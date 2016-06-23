@@ -1,0 +1,7 @@
+**/Gemfile.lock
+*.gem
+coverage/
+examples/.kitchen.local.yml
+examples/.kitchen/
+examples/.terraform/
+tmp/
