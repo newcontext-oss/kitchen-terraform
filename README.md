@@ -54,7 +54,7 @@ The default `directory`is the current working directory of Test Kitchen.
 
 ##### variable_files
 
-A pathname or a collection of pathnames of Terraform variable files containing variables to be set in the configuration.
+A collection of pathnames of Terraform variable files containing variables to be set in the configuration.
 
 ###### Examples
 
@@ -62,13 +62,13 @@ A pathname or a collection of pathnames of Terraform variable files containing v
 ---
 provisioner:
   name: terraform
-  variable_files: a/terraform/variable/file
----
-provisioner:
-  name: terraform
   variable_files:
     - first/terraform/variable/file
     - second/terraform/variable/file
+---
+provisioner:
+  name: terraform
+  variable_files: a/terraform/variable/file
 ...
 ```
 
@@ -78,7 +78,7 @@ The default `variable_files` collection is empty.
 
 ##### variables
 
-A Terraform variable or a collection of variables to be set in the configuration. 
+A collection of Terraform variables to be set in the configuration. 
 
 ###### Examples 
 
@@ -86,13 +86,13 @@ A Terraform variable or a collection of variables to be set in the configuration
 ---
 provisioner:
   name: terraform
-  variables: foo=bar
----
-provisioner:
-  name: terraform
   variables:
     - foo=bar
     - biz=baz
+---
+provisioner:
+  name: terraform
+  variables: foo=bar
 ...
 ```
 
