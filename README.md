@@ -22,8 +22,10 @@ There are no configuration options for the driver.
 #### Example
 
 ```yaml
+---
 driver:
   name: terraform
+...
 ```
 
 ### Kitchen::Provisioner::Terraform
@@ -39,9 +41,11 @@ The pathname of the directory containing the Terraform configuration to be teste
 ###### Example 
 
 ```yaml
+---
 provisioner:
   name: terraform
   directory: directory/containing/terraform/configuration
+...
 ```
 
 ###### Default 
@@ -50,7 +54,7 @@ The default `directory`is the current working directory of Test Kitchen.
 
 ##### variable_files
 
-A pathname or an array of pathnames of Terraform variable files containing variables to be set in the configuration.
+A pathname or a collection of pathnames of Terraform variable files containing variables to be set in the configuration.
 
 ###### Examples
 
@@ -65,15 +69,16 @@ provisioner:
   variable_files:
     - first/terraform/variable/file
     - second/terraform/variable/file
+...
 ```
 
 ###### Default 
 
-The default `variable_files` array is empty. 
+The default `variable_files` collection is empty. 
 
 ##### variables
 
-A Terraform variable or a list of variables to be set in the configuration. 
+A Terraform variable or a collection of variables to be set in the configuration. 
 
 ###### Examples 
 
@@ -88,11 +93,12 @@ provisioner:
   variables:
     - foo=bar
     - biz=baz
+...
 ```
 
 ###### Default 
 
-The default `variables` array is empty.
+The default `variables` collection is empty.
 
 ### Kitchen::Verifier::Terraform
 
@@ -108,15 +114,15 @@ The verifier inherits from `[Kitchen::Verifier::Inspec]` so any configuration su
 
 ##### groups 
 
-An array of group hashes containing control and connection options for the different server instance groups in the Terraform configuration.
+A collection of group mappingsmappings containing control and connection options for the different server instance groups in the Terraform configuration.
 
 Each group consists of:
 
 - a name to use for logging purposes 
 
-- an hash of attributes to define for the suite's Inspec profile 
+- a mapping ofof Inspec attribute names to Terraform output variable names to define for the suite's Inspec profile 
 
-- an array of controls to include from the suite's Inspec profile 
+- a collection of controls to include from the suite's Inspec profile 
 
 - a hostnames output variable name to use for extracting hostnames from the Terraform state; the output value is assumed to be in CSV format 
 
@@ -128,6 +134,7 @@ Each group consists of:
 ###### Example
 
 ```yaml
+---
 verifier:
   name: terraform
   groups:
@@ -139,18 +146,19 @@ verifier:
       hostnames: hostnames_output
       port: 123
       username: test-user
+...
 ```
 
 ###### Defaults
 
-The default `groups` array is empty. 
+The default `groups` collection is empty. 
 
 For each group:
 
-- the default `attributes`hash is empty 
+- the default `attributes` mapping is empty 
 
-- the default `controls` array is empty 
+- the default `controls` collection is empty 
 
-- the default `port`is obtained from the transport 
+- the default `port` is obtained from the transport 
 
-- the default `username`is obtained from the transport
+- the default `username` is obtained from the transport
