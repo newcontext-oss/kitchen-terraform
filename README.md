@@ -157,16 +157,15 @@ values managed under `groups`.
 
 ##### groups
 
-A collection of group mappingsmappings containing control and connection
-options for the different server instance groups in the Terraform
-configuration.
+A collection of group mappings containing control and connection options
+for the different server instance groups in the Terraform configuration.
 
 Each group consists of:
 
 - a name to use for logging purposes
 
-- a mapping ofof Inspec attribute names to Terraform output variable
-names to define for the suite's Inspec profile
+- a mapping of Inspec attribute names to Terraform output variable
+  names to define for the suite's Inspec profile
 
 - a collection of controls to include from the suite's Inspec profile
 
