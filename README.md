@@ -17,12 +17,28 @@ kitchen-terraform is a set of [Test Kitchen] plugins for testing
 
 [Terraform]: https://www.terraform.io/index.html
 
-## Plugins
+## Installation
+
+kitchen-terraform is packaged as a [Ruby gem] which means it can be
+[installed with Bundler].
+
+[Ruby Gem]: http://guides.rubygems.org/what-is-a-gem/index.html
+
+[installed with Bundler]: https://bundler.io/index.html#getting-started
+
+## Usage
 
 The provided plugins must all be used together in the
-[Test Kitchen configuration].
+[Test Kitchen configuration] in order to successfully test the provided
+Terraform configuration.
 
 [Test Kitchen configuration]: https://docs.chef.io/config_yml_kitchen.html
+
+Refer to the [examples directory] for a detailed example project.
+
+[examples directory]: examples/
+
+## Plugins
 
 ### [Kitchen::Driver::Terraform]
 
