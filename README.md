@@ -149,11 +149,12 @@ Terraform state using [Inspec profiles].
 
 #### Configuration
 
-The verifier inherits from [Kitchen::Verifier::Inspec] so any
-configuration supported by that class will be supported, save for the
-values managed under `groups`.
+The verifier inherits from [kitchen-inspec] so any configuration
+supported by that verifier should be supported by this verifier, with
+the exception of the `port` and `username` configuration which are
+specified under `groups`.
 
-[Kitchen::Verifier::Inspec]: https://github.com/chef/kitchen-inspec/blob/master/lib/kitchen/verifier/inspec.rb
+[kitchen-inspec]: https://github.com/chef/kitchen-inspec/
 
 ##### groups
 
