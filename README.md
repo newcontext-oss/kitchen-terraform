@@ -1,23 +1,41 @@
 # kitchen-terraform
-*A set of Test Kitchen plugins for testing Terraform configurations*
+
+kitchen-terraform is a set of [Test Kitchen] plugins for testing
+[Terraform configuration].
+
+[Test Kitchen]: http://kitchen.ci/index.html
+
+[Terraform configuration]: https://www.terraform.io/docs/configuration/index.html
 
 ## Requirements
 
+- [Bundler] **(~> 1.12)**
+
 - [Terraform] **(~> 0.6)**
 
-[Terraform]: https://www.terraform.io/downloads.html
+[Bundler]: https://bundler.io/index.html
+
+[Terraform]: https://www.terraform.io/index.html
 
 ## Plugins
 
-The provided plugins must all be used together in the Test Kitchen
-configuration.
+The provided plugins must all be used together in the
+[Test Kitchen configuration].
 
-### Kitchen::Driver::Terraform
+[Test Kitchen configuration]: https://docs.chef.io/config_yml_kitchen.html
+
+### [Kitchen::Driver::Terraform]
+
+[Kitchen::Driver::Terraform]: lib/kitchen/driver/terraform.rb
 
 The driver is responsible for validating the installed version of
-Terraform against the supported version and applying a destructive plan
-to the Terraform state based on the Terraform configuration provided to
-the provisioner.
+Terraform against the supported version and applying a destructive
+[Terraform plan] to the [Terraform state] based on the Terraform
+configuration provided to the provisioner.
+
+[Terraform plan]: https://www.terraform.io/docs/commands/plan.html
+
+[Terraform state]: https://www.terraform.io/docs/state/index.html
 
 #### Configuration
 
@@ -32,7 +50,9 @@ driver:
 ...
 ```
 
-### Kitchen::Provisioner::Terraform
+### [Kitchen::Provisioner::Terraform]
+
+[Kitchen::Provisioner::Terraform]: lib/kitchen/provisioner/terraform.rb
 
 The provisioner is responsible for applying a constructive plan to the
 Terraform state based on the provided Terraform configuration.
@@ -41,8 +61,11 @@ Terraform state based on the provided Terraform configuration.
 
 ##### directory
 
-The pathname of the directory containing the Terraform configuration to
-be tested.
+The pathname of the directory containing the Terraform configuration
+to be tested; corresponds to the [directory specified] in several
+Terraform commands.
+
+[directory specified]: https://www.terraform.io/docs/configuration/load.html
 
 ###### Example
 
@@ -56,12 +79,14 @@ provisioner:
 
 ###### Default
 
-The default `directory`is the current working directory of Test Kitchen.
+The default `directory` is the current working directory of Test Kitchen.
 
 ##### variable_files
 
-A collection of pathnames of Terraform variable files containing
-variables to be set in the configuration.
+A collection of pathnames of [Terraform variable files] to be evaluated
+for the configuration.
+
+[Terraform variable files]: https://www.terraform.io/docs/configuration/variables.html#variable-files
 
 ###### Examples
 
@@ -85,7 +110,13 @@ The default `variable_files` collection is empty.
 
 ##### variables
 
-A collection of Terraform variables to be set in the configuration.
+A collection of [Terraform variables] to be set in the configuration;
+the syntax matches that of [assigning variables] with command-line
+flags.
+
+[Terraform variables]: https://www.terraform.io/docs/configuration/variables.html
+
+[assigning variables]: https://www.terraform.io/intro/getting-started/variables.html#assigning-variables
 
 ###### Examples
 
@@ -107,7 +138,9 @@ provisioner:
 
 The default `variables` collection is empty.
 
-### Kitchen::Verifier::Terraform
+### [Kitchen::Verifier::Terraform]
+
+[Kitchen::Verifier::Terraform]: lib/kitchen/verifier/terraform.rb
 
 The verifier is responsible for verifying the server instances in the
 Terraform state using [Inspec profiles].
@@ -116,7 +149,7 @@ Terraform state using [Inspec profiles].
 
 #### Configuration
 
-The verifier inherits from `[Kitchen::Verifier::Inspec]` so any
+The verifier inherits from [Kitchen::Verifier::Inspec] so any
 configuration supported by that class will be supported, save for the
 values managed under `groups`.
 
