@@ -59,6 +59,8 @@ There are no configuration options for the driver.
 
 #### Example
 
+*.kitchen.yml*
+
 ```yaml
 ---
 driver:
@@ -85,6 +87,8 @@ Terraform commands.
 
 ###### Example
 
+*.kitchen.yml*
+
 ```yaml
 ---
 provisioner:
@@ -105,6 +109,8 @@ for the configuration.
 [Terraform variable files]: https://www.terraform.io/docs/configuration/variables.html#variable-files
 
 ###### Examples
+
+*.kitchen.yml*
 
 ```yaml
 ---
@@ -135,6 +141,8 @@ flags.
 [assigning variables]: https://www.terraform.io/intro/getting-started/variables.html#assigning-variables
 
 ###### Examples
+
+*.kitchen.yml*
 
 ```yaml
 ---
@@ -194,6 +202,8 @@ Each group consists of:
 - the username to use when connecting to the group's hosts
 
 ###### Example
+
+*.kitchen.yml*
 
 ```yaml
 ---
