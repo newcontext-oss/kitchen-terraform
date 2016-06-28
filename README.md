@@ -182,8 +182,11 @@ specified under `groups`.
 
 ##### groups
 
-A collection of group mappings containing control and connection options
-for the different server instance groups in the Terraform configuration.
+A collection of group mappings containing [Inspec control] and
+connection options for the different server instance groups in the
+Terraform configuration.
+
+[Inspec control]: https://github.com/chef/inspec/blob/master/docs/dsl_inspec.rst
 
 Each group consists of:
 
