@@ -12,15 +12,21 @@ prevent the successful execution of this example.
 
 ## Terraform Configuration
 
-(variables.tf) defines the required inputs for the example module.
+[variables.tf] defines the required inputs for the example module.
 
-(example.tf) creates three server instances: two in the
+[variables.tf]: variables.tf
+
+[example.tf] creates three server instances: two in the
 *kitchen_terraform_example_1* group and one in the
 *kitchen_terraform_example_2* group.
 
-(outputs.tf) defines two output variables: the hostnames of the
+[example.tf]: example.tf
+
+[outputs.tf] defines two output variables: the hostnames of the
 instances in the test suite's only group and an address to use in the
 suite's Inspec controls.
+
+[outputs.tf]: outputs.tf
 
 ## Test Kitchen Configuration
 
