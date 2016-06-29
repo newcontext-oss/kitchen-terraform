@@ -65,7 +65,6 @@ There are no configuration options for the driver.
 ---
 driver:
   name: terraform
-...
 ```
 
 ### [Kitchen::Provisioner::Terraform]
@@ -94,7 +93,6 @@ Terraform commands.
 provisioner:
   name: terraform
   directory: directory/containing/terraform/configuration
-...
 ```
 
 ###### Default
@@ -123,7 +121,6 @@ provisioner:
 provisioner:
   name: terraform
   variable_files: a/terraform/variable/file
-...
 ```
 
 ###### Default
@@ -155,7 +152,6 @@ provisioner:
 provisioner:
   name: terraform
   variables: foo=bar
-...
 ```
 
 ###### Default
@@ -221,7 +217,6 @@ verifier:
       hostnames: hostnames_output
       port: 123
       username: test-user
-...
 ```
 
 ###### Defaults
