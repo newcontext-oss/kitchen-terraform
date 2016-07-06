@@ -1,6 +1,6 @@
-Gemfile.lock
+**/Gemfile.lock
 coverage/
+examples/.kitchen.local.yml
 examples/.kitchen/
 examples/.terraform/
-examples/test/fixtures/credentials.tfvars
 tmp/

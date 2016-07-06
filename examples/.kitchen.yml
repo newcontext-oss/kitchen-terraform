@@ -3,29 +3,24 @@ driver:
   name: terraform
 provisioner:
   name: terraform
-  directory: test/fixtures
   variable_files:
     - test/fixtures/credentials.tfvars
-  variables:
-    - user=kitchen-terraform
 transport:
   name: ssh
-  ssh_key: ~/.ssh/aws/aaron_lane
 verifier:
   name: terraform
   format: doc
+  groups:
+    - name: contrived
+      attributes:
+        other_host_address: different_host_address
+      controls:
+        - running_service
+        - reachable_other_host
+      hostnames: contrived_hostnames
+      port: 22
+      username: ubuntu
 platforms:
   - name: ubuntu
 suites:
   - name: example
-    verifier:
-      groups:
-        - name: contrived
-          attributes:
-            hostname: other_hostname
-          controls:
-            - running_service
-            - reachable_other_host
-          hostnames: contrived_hostnames
-          port: 22
-          username: ubuntu
