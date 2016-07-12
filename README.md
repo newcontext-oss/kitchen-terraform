@@ -40,24 +40,35 @@ Refer to the [examples directory] for a detailed example project.
 
 ## Plugins
 
-### [Kitchen::Driver::Terraform]
+### Driver
 
-[Kitchen::Driver::Terraform]: lib/kitchen/driver/terraform.rb
+The [driver] is responsible for ensuring compatibility with Terraform and
+destroying existing [Terraform state].
 
-The driver is responsible for validating the installed version of
-Terraform against the supported version and applying a destructive
-[Terraform plan] to the [Terraform state] based on the Terraform
-configuration provided to the provisioner.
-
-[Terraform plan]: https://www.terraform.io/docs/commands/plan.html
+[driver]: lib/kitchen/driver/terraform.rb
 
 [Terraform state]: https://www.terraform.io/docs/state/index.html
+
+#### Actions
+
+##### kitchen create
+
+The driver validates the installed version of
+Terraform against the version supported by kitchen-terraform.
+
+##### kitchen destroy
+
+The driver applies a destructive [Terraform plan] to the
+Terraform state based on the Terraform configuration provided to the
+provisioner.
+
+[Terraform plan]: https://www.terraform.io/docs/commands/plan.html
 
 #### Configuration
 
 There are no configuration options for the driver.
 
-#### Example
+##### Example
 
 *.kitchen.yml*
 
@@ -67,11 +78,17 @@ driver:
   name: terraform
 ```
 
-### [Kitchen::Provisioner::Terraform]
+### Provisioner
 
-[Kitchen::Provisioner::Terraform]: lib/kitchen/provisioner/terraform.rb
+The [provisioner] is responsible for creating Terraform state.
 
-The provisioner is responsible for applying a constructive plan to the
+[provisioner]: lib/kitchen/provisioner/terraform.rb
+
+#### Actions
+
+##### kitchen converge
+
+The provisioner applies a constructive Terraform plan to the
 Terraform state based on the provided Terraform configuration.
 
 #### Configuration
@@ -158,21 +175,27 @@ provisioner:
 
 The default `variables` collection is empty.
 
-### [Kitchen::Verifier::Terraform]
+### Verifier
 
-[Kitchen::Verifier::Terraform]: lib/kitchen/verifier/terraform.rb
+The [verifier] is responsible for verifying the behaviour of any server
+instances in the Terraform state.
 
-The verifier is responsible for verifying the server instances in the
-Terraform state using [Inspec profiles].
+[verifier]: lib/kitchen/verifier/terraform.rb
+
+#### Actions
+
+##### kitchen verify
+
+The verifier verifies the configured server instances in the Terraform
+state using [Inspec profiles].
 
 [Inspec profiles]: https://github.com/chef/inspec/blob/master/docs/profiles.rst
 
 #### Configuration
 
-The verifier inherits from [kitchen-inspec] so any configuration
-supported by that verifier should be supported by this verifier, with
-the exception of the `port` and `username` configuration which are
-specified under `groups`.
+The verifier inherits from [kitchen-inspec] and should support any
+configuration defined by that plugin with the exception of the `port` and
+`username` configuration which are specified under `groups`.
 
 [kitchen-inspec]: https://github.com/chef/kitchen-inspec/
 
