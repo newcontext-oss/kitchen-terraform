@@ -21,7 +21,7 @@ Gem::Specification.new do |specification|
 
   specification.homepage = 'https://github.com/newcontext/kitchen-terraform'
 
-  specification.licenses = ['???']
+  specification.license = 'Apache-2.0'
 
   specification.add_development_dependency 'bundler-audit', '~> 0.5', '>= 0.5.0'
 
