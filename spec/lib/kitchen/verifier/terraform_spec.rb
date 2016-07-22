@@ -21,7 +21,7 @@ require 'support/terraform/client_holder_examples'
 require 'support/terraform/versions_are_set_examples'
 
 RSpec.describe Kitchen::Verifier::Terraform do
-  let(:config) { {} }
+  let(:config) { { kitchen_root: '<kitchen_root>' } }
 
   let(:described_instance) { described_class.new config }
 
