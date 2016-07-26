@@ -53,5 +53,6 @@ Gem::Specification.new do |specification|
 
   specification.requirements = ['Terraform, 0.6']
 
-  specification.signing_key = File.expand_path '~/.gem/ncs-alane-private_key.pem'
+  specification.signing_key =
+    File.expand_path '~/.gem/ncs-alane-private_key.pem'
 end
