@@ -9,7 +9,7 @@ require 'terraform/version.rb'
 Gem::Specification.new do |specification|
   specification.author = 'Aaron Lane'
 
-  specification.files = Dir.glob '{lib,spec}/**/*.rb'
+  specification.files = Dir.glob '{lib/**/*.rb,LICENSE,README.md}'
 
   specification.name = 'kitchen-terraform'
 
