@@ -50,7 +50,7 @@ module Kitchen
       end
 
       def evaluate(exit_code:)
-        raise "Inspec Runner returns #{exit_code}" unless 0 == exit_code
+        raise "Inspec Runner returns #{exit_code}" unless exit_code.zero?
       end
 
       def groups

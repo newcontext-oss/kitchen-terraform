@@ -7,9 +7,9 @@ end
 require 'terraform/version.rb'
 
 Gem::Specification.new do |specification|
-  specification.author = 'Aaron Lane'
+  specification.authors = ['Aaron Lane', 'Nick Willever']
 
-  specification.files = Dir.glob '{lib,spec}/**/*.rb'
+  specification.files = Dir.glob '{lib/**/*.rb,LICENSE,README.md}'
 
   specification.name = 'kitchen-terraform'
 
@@ -53,5 +53,6 @@ Gem::Specification.new do |specification|
 
   specification.requirements = ['Terraform, 0.6']
 
-  specification.signing_key = File.expand_path '~/.gem/ncs-alane-private_key.pem'
+  specification.signing_key =
+    File.expand_path '~/.gem/ncs-alane-private_key.pem'
 end
