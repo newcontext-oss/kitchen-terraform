@@ -26,7 +26,15 @@ kitchen-terraform is a set of [Test Kitchen] plugins for testing
 kitchen-terraform is packaged as a cryptographically signed [Ruby gem]
 which means it can be [installed with Bundler].
 
-First, the author's public key must be added as a trusted certificate:
+### Adding kitchen-terraform to a terraform project
+
+Once Bundler is installed, add kitchen-terraform to the Gemfile:
+
+```sh
+gem 'kitchen-terraform'
+```
+
+Before running `bundle`, the author's public key must be added as a trusted certificate:
 
 ```sh
 gem cert --add <(curl --location --silent \
@@ -36,7 +44,7 @@ https://raw.githubusercontent.com/newcontext/kitchen-terraform/master/certs/ncs-
 Then, install the bundle and verify all of the gems:
 
 ```sh
-bundle install --trust-profile HighSecurity
+bundle install --trust-policy HighSecurity
 ```
 
 [Ruby Gem]: http://guides.rubygems.org/what-is-a-gem/index.html
