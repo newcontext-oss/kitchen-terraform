@@ -10,6 +10,14 @@ While the complexity of the Terraform code has been kept to a minimum,
 it is possible that the configuration of a user's AWS account may still
 prevent the successful execution of this example.
 
+__WARNING__ Creating AWS resources could cost money and
+be charged to the AWS Account's bill
+
+Before continuing, we recommend following the instructions on configuring
+the [AWS account]
+
+[AWS account]: AWS.md
+
 ## Terraform Configuration
 
 [variables.tf] defines the required inputs for the example module.
@@ -104,7 +112,7 @@ example module is simple:
 [missing configuration]: README.md#user-content-missing-configuration
 
 ```sh
-$ bundle
+$ bundle install --trust-policy HighSecurity
 $ bundle exec kitchen converge
 # Wait for the instances to be ready for SSH connections...
 $ bundle exec kitchen verify

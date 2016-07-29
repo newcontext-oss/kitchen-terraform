@@ -1,0 +1,23 @@
+# How to contribute to kitchen-terraform
+
+## **Reporting bug**
+
+* Please check the issues list first on GitHub under [Issues]. If you cannot find a similar report then please [open an issue] and include as much detailed information as possible (i.e. code examples, test cases)
+
+[Issues]: https://github.com/newcontext/kitchen-terraform/issues
+[open an issue]: https://github.com/newcontext/kitchen-terraform/issues/new
+
+## **Submitting changes**
+
+* Open a pull request
+
+* Be as detailed as possible with the pull request, make sure to include tests!
+
+* The pull request will be reviewed, then later merged
+
+#### **Submitting a new feature**
+
+* [Email us] before writing the code, then follow the [submitting changes process]
+
+[Email us]: mailto:kitchen-terraform@newcontext.com
+[submitting changes process]: CONTRIBUTING.md#user-content-submitting-changes
