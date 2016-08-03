@@ -19,7 +19,9 @@ require 'terraform/client'
 require 'terraform/command'
 
 RSpec.describe Terraform::Client do
-  let(:described_instance) { described_class.new instance: instance }
+  let :described_instance do
+    described_class.new instance: instance, logger: logger
+  end
 
   let(:instance) { instance_double Kitchen::Instance }
 
@@ -30,6 +32,8 @@ RSpec.describe Terraform::Client do
   let(:instance_name) { '<instance_name>' }
 
   let(:kitchen_root) { '<kitchen_root>' }
+
+  let(:logger) { instance_double Object }
 
   let :provisioner do
     Kitchen::Provisioner::Terraform.new kitchen_root: kitchen_root
@@ -176,7 +180,7 @@ RSpec.describe Terraform::Client do
     let(:parameters) { { foo: 'bar' } }
 
     before do
-      allow(command_class).to receive(:new).with(**parameters)
+      allow(command_class).to receive(:new).with(logger: logger, **parameters)
         .and_yield command
 
       allow(command).to receive(:execute).with(no_args).and_yield output

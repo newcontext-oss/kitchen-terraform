@@ -72,13 +72,10 @@ module Terraform
       instance_directory.join 'terraform.tfplan'
     end
 
-    def run(command_class:, **parameters)
-      command_class.new(**parameters) do |command|
+    def run(command_class:, **parameters, &block)
+      command_class.new(logger: logger, **parameters) do |command|
         info command
-        command.execute do |output|
-          info output
-          yield output if block_given?
-        end
+        command.execute(&block)
       end
     end
 
@@ -92,10 +89,11 @@ module Terraform
 
     private
 
-    attr_accessor :instance_name, :provisioner
+    attr_accessor :instance_name, :logger, :provisioner
 
-    def initialize(instance:)
+    def initialize(instance:, logger:)
       self.instance_name = instance.name
+      self.logger = logger
       self.provisioner = instance.provisioner
     end
   end
