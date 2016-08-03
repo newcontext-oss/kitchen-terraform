@@ -29,6 +29,10 @@ module Kitchen
 
       plugin_version ::Terraform::VERSION
 
+      required_config :apply_timeout
+
+      default_config :apply_timeout, 600
+
       def call(_state = nil)
         client.validate_configuration_files
         client.download_modules

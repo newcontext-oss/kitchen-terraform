@@ -30,8 +30,8 @@ module Terraform
                    :variable_files, :variables
 
     def apply_execution_plan
-      run command_class: ApplyCommand, state: state_pathname,
-          plan: plan_pathname
+      run command_class: ApplyCommand, timeout: provisioner[:apply_timeout],
+          state: state_pathname, plan: plan_pathname
     end
 
     def download_modules

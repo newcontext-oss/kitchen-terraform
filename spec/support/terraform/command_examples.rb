@@ -20,9 +20,17 @@ RSpec.shared_examples Terraform::Command do
   describe '#execute' do
     let(:shell_out) { instance_double Mixlib::ShellOut }
 
+    let :shell_out_class do
+      class_double(Mixlib::ShellOut)
+        .as_stubbed_const transfer_nested_constants: true
+    end
+
     before do
-      allow(described_instance)
-        .to receive(:shell_out).with(no_args).and_return shell_out
+      allow(shell_out_class)
+        .to receive(:new).with(
+          described_instance.to_s,
+          returns: 0, timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT
+        ).and_return shell_out
 
       allow(shell_out).to receive(:run_command).with no_args
     end

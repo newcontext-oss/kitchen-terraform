@@ -120,6 +120,26 @@ Terraform state based on the provided Terraform configuration.
 
 #### Configuration
 
+##### apply_timeout
+
+The number of seconds to wait for the Terraform `apply` command to be
+successful before raising an error.
+
+###### Example
+
+*.kitchen.yml*
+
+```yaml
+---
+provisioner:
+  name: terraform
+  apply_timeout: 1000
+```
+
+###### Default
+
+The default `apply_timeout` is 600 seconds.
+
 ##### directory
 
 The pathname of the directory containing the Terraform configuration

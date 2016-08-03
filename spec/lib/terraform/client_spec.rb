@@ -50,6 +50,7 @@ RSpec.describe Terraform::Client do
     it 'applies the plan to the state' do
       is_expected.to receive(:run)
         .with command_class: Terraform::ApplyCommand,
+              timeout: provisioner[:apply_timeout],
               state: described_instance.state_pathname,
               plan: described_instance.plan_pathname
     end

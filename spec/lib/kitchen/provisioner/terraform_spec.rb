@@ -21,13 +21,23 @@ require 'support/terraform/client_holder_examples'
 require 'support/terraform/versions_are_set_examples'
 
 RSpec.describe Kitchen::Provisioner::Terraform do
-  let(:described_instance) { described_class.new kitchen_root: kitchen_root }
+  let(:config) { { kitchen_root: kitchen_root } }
+
+  let(:described_instance) { described_class.new config }
 
   let(:kitchen_root) { '<kitchen_root>' }
 
   it_behaves_like Terraform::ClientHolder
 
   it_behaves_like 'versions are set'
+
+  describe '#[](attr)' do
+    context 'when accessing the default :apply_timeout' do
+      subject { described_instance[:apply_timeout] }
+
+      it('returns 600 seconds') { is_expected.to be 600 }
+    end
+  end
 
   describe '#call(_state = nil)' do
     include_context '#client'
@@ -83,6 +93,18 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
     it 'defaults to the Test Kitchen root directory' do
       is_expected.to eq kitchen_root
+    end
+  end
+
+  describe '#finalize_config!(instance)' do
+    context 'when the config has an empty :apply_timeout' do
+      let(:config) { { apply_timeout: '' } }
+
+      let(:instance) { Kitchen::Instance.new }
+
+      subject { proc { described_instance.finalize_config! instance } }
+
+      it('raises an error') { is_expected.to raise_error Kitchen::ClientError }
     end
   end
 
