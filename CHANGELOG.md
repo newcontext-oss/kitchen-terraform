@@ -16,11 +16,11 @@
 * Fix the line length of the gem specification signing key configuration
 
 * Correct the reference to `bundle install --trust-profile` with
-  `bundle install --trust-policy` in the README (thanks to @nellshamrell
-  and @nictrix)
+  `bundle install --trust-policy` in the README (thanks to
+  [@nellshamrell] and [@nictrix])
 
 * Clarify the gem installation instructions in the README (thanks to
-  @nictrix)
+  [@nictrix])
 
 * Add Nick Willever to the gem specification authors
 
@@ -29,3 +29,7 @@
 ### Minor
 
 * Initial release
+
+[@nellshamrell]: https://github.com/nellshamrell
+
+[@nictrix]: https://github.com/nictrix
