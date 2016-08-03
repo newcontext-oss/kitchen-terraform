@@ -21,7 +21,9 @@ RSpec.describe Terraform::ApplyCommand do
   it_behaves_like Terraform::Command do
     let(:command_options) { "-input=false -state=#{state}" }
 
-    let(:described_instance) { described_class.new state: state, plan: target }
+    let :described_instance do
+      described_class.new logger: logger, state: state, plan: target
+    end
 
     let(:name) { 'apply' }
 

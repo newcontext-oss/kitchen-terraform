@@ -21,7 +21,7 @@ RSpec.describe Terraform::VersionCommand do
   it_behaves_like Terraform::Command do
     let(:command_options) { '' }
 
-    let(:described_instance) { described_class.new }
+    let(:described_instance) { described_class.new logger: logger }
 
     let(:name) { 'version' }
 

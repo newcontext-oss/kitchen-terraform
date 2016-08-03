@@ -17,6 +17,8 @@
 require 'terraform/command'
 
 RSpec.shared_examples Terraform::Command do
+  let(:logger) { instance_double Object }
+
   describe '#execute' do
     let(:shell_out) { instance_double Mixlib::ShellOut }
 
@@ -29,7 +31,8 @@ RSpec.shared_examples Terraform::Command do
       allow(shell_out_class)
         .to receive(:new).with(
           described_instance.to_s,
-          returns: 0, timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT
+          returns: 0, timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT,
+          live_stream: logger
         ).and_return shell_out
 
       allow(shell_out).to receive(:run_command).with no_args

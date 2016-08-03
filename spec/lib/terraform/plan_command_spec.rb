@@ -25,8 +25,9 @@ RSpec.describe Terraform::PlanCommand do
     end
 
     let :described_instance do
-      described_class.new destroy: destroy, out: out, state: state, var: var,
-                          var_file: var_file, dir: target
+      described_class.new logger: logger, destroy: destroy, out: out,
+                          state: state, var: var, var_file: var_file,
+                          dir: target
     end
 
     let(:destroy) { true }

@@ -24,6 +24,9 @@ RSpec.shared_examples Terraform::ClientHolder do
       allow(described_instance).to receive(:instance).with(no_args)
         .and_return instance
 
+      allow(described_instance).to receive(:logger).with(no_args)
+        .and_return instance_double Object
+
       allow(instance).to receive(:name).with no_args
 
       allow(instance).to receive(:provisioner).with no_args

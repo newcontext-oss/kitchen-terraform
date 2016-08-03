@@ -21,7 +21,7 @@ RSpec.describe Terraform::GetCommand do
   it_behaves_like Terraform::Command do
     let(:command_options) { '-update=true' }
 
-    let(:described_instance) { described_class.new dir: target }
+    let(:described_instance) { described_class.new logger: logger, dir: target }
 
     let(:name) { 'get' }
 

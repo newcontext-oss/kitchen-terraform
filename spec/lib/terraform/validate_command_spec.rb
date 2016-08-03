@@ -21,7 +21,7 @@ RSpec.describe Terraform::ValidateCommand do
   it_behaves_like Terraform::Command do
     let(:command_options) { '' }
 
-    let(:described_instance) { described_class.new dir: target }
+    let(:described_instance) { described_class.new logger: logger, dir: target }
 
     let(:name) { 'validate' }
 
