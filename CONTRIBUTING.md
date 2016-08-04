@@ -18,7 +18,4 @@
 
 * Please [open an issue] before writing the code, that way we are on the same page
 
-[Email us]: mailto:kitchen-terraform@newcontext.com
-[submitting changes process]: CONTRIBUTING.md#user-content-submitting-changes
 [open an issue]: https://github.com/newcontext/kitchen-terraform/issues/new
-
