@@ -14,8 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/coverage'
-
 RSpec.configure do |configuration|
   configuration.disable_monkey_patching!
 
