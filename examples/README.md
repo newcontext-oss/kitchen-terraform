@@ -103,10 +103,20 @@ example module is simple:
 
 [missing configuration]: README.md#user-content-missing-configuration
 
-```sh
-$ bundle
+```sh                                                                                                                          
+$ bundle install
 $ bundle exec kitchen converge
 # Wait for the instances to be ready for SSH connections...
 $ bundle exec kitchen verify
 $ bundle exec kitchen destroy
 ```
+
+## Other Information
+
+__WARNING__ Creating AWS resources could cost money and                                                                        
+be charged to the AWS Account's bill.
+
+Before continuing, we recommend following the instructions on configuring
+the [AWS account].
+
+[AWS account]: AWS.md
