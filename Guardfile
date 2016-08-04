@@ -5,6 +5,7 @@ group :red_green_refactor, halt_on_fail: true do
 
   Guard::RSpec::Dsl.new(self).tap do |dsl|
     guard :rspec, all_after_pass: true, all_on_start: true,
+                  bundler_env: :inherit,
                   cmd: 'bundle exec rspec' do
       watch dsl.rspec.spec_files
 
