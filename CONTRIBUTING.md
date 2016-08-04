@@ -5,7 +5,6 @@
 * Please check the issues list first on GitHub under [Issues]. If you cannot find a similar report then please [open an issue] and include as much detailed information as possible (i.e. code examples, test cases)
 
 [Issues]: https://github.com/newcontext/kitchen-terraform/issues
-[open an issue]: https://github.com/newcontext/kitchen-terraform/issues/new
 
 ## **Submitting changes**
 
@@ -17,7 +16,9 @@
 
 #### **Submitting a new feature**
 
-* [Email us] before writing the code, then follow the [submitting changes process]
+* Please [open an issue] before writing the code, that way we are on the same page
 
 [Email us]: mailto:kitchen-terraform@newcontext.com
 [submitting changes process]: CONTRIBUTING.md#user-content-submitting-changes
+[open an issue]: https://github.com/newcontext/kitchen-terraform/issues/new
+
