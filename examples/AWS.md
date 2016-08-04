@@ -7,7 +7,9 @@ A set of recommended instructions when running through the examples
 [Signup]: https://portal.aws.amazon.com/gp/aws/developer/registration/index.html
 [Signin]: https://console.aws.amazon.com/
 
-2. Create an [IAM user] in the us-east-1 with API keys (save credentials)
+2. Create an [IAM user] in the us-east-1 region with API keys and save
+   the Access Key ID and Secret Access Key for use in the example
+   configuration.
 
 [IAM user]: https://console.aws.amazon.com/iam/home?region=us-east-1#users
 
@@ -31,6 +33,7 @@ A set of recommended instructions when running through the examples
 }
 ```
 
-The AWS IAM user account is now setup, please continue on with the [README]
+The AWS IAM user account is now setup, please continue on with the
+[README].
 
 [README]: README.md

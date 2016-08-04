@@ -81,6 +81,11 @@ Several required configuration options are missing from the Test Kitchen
 configuration; these must be provided in a local Test Kitchen
 configuration.
 
+Before continuing, review the instructions on configuring the
+[AWS account] with an isolated user for enhanced security.
+
+[AWS account]: AWS.md
+
 *.kitchen.local.yml*
 
 ```yaml
@@ -98,25 +103,19 @@ suites:
 
 ## Executing Tests
 
+__WARNING__ Creating AWS resources could cost money and be charged to
+the AWS Account's bill; neither kitchen-terraform nor its maintainers
+are responsible for any incurred costs.
+
 Assuming that the [missing configuration] has been provided, testing the
 example module is simple:
 
 [missing configuration]: README.md#user-content-missing-configuration
 
-```sh                                                                                                                          
+```sh
 $ bundle install
 $ bundle exec kitchen converge
 # Wait for the instances to be ready for SSH connections...
 $ bundle exec kitchen verify
 $ bundle exec kitchen destroy
 ```
-
-## Other Information
-
-__WARNING__ Creating AWS resources could cost money and                                                                        
-be charged to the AWS Account's bill.
-
-Before continuing, we recommend following the instructions on configuring
-the [AWS account].
-
-[AWS account]: AWS.md
