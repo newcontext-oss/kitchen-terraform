@@ -15,7 +15,8 @@ group :red_green_refactor, halt_on_fail: true do
       dsl.watch_spec_files_for dsl.ruby.lib_files
     end
 
-    guard :rubocop, all_on_start: true, cli: '--format clang' do
+    guard :rubocop, all_on_start: true,
+                    cli: '--format clang --display-cop-names' do
       watch dsl.rspec.spec_files
 
       watch dsl.rspec.spec_helper
