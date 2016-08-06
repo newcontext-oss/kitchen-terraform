@@ -17,7 +17,7 @@ Gem::Specification.new do |specification|
 
   specification.version = Terraform::VERSION
 
-  specification.email = 'aaron.lane@newcontext.com'
+  specification.email = 'kitchen-terraform@newcontext.com'
 
   specification.homepage = 'https://github.com/newcontext/kitchen-terraform'
 
