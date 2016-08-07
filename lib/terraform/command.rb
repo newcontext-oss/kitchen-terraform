@@ -45,7 +45,7 @@ module Terraform
 
     private
 
-    attr_accessor :logger, :timeout
+    attr_accessor :shell_out
 
     def command_error(error:, type:)
       raise type, %(`#{shell_out.command}` failed: "#{error}")
