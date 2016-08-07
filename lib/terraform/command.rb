@@ -25,13 +25,9 @@ module Terraform
     attr_reader :name, :options, :target
 
     def execute
-      Mixlib::ShellOut
-        .new(to_s, returns: 0, timeout: timeout, live_stream: logger)
-        .tap do |shell_out|
-          shell_out.run_command
-          shell_out.error!
-          yield shell_out.stdout if block_given?
-        end
+      shell_out.run_command
+      shell_out.error!
+      yield shell_out.stdout if block_given?
     rescue => error
       handle error: error
       raise Error, error.message, error.backtrace
@@ -48,7 +44,7 @@ module Terraform
 
     private
 
-    attr_accessor :logger, :timeout
+    attr_accessor :shell_out
 
     attr_writer :name, :options, :target
 
@@ -56,9 +52,9 @@ module Terraform
       logger:, timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT,
       **keyword_arguments
     )
-      self.logger = logger
-      self.timeout = timeout
       initialize_attributes(**keyword_arguments)
+      self.shell_out = Mixlib::ShellOut.new to_s, returns: 0, timeout: timeout,
+                                                  live_stream: logger
       yield self if block_given?
     end
   end
