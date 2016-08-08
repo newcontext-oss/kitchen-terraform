@@ -26,6 +26,8 @@ module Terraform
   class Client
     extend Forwardable
 
+    attr_reader :supported_version
+
     def_delegators :provisioner, :directory, :info, :kitchen_root,
                    :variable_files, :variables
 
@@ -46,10 +48,6 @@ module Terraform
       run(
         command_class: OutputCommand, state: state_pathname, name: name
       ) { |output| yield output.chomp }
-    end
-
-    def fetch_version
-      run(command_class: VersionCommand) { |output| yield output }
     end
 
     def instance_directory
@@ -87,14 +85,26 @@ module Terraform
       run command_class: ValidateCommand, dir: directory
     end
 
+    def validate_version
+      run command_class: VersionCommand do |output|
+        break if supported_version.match output
+
+        raise ::Terraform::UserError,
+              "Terraform version must match #{supported_version}"
+      end
+    end
+
     private
 
     attr_accessor :instance_name, :logger, :provisioner
+
+    attr_writer :supported_version
 
     def initialize(instance:, logger:)
       self.instance_name = instance.name
       self.logger = logger
       self.provisioner = instance.provisioner
+      self.supported_version = /v0.6/
     end
   end
 end

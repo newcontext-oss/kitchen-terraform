@@ -79,7 +79,10 @@ RSpec.describe Kitchen::Driver::Terraform do
     it 'plans the destructive execution' do
       is_expected.to plan_destructive_execution
     end
+<<<<<<< b9dafad12a2874ff348bbbe9be99ab2c7c5c696d
 
     it('applies the execution plan') { is_expected.to apply_execution_plan }
+=======
+>>>>>>> Move version validation logic to client
   end
 end
