@@ -111,21 +111,6 @@ RSpec.describe Terraform::Client do
     end
   end
 
-  describe '#fetch_version' do
-    let(:output) { instance_double Object }
-
-    before do
-      allow(described_instance).to receive(:run)
-        .with(command_class: Terraform::VersionCommand).and_yield output
-    end
-
-    subject { ->(block) { described_instance.fetch_version(&block) } }
-
-    it 'yields the Terraform version' do
-      is_expected.to yield_with_args output
-    end
-  end
-
   describe '#instance_directory' do
     subject { described_instance.instance_directory.to_s }
 
@@ -202,6 +187,12 @@ RSpec.describe Terraform::Client do
     it { is_expected.to eq "#{instance_directory}/terraform.tfstate" }
   end
 
+  describe '#supported_version' do
+    subject { described_instance.supported_version }
+
+    it('matches v0.6') { is_expected.to match 'v0.6' }
+  end
+
   describe '#validate_configuration_files' do
     after { described_instance.validate_configuration_files }
 
@@ -211,6 +202,30 @@ RSpec.describe Terraform::Client do
       is_expected.to receive(:run)
         .with command_class: Terraform::ValidateCommand,
               dir: described_instance.directory
+    end
+  end
+
+  describe '#validate_version' do
+    before do
+      allow(described_instance).to receive(:run)
+        .with(command_class: Terraform::VersionCommand).and_yield output
+    end
+
+    subject { proc { described_instance.validate_version } }
+
+    context 'when the client does support the installed version of Terraform' do
+      let(:output) { 'v0.6.7' }
+
+      it('raises no error') { is_expected.to_not raise_error }
+    end
+
+    context 'when the client does not support the installed version of ' \
+              'Terraform' do
+      let(:output) { 'v0.7.8' }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError, /version must match/
+      end
     end
   end
 end

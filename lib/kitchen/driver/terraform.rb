@@ -32,13 +32,7 @@ module Kitchen
       no_parallel_for
 
       def create(_state = nil)
-        # TODO: move validation to client
-        client.fetch_version do |output|
-          break if output.match supported_version
-
-          raise ::Terraform::UserError,
-                "Terraform version must match #{supported_version}"
-        end
+        client.validate_version
       end
 
       def destroy(_state = nil)
@@ -46,10 +40,6 @@ module Kitchen
         client.download_modules
         client.plan_destructive_execution
         client.apply_execution_plan
-      end
-
-      def supported_version
-        'v0.6'
       end
     end
   end

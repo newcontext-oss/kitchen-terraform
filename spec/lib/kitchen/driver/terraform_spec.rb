@@ -36,33 +36,21 @@ RSpec.describe Kitchen::Driver::Terraform do
   describe '#create(_state = nil)' do
     include_context '#client'
 
-    before do
-      allow(client).to receive(:fetch_version).with(no_args).and_yield output
-    end
-
     subject { proc { described_instance.create } }
 
-    context 'when the Terraform version is supported' do
-      let(:output) { 'v0.6.1' }
+    context 'when the installed version of Terraform is supported' do
+      before { allow(client).to receive(:validate_version).with no_args }
 
-      it('does not raise an error') { is_expected.to_not raise_error }
+      it('raises no error') { is_expected.to_not raise_error }
     end
 
-    context 'when the Terraform version is not supported' do
-      let(:output) { 'v0.5.2' }
-
-      it 'does raise an error' do
-        is_expected.to raise_error Kitchen::ActionFailed
-      end
-    end
-
-    context 'when the client command fails' do
+    context 'when the installed version of Terraform is not supported' do
       before do
-        allow(client).to receive(:fetch_version).with(no_args)
+        allow(client).to receive(:validate_version).with(no_args)
           .and_raise Terraform::Error
       end
 
-      it 'does raise an error' do
+      it 'raise an action failed error' do
         is_expected.to raise_error Kitchen::ActionFailed
       end
     end
@@ -117,11 +105,5 @@ RSpec.describe Kitchen::Driver::Terraform do
         is_expected.to raise_error Kitchen::ActionFailed
       end
     end
-  end
-
-  describe '#supported_version' do
-    subject { described_instance.supported_version }
-
-    it('equals v0.6') { is_expected.to eq 'v0.6' }
   end
 end
