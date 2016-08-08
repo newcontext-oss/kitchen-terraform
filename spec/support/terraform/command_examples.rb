@@ -43,12 +43,41 @@ RSpec.shared_examples Terraform::Command do
       it('yields the output') { is_expected.to yield_with_args stdout }
     end
 
-    context 'when the execution is not successful due to a standard error' do
-      before { allow(shell_out).to receive(:error!).with(no_args).and_raise }
+    shared_examples 'an expected user error has occured' do
+      before do
+        allow(shell_out).to receive(:error!).with(no_args)
+          .and_raise error_class
+      end
 
       subject { proc { described_instance.execute } }
 
-      it('raises an error') { is_expected.to raise_error Terraform::Error }
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError
+      end
+    end
+
+    context 'when the execution is not successful due to a permissions error' do
+      it_behaves_like 'an expected user error has occured' do
+        let(:error_class) { Errno::EACCES }
+      end
+    end
+
+    context 'when the execution is not successful due to no executable' do
+      it_behaves_like 'an expected user error has occured' do
+        let(:error_class) { Errno::ENOENT }
+      end
+    end
+
+    context 'when the execution is not successful due to a command timeout' do
+      it_behaves_like 'an expected user error has occured' do
+        let(:error_class) { Mixlib::ShellOut::CommandTimeout }
+      end
+    end
+
+    context 'when the execution is not successful due to a command failure' do
+      it_behaves_like 'an expected user error has occured' do
+        let(:error_class) { Mixlib::ShellOut::ShellCommandFailed }
+      end
     end
   end
 

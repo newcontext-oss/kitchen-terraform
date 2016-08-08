@@ -14,9 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-require 'nesty'
+require_relative 'error'
 
 module Terraform
-  VERSION = '0.2.0'
+  # General error that must be handled by the user
+  class UserError < Error
+  end
 end

@@ -45,6 +45,8 @@ Gem::Specification.new do |specification|
 
   specification.add_runtime_dependency 'mixlib-shellout', '~> 2.2', '>= 2.2.6'
 
+  specification.add_runtime_dependency 'nesty', '~> 1.0', '>= 1.0.2'
+
   specification.add_runtime_dependency 'test-kitchen', '~> 1.10', '>= 1.10.0'
 
   specification.cert_chain = ['certs/ncs-alane-public_cert.pem']
