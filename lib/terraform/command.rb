@@ -17,7 +17,7 @@
 require 'mixlib/shellout'
 require 'pathname'
 require_relative 'command_options'
-require_relative 'error'
+require_relative 'user_error'
 
 module Terraform
   # Common logic for Mixlib::ShellOut Terraform commands
@@ -28,12 +28,9 @@ module Terraform
       shell_out.run_command
       shell_out.error!
       yield shell_out.stdout if block_given?
-    rescue => error
-      handle error: error
-      raise Error, error.message, error.backtrace
-    end
-
-    def handle(**_)
+    rescue Errno::EACCES, Errno::ENOENT, Mixlib::ShellOut::CommandTimeout,
+           Mixlib::ShellOut::ShellCommandFailed
+      raise UserError
     end
 
     def to_s

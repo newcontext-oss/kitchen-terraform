@@ -16,7 +16,7 @@
 
 require 'kitchen'
 require 'terraform/client_holder'
-require 'terraform/invalid_version'
+require 'terraform/user_error'
 require 'terraform/version'
 
 module Kitchen
@@ -32,12 +32,13 @@ module Kitchen
       no_parallel_for
 
       def create(_state = nil)
+        # TODO: move validation to client
         client.fetch_version do |output|
-          raise ::Terraform::InvalidVersion, supported_version, caller unless
-            output.match supported_version
+          break if output.match supported_version
+
+          raise ::Terraform::UserError,
+                "Terraform version must match #{supported_version}"
         end
-      rescue => error
-        raise Kitchen::ActionFailed, error.message, error.backtrace
       end
 
       def destroy(_state = nil)
@@ -45,8 +46,6 @@ module Kitchen
         client.download_modules
         client.plan_destructive_execution
         client.apply_execution_plan
-      rescue => error
-        raise Kitchen::ActionFailed, error.message, error.backtrace
       end
 
       def supported_version

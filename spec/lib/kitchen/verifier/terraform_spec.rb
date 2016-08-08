@@ -126,7 +126,7 @@ RSpec.describe Kitchen::Verifier::Terraform do
     context 'when the exit code is not 0' do
       let(:exit_code) { 1 }
 
-      it('raises an error') { is_expected.to raise_error RuntimeError }
+      it('raises an error') { is_expected.to raise_error Terraform::Error }
     end
   end
 

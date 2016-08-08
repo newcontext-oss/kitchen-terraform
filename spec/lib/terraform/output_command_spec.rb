@@ -30,31 +30,5 @@ RSpec.describe Terraform::OutputCommand do
     let(:state) { '<state_pathname>' }
 
     let(:target) { '<name>' }
-
-    describe '#handle(error:)' do
-      let(:error) { instance_double Exception }
-
-      before do
-        allow(error).to receive(:message).with(no_args).and_return message
-
-        allow(error).to receive(:backtrace).with no_args
-      end
-
-      subject { proc { described_instance.handle error: error } }
-
-      context 'when the error message does match the pattern' do
-        let(:message) { 'nothing to output' }
-
-        it 'does raise an error' do
-          is_expected.to raise_error Terraform::OutputNotFound
-        end
-      end
-
-      context 'when the error message does not match the pattern' do
-        let(:message) { 'a thing to output' }
-
-        it('does not raise an error') { is_expected.to_not raise_error }
-      end
-    end
   end
 end

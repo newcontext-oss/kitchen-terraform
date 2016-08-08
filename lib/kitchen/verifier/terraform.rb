@@ -18,6 +18,7 @@ require 'kitchen'
 require 'kitchen/verifier/inspec'
 require 'terraform/client_holder'
 require 'terraform/inspec_runner'
+require 'terraform/user_error'
 require 'terraform/version'
 
 module Kitchen
@@ -41,8 +42,6 @@ module Kitchen
             verify group: group, hostnames: output, state: state
           end
         end
-      rescue => error
-        raise ActionFailed, error.message, error.backtrace
       end
 
       def controls(group:)
@@ -50,7 +49,9 @@ module Kitchen
       end
 
       def evaluate(exit_code:)
-        raise "Inspec Runner returns #{exit_code}" unless exit_code.zero?
+        return if exit_code.zero?
+
+        raise ::Terraform::UserError, "Inspec Runner returns #{exit_code}"
       end
 
       def groups

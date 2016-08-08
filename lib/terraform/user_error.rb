@@ -17,7 +17,7 @@
 require_relative 'error'
 
 module Terraform
-  # Error of an output not found
-  class OutputNotFound < Error
+  # General error that must be handled by the user
+  class UserError < Error
   end
 end

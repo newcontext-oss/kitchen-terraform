@@ -14,7 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen'
+require 'nesty'
+
 module Terraform
-  class Error < StandardError
+  # Plugin error that should be rescued by Test Kitchen
+  class Error < Kitchen::ActionFailed
+    include Nesty::NestedError
   end
 end

@@ -107,7 +107,8 @@ RSpec.describe Kitchen::Driver::Terraform do
 
     context 'when a client command fails' do
       before do
-        allow(client).to receive(:validate_configuration_files).and_raise
+        allow(client).to receive(:validate_configuration_files)
+          .and_raise Terraform::Error
       end
 
       subject { proc { call_method } }

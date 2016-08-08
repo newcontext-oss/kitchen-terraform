@@ -38,8 +38,6 @@ module Kitchen
         client.download_modules
         client.plan_execution
         client.apply_execution_plan
-      rescue => error
-        raise Kitchen::ActionFailed, error.message, error.backtrace
       end
 
       def directory
