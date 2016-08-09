@@ -67,6 +67,24 @@ RSpec.describe Kitchen::Provisioner::Terraform do
                                             state: state, target: plan,
                                             timeout: apply_timeout
     end
+
+    context 'when accessing the default :directory' do
+      let(:key) { :directory }
+
+      it('returns <kitchen_root>') { is_expected.to be kitchen_root }
+    end
+
+    context 'when accessing the default :variable_files' do
+      let(:key) { :variable_files }
+
+      it('returns an empty collection') { is_expected.to be_empty }
+    end
+
+    context 'when accessing the default :variables' do
+      let(:key) { :variables }
+
+      it('returns an empty collection') { is_expected.to be_empty }
+    end
   end
 
   describe '#call(_state = nil)' do

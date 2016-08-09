@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'pathname'
 require_relative 'apply_command'
 require_relative 'get_command'
 require_relative 'output_command'
@@ -28,11 +29,8 @@ module Terraform
 
     attr_reader :supported_version
 
-    def_delegators :provisioner, :directory, :info, :kitchen_root,
-                   :variable_files, :variables
-
     def apply_execution_plan
-      run command_class: ApplyCommand, timeout: provisioner[:apply_timeout],
+      run command_class: ApplyCommand, timeout: apply_timeout,
           state: state_pathname, plan: plan_pathname
     end
 
@@ -72,7 +70,7 @@ module Terraform
 
     def run(command_class:, **parameters, &block)
       command_class.new(logger: logger, **parameters) do |command|
-        info command
+        logger.info command
         command.execute(&block)
       end
     end
@@ -96,15 +94,20 @@ module Terraform
 
     private
 
-    attr_accessor :instance_name, :logger, :provisioner
+    attr_accessor :apply_timeout, :directory, :instance_name, :kitchen_root,
+                  :logger, :variable_files, :variables
 
     attr_writer :supported_version
 
-    def initialize(instance:, logger:)
-      self.instance_name = instance.name
+    def initialize(instance_name:, logger:, provisioner:)
+      self.apply_timeout = provisioner[:apply_timeout]
+      self.directory = provisioner[:directory]
+      self.instance_name = instance_name
+      self.kitchen_root = Pathname.new provisioner[:kitchen_root]
       self.logger = logger
-      self.provisioner = instance.provisioner
       self.supported_version = /v0.6/
+      self.variable_files = provisioner[:variable_files]
+      self.variables = provisioner[:variables]
     end
   end
 end
