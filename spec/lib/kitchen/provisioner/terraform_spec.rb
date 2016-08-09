@@ -32,10 +32,30 @@ RSpec.describe Kitchen::Provisioner::Terraform do
   it_behaves_like 'versions are set'
 
   describe '#[](attr)' do
+    subject { described_instance[key] }
+
     context 'when accessing the default :apply_timeout' do
-      subject { described_instance[:apply_timeout] }
+      let(:key) { :apply_timeout }
 
       it('returns 600 seconds') { is_expected.to be 600 }
+    end
+
+    context 'when accessing the default :directory' do
+      let(:key) { :directory }
+
+      it('returns <kitchen_root>') { is_expected.to be kitchen_root }
+    end
+
+    context 'when accessing the default :variable_files' do
+      let(:key) { :variable_files }
+
+      it('returns an empty collection') { is_expected.to be_empty }
+    end
+
+    context 'when accessing the default :variables' do
+      let(:key) { :variables }
+
+      it('returns an empty collection') { is_expected.to be_empty }
     end
   end
 
@@ -88,41 +108,62 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     end
   end
 
-  describe '#directory' do
-    subject { described_instance.directory.to_s }
-
-    it 'defaults to the Test Kitchen root directory' do
-      is_expected.to eq kitchen_root
-    end
-  end
-
   describe '#finalize_config!(instance)' do
-    context 'when the config has an empty :apply_timeout' do
-      let(:config) { { apply_timeout: '' } }
+    let(:instance) { instance_double Kitchen::Instance }
 
-      let(:instance) { Kitchen::Instance.new }
+    let(:non_existent) { '/non/existent' }
 
+    before do
+      allow(instance).to receive(:to_str).with(no_args).and_return instance.to_s
+    end
+
+    shared_examples 'a user error has occurred' do
       subject { proc { described_instance.finalize_config! instance } }
 
-      it('raises an error') { is_expected.to raise_error Kitchen::ClientError }
+      it 'raises a user error' do
+        is_expected.to raise_error Kitchen::UserError, message
+      end
     end
-  end
 
-  describe '#kitchen_root' do
-    subject { described_instance.kitchen_root.to_s }
+    context 'when the config has a non-integer value for :apply_timeout' do
+      it_behaves_like 'a user error has occurred' do
+        let(:config) { { apply_timeout: 'six' } }
 
-    it('is the Test Kitchen root directory') { is_expected.to eq kitchen_root }
-  end
+        let(:message) { /an integer/ }
+      end
+    end
 
-  describe '#variable_files' do
-    subject { described_instance.variable_files }
+    context 'when the config has a non-existent value for :directory' do
+      it_behaves_like 'a user error has occurred' do
+        let(:config) { { directory: non_existent } }
 
-    it('defaults to empty array') { is_expected.to eq [] }
-  end
+        let(:message) { /existing directory pathname/ }
 
-  describe '#variables' do
-    subject { described_instance.variables }
+        before do
+          allow(File).to receive(:directory?).with(non_existent).and_return false
+        end
+      end
+    end
 
-    it('defaults to empty array') { is_expected.to eq [] }
+    context 'when the config has a list of non-existent files for ' \
+              ':variable_files' do
+      it_behaves_like 'a user error has occurred' do
+        let(:config) { { variable_files: [non_existent] } }
+
+        let(:message) { /existing file pathnames/ }
+
+        before do
+          allow(File).to receive(:file?).with(non_existent).and_return false
+        end
+      end
+    end
+
+    context 'when the config has an invalid element in :variables' do
+      it_behaves_like 'a user error has occurred' do
+        let(:config) { { variables: ['-invalid'] } }
+
+        let(:message) { /variable assignments/ }
+      end
+    end
   end
 end

@@ -18,22 +18,38 @@ require 'terraform/client_holder'
 
 RSpec.shared_examples Terraform::ClientHolder do
   describe '#client' do
+    let(:client) { instance_double Object }
+
+    let(:client_class) { class_double(Terraform::Client).as_stubbed_const }
+
     let(:instance) { instance_double Kitchen::Instance }
+
+    let(:instance_name) { instance_double Object }
+
+    let(:logger) { instance_double Object }
+
+    let(:provisioner) { instance_double Object }
 
     before do
       allow(described_instance).to receive(:instance).with(no_args)
         .and_return instance
 
+      allow(instance).to receive(:name).with(no_args)
+        .and_return instance_name
+
       allow(described_instance).to receive(:logger).with(no_args)
-        .and_return instance_double Object
+        .and_return logger
 
-      allow(instance).to receive(:name).with no_args
+      allow(instance).to receive(:provisioner).with(no_args)
+        .and_return provisioner
 
-      allow(instance).to receive(:provisioner).with no_args
+      allow(client_class).to receive(:new).with(
+        instance_name: instance_name, logger: logger, provisioner: provisioner
+      ).and_return client
     end
 
     subject { described_instance.client }
 
-    it('is a Terraform client') { is_expected.to be_kind_of Terraform::Client }
+    it('is a Terraform client') { is_expected.to be client }
   end
 end

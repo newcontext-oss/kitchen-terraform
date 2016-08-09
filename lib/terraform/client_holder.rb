@@ -20,7 +20,8 @@ module Terraform
   # Logic to provide a lazily initialized Client instance
   module ClientHolder
     def client
-      @client ||= Client.new instance: instance, logger: logger
+      @client ||= Client.new instance_name: instance.name, logger: logger,
+                             provisioner: instance.provisioner
     end
   end
 end

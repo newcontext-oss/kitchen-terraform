@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'kitchen'
-require 'pathname'
 require 'terraform/client_holder'
 require 'terraform/version'
 
@@ -29,9 +28,61 @@ module Kitchen
 
       plugin_version ::Terraform::VERSION
 
-      required_config :apply_timeout
+      required_config :apply_timeout do |key, value, provisioner|
+        resolve key: key, value: value do |resolved_value|
+          begin
+            Integer resolved_value
+          rescue ArgumentError, TypeError
+            config_error key: key, provisioner: provisioner,
+                         message: 'Must be a value that can be interpretted ' \
+                                    'as an integer'
+          end
+        end
+      end
 
       default_config :apply_timeout, 600
+
+      required_config :directory do |key, value, provisioner|
+        resolve key: key, value: value do |resolved_value|
+          next if (File.directory? String resolved_value) ||
+                  resolved_value.is_a?(Proc)
+
+          config_error key: key, provisioner: provisioner,
+                       message: 'Must be a value that can be interpretted as ' \
+                                  'an existing directory pathname'
+        end
+      end
+
+      default_config(:directory) { |provisioner| provisioner[:kitchen_root] }
+
+      expand_path_for :directory
+
+      required_config :variable_files do |key, value, provisioner|
+        resolve key: key, value: value do |resolved_value|
+          next unless
+            Array(resolved_value).any? { |file| !File.file? String file }
+
+          config_error key: key, provisioner: provisioner,
+                       message: 'Must be a value that can be interpretted as ' \
+                                  'a list of existing file pathnames'
+        end
+      end
+
+      default_config :variable_files, []
+
+      expand_path_for :variable_files
+
+      required_config :variables do |key, value, provisioner|
+        resolve key: key, value: value do |resolved_value|
+          next unless Array(resolved_value).any?(&method(:invalid_variable))
+
+          config_error key: key, provisioner: provisioner,
+                       message: 'Must be a value that can be interpretted as ' \
+                                  'a list of variable assignments'
+        end
+      end
+
+      default_config :variables, []
 
       def call(_state = nil)
         client.validate_configuration_files
@@ -40,20 +91,20 @@ module Kitchen
         client.apply_execution_plan
       end
 
-      def directory
-        config.fetch(:directory) { kitchen_root }
+      private_class_method
+
+      def self.config_error(key:, provisioner:, message:)
+        raise UserError,
+              "#{self}#{provisioner.instance.to_str}#config[:#{key}] " \
+                "#{message}"
       end
 
-      def kitchen_root
-        Pathname.new config.fetch :kitchen_root
+      def self.resolve(key:, value:)
+        yield value || defaults[key]
       end
 
-      def variable_files
-        config.fetch(:variable_files) { [] }
-      end
-
-      def variables
-        config.fetch(:variables) { [] }
+      def self.invalid_variable(variable)
+        !(/^\s*[\w|-]+={1}\S+\s*$/ =~ String(variable))
       end
     end
   end

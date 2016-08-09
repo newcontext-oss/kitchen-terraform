@@ -19,11 +19,14 @@ require 'terraform/client'
 require 'terraform/command'
 
 RSpec.describe Terraform::Client do
+  let(:apply_timeout) { instance_double Object }
+
   let :described_instance do
-    described_class.new instance: instance, logger: logger
+    described_class.new instance_name: instance_name, logger: logger,
+                                       provisioner: provisioner
   end
 
-  let(:instance) { instance_double Kitchen::Instance }
+  let(:directory) { instance_double Object }
 
   let :instance_directory do
     "#{kitchen_root}/.kitchen/kitchen-terraform/#{instance_name}"
@@ -33,18 +36,19 @@ RSpec.describe Terraform::Client do
 
   let(:kitchen_root) { '<kitchen_root>' }
 
-  let(:logger) { instance_double Object }
+  let(:logger) { instance_double Kitchen::Logger }
 
   let :provisioner do
-    Kitchen::Provisioner::Terraform.new kitchen_root: kitchen_root
+    Kitchen::Provisioner::Terraform.new apply_timeout: apply_timeout,
+                                        directory: directory,
+                                        kitchen_root: kitchen_root,
+                                        variable_files: variable_files,
+                                        variables: variables
   end
 
-  before do
-    allow(instance).to receive(:name).with(no_args).and_return instance_name
+  let(:variable_files) { instance_double Object }
 
-    allow(instance).to receive(:provisioner).with(no_args)
-      .and_return provisioner
-  end
+  let(:variables) { instance_double Object }
 
   describe '#apply_execution_plan' do
     after { described_instance.apply_execution_plan }
@@ -53,8 +57,7 @@ RSpec.describe Terraform::Client do
 
     it 'applies the plan to the state' do
       is_expected.to receive(:run)
-        .with command_class: Terraform::ApplyCommand,
-              timeout: provisioner[:apply_timeout],
+        .with command_class: Terraform::ApplyCommand, timeout: apply_timeout,
               state: described_instance.state_pathname,
               plan: described_instance.plan_pathname
     end
@@ -67,7 +70,7 @@ RSpec.describe Terraform::Client do
 
     it 'downloads the modules required in the directory' do
       is_expected.to receive(:run).with command_class: Terraform::GetCommand,
-                                        dir: described_instance.directory
+                                        dir: directory
     end
   end
 
@@ -126,10 +129,8 @@ RSpec.describe Terraform::Client do
       is_expected.to receive(:run)
         .with command_class: Terraform::PlanCommand, destroy: true,
               out: described_instance.plan_pathname,
-              state: described_instance.state_pathname,
-              var: described_instance.variables,
-              var_file: described_instance.variable_files,
-              dir: described_instance.directory
+              state: described_instance.state_pathname, var: variables,
+              var_file: variable_files, dir: directory
     end
   end
 
@@ -142,10 +143,8 @@ RSpec.describe Terraform::Client do
       is_expected.to receive(:run)
         .with command_class: Terraform::PlanCommand, destroy: false,
               out: described_instance.plan_pathname,
-              state: described_instance.state_pathname,
-              var: described_instance.variables,
-              var_file: described_instance.variable_files,
-              dir: described_instance.directory
+              state: described_instance.state_pathname, var: variables,
+              var_file: variable_files, dir: directory
     end
   end
 
@@ -167,6 +166,8 @@ RSpec.describe Terraform::Client do
     before do
       allow(command_class).to receive(:new).with(logger: logger, **parameters)
         .and_yield command
+
+      allow(logger).to receive(:info).with command
 
       allow(command).to receive(:execute).with(no_args).and_yield output
     end
@@ -200,8 +201,7 @@ RSpec.describe Terraform::Client do
 
     it 'validates the configuration files in the directory' do
       is_expected.to receive(:run)
-        .with command_class: Terraform::ValidateCommand,
-              dir: described_instance.directory
+        .with command_class: Terraform::ValidateCommand, dir: directory
     end
   end
 
