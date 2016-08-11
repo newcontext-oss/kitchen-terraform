@@ -74,26 +74,30 @@ RSpec.describe Terraform::Client do
     end
   end
 
-  describe '#extract_list_output(name:)' do
+  describe '#instance_directory' do
+    subject { described_instance.instance_directory.to_s }
+
+    it { is_expected.to eq instance_directory }
+  end
+
+  describe '#list_output(name:)' do
     let(:name) { instance_double Object }
 
     let(:output) { 'foo,bar' }
 
     before do
-      allow(described_instance).to receive(:extract_output).with(name: name)
-        .and_yield output
+      allow(described_instance).to receive(:output).with(name: name)
+        .and_return output
     end
 
-    subject do
-      ->(block) { described_instance.extract_list_output name: name, &block }
-    end
+    subject { described_instance.list_output name: name }
 
-    it 'splits and yields the extracted comma seperated output' do
-      is_expected.to yield_with_args %w(foo bar)
+    it 'returns the elements of the comma seperated output' do
+      is_expected.to contain_exactly 'foo', 'bar'
     end
   end
 
-  describe '#extract_output(name:)' do
+  describe '#output(name:)' do
     let(:name) { instance_double Object }
 
     let(:output) { "foo\n" }
@@ -105,19 +109,9 @@ RSpec.describe Terraform::Client do
       ).and_yield output
     end
 
-    subject do
-      ->(block) { described_instance.extract_output name: name, &block }
-    end
+    subject { described_instance.output name: name }
 
-    it 'chomps and yields the extracted output from the state' do
-      is_expected.to yield_with_args 'foo'
-    end
-  end
-
-  describe '#instance_directory' do
-    subject { described_instance.instance_directory.to_s }
-
-    it { is_expected.to eq instance_directory }
+    it('returns the output without a newline') { is_expected.to eq 'foo' }
   end
 
   describe '#plan_destructive_execution' do

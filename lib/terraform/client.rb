@@ -38,18 +38,18 @@ module Terraform
       run command_class: GetCommand, dir: directory
     end
 
-    def extract_list_output(name:)
-      extract_output(name: name) { |output| yield output.split ',' }
-    end
-
-    def extract_output(name:)
-      run(
-        command_class: OutputCommand, state: state_pathname, name: name
-      ) { |output| yield output.chomp }
-    end
-
     def instance_directory
       kitchen_root.join '.kitchen', 'kitchen-terraform', instance_name
+    end
+
+    def list_output(name:)
+      output(name: name).split ','
+    end
+
+    def output(name:)
+      run(
+        command_class: OutputCommand, state: state_pathname, name: name
+      ) { |output| return output.chomp }
     end
 
     def plan_destructive_execution
