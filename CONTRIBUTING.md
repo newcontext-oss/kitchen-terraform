@@ -2,7 +2,7 @@
 
 ## **Reporting bug**
 
-* Please check the issues list first on GitHub under [Issues]. If you
+Please check the issues list first on GitHub under [Issues]. If you
 cannot find a similar report then please [open an issue] and include as
 much detailed information as possible (i.e. code examples, test cases).
 
