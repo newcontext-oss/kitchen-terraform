@@ -59,6 +59,23 @@ module Kitchen
       def populate(runner:)
         collect_tests.each { |test| runner.add target: test }
       end
+
+      private_class_method
+
+      def self.convert(groups:, transport:, &block)
+        Array(groups).each do |group|
+          ::Terraform::Group.new(transport: transport, **Hash(group), &block)
+        end
+      rescue ArgumentError, TypeError
+        raise UserError
+      end
+
+      private
+
+      def each_group(&block)
+        self.class.convert groups: config[:groups],
+                           transport: instance.transport, &block
+      end
     end
   end
 end

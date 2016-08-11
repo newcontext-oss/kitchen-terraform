@@ -51,7 +51,17 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
   it_behaves_like Terraform::Configurable
 
-  it_behaves_like 'versions are set'
+  it_behaves_like Terraform::Configurable, key: :apply_timeout,
+                                           criteria: 'interpretable as an ' \
+                                                       'integer' do
+    let(:default) { be 600 }
+
+    let(:invalid_value) { 'ten' }
+
+    let(:error_message) { /an integer/ }
+
+    let(:valid_value) { 1000 }
+  end
 
   describe '#apply_execution_plan' do
     include_context 'command'
@@ -67,25 +77,59 @@ RSpec.describe Kitchen::Provisioner::Terraform do
                                             state: state, target: plan,
                                             timeout: apply_timeout
     end
+  end
 
-    context 'when accessing the default :directory' do
-      let(:key) { :directory }
+  it_behaves_like Terraform::Configurable,
+                  key: :directory, criteria: 'interpretable as an existing ' \
+                                               'directory pathname' do
+    let(:default) { be kitchen_root }
 
-      it('returns <kitchen_root>') { is_expected.to be kitchen_root }
-    end
+    let(:invalid_value) { '/non/existent' }
 
-    context 'when accessing the default :variable_files' do
-      let(:key) { :variable_files }
+    let(:error_message) { /an existing directory/ }
 
-      it('returns an empty collection') { is_expected.to be_empty }
-    end
+    let(:valid_value) { '/existent' }
 
-    context 'when accessing the default :variables' do
-      let(:key) { :variables }
+    before do
+      allow(File).to receive(:directory?).with(invalid_value).and_return false
 
-      it('returns an empty collection') { is_expected.to be_empty }
+      allow(File).to receive(:directory?).with(valid_value).and_return true
     end
   end
+
+  it_behaves_like Terraform::Configurable, key: :variable_files,
+                                           criteria: 'interpretable as a ' \
+                                                       'list of existing ' \
+                                                       'file pathnames' do
+    let(:default) { be_empty }
+
+    let(:invalid_value) { ['/non_existent'] }
+
+    let(:error_message) { /existing file pathnames/ }
+
+    let(:valid_value) { ['/existent'] }
+
+    before do
+      allow(File).to receive(:file?).with(invalid_value.first).and_return false
+
+      allow(File).to receive(:file?).with(valid_value.first).and_return true
+    end
+  end
+
+  it_behaves_like Terraform::Configurable, key: :variables,
+                                           criteria: 'interpretable as a ' \
+                                                       'list of variable ' \
+                                                       'assignments' do
+    let(:default) { be_empty }
+
+    let(:invalid_value) { ['-invalid'] }
+
+    let(:error_message) { /variable assignments/ }
+
+    let(:valid_value) { ['-foo-bar=biz'] }
+  end
+
+  it_behaves_like 'versions are set'
 
   describe '#call(_state = nil)' do
     let(:apply_execution_plan) { receive(:apply_execution_plan).with no_args }

@@ -23,7 +23,7 @@ RSpec.describe Terraform::Client do
 
   let :described_instance do
     described_class.new instance_name: instance_name, logger: logger,
-                                       provisioner: provisioner
+                        provisioner: provisioner
   end
 
   let(:directory) { instance_double Object }
