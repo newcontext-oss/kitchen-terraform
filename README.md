@@ -36,7 +36,8 @@ source 'https://rubygems.org'
 gem 'kitchen-terraform', '~> 0.1'
 ```
 
-Before running `bundle`, the author's public key must be added as a trusted certificate:
+Before running `bundle`, the author's public key must be added as a
+trusted certificate:
 
 ```sh
 gem cert --add <(curl --location --silent \
@@ -95,9 +96,7 @@ provisioner.
 
 There are no configuration options for the driver.
 
-##### Example
-
-*.kitchen.yml*
+##### Example .kitchen.yml
 
 ```yaml
 ---
@@ -125,9 +124,7 @@ Terraform state based on the provided Terraform configuration.
 The number of seconds to wait for the Terraform `apply` command to be
 successful before raising an error.
 
-###### Example
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
 ---
@@ -148,9 +145,7 @@ Terraform commands.
 
 [directory specified]: https://www.terraform.io/docs/configuration/load.html
 
-###### Example
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
 ---
@@ -170,9 +165,7 @@ for the configuration.
 
 [Terraform variable files]: https://www.terraform.io/docs/configuration/variables.html#variable-files
 
-###### Examples
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
 ---
@@ -201,9 +194,7 @@ flags.
 
 [assigning variables]: https://www.terraform.io/intro/getting-started/variables.html#assigning-variables
 
-###### Examples
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
 ---
@@ -270,9 +261,7 @@ Each group consists of:
 
 - the username to use when connecting to the group's hosts
 
-###### Example
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
 ---
