@@ -16,12 +16,15 @@
 
 require 'kitchen'
 require 'terraform/client_holder'
+require 'terraform/configurable'
 require 'terraform/version'
 
 module Kitchen
   module Provisioner
     # Terraform configuration applier
     class Terraform < Base
+      extend ::Terraform::Configurable
+
       include ::Terraform::ClientHolder
 
       kitchen_provisioner_api_version 2
@@ -29,14 +32,15 @@ module Kitchen
       plugin_version ::Terraform::VERSION
 
       required_config :apply_timeout do |key, value, provisioner|
-        resolve key: key, value: value do |resolved_value|
-          begin
+        begin
+          resolve key: key, value: value do |resolved_value|
             Integer resolved_value
-          rescue ArgumentError, TypeError
-            config_error key: key, provisioner: provisioner,
-                         message: 'Must be a value that can be interpretted ' \
-                                    'as an integer'
           end
+        rescue ArgumentError, TypeError => error
+          debug message: error
+          config_error key: key, plugin: provisioner,
+                       message: 'must be a value that can be interpretted as ' \
+                                  'an integer'
         end
       end
 
@@ -47,8 +51,8 @@ module Kitchen
           next if (File.directory? String resolved_value) ||
                   resolved_value.is_a?(Proc)
 
-          config_error key: key, provisioner: provisioner,
-                       message: 'Must be a value that can be interpretted as ' \
+          config_error key: key, plugin: provisioner,
+                       message: 'must be a value that can be interpretted as ' \
                                   'an existing directory pathname'
         end
       end
@@ -62,8 +66,8 @@ module Kitchen
           next unless
             Array(resolved_value).any? { |file| !File.file? String file }
 
-          config_error key: key, provisioner: provisioner,
-                       message: 'Must be a value that can be interpretted as ' \
+          config_error key: key, plugin: provisioner,
+                       message: 'must be a value that can be interpretted as ' \
                                   'a list of existing file pathnames'
         end
       end
@@ -76,8 +80,8 @@ module Kitchen
         resolve key: key, value: value do |resolved_value|
           next unless Array(resolved_value).any?(&method(:invalid_variable))
 
-          config_error key: key, provisioner: provisioner,
-                       message: 'Must be a value that can be interpretted as ' \
+          config_error key: key, plugin: provisioner,
+                       message: 'must be a value that can be interpretted as ' \
                                   'a list of variable assignments'
         end
       end
@@ -92,16 +96,6 @@ module Kitchen
       end
 
       private_class_method
-
-      def self.config_error(key:, provisioner:, message:)
-        raise UserError,
-              "#{self}#{provisioner.instance.to_str}#config[:#{key}] " \
-                "#{message}"
-      end
-
-      def self.resolve(key:, value:)
-        yield value || defaults[key]
-      end
 
       def self.invalid_variable(variable)
         !(/^\s*[\w|-]+={1}\S+\s*$/ =~ String(variable))

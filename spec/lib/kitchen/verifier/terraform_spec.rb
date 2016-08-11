@@ -18,65 +18,71 @@ require 'inspec'
 require 'kitchen/verifier/terraform'
 require 'support/terraform/client_holder_context'
 require 'support/terraform/client_holder_examples'
+require 'support/terraform/configurable_examples'
 require 'support/terraform/versions_are_set_examples'
 
 RSpec.describe Kitchen::Verifier::Terraform do
-  let(:config) { { kitchen_root: '<kitchen_root>' } }
+  let(:config) { required_config.merge optional_config }
 
   let(:described_instance) { described_class.new config }
 
+  let(:group) { instance_double Terraform::Group }
+
+  let(:optional_config) { {} }
+
+  let(:required_config) { { kitchen_root: '<kitchen_root>' } }
+
   let(:state) { {} }
 
-  shared_context '#instance' do
-    let(:instance) { instance_double Kitchen::Instance }
-
-    let(:logger) { instance_double Kitchen::Logger }
-
-    let(:transport) { Kitchen::Transport::Ssh.new }
-
-    let(:transport_config) { {} }
-
-    before do
-      described_instance.finalize_config! instance
-
-      allow(instance).to receive(:logger).with(no_args).and_return logger
-
-      allow(instance).to receive(:transport).with(no_args).and_return transport
-
-      allow(logger).to receive :info
-
-      allow(transport).to receive(:config).with(no_args)
-        .and_return Kitchen::LazyHash
-        .new(transport_config, instance_double(Object))
-
-      allow(transport).to receive(:diagnose).with(no_args)
-        .and_return transport_config
-
-      allow(transport).to receive(:name).with(no_args)
-        .and_return instance_double Object
-    end
-  end
+  let(:transport) { instance_double Object }
 
   it_behaves_like Terraform::ClientHolder
 
-  it_behaves_like 'versions are set'
+  it_behaves_like Terraform::Configurable, key: :groups,
+                                           criteria: 'interpretable as a ' \
+                                                       'collection of group' \
+                                                       'mappings ' do
+    let(:default) { be_empty }
 
-  describe '#attributes(group:)' do
-    subject { described_instance.attributes group: {} }
+    let(:error_message) { /collection of group mappings/ }
 
-    it('defaults to an empty hash') { is_expected.to eq({}) }
+    let(:invalid_value) { ['not a group mapping'] }
+
+    let :valid_value do
+      [{ hostnames: [], name: 'foo', port: 1, username: 'username' }]
+    end
+
+    before do
+      allow(instance).to receive(:transport).with(no_args).and_return transport
+    end
   end
+
+  it_behaves_like 'versions are set'
 
   describe '#call(state)' do
     include_context '#client'
 
     let(:call_method) { described_instance.call state }
 
-    let(:config) { { groups: [group] } }
-
-    let(:group) { { hostnames: hostnames } }
+    let(:groups) { instance_double Object }
 
     let(:hostnames) { instance_double Object }
+
+    let(:instance) { instance_double Kitchen::Instance }
+
+    let(:optional_config) { { groups: groups } }
+
+    before do
+      allow(group).to receive(:hostnames).with(no_args).and_return hostnames
+
+      allow(described_instance).to receive(:instance).with(no_args)
+        .and_return instance
+
+      allow(instance).to receive(:transport).with(no_args).and_return transport
+
+      allow(described_class).to receive(:convert)
+        .with(groups: groups, transport: transport).and_yield group
+    end
 
     context 'when the hostnames list output can be extracted' do
       let(:output) { instance_double Object }
@@ -108,12 +114,6 @@ RSpec.describe Kitchen::Verifier::Terraform do
     end
   end
 
-  describe '#controls(group:)' do
-    subject { described_instance.controls group: {} }
-
-    it('defaults to an empty array') { is_expected.to eq [] }
-  end
-
   describe '#evaluate(exit_code:)' do
     subject { proc { described_instance.evaluate exit_code: exit_code } }
 
@@ -128,12 +128,6 @@ RSpec.describe Kitchen::Verifier::Terraform do
 
       it('raises an error') { is_expected.to raise_error Terraform::Error }
     end
-  end
-
-  describe '#groups' do
-    subject { described_instance.groups }
-
-    it('defaults to an empty array') { is_expected.to eq [] }
   end
 
   describe '#initialize_runner(group:, hostname:, state:)' do
@@ -185,22 +179,6 @@ RSpec.describe Kitchen::Verifier::Terraform do
     end
   end
 
-  describe '#port(group:)' do
-    include_context '#instance'
-
-    let(:group) { {} }
-
-    let(:port) { instance_double Object }
-
-    let(:transport_config) { { port: port } }
-
-    subject { described_instance.port group: group }
-
-    it 'defaults to the transport port configuration' do
-      is_expected.to be port
-    end
-  end
-
   describe '#resolve_attributes(group:)' do
     include_context '#client'
 
@@ -211,15 +189,15 @@ RSpec.describe Kitchen::Verifier::Terraform do
     let(:variable_name) { instance_double Object }
 
     before do
+      allow(group).to receive(:each_attribute_pair).with(no_args)
+        .and_yield method_name, variable_name
+
       allow(client).to receive(:extract_output).with(name: variable_name)
         .and_yield output
     end
 
     subject do
-      lambda do |block|
-        described_instance.resolve_attributes group:
-          { attributes: { method_name => variable_name } }, &block
-      end
+      ->(block) { described_instance.resolve_attributes group: group, &block }
     end
 
     it 'extracts an output value for each attribute pair in the group' do
@@ -228,11 +206,9 @@ RSpec.describe Kitchen::Verifier::Terraform do
   end
 
   describe '#runner_options_for_terraform(group:, hostname:, state:)' do
-    include_context '#instance'
-
     let(:controls) { instance_double Object }
 
-    let(:group) { { controls: controls, port: port, username: username } }
+    let(:instance) { instance_double Kitchen::Instance }
 
     let(:hostname) { instance_double Object }
 
@@ -241,8 +217,19 @@ RSpec.describe Kitchen::Verifier::Terraform do
     let(:username) { instance_double Object }
 
     before do
+      allow(described_instance).to receive(:instance).with(no_args)
+        .and_return instance
+
+      allow(instance).to receive(:transport).with(no_args).and_return transport
+
       allow(described_instance).to receive(:runner_options)
         .with(transport, state).and_return({})
+
+      allow(group).to receive(:controls).with(no_args).and_return controls
+
+      allow(group).to receive(:port).with(no_args).and_return port
+
+      allow(group).to receive(:username).with(no_args).and_return username
     end
 
     subject do
@@ -255,23 +242,6 @@ RSpec.describe Kitchen::Verifier::Terraform do
       is_expected.to include controls: controls, host: hostname, port: port,
                              user: username
     end
-  end
-
-  describe '#username(group:)' do
-    include_context '#instance'
-
-    let(:transport_config) { { username: username } }
-
-    let(:username) { instance_double Object }
-
-    before do
-      allow(transport_config).to receive(:fetch).with(:username)
-        .and_return username
-    end
-
-    subject { described_instance.username group: {} }
-
-    it('defaults to the transport username') { is_expected.to be username }
   end
 
   describe '#verify(group:, hostnames:, state:)' do

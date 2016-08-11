@@ -18,6 +18,7 @@ require 'kitchen/provisioner/terraform'
 require 'terraform/error'
 require 'support/terraform/client_holder_context'
 require 'support/terraform/client_holder_examples'
+require 'support/terraform/configurable_examples'
 require 'support/terraform/versions_are_set_examples'
 
 RSpec.describe Kitchen::Provisioner::Terraform do
@@ -29,35 +30,69 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
   it_behaves_like Terraform::ClientHolder
 
-  it_behaves_like 'versions are set'
+  it_behaves_like Terraform::Configurable, key: :apply_timeout,
+                                           criteria: 'interpretable as an ' \
+                                                       'integer' do
+    let(:default) { be 600 }
 
-  describe '#[](attr)' do
-    subject { described_instance[key] }
+    let(:invalid_value) { 'ten' }
 
-    context 'when accessing the default :apply_timeout' do
-      let(:key) { :apply_timeout }
+    let(:error_message) { /an integer/ }
 
-      it('returns 600 seconds') { is_expected.to be 600 }
-    end
+    let(:valid_value) { 1000 }
+  end
 
-    context 'when accessing the default :directory' do
-      let(:key) { :directory }
+  it_behaves_like Terraform::Configurable,
+                  key: :directory, criteria: 'interpretable as an existing ' \
+                                               'directory pathname' do
+    let(:default) { be kitchen_root }
 
-      it('returns <kitchen_root>') { is_expected.to be kitchen_root }
-    end
+    let(:invalid_value) { '/non/existent' }
 
-    context 'when accessing the default :variable_files' do
-      let(:key) { :variable_files }
+    let(:error_message) { /an existing directory/ }
 
-      it('returns an empty collection') { is_expected.to be_empty }
-    end
+    let(:valid_value) { '/existent' }
 
-    context 'when accessing the default :variables' do
-      let(:key) { :variables }
+    before do
+      allow(File).to receive(:directory?).with(invalid_value).and_return false
 
-      it('returns an empty collection') { is_expected.to be_empty }
+      allow(File).to receive(:directory?).with(valid_value).and_return true
     end
   end
+
+  it_behaves_like Terraform::Configurable, key: :variable_files,
+                                           criteria: 'interpretable as a ' \
+                                                       'list of existing ' \
+                                                       'file pathnames' do
+    let(:default) { be_empty }
+
+    let(:invalid_value) { ['/non_existent'] }
+
+    let(:error_message) { /existing file pathnames/ }
+
+    let(:valid_value) { ['/existent'] }
+
+    before do
+      allow(File).to receive(:file?).with(invalid_value.first).and_return false
+
+      allow(File).to receive(:file?).with(valid_value.first).and_return true
+    end
+  end
+
+  it_behaves_like Terraform::Configurable, key: :variables,
+                                           criteria: 'interpretable as a ' \
+                                                       'list of variable ' \
+                                                       'assignments' do
+    let(:default) { be_empty }
+
+    let(:invalid_value) { ['-invalid'] }
+
+    let(:error_message) { /variable assignments/ }
+
+    let(:valid_value) { ['-foo-bar=biz'] }
+  end
+
+  it_behaves_like 'versions are set'
 
   describe '#call(_state = nil)' do
     include_context '#client'
@@ -105,65 +140,6 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       subject { proc { call_method } }
 
       it('raises an error') { is_expected.to raise_error Kitchen::ActionFailed }
-    end
-  end
-
-  describe '#finalize_config!(instance)' do
-    let(:instance) { instance_double Kitchen::Instance }
-
-    let(:non_existent) { '/non/existent' }
-
-    before do
-      allow(instance).to receive(:to_str).with(no_args).and_return instance.to_s
-    end
-
-    shared_examples 'a user error has occurred' do
-      subject { proc { described_instance.finalize_config! instance } }
-
-      it 'raises a user error' do
-        is_expected.to raise_error Kitchen::UserError, message
-      end
-    end
-
-    context 'when the config has a non-integer value for :apply_timeout' do
-      it_behaves_like 'a user error has occurred' do
-        let(:config) { { apply_timeout: 'six' } }
-
-        let(:message) { /an integer/ }
-      end
-    end
-
-    context 'when the config has a non-existent value for :directory' do
-      it_behaves_like 'a user error has occurred' do
-        let(:config) { { directory: non_existent } }
-
-        let(:message) { /existing directory pathname/ }
-
-        before do
-          allow(File).to receive(:directory?).with(non_existent).and_return false
-        end
-      end
-    end
-
-    context 'when the config has a list of non-existent files for ' \
-              ':variable_files' do
-      it_behaves_like 'a user error has occurred' do
-        let(:config) { { variable_files: [non_existent] } }
-
-        let(:message) { /existing file pathnames/ }
-
-        before do
-          allow(File).to receive(:file?).with(non_existent).and_return false
-        end
-      end
-    end
-
-    context 'when the config has an invalid element in :variables' do
-      it_behaves_like 'a user error has occurred' do
-        let(:config) { { variables: ['-invalid'] } }
-
-        let(:message) { /variable assignments/ }
-      end
     end
   end
 end

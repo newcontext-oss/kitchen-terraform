@@ -3,4 +3,5 @@ AllCops:
   TargetRubyVersion: 2.3
 Metrics/ParameterLists:
   Exclude:
+    - lib/terraform/group.rb
     - lib/terraform/plan_command.rb
