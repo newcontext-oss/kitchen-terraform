@@ -49,9 +49,11 @@ module Kitchen
         provisioner.coerce_color value: value
       end
 
-      default_config(:directory) { |provisioner| provisioner[:kitchen_root] }
+      expand_path_for :plan
 
-      expand_path_for :directory
+      default_config :state do |provisioner|
+        provisioner.instance_pathname filename: 'terraform.tfstate'
+      end
 
       default_config :plan do |provisioner|
         provisioner.instance_pathname filename: 'terraform.tfplan'

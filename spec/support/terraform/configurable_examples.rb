@@ -144,4 +144,20 @@ RSpec.shared_examples Terraform::Configurable do
 
     it('returns the instance\'s transport') { is_expected.to be transport }
   end
+
+  describe '#provisioner' do
+    include_context '#provisioner'
+
+    subject { described_instance.provisioner }
+
+    it('returns the instance\'s provisioner') { is_expected.to be provisioner }
+  end
+
+  describe '#transport' do
+    include_context '#transport'
+
+    subject { described_instance.transport }
+
+    it('returns the instance\'s transport') { is_expected.to be transport }
+  end
 end

@@ -51,18 +51,6 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
   it_behaves_like Terraform::Configurable
 
-  it_behaves_like Terraform::Configurable, key: :apply_timeout,
-                                           criteria: 'interpretable as an ' \
-                                                       'integer' do
-    let(:default) { be 600 }
-
-    let(:invalid_value) { 'ten' }
-
-    let(:error_message) { /an integer/ }
-
-    let(:valid_value) { 1000 }
-  end
-
   describe '#apply_execution_plan' do
     include_context 'command'
 
@@ -83,53 +71,24 @@ RSpec.describe Kitchen::Provisioner::Terraform do
                   key: :directory, criteria: 'interpretable as an existing ' \
                                                'directory pathname' do
     let(:default) { be kitchen_root }
-
-    let(:invalid_value) { '/non/existent' }
-
-    let(:error_message) { /an existing directory/ }
-
-    let(:valid_value) { '/existent' }
-
-    before do
-      allow(File).to receive(:directory?).with(invalid_value).and_return false
-
-      allow(File).to receive(:directory?).with(valid_value).and_return true
-    end
-  end
-
-  it_behaves_like Terraform::Configurable, key: :variable_files,
-                                           criteria: 'interpretable as a ' \
-                                                       'list of existing ' \
-                                                       'file pathnames' do
-    let(:default) { be_empty }
-
-    let(:invalid_value) { ['/non_existent'] }
-
-    let(:error_message) { /existing file pathnames/ }
-
-    let(:valid_value) { ['/existent'] }
-
-    before do
-      allow(File).to receive(:file?).with(invalid_value.first).and_return false
-
-      allow(File).to receive(:file?).with(valid_value.first).and_return true
-    end
-  end
-
-  it_behaves_like Terraform::Configurable, key: :variables,
-                                           criteria: 'interpretable as a ' \
-                                                       'list of variable ' \
-                                                       'assignments' do
-    let(:default) { be_empty }
-
-    let(:invalid_value) { ['-invalid'] }
-
-    let(:error_message) { /variable assignments/ }
-
-    let(:valid_value) { ['-foo-bar=biz'] }
   end
 
   it_behaves_like 'versions are set'
+
+  describe '#apply_execution_plan' do
+    include_context 'command'
+
+    after { described_instance.apply_execution_plan }
+
+    subject do
+      class_double(Terraform::ApplyCommand).as_stubbed_const
+    end
+
+    it 'executes the apply command with the existing plan' do
+      is_expected.to receive(:execute).with logger: logger, state: state,
+                                            target: plan, timeout: apply_timeout
+    end
+  end
 
   describe '#call(_state = nil)' do
     let(:apply_execution_plan) { receive(:apply_execution_plan).with no_args }
@@ -215,8 +174,6 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
     context 'when the value can not be coerced to be a boolean' do
       let(:value) { 'a' }
-
-      after { call_method }
 
       subject { described_instance }
 

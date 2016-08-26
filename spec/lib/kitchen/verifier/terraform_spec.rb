@@ -87,9 +87,7 @@ RSpec.describe Kitchen::Verifier::Terraform do
     context 'when the value can not be coerced to be a group' do
       before { allow_new_group.and_raise Kitchen::UserError, '' }
 
-      after { call_method }
-
-      subject { described_instance }
+      subject { described_instance[:groups] }
 
       it 'an error is reported' do
         is_expected.to receive(:config_error)
@@ -104,7 +102,7 @@ RSpec.describe Kitchen::Verifier::Terraform do
     context 'when the exit code is 0' do
       let(:exit_code) { 0 }
 
-      it('does not raise an error') { is_expected.to_not raise_error }
+      it('does not raise a error') { is_expected.to_not raise_error }
     end
 
     context 'when the exit code is not 0' do
