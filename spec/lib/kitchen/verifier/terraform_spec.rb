@@ -102,7 +102,7 @@ RSpec.describe Kitchen::Verifier::Terraform do
     context 'when the exit code is 0' do
       let(:exit_code) { 0 }
 
-      it('does not raise a error') { is_expected.to_not raise_error }
+      it('does not raise an error') { is_expected.to_not raise_error }
     end
 
     context 'when the exit code is not 0' do
