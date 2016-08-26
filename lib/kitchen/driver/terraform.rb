@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require 'kitchen'
-require 'terraform/client_holder'
+require 'terraform/configurable'
 require 'terraform/user_error'
 require 'terraform/version'
 
@@ -23,7 +23,7 @@ module Kitchen
   module Driver
     # Terraform state lifecycle activities manager
     class Terraform < Base
-      include ::Terraform::ClientHolder
+      include ::Terraform::Configurable
 
       kitchen_driver_api_version 2
 
@@ -32,14 +32,14 @@ module Kitchen
       no_parallel_for
 
       def create(_state = nil)
-        client.validate_version
+        provisioner.validate_version
       end
 
       def destroy(_state = nil)
-        client.validate_configuration_files
-        client.download_modules
-        client.plan_destructive_execution
-        client.apply_execution_plan
+        provisioner.validate_configuration_files
+        provisioner.download_modules
+        provisioner.plan_destructive_execution
+        provisioner.apply_execution_plan
       end
     end
   end

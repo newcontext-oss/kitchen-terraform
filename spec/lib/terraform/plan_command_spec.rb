@@ -15,33 +15,42 @@
 # limitations under the License.
 
 require 'terraform/plan_command'
-require 'support/terraform/command_examples'
 
 RSpec.describe Terraform::PlanCommand do
-  it_behaves_like Terraform::Command do
-    let :command_options do
-      "-destroy=#{destroy} -input=false -out=#{out} " \
-        "-state=#{state} -var=#{var} -var-file=#{var_file}"
+  let :described_instance do
+    described_class.new destroy: destroy, logger: logger, out: out,
+                        state: state, variables: variables,
+                        variable_files: [variable_file]
+  end
+
+  let(:destroy) { instance_double Object }
+
+  let(:logger) { instance_double Object }
+
+  let(:out) { instance_double Object }
+
+  let(:state) { instance_double Object }
+
+  let(:variable_file) { instance_double Object }
+
+  let(:variables) { { 'key' => 'value' } }
+
+  describe '#name' do
+    subject { described_instance.name }
+
+    it('returns "plan"') { is_expected.to eq 'plan' }
+  end
+
+  describe '#options' do
+    subject { described_instance.options }
+
+    it 'returns "-destroy=<true_or_false> -input=false ' \
+         '-out=<plan_pathname> -state=<state_pathname> ' \
+         '[-var=\'<variable_assignment>\'...] ' \
+         '[-var-file=<variable_pathname>...]"' do
+      is_expected.to eq "-destroy=#{destroy} -input=false -out=#{out} " \
+                          "-state=#{state} -var='key=value' " \
+                          "-var-file=#{variable_file}"
     end
-
-    let :described_instance do
-      described_class.new logger: logger, destroy: destroy, out: out,
-                          state: state, var: var, var_file: var_file,
-                          dir: target
-    end
-
-    let(:destroy) { true }
-
-    let(:name) { 'plan' }
-
-    let(:out) { '<plan_pathname>' }
-
-    let(:state) { '<state_pathname>' }
-
-    let(:target) { '<directory>' }
-
-    let(:var) { '"foo=bar"' }
-
-    let(:var_file) { '<variable_file>' }
   end
 end

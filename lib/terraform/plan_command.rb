@@ -18,18 +18,40 @@ require_relative 'command'
 
 module Terraform
   # Command to plan an execution
-  class PlanCommand
-    include Command
+  class PlanCommand < Command
+    def name
+      'plan'
+    end
+
+    def options
+      "-destroy=#{destroy} -input=false -out=#{out} -state=#{state}" \
+        "#{processed_variables}#{processed_variable_files}"
+    end
 
     private
 
-    def initialize_attributes(destroy:, out:, state:, var:, var_file:, dir:)
-      self.name = 'plan'
-      self.options = {
-        destroy: destroy, input: false, out: out, state: state, var: var,
-        var_file: var_file
-      }
-      self.target = dir
+    attr_accessor :destroy, :out, :state, :variables, :variable_files
+
+    def initialize_attributes(
+      destroy:, out:, state:, variables:, variable_files:
+    )
+      self.destroy = destroy
+      self.out = out
+      self.state = state
+      self.variables = variables
+      self.variable_files = variable_files
+    end
+
+    def processed_variable_files
+      variable_files.each_with_object String.new do |pathname, string|
+        string.concat " -var-file=#{pathname}"
+      end
+    end
+
+    def processed_variables
+      variables.each_with_object String.new do |(key, value), string|
+        string.concat " -var='#{key}=#{value}'"
+      end
     end
   end
 end

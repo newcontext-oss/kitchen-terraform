@@ -14,52 +14,107 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen/provisioner/terraform'
+require 'kitchen/transport/ssh'
 require 'terraform/configurable'
 
-RSpec
-  .shared_examples Terraform::Configurable do |key:, criteria:|
+RSpec.shared_context '#finalize_config!(instance)' do
+  include_context '#instance'
+
+  include_context 'config'
+
+  after { described_instance.finalize_config! instance }
+end
+
+RSpec.shared_context '#instance' do
   let(:instance) { instance_double Kitchen::Instance }
 
-  describe "configuration option #{key}" do
-    describe 'value requirements' do
-      let :config do
-        { key => value, kitchen_root: '/root', test_base_path: '/test' }
-      end
+  let(:instance_name) { 'instance' }
 
-      let(:suite) { instance_double Kitchen::Suite }
+  before do
+    allow(described_instance).to receive(:instance).with(no_args)
+      .and_return instance
 
-      before do
-        allow(instance).to receive(:suite).with(no_args).and_return suite
+    allow(instance).to receive(:name).with(no_args).and_return instance_name
 
-        allow(instance).to receive(:to_str).with(no_args).and_return instance
-          .to_s
+    allow(instance).to receive(:to_str).with(no_args).and_return instance_name
+  end
+end
 
-        allow(suite).to receive(:name).with(no_args).and_return 'suite'
-      end
+RSpec.shared_context '#logger' do
+  let(:logger) { instance_double Object }
 
-      subject { proc { described_instance.finalize_config! instance } }
+  before do
+    allow(described_instance).to receive(:logger).with(no_args)
+      .and_return logger
+  end
+end
 
-      context "when the provided value is #{criteria}" do
-        let(:value) { valid_value }
+RSpec.shared_context '#provisioner' do
+  include_context '#instance'
 
-        it 'does not raise a user error' do
-          is_expected.to_not raise_error
-        end
-      end
+  let(:provisioner) { instance_double Kitchen::Provisioner::Terraform }
 
-      context "when the provided value is not #{criteria}" do
-        let(:value) { invalid_value }
+  before do
+    allow(instance).to receive(:provisioner).with(no_args)
+      .and_return provisioner
+  end
+end
 
-        it 'does raise a user error' do
-          is_expected.to raise_error Kitchen::UserError, error_message
-        end
+RSpec.shared_context '#transport' do
+  include_context '#instance'
+
+  let(:transport) { instance_double Kitchen::Transport::Ssh }
+
+  before do
+    allow(instance).to receive(:transport).with(no_args)
+      .and_return transport
+  end
+end
+
+RSpec.shared_context 'config' do
+  let(:config) { { kitchen_root: kitchen_root } }
+
+  let(:kitchen_root) { Dir.pwd }
+end
+
+RSpec.shared_examples Terraform::Configurable do
+  describe '#config_error(attribute:, message:)' do
+    include_context '#instance'
+
+    let(:attribute) { :foo }
+
+    let(:message) { 'bar' }
+
+    before do
+      allow(instance).to receive(:to_str).with(no_args).and_return instance.to_s
+    end
+
+    subject do
+      proc do
+        described_instance.config_error attribute: attribute, message: message
       end
     end
 
-    describe 'default value' do
-      subject { described_instance[key] }
-
-      it { is_expected.to default }
+    it 'raises a user error regarding the config attribute' do
+      is_expected.to raise_error Terraform::UserError,
+                                 /#{attribute}.*#{message}/
     end
+  end
+
+  describe '#provisioner' do
+    include_context '#provisioner'
+
+    subject { described_instance.provisioner }
+
+    it('returns the instance\'s provisioner') { is_expected.to be provisioner }
+  end
+
+  describe '#transport' do
+    include_context '#transport'
+
+    subject { described_instance.transport }
+
+    it('returns the instance\'s transport') { is_expected.to be transport }
   end
 end

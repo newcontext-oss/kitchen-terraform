@@ -14,78 +14,145 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen/provisioner/terraform'
+require 'kitchen/verifier/terraform'
+require 'support/terraform/configurable_examples'
 require 'terraform/group'
 
 RSpec.describe Terraform::Group do
-  let :create_instance do
-    proc { |block| described_class.new(**keyword_arguments, &block) }
+  let :described_instance do
+    described_class.new value: value, verifier: verifier
   end
 
-  let(:described_instance) { create_instance.call }
+  let(:port) { 1 }
 
-  let(:keyword_arguments) { required_arguments.merge optional_arguments }
+  let(:provisioner) { instance_double Kitchen::Provisioner::Terraform }
 
-  let(:optional_arguments) { {} }
+  let(:transport) { instance_double Kitchen::Transport::Ssh }
 
-  let :required_arguments do
-    {
-      hostnames: 'hostnames', name: 'name',
-      transport: { port: 1, username: 'username' }
-    }
+  let(:username) { instance_double Object }
+
+  let(:value) { { attributes: {} } }
+
+  let(:verifier) { Kitchen::Verifier::Terraform.new }
+
+  before do
+    allow(verifier).to receive(:transport).with(no_args).and_return transport
+
+    allow(verifier).to receive(:provisioner).with(no_args)
+      .and_return provisioner
+
+    allow(transport).to receive(:[]).with(:port).and_return port
+
+    allow(transport).to receive(:[]).with(:username).and_return username
   end
 
-  describe '.new(attributes: {}, controls: [], hostnames:, name:, port: nil, ' \
-             'transport:, username: nil)' do
-    subject { create_instance }
+  describe '.new(transport:, value:, verifier:)' do
+    let(:instance) { instance_double Kitchen::Instance }
 
-    context 'when all arguments are valid' do
-      it 'yields the new instance' do
-        is_expected.to yield_with_args kind_of described_class
+    before do
+      allow(verifier).to receive(:instance).with(no_args).and_return instance
+
+      allow(instance).to receive(:to_str).with(no_args).and_return 'instance'
+    end
+
+    context 'when a port is not specified' do
+      subject { described_instance[:port] }
+
+      it('defaults to the transport port') { is_expected.to eq port }
+    end
+
+    context 'when a username is not specified' do
+      subject { described_instance[:user] }
+
+      it 'defaults to the transport username' do
+        is_expected.to eq username.to_s
       end
     end
 
-    context 'when an argument is invalid' do
-      context 'attributes can not be interpretted as a hash' do
-        let(:optional_arguments) { { attributes: [1, 2, 3] } }
+    context 'when the value can not be coerced to be a mapping' do
+      let(:value) { 'a' }
 
-        it 'raises a type error' do
-          is_expected.to raise_error TypeError, /can't convert/
-        end
+      subject { proc { described_instance } }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError
       end
+    end
 
-      context 'port can not be interpretted as an integer' do
-        let(:optional_arguments) { { port: 'a' } }
+    context 'when the attributes can not be coerced to be a mapping' do
+      before { value[:attributes] = 'a' }
 
-        it 'raises an argument error' do
-          is_expected.to raise_error ArgumentError, /invalid value.*"a"/
-        end
+      subject { proc { described_instance } }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError,
+                                   /Inspec attribute names to Terraform output/
       end
+    end
 
-      context 'transport port can not be interpreted as an integer' do
-        let(:optional_arguments) { { transport: { port: 'b' } } }
+    context 'when the port can not be coerced to be an integer' do
+      before { value[:port] = 'a' }
 
-        it 'raises an argument error' do
-          is_expected.to raise_error ArgumentError, /invalid value.*"b"/
-        end
+      subject { proc { described_instance } }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError, /an integer/
       end
     end
   end
 
-  describe '#each_attribute_pair(&block)' do
-    let(:attributes) { { foo: 'bar' } }
+  describe '#populate(runner:)' do
+    let(:output_name) { instance_double Object }
 
-    let(:optional_arguments) { { attributes: attributes } }
+    let(:output_value) { instance_double Object }
 
-    subject { ->(block) { described_instance.each_attribute_pair(&block) } }
+    let(:runner) { instance_double Terraform::InspecRunner }
 
-    it 'yields each attribute pair' do
-      is_expected.to yield_with_args(*Array(attributes))
+    before do
+      value[:attributes] = { key: output_name }
+
+      allow(provisioner).to receive(:output).with(name: output_name)
+        .and_return output_value
+    end
+
+    after { described_instance.populate runner: runner }
+
+    subject { runner }
+
+    it 'sets runner attributes using Terraform output values' do
+      is_expected.to receive(:set_attribute).with key: :key, value: output_value
     end
   end
 
-  describe '#to_s' do
-    subject { described_instance.to_s }
+  describe '#verify_each_host(options:)' do
+    let(:hostname) { instance_double Object }
 
-    it('returns the group name') { is_expected.to be described_instance.name }
+    let(:hostnames) { instance_double Object }
+
+    let(:options) { {} }
+
+    before do
+      value[:hostnames] = hostnames
+
+      allow(provisioner).to receive(:each_list_output)
+        .with(name: hostnames.to_s).and_yield hostname
+
+      allow(described_instance).to receive(:store).with :host, hostname
+
+      allow(verifier).to receive(:info).with kind_of String
+    end
+
+    after { described_instance.verify_each_host options: options }
+
+    subject do
+      class_double(Terraform::InspecRunner).as_stubbed_const
+    end
+
+    it 'verifies each host in the group' do
+      is_expected.to receive(:run_and_verify)
+        .with group: described_instance, options: described_instance,
+              verifier: verifier
+    end
   end
 end

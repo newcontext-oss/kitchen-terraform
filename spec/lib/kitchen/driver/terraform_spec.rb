@@ -16,14 +16,13 @@
 
 require 'kitchen/driver/terraform'
 require 'terraform/error'
-require 'support/terraform/client_holder_context'
-require 'support/terraform/client_holder_examples'
+require 'support/terraform/configurable_examples'
 require 'support/terraform/versions_are_set_examples'
 
 RSpec.describe Kitchen::Driver::Terraform do
   let(:described_instance) { described_class.new }
 
-  it_behaves_like Terraform::ClientHolder
+  it_behaves_like Terraform::Configurable
 
   it_behaves_like 'versions are set'
 
@@ -34,21 +33,22 @@ RSpec.describe Kitchen::Driver::Terraform do
   end
 
   describe '#create(_state = nil)' do
-    include_context '#client'
+    include_context '#provisioner'
+
+    let :allow_validate do
+      allow(provisioner).to receive(:validate_version).with no_args
+    end
 
     subject { proc { described_instance.create } }
 
     context 'when the installed version of Terraform is supported' do
-      before { allow(client).to receive(:validate_version).with no_args }
+      before { allow_validate }
 
       it('raises no error') { is_expected.to_not raise_error }
     end
 
     context 'when the installed version of Terraform is not supported' do
-      before do
-        allow(client).to receive(:validate_version).with(no_args)
-          .and_raise Terraform::Error
-      end
+      before { allow_validate.and_raise Terraform::Error }
 
       it 'raise an action failed error' do
         is_expected.to raise_error Kitchen::ActionFailed
@@ -57,24 +57,28 @@ RSpec.describe Kitchen::Driver::Terraform do
   end
 
   describe '#destroy(_state = nil)' do
-    include_context '#client'
+    include_context '#provisioner'
+
+    let :allow_apply do
+      allow(provisioner).to receive(:apply_execution_plan).with no_args
+    end
 
     let(:call_method) { described_instance.destroy }
 
+    before do
+      allow(provisioner).to receive(:validate_configuration_files).with no_args
+
+      allow(provisioner).to receive(:download_modules).with no_args
+
+      allow(provisioner).to receive(:plan_destructive_execution).with no_args
+    end
+
     context 'when the Terraform state can be destroyed' do
-      before do
-        allow(client).to receive(:validate_configuration_files).with no_args
-
-        allow(client).to receive(:download_modules).with no_args
-
-        allow(client).to receive(:plan_destructive_execution).with no_args
-
-        allow(client).to receive(:apply_execution_plan).with no_args
-      end
+      before { allow_apply }
 
       after { call_method }
 
-      subject { client }
+      subject { provisioner }
 
       it 'validates the configuration files' do
         is_expected.to receive(:validate_configuration_files).with no_args
@@ -93,11 +97,8 @@ RSpec.describe Kitchen::Driver::Terraform do
       end
     end
 
-    context 'when a client command fails' do
-      before do
-        allow(client).to receive(:validate_configuration_files)
-          .and_raise Terraform::Error
-      end
+    context 'when a provisioner command fails' do
+      before { allow_apply.and_raise Terraform::Error }
 
       subject { proc { call_method } }
 

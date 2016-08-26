@@ -14,38 +14,82 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'delegate'
+require_relative 'inspec_runner'
 require_relative 'user_error'
 
 module Terraform
   # Group to be verified
-  class Group
-    attr_reader :controls, :hostnames, :name, :port, :username
-
-    def each_attribute_pair(&block)
-      attributes.each_pair(&block)
+  class Group < DelegateClass Hash
+    def populate(runner:)
+      dig(:attributes).each_pair do |key, output_name|
+        runner.set_attribute key: key,
+                             value: provisioner.output(name: output_name)
+      end
     end
 
-    def to_s
-      name
+    def verify_each_host(options:)
+      provisioner.each_list_output name: dig(:hostnames) do |hostname|
+        store :host, hostname
+        verifier.info "Verifying group: #{dig :name}; current host #{hostname}"
+        InspecRunner.run_and_verify group: self, options: options.merge(self),
+                                    verifier: verifier
+      end
     end
 
     private
 
-    attr_accessor :attributes
+    attr_accessor :provisioner, :transport, :verifier
 
-    attr_writer :controls, :hostnames, :name, :port, :username
+    def coerce_attributes
+      store :attributes, Hash(dig(:attributes))
+    rescue ArgumentError, TypeError
+      verifier.config_error attribute: 'groups][x][:attributes',
+                            message: 'must be interpretable as a mapping of ' \
+                                       'Inspec attribute names to Terraform ' \
+                                       'output variable names'
+    end
 
-    def initialize(
-      attributes: {}, controls: [], hostnames:, name:, port: nil, transport:,
-      username: nil
-    )
-      self.attributes = Hash attributes
-      self.controls = Array controls
-      self.hostnames = String hostnames
-      self.name = String name
-      self.port = Integer port || transport[:port]
-      self.username = String username || transport[:username]
-      yield self if block_given?
+    def coerce_controls
+      store :controls, Array(dig(:controls))
+    end
+
+    def coerce_hostnames
+      store :hostnames, String(dig(:hostnames))
+    end
+
+    def coerce_name
+      store :name, String(dig(:name))
+    end
+
+    def coerce_parameters
+      coerce_attributes
+      coerce_controls
+      coerce_hostnames
+      coerce_name
+      coerce_port
+      coerce_username
+    end
+
+    def coerce_port
+      store :port, Integer(dig(:port) || transport[:port])
+    rescue ArgumentError, TypeError
+      verifier.config_error attribute: 'groups][x][:port',
+                            message: 'must be interpretable as an integer'
+    end
+
+    def coerce_username
+      store :user, String(dig(:username) || transport[:username])
+    end
+
+    def initialize(value:, verifier:)
+      super Hash value
+      self.provisioner = verifier.provisioner
+      self.transport = verifier.transport
+      self.verifier = verifier
+      coerce_parameters
+    rescue ArgumentError, TypeError
+      raise UserError
     end
   end
 end

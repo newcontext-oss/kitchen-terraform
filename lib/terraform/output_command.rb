@@ -18,15 +18,21 @@ require_relative 'command'
 
 module Terraform
   # Command to extract values of output variables
-  class OutputCommand
-    include Command
+  class OutputCommand < Command
+    def name
+      'output'
+    end
+
+    def options
+      "-state=#{state}"
+    end
 
     private
 
-    def initialize_attributes(state:, name:)
-      self.name = 'output'
-      self.options = { state: state }
-      self.target = name
+    attr_accessor :state
+
+    def initialize_attributes(state:)
+      self.state = state
     end
   end
 end

@@ -15,14 +15,14 @@
 # limitations under the License.
 
 require 'mixlib/shellout'
-require 'pathname'
-require_relative 'command_options'
 require_relative 'user_error'
 
 module Terraform
-  # Common logic for Mixlib::ShellOut Terraform commands
-  module Command
-    attr_reader :name, :options, :target
+  # Interface to the Terraform command line client
+  class Command
+    def self.execute(**keyword_arguments, &block)
+      new(**keyword_arguments).execute(&block)
+    end
 
     def execute
       shell_out.run_command
@@ -33,26 +33,29 @@ module Terraform
       raise UserError
     end
 
-    def to_s
-      CommandOptions.new options do |command_options|
-        return "terraform #{name} #{command_options} #{target}"
-      end
+    def name
+      ''
+    end
+
+    def options
+      '--help'
     end
 
     private
 
     attr_accessor :shell_out
 
-    attr_writer :name, :options, :target
-
     def initialize(
-      logger:, timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT,
+      logger:, target: '', timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT,
       **keyword_arguments
     )
       initialize_attributes(**keyword_arguments)
-      self.shell_out = Mixlib::ShellOut.new to_s, returns: 0, timeout: timeout,
-                                                  live_stream: logger
-      yield self if block_given?
+      self.shell_out = Mixlib::ShellOut
+                       .new "terraform #{name} #{options} #{target}",
+                            live_stream: logger, returns: 0, timeout: timeout
+    end
+
+    def initialize_attributes(**_keyword_arguments)
     end
   end
 end

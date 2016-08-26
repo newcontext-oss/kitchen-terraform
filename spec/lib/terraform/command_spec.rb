@@ -16,10 +16,31 @@
 
 require 'terraform/command'
 
-RSpec.shared_examples Terraform::Command do
+RSpec.describe Terraform::Command do
+  let(:described_instance) { described_class.new logger: logger }
+
   let(:logger) { instance_double Object }
 
+  describe '.execute(**keyword_arguments, &block)' do
+    let(:instance) { instance_double described_class }
+
+    before do
+      allow(described_class).to receive(:new).with(logger: logger)
+        .and_return instance
+    end
+
+    after { described_class.execute logger: logger }
+
+    subject { instance }
+
+    it 'creates and executes a command instance' do
+      is_expected.to receive(:execute).with no_args
+    end
+  end
+
   describe '#execute' do
+    let(:allow_error) { allow(shell_out).to receive(:error!).with no_args }
+
     let(:shell_out) { instance_double Mixlib::ShellOut }
 
     before do
@@ -33,7 +54,7 @@ RSpec.shared_examples Terraform::Command do
       let(:stdout) { instance_double Object }
 
       before do
-        allow(shell_out).to receive(:error!).with no_args
+        allow_error
 
         allow(shell_out).to receive(:stdout).with(no_args).and_return stdout
       end
@@ -43,11 +64,8 @@ RSpec.shared_examples Terraform::Command do
       it('yields the output') { is_expected.to yield_with_args stdout }
     end
 
-    shared_examples 'an expected user error has occured' do
-      before do
-        allow(shell_out).to receive(:error!).with(no_args)
-          .and_raise error_class
-      end
+    context 'when the execution is not successful due to a permissions error' do
+      before { allow_error.and_raise Errno::EACCES }
 
       subject { proc { described_instance.execute } }
 
@@ -56,56 +74,46 @@ RSpec.shared_examples Terraform::Command do
       end
     end
 
-    context 'when the execution is not successful due to a permissions error' do
-      it_behaves_like 'an expected user error has occured' do
-        let(:error_class) { Errno::EACCES }
-      end
-    end
+    context 'when the execution is not successful due to no executable found' do
+      before { allow_error.and_raise Errno::ENOENT }
 
-    context 'when the execution is not successful due to no executable' do
-      it_behaves_like 'an expected user error has occured' do
-        let(:error_class) { Errno::ENOENT }
+      subject { proc { described_instance.execute } }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError
       end
     end
 
     context 'when the execution is not successful due to a command timeout' do
-      it_behaves_like 'an expected user error has occured' do
-        let(:error_class) { Mixlib::ShellOut::CommandTimeout }
+      before { allow_error.and_raise Mixlib::ShellOut::CommandTimeout }
+
+      subject { proc { described_instance.execute } }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError
       end
     end
 
     context 'when the execution is not successful due to a command failure' do
-      it_behaves_like 'an expected user error has occured' do
-        let(:error_class) { Mixlib::ShellOut::ShellCommandFailed }
+      before { allow_error.and_raise Mixlib::ShellOut::ShellCommandFailed }
+
+      subject { proc { described_instance.execute } }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError
       end
     end
   end
 
   describe '#name' do
-    let :supported_command_names do
-      %w(apply destroy get output plan validate version)
-    end
-
     subject { described_instance.name }
 
-    it 'is a supported command' do
-      is_expected.to(
-        satisfy { |command_name| supported_command_names.include? command_name }
-      )
-    end
+    it('returns an empty string') { is_expected.to eq '' }
   end
 
   describe '#options' do
     subject { described_instance.options }
 
-    it('is a hash') { is_expected.to be_kind_of Hash }
-  end
-
-  describe '#to_s' do
-    subject { described_instance.to_s }
-
-    it 'is the converted command string' do
-      is_expected.to eq "terraform #{name} #{command_options} #{target}"
-    end
+    it('returns "--help"') { is_expected.to eq '--help' }
   end
 end

@@ -15,20 +15,25 @@
 # limitations under the License.
 
 require 'terraform/output_command'
-require 'support/terraform/command_examples'
 
 RSpec.describe Terraform::OutputCommand do
-  it_behaves_like Terraform::Command do
-    let(:command_options) { "-state=#{state}" }
+  let(:described_instance) { described_class.new logger: logger, state: state }
 
-    let :described_instance do
-      described_class.new logger: logger, state: state, name: target
+  let(:logger) { instance_double Object }
+
+  let(:state) { instance_double Object }
+
+  describe '#name' do
+    subject { described_instance.name }
+
+    it('returns "output"') { is_expected.to eq 'output' }
+  end
+
+  describe '#options' do
+    subject { described_instance.options }
+
+    it 'returns "-state=<state_pathname>"' do
+      is_expected.to eq "-state=#{state}"
     end
-
-    let(:name) { 'output' }
-
-    let(:state) { '<state_pathname>' }
-
-    let(:target) { '<name>' }
   end
 end

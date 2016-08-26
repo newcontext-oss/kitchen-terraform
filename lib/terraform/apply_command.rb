@@ -18,15 +18,21 @@ require_relative 'command'
 
 module Terraform
   # Command to apply an execution plan
-  class ApplyCommand
-    include Command
+  class ApplyCommand < Command
+    def name
+      'apply'
+    end
+
+    def options
+      "-input=false -state=#{state}"
+    end
 
     private
 
-    def initialize_attributes(state:, plan:)
-      self.name = 'apply'
-      self.options = { input: false, state: state }
-      self.target = plan
+    attr_accessor :state
+
+    def initialize_attributes(state:)
+      self.state = state
     end
   end
 end
