@@ -114,8 +114,5 @@ example module is simple:
 
 ```sh
 $ bundle install
-$ bundle exec kitchen converge
-# Wait for the instances to be ready for SSH connections...
-$ bundle exec kitchen verify
-$ bundle exec kitchen destroy
+$ bundle exec kitchen test --destroy always
 ```
