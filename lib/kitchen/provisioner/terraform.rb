@@ -74,9 +74,9 @@ module Kitchen
       default_config :variables, {}
 
       def apply_execution_plan
-        ::Terraform::ApplyCommand.execute logger: logger, state: config[:state],
-                                          target: config[:plan],
-                                          timeout: config[:apply_timeout]
+        ::Terraform::ApplyCommand.execute \
+          logger: logger, state: config[:state], target: config[:plan],
+          color: config[:color], timeout: config[:apply_timeout]
       end
 
       def call(_state = nil)
@@ -133,7 +133,7 @@ module Kitchen
         ::Terraform::PlanCommand
           .execute destroy: false, logger: logger, out: config[:plan],
                    state: config[:state], target: config[:directory],
-                   variables: config[:variables],
+                   variables: config[:variables], color: config[:color],
                    variable_files: config[:variable_files]
       end
 
@@ -141,7 +141,7 @@ module Kitchen
         ::Terraform::PlanCommand
           .execute destroy: true, logger: logger, out: config[:plan],
                    state: config[:state], target: config[:directory],
-                   variables: config[:variables],
+                   variables: config[:variables], color: config[:color],
                    variable_files: config[:variable_files]
       end
 

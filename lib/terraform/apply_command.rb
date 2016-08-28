@@ -24,15 +24,20 @@ module Terraform
     end
 
     def options
-      "-input=false -state=#{state}"
+      "-input=false -state=#{state}#{color_switch}"
     end
 
     private
 
-    attr_accessor :state
+    attr_accessor :state, :color
 
-    def initialize_attributes(state:)
+    def initialize_attributes(state:, color:)
       self.state = state
+      self.color = color
+    end
+
+    def color_switch
+      color ? '' : ' -no-color'
     end
   end
 end

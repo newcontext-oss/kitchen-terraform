@@ -20,7 +20,7 @@ RSpec.describe Terraform::PlanCommand do
   let :described_instance do
     described_class.new destroy: destroy, logger: logger, out: out,
                         state: state, variables: variables,
-                        variable_files: [variable_file]
+                        variable_files: [variable_file], color: false
   end
 
   let(:destroy) { instance_double Object }
@@ -46,10 +46,11 @@ RSpec.describe Terraform::PlanCommand do
 
     it 'returns "-destroy=<true_or_false> -input=false ' \
          '-out=<plan_pathname> -state=<state_pathname> ' \
+         '-no-color ' \
          '[-var=\'<variable_assignment>\'...] ' \
          '[-var-file=<variable_pathname>...]"' do
       is_expected.to eq "-destroy=#{destroy} -input=false -out=#{out} " \
-                          "-state=#{state} -var='key=value' " \
+                          "-state=#{state} -no-color -var='key=value' " \
                           "-var-file=#{variable_file}"
     end
   end

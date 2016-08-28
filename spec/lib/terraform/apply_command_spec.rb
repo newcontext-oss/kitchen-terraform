@@ -17,7 +17,10 @@
 require 'terraform/apply_command'
 
 RSpec.describe Terraform::ApplyCommand do
-  let(:described_instance) { described_class.new logger: logger, state: state }
+  let(:described_instance) do
+    described_class.new logger: logger, state: state,
+                        color: false
+  end
 
   let(:logger) { instance_double Object }
 
@@ -32,8 +35,8 @@ RSpec.describe Terraform::ApplyCommand do
   describe '#options' do
     subject { described_instance.options }
 
-    it 'returns "-input=false -state=<state_pathname>"' do
-      is_expected.to eq "-input=false -state=#{state}"
+    it 'returns "-input=false -state=<state_pathname> -no-color"' do
+      is_expected.to eq "-input=false -state=#{state} -no-color"
     end
   end
 end

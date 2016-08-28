@@ -25,21 +25,24 @@ module Terraform
 
     def options
       "-destroy=#{destroy} -input=false -out=#{out} -state=#{state}" \
+        "#{color_switch}" \
         "#{processed_variables}#{processed_variable_files}"
     end
 
     private
 
-    attr_accessor :destroy, :out, :state, :variables, :variable_files
+    attr_accessor :destroy, :out, :state, :variables, :variable_files,
+                  :color
 
     def initialize_attributes(
-      destroy:, out:, state:, variables:, variable_files:
+      destroy:, out:, state:, variables:, variable_files:, color:
     )
       self.destroy = destroy
       self.out = out
       self.state = state
       self.variables = variables
       self.variable_files = variable_files
+      self.color = color
     end
 
     def processed_variable_files
@@ -52,6 +55,10 @@ module Terraform
       variables.each_with_object String.new do |(key, value), string|
         string.concat " -var='#{key}=#{value}'"
       end
+    end
+
+    def color_switch
+      color ? '' : ' -no-color'
     end
   end
 end
