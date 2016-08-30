@@ -41,12 +41,12 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
     let(:variables) { instance_double Object }
 
-    let(:color) { true }
+    let(:color) { instance_double Object }
 
     before do
-      config.merge! apply_timeout: apply_timeout, directory: directory,
-                    plan: plan, state: state, variable_files: variable_files,
-                    variables: variables, color: color
+      config.merge! apply_timeout: apply_timeout, color: color,
+                    directory: directory, plan: plan, state: state,
+                    variable_files: variable_files, variables: variables
     end
   end
 
@@ -297,9 +297,8 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
     it 'plans a destructive execution' do
       is_expected.to receive(:execute)
-        .with destroy: true, logger: logger, out: plan, state: state,
-              color: true,
-              target: directory, variables: variables,
+        .with color: color, destroy: true, logger: logger, out: plan,
+              state: state, target: directory, variables: variables,
               variable_files: variable_files
     end
   end
@@ -313,9 +312,8 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
     it 'plans a constructive execution' do
       is_expected.to receive(:execute)
-        .with destroy: false, logger: logger, out: plan, state: state,
-              color: true,
-              target: directory, variables: variables,
+        .with color: color, destroy: false, logger: logger, out: plan,
+              state: state, target: directory, variables: variables,
               variable_files: variable_files
     end
   end

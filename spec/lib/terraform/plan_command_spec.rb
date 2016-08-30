@@ -54,4 +54,23 @@ RSpec.describe Terraform::PlanCommand do
                           "-var-file=#{variable_file}"
     end
   end
+
+  let :described_instance_with_color do
+    described_class.new destroy: destroy, logger: logger,
+                        out: out, state: state, variables: variables,
+                        variable_files: [variable_file]
+  end
+
+  describe '#options_with_color' do
+    subject { described_instance_with_color.options }
+
+    it 'returns "-destroy=<true_or_false> -input=false ' \
+         '-out=<plan_pathname> -state=<state_pathname> ' \
+         '[-var=\'<variable_assignment>\'...] ' \
+         '[-var-file=<variable_pathname>...]"' do
+      is_expected.to eq "-destroy=#{destroy} -input=false -out=#{out} " \
+                          "-state=#{state} -var='key=value' " \
+                          "-var-file=#{variable_file}"
+    end
+  end
 end

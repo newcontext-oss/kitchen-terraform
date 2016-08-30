@@ -39,4 +39,16 @@ RSpec.describe Terraform::ApplyCommand do
       is_expected.to eq "-input=false -state=#{state} -no-color"
     end
   end
+
+  let(:described_instance_with_color) do
+    described_class.new logger: logger, state: state
+  end
+
+  describe '#options_with_color' do
+    subject { described_instance_with_color.options }
+
+    it 'returns "-input=false -state=<state_pathname>"' do
+      is_expected.to eq "-input=false -state=#{state}"
+    end
+  end
 end

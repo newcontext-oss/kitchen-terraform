@@ -14,29 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-require_relative 'command_switches'
-
-module Terraform
-  # Command to apply an execution plan
-  class ApplyCommand < Command
-    include CommandSwitches
-
-    def name
-      'apply'
-    end
-
-    def options
-      "-input=false -state=#{state}#{color_switch}"
-    end
-
-    private
-
-    attr_accessor :color, :state
-
-    def initialize_attributes(color: true, state:)
-      self.color = color
-      self.state = state
-    end
+# Shared command line switches for Terraform
+module CommandSwitches
+  def color_switch
+    color ? '' : ' -no-color'
   end
 end

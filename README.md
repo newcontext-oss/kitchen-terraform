@@ -139,7 +139,7 @@ The default `apply_timeout` is 600 seconds.
 
 ##### color
 
-Enable or disable colored output from the Terraform command
+Enable or disable colored output from the Terraform command.
 
 ###### Example .kitchen.yml
 

@@ -15,10 +15,13 @@
 # limitations under the License.
 
 require_relative 'command'
+require_relative 'command_switches'
 
 module Terraform
   # Command to plan an execution
   class PlanCommand < Command
+    include CommandSwitches
+
     def name
       'plan'
     end
@@ -31,18 +34,17 @@ module Terraform
 
     private
 
-    attr_accessor :destroy, :out, :state, :variables, :variable_files,
-                  :color
+    attr_accessor :color, :destroy, :out, :state, :variables, :variable_files
 
     def initialize_attributes(
-      destroy:, out:, state:, variables:, variable_files:, color:
+      color: true, destroy:, out:, state:, variables:, variable_files:
     )
+      self.color = color
       self.destroy = destroy
       self.out = out
       self.state = state
       self.variables = variables
       self.variable_files = variable_files
-      self.color = color
     end
 
     def processed_variable_files
@@ -55,10 +57,6 @@ module Terraform
       variables.each_with_object String.new do |(key, value), string|
         string.concat " -var='#{key}=#{value}'"
       end
-    end
-
-    def color_switch
-      color ? '' : ' -no-color'
     end
   end
 end
