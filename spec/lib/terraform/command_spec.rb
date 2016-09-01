@@ -48,6 +48,8 @@ RSpec.describe Terraform::Command do
         .and_return shell_out
 
       allow(shell_out).to receive(:run_command).with no_args
+
+      allow(shell_out).to receive(:command).with(no_args).and_return 'command'
     end
 
     context 'when the execution is successful' do
@@ -69,8 +71,8 @@ RSpec.describe Terraform::Command do
 
       subject { proc { described_instance.execute } }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError
+      it 'raises an instance failure' do
+        is_expected.to raise_error Kitchen::InstanceFailure
       end
     end
 
@@ -79,8 +81,8 @@ RSpec.describe Terraform::Command do
 
       subject { proc { described_instance.execute } }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError
+      it 'raises an instance failure' do
+        is_expected.to raise_error Kitchen::InstanceFailure
       end
     end
 
@@ -89,8 +91,8 @@ RSpec.describe Terraform::Command do
 
       subject { proc { described_instance.execute } }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError
+      it 'raises a transient failure' do
+        is_expected.to raise_error Kitchen::TransientFailure
       end
     end
 
@@ -99,8 +101,8 @@ RSpec.describe Terraform::Command do
 
       subject { proc { described_instance.execute } }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError
+      it 'raises a transient failure' do
+        is_expected.to raise_error Kitchen::TransientFailure
       end
     end
   end
