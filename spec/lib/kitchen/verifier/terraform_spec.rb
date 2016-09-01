@@ -33,10 +33,6 @@ RSpec.describe Kitchen::Verifier::Terraform do
 
     include_context '#transport'
 
-    let :allow_verify do
-      allow(group).to receive(:verify_each_host).with options: runner_options
-    end
-
     let(:group) { instance_double Terraform::Group }
 
     let(:runner_options) { instance_double Object }
@@ -50,20 +46,12 @@ RSpec.describe Kitchen::Verifier::Terraform do
         .with(transport, state).and_return runner_options
     end
 
-    subject { proc { described_instance.call state } }
+    after { described_instance.call state }
 
-    context 'when the groups are successfully verified' do
-      before { allow_verify }
+    subject { group }
 
-      it('raises no error') { is_expected.to_not raise_error }
-    end
-
-    context 'when the groups are not successfully verified' do
-      before { allow_verify.and_raise Terraform::Error }
-
-      it 'raises an action failed error' do
-        is_expected.to raise_error Kitchen::ActionFailed
-      end
+    it 'verifies each host of each group' do
+      is_expected.to receive(:verify_each_host).with options: runner_options
     end
   end
 
@@ -97,12 +85,12 @@ RSpec.describe Kitchen::Verifier::Terraform do
     end
 
     context 'when the value can not be coerced to be a group' do
-      before { allow_new_group.and_raise Terraform::UserError }
+      before { allow_new_group.and_raise Kitchen::UserError, '' }
 
       subject { proc { call_method } }
 
       it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError,
+        is_expected.to raise_error Kitchen::UserError,
                                    /collection of group mappings/
       end
     end
@@ -120,8 +108,8 @@ RSpec.describe Kitchen::Verifier::Terraform do
     context 'when the exit code is not 0' do
       let(:exit_code) { 1 }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError
+      it 'raises an instance failure' do
+        is_expected.to raise_error Kitchen::InstanceFailure
       end
     end
   end

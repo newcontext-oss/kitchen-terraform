@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'kitchen/provisioner/terraform'
-require 'terraform/error'
 require 'support/terraform/configurable_examples'
 require 'support/terraform/versions_are_set_examples'
 
@@ -68,52 +67,44 @@ RSpec.describe Kitchen::Provisioner::Terraform do
   end
 
   describe '#call(_state = nil)' do
-    let :allow_apply do
-      allow(described_instance).to receive(:validate_configuration_files)
-        .with no_args
+    let(:apply_execution_plan) { receive(:apply_execution_plan).with no_args }
 
-      allow(described_instance).to receive(:download_modules).with no_args
+    let(:download_modules) { receive(:download_modules).with no_args }
 
-      allow(described_instance).to receive(:plan_constructive_execution)
-        .with no_args
-
-      allow(described_instance).to receive(:apply_execution_plan).with no_args
+    let :plan_constructive_execution do
+      receive(:plan_constructive_execution).with no_args
     end
 
-    let(:call_method) { described_instance.call }
-
-    context 'when all Terraform commands are successful' do
-      before { allow_apply }
-
-      after { call_method }
-
-      subject { described_instance }
-
-      it 'validates the configuration files' do
-        is_expected.to receive(:validate_configuration_files).with no_args
-      end
-
-      it 'downloads any dependency modules' do
-        is_expected.to receive(:download_modules).with no_args
-      end
-
-      it 'plans the constructive execution' do
-        is_expected.to receive(:plan_constructive_execution).with no_args
-      end
-
-      it 'applys the constructive execution plan' do
-        is_expected.to receive(:apply_execution_plan).with no_args
-      end
+    let :validate_configuration_files do
+      receive(:validate_configuration_files).with no_args
     end
 
-    context 'when all Terraform commands are not successful' do
-      before { allow_apply.and_raise Terraform::UserError }
+    before do
+      allow(described_instance).to validate_configuration_files
 
-      subject { proc { call_method } }
+      allow(described_instance).to download_modules
 
-      it 'raises an action failed error' do
-        is_expected.to raise_error Kitchen::ActionFailed
-      end
+      allow(described_instance).to plan_constructive_execution
+
+      allow(described_instance).to apply_execution_plan
+    end
+
+    after { described_instance.call }
+
+    subject { described_instance }
+
+    it 'validates the configuration files' do
+      is_expected.to validate_configuration_files
+    end
+
+    it('downloads any dependency modules') { is_expected.to download_modules }
+
+    it 'plans the constructive execution' do
+      is_expected.to plan_constructive_execution
+    end
+
+    it 'applys the constructive execution plan' do
+      is_expected.to apply_execution_plan
     end
   end
 
@@ -136,7 +127,7 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       subject { proc { call_method } }
 
       it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError, /an integer/
+        is_expected.to raise_error Kitchen::UserError, /an integer/
       end
     end
   end
@@ -170,7 +161,7 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       subject { proc { call_method } }
 
       it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError,
+        is_expected.to raise_error Kitchen::UserError,
                                    /mapping of Terraform variable assignments/
       end
     end
@@ -351,7 +342,7 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       let(:output) { 'v0.7' }
 
       it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError, /version must match/
+        is_expected.to raise_error Kitchen::UserError, /version must match/
       end
     end
   end

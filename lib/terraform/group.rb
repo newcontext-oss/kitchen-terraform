@@ -16,7 +16,6 @@
 
 require 'delegate'
 require_relative 'inspec_runner'
-require_relative 'user_error'
 
 module Terraform
   # Group to be verified
@@ -44,7 +43,7 @@ module Terraform
     def coerce_attributes
       store :attributes, Hash(dig(:attributes))
     rescue ArgumentError, TypeError
-      verifier.config_error attribute: 'groups][x][:attributes',
+      verifier.config_error attribute: "groups][#{self}][:attributes",
                             message: 'must be interpretable as a mapping of ' \
                                        'Inspec attribute names to Terraform ' \
                                        'output variable names'
@@ -74,7 +73,7 @@ module Terraform
     def coerce_port
       store :port, Integer(dig(:port) || transport[:port])
     rescue ArgumentError, TypeError
-      verifier.config_error attribute: 'groups][x][:port',
+      verifier.config_error attribute: "groups][#{self}][:port",
                             message: 'must be interpretable as an integer'
     end
 
@@ -89,7 +88,8 @@ module Terraform
       self.verifier = verifier
       coerce_parameters
     rescue ArgumentError, TypeError
-      raise UserError
+      verifier.config_error attribute: "groups][#{self}][:port",
+                            message: 'must be interpretable as a group mapping'
     end
   end
 end

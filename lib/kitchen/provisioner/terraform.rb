@@ -89,7 +89,7 @@ module Kitchen
       def coerce_apply_timeout(value:)
         config[:apply_timeout] = Integer value
       rescue ArgumentError, TypeError
-        config_error attribute: :apply_timeout,
+        config_error attribute: 'apply_timeout',
                      message: 'must be interpretable as an integer'
       end
 
@@ -105,7 +105,7 @@ module Kitchen
             Hash value
           end
       rescue ArgumentError, TypeError
-        config_error attribute: :variables,
+        config_error attribute: 'variables',
                      message: 'must be interpretable as a mapping of ' \
                                 'Terraform variable assignments'
       end
@@ -152,7 +152,7 @@ module Kitchen
 
       def validate_version
         ::Terraform::VersionCommand.execute logger: logger do |output|
-          raise ::Terraform::UserError,
+          raise UserError,
                 "Terraform version must match #{SUPPORTED_VERSION}" unless
                   SUPPORTED_VERSION.match output
         end

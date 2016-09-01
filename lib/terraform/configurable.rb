@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require 'forwardable'
-require_relative 'user_error'
+require 'kitchen'
 
 module Terraform
   # Common logic for classes that include Kitchen::Configurable
@@ -25,7 +25,7 @@ module Terraform
     def_delegators :instance, :provisioner, :transport
 
     def config_error(attribute:, message:)
-      raise UserError,
+      raise Kitchen::UserError,
             "#{self.class}#{instance.to_str}#config[:#{attribute}] #{message}"
     end
   end

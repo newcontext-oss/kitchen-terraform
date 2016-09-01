@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen'
 require 'mixlib/shellout'
-require_relative 'user_error'
 
 module Terraform
   # Interface to the Terraform command line client
@@ -28,9 +28,11 @@ module Terraform
       shell_out.run_command
       shell_out.error!
       yield shell_out.stdout if block_given?
-    rescue Errno::EACCES, Errno::ENOENT, Mixlib::ShellOut::CommandTimeout,
-           Mixlib::ShellOut::ShellCommandFailed
-      raise UserError
+    rescue Errno::EACCES, Errno::ENOENT => error
+      command_error error: error, type: Kitchen::InstanceFailure
+    rescue Mixlib::ShellOut::CommandTimeout,
+           Mixlib::ShellOut::ShellCommandFailed => error
+      command_error error: error, type: Kitchen::TransientFailure
     end
 
     def name
@@ -44,6 +46,10 @@ module Terraform
     private
 
     attr_accessor :shell_out
+
+    def command_error(error:, type:)
+      raise type, %(`#{shell_out.command}` failed: "#{error}")
+    end
 
     def initialize(
       logger:, target: '', timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT,

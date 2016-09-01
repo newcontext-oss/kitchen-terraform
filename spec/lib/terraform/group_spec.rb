@@ -47,7 +47,7 @@ RSpec.describe Terraform::Group do
     allow(transport).to receive(:[]).with(:username).and_return username
   end
 
-  describe '.new(transport:, value:, verifier:)' do
+  describe '.new(value:, verifier:)' do
     let(:instance) { instance_double Kitchen::Instance }
 
     before do
@@ -76,7 +76,7 @@ RSpec.describe Terraform::Group do
       subject { proc { described_instance } }
 
       it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError
+        is_expected.to raise_error Kitchen::UserError, /a group mapping/
       end
     end
 
@@ -86,7 +86,7 @@ RSpec.describe Terraform::Group do
       subject { proc { described_instance } }
 
       it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError,
+        is_expected.to raise_error Kitchen::UserError,
                                    /Inspec attribute names to Terraform output/
       end
     end
@@ -97,7 +97,7 @@ RSpec.describe Terraform::Group do
       subject { proc { described_instance } }
 
       it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError, /an integer/
+        is_expected.to raise_error Kitchen::UserError, /an integer/
       end
     end
   end

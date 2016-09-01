@@ -16,7 +16,6 @@
 
 require 'kitchen'
 require 'terraform/configurable'
-require 'terraform/user_error'
 require 'terraform/version'
 
 module Kitchen

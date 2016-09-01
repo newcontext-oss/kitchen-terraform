@@ -17,7 +17,6 @@
 require 'kitchen'
 require 'kitchen/verifier/inspec'
 require 'terraform/configurable'
-require 'terraform/user_error'
 require 'terraform/version'
 
 module Kitchen
@@ -47,16 +46,15 @@ module Kitchen
         config[:groups] = Array(value).map do |raw_group|
           ::Terraform::Group.new value: raw_group, verifier: self
         end
-      rescue ::Terraform::UserError
-        config_error attribute: :groups,
+      rescue UserError
+        config_error attribute: 'groups',
                      message: 'must be interpretable as a collection of ' \
                                 'group mappings'
       end
 
       def evaluate(exit_code:)
-        return if exit_code.zero?
-
-        raise ::Terraform::UserError, "Inspec Runner returns #{exit_code}"
+        raise InstanceFailure, "Inspec Runner returns #{exit_code}" unless
+          exit_code.zero?
       end
 
       def populate(runner:)

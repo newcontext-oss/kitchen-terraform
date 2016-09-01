@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen'
 require 'kitchen/provisioner/terraform'
 require 'kitchen/transport/ssh'
 require 'terraform/configurable'
@@ -97,8 +98,7 @@ RSpec.shared_examples Terraform::Configurable do
     end
 
     it 'raises a user error regarding the config attribute' do
-      is_expected.to raise_error Terraform::UserError,
-                                 /#{attribute}.*#{message}/
+      is_expected.to raise_error Kitchen::UserError, /#{attribute}.*#{message}/
     end
   end
 
