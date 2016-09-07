@@ -115,13 +115,13 @@ module Kitchen
                                         target: config[:directory]
       end
 
+      def each_list_output(name:, &block)
+        output(name: name).split(',').each(&block)
+      end
+
       def instance_pathname(filename:)
         File.join config[:kitchen_root], '.kitchen', 'kitchen-terraform',
                   instance.name, filename
-      end
-
-      def each_list_output(name:, &block)
-        output(name: name).split(',').each(&block)
       end
 
       def output(name:)

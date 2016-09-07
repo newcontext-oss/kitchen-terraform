@@ -179,6 +179,23 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     end
   end
 
+  describe '#each_list_output(name:, &block)' do
+    let(:name) { instance_double Object }
+
+    before do
+      allow(described_instance).to receive(:output).with(name: name)
+        .and_return 'foo,bar'
+    end
+
+    subject do
+      ->(block) { described_instance.each_list_output name: name, &block }
+    end
+
+    it 'yields each element of a CSV list output' do
+      is_expected.to yield_successive_args 'foo', 'bar'
+    end
+  end
+
   describe '#finalize_config!(instance)' do
     include_context '#finalize_config!(instance)'
 
@@ -235,23 +252,6 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     it 'returns a pathname under the hidden instance directory' do
       is_expected
         .to eq "#{kitchen_root}/.kitchen/kitchen-terraform/instance/#{filename}"
-    end
-  end
-
-  describe '#each_list_output(name:, &block)' do
-    let(:name) { instance_double Object }
-
-    before do
-      allow(described_instance).to receive(:output).with(name: name)
-        .and_return 'foo,bar'
-    end
-
-    subject do
-      ->(block) { described_instance.each_list_output name: name, &block }
-    end
-
-    it 'yields each element of a CSV list output' do
-      is_expected.to yield_successive_args 'foo', 'bar'
     end
   end
 
