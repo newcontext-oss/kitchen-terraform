@@ -45,6 +45,10 @@ module Kitchen
 
       default_config :color, true
 
+      required_config :color do |_, value, provisioner|
+        provisioner.coerce_color value: value
+      end
+
       default_config(:directory) { |provisioner| provisioner[:kitchen_root] }
 
       expand_path_for :directory
