@@ -28,6 +28,7 @@ module Terraform
     attr_accessor :color
 
     def initialize_attributes(color:)
+      super
       self.color = color
     end
   end
