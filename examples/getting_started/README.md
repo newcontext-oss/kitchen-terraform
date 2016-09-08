@@ -79,7 +79,13 @@ Go ahead and open your .kitchen.yml file:
 ```
 
 Let's go ahead and add in configuration for for both test kitchen and
-kitchen terraform. First the driver - the driver we are using is called
+kitchen-terraform.
+
+Kitchen-terraform provides three plugins for use with test kitchen -
+a driver, a provisioner, and a verifier. We will go through each
+of these plugins in this tutorial.
+
+First the driver - the driver we are using is called
 terraform
 
 
@@ -211,7 +217,7 @@ which is an output value we will need to add to output.tf in a bit.
 
 Finally, there is the username - this is the name kitchen terraform will
 use to ssh into the hostnames with.  In this tutorial we are using
-ubuntu instances and the default username is ubuntu.
+Ubuntu instances and the default username is ubuntu.
 
 And, last, let's add a test suite to .kitchen.yml
 
@@ -258,7 +264,7 @@ an inspec directory within our test directories
   $ mkdir -p test/integration/default/controls
 ```
 
-This will be our inspec group of tests.  Now we need to provide a yml
+This will be our default group of tests.  Now we need to provide a yml
 file with the name of that group within the group directory.  Go ahead
 and create this:
 
@@ -372,7 +378,9 @@ Go ahead and run
   $ bundle exec kitchen converge
 ```
 
-NOTE: If you receive the error "Error launching source instance: VPCResourceNotSpecified: The specified instance type can only be used in a VPC", check out [this documentation for help correcting it](http://docs.rightscale.com/faq/EC2_t2.x_Instance_Type_Requirement.html)
+NOTE: If you receive the error "Error launching source instance:
+VPCResourceNotSpecified: The specified instance type can only be
+used in a VPC", check out [this documentation for help correcting it](http://docs.rightscale.com/faq/EC2_t2.x_Instance_Type_Requirement.html)
 
 And it should converge successfully and you should see output that
 includes
@@ -499,9 +507,9 @@ verifier:
   name: terraform
   format: doc
   groups:
-    - name: inspec
+    - name: default
       tests:
-        - default
+        - operating_system
       hostnames: public_dns
       username: ubuntu
 ```
@@ -519,9 +527,9 @@ verifier:
   name: terraform
   format: doc
   groups:
-    - name: inspec
+    - name: default
       tests:
-        - default
+        - operating_system
       hostnames: public_dns
       username: ec2-user
 ```
@@ -556,14 +564,14 @@ verifier:
   name: terraform
   format: doc
   groups:
-    - name: inspec
+    - name: default
       tests:
-        - default
+        - operating_system
       hostnames: public_dns
       username: ubuntu
 ```
 
-And open up your testing.tfvars file and switch back to an ubuntu AMI
+And open up your testing.tfvars file and switch back to an Ubuntu AMI
 
 testing.tfvars
 ```
