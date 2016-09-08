@@ -14,14 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
 require_relative 'command_switches'
 
 module Terraform
   # Command to plan an execution
-  class PlanCommand < Command
-    include CommandSwitches
-
+  class PlanCommand < CommandSwitches
     def name
       'plan'
     end
@@ -34,12 +31,11 @@ module Terraform
 
     private
 
-    attr_accessor :color, :destroy, :out, :state, :variables, :variable_files
+    attr_accessor :destroy, :out, :state, :variables, :variable_files
 
     def initialize_attributes(
-      color: true, destroy:, out:, state:, variables:, variable_files:
+      destroy:, out:, state:, variables:, variable_files:
     )
-      self.color = color
       self.destroy = destroy
       self.out = out
       self.state = state

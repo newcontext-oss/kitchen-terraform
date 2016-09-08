@@ -14,31 +14,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/apply_command'
+require 'terraform/command_switches'
 require 'support/terraform/command_switches_examples'
 
-RSpec.describe Terraform::ApplyCommand do
-  include_context '#color'
-
-  let(:described_instance) do
-    described_class.new logger: logger, state: state
-  end
-
+RSpec.describe Terraform::CommandSwitches do
   let(:logger) { instance_double Object }
 
-  let(:state) { instance_double Object }
-
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "apply"') { is_expected.to eq 'apply' }
+  let(:described_instance) do
+    described_class.new logger: logger, color: true
   end
 
-  describe '#options' do
-    subject { described_instance.options }
+  describe '#color_switch' do
+    subject { described_instance.color_switch }
 
-    it 'returns "-input=false -state=<state_pathname>"' do
-      is_expected.to eq "-input=false -state=#{state}"
+    it 'returns nothing' do
+      is_expected.to eq ''
+    end
+  end
+
+  let(:described_no_color_instance) do
+    described_class.new logger: logger, color: false
+  end
+
+  describe '#color_switch' do
+    subject { described_no_color_instance.color_switch }
+
+    it 'returns "-no-color"' do
+      is_expected.to eq ' -no-color'
     end
   end
 end

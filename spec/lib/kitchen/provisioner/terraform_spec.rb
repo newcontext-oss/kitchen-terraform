@@ -31,6 +31,8 @@ RSpec.describe Kitchen::Provisioner::Terraform do
   shared_context 'command' do
     let(:apply_timeout) { instance_double Object }
 
+    let(:color) { instance_double Object }
+
     let(:directory) { instance_double Object }
 
     let(:plan) { instance_double Object }
@@ -40,8 +42,6 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     let(:variable_files) { instance_double Object }
 
     let(:variables) { instance_double Object }
-
-    let(:color) { instance_double Object }
 
     before do
       config.merge! apply_timeout: apply_timeout, color: color,
@@ -64,8 +64,8 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     end
 
     it 'executes the apply command with the existing plan' do
-      is_expected.to receive(:execute).with logger: logger, state: state,
-                                            target: plan, color: color,
+      is_expected.to receive(:execute).with color: color, logger: logger,
+                                            state: state, target: plan,
                                             timeout: apply_timeout
     end
   end
@@ -202,6 +202,12 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       subject { described_instance[:apply_timeout] }
 
       it('defaults to 600 seconds') { is_expected.to eq 600 }
+    end
+
+    describe '[:color]' do
+      subject { described_instance[:color] }
+
+      it('defaults to true') { is_expected.to eq true }
     end
 
     describe '[:directory]' do

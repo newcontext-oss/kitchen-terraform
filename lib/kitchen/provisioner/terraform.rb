@@ -43,6 +43,8 @@ module Kitchen
 
       default_config :apply_timeout, 600
 
+      default_config :color, true
+
       default_config(:directory) { |provisioner| provisioner[:kitchen_root] }
 
       expand_path_for :directory
@@ -91,6 +93,13 @@ module Kitchen
       rescue ArgumentError, TypeError
         config_error attribute: :apply_timeout,
                      message: 'must be interpretable as an integer'
+      end
+
+      def coerce_color(value:)
+        config[:color] = Boolean value
+      rescue ArgumentError, TypeError
+        config_error attribute: :color,
+                     message: 'must be interpretable as a boolean'
       end
 
       def coerce_variable_files(value:)

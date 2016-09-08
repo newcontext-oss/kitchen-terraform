@@ -14,25 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_switches'
+require 'terraform/command_switches'
 
-module Terraform
-  # Command to apply an execution plan
-  class ApplyCommand < CommandSwitches
-    def name
-      'apply'
-    end
+RSpec.shared_context '#color' do
+  let(:color) { instance_double Object }
 
-    def options
-      "-input=false -state=#{state}#{color_switch}"
-    end
-
-    private
-
-    attr_accessor :state
-
-    def initialize_attributes(state:)
-      self.state = state
-    end
+  before do
+    allow(described_instance).to receive(:color).with(no_args)
+      .and_return color
   end
 end

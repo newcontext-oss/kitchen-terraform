@@ -152,7 +152,7 @@ provisioner:
 
 ###### Default
 
-The default value for `color` is true
+The default value for `color` is true.
 
 ##### directory
 
