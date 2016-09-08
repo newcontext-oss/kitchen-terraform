@@ -55,6 +55,9 @@ And add in the kitchen-terraform gem like so
 
 Gemfile
 ```
+source 'https://rubygems.org/'
+ruby '2.3.1'
+
 gem 'test-kitchen'
 gem 'kitchen-terraform'
 ```
@@ -74,8 +77,6 @@ Go ahead and open your .kitchen.yml file:
 ```
   $ vim .kitchen.yml
 ```
-
-You'll see content in it that looks like this:
 
 Let's go ahead and add in configuration for for both test kitchen and
 kitchen terraform. First the driver - the driver we are using is called
@@ -370,6 +371,8 @@ Go ahead and run
 ```
   $ bundle exec kitchen converge
 ```
+
+NOTE: If you receive the error "Error launching source instance: VPCResourceNotSpecified: The specified instance type can only be used in a VPC", check out [this documentation for help correcting it](http://docs.rightscale.com/faq/EC2_t2.x_Instance_Type_Requirement.html)
 
 And it should converge successfully and you should see output that
 includes
