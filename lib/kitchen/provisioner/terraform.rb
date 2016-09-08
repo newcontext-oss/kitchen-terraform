@@ -96,7 +96,8 @@ module Kitchen
       end
 
       def coerce_color(value:)
-        config[:color] = Boolean value
+        raise TypeError unless [TrueClass, FalseClass].include?(value.class)
+        config[:color] = value
       rescue ArgumentError, TypeError
         config_error attribute: :color,
                      message: 'must be interpretable as a boolean'

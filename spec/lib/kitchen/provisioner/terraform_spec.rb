@@ -144,6 +144,30 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     end
   end
 
+  describe '#coerce_color(value:)' do
+    let(:call_method) { described_instance.coerce_color value: value }
+
+    context 'when the value can be coerced to be a boolean' do
+      let(:value) { true }
+
+      before { call_method }
+
+      subject { described_instance[:color] }
+
+      it('updates the config assignment') { is_expected.to eq value }
+    end
+
+    context 'when the value can not be coerced to be a boolean' do
+      let(:value) { 'a' }
+
+      subject { proc { call_method } }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError, /a boolean/
+      end
+    end
+  end
+
   describe '#coerce_variable_files(value:)' do
     let(:value) { instance_double Object }
 
