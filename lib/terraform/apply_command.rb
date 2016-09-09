@@ -32,9 +32,10 @@ module Terraform
 
     private
 
-    attr_accessor :state
+    attr_accessor :color, :state
 
-    def initialize_attributes(state:)
+    def initialize_attributes(color:, state:)
+      self.color = color
       self.state = state
     end
   end

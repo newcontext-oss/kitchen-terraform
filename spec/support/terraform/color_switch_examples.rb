@@ -24,3 +24,25 @@ RSpec.shared_context '#color' do
       .and_return color
   end
 end
+
+RSpec.shared_examples Terraform::ColorSwitch do
+  include_context '#color'
+
+  describe '#color_switch(true)' do
+    subject { described_instance.color_switch }
+
+    it 'returns nothing' do
+      is_expected.to eq ''
+    end
+  end
+
+  describe '#color_switch(false)' do
+    let(:color) { false }
+
+    subject { described_instance.color_switch }
+
+    it 'returns -no-color' do
+      is_expected.to eq ' -no-color'
+    end
+  end
+end

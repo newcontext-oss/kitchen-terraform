@@ -17,8 +17,6 @@
 module Terraform
   # Shared color switche for Terraform
   module ColorSwitch
-    attr_accessor :color
-
     def color_switch
       color ? '' : ' -no-color'
     end

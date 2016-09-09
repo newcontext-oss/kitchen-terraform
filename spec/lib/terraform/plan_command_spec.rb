@@ -20,9 +20,11 @@ require 'support/terraform/color_switch_examples'
 RSpec.describe Terraform::PlanCommand do
   include_context '#color'
 
+  it_behaves_like Terraform::ColorSwitch
+
   let :described_instance do
-    described_class.new destroy: destroy, logger: logger, out: out,
-                        state: state, variables: variables,
+    described_class.new color: color, destroy: destroy, logger: logger,
+                        out: out, state: state, variables: variables,
                         variable_files: [variable_file]
   end
 

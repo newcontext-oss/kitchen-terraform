@@ -34,11 +34,12 @@ module Terraform
 
     private
 
-    attr_accessor :destroy, :out, :state, :variables, :variable_files
+    attr_accessor :color, :destroy, :out, :state, :variables, :variable_files
 
     def initialize_attributes(
-      destroy:, out:, state:, variables:, variable_files:
+      color:, destroy:, out:, state:, variables:, variable_files:
     )
+      self.color = color
       self.destroy = destroy
       self.out = out
       self.state = state

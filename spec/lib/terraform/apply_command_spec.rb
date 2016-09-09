@@ -20,8 +20,10 @@ require 'support/terraform/color_switch_examples'
 RSpec.describe Terraform::ApplyCommand do
   include_context '#color'
 
+  it_behaves_like Terraform::ColorSwitch
+
   let(:described_instance) do
-    described_class.new logger: logger, state: state
+    described_class.new color: color, logger: logger, state: state
   end
 
   let(:logger) { instance_double Object }
