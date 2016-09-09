@@ -163,14 +163,6 @@ module Kitchen
                                              target: config[:directory]
       end
 
-      def validate_version
-        ::Terraform::VersionCommand.execute logger: logger do |output|
-          raise UserError,
-                "Terraform version must match #{SUPPORTED_VERSION}" unless
-                  SUPPORTED_VERSION.match output
-        end
-      end
-
       private
 
       def deprecated_variables_format(value:)
