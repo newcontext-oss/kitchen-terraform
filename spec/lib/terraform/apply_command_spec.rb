@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require 'terraform/apply_command'
-require 'support/terraform/command_switches_examples'
+require 'support/terraform/color_switch_examples'
 
 RSpec.describe Terraform::ApplyCommand do
   include_context '#color'

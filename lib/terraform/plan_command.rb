@@ -14,11 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_switches'
+require_relative 'command'
+require_relative 'color_switch'
 
 module Terraform
   # Command to plan an execution
-  class PlanCommand < CommandSwitches
+  class PlanCommand < Command
+    include ColorSwitch
+
     def name
       'plan'
     end

@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command_switches'
+require 'terraform/color_switch'
 
 RSpec.shared_context '#color' do
   let(:color) { instance_double Object }

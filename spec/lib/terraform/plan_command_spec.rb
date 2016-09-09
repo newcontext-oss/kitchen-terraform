@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require 'terraform/plan_command'
-require 'support/terraform/command_switches_examples'
+require 'support/terraform/color_switch_examples'
 
 RSpec.describe Terraform::PlanCommand do
   include_context '#color'

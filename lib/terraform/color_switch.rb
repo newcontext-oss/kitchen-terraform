@@ -14,22 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-
 module Terraform
-  # Shared command line switches for Terraform
-  class CommandSwitches < Command
-    def color_switch
-      color ? '' : ' -no-color'
-    end
-
-    private
-
+  # Shared color switche for Terraform
+  module ColorSwitch
     attr_accessor :color
 
-    def initialize_attributes(color:)
-      super
-      self.color = color
+    def color_switch
+      color ? '' : ' -no-color'
     end
   end
 end
