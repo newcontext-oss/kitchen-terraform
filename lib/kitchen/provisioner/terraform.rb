@@ -29,8 +29,6 @@ module Kitchen
   module Provisioner
     # Terraform configuration applier
     class Terraform < Base
-      SUPPORTED_VERSION = /v0.6/
-
       include ::Terraform::Configurable
 
       kitchen_provisioner_api_version 2
@@ -130,6 +128,10 @@ module Kitchen
 
       def each_list_output(name:, &block)
         output(name: name).split(',').each(&block)
+      end
+
+      def installed_version
+        ::Terraform::VersionCommand.execute logger: logger, &:chomp
       end
 
       def instance_pathname(filename:)
