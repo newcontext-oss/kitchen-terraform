@@ -8,9 +8,28 @@ major version 0.y.z will maintain a stable public interface.
 
 ## [0.2.0] - 2016-09-??
 
+### Added
+
+* Live log stream of output from Terraform commands
+
+* Coercion and validation of configuration values
+
+* Configuration option for timeout of Terraform apply command
+
+* Configuration option for colored output of Terroform plan and apply
+  commands (thanks [@nictrix])
+
+* Getting started guide (thanks [@nellshamrell])
+
 ### Changed
 
-* CHANGELOG format is based on [Keep a Changelog]
+* CHANGELOG format is based on [Keep a CHANGELOG] \(thanks [@amaltson]\)
+
+* Gem specification email address (thanks [@mrheath])
+
+* Example project automatically waits for remote SSH to be available
+
+* Improve error handling and messages (thanks [@cullenmcdermott])
 
 ## [0.1.2] - 2016-08-04
 
@@ -77,7 +96,10 @@ major version 0.y.z will maintain a stable public interface.
 [0.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.0...v0.1.1
 [0.1.2]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.1...v0.1.2
 [0.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.2...v0.2.0
+[@amaltson]: https://github.com/amaltson
+[@cullenmcdermott]: https://github.com/cullenmcdermott
 [@fivetwentysix]: https://github.com/fivetwentysix
+[@mrheath]: https://github.com/mrheath
 [@nellshamrell]: https://github.com/nellshamrell
 [@nictrix]: https://github.com/nictrix
 [Keep a CHANGELOG]: http://keepachangelog.com/
