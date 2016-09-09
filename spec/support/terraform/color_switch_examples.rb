@@ -28,21 +28,21 @@ end
 RSpec.shared_examples Terraform::ColorSwitch do
   include_context '#color'
 
-  describe '#color_switch(true)' do
+  describe '#color_switch' do
     subject { described_instance.color_switch }
 
-    it 'returns nothing' do
-      is_expected.to eq ''
+    context 'when color is true' do
+      it 'returns nothing' do
+        is_expected.to eq ''
+      end
     end
-  end
 
-  describe '#color_switch(false)' do
-    let(:color) { false }
+    context 'when color is false' do
+      let(:color) { false }
 
-    subject { described_instance.color_switch }
-
-    it 'returns -no-color' do
-      is_expected.to eq ' -no-color'
+      it 'returns -no-color' do
+        is_expected.to eq ' -no-color'
+      end
     end
   end
 end
