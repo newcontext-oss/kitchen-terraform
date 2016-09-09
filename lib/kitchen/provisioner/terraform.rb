@@ -29,8 +29,6 @@ module Kitchen
   module Provisioner
     # Terraform configuration applier
     class Terraform < Base
-      SUPPORTED_VERSION = /v0.6/
-
       include ::Terraform::Configurable
 
       kitchen_provisioner_api_version 2
@@ -119,6 +117,10 @@ module Kitchen
         output(name: name).split(',').each(&block)
       end
 
+      def installed_version
+        ::Terraform::VersionCommand.execute logger: logger, &:chomp
+      end
+
       def instance_pathname(filename:)
         File.join config[:kitchen_root], '.kitchen', 'kitchen-terraform',
                   instance.name, filename
@@ -148,14 +150,6 @@ module Kitchen
       def validate_configuration_files
         ::Terraform::ValidateCommand.execute logger: logger,
                                              target: config[:directory]
-      end
-
-      def validate_version
-        ::Terraform::VersionCommand.execute logger: logger do |output|
-          raise UserError,
-                "Terraform version must match #{SUPPORTED_VERSION}" unless
-                  SUPPORTED_VERSION.match output
-        end
       end
     end
   end

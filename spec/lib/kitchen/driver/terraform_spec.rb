@@ -34,12 +34,32 @@ RSpec.describe Kitchen::Driver::Terraform do
   end
 
   describe '#create(_state = nil)' do
-    subject { provisioner }
+    let :allow_installed_version do
+      allow(provisioner).to receive(:installed_version).with no_args
+    end
 
-    after { described_instance.create }
+    subject { proc { described_instance.create } }
 
-    it 'validates the installed version of Terraform' do
-      is_expected.to receive(:validate_version).with no_args
+    context 'when the installed version of Terraform is 0.6.z' do
+      before { allow_installed_version.and_return 'v0.6.z' }
+
+      it('does not raise an error') { is_expected.to_not raise_error }
+    end
+
+    context 'when the installed version of Terraform is 0.7.z' do
+      before { allow_installed_version.and_return 'v0.7.z' }
+
+      it('does not raise an error') { is_expected.to_not raise_error }
+    end
+
+    context 'when the installed version of Terraform is not supported' do
+      before { allow_installed_version.and_return 'v0.8.z' }
+
+      it 'does raise a user error' do
+        is_expected.to raise_error Kitchen::UserError,
+                                   'Only Terraform versions 0.6.z and 0.7.z ' \
+                                     'are supported'
+      end
     end
   end
 
