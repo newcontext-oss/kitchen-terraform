@@ -314,6 +314,23 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     end
   end
 
+  describe '#installed_version' do
+    let(:output) { "v0.7.x\n" }
+
+    let :version_command_class do
+      class_double(Terraform::VersionCommand).as_stubbed_const
+    end
+
+    before do
+      allow(version_command_class).to receive(:execute).with(logger: logger)
+        .and_yield output
+    end
+
+    subject { described_instance.installed_version }
+
+    it('returns the installed Terraform version') { is_expected.to eq 'v0.7.x' }
+  end
+
   describe '#instance_pathname(filename:)' do
     let(:filename) { 'foo' }
 
@@ -385,35 +402,6 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
     it 'validates the configuration files' do
       is_expected.to receive(:execute).with logger: logger, target: directory
-    end
-  end
-
-  describe '#validate_version' do
-    include_context 'command'
-
-    let :validate_command_class do
-      class_double(Terraform::VersionCommand).as_stubbed_const
-    end
-
-    before do
-      allow(validate_command_class).to receive(:execute).with(logger: logger)
-        .and_yield output
-    end
-
-    subject { proc { described_instance.validate_version } }
-
-    context 'when the installed version of Terraform is supported' do
-      let(:output) { 'v0.6' }
-
-      it('raises no error') { is_expected.to_not raise_error }
-    end
-
-    context 'when the installed version of Terraform is not supported' do
-      let(:output) { 'v0.7' }
-
-      it 'raises a user error' do
-        is_expected.to raise_error Kitchen::UserError, /version must match/
-      end
     end
   end
 end
