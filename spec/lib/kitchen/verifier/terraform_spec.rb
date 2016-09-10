@@ -87,11 +87,13 @@ RSpec.describe Kitchen::Verifier::Terraform do
     context 'when the value can not be coerced to be a group' do
       before { allow_new_group.and_raise Kitchen::UserError, '' }
 
-      subject { proc { call_method } }
+      after { call_method }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Kitchen::UserError,
-                                   /collection of group mappings/
+      subject { described_instance }
+
+      it 'an error is reported' do
+        is_expected.to receive(:config_error)
+          .with attribute: 'groups', expected: 'a collection of group mappings'
       end
     end
   end

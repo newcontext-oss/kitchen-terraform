@@ -48,8 +48,7 @@ module Kitchen
         end
       rescue UserError
         config_error attribute: 'groups',
-                     message: 'must be interpretable as a collection of ' \
-                                'group mappings'
+                     expected: 'a collection of group mappings'
       end
 
       def evaluate(exit_code:)

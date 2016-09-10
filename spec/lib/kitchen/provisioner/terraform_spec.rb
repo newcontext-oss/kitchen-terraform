@@ -124,10 +124,13 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     context 'when the value can not be coerced to be an integer' do
       let(:value) { 'a' }
 
-      subject { proc { call_method } }
+      after { call_method }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Kitchen::UserError, /an integer/
+      subject { described_instance }
+
+      it 'an error is reported' do
+        is_expected.to receive(:config_error).with attribute: 'apply_timeout',
+                                                   expected: 'an integer'
       end
     end
   end
@@ -143,11 +146,11 @@ RSpec.describe Kitchen::Provisioner::Terraform do
   end
 
   describe '#coerce_variables(value:)' do
+    let(:attribute) { 'variables' }
+
     let(:call_method) { described_instance.coerce_variables value: value }
 
-    context 'when the value can be coerced to be a mapping' do
-      let(:value) { 'foo=bar' }
-
+    shared_examples 'the value can be coerced to be a mapping' do
       before { call_method }
 
       subject { described_instance[:variables] }
@@ -155,14 +158,23 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       it('updates the config assignment') { is_expected.to eq 'foo' => 'bar' }
     end
 
+    context 'when the value is in a supported format' do
+      let(:value) { { 'foo' => 'bar' } }
+
+      it_behaves_like 'the value can be coerced to be a mapping'
+    end
+
     context 'when the value can not be coerced to be a mapping' do
       let(:value) { 1 }
 
-      subject { proc { call_method } }
+      after { call_method }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Kitchen::UserError,
-                                   /mapping of Terraform variable assignments/
+      subject { described_instance }
+
+      it 'an error is reported' do
+        is_expected.to receive(:config_error)
+          .with attribute: attribute,
+                expected: 'a mapping of Terraform variable assignments'
       end
     end
   end

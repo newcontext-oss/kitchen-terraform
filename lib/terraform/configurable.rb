@@ -24,9 +24,16 @@ module Terraform
 
     def_delegators :instance, :provisioner, :transport
 
-    def config_error(attribute:, message:)
-      raise Kitchen::UserError,
-            "#{self.class}#{instance.to_str}#config[:#{attribute}] #{message}"
+    def config_error(attribute:, expected:)
+      raise Kitchen::UserError, formatted(
+        attribute: attribute, message: "must be interpretable as #{expected}"
+      )
+    end
+
+    private
+
+    def formatted(attribute:, message:)
+      "#{self.class}#{instance.to_str}#config[:#{attribute}] #{message}"
     end
   end
 end

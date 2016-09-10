@@ -73,31 +73,41 @@ RSpec.describe Terraform::Group do
     context 'when the value can not be coerced to be a mapping' do
       let(:value) { 'a' }
 
-      subject { proc { described_instance } }
+      after { described_instance }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Kitchen::UserError, /a group mapping/
+      subject { verifier }
+
+      it 'an error is reported' do
+        is_expected.to receive(:config_error)
+          .with attribute: /groups\]\[.*/, expected: 'a group mapping'
       end
     end
 
     context 'when the attributes can not be coerced to be a mapping' do
       before { value[:attributes] = 'a' }
 
-      subject { proc { described_instance } }
+      after { described_instance }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Kitchen::UserError,
-                                   /Inspec attribute names to Terraform output/
+      subject { verifier }
+
+      it 'an error is reported' do
+        is_expected.to receive(:config_error)
+          .with attribute: /groups\]\[{.*}\]\[:attributes/,
+                expected: 'a mapping of Inspec attribute names to Terraform ' \
+                            'output variable names'
       end
     end
 
     context 'when the port can not be coerced to be an integer' do
       before { value[:port] = 'a' }
 
-      subject { proc { described_instance } }
+      after { described_instance }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Kitchen::UserError, /an integer/
+      subject { verifier }
+
+      it 'an error is reported' do
+        is_expected.to receive(:config_error)
+          .with attribute: /groups\]\[.*\]\[:port/, expected: 'an integer'
       end
     end
   end

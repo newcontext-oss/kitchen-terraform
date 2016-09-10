@@ -80,25 +80,28 @@ RSpec.shared_context 'config' do
 end
 
 RSpec.shared_examples Terraform::Configurable do
-  describe '#config_error(attribute:, message:)' do
-    include_context '#instance'
+  include_context '#instance'
 
-    let(:attribute) { :foo }
+  let(:attribute) { :foo }
 
-    let(:message) { 'bar' }
+  let(:expected) { 'bar' }
+
 
     before do
-      allow(instance).to receive(:to_str).with(no_args).and_return instance.to_s
     end
 
+  describe '#config_error(attribute:, expected:)' do
     subject do
       proc do
-        described_instance.config_error attribute: attribute, message: message
+        described_instance.config_error attribute: attribute, expected: expected
       end
     end
 
     it 'raises a user error regarding the config attribute' do
-      is_expected.to raise_error Kitchen::UserError, /#{attribute}.*#{message}/
+      is_expected.to raise_error Kitchen::UserError,
+                                 "#{described_class}#{instance_name}" \
+                                   "#config[:#{attribute}] must be " \
+                                   "interpretable as #{expected}"
     end
   end
 

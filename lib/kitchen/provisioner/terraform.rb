@@ -89,8 +89,7 @@ module Kitchen
       def coerce_apply_timeout(value:)
         config[:apply_timeout] = Integer value
       rescue ArgumentError, TypeError
-        config_error attribute: 'apply_timeout',
-                     message: 'must be interpretable as an integer'
+        config_error attribute: 'apply_timeout', expected: 'an integer'
       end
 
       def coerce_variable_files(value:)
@@ -106,8 +105,7 @@ module Kitchen
           end
       rescue ArgumentError, TypeError
         config_error attribute: 'variables',
-                     message: 'must be interpretable as a mapping of ' \
-                                'Terraform variable assignments'
+                     expected: 'a mapping of Terraform variable assignments'
       end
 
       def download_modules
