@@ -16,8 +16,10 @@ major version 0.y.z will maintain a stable public interface.
 
 * Configuration option for timeout of Terraform apply command
 
-* Configuration option for colored output of Terroform plan and apply
+* Configuration option for colored output of Terraform plan and apply
   commands (thanks [@nictrix])
+
+* Configuration of variable assignments using a map
 
 * Getting started guide (thanks [@nellshamrell])
 
@@ -30,6 +32,8 @@ major version 0.y.z will maintain a stable public interface.
 * Example project automatically waits for remote SSH to be available
 
 * Improve error handling and messages (thanks [@cullenmcdermott])
+
+* Deprecate configuration of variable assignments using a list or string
 
 ## [0.1.2] - 2016-08-04
 
