@@ -24,6 +24,12 @@ module Terraform
 
     def_delegators :instance, :provisioner, :transport
 
+    def config_deprecated(attribute:, expected:)
+      logger.warn 'DEPRECATION NOTICE'
+      logger.warn formatted attribute: attribute,
+                            message: "should be #{expected}"
+    end
+
     def config_error(attribute:, expected:)
       raise Kitchen::UserError, formatted(
         attribute: attribute, message: "must be interpretable as #{expected}"

@@ -158,6 +158,28 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       it('updates the config assignment') { is_expected.to eq 'foo' => 'bar' }
     end
 
+    context 'when the value is in a deprecated format' do
+      let :receive_deprecated do
+        receive(:config_deprecated).with attribute: attribute,
+                                         expected: 'a mapping rather than a ' \
+                                                     'list or string'
+      end
+
+      let(:value) { 'foo=bar' }
+
+      before { allow(described_instance).to receive_deprecated }
+
+      it_behaves_like 'the value can be coerced to be a mapping'
+
+      describe 'a deprecation' do
+        after { call_method }
+
+        subject { described_instance }
+
+        it('is reported') { is_expected.to receive_deprecated }
+      end
+    end
+
     context 'when the value is in a supported format' do
       let(:value) { { 'foo' => 'bar' } }
 

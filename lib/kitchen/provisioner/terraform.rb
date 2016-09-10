@@ -97,12 +97,13 @@ module Kitchen
       end
 
       def coerce_variables(value:)
-        config[:variables] =
-          if value.is_a?(Array) || value.is_a?(String)
-            Hash[Array(value).map { |string| string.split '=' }]
-          else
-            Hash value
-          end
+        config[:variables] = if value.is_a?(Array) || value.is_a?(String)
+          config_deprecated attribute: 'variables',
+                            expected: 'a mapping rather than a list or string'
+          Hash[Array(value).map { |string| string.split '=' }]
+        else
+          Hash value
+        end
       rescue ArgumentError, TypeError
         config_error attribute: 'variables',
                      expected: 'a mapping of Terraform variable assignments'

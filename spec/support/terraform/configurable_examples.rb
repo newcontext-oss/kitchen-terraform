@@ -43,7 +43,7 @@ RSpec.shared_context '#instance' do
 end
 
 RSpec.shared_context '#logger' do
-  let(:logger) { instance_double Object }
+  let(:logger) { instance_double Kitchen::Logger }
 
   before do
     allow(described_instance).to receive(:logger).with(no_args)
@@ -86,9 +86,34 @@ RSpec.shared_examples Terraform::Configurable do
 
   let(:expected) { 'bar' }
 
+  describe '#config_deprecated(attribute:, expected:)' do
+    include_context '#logger'
+
+    let :receive_correction do
+      receive(:warn).with "#{described_class}#{instance_name}" \
+                            "#config[:#{attribute}] should be #{expected}"
+    end
+
+
+    let(:receive_notice) { receive(:warn).with 'DEPRECATION NOTICE' }
 
     before do
+      allow(logger).to receive_notice
+
+      allow(logger).to receive_correction
     end
+
+    after do
+      described_instance.config_deprecated attribute: attribute,
+                                           expected: expected
+    end
+
+    subject { logger }
+
+    it('reports a deprecation') { is_expected.to receive_notice }
+
+    it('suggests a correction') { is_expected.to receive_correction }
+  end
 
   describe '#config_error(attribute:, expected:)' do
     subject do
