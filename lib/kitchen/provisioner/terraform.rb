@@ -97,13 +97,12 @@ module Kitchen
       end
 
       def coerce_variables(value:)
-        config[:variables] = if value.is_a?(Array) || value.is_a?(String)
-          config_deprecated attribute: 'variables',
-                            expected: 'a mapping rather than a list or string'
-          Hash[Array(value).map { |string| string.split '=' }]
-        else
-          Hash value
-        end
+        config[:variables] =
+          if value.is_a?(Array) || value.is_a?(String)
+            deprecated_variables_format value: value
+          else
+            Hash value
+          end
       rescue ArgumentError, TypeError
         config_error attribute: 'variables',
                      expected: 'a mapping of Terraform variable assignments'
@@ -155,6 +154,14 @@ module Kitchen
                 "Terraform version must match #{SUPPORTED_VERSION}" unless
                   SUPPORTED_VERSION.match output
         end
+      end
+
+      private
+
+      def deprecated_variables_format(value:)
+        config_deprecated attribute: 'variables',
+                          expected: 'a mapping rather than a list or string'
+        Hash[Array(value).map { |string| string.split '=' }]
       end
     end
   end
