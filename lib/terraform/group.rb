@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'delegate'
-require_relative 'inspec_runner'
 
 module Terraform
   # Group to be verified
@@ -28,6 +27,7 @@ module Terraform
     end
 
     def verify_each_host(options:)
+      require 'terraform/inspec_runner'
       provisioner.each_list_output name: dig(:hostnames) do |hostname|
         store :host, hostname
         verifier.info "Verifying group: #{dig :name}; current host #{hostname}"

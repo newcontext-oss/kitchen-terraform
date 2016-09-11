@@ -18,6 +18,7 @@ require 'kitchen/provisioner/terraform'
 require 'kitchen/verifier/terraform'
 require 'support/terraform/configurable_examples'
 require 'terraform/group'
+require 'terraform/inspec_runner'
 
 RSpec.describe Terraform::Group do
   let :described_instance do
