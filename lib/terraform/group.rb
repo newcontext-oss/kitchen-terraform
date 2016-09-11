@@ -44,8 +44,8 @@ module Terraform
       store :attributes, Hash(dig(:attributes))
     rescue ArgumentError, TypeError
       verifier.config_error attribute: "groups][#{self}][:attributes",
-                            expected: 'a mapping of Inspec attribute names to ' \
-                                       'Terraform output variable names'
+                            expected: 'a mapping of Inspec attribute names ' \
+                                        'to Terraform output variable names'
     end
 
     def coerce_controls
