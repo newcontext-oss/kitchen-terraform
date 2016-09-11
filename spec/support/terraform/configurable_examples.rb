@@ -94,7 +94,6 @@ RSpec.shared_examples Terraform::Configurable do
                             "#config[:#{attribute}] should be #{expected}"
     end
 
-
     let(:receive_notice) { receive(:warn).with 'DEPRECATION NOTICE' }
 
     before do
