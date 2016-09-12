@@ -16,8 +16,9 @@ verifier:
       attributes:
         other_host_address: different_host_address
       controls:
-        - running_service
+        - ami_id
         - reachable_other_host
+        - running_service
       hostnames: contrived_hostnames
       port: 22
       username: ubuntu

@@ -56,7 +56,7 @@ The verifier is configured with a single group named `contrived`.
 
 The `contrived` group uses the value of the `different_host_address` output
 to define an Inspec control attribute named `other_host_address` and
-includes both of the suite's [profile's controls]. The group uses the
+includes all of the suite's [profile's controls]. The group uses the
 value of the `contrived_hostnames` output to obtain the targets to
 execute the controls on and provides a static port and username based on
 the AMI used in the example module.
