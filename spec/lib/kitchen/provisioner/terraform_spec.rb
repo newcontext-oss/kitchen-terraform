@@ -30,6 +30,8 @@ RSpec.describe Kitchen::Provisioner::Terraform do
   shared_context 'command' do
     let(:apply_timeout) { instance_double Object }
 
+    let(:color) { instance_double Object }
+
     let(:directory) { instance_double Object }
 
     let(:plan) { instance_double Object }
@@ -41,9 +43,9 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     let(:variables) { instance_double Object }
 
     before do
-      config.merge! apply_timeout: apply_timeout, directory: directory,
-                    plan: plan, state: state, variable_files: variable_files,
-                    variables: variables
+      config.merge! apply_timeout: apply_timeout, color: color,
+                    directory: directory, plan: plan, state: state,
+                    variable_files: variable_files, variables: variables
     end
   end
 
@@ -61,8 +63,9 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     end
 
     it 'executes the apply command with the existing plan' do
-      is_expected.to receive(:execute).with logger: logger, state: state,
-                                            target: plan, timeout: apply_timeout
+      is_expected.to receive(:execute).with color: color, logger: logger,
+                                            state: state, target: plan,
+                                            timeout: apply_timeout
     end
   end
 
@@ -131,6 +134,30 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       it 'an error is reported' do
         is_expected.to receive(:config_error).with attribute: 'apply_timeout',
                                                    expected: 'an integer'
+      end
+    end
+  end
+
+  describe '#coerce_color(value:)' do
+    let(:call_method) { described_instance.coerce_color value: value }
+
+    context 'when the value can be coerced to be a boolean' do
+      let(:value) { true }
+
+      before { call_method }
+
+      subject { described_instance[:color] }
+
+      it('updates the config assignment') { is_expected.to eq value }
+    end
+
+    context 'when the value can not be coerced to be a boolean' do
+      let(:value) { 'a' }
+
+      subject { proc { call_method } }
+
+      it 'raises a user error' do
+        is_expected.to raise_error Terraform::UserError, /a boolean/
       end
     end
   end
@@ -243,6 +270,12 @@ RSpec.describe Kitchen::Provisioner::Terraform do
       it('defaults to 600 seconds') { is_expected.to eq 600 }
     end
 
+    describe '[:color]' do
+      subject { described_instance[:color] }
+
+      it('defaults to true') { is_expected.to eq true }
+    end
+
     describe '[:directory]' do
       subject { described_instance[:directory] }
 
@@ -319,8 +352,8 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
     it 'plans a destructive execution' do
       is_expected.to receive(:execute)
-        .with destroy: true, logger: logger, out: plan, state: state,
-              target: directory, variables: variables,
+        .with color: color, destroy: true, logger: logger, out: plan,
+              state: state, target: directory, variables: variables,
               variable_files: variable_files
     end
   end
@@ -334,8 +367,8 @@ RSpec.describe Kitchen::Provisioner::Terraform do
 
     it 'plans a constructive execution' do
       is_expected.to receive(:execute)
-        .with destroy: false, logger: logger, out: plan, state: state,
-              target: directory, variables: variables,
+        .with color: color, destroy: false, logger: logger, out: plan,
+              state: state, target: directory, variables: variables,
               variable_files: variable_files
     end
   end

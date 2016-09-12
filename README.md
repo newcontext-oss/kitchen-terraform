@@ -137,6 +137,23 @@ provisioner:
 
 The default `apply_timeout` is 600 seconds.
 
+##### color
+
+Enable or disable colored output from the Terraform command.
+
+###### Example .kitchen.yml
+
+```yaml
+---
+provisioner:
+  name: terraform
+  color: false
+```
+
+###### Default
+
+The default value for `color` is true.
+
 ##### directory
 
 The pathname of the directory containing the Terraform configuration

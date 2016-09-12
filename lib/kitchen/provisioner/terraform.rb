@@ -43,6 +43,12 @@ module Kitchen
 
       default_config :apply_timeout, 600
 
+      default_config :color, true
+
+      required_config :color do |_, value, provisioner|
+        provisioner.coerce_color value: value
+      end
+
       default_config(:directory) { |provisioner| provisioner[:kitchen_root] }
 
       expand_path_for :directory
@@ -74,9 +80,9 @@ module Kitchen
       default_config :variables, {}
 
       def apply_execution_plan
-        ::Terraform::ApplyCommand.execute logger: logger, state: config[:state],
-                                          target: config[:plan],
-                                          timeout: config[:apply_timeout]
+        ::Terraform::ApplyCommand.execute \
+          logger: logger, state: config[:state], target: config[:plan],
+          color: config[:color], timeout: config[:apply_timeout]
       end
 
       def call(_state = nil)
@@ -90,6 +96,14 @@ module Kitchen
         config[:apply_timeout] = Integer value
       rescue ArgumentError, TypeError
         config_error attribute: 'apply_timeout', expected: 'an integer'
+      end
+
+      def coerce_color(value:)
+        raise TypeError unless [TrueClass, FalseClass].include?(value.class)
+        config[:color] = value
+      rescue ArgumentError, TypeError
+        config_error attribute: :color,
+                     message: 'must be interpretable as a boolean'
       end
 
       def coerce_variable_files(value:)
@@ -131,7 +145,7 @@ module Kitchen
         ::Terraform::PlanCommand
           .execute destroy: false, logger: logger, out: config[:plan],
                    state: config[:state], target: config[:directory],
-                   variables: config[:variables],
+                   variables: config[:variables], color: config[:color],
                    variable_files: config[:variable_files]
       end
 
@@ -139,7 +153,7 @@ module Kitchen
         ::Terraform::PlanCommand
           .execute destroy: true, logger: logger, out: config[:plan],
                    state: config[:state], target: config[:directory],
-                   variables: config[:variables],
+                   variables: config[:variables], color: config[:color],
                    variable_files: config[:variable_files]
       end
 

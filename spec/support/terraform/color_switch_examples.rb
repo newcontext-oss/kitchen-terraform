@@ -14,29 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-require_relative 'color_switch'
+require 'terraform/color_switch'
 
-module Terraform
-  # Command to apply an execution plan
-  class ApplyCommand < Command
-    include ColorSwitch
+RSpec.shared_context '#color' do
+  let(:color) { instance_double Object }
 
-    def name
-      'apply'
+  before do
+    allow(described_instance).to receive(:color).with(no_args)
+      .and_return color
+  end
+end
+
+RSpec.shared_examples Terraform::ColorSwitch do
+  include_context '#color'
+
+  describe '#color_switch' do
+    subject { described_instance.color_switch }
+
+    context 'when color is true' do
+      it 'returns nothing' do
+        is_expected.to eq ''
+      end
     end
 
-    def options
-      "-input=false -state=#{state}#{color_switch}"
-    end
+    context 'when color is false' do
+      let(:color) { false }
 
-    private
-
-    attr_accessor :color, :state
-
-    def initialize_attributes(color:, state:)
-      self.color = color
-      self.state = state
+      it 'returns -no-color' do
+        is_expected.to eq ' -no-color'
+      end
     end
   end
 end

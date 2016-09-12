@@ -14,29 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-require_relative 'color_switch'
-
 module Terraform
-  # Command to apply an execution plan
-  class ApplyCommand < Command
-    include ColorSwitch
-
-    def name
-      'apply'
-    end
-
-    def options
-      "-input=false -state=#{state}#{color_switch}"
-    end
-
-    private
-
-    attr_accessor :color, :state
-
-    def initialize_attributes(color:, state:)
-      self.color = color
-      self.state = state
+  # Shared color switche for Terraform
+  module ColorSwitch
+    def color_switch
+      color ? '' : ' -no-color'
     end
   end
 end

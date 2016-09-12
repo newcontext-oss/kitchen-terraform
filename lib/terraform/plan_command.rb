@@ -15,26 +15,31 @@
 # limitations under the License.
 
 require_relative 'command'
+require_relative 'color_switch'
 
 module Terraform
   # Command to plan an execution
   class PlanCommand < Command
+    include ColorSwitch
+
     def name
       'plan'
     end
 
     def options
       "-destroy=#{destroy} -input=false -out=#{out} -state=#{state}" \
+        "#{color_switch}" \
         "#{processed_variables}#{processed_variable_files}"
     end
 
     private
 
-    attr_accessor :destroy, :out, :state, :variables, :variable_files
+    attr_accessor :color, :destroy, :out, :state, :variables, :variable_files
 
     def initialize_attributes(
-      destroy:, out:, state:, variables:, variable_files:
+      color:, destroy:, out:, state:, variables:, variable_files:
     )
+      self.color = color
       self.destroy = destroy
       self.out = out
       self.state = state
