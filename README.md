@@ -203,13 +203,9 @@ The default `variable_files` collection is empty.
 
 ##### variables
 
-A collection of [Terraform variables] to be set in the configuration;
-the syntax matches that of [assigning variables] with command-line
-flags.
+A mapping of [Terraform variables] to be set in the configuration.
 
 [Terraform variables]: https://www.terraform.io/docs/configuration/variables.html
-
-[assigning variables]: https://www.terraform.io/intro/getting-started/variables.html#assigning-variables
 
 ###### Example .kitchen.yml
 
@@ -218,9 +214,16 @@ flags.
 provisioner:
   name: terraform
   variables:
+    foo: bar
+# deprecated
+---
+provisioner:
+  name: terraform
+  variables:
     - foo=bar
     - biz=baz
 ---
+# deprecated
 provisioner:
   name: terraform
   variables: foo=bar
