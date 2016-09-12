@@ -154,10 +154,13 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     context 'when the value can not be coerced to be a boolean' do
       let(:value) { 'a' }
 
-      subject { proc { call_method } }
+      after { call_method }
 
-      it 'raises a user error' do
-        is_expected.to raise_error Terraform::UserError, /a boolean/
+      subject { described_instance }
+
+      it 'an error is reported' do
+        is_expected.to receive(:config_error).with attribute: 'color',
+                                                   expected: 'a boolean'
       end
     end
   end
