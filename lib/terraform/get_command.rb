@@ -18,15 +18,13 @@ require_relative 'command'
 
 module Terraform
   # Command to get modules
-  class GetCommand
-    include Command
+  class GetCommand < Command
+    def name
+      'get'
+    end
 
-    private
-
-    def initialize_attributes(dir:)
-      self.name = 'get'
-      self.options = { update: true }
-      self.target = dir
+    def options
+      '-update=true'
     end
   end
 end

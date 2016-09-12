@@ -14,10 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'error'
-
 module Terraform
-  # Error of an output not found
-  class OutputNotFound < Error
+  # Shared color switche for Terraform
+  module ColorSwitch
+    def color_switch
+      color ? '' : ' -no-color'
+    end
   end
 end

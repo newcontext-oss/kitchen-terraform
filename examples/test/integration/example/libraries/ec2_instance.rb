@@ -14,21 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command_options'
+# Resource representing an EC2 instance
+class EC2Instance < Inspec.resource 1
+  name 'ec2_instance'
 
-RSpec.describe Terraform::CommandOptions do
-  describe '#to_s' do
-    let :described_instance do
-      described_class.new single_argument: 'argument',
-                          multiple_arguments: %w(argument argument)
-    end
-
-    subject { described_instance.to_s }
-
-    it 'transform the options in to flags' do
-      is_expected.to eq '-single-argument=argument ' \
-                          '-multiple-arguments=argument ' \
-                          '-multiple-arguments=argument'
-    end
+  def ami_id
+    inspec.command('curl http://169.254.169.254/latest/meta-data/ami-id').stdout
   end
 end

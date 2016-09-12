@@ -17,7 +17,7 @@ Gem::Specification.new do |specification|
 
   specification.version = Terraform::VERSION
 
-  specification.email = 'aaron.lane@newcontext.com'
+  specification.email = 'kitchen-terraform@newcontext.com'
 
   specification.homepage = 'https://github.com/newcontext/kitchen-terraform'
 
@@ -38,6 +38,8 @@ Gem::Specification.new do |specification|
   specification.add_development_dependency 'rubocop', '~> 0.40', '>= 0.40.0'
 
   specification.add_development_dependency 'simplecov', '~> 0.11', '>= 0.11.2'
+
+  specification.add_runtime_dependency 'inspec', '~> 0.33.2'
 
   specification.add_runtime_dependency 'kitchen-inspec', '~> 0.14', '>= 0.14.0'
 

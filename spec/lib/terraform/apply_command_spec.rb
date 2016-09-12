@@ -15,18 +15,32 @@
 # limitations under the License.
 
 require 'terraform/apply_command'
-require 'support/terraform/command_examples'
+require 'support/terraform/color_switch_examples'
 
 RSpec.describe Terraform::ApplyCommand do
-  it_behaves_like Terraform::Command do
-    let(:command_options) { "-input=false -state=#{state}" }
+  include_context '#color'
 
-    let(:described_instance) { described_class.new state: state, plan: target }
+  it_behaves_like Terraform::ColorSwitch
 
-    let(:name) { 'apply' }
+  let(:described_instance) do
+    described_class.new color: color, logger: logger, state: state
+  end
 
-    let(:state) { '<state_pathname>' }
+  let(:logger) { instance_double Object }
 
-    let(:target) { '<plan_pathname>' }
+  let(:state) { instance_double Object }
+
+  describe '#name' do
+    subject { described_instance.name }
+
+    it('returns "apply"') { is_expected.to eq 'apply' }
+  end
+
+  describe '#options' do
+    subject { described_instance.options }
+
+    it 'returns "-input=false -state=<state_pathname>"' do
+      is_expected.to eq "-input=false -state=#{state}"
+    end
   end
 end

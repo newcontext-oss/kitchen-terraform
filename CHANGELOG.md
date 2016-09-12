@@ -1,8 +1,63 @@
-# kitchen-terraform Change Log
+# Change Log
 
-## Version 0.1.2
+All notable changes to this project will be documented in this file; the
+format is based on [Keep a CHANGELOG].
 
-### Patch
+This project adheres to [Semantic Versioning] with the exception that
+major version 0.y.z will maintain a stable public interface.
+
+## [0.2.0] - 2016-09-??
+
+### Added
+
+* Live log stream of output from Terraform commands
+
+* Coercion and validation of configuration values
+
+* Configuration option for timeout of Terraform apply command
+
+* Configuration option for colored output of Terraform plan and apply
+  commands (thanks [@nictrix])
+
+* Configuration of variable assignments using a map
+
+* Getting started guide (thanks [@nellshamrell])
+
+### Changed
+
+* CHANGELOG format is based on [Keep a CHANGELOG] \(thanks [@amaltson]\)
+
+* Gem specification email address (thanks [@mrheath])
+
+* Example project automatically waits for remote SSH to be available
+
+* Improve error handling and messages (thanks [@cullenmcdermott])
+
+* Deprecate configuration of variable assignments using a list or string
+
+### Fixed
+
+* Inspec is pinned at the minor feature level to reduce bug risk
+
+## [0.1.2] - 2016-08-04
+
+### Added
+
+* Link to referenced users' profiles in the Change Log
+
+* Display RuboCop Cop names in Guard output
+
+* Contributing and developing guides (thanks [@nictrix])
+
+* Example instructions suggest IAM user creation for enhanced security (
+  thanks [@nictrix])
+
+### Changed
+
+* Example configuration is compatible with more AWS accounts (thanks
+  [@nictrix])
+
+### Fixed
 
 * Remove enforcement of RubyGems trust policy (thanks [@fivetwentysix])
 
@@ -10,50 +65,50 @@
   environment, this is the highest policy that can be successfully
   applied
 
-* Add links to referenced users' profiles in the Change Log
-
-* Display RuboCop Cop names in Guard output
-
 * Only enforce code coverage requirements when Guard runs all specs
 
-* Add contributing and developing guides (thanks @nictrix)
+## [0.1.1] - 2016-07-26
 
-* Update example configuration to be compatible with more AWS accounts
-  (thanks @nictrix)
+### Added
 
-* Update example instructions to suggest IAM user creation for enhanced
-  security (thanks @nictrix)
+### Changed
 
-## Version 0.1.1
+* Replace `0 == fixnum_object` with `fixnum_object.zero?`
 
-### Patch
+* Include LICENSE and README in the gem
+
+* Remove specs from the gem
+
+* Add Nick Willever to the gem specification authors
+
+### Fixed
 
 * Lower the development bundle trust policy to MediumSecurity due to
   rubocop-0.42.0 not being signed :crying_cat_face:
 
-* Replace `0 == fixnum_object` with `fixnum_object.zero?`
-
-* Add the LICENSE and README to the gem
-
-* Remove the specs from the gem
-
 * Fix the line length of the gem specification signing key configuration
 
 * Correct the reference to `bundle install --trust-profile` with
-  `bundle install --trust-policy` in the README (thanks to
-  [@nellshamrell] and [@nictrix])
+  `bundle install --trust-policy` in the README (thanks [@nellshamrell]
+  and [@nictrix])
 
-* Clarify the gem installation instructions in the README (thanks to
+* Clarify the gem installation instructions in the README (thanks
   [@nictrix])
 
-* Add Nick Willever to the gem specification authors
+## 0.1.0 - 2016-07-22
 
-## Version 0.1.0
-
-### Minor
+### Added
 
 * Initial release
 
+[0.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.0...v0.1.1
+[0.1.2]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.1...v0.1.2
+[0.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.2...v0.2.0
+[@amaltson]: https://github.com/amaltson
+[@cullenmcdermott]: https://github.com/cullenmcdermott
 [@fivetwentysix]: https://github.com/fivetwentysix
+[@mrheath]: https://github.com/mrheath
 [@nellshamrell]: https://github.com/nellshamrell
 [@nictrix]: https://github.com/nictrix
+[Keep a CHANGELOG]: http://keepachangelog.com/
+[Semantic Versioning]: http://semver.org/

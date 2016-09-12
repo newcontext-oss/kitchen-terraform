@@ -36,7 +36,8 @@ source 'https://rubygems.org'
 gem 'kitchen-terraform', '~> 0.1'
 ```
 
-Before running `bundle`, the author's public key must be added as a trusted certificate:
+Before running `bundle`, the author's public key must be added as a
+trusted certificate:
 
 ```sh
 gem cert --add <(curl --location --silent \
@@ -95,9 +96,7 @@ provisioner.
 
 There are no configuration options for the driver.
 
-##### Example
-
-*.kitchen.yml*
+##### Example .kitchen.yml
 
 ```yaml
 ---
@@ -120,6 +119,41 @@ Terraform state based on the provided Terraform configuration.
 
 #### Configuration
 
+##### apply_timeout
+
+The number of seconds to wait for the Terraform `apply` command to be
+successful before raising an error.
+
+###### Example .kitchen.yml
+
+```yaml
+---
+provisioner:
+  name: terraform
+  apply_timeout: 1000
+```
+
+###### Default
+
+The default `apply_timeout` is 600 seconds.
+
+##### color
+
+Enable or disable colored output from the Terraform command.
+
+###### Example .kitchen.yml
+
+```yaml
+---
+provisioner:
+  name: terraform
+  color: false
+```
+
+###### Default
+
+The default value for `color` is true.
+
 ##### directory
 
 The pathname of the directory containing the Terraform configuration
@@ -128,9 +162,7 @@ Terraform commands.
 
 [directory specified]: https://www.terraform.io/docs/configuration/load.html
 
-###### Example
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
 ---
@@ -150,9 +182,7 @@ for the configuration.
 
 [Terraform variable files]: https://www.terraform.io/docs/configuration/variables.html#variable-files
 
-###### Examples
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
 ---
@@ -173,19 +203,19 @@ The default `variable_files` collection is empty.
 
 ##### variables
 
-A collection of [Terraform variables] to be set in the configuration;
-the syntax matches that of [assigning variables] with command-line
-flags.
+A mapping of [Terraform variables] to be set in the configuration.
 
 [Terraform variables]: https://www.terraform.io/docs/configuration/variables.html
 
-[assigning variables]: https://www.terraform.io/intro/getting-started/variables.html#assigning-variables
-
-###### Examples
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
+---
+provisioner:
+  name: terraform
+  variables:
+    foo: bar
+# deprecated
 ---
 provisioner:
   name: terraform
@@ -193,6 +223,7 @@ provisioner:
     - foo=bar
     - biz=baz
 ---
+# deprecated
 provisioner:
   name: terraform
   variables: foo=bar
@@ -250,9 +281,7 @@ Each group consists of:
 
 - the username to use when connecting to the group's hosts
 
-###### Example
-
-*.kitchen.yml*
+###### Example .kitchen.yml
 
 ```yaml
 ---

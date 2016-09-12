@@ -14,23 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/client_holder'
-
-RSpec.shared_examples Terraform::ClientHolder do
-  describe '#client' do
-    let(:instance) { instance_double Kitchen::Instance }
-
-    before do
-      allow(described_instance).to receive(:instance).with(no_args)
-        .and_return instance
-
-      allow(instance).to receive(:name).with no_args
-
-      allow(instance).to receive(:provisioner).with no_args
-    end
-
-    subject { described_instance.client }
-
-    it('is a Terraform client') { is_expected.to be_kind_of Terraform::Client }
+control 'ami_id' do
+  describe ec2_instance.ami_id do
+    it { is_expected.to match 'ami-' }
   end
 end

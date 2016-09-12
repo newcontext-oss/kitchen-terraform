@@ -15,16 +15,15 @@
 # limitations under the License.
 
 require 'terraform/validate_command'
-require 'support/terraform/command_examples'
 
 RSpec.describe Terraform::ValidateCommand do
-  it_behaves_like Terraform::Command do
-    let(:command_options) { '' }
+  let(:described_instance) { described_class.new logger: logger }
 
-    let(:described_instance) { described_class.new dir: target }
+  let(:logger) { instance_double Object }
 
-    let(:name) { 'validate' }
+  describe '#name' do
+    subject { described_instance.name }
 
-    let(:target) { '<directory>' }
+    it('returns "validate"') { is_expected.to eq 'validate' }
   end
 end
