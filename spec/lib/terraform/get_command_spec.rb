@@ -15,16 +15,21 @@
 # limitations under the License.
 
 require 'terraform/get_command'
-require 'support/terraform/command_examples'
 
 RSpec.describe Terraform::GetCommand do
-  it_behaves_like Terraform::Command do
-    let(:command_options) { '-update=true' }
+  let(:described_instance) { described_class.new logger: logger }
 
-    let(:described_instance) { described_class.new dir: target }
+  let(:logger) { instance_double Object }
 
-    let(:name) { 'get' }
+  describe '#name' do
+    subject { described_instance.name }
 
-    let(:target) { '<directory>' }
+    it('returns "get"') { is_expected.to eq 'get' }
+  end
+
+  describe '#options' do
+    subject { described_instance.options }
+
+    it('returns "-update=true"') { is_expected.to eq '-update=true' }
   end
 end

@@ -15,16 +15,15 @@
 # limitations under the License.
 
 require 'terraform/version_command'
-require 'support/terraform/command_examples'
 
 RSpec.describe Terraform::VersionCommand do
-  it_behaves_like Terraform::Command do
-    let(:command_options) { '' }
+  let(:described_instance) { described_class.new logger: logger }
 
-    let(:described_instance) { described_class.new }
+  let(:logger) { instance_double Object }
 
-    let(:name) { 'version' }
+  describe '#name' do
+    subject { described_instance.name }
 
-    let(:target) { '' }
+    it('returns "version"') { is_expected.to eq 'version' }
   end
 end

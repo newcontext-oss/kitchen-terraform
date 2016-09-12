@@ -18,15 +18,9 @@ require_relative 'command'
 
 module Terraform
   # Command to valdidate configuration files
-  class ValidateCommand
-    include Command
-
-    private
-
-    def initialize_attributes(dir:)
-      self.name = 'validate'
-      self.options = {}
-      self.target = dir
+  class ValidateCommand < Command
+    def name
+      'validate'
     end
   end
 end

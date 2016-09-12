@@ -15,18 +15,28 @@
 # limitations under the License.
 
 require_relative 'command'
+require_relative 'color_switch'
 
 module Terraform
   # Command to apply an execution plan
-  class ApplyCommand
-    include Command
+  class ApplyCommand < Command
+    include ColorSwitch
+
+    def name
+      'apply'
+    end
+
+    def options
+      "-input=false -state=#{state}#{color_switch}"
+    end
 
     private
 
-    def initialize_attributes(state:, plan:)
-      self.name = 'apply'
-      self.options = { input: false, state: state }
-      self.target = plan
+    attr_accessor :color, :state
+
+    def initialize_attributes(color:, state:)
+      self.color = color
+      self.state = state
     end
   end
 end

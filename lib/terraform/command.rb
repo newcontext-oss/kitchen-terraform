@@ -14,45 +14,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen'
 require 'mixlib/shellout'
-require 'pathname'
-require_relative 'command_options'
-require_relative 'error'
 
 module Terraform
-  # Common logic for Mixlib::ShellOut Terraform commands
-  module Command
-    attr_reader :name, :options, :target
+  # Interface to the Terraform command line client
+  class Command
+    def self.execute(**keyword_arguments, &block)
+      new(**keyword_arguments).execute(&block)
+    end
 
     def execute
-      # TODO: use the live output stream
       shell_out.run_command
       shell_out.error!
       yield shell_out.stdout if block_given?
-    rescue => error
-      handle error: error
-      raise Error, error.message, error.backtrace
+    rescue Errno::EACCES, Errno::ENOENT => error
+      command_error error: error, type: Kitchen::InstanceFailure
+    rescue Mixlib::ShellOut::CommandTimeout,
+           Mixlib::ShellOut::ShellCommandFailed => error
+      command_error error: error, type: Kitchen::TransientFailure
     end
 
-    def handle(**_)
+    def name
+      ''
     end
 
-    def to_s
-      CommandOptions.new options do |command_options|
-        return "terraform #{name} #{command_options} #{target}"
-      end
+    def options
+      '--help'
     end
 
     private
 
     attr_accessor :shell_out
 
-    attr_writer :name, :options, :target
+    def command_error(error:, type:)
+      raise type, %(`#{shell_out.command}` failed: "#{error}")
+    end
 
-    def initialize(**keyword_arguments)
+    def initialize(
+      logger:, target: '', timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT,
+      **keyword_arguments
+    )
       initialize_attributes(**keyword_arguments)
-      self.shell_out = Mixlib::ShellOut.new to_s, returns: 0
-      yield self if block_given?
+      self.shell_out = Mixlib::ShellOut
+                       .new "terraform #{name} #{options} #{target}",
+                            live_stream: logger, returns: 0, timeout: timeout
+    end
+
+    def initialize_attributes(**_keyword_arguments)
     end
   end
 end

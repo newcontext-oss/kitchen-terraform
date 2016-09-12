@@ -18,15 +18,9 @@ require_relative 'command'
 
 module Terraform
   # Command to obtain the version
-  class VersionCommand
-    include Command
-
-    private
-
-    def initialize_attributes(**_)
-      self.name = 'version'
-      self.options = {}
-      self.target = ''
+  class VersionCommand < Command
+    def name
+      'version'
     end
   end
 end

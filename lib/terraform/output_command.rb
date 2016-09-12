@@ -15,24 +15,24 @@
 # limitations under the License.
 
 require_relative 'command'
-require_relative 'output_not_found'
 
 module Terraform
   # Command to extract values of output variables
-  class OutputCommand
-    include Command
+  class OutputCommand < Command
+    def name
+      'output'
+    end
 
-    def handle(error:)
-      raise OutputNotFound, error.message, error.backtrace if
-        error.message =~ /no(?:thing to)? output/
+    def options
+      "-state=#{state}"
     end
 
     private
 
-    def initialize_attributes(state:, name:)
-      self.name = 'output'
-      self.options = { state: state }
-      self.target = name
+    attr_accessor :state
+
+    def initialize_attributes(state:)
+      self.state = state
     end
   end
 end
