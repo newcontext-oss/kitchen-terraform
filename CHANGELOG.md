@@ -35,6 +35,10 @@ major version 0.y.z will maintain a stable public interface.
 
 * Deprecate configuration of variable assignments using a list or string
 
+### Fixed
+
+* Inspec is pinned at the minor feature level to reduce bug risk
+
 ## [0.1.2] - 2016-08-04
 
 ### Added

@@ -35,7 +35,14 @@ module Terraform
     end
 
     def set_attribute(key:, value:)
-      conf['attributes'].store key.to_s, value
+      conf[:attributes].store key.to_s, value
+    end
+
+    private
+
+    def initialize(conf = {})
+      conf.store :attributes, conf.fetch(:attributes, {}).clone
+      super
     end
   end
 end

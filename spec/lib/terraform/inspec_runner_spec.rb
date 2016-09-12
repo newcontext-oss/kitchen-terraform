@@ -19,7 +19,7 @@ require 'terraform/group'
 require 'terraform/inspec_runner'
 
 RSpec.describe Terraform::InspecRunner do
-  let(:described_instance) { described_class.new 'attributes' => {} }
+  let(:described_instance) { described_class.new attributes: {} }
 
   describe '.run_and_verify(group:, options:, verifier:)' do
     let(:exit_code) { instance_double Object }
@@ -83,7 +83,7 @@ RSpec.describe Terraform::InspecRunner do
   describe '#set_attribute(key:, value:)' do
     before { described_instance.set_attribute key: :key, value: :value }
 
-    subject { described_instance.conf['attributes'] }
+    subject { described_instance.conf[:attributes] }
 
     it 'stores the attribute pair with a string key' do
       is_expected.to include 'key' => :value
