@@ -85,8 +85,9 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     end
 
     it 'executes the apply command with the existing plan' do
-      is_expected.to receive(:execute).with logger: logger, state: state,
-                                            target: plan, timeout: apply_timeout
+      is_expected.to receive(:execute).with color: color, logger: logger,
+                                            state: state, target: plan,
+                                            timeout: apply_timeout
     end
   end
 
