@@ -36,18 +36,10 @@ source 'https://rubygems.org'
 gem 'kitchen-terraform', '~> 0.1'
 ```
 
-Before running `bundle`, the author's public key must be added as a
-trusted certificate:
-
-```sh
-gem cert --add <(curl --location --silent \
-https://raw.githubusercontent.com/newcontext/kitchen-terraform/master/certs/ncs-alane-public_cert.pem)
-```
-
 Then, install the bundle and verify all of the gems:
 
 ```sh
-bundle install --trust-policy LowSecurity
+bundle install
 ```
 
 [Ruby Gem]: http://guides.rubygems.org/what-is-a-gem/index.html
@@ -137,6 +129,23 @@ provisioner:
 
 The default `apply_timeout` is 600 seconds.
 
+##### color
+
+Enable or disable colored output from the Terraform command.
+
+###### Example .kitchen.yml
+
+```yaml
+---
+provisioner:
+  name: terraform
+  color: false
+```
+
+###### Default
+
+The default value for `color` is true.
+
 ##### directory
 
 The pathname of the directory containing the Terraform configuration
@@ -186,13 +195,9 @@ The default `variable_files` collection is empty.
 
 ##### variables
 
-A collection of [Terraform variables] to be set in the configuration;
-the syntax matches that of [assigning variables] with command-line
-flags.
+A mapping of [Terraform variables] to be set in the configuration.
 
 [Terraform variables]: https://www.terraform.io/docs/configuration/variables.html
-
-[assigning variables]: https://www.terraform.io/intro/getting-started/variables.html#assigning-variables
 
 ###### Example .kitchen.yml
 
@@ -201,9 +206,16 @@ flags.
 provisioner:
   name: terraform
   variables:
+    foo: bar
+# deprecated
+---
+provisioner:
+  name: terraform
+  variables:
     - foo=bar
     - biz=baz
 ---
+# deprecated
 provisioner:
   name: terraform
   variables: foo=bar
