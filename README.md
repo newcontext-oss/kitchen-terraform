@@ -36,18 +36,10 @@ source 'https://rubygems.org'
 gem 'kitchen-terraform', '~> 0.1'
 ```
 
-Before running `bundle`, the author's public key must be added as a
-trusted certificate:
+Then, use Bundler to install the gems:
 
 ```sh
-gem cert --add <(curl --location --silent \
-https://raw.githubusercontent.com/newcontext/kitchen-terraform/master/certs/ncs-alane-public_cert.pem)
-```
-
-Then, install the bundle and verify all of the gems:
-
-```sh
-bundle install --trust-policy LowSecurity
+bundle install
 ```
 
 [Ruby Gem]: http://guides.rubygems.org/what-is-a-gem/index.html
