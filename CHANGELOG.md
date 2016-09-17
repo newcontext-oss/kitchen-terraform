@@ -6,6 +6,13 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
+## [0.3.0] - 2016-09-??
+
+### Fixed
+
+* Remove references to verifying the gem; it's problematic even with
+  low security (thanks [@kevindickerson])
+
 ## [0.2.0] - 2016-09-12
 
 ### Added
@@ -107,6 +114,7 @@ major version 0.y.z will maintain a stable public interface.
 [@amaltson]: https://github.com/amaltson
 [@cullenmcdermott]: https://github.com/cullenmcdermott
 [@fivetwentysix]: https://github.com/fivetwentysix
+[@kevindickerson]: https://github.com/kevindickerson
 [@mrheath]: https://github.com/mrheath
 [@nellshamrell]: https://github.com/nellshamrell
 [@nictrix]: https://github.com/nictrix
