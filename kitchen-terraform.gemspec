@@ -39,7 +39,7 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'simplecov', '~> 0.11', '>= 0.11.2'
 
-  specification.add_runtime_dependency 'inspec', '~> 0.33.2'
+  specification.add_runtime_dependency 'inspec', '~> 0.35.0'
 
   specification.add_runtime_dependency 'kitchen-inspec', '~> 0.14', '>= 0.14.0'
 
