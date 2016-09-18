@@ -22,27 +22,13 @@ module Terraform
   class InspecRunner < Inspec::Runner
     attr_reader :conf
 
-    def self.run_and_verify(group:, options:, verifier:)
-      new(options).tap do |runner|
-        group.populate runner: runner
-        verifier.populate runner: runner
-        verifier.evaluate exit_code: runner.run
-      end
-    end
-
     def add(target:)
       add_target target, conf
     end
 
-    def set_attribute(key:, value:)
-      conf[:attributes].store key.to_s, value
-    end
-
-    private
-
-    def initialize(conf = {})
-      conf.store :attributes, conf.fetch(:attributes, {}).clone
-      super
+    def evaluate(verifier:)
+      verifier.add_targets runner: self
+      verifier.verify exit_code: run
     end
   end
 end

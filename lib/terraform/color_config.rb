@@ -14,29 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/apply_command'
-require 'support/terraform/color_switch_examples'
+module Terraform
+  # Behaviour for the [:color] config option
+  module ColorConfig
+    def self.included(configurable_class)
+      configurable_class.required_config :color do |_, value, configurable|
+        configurable.coerce_color value: value
+      end
+      configurable_class.default_config :color, true
+    end
 
-RSpec.describe Terraform::ApplyCommand do
-  include_context '#color'
-
-  it_behaves_like Terraform::ColorSwitch
-
-  let(:described_instance) { described_class.new color: color, state: state }
-
-  let(:state) { instance_double Object }
-
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "apply"') { is_expected.to eq 'apply' }
-  end
-
-  describe '#options' do
-    subject { described_instance.options }
-
-    it 'returns "-input=false -state=<state_pathname>"' do
-      is_expected.to eq "-input=false -state=#{state}"
+    def coerce_color(value:)
+      raise TypeError unless [TrueClass, FalseClass].include? value.class
+      config[:color] = value
+    rescue TypeError
+      config_error attribute: 'color', expected: 'a boolean'
     end
   end
 end

@@ -15,17 +15,18 @@
 # limitations under the License.
 
 require 'kitchen/driver/terraform'
+require 'support/terraform/client_examples'
+require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
-require 'support/terraform/versions_are_set_examples'
 
 RSpec.describe Kitchen::Driver::Terraform do
-  include_context '#provisioner'
+  include_context 'config'
 
-  let(:described_instance) { described_class.new }
+  let(:described_instance) { described_class.new config }
+
+  it_behaves_like Terraform::Client
 
   it_behaves_like Terraform::Configurable
-
-  it_behaves_like 'versions are set'
 
   describe '.serial_actions' do
     subject(:serial_actions) { described_class.serial_actions }
@@ -34,32 +35,12 @@ RSpec.describe Kitchen::Driver::Terraform do
   end
 
   describe '#create(_state = nil)' do
-    let :allow_installed_version do
-      allow(provisioner).to receive(:installed_version).with no_args
-    end
+    after { described_instance.create }
 
-    subject { proc { described_instance.create } }
+    subject { described_instance }
 
-    context 'when the installed version of Terraform is 0.6.z' do
-      before { allow_installed_version.and_return 'v0.6.z' }
-
-      it('does not raise an error') { is_expected.to_not raise_error }
-    end
-
-    context 'when the installed version of Terraform is 0.7.z' do
-      before { allow_installed_version.and_return 'v0.7.z' }
-
-      it('does not raise an error') { is_expected.to_not raise_error }
-    end
-
-    context 'when the installed version of Terraform is not supported' do
-      before { allow_installed_version.and_return 'v0.8.z' }
-
-      it 'does raise a user error' do
-        is_expected.to raise_error Kitchen::UserError,
-                                   'Only Terraform versions 0.6.z and 0.7.z ' \
-                                     'are supported'
-      end
+    it 'validates the installed version of Terraform' do
+      is_expected.to receive(:validate_installed_version).with no_args
     end
   end
 
@@ -69,7 +50,7 @@ RSpec.describe Kitchen::Driver::Terraform do
     let(:download_modules) { receive(:download_modules).with no_args }
 
     let :plan_destructive_execution do
-      receive(:plan_destructive_execution).with no_args
+      receive(:plan_execution).with destroy: true
     end
 
     let :validate_configuration_files do
@@ -77,26 +58,26 @@ RSpec.describe Kitchen::Driver::Terraform do
     end
 
     before do
-      allow(provisioner).to validate_configuration_files
+      allow(described_instance).to validate_configuration_files
 
-      allow(provisioner).to download_modules
+      allow(described_instance).to download_modules
 
-      allow(provisioner).to plan_destructive_execution
+      allow(described_instance).to plan_destructive_execution
 
-      allow(provisioner).to apply_execution_plan
+      allow(described_instance).to apply_execution_plan
     end
 
     after { described_instance.destroy }
 
-    subject { provisioner }
+    subject { described_instance }
 
     it 'validates the configuration files' do
       is_expected.to validate_configuration_files
     end
 
-    it('gets the modules') { is_expected.to download_modules }
+    it('gets the dependency modules') { is_expected.to download_modules }
 
-    it 'plans the destructive execution' do
+    it 'plans a destructive execution' do
       is_expected.to plan_destructive_execution
     end
 

@@ -14,29 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/apply_command'
-require 'support/terraform/color_switch_examples'
+require 'terraform/variable_files_config'
 
-RSpec.describe Terraform::ApplyCommand do
-  include_context '#color'
+RSpec.shared_examples Terraform::VariableFilesConfig do
+  describe '#coerce_variable_files(value:)' do
+    let(:value) { instance_double Object }
 
-  it_behaves_like Terraform::ColorSwitch
+    before { described_instance.coerce_variable_files value: value }
 
-  let(:described_instance) { described_class.new color: color, state: state }
+    subject { described_instance[:variable_files] }
 
-  let(:state) { instance_double Object }
-
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "apply"') { is_expected.to eq 'apply' }
+    it('updates the config assignment') { is_expected.to eq [value] }
   end
 
-  describe '#options' do
-    subject { described_instance.options }
+  describe '#finalize_config!(instance)' do
+    include_context 'finalize_config! instance'
 
-    it 'returns "-input=false -state=<state_pathname>"' do
-      is_expected.to eq "-input=false -state=#{state}"
+    describe '[:variable_files]' do
+      subject { described_instance[:variable_files] }
+
+      it('defaults to an empty collection') { is_expected.to eq [] }
     end
   end
 end

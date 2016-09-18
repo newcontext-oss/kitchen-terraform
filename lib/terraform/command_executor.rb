@@ -14,42 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen'
 require 'mixlib/shellout'
 
 module Terraform
-  # Terraform command to be executed
-  class Command
-    def name
-      ''
-    end
-
-    def options
-      '--help'
-    end
-
-    def run(logger:, timeout:)
-      shell_out.live_stream = logger
-      shell_out.timeout = timeout
-      shell_out.run_command
-      shell_out.error!
-      yield shell_out.stdout if block_given?
-    end
-
-    def to_s
-      shell_out.command
+  # Behaviour for executing commands
+  module CommandExecutor
+    def execute(
+      command:, timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT, &block
+    )
+      command.run logger: logger, timeout: timeout, &block
+    rescue Errno::EACCES, Errno::ENOENT => error
+      command_error command: command, error: error,
+                    type: Kitchen::InstanceFailure
+    rescue Mixlib::ShellOut::CommandTimeout,
+           Mixlib::ShellOut::ShellCommandFailed => error
+      command_error command: command, error: error,
+                    type: Kitchen::TransientFailure
     end
 
     private
 
-    attr_accessor :shell_out
-
-    def initialize(target: '', **keyword_arguments)
-      initialize_attributes(**keyword_arguments)
-      self.shell_out = Mixlib::ShellOut
-                       .new "terraform #{name} #{options} #{target}", returns: 0
-    end
-
-    def initialize_attributes(**_keyword_arguments)
+    def command_error(command:, error:, type:)
+      raise type, %(`#{command}` failed: "#{error}")
     end
   end
 end

@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'inspec'
 require 'kitchen/verifier/terraform'
+require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
-require 'support/terraform/versions_are_set_examples'
+require 'support/terraform/groups_config_examples'
 
 RSpec.describe Kitchen::Verifier::Terraform do
   include_context 'config'
@@ -26,80 +26,59 @@ RSpec.describe Kitchen::Verifier::Terraform do
 
   it_behaves_like Terraform::Configurable
 
-  it_behaves_like 'versions are set'
+  it_behaves_like Terraform::GroupsConfig
+
+  describe '#add_targets(runner:)' do
+    let(:runner) { instance_double Terraform::InspecRunner }
+
+    let(:test) { instance_double Object }
+
+    before do
+      allow(described_instance).to receive(:collect_tests).with(no_args)
+        .and_return [test]
+    end
+
+    after { described_instance.add_targets runner: runner }
+
+    subject { runner }
+
+    it 'adds its tests to the runner' do
+      is_expected.to receive(:add).with target: test
+    end
+  end
 
   describe '#call(state)' do
-    include_context '#provisioner'
+    let(:conf) { { host: host, name: name } }
 
-    include_context '#transport'
+    let(:host) { instance_double Object }
 
-    let(:group) { instance_double Terraform::Group }
+    let(:name) { instance_double Object }
 
-    let(:runner_options) { instance_double Object }
+    let(:runner) { instance_double Terraform::InspecRunner }
 
     let(:state) { instance_double Object }
 
     before do
-      config.store :groups, [group]
+      allow(described_instance).to receive(:each_group_host_runner)
+        .with(state: state).and_yield runner
 
-      allow(described_instance).to receive(:runner_options)
-        .with(transport, state).and_return runner_options
+      allow(runner).to receive(:conf).with(no_args).and_return conf
+
+      allow(described_instance).to receive(:info)
+        .with "Verifying host '#{host}' of group '#{name}'"
     end
 
     after { described_instance.call state }
 
-    subject { group }
+    subject { runner }
 
-    it 'verifies each host of each group' do
-      is_expected.to receive(:verify_each_host).with options: runner_options
+    it 'evaluates each host of each group with the runner' do
+      is_expected.to receive(:evaluate).with verifier: described_instance
     end
   end
 
-  describe '#coerce_groups(value:)' do
-    include_context '#transport'
-
-    let :allow_new_group do
-      allow(group_class).to receive(:new)
-        .with(value: raw_group, verifier: described_instance)
-    end
-
-    let(:call_method) { described_instance.coerce_groups value: value }
-
-    let(:group_class) { class_double(Terraform::Group).as_stubbed_const }
-
-    let(:raw_group) { instance_double Object }
-
-    let(:value) { [raw_group] }
-
-    context 'when the value can be coerced to be a group' do
-      let(:group) { instance_double Object }
-
-      before do
-        allow_new_group.and_return group
-        call_method
-      end
-
-      subject { described_instance[:groups] }
-
-      it('updates the config assignment') { is_expected.to eq [group] }
-    end
-
-    context 'when the value can not be coerced to be a group' do
-      before { allow_new_group.and_raise Kitchen::UserError, '' }
-
-      after { call_method }
-
-      subject { described_instance }
-
-      it 'an error is reported' do
-        is_expected.to receive(:config_error)
-          .with attribute: 'groups', expected: 'a collection of group mappings'
-      end
-    end
-  end
-
-  describe '#evaluate(exit_code:)' do
-    subject { proc { described_instance.evaluate exit_code: exit_code } }
+  describe '#verify(exit_code:)' do
+    subject { proc { described_instance.verify exit_code: exit_code } }
 
     context 'when the exit code is 0' do
       let(:exit_code) { 0 }
@@ -113,35 +92,6 @@ RSpec.describe Kitchen::Verifier::Terraform do
       it 'raises an instance failure' do
         is_expected.to raise_error Kitchen::InstanceFailure
       end
-    end
-  end
-
-  describe '#finalize_config!(instance)' do
-    include_context '#finalize_config!(instance)'
-
-    describe '[:groups]' do
-      subject { described_instance[:groups] }
-
-      it('defaults to an empty collection') { is_expected.to eq [] }
-    end
-  end
-
-  describe '#populate(runner:)' do
-    let(:runner) { instance_double Terraform::InspecRunner }
-
-    let(:test) { instance_double Object }
-
-    before do
-      allow(described_instance).to receive(:collect_tests).with(no_args)
-        .and_return [test]
-    end
-
-    after { described_instance.populate runner: runner }
-
-    subject { runner }
-
-    it 'adds the tests to the runner' do
-      is_expected.to receive(:add).with target: test
     end
   end
 end
