@@ -7,7 +7,7 @@ end
 require 'terraform/version.rb'
 
 Gem::Specification.new do |specification|
-  specification.authors = ['Aaron Lane', 'Nick Willever']
+  specification.authors = ['Aaron Lane', 'Kevin Dickerson', 'Nick Willever']
 
   specification.files = Dir.glob '{lib/**/*.rb,LICENSE,README.md}'
 
