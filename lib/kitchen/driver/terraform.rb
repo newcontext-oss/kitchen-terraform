@@ -15,38 +15,30 @@
 # limitations under the License.
 
 require 'kitchen'
+require 'terraform/client'
 require 'terraform/configurable'
-require 'terraform/version'
 
 module Kitchen
   module Driver
     # Terraform state lifecycle activities manager
     class Terraform < Base
+      include ::Terraform::Client
+
       include ::Terraform::Configurable
 
       kitchen_driver_api_version 2
 
-      plugin_version ::Terraform::VERSION
-
       no_parallel_for
 
       def create(_state = nil)
-        raise UserError,
-              'Only Terraform versions 0.6.z and 0.7.z are supported' unless
-                supported_version.match provisioner.installed_version
+        validate_installed_version
       end
 
       def destroy(_state = nil)
-        provisioner.validate_configuration_files
-        provisioner.download_modules
-        provisioner.plan_destructive_execution
-        provisioner.apply_execution_plan
-      end
-
-      private
-
-      def supported_version
-        /v0\.[67]/
+        validate_configuration_files
+        download_modules
+        plan_execution destroy: true
+        apply_execution_plan
       end
     end
   end

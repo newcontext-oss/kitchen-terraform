@@ -14,29 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/apply_command'
-require 'support/terraform/color_switch_examples'
+module Terraform
+  # Behaviour for the [:apply_timeout] config option
+  module ApplyTimeoutConfig
+    def self.included(configurable_class)
+      configurable_class
+        .required_config :apply_timeout do |_, value, configurable|
+          configurable.coerce_apply_timeout value: value
+        end
+      configurable_class.default_config :apply_timeout, 600
+    end
 
-RSpec.describe Terraform::ApplyCommand do
-  include_context '#color'
-
-  it_behaves_like Terraform::ColorSwitch
-
-  let(:described_instance) { described_class.new color: color, state: state }
-
-  let(:state) { instance_double Object }
-
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "apply"') { is_expected.to eq 'apply' }
-  end
-
-  describe '#options' do
-    subject { described_instance.options }
-
-    it 'returns "-input=false -state=<state_pathname>"' do
-      is_expected.to eq "-input=false -state=#{state}"
+    def coerce_apply_timeout(value:)
+      config[:apply_timeout] = Integer value
+    rescue ArgumentError, TypeError
+      config_error attribute: 'apply_timeout', expected: 'an integer'
     end
   end
 end

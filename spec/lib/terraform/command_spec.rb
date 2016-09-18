@@ -17,95 +17,9 @@
 require 'terraform/command'
 
 RSpec.describe Terraform::Command do
-  let(:described_instance) { described_class.new logger: logger }
+  let(:described_instance) { described_class.new target: target }
 
-  let(:logger) { instance_double Object }
-
-  describe '.execute(**keyword_arguments, &block)' do
-    let(:instance) { instance_double described_class }
-
-    before do
-      allow(described_class).to receive(:new).with(logger: logger)
-        .and_return instance
-    end
-
-    after { described_class.execute logger: logger }
-
-    subject { instance }
-
-    it 'creates and executes a command instance' do
-      is_expected.to receive(:execute).with no_args
-    end
-  end
-
-  describe '#execute' do
-    let(:allow_error) { allow(shell_out).to receive(:error!).with no_args }
-
-    let(:shell_out) { instance_double Mixlib::ShellOut }
-
-    before do
-      allow(described_instance).to receive(:shell_out).with(no_args)
-        .and_return shell_out
-
-      allow(shell_out).to receive(:run_command).with no_args
-
-      allow(shell_out).to receive(:command).with(no_args).and_return 'command'
-    end
-
-    context 'when the execution is successful' do
-      let(:stdout) { instance_double Object }
-
-      before do
-        allow_error
-
-        allow(shell_out).to receive(:stdout).with(no_args).and_return stdout
-      end
-
-      subject { ->(block) { described_instance.execute(&block) } }
-
-      it('yields the output') { is_expected.to yield_with_args stdout }
-    end
-
-    context 'when the execution is not successful due to a permissions error' do
-      before { allow_error.and_raise Errno::EACCES }
-
-      subject { proc { described_instance.execute } }
-
-      it 'raises an instance failure' do
-        is_expected.to raise_error Kitchen::InstanceFailure
-      end
-    end
-
-    context 'when the execution is not successful due to no executable found' do
-      before { allow_error.and_raise Errno::ENOENT }
-
-      subject { proc { described_instance.execute } }
-
-      it 'raises an instance failure' do
-        is_expected.to raise_error Kitchen::InstanceFailure
-      end
-    end
-
-    context 'when the execution is not successful due to a command timeout' do
-      before { allow_error.and_raise Mixlib::ShellOut::CommandTimeout }
-
-      subject { proc { described_instance.execute } }
-
-      it 'raises a transient failure' do
-        is_expected.to raise_error Kitchen::TransientFailure
-      end
-    end
-
-    context 'when the execution is not successful due to a command failure' do
-      before { allow_error.and_raise Mixlib::ShellOut::ShellCommandFailed }
-
-      subject { proc { described_instance.execute } }
-
-      it 'raises a transient failure' do
-        is_expected.to raise_error Kitchen::TransientFailure
-      end
-    end
-  end
+  let(:target) { instance_double Object }
 
   describe '#name' do
     subject { described_instance.name }
@@ -117,5 +31,72 @@ RSpec.describe Terraform::Command do
     subject { described_instance.options }
 
     it('returns "--help"') { is_expected.to eq '--help' }
+  end
+
+  describe '#run(logger:, timeout:)' do
+    let(:check_error) { receive(:error!).with no_args }
+
+    let(:logger) { instance_double Object }
+
+    let(:run_command) { receive(:run_command).with no_args }
+
+    let(:set_live_stream) { receive(:live_stream=).with logger }
+
+    let(:set_timeout) { receive(:timeout=).with timeout }
+
+    let(:shell_out) { instance_double Mixlib::ShellOut }
+
+    let(:stdout) { instance_double Object }
+
+    let(:timeout) { instance_double Object }
+
+    before do
+      allow(described_instance).to receive(:shell_out).with(no_args)
+        .and_return shell_out
+
+      allow(shell_out).to set_live_stream
+
+      allow(shell_out).to set_timeout
+
+      allow(shell_out).to run_command
+
+      allow(shell_out).to check_error
+
+      allow(shell_out).to receive(:stdout).with(no_args).and_return stdout
+    end
+
+    describe 'executing' do
+      after { described_instance.run logger: logger, timeout: timeout }
+
+      subject { shell_out }
+
+      it 'uses the logger for live streaming' do
+        is_expected.to set_live_stream
+      end
+
+      it('configures a timeout duration') { is_expected.to set_timeout }
+
+      it('runs the command') { is_expected.to run_command }
+
+      it('checks for errors') { is_expected.to check_error }
+    end
+
+    describe 'handling output' do
+      subject do
+        lambda do |block|
+          described_instance.run logger: logger, timeout: timeout, &block
+        end
+      end
+
+      it('yields the standard output') { is_expected.to yield_with_args stdout }
+    end
+  end
+
+  describe '#to_s' do
+    subject { described_instance.to_s }
+
+    it 'returns the command string' do
+      is_expected.to eq "terraform  --help #{target}"
+    end
   end
 end

@@ -15,52 +15,10 @@
 # limitations under the License.
 
 require 'kitchen/verifier/terraform'
-require 'terraform/group'
 require 'terraform/inspec_runner'
 
 RSpec.describe Terraform::InspecRunner do
-  let(:described_instance) { described_class.new attributes: {} }
-
-  describe '.run_and_verify(group:, options:, verifier:)' do
-    let(:exit_code) { instance_double Object }
-
-    let(:group) { instance_double Terraform::Group }
-
-    let(:instance) { instance_double described_class }
-
-    let(:options) { { 'biz' => 'baz' } }
-
-    let(:tests) { instance_double Object }
-
-    let(:verifier) { instance_double Kitchen::Verifier::Terraform }
-
-    before do
-      allow(described_class).to receive(:new).with(options).and_return instance
-
-      allow(group).to receive(:populate).with runner: instance
-
-      allow(verifier).to receive(:populate).with runner: instance
-
-      allow(instance).to receive(:run).with(no_args).and_return exit_code
-
-      allow(verifier).to receive(:evaluate).with exit_code: exit_code
-    end
-
-    after do
-      described_class.run_and_verify group: group, options: options,
-                                     verifier: verifier
-    end
-
-    subject { verifier }
-
-    it 'populates the runner with the verifier tests' do
-      is_expected.to receive(:populate).with runner: instance
-    end
-
-    it 'evaluates the exit code from the runner' do
-      is_expected.to receive(:evaluate).with exit_code: exit_code
-    end
-  end
+  let(:described_instance) { described_class.new }
 
   describe '#add(target:)' do
     let(:conf) { instance_double Object }
@@ -80,13 +38,30 @@ RSpec.describe Terraform::InspecRunner do
     end
   end
 
-  describe '#set_attribute(key:, value:)' do
-    before { described_instance.set_attribute key: :key, value: :value }
+  describe '#evaluate(verifier:)' do
+    let(:add_targets) { receive(:add_targets).with runner: described_instance }
 
-    subject { described_instance.conf[:attributes] }
+    let(:exit_code) { instance_double Object }
 
-    it 'stores the attribute pair with a string key' do
-      is_expected.to include 'key' => :value
+    let(:verifier) { instance_double Kitchen::Verifier::Terraform }
+
+    let(:verify) { receive(:verify).with exit_code: exit_code }
+
+    before do
+      allow(verifier).to add_targets
+
+      allow(described_instance).to receive(:run).with(no_args)
+        .and_return exit_code
+
+      allow(verifier).to verify
     end
+
+    after { described_instance.evaluate verifier: verifier }
+
+    subject { verifier }
+
+    it('adds the targets of the verifier') { is_expected.to add_targets }
+
+    it('verifies the exit code') { is_expected.to verify }
   end
 end

@@ -15,41 +15,36 @@
 # limitations under the License.
 
 require 'kitchen/provisioner/terraform'
+require 'support/terraform/apply_timeout_config_examples'
+require 'support/terraform/color_config_examples'
+require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
-require 'support/terraform/versions_are_set_examples'
+require 'support/terraform/directory_config_examples'
+require 'support/terraform/plan_config_examples'
+require 'support/terraform/state_config_examples'
+require 'support/terraform/variable_files_config_examples'
+require 'support/terraform/variables_config_examples'
 
 RSpec.describe Kitchen::Provisioner::Terraform do
   include_context 'config'
 
-  include_context '#instance'
-
-  include_context '#logger'
-
   let(:described_instance) { described_class.new config }
 
-  shared_context 'command' do
-    let(:apply_timeout) { instance_double Object }
+  it_behaves_like Terraform::ApplyTimeoutConfig
 
-    let(:color) { instance_double Object }
-
-    let(:directory) { instance_double Object }
-
-    let(:plan) { instance_double Object }
-
-    let(:state) { instance_double Object }
-
-    let(:variable_files) { instance_double Object }
-
-    let(:variables) { instance_double Object }
-
-    before do
-      config.merge! apply_timeout: apply_timeout, color: color,
-                    directory: directory, plan: plan, state: state,
-                    variable_files: variable_files, variables: variables
-    end
-  end
+  it_behaves_like Terraform::ColorConfig
 
   it_behaves_like Terraform::Configurable
+
+  it_behaves_like Terraform::DirectoryConfig
+
+  it_behaves_like Terraform::PlanConfig
+
+  it_behaves_like Terraform::StateConfig
+
+  it_behaves_like Terraform::VariableFilesConfig
+
+  it_behaves_like Terraform::VariablesConfig
 
   it_behaves_like 'versions are set'
 
@@ -70,12 +65,14 @@ RSpec.describe Kitchen::Provisioner::Terraform do
   end
 
   describe '#call(_state = nil)' do
+    include_context '#driver'
+
     let(:apply_execution_plan) { receive(:apply_execution_plan).with no_args }
 
     let(:download_modules) { receive(:download_modules).with no_args }
 
     let :plan_constructive_execution do
-      receive(:plan_constructive_execution).with no_args
+      receive(:plan_execution).with destroy: false
     end
 
     let :validate_configuration_files do
@@ -83,26 +80,26 @@ RSpec.describe Kitchen::Provisioner::Terraform do
     end
 
     before do
-      allow(described_instance).to validate_configuration_files
+      allow(driver).to validate_configuration_files
 
-      allow(described_instance).to download_modules
+      allow(driver).to download_modules
 
-      allow(described_instance).to plan_constructive_execution
+      allow(driver).to plan_constructive_execution
 
-      allow(described_instance).to apply_execution_plan
+      allow(driver).to apply_execution_plan
     end
 
     after { described_instance.call }
 
-    subject { described_instance }
+    subject { driver }
 
     it 'validates the configuration files' do
       is_expected.to validate_configuration_files
     end
 
-    it('downloads any dependency modules') { is_expected.to download_modules }
+    it('downloads the dependency modules') { is_expected.to download_modules }
 
-    it 'plans the constructive execution' do
+    it 'plans a constructive execution' do
       is_expected.to plan_constructive_execution
     end
 
