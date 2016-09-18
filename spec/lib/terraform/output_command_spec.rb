@@ -17,9 +17,7 @@
 require 'terraform/output_command'
 
 RSpec.describe Terraform::OutputCommand do
-  let(:described_instance) { described_class.new logger: logger, state: state }
-
-  let(:logger) { instance_double Object }
+  let(:described_instance) { described_class.new state: state }
 
   let(:state) { instance_double Object }
 

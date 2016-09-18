@@ -18,66 +18,7 @@ require 'kitchen'
 require 'kitchen/provisioner/terraform'
 require 'kitchen/transport/ssh'
 require 'terraform/configurable'
-
-RSpec.shared_context '#finalize_config!(instance)' do
-  include_context '#instance'
-
-  include_context 'config'
-
-  after { described_instance.finalize_config! instance }
-end
-
-RSpec.shared_context '#instance' do
-  let(:instance) { instance_double Kitchen::Instance }
-
-  let(:instance_name) { 'instance' }
-
-  before do
-    allow(described_instance).to receive(:instance).with(no_args)
-      .and_return instance
-
-    allow(instance).to receive(:name).with(no_args).and_return instance_name
-
-    allow(instance).to receive(:to_str).with(no_args).and_return instance_name
-  end
-end
-
-RSpec.shared_context '#logger' do
-  let(:logger) { instance_double Kitchen::Logger }
-
-  before do
-    allow(described_instance).to receive(:logger).with(no_args)
-      .and_return logger
-  end
-end
-
-RSpec.shared_context '#provisioner' do
-  include_context '#instance'
-
-  let(:provisioner) { instance_double Kitchen::Provisioner::Terraform }
-
-  before do
-    allow(instance).to receive(:provisioner).with(no_args)
-      .and_return provisioner
-  end
-end
-
-RSpec.shared_context '#transport' do
-  include_context '#instance'
-
-  let(:transport) { instance_double Kitchen::Transport::Ssh }
-
-  before do
-    allow(instance).to receive(:transport).with(no_args)
-      .and_return transport
-  end
-end
-
-RSpec.shared_context 'config' do
-  let(:config) { { kitchen_root: kitchen_root } }
-
-  let(:kitchen_root) { Dir.pwd }
-end
+require_relative 'configurable_context'
 
 RSpec.shared_examples Terraform::Configurable do
   include_context '#instance'
@@ -85,6 +26,22 @@ RSpec.shared_examples Terraform::Configurable do
   let(:attribute) { :foo }
 
   let(:expected) { 'bar' }
+
+  describe '@api_version' do
+    subject :api_version do
+      described_class.instance_variable_get :@api_version
+    end
+
+    it('equals 2') { is_expected.to eq 2 }
+  end
+
+  describe '@plugin_version' do
+    subject :plugin_version do
+      described_class.instance_variable_get :@plugin_version
+    end
+
+    it('equals the gem version') { is_expected.to be Terraform::VERSION }
+  end
 
   describe '#config_deprecated(attribute:, expected:)' do
     include_context '#logger'
@@ -129,12 +86,35 @@ RSpec.shared_examples Terraform::Configurable do
     end
   end
 
+  describe '#instance_pathname(filename:)' do
+    include_context '#instance'
+
+    let(:filename) { 'foo' }
+
+    subject { described_instance.instance_pathname filename: filename }
+
+    it 'returns a pathname under the hidden instance directory' do
+      is_expected
+        .to eq "#{kitchen_root}/.kitchen/kitchen-terraform/instance/#{filename}"
+    end
+  end
+
+  describe '#driver' do
+    include_context '#driver'
+
+    subject { described_instance.driver }
+
+    it('returns the driver of the instance') { is_expected.to be driver }
+  end
+
   describe '#provisioner' do
     include_context '#provisioner'
 
     subject { described_instance.provisioner }
 
-    it('returns the instance\'s provisioner') { is_expected.to be provisioner }
+    it 'returns the provisioner of the instance' do
+      is_expected.to be provisioner
+    end
   end
 
   describe '#transport' do
@@ -142,7 +122,7 @@ RSpec.shared_examples Terraform::Configurable do
 
     subject { described_instance.transport }
 
-    it('returns the instance\'s transport') { is_expected.to be transport }
+    it('returns the transport of the instance') { is_expected.to be transport }
   end
 
   describe '#provisioner' do

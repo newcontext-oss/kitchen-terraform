@@ -14,29 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/apply_command'
-require 'support/terraform/color_switch_examples'
+require 'terraform/state_config'
 
-RSpec.describe Terraform::ApplyCommand do
-  include_context '#color'
+RSpec.shared_examples Terraform::StateConfig do
+  describe '#finalize_config!(instance)' do
+    include_context 'finalize_config! instance'
 
-  it_behaves_like Terraform::ColorSwitch
+    describe '[:state]' do
+      subject { described_instance[:state] }
 
-  let(:described_instance) { described_class.new color: color, state: state }
-
-  let(:state) { instance_double Object }
-
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "apply"') { is_expected.to eq 'apply' }
-  end
-
-  describe '#options' do
-    subject { described_instance.options }
-
-    it 'returns "-input=false -state=<state_pathname>"' do
-      is_expected.to eq "-input=false -state=#{state}"
+      it 'defaults to an instance pathname' do
+        is_expected.to match %r{instance/terraform\.tfstate}
+      end
     end
   end
 end

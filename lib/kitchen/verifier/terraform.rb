@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
 require 'kitchen/verifier/inspec'
 require 'terraform/configurable'
-require 'terraform/version'
+require 'terraform/groups_config'
 
 module Kitchen
   module Verifier
@@ -26,38 +25,31 @@ module Kitchen
     class Terraform < Inspec
       include ::Terraform::Configurable
 
+      include ::Terraform::GroupsConfig
+
       kitchen_verifier_api_version 2
 
-      plugin_version ::Terraform::VERSION
-
-      required_config :groups do |_, value, verifier|
-        verifier.coerce_groups value: value
+      def add_targets(runner:)
+        collect_tests.each { |test| runner.add target: test }
       end
-
-      default_config :groups, []
 
       def call(state)
-        config[:groups].each do |group|
-          group.verify_each_host options: runner_options(transport, state)
+        each_group_host_runner state: state do |runner|
+          info "Verifying host '#{runner.conf[:host]}' of group " \
+                 "'#{runner.conf[:name]}'"
+          runner.evaluate verifier: self
         end
       end
 
-      def coerce_groups(value:)
-        config[:groups] = Array(value).map do |raw_group|
-          ::Terraform::Group.new value: raw_group, verifier: self
-        end
-      rescue UserError
-        config_error attribute: 'groups',
-                     expected: 'a collection of group mappings'
-      end
-
-      def evaluate(exit_code:)
+      def verify(exit_code:)
         raise InstanceFailure, "Inspec Runner returns #{exit_code}" unless
           exit_code.zero?
       end
 
-      def populate(runner:)
-        collect_tests.each { |test| runner.add target: test }
+      private
+
+      def load_needed_dependencies!
+        require 'terraform/inspec_runner'
       end
     end
   end

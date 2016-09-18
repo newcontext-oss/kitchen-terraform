@@ -23,14 +23,11 @@ RSpec.describe Terraform::PlanCommand do
   it_behaves_like Terraform::ColorSwitch
 
   let :described_instance do
-    described_class.new color: color, destroy: destroy, logger: logger,
-                        out: out, state: state, variables: variables,
-                        variable_files: [variable_file]
+    described_class.new color: color, destroy: destroy, out: out, state: state,
+                        variables: variables, variable_files: [variable_file]
   end
 
   let(:destroy) { instance_double Object }
-
-  let(:logger) { instance_double Object }
 
   let(:out) { instance_double Object }
 

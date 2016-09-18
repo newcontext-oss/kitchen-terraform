@@ -16,13 +16,18 @@
 
 require 'forwardable'
 require 'kitchen'
+require_relative 'version'
 
 module Terraform
   # Common logic for classes that include Kitchen::Configurable
   module Configurable
     extend Forwardable
 
-    def_delegators :instance, :provisioner, :transport
+    def_delegators :instance, :driver, :provisioner, :transport
+
+    def self.included(configurable_class)
+      configurable_class.plugin_version VERSION
+    end
 
     def config_deprecated(attribute:, expected:)
       logger.warn 'DEPRECATION NOTICE'
@@ -34,6 +39,11 @@ module Terraform
       raise Kitchen::UserError, formatted(
         attribute: attribute, message: "must be interpretable as #{expected}"
       )
+    end
+
+    def instance_pathname(filename:)
+      File.join config[:kitchen_root], '.kitchen', 'kitchen-terraform',
+                instance.name, filename
     end
 
     private
