@@ -96,9 +96,9 @@ suites:
   - name: example
     provisioner:
       variables:
-        - access_key=<aws_access_key_id>
-        - public_key_pathname=<pathname/of/public/ssh/key>
-        - secret_key=<aws_secret_access_key>
+        access_key: <aws_access_key_id>
+        public_key_pathname: <pathname/of/public/ssh/key>
+        secret_key: <aws_secret_access_key>
 ```
 
 ## Executing Tests
