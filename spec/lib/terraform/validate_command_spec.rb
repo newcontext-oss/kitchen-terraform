@@ -26,4 +26,10 @@ RSpec.describe Terraform::ValidateCommand do
 
     it('returns "validate"') { is_expected.to eq 'validate' }
   end
+
+  describe '#options' do
+    subject { described_instance.options }
+
+    it('returns an empty string') { is_expected.to eq '' }
+  end
 end

@@ -22,5 +22,9 @@ module Terraform
     def name
       'version'
     end
+
+    def options
+      ''
+    end
   end
 end
