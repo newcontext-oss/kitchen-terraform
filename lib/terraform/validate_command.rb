@@ -22,5 +22,9 @@ module Terraform
     def name
       'validate'
     end
+
+    def options
+      ''
+    end
   end
 end

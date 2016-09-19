@@ -26,4 +26,10 @@ RSpec.describe Terraform::VersionCommand do
 
     it('returns "version"') { is_expected.to eq 'version' }
   end
+
+  describe '#options' do
+    subject { described_instance.options }
+
+    it('returns an empty string') { is_expected.to eq '' }
+  end
 end
