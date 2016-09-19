@@ -22,6 +22,7 @@ Make sure you have the following prerequisites for this tutorial
 * Terraform installed
 * Bundler installed
 * Ruby 2.3.1
+* The default security group on your account must allow ssh access from your ip address
 
 So let's start building this config from scratch!
 
@@ -349,7 +350,7 @@ secret_key = "my_aws_secret_key"
 key_name = "my_aws_key_pair_name"
 region = "us-east-1"
 ami = "ami-fce3c696"
-instance_type = "t2.medium"
+instance_type = "m3.medium"
 ```
 
 Save and close the file.
@@ -458,7 +459,7 @@ And change this content
 testing.tfvars
 ```
 region = "us-east-1"
-instance_type = "t2.medium"
+instance_type = "m3.medium"
 ami = "ami-fce3c696"
 ```
 
@@ -468,7 +469,7 @@ within the us-east-1 AWS region.
 testing.tfvars
 ```
 region = "us-east-1"
-instance_type = "t2.medium"
+instance_type = "m3.medium"
 ami = "ami-6869aa05"
 ```
 
@@ -576,7 +577,7 @@ And open up your testing.tfvars file and switch back to an Ubuntu AMI
 testing.tfvars
 ```
 region = "us-east-1"
-instance_type = "t2.medium"
+instance_type = "m3.medium"
 ami = "ami-fce3c696"
 ```
 
