@@ -8,6 +8,16 @@ major version 0.y.z will maintain a stable public interface.
 
 ## [0.3.0] - 2016-09-??
 
+### Added
+
+* Getting started guide under `examples/getting_started` (thanks
+  [@nellshamrell])
+
+### Changed
+
+* Example project moved under `examples/detailed` (thanks
+  [@nellshamrell])
+
 ### Fixed
 
 * Remove references to verifying the gem; it's problematic even with
