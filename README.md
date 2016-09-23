@@ -54,6 +54,8 @@ Terraform configuration.
 
 [Test Kitchen configuration]: https://docs.chef.io/config_yml_kitchen.html
 
+Refer to [Getting Started Readme](examples/getting_started/README.md) for a detailed walkthrough of setting up and using kitchen-terraform.
+
 Refer to the [examples directory] for a detailed example project.
 
 [examples directory]: examples/
