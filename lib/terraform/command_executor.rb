@@ -20,10 +20,9 @@ require 'mixlib/shellout'
 module Terraform
   # Behaviour for executing commands
   module CommandExecutor
-    def execute(
-      command:, timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT, &block
-    )
-      command.run logger: logger, timeout: timeout, &block
+    def execute(command:, timeout: Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
+      command.run logger: logger, timeout: timeout
+      yield command.output if block_given?
     rescue Errno::EACCES, Errno::ENOENT => error
       command_error command: command, error: error,
                     type: Kitchen::InstanceFailure

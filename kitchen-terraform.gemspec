@@ -55,7 +55,7 @@ Gem::Specification.new do |specification|
 
   specification.required_rubygems_version = ['~> 2.6', '>= 2.6.3']
 
-  specification.requirements = ['Terraform, 0.6']
+  specification.requirements = ['Terraform >= 0.6.0, < 0.8.0']
 
   specification.signing_key =
     File.expand_path '~/.gem/ncs-alane-private_key.pem'

@@ -20,11 +20,15 @@ require_relative 'configurable_context'
 
 RSpec.shared_examples Terraform::CommandExecutor do
   describe '#execute(command:, timeout: ' \
-             'Mixlib::ShellOut::DEFAULT_READ_TIMEOUT, &block)' do
+             'Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)' do
     include_context '#logger'
 
     let :allow_command_run do
       allow(command).to receive(:run).with logger: logger, timeout: timeout
+    end
+
+    let :call_method do
+      proc { described_instance.execute command: command, timeout: timeout }
     end
 
     let(:command) { instance_double Terraform::Command }
@@ -35,19 +39,29 @@ RSpec.shared_examples Terraform::CommandExecutor do
       allow(command).to receive(:to_s).with(no_args).and_return 'command'
     end
 
-    subject do
-      proc { described_instance.execute command: command, timeout: timeout }
-    end
-
     context 'when the command does execute successfully' do
-      before { allow_command_run }
+      let(:output) { instance_double Object }
 
-      it('an error is not raised') { is_expected.to_not raise_error }
+      before do
+        allow_command_run
+
+        allow(command).to receive(:output).with(no_args).and_return output
+      end
+
+      subject do
+        lambda do |block|
+          described_instance.execute command: command, timeout: timeout, &block
+        end
+      end
+
+      it('yields the output') { is_expected.to yield_with_args output }
     end
 
     context 'when the command does not execute successfully due to a ' \
               'permissions error' do
       before { allow_command_run.and_raise Errno::EACCES }
+
+      subject { call_method }
 
       it 'raises an instance failure' do
         is_expected.to raise_error Kitchen::InstanceFailure,
@@ -59,6 +73,8 @@ RSpec.shared_examples Terraform::CommandExecutor do
               'executable found' do
       before { allow_command_run.and_raise Errno::ENOENT }
 
+      subject { call_method }
+
       it 'raises an instance failure' do
         is_expected.to raise_error Kitchen::InstanceFailure,
                                    '`command` failed: "No such file or ' \
@@ -68,6 +84,8 @@ RSpec.shared_examples Terraform::CommandExecutor do
 
     context 'when the command does not execute successfully due to a timeout' do
       before { allow_command_run.and_raise Mixlib::ShellOut::CommandTimeout }
+
+      subject { call_method }
 
       it 'raises a transient failure' do
         is_expected.to raise_error Kitchen::TransientFailure,
@@ -79,6 +97,8 @@ RSpec.shared_examples Terraform::CommandExecutor do
       before do
         allow_command_run.and_raise Mixlib::ShellOut::ShellCommandFailed
       end
+
+      subject { call_method }
 
       it 'raises a transient failure' do
         is_expected.to raise_error Kitchen::TransientFailure,

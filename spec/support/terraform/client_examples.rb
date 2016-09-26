@@ -21,8 +21,6 @@ require_relative 'configurable_context'
 RSpec.shared_examples Terraform::Client do
   include_context '#provisioner'
 
-  let(:allow_execute) { allow(described_instance).to receive :execute }
-
   it_behaves_like Terraform::CommandExecutor
 
   describe '#apply_execution_plan' do
@@ -70,47 +68,56 @@ RSpec.shared_examples Terraform::Client do
     end
   end
 
-  describe '#each_list_output(name:, &block)' do
-    let(:name) { instance_double Object }
-
-    let(:output) { 'foo,bar' }
-
-    before do
-      allow(described_instance).to receive(:output).with(name: name)
-        .and_return output
-    end
-
-    subject do
-      ->(block) { described_instance.each_list_output name: name, &block }
-    end
-
-    it 'iterates the elements of the output' do
-      is_expected.to yield_successive_args 'foo', 'bar'
-    end
-  end
-
-  describe '#output(name:)' do
-    let(:name) { instance_double Object }
-
+  describe '#output_value(list: false, name:, &block)' do
     let(:output_command) { instance_double Terraform::OutputCommand }
 
     let :output_command_class do
       class_double(Terraform::OutputCommand).as_stubbed_const
     end
 
+    let(:element_one) { instance_double Object }
+
+    let(:element_two) { instance_double Object }
+
+    let(:name) { instance_double Object }
+
+    let(:value) { [element_one, element_two] }
+
+    let(:version) { instance_double Object }
+
     before do
-      allow(output_command_class).to receive(:new)
-        .with(state: provisioner_state, target: name).and_return output_command
+      allow(described_instance).to receive(:version).with(no_args)
+        .and_return version
+
+      allow(output_command_class).to receive(:new).with(
+        list: list, state: provisioner_state, target: name, version: version
+      ).and_return output_command
 
       allow(described_instance).to receive(:execute)
-        .with(command: output_command).and_yield "foo\n"
+        .with(command: output_command).and_yield value
     end
 
-    after { described_instance.output name: name }
+    context 'when it is a list' do
+      let(:list) { true }
 
-    subject { described_instance.output name: name }
+      subject do
+        lambda do |block|
+          described_instance.output_value list: list, name: name, &block
+        end
+      end
 
-    it('returns the named output value') { is_expected.to eq 'foo' }
+      it 'yields each value element' do
+        is_expected.to yield_successive_args element_one, element_two
+      end
+    end
+
+    context 'when it is not a list' do
+      let(:list) { false }
+
+      subject { described_instance.output_value list: list, name: name }
+
+      it('returns the named output value') { is_expected.to eq value }
+    end
   end
 
   describe '#plan_execution(destroy:)' do
@@ -161,45 +168,25 @@ RSpec.shared_examples Terraform::Client do
     end
   end
 
-  describe '#validate_installed_version' do
-    let :allow_execute do
-      allow(described_instance).to receive(:execute)
-        .with command: version_command
-    end
-
+  describe '#version' do
     let(:version_command) { instance_double Terraform::VersionCommand }
 
     let :version_command_class do
       class_double(Terraform::VersionCommand).as_stubbed_const
     end
 
+    let(:version) { instance_double Object }
+
     before do
       allow(version_command_class).to receive(:new).with(no_args)
         .and_return version_command
+
+      allow(described_instance).to receive(:execute)
+        .with(command: version_command).and_yield version
     end
 
-    subject { proc { described_instance.validate_installed_version } }
+    subject { described_instance.version }
 
-    context 'when the installed version is 0.6.z' do
-      before { allow_execute.and_yield 'v0.6.z' }
-
-      it('an error is not raised') { is_expected.to_not raise_error }
-    end
-
-    context 'when the installed version is 0.7.z' do
-      before { allow_execute.and_yield 'v0.7.z' }
-
-      it('an error is not raised') { is_expected.to_not raise_error }
-    end
-
-    context 'when the installed version is not supported' do
-      before { allow_execute.and_yield 'v0.8.z' }
-
-      it 'an error is raised' do
-        is_expected.to raise_error Kitchen::UserError,
-                                   'Only Terraform versions 0.6.z and 0.7.z ' \
-                                     'are supported'
-      end
-    end
+    it('returns the installed version') { is_expected.to be version }
   end
 end

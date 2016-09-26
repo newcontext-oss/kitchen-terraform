@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
 require_relative 'apply_command'
 require_relative 'command_executor'
 require_relative 'get_command'
@@ -39,13 +38,12 @@ module Terraform
       execute command: GetCommand.new(target: provisioner[:directory])
     end
 
-    def each_list_output(name:, &block)
-      output(name: name).split(',').each(&block)
-    end
-
-    def output(name:)
-      execute command: OutputCommand
-        .new(state: provisioner[:state], target: name), &:chomp
+    def output_value(list: false, name:, &block)
+      execute(
+        command: OutputCommand.new(
+          list: list, state: provisioner[:state], target: name, version: version
+        )
+      ) { |value| list ? value.each(&block) : (return value) }
     end
 
     def plan_execution(destroy:)
@@ -58,16 +56,11 @@ module Terraform
     end
 
     def validate_configuration_files
-      execute command: ValidateCommand
-        .new(target: provisioner[:directory])
+      execute command: ValidateCommand.new(target: provisioner[:directory])
     end
 
-    def validate_installed_version
-      execute command: VersionCommand.new do |version|
-        raise Kitchen::UserError,
-              'Only Terraform versions 0.6.z and 0.7.z are supported' unless
-                /v0\.[67]/ =~ version
-      end
+    def version
+      execute(command: VersionCommand.new) { |value| return value }
     end
   end
 end

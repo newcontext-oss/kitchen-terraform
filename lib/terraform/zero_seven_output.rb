@@ -14,29 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'inspec'
-require 'kitchen'
+require 'json'
 
 module Terraform
-  # Inspec::Runner with convenience methods for use by
-  # Kitchen::Verifier::Terraform
-  class InspecRunner < Inspec::Runner
-    attr_reader :conf
-
-    def add(target:)
-      add_target target, conf
-    end
-
-    def evaluate(verifier:)
-      verifier.add_targets runner: self
-      verifier.verify exit_code: run
+  # Behaviour for OutputCommand with Terraform 0.7
+  module ZeroSevenOutput
+    def options
+      "-json=true -state=#{state}"
     end
 
     private
 
-    def initialize(conf = {})
-      conf[:attributes] = Kitchen::Util.stringified_hash conf[:attributes]
-      super
+    def processed_output(raw_output:)
+      JSON.parse(raw_output).fetch('value')
+          .tap { |value| return list ? Array(value) : value }
     end
   end
 end

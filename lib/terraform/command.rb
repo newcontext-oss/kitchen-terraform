@@ -27,12 +27,15 @@ module Terraform
       '--help'
     end
 
+    def output
+      processed_output raw_output: shell_out.stdout
+    end
+
     def run(logger:, timeout:)
       shell_out.live_stream = logger
       shell_out.timeout = timeout
       shell_out.run_command
       shell_out.error!
-      yield shell_out.stdout if block_given?
     end
 
     def to_s
@@ -50,6 +53,10 @@ module Terraform
     end
 
     def initialize_attributes(**_keyword_arguments)
+    end
+
+    def processed_output(raw_output:)
+      raw_output
     end
   end
 end

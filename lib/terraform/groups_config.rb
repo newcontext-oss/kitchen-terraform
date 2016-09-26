@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
+require_relative 'group'
 
 module Terraform
   # Behaviour for the [:groups] config option
@@ -39,7 +39,9 @@ module Terraform
     end
 
     def coerce_groups(value:)
-      config[:groups] = Array(value).map { |group| coerced_group value: group }
+      config[:groups] = Array(value).map do |group|
+        Group.new data: coerced_group(value: group)
+      end
     end
 
     def coerce_hostnames(group:)
@@ -71,34 +73,6 @@ module Terraform
       end
     rescue TypeError
       config_error attribute: "groups][#{value}", expected: 'a group mapping'
-    end
-
-    def each_group_host_runner(state:, &block)
-      config[:groups].each do |group|
-        load_attributes group: group
-        load_username group: group
-        each_host_runner group: group, state: state, &block
-      end
-    end
-
-    # NOTE: terraform/inspec_runner is required in
-    #       Kitchen::Verifier::Terraform#load_dependencies!
-    def each_host_runner(group:, state:)
-      driver.each_list_output name: group[:hostnames] do |output|
-        group[:host] = output
-        yield InspecRunner.new runner_options(transport, state).merge group
-      end
-    end
-
-    def load_attributes(group:)
-      group[:attributes] = Kitchen::Util.stringified_hash group[:attributes]
-      group[:attributes].each_pair do |key, output_name|
-        group[:attributes][key] = driver.output name: output_name
-      end
-    end
-
-    def load_username(group:)
-      group[:user] = group[:username]
     end
   end
 end

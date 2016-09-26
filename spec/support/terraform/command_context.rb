@@ -14,29 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'inspec'
-require 'kitchen'
+require 'mixlib/shellout'
 
-module Terraform
-  # Inspec::Runner with convenience methods for use by
-  # Kitchen::Verifier::Terraform
-  class InspecRunner < Inspec::Runner
-    attr_reader :conf
+RSpec.shared_context '#shell_out' do
+  let(:allow_stdout) { allow(shell_out).to receive(:stdout).with no_args }
 
-    def add(target:)
-      add_target target, conf
-    end
+  let(:shell_out) { instance_double Mixlib::ShellOut }
 
-    def evaluate(verifier:)
-      verifier.add_targets runner: self
-      verifier.verify exit_code: run
-    end
-
-    private
-
-    def initialize(conf = {})
-      conf[:attributes] = Kitchen::Util.stringified_hash conf[:attributes]
-      super
-    end
+  before do
+    allow(described_instance).to receive(:shell_out).with(no_args)
+      .and_return shell_out
   end
 end

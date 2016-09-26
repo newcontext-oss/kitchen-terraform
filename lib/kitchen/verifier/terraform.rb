@@ -34,11 +34,30 @@ module Kitchen
       end
 
       def call(state)
-        each_group_host_runner state: state do |runner|
-          info "Verifying host '#{runner.conf[:host]}' of group " \
-                 "'#{runner.conf[:name]}'"
-          runner.evaluate verifier: self
+        self.inspec_runner_options = runner_options transport, state
+        config[:groups].each { |group| group.evaluate verifier: self }
+      end
+
+      def execute
+        ::Terraform::InspecRunner.new(inspec_runner_options)
+                                 .tap do |inspec_runner|
+                                   inspec_runner.evaluate verifier: self
+                                 end
+      end
+
+      def merge(options:)
+        inspec_runner_options.merge! options
+      end
+
+      def resolve_attributes(group:)
+        group.each_attribute do |key, output_name|
+          group.store_attribute key: key,
+                                value: driver.output_value(name: output_name)
         end
+      end
+
+      def resolve_hostnames(group:, &block)
+        driver.output_value list: true, name: group.hostnames, &block
       end
 
       def verify(exit_code:)
@@ -47,6 +66,8 @@ module Kitchen
       end
 
       private
+
+      attr_accessor :inspec_runner_options
 
       def load_needed_dependencies!
         require 'terraform/inspec_runner'

@@ -90,6 +90,8 @@ Before continuing, review the instructions on configuring the
 
 ```yaml
 ---
+provisioner:
+  directory: test/fixtures/<version of Terraform installed>
 transport:
   ssh_key: <pathname/of/private/ssh/key>
 suites:

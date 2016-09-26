@@ -23,13 +23,13 @@ RSpec.shared_examples Terraform::GroupsConfig do
     let(:call_method) { described_instance.coerce_attributes group: group }
 
     context 'when the attributes can be coerced to be a mapping' do
-      let(:group) { { attributes: { 'foo' => 'bar' } } }
+      let(:group) { { attributes: { foo: 'bar' } } }
 
       before { call_method }
 
       subject { group[:attributes] }
 
-      it('updates the config assignment') { is_expected.to eq 'foo' => 'bar' }
+      it('updates the config assignment') { is_expected.to eq foo: 'bar' }
     end
 
     context 'when the attributes can not be coerced to be a mapping' do
@@ -59,12 +59,19 @@ RSpec.shared_examples Terraform::GroupsConfig do
   end
 
   describe '#coerce_groups(value:)' do
-    let(:group) { instance_double Object }
+    let(:group) { instance_double Terraform::Group }
+
+    let(:group_class) { class_double(Terraform::Group).as_stubbed_const }
+
+    let(:group_data) { instance_double Object }
 
     let(:value) { instance_double Object }
 
     before do
       allow(described_instance).to receive(:coerced_group).with(value: value)
+        .and_return group_data
+
+      allow(group_class).to receive(:new).with(data: group_data)
         .and_return group
 
       described_instance.coerce_groups value: value
@@ -177,88 +184,6 @@ RSpec.shared_examples Terraform::GroupsConfig do
     end
   end
 
-  describe '#each_group_host_runner(state:, &block)' do
-    let(:group) { instance_double Object }
-
-    let(:load_attributes) { receive(:load_attributes).with group: group }
-
-    let(:load_username) { receive(:load_username).with group: group }
-
-    let :enumerate_host_runners do
-      receive(:each_host_runner).with group: group, state: state
-    end
-
-    let(:state) { instance_double Object }
-
-    before do
-      config[:groups] = [group]
-
-      allow(described_instance).to load_attributes
-
-      allow(described_instance).to load_username
-
-      allow(described_instance).to enumerate_host_runners
-    end
-
-    after { described_instance.each_group_host_runner state: state }
-
-    subject { described_instance }
-
-    it('loads attributes') { is_expected.to load_attributes }
-
-    it('loads the username') { is_expected.to load_username }
-
-    it('enumerates the host runners') { is_expected.to enumerate_host_runners }
-  end
-
-  describe '#each_host_runner(group:, state:)' do
-    include_context '#driver'
-
-    include_context '#transport'
-
-    let(:group) { { hostnames: hostnames } }
-
-    let(:group_runner_options) { instance_double Object }
-
-    let(:hostnames) { instance_double Object }
-
-    let(:inspec_runner) { instance_double Object }
-
-    let :inspec_runner_class do
-      class_double(Terraform::InspecRunner).as_stubbed_const
-    end
-
-    let(:output) { instance_double Object }
-
-    let(:runner_options) { instance_double Hash }
-
-    let(:state) { instance_double Object }
-
-    before do
-      allow(driver).to receive(:each_list_output).with(name: hostnames)
-        .and_yield output
-
-      allow(described_instance).to receive(:runner_options)
-        .with(transport, state).and_return runner_options
-
-      allow(runner_options).to receive(:merge).with(group)
-        .and_return group_runner_options
-
-      allow(inspec_runner_class).to receive(:new)
-        .with(group_runner_options).and_return inspec_runner
-    end
-
-    subject do
-      lambda do |block|
-        described_instance.each_host_runner group: group, state: state, &block
-      end
-    end
-
-    it 'enumerates runners for each host' do
-      is_expected.to yield_with_args inspec_runner
-    end
-  end
-
   describe '#finalize_config!(instance)' do
     include_context 'finalize_config! instance'
 
@@ -267,42 +192,5 @@ RSpec.shared_examples Terraform::GroupsConfig do
 
       it('defaults to an empty collection') { is_expected.to eq [] }
     end
-  end
-
-  describe '#load_attributes(group:)' do
-    include_context '#driver'
-
-    let(:group) { { attributes: { key => output_name } } }
-
-    let(:key) { instance_double Object }
-
-    let(:output) { instance_double Object }
-
-    let(:output_name) { instance_double Object }
-
-    before do
-      allow(driver).to receive(:output).with(name: output_name)
-        .and_return output
-
-      described_instance.load_attributes group: group
-    end
-
-    subject { group[:attributes] }
-
-    it 'updates the mapping with Terraform output variable values' do
-      is_expected.to eq key.to_s => output
-    end
-  end
-
-  describe '#load_username(group:)' do
-    let(:group) { { username: username } }
-
-    let(:username) { instance_double Object }
-
-    before { described_instance.load_username group: group }
-
-    subject { group[:user] }
-
-    it('updates the user with the username') { is_expected.to eq username }
   end
 end

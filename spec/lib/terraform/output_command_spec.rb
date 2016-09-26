@@ -14,24 +14,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/command_extender_examples'
+require 'support/terraform/zero_seven_output_examples'
+require 'support/terraform/zero_six_output_examples'
 require 'terraform/output_command'
 
 RSpec.describe Terraform::OutputCommand do
-  let(:described_instance) { described_class.new state: state }
+  let :described_instance do
+    described_class.new list: list, version: version, state: state
+  end
+
+  let(:list) { instance_double Object }
 
   let(:state) { instance_double Object }
+
+  let(:version) { '' }
+
+  it_behaves_like Terraform::CommandExtender
+
+  it_behaves_like(Terraform::ZeroSevenOutput) { let(:version) { 'v0.7' } }
+
+  it_behaves_like(Terraform::ZeroSixOutput) { let(:version) { 'v0.6' } }
 
   describe '#name' do
     subject { described_instance.name }
 
     it('returns "output"') { is_expected.to eq 'output' }
-  end
-
-  describe '#options' do
-    subject { described_instance.options }
-
-    it 'returns "-state=<state_pathname>"' do
-      is_expected.to eq "-state=#{state}"
-    end
   end
 end

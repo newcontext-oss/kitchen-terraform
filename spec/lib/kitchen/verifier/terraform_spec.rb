@@ -18,11 +18,19 @@ require 'kitchen/verifier/terraform'
 require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
 require 'support/terraform/groups_config_examples'
+require 'terraform/group'
 
 RSpec.describe Kitchen::Verifier::Terraform do
   include_context 'config'
 
   let(:described_instance) { described_class.new config }
+
+  let(:inspec_runner_options) { instance_double Hash }
+
+  before do
+    allow(described_instance).to receive(:inspec_runner_options).with(no_args)
+      .and_return inspec_runner_options
+  end
 
   it_behaves_like Terraform::Configurable
 
@@ -48,32 +56,129 @@ RSpec.describe Kitchen::Verifier::Terraform do
   end
 
   describe '#call(state)' do
-    let(:conf) { { host: host, name: name } }
+    include_context '#transport'
 
-    let(:host) { instance_double Object }
+    let(:evaluate) { receive(:evaluate).with verifier: described_instance }
 
-    let(:name) { instance_double Object }
+    let(:group) { instance_double Terraform::Group }
 
-    let(:runner) { instance_double Terraform::InspecRunner }
+    let(:runner_key) { instance_double Object }
+
+    let(:runner_options) { { runner_key => runner_value } }
+
+    let(:runner_value) { instance_double Object }
+
+    let :set_options do
+      receive(:inspec_runner_options=).with runner_options
+    end
 
     let(:state) { instance_double Object }
 
     before do
-      allow(described_instance).to receive(:each_group_host_runner)
-        .with(state: state).and_yield runner
+      allow(described_instance).to receive(:runner_options)
+        .with(transport, state).and_return runner_options
 
-      allow(runner).to receive(:conf).with(no_args).and_return conf
+      allow(config).to receive(:[]).with(:groups).and_return [group]
 
-      allow(described_instance).to receive(:info)
-        .with "Verifying host '#{host}' of group '#{name}'"
+      allow(group).to evaluate
     end
 
     after { described_instance.call state }
 
-    subject { runner }
+    describe 'setting options' do
+      subject { described_instance }
 
-    it 'evaluates each host of each group with the runner' do
+      it 'uses logic of Kitchen::Verifier::Inspec' do
+        is_expected.to set_options
+      end
+    end
+
+    describe 'evaluating tests' do
+      subject { group }
+
+      it('each group is evaluated') { is_expected.to evaluate }
+    end
+  end
+
+  describe '#execute' do
+    let(:inspec_runner) { instance_double Terraform::InspecRunner }
+
+    let :inspec_runner_class do
+      class_double(Terraform::InspecRunner).as_stubbed_const
+    end
+
+    before do
+      allow(inspec_runner_class).to receive(:new).with(inspec_runner_options)
+        .and_return inspec_runner
+    end
+
+    after { described_instance.execute }
+
+    subject { inspec_runner }
+
+    it 'evaluates the configuration' do
       is_expected.to receive(:evaluate).with verifier: described_instance
+    end
+  end
+
+  describe '#merge(options:)' do
+    let(:options) { instance_double Object }
+
+    after { described_instance.merge options: options }
+
+    subject { inspec_runner_options }
+
+    it 'prioritizes the provided options' do
+      is_expected.to receive(:merge!).with options
+    end
+  end
+
+  describe '#resolve_attributes(group:)' do
+    include_context '#driver'
+
+    let(:group) { instance_double Terraform::Group }
+
+    let(:key) { instance_double Object }
+
+    let(:output_name) { instance_double Object }
+
+    let(:output_value) { instance_double Object }
+
+    before do
+      allow(group).to receive(:each_attribute).with(no_args)
+        .and_yield key, output_name
+
+      allow(driver).to receive(:output_value).with(name: output_name)
+        .and_return output_value
+    end
+
+    after { described_instance.resolve_attributes group: group }
+
+    subject { group }
+
+    it 'updates each attribute with the resolved output value' do
+      is_expected.to receive(:store_attribute).with key: key,
+                                                    value: output_value
+    end
+  end
+
+  describe '#resolve_hostnames(group:, &block)' do
+    include_context '#driver'
+
+    let(:group) { instance_double Terraform::Group }
+
+    let(:hostnames) { instance_double Object }
+
+    before do
+      allow(group).to receive(:hostnames).with(no_args).and_return hostnames
+    end
+
+    after { described_instance.resolve_hostnames group: group }
+
+    subject { driver }
+
+    it 'yields each hostname' do
+      is_expected.to receive(:output_value).with list: true, name: hostnames
     end
   end
 
