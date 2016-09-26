@@ -31,7 +31,9 @@ module Kitchen
       no_parallel_for
 
       def create(_state = nil)
-        validate_installed_version
+        raise Kitchen::UserError,
+              'Only Terraform versions 0.6.z and 0.7.z are supported' unless
+                /v0\.[67]/ =~ version
       end
 
       def destroy(_state = nil)

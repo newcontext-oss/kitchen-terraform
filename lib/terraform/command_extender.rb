@@ -14,29 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'inspec'
-require 'kitchen'
-
 module Terraform
-  # Inspec::Runner with convenience methods for use by
-  # Kitchen::Verifier::Terraform
-  class InspecRunner < Inspec::Runner
-    attr_reader :conf
-
-    def add(target:)
-      add_target target, conf
-    end
-
-    def evaluate(verifier:)
-      verifier.add_targets runner: self
-      verifier.verify exit_code: run
-    end
-
-    private
-
-    def initialize(conf = {})
-      conf[:attributes] = Kitchen::Util.stringified_hash conf[:attributes]
-      super
+  # Logic to extend a command's behaviour based on the Terraform version
+  module CommandExtender
+    def extend_behaviour(version:)
+      extend version_behaviours.fetch(
+        version_behaviours.keys
+          .find { |extended_version| extended_version =~ version }
+      ) { return }
     end
   end
 end

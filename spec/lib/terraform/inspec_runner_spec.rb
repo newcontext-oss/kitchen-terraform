@@ -18,11 +18,11 @@ require 'kitchen/verifier/terraform'
 require 'terraform/inspec_runner'
 
 RSpec.describe Terraform::InspecRunner do
-  let(:described_instance) { described_class.new }
+  let(:conf) { {} }
+
+  let(:described_instance) { described_class.new conf }
 
   describe '#add(target:)' do
-    let(:conf) { instance_double Object }
-
     let(:target) { instance_double Object }
 
     before do
@@ -41,13 +41,23 @@ RSpec.describe Terraform::InspecRunner do
   describe '#evaluate(verifier:)' do
     let(:add_targets) { receive(:add_targets).with runner: described_instance }
 
+    let(:attributes) { {} }
+
+    let(:call_method) { described_instance.evaluate verifier: verifier }
+
     let(:exit_code) { instance_double Object }
+
+    let(:key) { instance_double Object }
+
+    let(:value) { instance_double Object }
 
     let(:verifier) { instance_double Kitchen::Verifier::Terraform }
 
     let(:verify) { receive(:verify).with exit_code: exit_code }
 
     before do
+      conf[:attributes] = attributes
+
       allow(verifier).to add_targets
 
       allow(described_instance).to receive(:run).with(no_args)
@@ -56,7 +66,7 @@ RSpec.describe Terraform::InspecRunner do
       allow(verifier).to verify
     end
 
-    after { described_instance.evaluate verifier: verifier }
+    after { call_method }
 
     subject { verifier }
 

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/command_context'
 require 'terraform/command'
 
 RSpec.describe Terraform::Command do
@@ -33,7 +34,21 @@ RSpec.describe Terraform::Command do
     it('returns "--help"') { is_expected.to eq '--help' }
   end
 
+  describe '#output' do
+    include_context '#shell_out'
+
+    let(:value) { instance_double Object }
+
+    before { allow_stdout.and_return value }
+
+    subject { described_instance.output }
+
+    it('returns unprocessed output') { is_expected.to eq value }
+  end
+
   describe '#run(logger:, timeout:)' do
+    include_context '#shell_out'
+
     let(:check_error) { receive(:error!).with no_args }
 
     let(:logger) { instance_double Object }
@@ -44,16 +59,9 @@ RSpec.describe Terraform::Command do
 
     let(:set_timeout) { receive(:timeout=).with timeout }
 
-    let(:shell_out) { instance_double Mixlib::ShellOut }
-
-    let(:stdout) { instance_double Object }
-
     let(:timeout) { instance_double Object }
 
     before do
-      allow(described_instance).to receive(:shell_out).with(no_args)
-        .and_return shell_out
-
       allow(shell_out).to set_live_stream
 
       allow(shell_out).to set_timeout
@@ -61,35 +69,21 @@ RSpec.describe Terraform::Command do
       allow(shell_out).to run_command
 
       allow(shell_out).to check_error
-
-      allow(shell_out).to receive(:stdout).with(no_args).and_return stdout
     end
 
-    describe 'executing' do
-      after { described_instance.run logger: logger, timeout: timeout }
+    after { described_instance.run logger: logger, timeout: timeout }
 
-      subject { shell_out }
+    subject { shell_out }
 
-      it 'uses the logger for live streaming' do
-        is_expected.to set_live_stream
-      end
-
-      it('configures a timeout duration') { is_expected.to set_timeout }
-
-      it('runs the command') { is_expected.to run_command }
-
-      it('checks for errors') { is_expected.to check_error }
+    it 'uses the logger for live streaming' do
+      is_expected.to set_live_stream
     end
 
-    describe 'handling output' do
-      subject do
-        lambda do |block|
-          described_instance.run logger: logger, timeout: timeout, &block
-        end
-      end
+    it('configures a timeout duration') { is_expected.to set_timeout }
 
-      it('yields the standard output') { is_expected.to yield_with_args stdout }
-    end
+    it('runs the command') { is_expected.to run_command }
+
+    it('checks for errors') { is_expected.to check_error }
   end
 
   describe '#to_s' do
