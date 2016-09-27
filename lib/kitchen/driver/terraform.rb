@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'fileutils'
 require 'kitchen'
 require 'terraform/client'
 require 'terraform/configurable'
@@ -31,16 +32,22 @@ module Kitchen
       no_parallel_for
 
       def create(_state = nil)
-        raise Kitchen::UserError,
-              'Only Terraform versions 0.6.z and 0.7.z are supported' unless
-                /v0\.[67]/ =~ version
+        %i(plan state)
+          .each { |option| FileUtils.mkdir_p File.dirname provisioner[option] }
       end
 
       def destroy(_state = nil)
+        create
         validate_configuration_files
         download_modules
         plan_execution destroy: true
         apply_execution_plan
+      end
+
+      def verify_dependencies
+        raise Kitchen::UserError,
+              'Only Terraform versions 0.6.z and 0.7.z are supported' unless
+                /v0\.[67]/ =~ version
       end
     end
   end
