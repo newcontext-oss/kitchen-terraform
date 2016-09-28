@@ -15,16 +15,17 @@
 # limitations under the License.
 
 require 'terraform/apply_command'
+require 'support/terraform/color_switch_context'
 require 'support/terraform/color_switch_examples'
 
 RSpec.describe Terraform::ApplyCommand do
-  include_context '#color'
-
-  it_behaves_like Terraform::ColorSwitch
+  let(:color) { instance_double Object }
 
   let(:described_instance) { described_class.new color: color, state: state }
 
   let(:state) { instance_double Object }
+
+  it_behaves_like Terraform::ColorSwitch
 
   describe '#name' do
     subject { described_instance.name }
@@ -33,10 +34,13 @@ RSpec.describe Terraform::ApplyCommand do
   end
 
   describe '#options' do
+    include_context '#color_switch'
+
     subject { described_instance.options }
 
-    it 'returns "-input=false -state=<state_pathname>"' do
-      is_expected.to eq "-input=false -state=#{state}"
+    it 'returns "-input=false -state=<state_pathname> ' \
+         '-color=<true or false>"' do
+      is_expected.to eq "-input=false -state=#{state} -color=<true or false>"
     end
   end
 end

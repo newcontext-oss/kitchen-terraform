@@ -15,12 +15,11 @@
 # limitations under the License.
 
 require 'terraform/plan_command'
+require 'support/terraform/color_switch_context'
 require 'support/terraform/color_switch_examples'
 
 RSpec.describe Terraform::PlanCommand do
-  include_context '#color'
-
-  it_behaves_like Terraform::ColorSwitch
+  let(:color) { instance_double Object }
 
   let :described_instance do
     described_class.new color: color, destroy: destroy, out: out, state: state,
@@ -37,6 +36,8 @@ RSpec.describe Terraform::PlanCommand do
 
   let(:variables) { { 'key' => 'value' } }
 
+  it_behaves_like Terraform::ColorSwitch
+
   describe '#name' do
     subject { described_instance.name }
 
@@ -44,15 +45,17 @@ RSpec.describe Terraform::PlanCommand do
   end
 
   describe '#options' do
+    include_context '#color_switch'
+
     subject { described_instance.options }
 
     it 'returns "-destroy=<true_or_false> -input=false ' \
          '-out=<plan_pathname> -state=<state_pathname> ' \
-         '[-var=\'<variable_assignment>\'...] ' \
+         '-color=<true or false> [-var=\'<variable_assignment>\'...] ' \
          '[-var-file=<variable_pathname>...]"' do
       is_expected.to eq "-destroy=#{destroy} -input=false -out=#{out} " \
-                          "-state=#{state} -var='key=value' " \
-                          "-var-file=#{variable_file}"
+                          "-state=#{state} -color=<true or false> " \
+                          "-var='key=value' -var-file=#{variable_file}"
     end
   end
 end
