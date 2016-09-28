@@ -37,6 +37,8 @@ module Kitchen
       end
 
       def destroy(_state = nil)
+        return if !File.exist?(provisioner[:state]) || current_state.empty?
+
         create
         validate_configuration_files
         download_modules
