@@ -47,6 +47,29 @@ RSpec.shared_examples Terraform::Client do
     end
   end
 
+  describe '#current_state' do
+    let(:show_command) { instance_double Terraform::ShowCommand }
+
+    let :show_command_class do
+      class_double(Terraform::ShowCommand).as_stubbed_const
+    end
+
+    let(:value) { instance_double Object }
+
+    before do
+      allow(show_command_class).to receive(:new)
+        .with(color: provisioner_color, target: provisioner_state)
+        .and_return show_command
+
+      allow(described_instance).to receive(:execute).with(command: show_command)
+        .and_return value
+    end
+
+    subject { described_instance.current_state }
+
+    it('returns the current state') { is_expected.to eq value }
+  end
+
   describe '#download_modules' do
     let(:get_command) { instance_double Terraform::GetCommand }
 

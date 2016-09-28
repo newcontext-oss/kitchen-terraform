@@ -19,6 +19,7 @@ require_relative 'command_executor'
 require_relative 'get_command'
 require_relative 'output_command'
 require_relative 'plan_command'
+require_relative 'show_command'
 require_relative 'validate_command'
 require_relative 'version_command'
 
@@ -32,6 +33,13 @@ module Terraform
         color: provisioner[:color], state: provisioner[:state],
         target: provisioner[:plan]
       ), timeout: provisioner[:apply_timeout]
+    end
+
+    def current_state
+      execute(
+        command: ShowCommand
+          .new(color: provisioner[:color], target: provisioner[:state])
+      ) { |value| return value }
     end
 
     def download_modules
