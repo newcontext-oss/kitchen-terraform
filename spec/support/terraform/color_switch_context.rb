@@ -14,15 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # Shared color switch for Terraform
-  module ColorSwitch
-    def color_switch
-      color ? '' : '-no-color'
-    end
-
-    private
-
-    attr_accessor :color
+RSpec.shared_context '#color_switch' do
+  before do
+    allow(described_instance).to receive(:color_switch).with(no_args)
+      .and_return '-color=<true or false>'
   end
 end
