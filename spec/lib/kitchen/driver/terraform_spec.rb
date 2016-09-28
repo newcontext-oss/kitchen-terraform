@@ -87,6 +87,18 @@ RSpec.describe Kitchen::Driver::Terraform do
   end
 
   describe '#destroy(_state = nil)' do
+    include_context '#provisioner'
+
+    let :allow_current_state do
+      allow(described_instance).to receive(:current_state).with no_args
+    end
+
+    let :allow_exist? do
+      allow(file_class).to receive(:exist?).with provisioner_state
+    end
+
+    let(:file_class) { class_double(File).as_stubbed_const }
+
     let(:apply_execution_plan) { receive(:apply_execution_plan).with no_args }
 
     let(:create) { receive(:create).with no_args }
@@ -101,37 +113,59 @@ RSpec.describe Kitchen::Driver::Terraform do
       receive(:validate_configuration_files).with no_args
     end
 
-    before do
-      allow(described_instance).to create
-
-      allow(described_instance).to validate_configuration_files
-
-      allow(described_instance).to download_modules
-
-      allow(described_instance).to plan_destructive_execution
-
-      allow(described_instance).to apply_execution_plan
-    end
-
-    after { described_instance.destroy }
-
     subject { described_instance }
 
-    it 'ensures the parent directories of the plan and state files exist' do
-      is_expected.to create
+    context 'when the state does not exist' do
+      before { allow_exist?.and_return false }
+
+      it('takes no action') { is_expected.to_not apply_execution_plan }
     end
 
-    it 'validates the configuration files' do
-      is_expected.to validate_configuration_files
+    context 'when the state does exist but is empty' do
+      before do
+        allow_exist?.and_return true
+
+        allow_current_state.and_return ''
+      end
+
+      it('takes no action') { is_expected.to_not apply_execution_plan }
     end
 
-    it('gets the dependency modules') { is_expected.to download_modules }
+    context 'when the state does exist and is not empty' do
+      before do
+        allow_exist?.and_return true
 
-    it 'plans a destructive execution' do
-      is_expected.to plan_destructive_execution
+        allow_current_state.and_return 'foo'
+
+        allow(described_instance).to create
+
+        allow(described_instance).to validate_configuration_files
+
+        allow(described_instance).to download_modules
+
+        allow(described_instance).to plan_destructive_execution
+
+        allow(described_instance).to apply_execution_plan
+      end
+
+      after { described_instance.destroy }
+
+      it 'ensures the parent directories of the plan and state files exist' do
+        is_expected.to create
+      end
+
+      it 'validates the configuration files' do
+        is_expected.to validate_configuration_files
+      end
+
+      it('gets the dependency modules') { is_expected.to download_modules }
+
+      it 'plans a destructive execution' do
+        is_expected.to plan_destructive_execution
+      end
+
+      it('applies the execution plan') { is_expected.to apply_execution_plan }
     end
-
-    it('applies the execution plan') { is_expected.to apply_execution_plan }
   end
 
   describe '#verify_dependencies' do
