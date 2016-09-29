@@ -54,7 +54,7 @@ RSpec.shared_examples Terraform::Client do
       class_double(Terraform::ShowCommand).as_stubbed_const
     end
 
-    let(:value) { instance_double Object }
+    let(:value) { "\e[10mfoo\n" }
 
     before do
       allow(show_command_class).to receive(:new)
@@ -62,12 +62,14 @@ RSpec.shared_examples Terraform::Client do
         .and_return show_command
 
       allow(described_instance).to receive(:execute).with(command: show_command)
-        .and_return value
+        .and_yield value
     end
 
     subject { described_instance.current_state }
 
-    it('returns the current state') { is_expected.to eq value }
+    it 'returns the state output stripped of color and newlines' do
+      is_expected.to eq 'foo'
+    end
   end
 
   describe '#download_modules' do

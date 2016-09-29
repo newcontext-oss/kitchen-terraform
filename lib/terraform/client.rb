@@ -39,7 +39,7 @@ module Terraform
       execute(
         command: ShowCommand
           .new(color: provisioner[:color], target: provisioner[:state])
-      ) { |value| return value }
+      ) { |value| return value.gsub(/(\e\[\d+m|\n)/, '') }
     end
 
     def download_modules
