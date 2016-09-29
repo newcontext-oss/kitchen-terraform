@@ -113,6 +113,8 @@ RSpec.describe Kitchen::Driver::Terraform do
       receive(:validate_configuration_files).with no_args
     end
 
+    after { described_instance.destroy }
+
     subject { described_instance }
 
     context 'when the state does not exist' do
@@ -147,8 +149,6 @@ RSpec.describe Kitchen::Driver::Terraform do
 
         allow(described_instance).to apply_execution_plan
       end
-
-      after { described_instance.destroy }
 
       it 'ensures the parent directories of the plan and state files exist' do
         is_expected.to create
