@@ -173,27 +173,39 @@ RSpec.describe Kitchen::Driver::Terraform do
       allow(described_instance).to receive(:version).with no_args
     end
 
-    subject { proc { described_instance.verify_dependencies } }
+    let(:call_method) { described_instance.verify_dependencies }
 
-    context 'when the installed version is 0.6.z' do
-      before { allow_version.and_return 'v0.6.z' }
+    context 'when the installed version is v0.7' do
+      before { allow_version.and_return 'v0.7' }
+
+      subject { proc { call_method } }
 
       it('an error is not raised') { is_expected.to_not raise_error }
     end
 
-    context 'when the installed version is 0.7.z' do
-      before { allow_version.and_return 'v0.7.z' }
+    context 'when the installed version is v0.6' do
+      let(:version) { 'v0.6' }
 
-      it('an error is not raised') { is_expected.to_not raise_error }
+      before { allow_version.and_return version }
+
+      after { call_method }
+
+      subject { described_instance }
+
+      it 'logs a deprecation' do
+        is_expected.to receive(:log_deprecation)
+          .with aspect: version, remediation: 'Update to v0.7', version: '1.0'
+      end
     end
 
     context 'when the installed version is not supported' do
-      before { allow_version.and_return 'v0.8.z' }
+      before { allow_version.and_return 'v0.8' }
+
+      subject { proc { call_method } }
 
       it 'an error is raised' do
         is_expected.to raise_error Kitchen::UserError,
-                                   'Only Terraform versions 0.6.z and 0.7.z ' \
-                                     'are supported'
+                                   'Only Terraform v0.7 and v0.6 are supported'
       end
     end
   end

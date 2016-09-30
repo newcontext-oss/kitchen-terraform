@@ -200,7 +200,7 @@ RSpec.shared_examples Terraform::Client do
       class_double(Terraform::VersionCommand).as_stubbed_const
     end
 
-    let(:version) { instance_double Object }
+    let(:version) { "Terraform v12.345.6789\n" }
 
     before do
       allow(version_command_class).to receive(:new).with(no_args)
@@ -212,6 +212,6 @@ RSpec.shared_examples Terraform::Client do
 
     subject { described_instance.version }
 
-    it('returns the installed version') { is_expected.to be version }
+    it('returns the installed version') { is_expected.to eq 'v12.345.6789' }
   end
 end

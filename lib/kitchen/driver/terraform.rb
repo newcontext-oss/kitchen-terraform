@@ -47,9 +47,14 @@ module Kitchen
       end
 
       def verify_dependencies
-        raise Kitchen::UserError,
-              'Only Terraform versions 0.6.z and 0.7.z are supported' unless
-                /v0\.[67]/ =~ version
+        case version
+        when /v0\.7/
+        when /v0\.6/
+          log_deprecation aspect: version, remediation: 'Update to v0.7',
+                          version: '1.0'
+        else
+          raise Kitchen::UserError, 'Only Terraform v0.7 and v0.6 are supported'
+        end
       end
     end
   end
