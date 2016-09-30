@@ -68,7 +68,9 @@ module Terraform
     end
 
     def version
-      execute(command: VersionCommand.new) { |value| return value }
+      execute command: VersionCommand.new do |value|
+        return value.slice(/v\d+\.\d+\.\d+/)
+      end
     end
   end
 end

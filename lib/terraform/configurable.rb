@@ -29,16 +29,14 @@ module Terraform
       configurable_class.plugin_version VERSION
     end
 
-    def config_deprecated(attribute:, expected:)
-      logger.warn 'DEPRECATION NOTICE'
-      logger.warn formatted attribute: attribute,
-                            message: "should be #{expected}"
+    def config_deprecated(attribute:, remediation:, type:, version:)
+      log_deprecation aspect: "#{formatted(attribute: attribute)} as #{type}",
+                      remediation: remediation, version: version
     end
 
     def config_error(attribute:, expected:)
-      raise Kitchen::UserError, formatted(
-        attribute: attribute, message: "must be interpretable as #{expected}"
-      )
+      raise Kitchen::UserError, "#{formatted attribute: attribute} must be " \
+                                  "interpretable as #{expected}"
     end
 
     def instance_pathname(filename:)
@@ -46,10 +44,17 @@ module Terraform
                 instance.name, filename
     end
 
+    def log_deprecation(aspect:, remediation:, version:)
+      logger.warn 'DEPRECATION NOTICE'
+      logger.warn "Support for #{aspect} will be dropped in " \
+                    "kitchen-terraform v#{version}"
+      logger.warn remediation
+    end
+
     private
 
-    def formatted(attribute:, message:)
-      "#{self.class}#{instance.to_str}#config[:#{attribute}] #{message}"
+    def formatted(attribute:)
+      "#{self.class}#{instance.to_str}#config[:#{attribute}]"
     end
   end
 end

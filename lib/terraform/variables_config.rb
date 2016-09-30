@@ -39,8 +39,8 @@ module Terraform
     private
 
     def deprecated_variables_format(value:)
-      config_deprecated attribute: 'variables',
-                        expected: 'a mapping rather than a list or string'
+      config_deprecated attribute: 'variables', remediation: 'Use a mapping',
+                        type: 'a list or string', version: '1.0'
       Hash[Array(value).map { |string| string.split '=' }]
     end
   end

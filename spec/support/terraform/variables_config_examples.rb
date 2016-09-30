@@ -17,29 +17,37 @@
 require 'terraform/variables_config'
 
 RSpec.shared_examples Terraform::VariablesConfig do
-  describe '#coerce_variables(value:)' do
-    let(:attribute) { 'variables' }
+  shared_context '#deprecated_variables_format(value:)' do
+    let :log_deprecation do
+      receive(:config_deprecated)
+        .with attribute: 'variables', remediation: 'Use a mapping',
+              type: 'a list or string', version: '1.0'
+    end
+  end
 
+  describe '#coerce_variables(value:)' do
     let(:call_method) { described_instance.coerce_variables value: value }
+
+    let(:variable_name) { 'foo' }
+
+    let(:variable_value) { 'bar' }
 
     shared_examples 'the value can be coerced to be a mapping' do
       before { call_method }
 
       subject { described_instance[:variables] }
 
-      it('updates the config assignment') { is_expected.to eq 'foo' => 'bar' }
+      it 'updates the config assignment' do
+        is_expected.to eq variable_name => variable_value
+      end
     end
 
     context 'when the value is in a deprecated format' do
-      let :receive_deprecated do
-        receive(:config_deprecated).with attribute: attribute,
-                                         expected: 'a mapping rather than a ' \
-                                                     'list or string'
-      end
+      include_context '#deprecated_variables_format(value:)'
 
-      let(:value) { 'foo=bar' }
+      let(:value) { "#{variable_name}=#{variable_value}" }
 
-      before { allow(described_instance).to receive_deprecated }
+      before { allow(described_instance).to log_deprecation }
 
       it_behaves_like 'the value can be coerced to be a mapping'
 
@@ -48,12 +56,12 @@ RSpec.shared_examples Terraform::VariablesConfig do
 
         subject { described_instance }
 
-        it('is reported') { is_expected.to receive_deprecated }
+        it('is reported') { is_expected.to log_deprecation }
       end
     end
 
     context 'when the value is in a supported format' do
-      let(:value) { { 'foo' => 'bar' } }
+      let(:value) { { variable_name => variable_value } }
 
       it_behaves_like 'the value can be coerced to be a mapping'
     end
@@ -67,7 +75,7 @@ RSpec.shared_examples Terraform::VariablesConfig do
 
       it 'an error is reported' do
         is_expected.to receive(:config_error)
-          .with attribute: attribute,
+          .with attribute: 'variables',
                 expected: 'a mapping of Terraform variable assignments'
       end
     end
