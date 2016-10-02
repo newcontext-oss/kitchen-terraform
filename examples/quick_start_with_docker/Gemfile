@@ -1,0 +1,4 @@
+source 'https://rubygems.org/'
+
+gem 'kitchen-terraform', git: 'https://github.com/newcontext/kitchen-terraform', branch: 'ncs-alane-0.3.0'
+gem 'inspec-aws', git: 'https://github.com/pburkholder/inspec-aws', branch: "example_fix"
