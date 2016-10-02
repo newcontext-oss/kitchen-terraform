@@ -13,7 +13,7 @@ kitchen-terraform is a set of [Test Kitchen] plugins for testing
 
 - [Bundler] **(~> 1.12)**
 
-- [Terraform] **(~> 0.6)**
+- [Terraform] **(>= 0.6, < 0.8)**
 
 [Ruby]: https://www.ruby-lang.org/en/index.html
 
