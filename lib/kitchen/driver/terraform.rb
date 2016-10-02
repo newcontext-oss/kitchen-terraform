@@ -50,7 +50,7 @@ module Kitchen
         case version
         when /v0\.7/
         when /v0\.6/
-          log_deprecation aspect: version, remediation: 'Update to v0.7',
+          log_deprecation aspect: 'v0.6', remediation: 'Update to v0.7',
                           version: '1.0'
         else
           raise Kitchen::UserError, 'Only Terraform v0.7 and v0.6 are supported'
