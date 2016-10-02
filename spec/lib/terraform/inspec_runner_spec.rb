@@ -22,22 +22,6 @@ RSpec.describe Terraform::InspecRunner do
 
   let(:described_instance) { described_class.new conf }
 
-  describe '#add(target:)' do
-    let(:target) { instance_double Object }
-
-    before do
-      allow(described_instance).to receive(:conf).with(no_args).and_return conf
-    end
-
-    after { described_instance.add target: target }
-
-    subject { described_instance }
-
-    it 'adds the target' do
-      is_expected.to receive(:add_target).with target, conf
-    end
-  end
-
   describe '#evaluate(verifier:)' do
     let(:add_targets) { receive(:add_targets).with runner: described_instance }
 

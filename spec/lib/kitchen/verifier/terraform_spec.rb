@@ -51,7 +51,7 @@ RSpec.describe Kitchen::Verifier::Terraform do
     subject { runner }
 
     it 'adds its tests to the runner' do
-      is_expected.to receive(:add).with target: test
+      is_expected.to receive(:add_target).with test
     end
   end
 

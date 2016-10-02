@@ -30,7 +30,7 @@ module Kitchen
       kitchen_verifier_api_version 2
 
       def add_targets(runner:)
-        collect_tests.each { |test| runner.add target: test }
+        collect_tests.each { |test| runner.add_target test }
       end
 
       def call(state)

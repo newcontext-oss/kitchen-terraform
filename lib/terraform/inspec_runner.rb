@@ -23,10 +23,6 @@ module Terraform
   class InspecRunner < Inspec::Runner
     attr_reader :conf
 
-    def add(target:)
-      add_target target, conf
-    end
-
     def evaluate(verifier:)
       verifier.add_targets runner: self
       verifier.verify exit_code: run
