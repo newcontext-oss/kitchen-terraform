@@ -29,4 +29,10 @@ group :red_green_refactor, halt_on_fail: true do
       watch dsl.ruby.lib_files
     end
   end
+
+  guard :reek do
+    watch(/.+\.rb$/)
+
+    watch '.reek'
+  end
 end

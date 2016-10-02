@@ -30,11 +30,15 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'guard', '~> 2.14', '>= 2.14.0'
 
+  specification.add_development_dependency 'guard-reek', '>= 1.0.2', '~> 1.0'
+
   specification.add_development_dependency 'guard-rspec', '~> 4.7', '>= 4.7.2'
 
   specification.add_development_dependency 'guard-rubocop', '~> 1.2', '>= 1.2.0'
 
   specification.add_development_dependency 'pry', '~> 0.10', '>= 0.10.3'
+
+  specification.add_development_dependency 'reek', '>= 4.4.2', '~> 4.4'
 
   specification.add_development_dependency 'rspec', '~> 3.4', '>= 3.4.0'
 
