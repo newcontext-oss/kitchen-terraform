@@ -43,4 +43,6 @@ group :red_green_refactor, halt_on_fail: true do
   end
 
   guard(:bundler) { watch 'kitchen-terraform.gemspec' }
+
+  guard(:bundler_audit, run_on_start: true) { watch 'Gemfile.lock' }
 end
