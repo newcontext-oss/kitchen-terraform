@@ -41,4 +41,6 @@ group :red_green_refactor, halt_on_fail: true do
       watch '.reek'
     end
   end
+
+  guard(:bundler) { watch 'kitchen-terraform.gemspec' }
 end

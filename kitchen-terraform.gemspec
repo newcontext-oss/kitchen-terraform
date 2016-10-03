@@ -30,6 +30,9 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'guard', '~> 2.14', '>= 2.14.0'
 
+  specification.add_development_dependency 'guard-bundler', '>= 2.1.0', '~> 2.1'
+                                           '~> 0.1'
+
   specification.add_development_dependency 'guard-reek', '>= 1.0.2', '~> 1.0'
 
   specification.add_development_dependency 'guard-rspec', '~> 4.7', '>= 4.7.2'
