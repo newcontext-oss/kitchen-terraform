@@ -28,6 +28,8 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'bundler-audit', '~> 0.5', '>= 0.5.0'
 
+  specification.add_development_dependency 'flay', '>= 2.8.1', '~> 2.8'
+
   specification.add_development_dependency 'guard', '~> 2.14', '>= 2.14.0'
 
   specification.add_development_dependency 'guard-bundler', '>= 2.1.0', '~> 2.1'
