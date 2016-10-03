@@ -28,11 +28,17 @@ group :red_green_refactor, halt_on_fail: true do
 
       watch dsl.ruby.lib_files
     end
-  end
 
-  guard :reek do
-    watch(/.+\.rb$/)
+    guard :reek do
+      watch dsl.rspec.spec_files
 
-    watch '.reek'
+      watch dsl.rspec.spec_helper
+
+      watch dsl.rspec.spec_support
+
+      watch dsl.ruby.lib_files
+
+      watch '.reek'
+    end
   end
 end
