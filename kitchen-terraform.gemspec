@@ -28,8 +28,6 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'bundler-audit', '~> 0.5', '>= 0.5.0'
 
-  specification.add_development_dependency 'flay', '>= 2.8.1', '~> 2.8'
-
   specification.add_development_dependency 'guard', '~> 2.14', '>= 2.14.0'
 
   specification.add_development_dependency 'guard-bundler', '>= 2.1.0', '~> 2.1'
@@ -37,19 +35,19 @@ Gem::Specification.new do |specification|
   specification.add_development_dependency 'guard-bundler-audit', '>= 0.1.2',
                                            '~> 0.1'
 
-  specification.add_development_dependency 'guard-reek', '>= 1.0.2', '~> 1.0'
-
   specification.add_development_dependency 'guard-rspec', '~> 4.7', '>= 4.7.2'
 
   specification.add_development_dependency 'guard-rubocop', '~> 1.2', '>= 1.2.0'
 
-  specification.add_development_dependency 'pry', '~> 0.10', '>= 0.10.3'
+  specification.add_development_dependency 'guard-rubycritic', '~> 2.9'
 
-  specification.add_development_dependency 'reek', '>= 4.4.2', '~> 4.4'
+  specification.add_development_dependency 'pry', '~> 0.10', '>= 0.10.3'
 
   specification.add_development_dependency 'rspec', '~> 3.4', '>= 3.4.0'
 
   specification.add_development_dependency 'rubocop', '~> 0.40', '>= 0.40.0'
+
+  specification.add_development_dependency 'rubycritic', '~> 2.9'
 
   specification.add_development_dependency 'simplecov', '~> 0.11', '>= 0.11.2'
 

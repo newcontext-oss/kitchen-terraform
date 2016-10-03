@@ -29,7 +29,7 @@ group :red_green_refactor, halt_on_fail: true do
       watch dsl.ruby.lib_files
     end
 
-    guard :reek do
+    guard 'rubycritic' do
       watch dsl.rspec.spec_files
 
       watch dsl.rspec.spec_helper
@@ -37,8 +37,6 @@ group :red_green_refactor, halt_on_fail: true do
       watch dsl.rspec.spec_support
 
       watch dsl.ruby.lib_files
-
-      watch '.reek'
     end
   end
 
