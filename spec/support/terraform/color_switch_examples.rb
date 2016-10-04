@@ -16,33 +16,25 @@
 
 require 'terraform/color_switch'
 
-RSpec.shared_context '#color' do
-  let(:color) { instance_double Object }
-
-  before do
-    allow(described_instance).to receive(:color).with(no_args)
-      .and_return color
-  end
-end
-
 RSpec.shared_examples Terraform::ColorSwitch do
-  include_context '#color'
-
   describe '#color_switch' do
+    before do
+      allow(described_instance).to receive(:color).with(no_args)
+        .and_return color
+    end
+
     subject { described_instance.color_switch }
 
     context 'when color is true' do
-      it 'returns nothing' do
-        is_expected.to eq ''
-      end
+      let(:color) { true }
+
+      it('returns an empty string') { is_expected.to eq '' }
     end
 
     context 'when color is false' do
       let(:color) { false }
 
-      it 'returns -no-color' do
-        is_expected.to eq ' -no-color'
-      end
+      it('returns "-no-color"') { is_expected.to eq '-no-color' }
     end
   end
 end

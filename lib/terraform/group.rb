@@ -14,81 +14,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'delegate'
-
 module Terraform
-  # Group to be verified
-  class Group < DelegateClass Hash
-    def populate(runner:)
-      dig(:attributes).each_pair do |key, output_name|
-        runner.set_attribute key: key,
-                             value: provisioner.output(name: output_name)
+  # Group of Terraform server instances to be verified
+  class Group
+    def each_attribute(&block)
+      data[:attributes].each_pair(&block)
+    end
+
+    def evaluate(verifier:)
+      verifier.merge options: options
+      verifier.resolve_attributes group: self
+      verifier.resolve_hostnames group: self do |hostname|
+        verifier.info "Verifying host '#{hostname}' of group '#{data[:name]}'"
+        verifier.merge options: { host: hostname }
+        verifier.execute
       end
     end
 
-    def verify_each_host(options:)
-      require 'terraform/inspec_runner'
-      provisioner.each_list_output name: dig(:hostnames) do |hostname|
-        store :host, hostname
-        verifier.info "Verifying group: #{dig :name}; current host #{hostname}"
-        InspecRunner.run_and_verify group: self, options: options.merge(self),
-                                    verifier: verifier
-      end
+    def hostnames
+      data[:hostnames]
+    end
+
+    def store_attribute(key:, value:)
+      data[:attributes][key] = value
     end
 
     private
 
-    attr_accessor :provisioner, :transport, :verifier
+    attr_accessor :data
 
-    def coerce_attributes
-      store :attributes, Hash(dig(:attributes))
-    rescue ArgumentError, TypeError
-      verifier.config_error attribute: "groups][#{self}][:attributes",
-                            expected: 'a mapping of Inspec attribute names ' \
-                                        'to Terraform output variable names'
+    def initialize(data:)
+      self.data = data
     end
 
-    def coerce_controls
-      store :controls, Array(dig(:controls))
-    end
-
-    def coerce_hostnames
-      store :hostnames, String(dig(:hostnames))
-    end
-
-    def coerce_name
-      store :name, String(dig(:name))
-    end
-
-    def coerce_parameters
-      coerce_attributes
-      coerce_controls
-      coerce_hostnames
-      coerce_name
-      coerce_port
-      coerce_username
-    end
-
-    def coerce_port
-      store :port, Integer(dig(:port) || transport[:port])
-    rescue ArgumentError, TypeError
-      verifier.config_error attribute: "groups][#{self}][:port",
-                            expected: 'an integer'
-    end
-
-    def coerce_username
-      store :user, String(dig(:username) || transport[:username])
-    end
-
-    def initialize(value:, verifier:)
-      super Hash value
-      self.provisioner = verifier.provisioner
-      self.transport = verifier.transport
-      self.verifier = verifier
-      coerce_parameters
-    rescue ArgumentError, TypeError
-      verifier.config_error attribute: "groups][#{self}",
-                            expected: 'a group mapping'
+    def options
+      {
+        attributes: data[:attributes], controls: data[:controls],
+        port: data[:port], user: data[:username]
+      }
     end
   end
 end

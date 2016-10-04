@@ -15,24 +15,31 @@
 # limitations under the License.
 
 require_relative 'command'
+require_relative 'command_extender'
+require_relative 'zero_six_output'
+require_relative 'zero_seven_output'
 
 module Terraform
   # Command to extract values of output variables
   class OutputCommand < Command
+    include CommandExtender
+
     def name
       'output'
     end
 
-    def options
-      "-state=#{state}"
-    end
-
     private
 
-    attr_accessor :state
+    attr_accessor :list, :state
 
-    def initialize_attributes(state:)
+    def initialize_attributes(list:, version:, state:)
+      extend_behaviour version: version
+      self.list = list
       self.state = state
+    end
+
+    def version_behaviours
+      { /v0.7/ => ZeroSevenOutput, /v0.6/ => ZeroSixOutput }
     end
   end
 end

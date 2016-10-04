@@ -2,7 +2,7 @@
 **/Gemfile.lock
 *.gem
 coverage/
-examples/.kitchen.local.yml
-examples/.kitchen/
-examples/.terraform/
+examples/detailed/.kitchen.local.yml
+examples/detailed/.kitchen/
+examples/detailed/.terraform/
 tmp/

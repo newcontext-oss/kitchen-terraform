@@ -13,7 +13,7 @@ kitchen-terraform is a set of [Test Kitchen] plugins for testing
 
 - [Bundler] **(~> 1.12)**
 
-- [Terraform] **(~> 0.6)**
+- [Terraform] **(>= 0.6, < 0.8)**
 
 [Ruby]: https://www.ruby-lang.org/en/index.html
 
@@ -36,18 +36,10 @@ source 'https://rubygems.org'
 gem 'kitchen-terraform', '~> 0.1'
 ```
 
-Before running `bundle`, the author's public key must be added as a
-trusted certificate:
+Then, use Bundler to install the gems:
 
 ```sh
-gem cert --add <(curl --location --silent \
-https://raw.githubusercontent.com/newcontext/kitchen-terraform/master/certs/ncs-alane-public_cert.pem)
-```
-
-Then, install the bundle and verify all of the gems:
-
-```sh
-bundle install --trust-policy LowSecurity
+bundle install
 ```
 
 [Ruby Gem]: http://guides.rubygems.org/what-is-a-gem/index.html
@@ -62,6 +54,8 @@ Terraform configuration.
 
 [Test Kitchen configuration]: https://docs.chef.io/config_yml_kitchen.html
 
+Refer to [Getting Started Readme](examples/getting_started/README.md) for a detailed walkthrough of setting up and using kitchen-terraform.
+
 Refer to the [examples directory] for a detailed example project.
 
 [examples directory]: examples/
@@ -70,10 +64,13 @@ Refer to the [examples directory] for a detailed example project.
 
 ### Driver
 
-The [driver] is responsible for ensuring compatibility with Terraform and
-destroying existing [Terraform state].
+The [driver] is a wrapper around the [Terraform command-line interface].
+It is responsible for enforcing Terraform version support and works with
+the provisioner to manage the [Terraform state].
 
 [driver]: lib/kitchen/driver/terraform.rb
+
+[Terraform command-line interface]: https://www.terraform.io/docs/commands/index.html
 
 [Terraform state]: https://www.terraform.io/docs/state/index.html
 
@@ -81,8 +78,8 @@ destroying existing [Terraform state].
 
 ##### kitchen create
 
-The driver validates the installed version of
-Terraform against the version supported by kitchen-terraform.
+The driver ensures that the parent directories of the plan and state
+files exist.
 
 ##### kitchen destroy
 
@@ -106,7 +103,10 @@ driver:
 
 ### Provisioner
 
-The [provisioner] is responsible for creating Terraform state.
+The [provisioner] is the bridge between Terraform and Test Kitchen. It
+is responsible for managing the Test Kitchen configuration options related to
+the Terraform configuration and works with the driver to manage the
+Terraform state.
 
 [provisioner]: lib/kitchen/provisioner/terraform.rb
 
@@ -114,8 +114,8 @@ The [provisioner] is responsible for creating Terraform state.
 
 ##### kitchen converge
 
-The provisioner applies a constructive Terraform plan to the
-Terraform state based on the provided Terraform configuration.
+The provisioner uses the driver to apply a constructive Terraform plan
+to the Terraform state based on the provided Terraform configuration.
 
 #### Configuration
 
@@ -235,19 +235,22 @@ The default `variables` collection is empty.
 
 ### Verifier
 
-The [verifier] is responsible for verifying the behaviour of any server
-instances in the Terraform state.
+The [verifier] is a wrapper around [InSpec]. It is responsible for
+verifying the behaviour of any server instances in the Terraform state.
 
 [verifier]: lib/kitchen/verifier/terraform.rb
+
+[InSpec]: http://inspec.io
 
 #### Actions
 
 ##### kitchen verify
 
-The verifier verifies the configured server instances in the Terraform
-state using [Inspec profiles].
+The verifier verifies the test suite's configured groups of server
+instances in the Terraform state using an [InSpec profiles] located in
+`<Test Kitchen working directory>/test/integration/<suite name>`.
 
-[Inspec profiles]: https://github.com/chef/inspec/blob/master/docs/profiles.rst
+[InSpec profiles]: http://inspec.io/docs/reference/profiles
 
 #### Configuration
 
@@ -259,20 +262,20 @@ configuration defined by that plugin with the exception of the `port` and
 
 ##### groups
 
-A collection of group mappings containing [Inspec control] and
+A collection of group mappings containing [InSpec control] and
 connection options for the different server instance groups in the
 Terraform configuration.
 
-[Inspec control]: https://github.com/chef/inspec/blob/master/docs/dsl_inspec.rst
+[InSpec control]: http://inspec.io/docs/reference/dsl_inspec/
 
 Each group consists of:
 
 - a name to use for logging purposes
 
-- a mapping of Inspec attribute names to Terraform output variable
-  names to define for the suite's Inspec profile
+- a mapping of InSpec attribute names to Terraform output variable
+  names to define for the suite's InSpec profile
 
-- a collection of controls to include from the suite's Inspec profile
+- a collection of controls to include from the suite's InSpec profile
 
 - a hostnames output variable name to use for extracting hostnames from
   the Terraform state; the output value is assumed to be in CSV format

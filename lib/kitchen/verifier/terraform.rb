@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
 require 'kitchen/verifier/inspec'
 require 'terraform/configurable'
-require 'terraform/version'
+require 'terraform/groups_config'
 
 module Kitchen
   module Verifier
@@ -26,38 +25,52 @@ module Kitchen
     class Terraform < Inspec
       include ::Terraform::Configurable
 
+      include ::Terraform::GroupsConfig
+
       kitchen_verifier_api_version 2
 
-      plugin_version ::Terraform::VERSION
-
-      required_config :groups do |_, value, verifier|
-        verifier.coerce_groups value: value
+      def add_targets(runner:)
+        collect_tests.each { |test| runner.add_target test }
       end
-
-      default_config :groups, []
 
       def call(state)
-        config[:groups].each do |group|
-          group.verify_each_host options: runner_options(transport, state)
+        self.inspec_runner_options = runner_options transport, state
+        config[:groups].each { |group| group.evaluate verifier: self }
+      end
+
+      def execute
+        ::Terraform::InspecRunner.new(inspec_runner_options)
+                                 .tap do |inspec_runner|
+                                   inspec_runner.evaluate verifier: self
+                                 end
+      end
+
+      def merge(options:)
+        inspec_runner_options.merge! options
+      end
+
+      def resolve_attributes(group:)
+        group.each_attribute do |key, output_name|
+          group.store_attribute key: key,
+                                value: driver.output_value(name: output_name)
         end
       end
 
-      def coerce_groups(value:)
-        config[:groups] = Array(value).map do |raw_group|
-          ::Terraform::Group.new value: raw_group, verifier: self
-        end
-      rescue UserError
-        config_error attribute: 'groups',
-                     expected: 'a collection of group mappings'
+      def resolve_hostnames(group:, &block)
+        driver.output_value list: true, name: group.hostnames, &block
       end
 
-      def evaluate(exit_code:)
+      def verify(exit_code:)
         raise InstanceFailure, "Inspec Runner returns #{exit_code}" unless
           exit_code.zero?
       end
 
-      def populate(runner:)
-        collect_tests.each { |test| runner.add target: test }
+      private
+
+      attr_accessor :inspec_runner_options
+
+      def load_needed_dependencies!
+        require 'terraform/inspec_runner'
       end
     end
   end

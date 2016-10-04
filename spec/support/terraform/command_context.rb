@@ -14,22 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/version'
+require 'mixlib/shellout'
 
-RSpec.shared_examples 'versions are set' do
-  describe '@api_version' do
-    subject :api_version do
-      described_class.instance_variable_get :@api_version
-    end
+RSpec.shared_context '#shell_out' do
+  let(:allow_stdout) { allow(shell_out).to receive(:stdout).with no_args }
 
-    it('equals 2') { is_expected.to eq 2 }
-  end
+  let(:shell_out) { instance_double Mixlib::ShellOut }
 
-  describe '@plugin_version' do
-    subject :plugin_version do
-      described_class.instance_variable_get :@plugin_version
-    end
-
-    it('equals the gem version') { is_expected.to be Terraform::VERSION }
+  before do
+    allow(described_instance).to receive(:shell_out).with(no_args)
+      .and_return shell_out
   end
 end

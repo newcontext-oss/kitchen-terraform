@@ -15,10 +15,14 @@
 # limitations under the License.
 
 module Terraform
-  # Shared color switche for Terraform
+  # Shared color switch for Terraform
   module ColorSwitch
     def color_switch
-      color ? '' : ' -no-color'
+      color ? '' : '-no-color'
     end
+
+    private
+
+    attr_accessor :color
   end
 end
