@@ -6,7 +6,34 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
-## [0.2.0] - 2016-09-??
+## [0.3.0] - 2016-10-04
+
+### Added
+
+* Support for Terraform v0.7 (thanks [@esword], [@maniacal], and
+  [@nictrix])
+
+* Getting started guide under `examples/getting_started` (thanks
+  [@nellshamrell])
+
+* Kevin Dickerson, Nell Shamrell-Harrington, and Michael Glenney join
+  the gem specification authors
+
+### Changed
+
+* Example project moved under `examples/detailed` (thanks
+  [@nellshamrell])
+
+* Deprecate support for Terraform v0.6
+
+### Fixed
+
+* Release date of kitchen-terraform v0.2.0
+
+* Remove references to verifying the gem; it's problematic even with
+  low security (thanks [@kevindickerson])
+
+## [0.2.0] - 2016-09-12
 
 ### Added
 
@@ -106,7 +133,10 @@ major version 0.y.z will maintain a stable public interface.
 [0.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.2...v0.2.0
 [@amaltson]: https://github.com/amaltson
 [@cullenmcdermott]: https://github.com/cullenmcdermott
+[@esword]: https://github.com/esword
 [@fivetwentysix]: https://github.com/fivetwentysix
+[@kevindickerson]: https://github.com/kevindickerson
+[@maniacal]: https://github.com/maniacal
 [@mrheath]: https://github.com/mrheath
 [@nellshamrell]: https://github.com/nellshamrell
 [@nictrix]: https://github.com/nictrix

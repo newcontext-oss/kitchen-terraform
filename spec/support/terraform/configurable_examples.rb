@@ -18,103 +18,66 @@ require 'kitchen'
 require 'kitchen/provisioner/terraform'
 require 'kitchen/transport/ssh'
 require 'terraform/configurable'
-
-RSpec.shared_context '#finalize_config!(instance)' do
-  include_context '#instance'
-
-  include_context 'config'
-
-  after { described_instance.finalize_config! instance }
-end
-
-RSpec.shared_context '#instance' do
-  let(:instance) { instance_double Kitchen::Instance }
-
-  let(:instance_name) { 'instance' }
-
-  before do
-    allow(described_instance).to receive(:instance).with(no_args)
-      .and_return instance
-
-    allow(instance).to receive(:name).with(no_args).and_return instance_name
-
-    allow(instance).to receive(:to_str).with(no_args).and_return instance_name
-  end
-end
-
-RSpec.shared_context '#logger' do
-  let(:logger) { instance_double Kitchen::Logger }
-
-  before do
-    allow(described_instance).to receive(:logger).with(no_args)
-      .and_return logger
-  end
-end
-
-RSpec.shared_context '#provisioner' do
-  include_context '#instance'
-
-  let(:provisioner) { instance_double Kitchen::Provisioner::Terraform }
-
-  before do
-    allow(instance).to receive(:provisioner).with(no_args)
-      .and_return provisioner
-  end
-end
-
-RSpec.shared_context '#transport' do
-  include_context '#instance'
-
-  let(:transport) { instance_double Kitchen::Transport::Ssh }
-
-  before do
-    allow(instance).to receive(:transport).with(no_args)
-      .and_return transport
-  end
-end
-
-RSpec.shared_context 'config' do
-  let(:config) { { kitchen_root: kitchen_root } }
-
-  let(:kitchen_root) { Dir.pwd }
-end
+require_relative 'configurable_context'
 
 RSpec.shared_examples Terraform::Configurable do
-  include_context '#instance'
+  shared_context '#formatted(attribute:)' do
+    include_context '#instance'
 
-  let(:attribute) { :foo }
+    let :formatted_attribute do
+      "#{described_class}#{instance_name}#config[:#{attribute}]"
+    end
+  end
 
-  let(:expected) { 'bar' }
-
-  describe '#config_deprecated(attribute:, expected:)' do
-    include_context '#logger'
-
-    let :receive_correction do
-      receive(:warn).with "#{described_class}#{instance_name}" \
-                            "#config[:#{attribute}] should be #{expected}"
+  describe '@api_version' do
+    subject :api_version do
+      described_class.instance_variable_get :@api_version
     end
 
-    let(:receive_notice) { receive(:warn).with 'DEPRECATION NOTICE' }
+    it('equals 2') { is_expected.to eq 2 }
+  end
 
-    before do
-      allow(logger).to receive_notice
-
-      allow(logger).to receive_correction
+  describe '@plugin_version' do
+    subject :plugin_version do
+      described_class.instance_variable_get :@plugin_version
     end
+
+    it('equals the gem version') { is_expected.to be Terraform::VERSION }
+  end
+
+  describe '#config_deprecated(attribute:, remediation:, type:, version:)' do
+    include_context '#formatted(attribute:)'
+
+    let(:attribute) { instance_double Object }
+
+    let(:remediation) { instance_double Object }
+
+    let(:type) { instance_double Object }
+
+    let(:version) { instance_double Object }
 
     after do
       described_instance.config_deprecated attribute: attribute,
-                                           expected: expected
+                                           remediation: remediation, type: type,
+                                           version: version
     end
 
-    subject { logger }
+    subject { described_instance }
 
-    it('reports a deprecation') { is_expected.to receive_notice }
-
-    it('suggests a correction') { is_expected.to receive_correction }
+    it 'logs the deprecation' do
+      is_expected.to receive(:log_deprecation)
+        .with aspect: "#{formatted_attribute} as #{type}",
+              remediation: remediation, version: version
+    end
   end
 
   describe '#config_error(attribute:, expected:)' do
+    include_context '#formatted(attribute:)'
+
+    let(:attribute) { instance_double Object }
+
+    let(:expected) { instance_double Object }
+
     subject do
       proc do
         described_instance.config_error attribute: attribute, expected: expected
@@ -123,10 +86,73 @@ RSpec.shared_examples Terraform::Configurable do
 
     it 'raises a user error regarding the config attribute' do
       is_expected.to raise_error Kitchen::UserError,
-                                 "#{described_class}#{instance_name}" \
-                                   "#config[:#{attribute}] must be " \
+                                 "#{formatted_attribute} must be " \
                                    "interpretable as #{expected}"
     end
+  end
+
+  describe '#driver' do
+    include_context '#driver'
+
+    subject { described_instance.driver }
+
+    it('returns the driver of the instance') { is_expected.to be driver }
+  end
+
+  describe '#instance_pathname(filename:)' do
+    include_context '#instance'
+
+    let(:filename) { 'foo' }
+
+    subject { described_instance.instance_pathname filename: filename }
+
+    it 'returns a pathname under the hidden instance directory' do
+      is_expected.to eq "#{kitchen_root}/.kitchen/kitchen-terraform/" \
+                          "#{instance_name}/#{filename}"
+    end
+  end
+
+  describe '#log_deprecation(aspect:, remediation:, version:)' do
+    include_context '#logger'
+
+    let(:aspect) { instance_double Object }
+
+    let(:remediation) { instance_double Object }
+
+    let(:version) { instance_double Object }
+
+    let(:warn_deprecation) { receive(:warn).with 'DEPRECATION NOTICE' }
+
+    let :warn_deprecated_feature do
+      receive(:warn).with "Support for #{aspect} will be dropped in " \
+                            "kitchen-terraform v#{version}"
+    end
+
+    let(:warn_remediation) { receive(:warn).with remediation }
+
+    before do
+      allow(logger).to warn_deprecation
+
+      allow(logger).to warn_deprecated_feature
+
+      allow(logger).to warn_remediation
+    end
+
+    after do
+      described_instance.log_deprecation aspect: aspect,
+                                         remediation: remediation,
+                                         version: version
+    end
+
+    subject { logger }
+
+    it('warns of the deprecation') { is_expected.to warn_deprecation }
+
+    it 'warns of the deprecated feature' do
+      is_expected.to warn_deprecated_feature
+    end
+
+    it('warns of the remediation') { is_expected.to warn_remediation }
   end
 
   describe '#provisioner' do
@@ -134,7 +160,9 @@ RSpec.shared_examples Terraform::Configurable do
 
     subject { described_instance.provisioner }
 
-    it('returns the instance\'s provisioner') { is_expected.to be provisioner }
+    it 'returns the provisioner of the instance' do
+      is_expected.to be provisioner
+    end
   end
 
   describe '#transport' do
@@ -142,6 +170,6 @@ RSpec.shared_examples Terraform::Configurable do
 
     subject { described_instance.transport }
 
-    it('returns the instance\'s transport') { is_expected.to be transport }
+    it('returns the transport of the instance') { is_expected.to be transport }
   end
 end

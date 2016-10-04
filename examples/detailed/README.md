@@ -90,15 +90,17 @@ Before continuing, review the instructions on configuring the
 
 ```yaml
 ---
+provisioner:
+  directory: test/fixtures/<version of Terraform installed>
 transport:
   ssh_key: <pathname/of/private/ssh/key>
 suites:
   - name: example
     provisioner:
       variables:
-        - access_key=<aws_access_key_id>
-        - public_key_pathname=<pathname/of/public/ssh/key>
-        - secret_key=<aws_secret_access_key>
+        access_key: <aws_access_key_id>
+        public_key_pathname: <pathname/of/public/ssh/key>
+        secret_key: <aws_secret_access_key>
 ```
 
 ## Executing Tests

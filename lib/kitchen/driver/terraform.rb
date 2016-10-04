@@ -14,31 +14,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'fileutils'
 require 'kitchen'
+require 'terraform/client'
 require 'terraform/configurable'
-require 'terraform/version'
 
 module Kitchen
   module Driver
     # Terraform state lifecycle activities manager
     class Terraform < Base
+      include ::Terraform::Client
+
       include ::Terraform::Configurable
 
       kitchen_driver_api_version 2
 
-      plugin_version ::Terraform::VERSION
-
       no_parallel_for
 
       def create(_state = nil)
-        provisioner.validate_version
+        %i(plan state)
+          .each { |option| FileUtils.mkdir_p File.dirname provisioner[option] }
       end
 
       def destroy(_state = nil)
-        provisioner.validate_configuration_files
-        provisioner.download_modules
-        provisioner.plan_destructive_execution
-        provisioner.apply_execution_plan
+        return if !File.exist?(provisioner[:state]) || current_state.empty?
+
+        create
+        validate_configuration_files
+        download_modules
+        plan_execution destroy: true
+        apply_execution_plan
+      end
+
+      def verify_dependencies
+        case version
+        when /v0\.7/
+        when /v0\.6/
+          log_deprecation aspect: 'v0.6', remediation: 'Update to v0.7',
+                          version: '1.0'
+        else
+          raise Kitchen::UserError, 'Only Terraform v0.7 and v0.6 are supported'
+        end
       end
     end
   end
