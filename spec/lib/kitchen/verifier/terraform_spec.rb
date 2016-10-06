@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'inspec'
 require 'kitchen/verifier/terraform'
 require 'inspec/runner'
 require 'support/terraform/configurable_context'
@@ -48,6 +49,14 @@ require 'terraform/group'
 
   shared_context '#resolve_attributes' do
     include_context '#driver'
+
+    let(:call_method) { described_instance.execute }
+
+    let(:inspec_runner) { instance_double Inspec::Runner }
+
+    let(:inspec_runner_class) { class_double(Inspec::Runner).as_stubbed_const }
+
+    let(:verify) { receive(:verify).with inspec_runner: inspec_runner }
 
     before do
       allow(driver).to receive(:each_output_name)

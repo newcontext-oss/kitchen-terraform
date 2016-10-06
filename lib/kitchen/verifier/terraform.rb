@@ -66,7 +66,7 @@ module Kitchen
           group.store_attribute key: output_name, value: output_name
         end
         group.each_attribute do |key, output_name|
-          group.store_attribute key: key,
+          group.store_attribute key: key.to_s,
                                 value: driver.output_value(name: output_name)
         end
       end
