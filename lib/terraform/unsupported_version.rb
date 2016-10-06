@@ -14,18 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/plan_config'
+require 'delegate'
 
-RSpec.shared_examples Terraform::PlanConfig do
-  describe '#finalize_config!(instance)' do
-    include_context 'finalize_config! instance'
-
-    describe '[:plan]' do
-      subject { described_instance[:plan] }
-
-      it 'defaults to an instance pathname' do
-        is_expected.to match %r{instance/terraform\.tfplan}
-      end
+module Terraform
+  # An unsupported version of Terraform
+  class UnsupportedVersion < ::SimpleDelegator
+    def if_not_supported
+      yield
     end
   end
 end

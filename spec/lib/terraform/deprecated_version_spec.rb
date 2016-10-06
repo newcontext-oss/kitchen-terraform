@@ -14,27 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/color_switch'
+require 'support/yield_control_examples'
+require 'terraform/deprecated_version'
 
-RSpec.shared_examples Terraform::ColorSwitch do
-  describe '#color_switch' do
-    before do
-      allow(described_instance).to receive(:color).with(no_args)
-        .and_return color
+::RSpec.describe ::Terraform::DeprecatedVersion do
+  let(:described_instance) { described_class.new object }
+
+  describe '#if_deprecated' do
+    it_behaves_like 'control is yielded' do
+      let(:described_method) { :if_deprecated }
     end
+  end
 
-    subject { described_instance.color_switch }
-
-    context 'when color is true' do
-      let(:color) { true }
-
-      it('returns an empty string') { is_expected.to eq '' }
-    end
-
-    context 'when color is false' do
-      let(:color) { false }
-
-      it('returns "-no-color"') { is_expected.to eq '-no-color' }
+  describe '#if_json_not_supported' do
+    it_behaves_like 'control is yielded' do
+      let(:described_method) { :if_json_not_supported }
     end
   end
 end

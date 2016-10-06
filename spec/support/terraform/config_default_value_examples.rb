@@ -14,14 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # Behaviour for the [:state] config option
-  module StateConfig
-    def self.included(configurable_class)
-      configurable_class.default_config :state do |configurable|
-        configurable.instance_pathname filename: 'terraform.tfstate'
-      end
-      configurable_class.expand_path_for :state
-    end
+::RSpec.shared_examples 'a default value is set' do |attr:, value:|
+  describe "config[:#{attr}]" do
+    subject { described_instance[attr] }
+
+    it("defaults to #{value}") { is_expected.to eq value }
   end
 end

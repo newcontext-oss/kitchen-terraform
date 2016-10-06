@@ -14,22 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/command_examples'
 require 'terraform/version_command'
 
-RSpec.describe Terraform::VersionCommand do
-  let(:described_instance) { described_class.new logger: logger }
+::RSpec.describe ::Terraform::VersionCommand do
+  let(:described_instance) { described_class.new }
 
-  let(:logger) { instance_double Object }
-
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "version"') { is_expected.to eq 'version' }
-  end
-
-  describe '#options' do
-    subject { described_instance.options }
-
-    it('returns an empty string') { is_expected.to eq '' }
-  end
+  it_behaves_like('#name') { let(:name) { 'version' } }
 end

@@ -14,16 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'pathname'
+require 'support/terraform/config_default_value_examples'
 require 'terraform/directory_config'
 
-RSpec.shared_examples Terraform::DirectoryConfig do
-  describe '#finalize_config!(instance)' do
-    include_context 'finalize_config! instance'
-
-    describe '[:directory]' do
-      subject { described_instance[:directory] }
-
-      it('defaults to the Kitchen root') { is_expected.to eq kitchen_root }
-    end
-  end
+::RSpec.shared_examples ::Terraform::DirectoryConfig do
+  it_behaves_like 'a default value is set',
+                  attr: :directory, value: ::Pathname.new('/kitchen/root')
 end

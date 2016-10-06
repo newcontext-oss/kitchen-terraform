@@ -14,78 +14,81 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'apply_command'
-require_relative 'command_executor'
-require_relative 'get_command'
-require_relative 'output_command'
-require_relative 'plan_command'
-require_relative 'show_command'
-require_relative 'validate_command'
-require_relative 'version_command'
+require 'terraform/command_factory'
+require 'terraform/no_output_parser'
+require 'terraform/output_parser'
+require 'terraform/shell_out'
+require 'terraform/version'
 
 module Terraform
-  # Behaviour for implementing the workflow
-  module Client
-    include CommandExecutor
-
-    def apply_execution_plan
-      execute command: ApplyCommand.new(
-        color: provisioner[:color], parallelism: provisioner[:parallelism],
-        state: provisioner[:state], target: provisioner[:plan]
-      ), timeout: provisioner[:apply_timeout]
+  # Client to execute commands
+  class Client
+    def apply_constructively
+      apply plan_command: factory.plan_command
     end
 
-    def current_state
-      execute(
-        command: ShowCommand
-          .new(color: provisioner[:color], target: provisioner[:state])
-      ) { |value| return value.gsub(/(\e\[\d+m|\n)/, '') }
-    end
-
-    def download_modules
-      execute command: GetCommand.new(target: provisioner[:directory])
-    end
-
-    def output_value(list: false, name:, &block)
-      execute(
-        command: OutputCommand.new(
-          list: list, state: provisioner[:state], target: name, version: version
-        )
-      ) { |value| list ? value.each(&block) : (return value) }
+    def apply_destructively
+      apply plan_command: factory.destructive_plan_command
     end
 
     def each_output_name(&block)
-      execute(
-        command: OutputCommand.new(
-          list: false, state: provisioner[:state], version: version,
-          return_raw: true
-        )
-      ) { |output| JSON.parse(output).each_key(&block) }
+      output_parser(name: '').each_name(&block)
     end
 
-    def plan_execution(destroy:)
-      execute command: plan_command(destroy: destroy)
+    def iterate_output(name:, &block)
+      output_parser(name: name).iterate_parsed_output(&block)
     end
 
-    def validate_configuration_files
-      execute command: ValidateCommand.new(target: provisioner[:directory])
+    def load_state(&block)
+      execute(command: factory.show_command) do |state|
+        /\w+/.match state, &block
+      end
+    end
+
+    def output(name:)
+      output_parser(name: name).parsed_output
     end
 
     def version
-      execute command: VersionCommand.new do |value|
-        return value.slice(/v\d+\.\d+\.\d+/)
+      execute command: factory.version_command do |value|
+        return ::Terraform::Version.create value: value
       end
     end
 
     private
 
-    def plan_command(destroy:)
-      PlanCommand
-        .new color: provisioner[:color], destroy: destroy,
-             out: provisioner[:plan], parallelism: provisioner[:parallelism],
-             state: provisioner[:state], target: provisioner[:directory],
-             variables: provisioner[:variables],
-             variable_files: provisioner[:variable_files]
+    attr_accessor :apply_timeout, :factory, :logger
+
+    def apply(plan_command:)
+      execute command: factory.validate_command
+      execute command: factory.get_command
+      execute command: plan_command
+      ::Terraform::ShellOut.new(
+        command: factory.apply_command, logger: logger, timeout: apply_timeout
+      ).execute
+    end
+
+    def execute(command:, &block)
+      ::Terraform::ShellOut
+        .new(command: command, logger: logger).execute(&block)
+    end
+
+    def initialize(config: {}, logger:)
+      self.apply_timeout = config[:apply_timeout]
+      self.factory = ::Terraform::CommandFactory.new config: config
+      self.logger = logger
+    end
+
+    def output_parser(name:)
+      execute(
+        command: factory.output_command(target: name, version: version)
+      ) do |value|
+        return ::Terraform::OutputParser.create output: value, version: version
+      end
+    rescue ::Kitchen::StandardError => exception
+      raise exception unless exception.message =~ /no outputs/
+
+      ::Terraform::NoOutputParser.new
     end
   end
 end

@@ -14,48 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'pathname'
+require 'support/terraform/command_examples'
 require 'terraform/plan_command'
-require 'support/terraform/color_switch_context'
-require 'support/terraform/color_switch_examples'
 
-RSpec.describe Terraform::PlanCommand do
-  let(:color) { instance_double Object }
-
+::RSpec.describe ::Terraform::PlanCommand do
   let :described_instance do
-    described_class.new color: color, destroy: destroy, out: out,
-                        parallelism: 1234, state: state, variables: variables,
-                        variable_files: [variable_file]
+    described_class.new { |options| options.out = output_file }
   end
 
-  let(:destroy) { instance_double Object }
+  let(:output_file) { ::Pathname.new '/output/file' }
 
-  let(:out) { instance_double Object }
+  it_behaves_like('#name') { let(:name) { 'plan' } }
 
-  let(:state) { instance_double Object }
+  describe '#prepare' do
+    let :prepare_output_file do
+      instance_double ::Terraform::PrepareOutputFile
+    end
 
-  let(:variable_file) { instance_double Object }
+    before do
+      allow(::Terraform::PrepareOutputFile).to receive(:new)
+        .with(file: output_file).and_return prepare_output_file
+    end
 
-  let(:variables) { { 'key' => 'value' } }
+    after { described_instance.prepare }
 
-  it_behaves_like Terraform::ColorSwitch
+    subject { prepare_output_file }
 
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "plan"') { is_expected.to eq 'plan' }
-  end
-
-  describe '#options' do
-    include_context '#color_switch'
-
-    subject { described_instance.options }
-
-    it 'include "destroy", "input", "out", "parallelism", "state", "color", ' \
-         '"var", and "var-file"' do
-      is_expected.to eq "-destroy=#{destroy} -input=false -out=#{out} " \
-                          "-parallelism=1234 -state=#{state} " \
-                          "-color=<true or false> -var='key=value' " \
-                          "-var-file=#{variable_file}"
+    it 'prepares the output out file' do
+      is_expected.to receive(:execute).with no_args
     end
   end
 end

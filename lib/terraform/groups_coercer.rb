@@ -14,21 +14,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'json'
+require 'hashie'
+require 'terraform/group'
 
 module Terraform
-  # Behaviour for OutputCommand with Terraform 0.7
-  module ZeroSevenOutput
-    def options
-      "-json=true -state=#{state}"
+  # A coercer for [:groups] config values
+  class GroupsCoercer
+    def coerce(attr:, value:)
+      configurable[attr] = Array(value).map do |group|
+        ::Terraform::Group.new defaults.merge group
+      end
+    rescue ::TypeError, ::Hashie::CoercionError
+      configurable.config_error attr: attr, expected: 'a list of group mappings'
     end
 
     private
 
-    def processed_output(raw_output:)
-      return raw_output if return_raw
-      JSON.parse(raw_output).fetch('value')
-          .tap { |value| return list ? Array(value) : value }
+    attr_accessor :configurable, :defaults
+
+    def initialize(configurable:)
+      self.configurable = configurable
+      self.defaults = {
+        port: configurable.transport[:port],
+        username: configurable.transport[:username]
+      }
     end
   end
 end

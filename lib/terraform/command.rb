@@ -14,54 +14,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'mixlib/shellout'
+require 'terraform/command_options'
 
 module Terraform
   # Terraform command to be executed
   class Command
+    attr_reader :options, :target
+
     def name
-      ''
+      /(\w+)Command/.match(self.class.to_s) { |match| return match[1].downcase }
+
+      'help'
     end
 
-    def options
-      '--help'
-    end
-
-    def output
-      processed_output raw_output: shell_out.stdout
-    end
-
-    def run(logger:, timeout:)
-      shell_out.live_stream = logger
-      shell_out.timeout = timeout
-      shell_out.run_command
-      shell_out.error!
-    rescue => exception
-      handle_error exception: exception
+    def prepare
+      preparations.each(&:execute)
     end
 
     def to_s
-      shell_out.command
+      "terraform #{name} #{options} #{target}".strip
     end
 
     private
 
-    attr_accessor :shell_out
+    attr_accessor :preparations
 
-    def handle_error(exception:)
-      raise exception
-    end
+    attr_writer :options, :target
 
-    def initialize(target: '', **keyword_arguments)
-      initialize_attributes(**keyword_arguments)
-      self.shell_out = Mixlib::ShellOut
-                       .new "terraform #{name} #{options} #{target}", returns: 0
-    end
+    def initialize(target: '', &block)
+      block ||= proc {}
 
-    def initialize_attributes(**_keyword_arguments) end
-
-    def processed_output(raw_output:)
-      raw_output
+      self.options = ::Terraform::CommandOptions.new
+      self.preparations = []
+      self.target = target
+      block.call options
     end
   end
 end
