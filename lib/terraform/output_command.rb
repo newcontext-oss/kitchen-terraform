@@ -14,46 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'mixlib/shellout'
-require_relative 'command'
-require_relative 'command_extender'
-require_relative 'zero_six_output'
-require_relative 'zero_seven_output'
+require 'terraform/command'
 
 module Terraform
-  # Command to extract values of output variables
-  class OutputCommand < Command
-    include CommandExtender
-
-    def name
-      'output'
-    end
-
-    private
-
-    attr_accessor :list, :state, :return_raw
-
-    def handle_error(exception:)
-      raise exception if !exception.is_a?(
-        Mixlib::ShellOut::ShellCommandFailed
-      ) | !exception.message.match(/no outputs/)
-
-      define_singleton_method :output do
-        return '{}' if return_raw
-
-        list ? [] : ''
-      end
-    end
-
-    def initialize_attributes(list:, version:, state:, return_raw: false)
-      extend_behaviour version: version
-      self.list = list
-      self.state = state
-      self.return_raw = return_raw
-    end
-
-    def version_behaviours
-      { /v0.[7-8]/ => ZeroSevenOutput, /v0.6/ => ZeroSixOutput }
-    end
+  # A command to retrieve extract values of output variables
+  class OutputCommand < ::Terraform::Command
   end
 end

@@ -14,34 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require_relative 'simple_config'
+require_relative 'variables_coercer'
+
 module Terraform
   # Behaviour for the [:variables] config option
   module VariablesConfig
-    def self.included(configurable_class)
-      configurable_class.required_config :variables do |_, value, configurable|
-        configurable.coerce_variables value: value
-      end
-      configurable_class.default_config :variables, {}
-    end
+    include ::Terraform::SimpleConfig
 
-    def coerce_variables(value:)
-      config[:variables] =
-        if value.is_a?(Array) || value.is_a?(String)
-          deprecated_variables_format value: value
-        else
-          Hash value
-        end
-    rescue ArgumentError, TypeError
-      config_error attribute: 'variables',
-                   expected: 'a mapping of Terraform variable assignments'
-    end
-
-    private
-
-    def deprecated_variables_format(value:)
-      config_deprecated attribute: 'variables', remediation: 'Use a mapping',
-                        type: 'a list or string', version: '1.0'
-      Hash[Array(value).map { |string| string.split '=' }]
+    def self.extended(configurable_class)
+      configurable_class
+        .configure_required attr: :variables,
+                            coercer_class: ::Terraform::VariablesCoercer,
+                            default_value: {}
     end
   end
 end

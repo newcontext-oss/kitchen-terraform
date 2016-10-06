@@ -14,47 +14,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'fileutils'
 require 'kitchen'
-require 'terraform/client'
 require 'terraform/configurable'
+require 'terraform/version'
 
 module Kitchen
   module Driver
     # Terraform state lifecycle activities manager
-    class Terraform < Base
-      include ::Terraform::Client
-
+    class Terraform < ::Kitchen::Driver::Base
       include ::Terraform::Configurable
 
       kitchen_driver_api_version 2
 
       no_parallel_for
 
-      def create(_state = nil)
-        %i(plan state)
-          .each { |option| FileUtils.mkdir_p File.dirname provisioner[option] }
-      end
+      def create(_state = nil); end
 
       def destroy(_state = nil)
-        return if !File.exist?(provisioner[:state]) || current_state.empty?
-
-        create
-        validate_configuration_files
-        download_modules
-        plan_execution destroy: true
-        apply_execution_plan
+        load_state { client.apply_destructively }
+      rescue ::Kitchen::StandardError, ::SystemCallError => error
+        raise ::Kitchen::ActionFailed, error.message
       end
 
       def verify_dependencies
-        case version
-        when /(v[^0]|v0\.[^678])/
-          raise Kitchen::UserError,
-                'Only Terraform v0.8, v0.7, and v0.6 are supported'
-        when /v0\.6/
-          log_deprecation aspect: 'v0.6', remediation: 'Update to v0.8 or v0.7',
-                          version: '1.0'
+        verify_supported_version
+        check_deprecated_version
+      end
+
+      private
+
+      def check_deprecated_version
+        version.if_deprecated do
+          log_deprecation aspect: version.to_s,
+                          remediation: "Install #{::Terraform::Version.latest}"
         end
+      end
+
+      def load_state(&block)
+        silent_client.load_state(&block)
+      rescue ::Errno::ENOENT => error
+        debug error.message
+      end
+
+      def verify_supported_version
+        version.if_not_supported do
+          raise ::Kitchen::UserError,
+                "#{version} is not supported\nInstall " \
+                  "#{::Terraform::Version.latest}"
+        end
+      end
+
+      def version
+        @version ||= limited_client.version
       end
     end
   end

@@ -14,14 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'terraform/pathname_coercer'
+require 'terraform/simple_config'
+
 module Terraform
   # Behaviour for the [:directory] config option
   module DirectoryConfig
-    def self.included(configurable_class)
-      configurable_class.default_config :directory do |configurable|
-        configurable[:kitchen_root]
-      end
-      configurable_class.expand_path_for :directory
+    include ::Terraform::SimpleConfig
+
+    def self.extended(configurable_class)
+      configurable_class.configure_required(
+        attr: :directory, coercer_class: ::Terraform::PathnameCoercer,
+        default_value: ->(configurable) { configurable[:kitchen_root] }
+      )
     end
   end
 end

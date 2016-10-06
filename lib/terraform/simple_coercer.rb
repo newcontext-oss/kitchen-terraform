@@ -15,13 +15,22 @@
 # limitations under the License.
 
 module Terraform
-  # Behaviour for the [:plan] config option
-  module PlanConfig
-    def self.included(configurable_class)
-      configurable_class.default_config :plan do |configurable|
-        configurable.instance_pathname filename: 'terraform.tfplan'
-      end
-      configurable_class.expand_path_for :plan
+  # Performs simple coercions
+  class SimpleCoercer
+    def coerce(attr:, value:)
+      configurable[attr] = method.call value
+    rescue ArgumentError, TypeError
+      configurable.config_error attr: attr, expected: expected
+    end
+
+    private
+
+    attr_accessor :configurable, :expected, :method
+
+    def initialize(configurable:, expected:, method:)
+      self.configurable = configurable
+      self.expected = expected
+      self.method = method
     end
   end
 end

@@ -14,17 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
+require 'terraform/command'
 
 module Terraform
-  # Command to valdidate configuration files
-  class ValidateCommand < Command
-    def name
-      'validate'
-    end
-
-    def options
-      ''
-    end
+  # A command to valdidate configuration files
+  class ValidateCommand < ::Terraform::Command
   end
 end

@@ -17,80 +17,59 @@
 require 'kitchen/provisioner/terraform'
 require 'support/terraform/apply_timeout_config_examples'
 require 'support/terraform/color_config_examples'
-require 'support/terraform/command_context'
 require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
 require 'support/terraform/directory_config_examples'
+require 'support/terraform/file_configs_examples'
 require 'support/terraform/parallelism_config_examples'
-require 'support/terraform/plan_config_examples'
-require 'support/terraform/state_config_examples'
 require 'support/terraform/variable_files_config_examples'
 require 'support/terraform/variables_config_examples'
 
-RSpec.describe Kitchen::Provisioner::Terraform do
-  include_context 'config'
+::RSpec.describe ::Kitchen::Provisioner::Terraform do
+  include_context 'instance'
 
-  let(:described_instance) { described_class.new config }
+  let(:described_instance) { provisioner }
 
-  it_behaves_like Terraform::ApplyTimeoutConfig
+  it_behaves_like ::Terraform::ApplyTimeoutConfig
 
-  it_behaves_like Terraform::ColorConfig
+  it_behaves_like ::Terraform::ColorConfig
 
-  it_behaves_like Terraform::Configurable
+  it_behaves_like ::Terraform::Configurable
 
-  it_behaves_like Terraform::DirectoryConfig
+  it_behaves_like ::Terraform::DirectoryConfig
+
+  it_behaves_like ::Terraform::FileConfigs
 
   it_behaves_like ::Terraform::ParallelismConfig
 
-  it_behaves_like Terraform::PlanConfig
+  it_behaves_like ::Terraform::VariableFilesConfig
 
-  it_behaves_like Terraform::StateConfig
-
-  it_behaves_like Terraform::VariableFilesConfig
-
-  it_behaves_like Terraform::VariablesConfig
+  it_behaves_like ::Terraform::VariablesConfig
 
   describe '#call(_state = nil)' do
-    include_context '#driver'
+    include_context 'client'
 
-    let(:apply_execution_plan) { receive(:apply_execution_plan).with no_args }
+    context 'when all commands do not fail' do
+      after { described_instance.call }
 
-    let(:download_modules) { receive(:download_modules).with no_args }
+      subject { client }
 
-    let :plan_constructive_execution do
-      receive(:plan_execution).with destroy: false
+      it 'applies constructively' do
+        is_expected.to receive(:apply_constructively).with no_args
+      end
     end
 
-    let :validate_configuration_files do
-      receive(:validate_configuration_files).with no_args
-    end
+    context 'when a command does fail' do
+      before do
+        allow(client).to receive(:apply_constructively)
+          .with(no_args).and_raise ::SystemCallError, 'system call'
+      end
 
-    before do
-      allow(driver).to validate_configuration_files
+      subject { proc { described_instance.call } }
 
-      allow(driver).to download_modules
-
-      allow(driver).to plan_constructive_execution
-
-      allow(driver).to apply_execution_plan
-    end
-
-    after { described_instance.call }
-
-    subject { driver }
-
-    it 'validates the configuration files' do
-      is_expected.to validate_configuration_files
-    end
-
-    it('downloads the dependency modules') { is_expected.to download_modules }
-
-    it 'plans a constructive execution' do
-      is_expected.to plan_constructive_execution
-    end
-
-    it 'applys the constructive execution plan' do
-      is_expected.to apply_execution_plan
+      it 'raises an action failed error' do
+        is_expected.to raise_error ::Kitchen::ActionFailed, /system call/
+      end
     end
   end
 end

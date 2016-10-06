@@ -15,17 +15,14 @@
 # limitations under the License.
 
 module Terraform
-  # Behaviour for OutputCommand with Terraform 0.6
-  module ZeroSixOutput
-    def options
-      "-state=#{state}"
-    end
-
-    private
-
-    def processed_output(raw_output:)
-      return raw_output if return_raw
-      raw_output.chomp.tap { |value| return list ? value.split(',') : value }
+  # Behaviour for simple config options
+  module SimpleConfig
+    def configure_required(attr:, coercer_class:, default_value:)
+      required_config attr do |_, value, configurable|
+        coercer_class
+          .new(configurable: configurable).coerce attr: attr, value: value
+      end
+      default_config attr, default_value
     end
   end
 end

@@ -14,14 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # Logic to extend a command's behaviour based on the Terraform version
-  module CommandExtender
-    def extend_behaviour(version:)
-      extend version_behaviours.fetch(
-        version_behaviours.keys
-          .find { |extended_version| extended_version =~ version }
-      ) { return }
+require 'terraform/deprecated_variables_coercer'
+require 'support/terraform/configurable_context'
+
+::RSpec.describe ::Terraform::DeprecatedVariablesCoercer do
+  include_context 'instance'
+
+  let(:described_instance) { described_class.new configurable: provisioner }
+
+  describe '#coerce' do
+    before { described_instance.coerce attr: :variables, value: 'foo=bar' }
+
+    subject { provisioner[:variables] }
+
+    it 'coerces the deprecated "foo=bar" style to a mapping' do
+      is_expected.to eq 'foo' => 'bar'
     end
   end
 end

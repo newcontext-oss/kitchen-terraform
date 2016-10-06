@@ -54,6 +54,8 @@ require 'terraform/project_version.rb'
 
   specification.add_development_dependency 'travis', '~> 1.8'
 
+  specification.add_runtime_dependency 'hashie', '~> 3.5'
+
   specification.add_runtime_dependency 'inspec', '~> 1.0'
 
   specification.add_runtime_dependency 'kitchen-inspec', '~> 0.14', '>= 0.14.0'

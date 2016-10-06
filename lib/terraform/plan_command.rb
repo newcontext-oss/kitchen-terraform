@@ -14,51 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-require_relative 'color_switch'
+require 'terraform/command'
+require 'terraform/prepare_output_file'
 
 module Terraform
-  # Command to plan an execution
-  class PlanCommand < Command
-    include ColorSwitch
-
-    def name
-      'plan'
-    end
-
-    def options
-      "-destroy=#{destroy} -input=false -out=#{out} " \
-        "-parallelism=#{parallelism} -state=#{state} " \
-        "#{color_switch}#{processed_variables}#{processed_variable_files}"
-    end
-
+  # A command to plan an execution
+  class PlanCommand < ::Terraform::Command
     private
 
-    attr_accessor :destroy, :out, :parallelism, :state, :variables,
-                  :variable_files
-
-    def initialize_attributes(
-      color:, destroy:, out:, parallelism:, state:, variables:, variable_files:
-    )
-      self.color = color
-      self.destroy = destroy
-      self.out = out
-      self.parallelism = parallelism
-      self.state = state
-      self.variables = variables
-      self.variable_files = variable_files
-    end
-
-    def processed_variable_files
-      variable_files.each_with_object String.new do |pathname, string|
-        string.concat " -var-file=#{pathname}"
-      end
-    end
-
-    def processed_variables
-      variables.each_with_object String.new do |(key, value), string|
-        string.concat " -var='#{key}=#{value}'"
-      end
+    def initialize(target: '')
+      super
+      preparations.push ::Terraform::PrepareOutputFile.new file: options.out
     end
   end
 end

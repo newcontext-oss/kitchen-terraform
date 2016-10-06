@@ -14,26 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-require_relative 'color_switch'
+require 'terraform/command'
+require 'terraform/prepare_input_file'
 
 module Terraform
-  # Command to show a state or plan
-  class ShowCommand < Command
-    include ColorSwitch
-
-    def name
-      'show'
-    end
-
-    def options
-      color_switch
-    end
-
+  # A command to show a state
+  class ShowCommand < ::Terraform::Command
     private
 
-    def initialize_attributes(color:)
-      self.color = color
+    def initialize(target: '')
+      super
+      preparations.push ::Terraform::PrepareInputFile.new file: target
     end
   end
 end

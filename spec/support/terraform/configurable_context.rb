@@ -18,105 +18,52 @@ require 'kitchen'
 require 'kitchen/driver/terraform'
 require 'kitchen/provisioner/terraform'
 require 'kitchen/verifier/terraform'
+require 'terraform/configurable'
 
-RSpec.shared_context '#driver' do
-  include_context '#instance'
-
-  let(:driver) { instance_double Kitchen::Driver::Terraform }
-
-  before { allow(instance).to receive(:driver).with(no_args).and_return driver }
-end
-
-RSpec.shared_context '#instance' do
-  let(:instance) { instance_double Kitchen::Instance }
-
-  let(:instance_name) { 'instance' }
+::RSpec.shared_context 'client' do |client_type: :client|
+  let(client_type) { instance_double ::Terraform::Client }
 
   before do
-    allow(described_instance).to receive(:instance).with(no_args)
-      .and_return instance
-
-    allow(instance).to receive(:name).with(no_args).and_return instance_name
-
-    allow(instance).to receive(:to_str).with(no_args).and_return instance_name
+    allow(described_instance)
+      .to receive(client_type).with(no_args).and_return send client_type
   end
 end
 
-::RSpec.shared_context '#logger' do
+::RSpec.shared_context 'instance' do
+  let(:default_config) { { kitchen_root: kitchen_root } }
+
+  let(:driver) { ::Kitchen::Driver::Terraform.new default_config }
+
+  let :instance do
+    ::Kitchen::Instance.new driver: driver, logger: logger, platform: platform,
+                            provisioner: provisioner, state_file: object,
+                            suite: suite, transport: transport,
+                            verifier: verifier
+  end
+
+  let(:kitchen_root) { '/kitchen/root' }
+
   let(:logger) { ::Kitchen::Logger.new }
 
-  before do
-    allow(described_instance).to receive(:logger).with(no_args)
-      .and_return logger
+  let(:platform) { ::Kitchen::Platform.new name: 'platform' }
+
+  let :provisioner do
+    ::Kitchen::Provisioner::Terraform.new default_config
   end
+
+  let(:suite) { ::Kitchen::Suite.new name: 'suite' }
+
+  let(:transport) { ::Kitchen::Transport::Ssh.new }
+
+  let(:verifier) { ::Kitchen::Verifier::Terraform.new default_config }
+
+  before { instance }
 end
 
-RSpec.shared_context '#provisioner' do
-  include_context '#instance'
-
-  let(:provisioner) { instance_double Kitchen::Provisioner::Terraform }
-
-  let(:provisioner_apply_timeout) { instance_double Object }
-
-  let(:provisioner_color) { instance_double Object }
-
-  let(:provisioner_directory) { instance_double Object }
-
-  let(:provisioner_plan) { instance_double Object }
-
-  let(:provisioner_state) { instance_double Object }
-
-  let(:provisioner_variables) { instance_double Object }
-
-  let(:provisioner_variable_files) { instance_double Object }
-
-  before do
-    allow(instance).to receive(:provisioner).with(no_args)
-      .and_return provisioner
-
-    allow(provisioner).to receive(:[]).with(:apply_timeout)
-      .and_return provisioner_apply_timeout
-
-    allow(provisioner).to receive(:[]).with(:color).and_return provisioner_color
-
-    allow(provisioner).to receive(:[]).with(:directory)
-      .and_return provisioner_directory
-
-    allow(provisioner).to receive(:[]).with(:parallelism).and_return 1234
-
-    allow(provisioner).to receive(:[]).with(:plan).and_return provisioner_plan
-
-    allow(provisioner).to receive(:[]).with(:state).and_return provisioner_state
-
-    allow(provisioner).to receive(:[]).with(:variables)
-      .and_return provisioner_variables
-
-    allow(provisioner).to receive(:[]).with(:variable_files)
-      .and_return provisioner_variable_files
-  end
+::RSpec.shared_context 'limited_client' do
+  include_context 'client', client_type: :limited_client
 end
 
-RSpec.shared_context '#transport' do
-  include_context '#instance'
-
-  let(:transport) { instance_double Kitchen::Transport::Ssh }
-
-  before do
-    allow(instance).to receive(:transport).with(no_args)
-      .and_return transport
-  end
-end
-
-RSpec.shared_context 'config' do
-  let(:config) { { kitchen_root: kitchen_root } }
-
-  let(:kitchen_root) { Dir.pwd }
-end
-
-RSpec.shared_context 'finalize_config! instance' do
-  include_context '#instance'
-
-  include_context 'config'
-
-  after { described_instance.finalize_config! instance }
+::RSpec.shared_context 'silent_client' do
+  include_context 'client', client_type: :silent_client
 end

@@ -15,43 +15,9 @@
 # limitations under the License.
 
 require 'support/terraform/configurable_context'
+require 'support/terraform/simple_config_examples'
 require 'terraform/parallelism_config'
 
 ::RSpec.shared_examples ::Terraform::ParallelismConfig do
-  describe '#coerce_parallelism(value:)' do
-    let(:call_method) { described_instance.coerce_parallelism value: value }
-
-    context 'when the value can be coerced to be an integer' do
-      let(:value) { 1 }
-
-      before { call_method }
-
-      subject { described_instance[:parallelism] }
-
-      it('updates the config assignment') { is_expected.to eq value }
-    end
-
-    context 'when the value can not be coerced to be an integer' do
-      let(:value) { 'a' }
-
-      after { call_method }
-
-      subject { described_instance }
-
-      it 'an error is reported' do
-        is_expected.to receive(:config_error).with attribute: 'parallelism',
-                                                   expected: 'an integer'
-      end
-    end
-  end
-
-  describe '#finalize_config!(instance)' do
-    include_context 'finalize_config! instance'
-
-    describe '[:parallelism]' do
-      subject { described_instance[:parallelism] }
-
-      it('defaults to 10 concurrent operations') { is_expected.to eq 10 }
-    end
-  end
+  it_behaves_like ::Terraform::SimpleConfig, attr: :parallelism, default: 10
 end
