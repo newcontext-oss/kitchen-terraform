@@ -14,21 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'json'
-
-module Terraform
-  # Behaviour for OutputCommand with Terraform 0.7
-  module ZeroSevenOutput
-    def options
-      "-json=true -state=#{state}"
-    end
-
-    private
-
-    def processed_output(raw_output:)
-      return raw_output if return_raw
-      JSON.parse(raw_output).fetch('value')
-          .tap { |value| return list ? Array(value) : value }
-    end
+module Helpers
+  def object
+    instance_double ::Object
   end
 end

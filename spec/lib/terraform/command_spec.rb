@@ -14,83 +14,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/terraform/command_context'
+require 'support/terraform/command_examples'
 require 'terraform/command'
 
-RSpec.describe Terraform::Command do
+::RSpec.describe ::Terraform::Command do
   let(:described_instance) { described_class.new target: target }
 
-  let(:target) { instance_double Object }
+  let(:options) { ::Terraform::CommandOptions.new }
 
-  describe '#name' do
-    subject { described_instance.name }
+  let(:target) { object }
 
-    it('returns an empty string') { is_expected.to eq '' }
+  before do
+    allow(::Terraform::CommandOptions)
+      .to receive(:new).with(no_args).and_return options
   end
 
-  describe '#options' do
-    subject { described_instance.options }
+  it_behaves_like('#name') { let(:name) { 'help' } }
 
-    it('returns "--help"') { is_expected.to eq '--help' }
-  end
+  describe '.new' do
+    subject { ->(block) { described_class.new(&block) } }
 
-  describe '#output' do
-    include_context '#shell_out'
-
-    let(:value) { instance_double Object }
-
-    before { allow_stdout.and_return value }
-
-    subject { described_instance.output }
-
-    it('returns unprocessed output') { is_expected.to eq value }
-  end
-
-  describe '#run(logger:, timeout:)' do
-    include_context '#shell_out'
-
-    let(:check_error) { receive(:error!).with no_args }
-
-    let(:logger) { instance_double Object }
-
-    let(:run_command) { receive(:run_command).with no_args }
-
-    let(:set_live_stream) { receive(:live_stream=).with logger }
-
-    let(:set_timeout) { receive(:timeout=).with timeout }
-
-    let(:timeout) { instance_double Object }
-
-    before do
-      allow(shell_out).to set_live_stream
-
-      allow(shell_out).to set_timeout
-
-      allow(shell_out).to run_command
-
-      allow(shell_out).to check_error
+    it 'yields command options for configuration' do
+      is_expected.to yield_with_args Terraform::CommandOptions
     end
+  end
 
-    after { described_instance.run logger: logger, timeout: timeout }
+  describe '#prepare' do
+    subject { described_instance }
 
-    subject { shell_out }
-
-    it 'uses the logger for live streaming' do
-      is_expected.to set_live_stream
-    end
-
-    it('configures a timeout duration') { is_expected.to set_timeout }
-
-    it('runs the command') { is_expected.to run_command }
-
-    it('checks for errors') { is_expected.to check_error }
+    it('takes no action') { is_expected.to respond_to :prepare }
   end
 
   describe '#to_s' do
     subject { described_instance.to_s }
 
-    it 'returns the command string' do
-      is_expected.to eq "terraform  --help #{target}"
+    it 'is "terraform <name> <options> <target>"' do
+      is_expected.to eq "terraform help #{options} #{target}"
     end
   end
 end

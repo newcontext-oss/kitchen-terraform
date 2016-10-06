@@ -14,35 +14,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/command_examples'
 require 'terraform/apply_command'
-require 'support/terraform/color_switch_context'
-require 'support/terraform/color_switch_examples'
 
-RSpec.describe Terraform::ApplyCommand do
-  let(:color) { instance_double Object }
-
+::RSpec.describe ::Terraform::ApplyCommand do
   let :described_instance do
-    described_class.new color: color, parallelism: 1234, state: state
+    described_class.new(target: 'target') { |options| options.state = 'state' }
   end
 
-  let(:state) { instance_double Object }
+  let(:prepare_input_file) { instance_double ::Terraform::PrepareInputFile }
 
-  it_behaves_like Terraform::ColorSwitch
+  let(:prepare_output_file) { instance_double ::Terraform::PrepareOutputFile }
 
-  describe '#name' do
-    subject { described_instance.name }
+  before do
+    allow(::Terraform::PrepareInputFile)
+      .to receive(:new).with(file: 'target').and_return prepare_input_file
 
-    it('returns "apply"') { is_expected.to eq 'apply' }
+    allow(::Terraform::PrepareOutputFile)
+      .to receive(:new).with(file: 'state').and_return prepare_output_file
   end
 
-  describe '#options' do
-    include_context '#color_switch'
+  it_behaves_like('#name') { let(:name) { 'apply' } }
 
-    subject { described_instance.options }
+  describe '#prepare' do
+    before do
+      allow(prepare_input_file).to receive(:execute).with no_args
 
-    it 'include "color", "input", "parallelism", and "state"' do
-      is_expected.to eq "-input=false -parallelism=1234 -state=#{state} " \
-                          '-color=<true or false>'
+      allow(prepare_output_file).to receive(:execute).with no_args
+    end
+
+    after { described_instance.prepare }
+
+    context 'the input target file' do
+      subject { prepare_input_file }
+
+      it('is prepared') { is_expected.to receive(:execute).with no_args }
+    end
+
+    context 'the output state file' do
+      subject { prepare_output_file }
+
+      it('is prepared') { is_expected.to receive(:execute).with no_args }
     end
   end
 end

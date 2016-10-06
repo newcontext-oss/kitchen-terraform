@@ -14,22 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/command_examples'
 require 'terraform/get_command'
 
-RSpec.describe Terraform::GetCommand do
-  let(:described_instance) { described_class.new logger: logger }
+::RSpec.describe ::Terraform::GetCommand do
+  let(:described_instance) { described_class.new }
 
-  let(:logger) { instance_double Object }
-
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "get"') { is_expected.to eq 'get' }
-  end
-
-  describe '#options' do
-    subject { described_instance.options }
-
-    it('returns "-update=true"') { is_expected.to eq '-update=true' }
-  end
+  it_behaves_like('#name') { let(:name) { 'get' } }
 end

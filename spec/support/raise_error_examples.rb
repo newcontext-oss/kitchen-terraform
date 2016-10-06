@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+#
 # Copyright 2016 New Context Services, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,15 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # Shared color switch for Terraform
-  module ColorSwitch
-    def color_switch
-      color ? '' : '-no-color'
-    end
+require 'kitchen'
 
-    private
+::RSpec.shared_examples 'a user error has occurred' do
+  subject { proc { described_method } }
 
-    attr_accessor :color
+  it 'raises a UserError' do
+    is_expected.to raise_error ::Kitchen::UserError, message
   end
 end

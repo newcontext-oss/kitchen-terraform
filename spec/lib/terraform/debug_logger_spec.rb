@@ -14,18 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/state_config'
+require 'kitchen'
+require 'terraform/debug_logger'
 
-RSpec.shared_examples Terraform::StateConfig do
-  describe '#finalize_config!(instance)' do
-    include_context 'finalize_config! instance'
+::RSpec.describe ::Terraform::DebugLogger do
+  let(:described_instance) { described_class.new logger: logger }
 
-    describe '[:state]' do
-      subject { described_instance[:state] }
+  let(:logger) { instance_double ::Kitchen::Logger }
 
-      it 'defaults to an instance pathname' do
-        is_expected.to match %r{instance/terraform\.tfstate}
-      end
+  shared_examples '#debug' do
+    after { described_instance << 'message' }
+
+    subject { logger }
+
+    it 'forwards the message to #debug of the wrapped logger' do
+      is_expected.to receive(:debug).with 'message'
     end
   end
+
+  describe('#<< ') { it_behaves_like '#debug' }
+
+  describe('#debug') { it_behaves_like '#debug' }
 end

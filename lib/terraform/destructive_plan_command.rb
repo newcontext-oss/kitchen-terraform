@@ -14,15 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'mixlib/shellout'
+require 'terraform/prepare_input_file'
+require 'terraform/plan_command'
 
-RSpec.shared_context '#shell_out' do
-  let(:allow_stdout) { allow(shell_out).to receive(:stdout).with no_args }
+module Terraform
+  # A command to plan a destructive execution
+  class DestructivePlanCommand < ::Terraform::PlanCommand
+    def name
+      'plan'
+    end
 
-  let(:shell_out) { instance_double Mixlib::ShellOut }
+    private
 
-  before do
-    allow(described_instance).to receive(:shell_out).with(no_args)
-      .and_return shell_out
+    def initialize(target: '')
+      super
+      preparations
+        .push ::Terraform::PrepareInputFile.new file: options.state
+    end
   end
 end

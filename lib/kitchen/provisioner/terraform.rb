@@ -19,41 +19,37 @@ require 'terraform/apply_timeout_config'
 require 'terraform/color_config'
 require 'terraform/configurable'
 require 'terraform/directory_config'
+require 'terraform/file_configs'
 require 'terraform/parallelism_config'
-require 'terraform/plan_config'
-require 'terraform/state_config'
 require 'terraform/variable_files_config'
 require 'terraform/variables_config'
 
 module Kitchen
   module Provisioner
-    # Terraform configuration applier
-    class Terraform < Base
-      include ::Terraform::ApplyTimeoutConfig
+    # Applies constructive Terraform plans
+    class Terraform < ::Kitchen::Provisioner::Base
+      extend ::Terraform::ApplyTimeoutConfig
 
-      include ::Terraform::ColorConfig
+      extend ::Terraform::ColorConfig
+
+      extend ::Terraform::DirectoryConfig
+
+      extend ::Terraform::FileConfigs
+
+      extend ::Terraform::ParallelismConfig
+
+      extend ::Terraform::VariableFilesConfig
+
+      extend ::Terraform::VariablesConfig
 
       include ::Terraform::Configurable
-
-      include ::Terraform::DirectoryConfig
-
-      include ::Terraform::ParallelismConfig
-
-      include ::Terraform::PlanConfig
-
-      include ::Terraform::StateConfig
-
-      include ::Terraform::VariableFilesConfig
-
-      include ::Terraform::VariablesConfig
 
       kitchen_provisioner_api_version 2
 
       def call(_state = nil)
-        driver.validate_configuration_files
-        driver.download_modules
-        driver.plan_execution destroy: false
-        driver.apply_execution_plan
+        client.apply_constructively
+      rescue ::Kitchen::StandardError, ::SystemCallError => error
+        raise ::Kitchen::ActionFailed, error.message
       end
     end
   end

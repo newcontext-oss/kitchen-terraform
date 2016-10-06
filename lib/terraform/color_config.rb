@@ -14,21 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require_relative 'color_coercer'
+require_relative 'simple_config'
+
 module Terraform
   # Behaviour for the [:color] config option
   module ColorConfig
-    def self.included(configurable_class)
-      configurable_class.required_config :color do |_, value, configurable|
-        configurable.coerce_color value: value
-      end
-      configurable_class.default_config :color, true
-    end
+    include ::Terraform::SimpleConfig
 
-    def coerce_color(value:)
-      raise TypeError unless [TrueClass, FalseClass].include? value.class
-      config[:color] = value
-    rescue TypeError
-      config_error attribute: 'color', expected: 'a boolean'
+    def self.extended(configurable_class)
+      configurable_class
+        .configure_required attr: :color,
+                            coercer_class: ::Terraform::ColorCoercer,
+                            default_value: true
     end
   end
 end

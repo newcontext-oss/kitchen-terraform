@@ -14,32 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/command_examples'
 require 'terraform/show_command'
-require 'support/terraform/color_switch_context'
-require 'support/terraform/color_switch_examples'
 
-RSpec.describe Terraform::ShowCommand do
-  let(:color) { instance_double Object }
+::RSpec.describe ::Terraform::ShowCommand do
+  let(:described_instance) { described_class.new }
 
-  let(:described_instance) { described_class.new color: color, target: state }
-
-  let(:state) { instance_double Object }
-
-  it_behaves_like Terraform::ColorSwitch
-
-  describe '#name' do
-    subject { described_instance.name }
-
-    it('returns "show"') { is_expected.to eq 'show' }
-  end
-
-  describe '#options' do
-    include_context '#color_switch'
-
-    subject { described_instance.options }
-
-    it 'returns "-color=<true or false>"' do
-      is_expected.to eq '-color=<true or false>'
-    end
-  end
+  it_behaves_like('#name') { let(:name) { 'show' } }
 end
