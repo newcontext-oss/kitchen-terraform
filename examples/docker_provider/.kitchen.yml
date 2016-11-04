@@ -1,0 +1,28 @@
+---
+driver:
+  name: terraform
+
+provisioner:
+  name: terraform
+  variable_files:
+    - testing.tfvars
+
+platforms:
+  - name: terraform
+
+transport:
+  name: ssh
+  password: Docker!
+
+suites:
+  - name: default
+
+verifier:
+  name: terraform 
+  format: doc
+  groups:
+  - name: default
+    tests:
+      - operating_system
+    port: 2222
+    hostnames: localhost
