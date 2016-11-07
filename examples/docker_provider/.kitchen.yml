@@ -4,8 +4,10 @@ driver:
 
 provisioner:
   name: terraform
-  variable_files:
-    - testing.tfvars
+  variables:
+    docker_host: "unix:///var/run/docker.sock"
+    docker_container: "terraform"
+    docker_image: "errygg/chef-client:latest"
 
 platforms:
   - name: terraform
