@@ -193,6 +193,67 @@ RSpec.shared_examples Terraform::Client do
     end
   end
 
+  describe '#each_output_name(&block)' do
+    let(:output_command) { instance_double Terraform::OutputCommand }
+
+    let :output_command_class do
+      class_double(Terraform::OutputCommand).as_stubbed_const
+    end
+
+    let(:list) { false }
+
+    let(:return_raw) { true }
+
+    let(:test_json) do
+      {
+        contrived_hostnames: {
+          sensitive: false,
+          type: 'list',
+          value: [
+            'hostA.compute-1.amazonaws.com',
+            'hostB.compute-1.amazonaws.com'
+          ]
+        },
+        other_host_address: {
+          sensitive: false,
+          type: 'string',
+          value: '123.123.123.123'
+        }
+      }.to_json
+    end
+
+    let(:version) { instance_double Object }
+
+    let(:element_one) { 'contrived_hostnames' }
+
+    let(:element_two) { 'other_host_address' }
+
+    let(:output_names) { [element_one, element_two] }
+
+    before do
+      allow(described_instance).to receive(:version).with(no_args)
+        .and_return version
+
+      allow(output_command_class).to receive(:new).with(
+        list: list, state: provisioner_state,
+        return_raw: return_raw, version: version
+      ).and_return output_command
+
+      allow(described_instance).to receive(:execute)
+        .with(command: output_command).and_yield test_json
+    end
+
+    subject do
+      lambda do |block|
+        described_instance.each_output_name(&block)
+      end
+    end
+
+    it 'yields each output element' do
+      is_expected.to yield_successive_args element_one, element_two
+    end
+  end
+
   describe '#version' do
     let(:version_command) { instance_double Terraform::VersionCommand }
 

@@ -18,7 +18,9 @@ require 'kitchen/verifier/terraform'
 require 'terraform/group'
 
 RSpec.describe Terraform::Group do
-  let(:described_instance) { described_class.new data: data }
+  let(:described_instance) do
+    described_class.new data: data
+  end
 
   describe '#each_attribute(&block)' do
     let(:data) { { attributes: { key_1 => value_1, key_2 => value_2 } } }

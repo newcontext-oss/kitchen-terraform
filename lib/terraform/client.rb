@@ -54,6 +54,15 @@ module Terraform
       ) { |value| list ? value.each(&block) : (return value) }
     end
 
+    def each_output_name(&block)
+      execute(
+        command: OutputCommand.new(
+          list: false, state: provisioner[:state], version: version,
+          return_raw: true
+        )
+      ) { |output| JSON.parse(output).each_key(&block) }
+    end
+
     def plan_execution(destroy:)
       execute command: PlanCommand.new(
         color: provisioner[:color], destroy: destroy, out: provisioner[:plan],

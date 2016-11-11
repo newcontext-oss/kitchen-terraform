@@ -26,6 +26,7 @@ module Terraform
     private
 
     def processed_output(raw_output:)
+      return raw_output if return_raw
       JSON.parse(raw_output).fetch('value')
           .tap { |value| return list ? Array(value) : value }
     end

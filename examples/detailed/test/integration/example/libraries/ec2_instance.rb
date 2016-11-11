@@ -18,7 +18,9 @@
 class EC2Instance < Inspec.resource 1
   name 'ec2_instance'
 
-  def ami_id
-    inspec.command('curl http://169.254.169.254/latest/meta-data/ami-id').stdout
+  def security_groups
+    inspec
+      .command('curl http://169.254.169.254/latest/meta-data/security-groups')
+      .stdout
   end
 end
