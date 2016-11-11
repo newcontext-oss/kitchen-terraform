@@ -50,6 +50,11 @@ module Kitchen
       end
 
       def resolve_attributes(group:)
+        # discover output names
+        driver.list_output_names.each do |output_name|
+          group.store_output_names name: output_name
+        end
+        group.merge_attributes
         group.each_attribute do |key, output_name|
           group.store_attribute key: key,
                                 value: driver.output_value(name: output_name)

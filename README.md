@@ -273,7 +273,10 @@ Each group consists of:
 - a name to use for logging purposes
 
 - a mapping of InSpec attribute names to Terraform output variable
-  names to define for the suite's InSpec profile
+  names to define for the suite's InSpec profile. By default, all Terraform
+  output names in your project will be discovered and an InSpec attribute name
+  created for it. This can be overridden explicitly by defining them in your
+  kitchen config.
 
 - a collection of controls to include from the suite's InSpec profile
 

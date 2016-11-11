@@ -193,6 +193,56 @@ RSpec.shared_examples Terraform::Client do
     end
   end
 
+  describe '#list_output_names' do
+    let :file_class do
+      class_double(File).as_stubbed_const
+    end
+
+    let(:test_json) do
+      {
+        modules: [
+          path: ['root'],
+          outputs: {
+            output1: {
+              sensitive: 'false',
+              type: 'list',
+              value: %w(
+                foo
+                bar
+              )
+            },
+            output2: {
+              sensitive: 'false',
+              type: 'string',
+              value: '123.123.123.123'
+            }
+          }
+        ],
+        outputs: {
+          output3: {
+            sensitive: 'false',
+            type: 'string',
+            value: 'blahblah'
+          }
+        }
+      }.to_json
+    end
+
+    let(:output_names) { %w(output1 output2 output3) }
+
+    before do
+      allow(file_class).to receive(:read)
+        .with(provisioner_state)
+        .and_return(test_json)
+    end
+
+    subject { described_instance.list_output_names }
+
+    it 'returns output names' do
+      is_expected.to eq output_names
+    end
+  end
+
   describe '#version' do
     let(:version_command) { instance_double Terraform::VersionCommand }
 

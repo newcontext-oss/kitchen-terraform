@@ -18,7 +18,11 @@ require 'kitchen/verifier/terraform'
 require 'terraform/group'
 
 RSpec.describe Terraform::Group do
-  let(:described_instance) { described_class.new data: data }
+  let(:output_names) { [] }
+
+  let(:described_instance) do
+    described_class.new data: data, output_names: output_names
+  end
 
   describe '#each_attribute(&block)' do
     let(:data) { { attributes: { key_1 => value_1, key_2 => value_2 } } }
@@ -134,5 +138,33 @@ RSpec.describe Terraform::Group do
     subject { data[:attributes][key] }
 
     it('stores the attribute pair data') { is_expected.to eq value }
+  end
+
+  describe '#merge_attributes' do
+    let(:data) { { attributes: { foo: :bar } } }
+
+    let(:output_names) { [:foo, :bar] }
+
+    let(:attribute_subject) { { foo: :bar, bar: :bar } }
+
+    before { described_instance.merge_attributes }
+
+    subject { data[:attributes] }
+
+    it('stores the attribute pair data') { is_expected.to eq attribute_subject }
+  end
+
+  describe '#store_output_names(name:)' do
+    let(:data) { { attributes: {} } }
+
+    let(:name) { instance_double Object }
+
+    before do
+      described_instance.store_output_names name: name
+    end
+
+    subject { output_names }
+
+    it('stores the output name') { is_expected.to contain_exactly name }
   end
 end

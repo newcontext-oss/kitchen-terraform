@@ -35,16 +35,27 @@ module Terraform
       data[:hostnames]
     end
 
+    def store_output_names(name:)
+      output_names.push name
+    end
+
+    def merge_attributes
+      output_names.each do |k|
+        data[:attributes].key?(k) ? next : store_attribute(key: k, value: k)
+      end
+    end
+
     def store_attribute(key:, value:)
       data[:attributes][key] = value
     end
 
     private
 
-    attr_accessor :data
+    attr_accessor :data, :output_names
 
-    def initialize(data:)
+    def initialize(data:, output_names: [])
       self.data = data
+      self.output_names = output_names
     end
 
     def options
