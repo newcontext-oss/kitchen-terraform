@@ -57,12 +57,12 @@ module Terraform
     def list_output_names
       output_names = []
       state_json = JSON.parse(File.read(provisioner[:state]))
-      state_json.fetch('modules', 'false')[0]['outputs'].each_key do |key|
-        key == 'false' ? next : output_names << key
-      end
-      state_json.fetch('outputs', 'false').each_key do |key|
-        key == 'false' ? next : output_names << key
-      end
+      state_json.fetch('modules')[0]['outputs'].each_key do |key|
+        output_names << key
+      end if state_json.key?('modules')
+      state_json.fetch('outputs').each_key do |key|
+        output_names << key
+      end if state_json.key?('outputs')
       output_names
     end
 
