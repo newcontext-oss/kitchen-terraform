@@ -14,11 +14,11 @@ verifier:
   groups:
     - name: contrived
       attributes:
-        other_host_address: different_host_address
+        overridden_security_group: security_group
       controls:
-        - ami_id
         - reachable_other_host
         - running_service
+        - security_group
       hostnames: contrived_hostnames
       port: 22
       username: ubuntu
