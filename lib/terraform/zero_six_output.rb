@@ -24,6 +24,7 @@ module Terraform
     private
 
     def processed_output(raw_output:)
+      return raw_output if return_raw
       raw_output.chomp.tap { |value| return list ? value.split(',') : value }
     end
   end

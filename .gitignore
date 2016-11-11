@@ -1,6 +1,8 @@
 **/.bundle/
+*/.idea/
 **/Gemfile.lock
 *.gem
+.kitchen/*
 coverage/
 examples/detailed/.kitchen.local.yml
 examples/detailed/.kitchen/

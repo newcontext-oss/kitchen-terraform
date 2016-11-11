@@ -21,7 +21,10 @@ require 'terraform/output_command'
 
 RSpec.describe Terraform::OutputCommand do
   let :described_instance do
-    described_class.new list: list, version: version, state: state
+    described_class.new(
+      list: list, version: version,
+      state: state, return_raw: false
+    )
   end
 
   let(:list) { instance_double Object }
