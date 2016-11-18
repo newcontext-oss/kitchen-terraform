@@ -150,9 +150,6 @@ RSpec.describe Kitchen::Verifier::Terraform do
       allow(group).to receive(:each_attribute).with(no_args)
         .and_yield key, output_name
 
-      # allow(driver).to receive(:each).with(no_args)
-      #   .and_yield output_name
-
       allow(group).to receive(:store_output_names).with(name: output_name)
 
       allow(group).to receive(:merge_attributes).with(no_args)
