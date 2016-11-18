@@ -36,13 +36,13 @@ module Terraform
       data[:hostnames]
     end
 
-    def store_output_names(name:)
+    def store_output_name(name:)
       output_names.push name
     end
 
     def merge_attributes
-      output_names.each do |k|
-        data[:attributes].key?(k) ? next : store_attribute(key: k, value: k)
+      output_names.each do |output|
+        data[:attributes].key?(output) ? next : store_attribute(key: output, value: output)
       end
     end
 
