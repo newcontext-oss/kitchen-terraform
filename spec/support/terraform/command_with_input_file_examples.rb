@@ -14,27 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/color_switch'
+require 'terraform/command_with_input_file'
 
-RSpec.shared_examples Terraform::ColorSwitch do
-  describe '#color_switch' do
+::RSpec.shared_examples ::Terraform::CommandWithInputFile do
+  describe '#if_requirements_not_met' do
+    subject { ->(block) { described_instance.if_requirements_not_met(&block) } }
+
     before do
-      allow(described_instance).to receive(:color).with(no_args)
-        .and_return color
+      allow(::File).to receive(:exist?).with(described_instance.input_file)
+        .and_return file_exist
     end
 
-    subject { described_instance.color_switch }
+    context 'when the input file does exist' do
+      let(:file_exist) { true }
 
-    context 'when color is true' do
-      let(:color) { true }
-
-      it('returns an empty string') { is_expected.to eq '' }
+      it('takes no action') { is_expected.to_not yield_control }
     end
 
-    context 'when color is false' do
-      let(:color) { false }
+    context 'when the input file does not exist' do
+      let(:file_exist) { false }
 
-      it('returns "-no-color"') { is_expected.to eq '-no-color' }
+      it 'yields the reason' do
+        is_expected.to yield_with_args 'missing input file'
+      end
     end
   end
 end

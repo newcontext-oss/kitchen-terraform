@@ -14,22 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/validate_command'
+require 'terraform/command_with_output_file'
 
-RSpec.describe Terraform::ValidateCommand do
-  let(:described_instance) { described_class.new logger: logger }
+::RSpec.shared_examples ::Terraform::CommandWithOutputFile do
+  describe '#prepare' do
+    let(:dirname) { object }
 
-  let(:logger) { instance_double Object }
+    before do
+      allow(::File).to receive(:dirname).with(described_instance.output_file)
+        .and_return dirname
+    end
 
-  describe '#name' do
-    subject { described_instance.name }
+    after { described_instance.prepare }
 
-    it('returns "validate"') { is_expected.to eq 'validate' }
-  end
+    subject { ::FileUtils }
 
-  describe '#options' do
-    subject { described_instance.options }
-
-    it('returns an empty string') { is_expected.to eq '' }
+    it 'creates the parent directory for the output file' do
+      is_expected.to receive(:mkdir_p).with dirname
+    end
   end
 end

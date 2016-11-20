@@ -14,15 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'mixlib/shellout'
+require 'terraform/output_command'
+require_relative 'colored_command_examples'
 
-RSpec.shared_context '#shell_out' do
-  let(:allow_stdout) { allow(shell_out).to receive(:stdout).with no_args }
+::RSpec.shared_examples ::Terraform::OutputCommand do
+  it_behaves_like 'colored command'
 
-  let(:shell_out) { instance_double Mixlib::ShellOut }
+  describe '#name' do
+    subject { described_instance.name }
 
-  before do
-    allow(described_instance).to receive(:shell_out).with(no_args)
-      .and_return shell_out
+    it('is "output"') { is_expected.to eq 'output' }
   end
 end

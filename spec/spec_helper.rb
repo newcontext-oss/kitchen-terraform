@@ -14,8 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RSpec.configure do |configuration|
+require_relative 'support/helpers'
+
+::RSpec.configure do |configuration|
   configuration.disable_monkey_patching!
+
+  configuration.include ::Helpers
 
   configuration.mock_with :rspec do |mocks|
     mocks.verify_doubled_constant_names = true

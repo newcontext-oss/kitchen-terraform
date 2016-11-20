@@ -14,19 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_input_file'
-
 module Terraform
-  # Behaviour for a command to show a state
-  module ShowCommand
-    include CommandWithInputFile
-
-    def input_file
-      target
-    end
-
-    def name
-      'show'
+  # Behaviour for a command that takes no interactive input
+  module DetachedCommand
+    def options
+      super.tap { |options| options.input = false }
     end
   end
 end

@@ -14,9 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RSpec.shared_context '#color_switch' do
-  before do
-    allow(described_instance).to receive(:color_switch).with(no_args)
-      .and_return '-color=<true or false>'
+require 'fileutils'
+
+module Terraform
+  # Behaviour for a command with an output file
+  module CommandWithOutputFile
+    def prepare
+      super
+      ::FileUtils.mkdir_p ::File.dirname output_file
+    end
   end
 end

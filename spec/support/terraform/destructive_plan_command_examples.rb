@@ -14,19 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_input_file'
+require 'terraform/destructive_plan_command'
+require_relative 'command_with_input_file_examples'
+require_relative 'plan_command_examples'
 
-module Terraform
-  # Behaviour for a command to show a state
-  module ShowCommand
-    include CommandWithInputFile
+::RSpec.shared_examples ::Terraform::DestructivePlanCommand do
+  it_behaves_like ::Terraform::CommandWithInputFile
 
-    def input_file
-      target
+  it_behaves_like ::Terraform::PlanCommand
+
+  describe '#input_file' do
+    subject { described_instance.input_file }
+
+    it 'is the state option' do
+      is_expected.to be described_instance.options.state
     end
+  end
 
-    def name
-      'show'
-    end
+  describe '#options' do
+    subject { described_instance.options.to_s }
+
+    it('includes -destroy=true') { is_expected.to include '-destroy=true' }
   end
 end

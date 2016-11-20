@@ -15,18 +15,21 @@
 # limitations under the License.
 
 require_relative 'command_with_input_file'
+require_relative 'plan_command'
 
 module Terraform
-  # Behaviour for a command to show a state
-  module ShowCommand
+  # Behaviour for a command to plan a destructive execution
+  module DestructivePlanCommand
     include CommandWithInputFile
 
+    include PlanCommand
+
     def input_file
-      target
+      options.state
     end
 
-    def name
-      'show'
+    def options
+      super.tap { |options| options.destroy = true }
     end
   end
 end
