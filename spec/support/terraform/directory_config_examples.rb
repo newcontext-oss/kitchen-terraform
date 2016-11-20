@@ -16,14 +16,12 @@
 
 require 'terraform/directory_config'
 
-RSpec.shared_examples Terraform::DirectoryConfig do
-  describe '#finalize_config!(instance)' do
-    include_context 'finalize_config! instance'
+::RSpec.shared_examples ::Terraform::DirectoryConfig do
+  describe '#configure_directory' do
+    subject { described_instance[:directory] }
 
-    describe '[:directory]' do
-      subject { described_instance[:directory] }
-
-      it('defaults to the Kitchen root') { is_expected.to eq kitchen_root }
+    it 'defaults [:directory] to the Kitchen root' do
+      is_expected.to include kitchen_root
     end
   end
 end

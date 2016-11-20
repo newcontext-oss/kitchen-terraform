@@ -15,13 +15,13 @@
 # limitations under the License.
 
 module Terraform
-  # Behaviour for the [:state] config option
-  module StateConfig
-    def self.included(configurable_class)
-      configurable_class.default_config :state do |configurable|
-        configurable.instance_pathname filename: 'terraform.tfstate'
+  # Behaviour for simple config options
+  module SimpleConfig
+    def configure_required(attr:, coercer_class:)
+      required_config attr do |_, value, configurable|
+        coercer_class.new(configurable: configurable)
+                     .coerce attr: attr, value: value
       end
-      configurable_class.expand_path_for :state
     end
   end
 end

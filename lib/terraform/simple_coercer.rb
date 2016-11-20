@@ -14,12 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/variables_config'
+module Terraform
+  # Performs simple coercions
+  class SimpleCoercer
+    def coerce(attr:, value:)
+      configurable[attr] = method.call value
+    rescue ArgumentError, TypeError
+      configurable.config_error attr: attr, expected: expected
+    end
 
-::RSpec.shared_examples ::Terraform::VariablesConfig do
-  describe '#configure_variables' do
-    subject { described_instance[:variables] }
+    private
 
-    it('defaults [:variables] to an empty map') { is_expected.to eq({}) }
+    attr_accessor :configurable, :expected, :method
+
+    def initialize(configurable:, expected:, method:)
+      self.configurable = configurable
+      self.expected = expected
+      self.method = method
+    end
   end
 end

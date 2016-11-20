@@ -15,13 +15,26 @@
 # limitations under the License.
 
 module Terraform
-  # Behaviour for the [:plan] config option
-  module PlanConfig
-    def self.included(configurable_class)
-      configurable_class.default_config :plan do |configurable|
-        configurable.instance_pathname filename: 'terraform.tfplan'
+  # Behaviour for the [:directory], [:plan], and [:state] config options
+  module FileConfigs
+    def self.extended(configurable_class)
+      configurable_class.configure_files
+    end
+
+    def configure_files
+      { directory: './', plan: 'terraform.tfplan', state: 'terraform.tfstate' }
+        .each_pair do |attr, filename|
+          configure_file attr: attr, filename: filename
+        end
+      expand_path_for attr
+    end
+
+    private
+
+    def configure_file(attr:, filename:)
+      default_config attr do |configurable|
+        configurable.instance_pathname filename: filename
       end
-      configurable_class.expand_path_for :plan
     end
   end
 end

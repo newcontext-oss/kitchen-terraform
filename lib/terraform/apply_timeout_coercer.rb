@@ -14,12 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/variables_config'
+require 'forwardable'
+require_relative 'simple_coercer'
 
-::RSpec.shared_examples ::Terraform::VariablesConfig do
-  describe '#configure_variables' do
-    subject { described_instance[:variables] }
+module Terraform
+  # A coercer for the [:apply_timeout] value
+  class ApplyTimeoutCoercer
+    extend Forwardable
 
-    it('defaults [:variables] to an empty map') { is_expected.to eq({}) }
+    def_delegator :coercer, :coerce
+
+    private
+
+    attr_accessor :coercer
+
+    def initialize(configurable:)
+      self.coercer = SimpleCoercer.new configurable: configurable,
+                                       expected: 'an integer',
+                                       method: method(:Integer)
+    end
   end
 end

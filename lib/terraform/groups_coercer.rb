@@ -14,12 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/variables_config'
+require 'hashie/extensions/coercion'
+require_relative 'groups'
 
-::RSpec.shared_examples ::Terraform::VariablesConfig do
-  describe '#configure_variables' do
-    subject { described_instance[:variables] }
+module Terraform
+  # A coercer for [:groups] config values
+  class GroupsCoercer
+    def coerce(attr:, value:)
+      configurable[attr] =
+        ::Terraform::Groups.new Array(value).map(&method(:Hash))
+    rescue ::TypeError, ::Hashie::CoercionError
+      configurable.config_error attr: attr, expected: 'a group mapping'
+    end
 
-    it('defaults [:variables] to an empty map') { is_expected.to eq({}) }
+    private
+
+    attr_accessor :configurable
+
+    def initialize(configurable:)
+      self.configurable = configurable
+    end
   end
 end

@@ -14,12 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/variables_config'
+require 'terraform/deprecated_variables_coercer'
+require 'support/terraform/configurable_context'
 
-::RSpec.shared_examples ::Terraform::VariablesConfig do
-  describe '#configure_variables' do
-    subject { described_instance[:variables] }
+::RSpec.describe ::Terraform::DeprecatedVariablesCoercer do
+  include_context 'instance'
 
-    it('defaults [:variables] to an empty map') { is_expected.to eq({}) }
+  let(:described_instance) { described_class.new configurable: provisioner }
+
+  describe '#coerce' do
+    before { described_instance.coerce attr: :variables, value: 'foo=bar' }
+
+    subject { provisioner[:variables] }
+
+    it 'coerces the deprecated "foo=bar" style to a mapping' do
+      is_expected.to include 'foo' => 'bar'
+    end
   end
 end

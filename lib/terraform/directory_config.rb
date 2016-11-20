@@ -17,11 +17,13 @@
 module Terraform
   # Behaviour for the [:directory] config option
   module DirectoryConfig
-    def self.included(configurable_class)
-      configurable_class.default_config :directory do |configurable|
-        configurable[:kitchen_root]
-      end
-      configurable_class.expand_path_for :directory
+    def self.extended(configurable_class)
+      configurable_class.configure_directory
+    end
+
+    def configure_directory
+      default_config(:directory) { |configurable| configurable[:kitchen_root] }
+      expand_path_for :directory
     end
   end
 end

@@ -14,12 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/variables_config'
+module Terraform
+  # A coercer for the [:color] value
+  class ColorCoercer
+    def coerce(attr:, value:)
+      configurable[attr] = [true, false].find(
+        proc { configurable.config_error attr: attr, expected: 'a boolean' },
+        &value.method(:==)
+      )
+    end
 
-::RSpec.shared_examples ::Terraform::VariablesConfig do
-  describe '#configure_variables' do
-    subject { described_instance[:variables] }
+    private
 
-    it('defaults [:variables] to an empty map') { is_expected.to eq({}) }
+    attr_accessor :configurable
+
+    def initialize(configurable:)
+      self.configurable = configurable
+    end
   end
 end
