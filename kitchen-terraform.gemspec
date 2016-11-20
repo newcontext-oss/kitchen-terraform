@@ -1,25 +1,25 @@
 # frozen_string_literal: true
 
-File.expand_path('../lib', __FILE__).tap do |directory|
+::File.expand_path('../lib', __FILE__).tap do |directory|
   $LOAD_PATH.unshift directory unless $LOAD_PATH.include? directory
 end
 
-require 'terraform/version.rb'
+require 'terraform/project_version.rb'
 
-Gem::Specification.new do |specification|
+::Gem::Specification.new do |specification|
   specification.authors = [
     'Aaron Lane', 'Clay Thomas', 'Erik R. Rygg', 'Ewa Czechowska',
     'Kevin Dickerson', 'Kyle Sexton', 'Michael Glenney',
     'Nell Shamrell-Harrington', 'Nick Willever', 'Walter Dolce'
   ]
 
-  specification.files = Dir.glob '{lib/**/*.rb,LICENSE,README.md}'
+  specification.files = ::Dir.glob '{lib/**/*.rb,LICENSE,README.md}'
 
   specification.name = 'kitchen-terraform'
 
   specification.summary = 'Test Kitchen plugins for testing Terraform projects'
 
-  specification.version = Terraform::VERSION
+  specification.version = ::Terraform::PROJECT_VERSION
 
   specification.email = 'kitchen-terraform@newcontext.com'
 
