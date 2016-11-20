@@ -1,4 +1,6 @@
 AllCops:
+  DefaultFormatter: clang
+  DisplayCopNames: true
   TargetRubyVersion: 2.3
 Metrics/BlockLength:
   Exclude:
@@ -9,3 +11,6 @@ Metrics/ParameterLists:
   Exclude:
     - lib/terraform/group.rb
     - lib/terraform/plan_command.rb
+Style/AccessorMethodName:
+  Exclude:
+    - lib/terraform/command_factory.rb
