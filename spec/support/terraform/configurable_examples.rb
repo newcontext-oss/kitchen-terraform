@@ -42,7 +42,9 @@ RSpec.shared_examples Terraform::Configurable do
       described_class.instance_variable_get :@plugin_version
     end
 
-    it('equals the gem version') { is_expected.to be Terraform::VERSION }
+    it 'equals the gem version' do
+      is_expected.to be ::Terraform::PROJECT_VERSION
+    end
   end
 
   describe '#config_deprecated(attribute:, remediation:, type:, version:)' do
