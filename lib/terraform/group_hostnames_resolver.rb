@@ -14,7 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/group'
+module Terraform
+  # Resolves group hostnames using a client
+  class GroupHostnamesResolver
+    def resolve(group:, hostnames:)
+      client.iterate_output name: hostnames do |output_value|
+        group.store_hostname value: output_value
+      end
+    end
 
-RSpec.describe Terraform::Group do
+    private
+
+    attr_accessor :client
+
+    def initialize(client:)
+      self.client = client
+    end
+  end
 end

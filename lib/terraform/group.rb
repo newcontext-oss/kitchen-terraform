@@ -14,48 +14,61 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/util'
+require 'forwardable'
+require 'hashie/dash'
+require 'hashie/extensions/dash/coercion'
+require 'set'
+require 'terraform/group_attributes'
 
 module Terraform
   # Group of Terraform server instances to be verified
-  class Group
-    def each_attribute(&block)
-      data[:attributes].dup.each_pair(&block)
-    end
+  class Group < ::Hashie::Dash
+    extend ::Forwardable
 
-    def hostnames
-      data[:hostnames]
-    end
+    include ::Hashie::Extensions::Dash::Coercion
+
+    def_delegator :attributes, :resolve, :resolve_attributes
+
+    property :attributes, coerce: ::Terraform::GroupAttributes,
+                          default: ::Terraform::GroupAttributes.new
+
+    property :controls, coerce: ::Array[::String], default: []
+
+    property :hostname, coerce: ::String
+
+    property :hostnames, coerce: ::String, default: ''
+
+    property :name, coerce: ::String, required: true
+
+    property :port
+
+    coerce_key :port, ->(value) { Integer value }
+
+    property :username, coerce: ::String
 
     def if_local
       yield if hostnames.empty?
     end
 
-    def name
-      data[:name]
+    def resolve_hostnames(resolver:)
+      resolver.resolve group: self, hostnames: hostnames
     end
 
-    def options
-      {
-        attributes: attributes, controls: data[:controls], port: data[:port],
-        user: data[:username]
-      }
+    def store_hostname(value:)
+      resolved_hostnames.add value
     end
 
-    def store_attribute(key:, value:)
-      data[:attributes][key] = value
+    def with_each_hostname
+      resolved_hostnames.each do |hostname|
+        self[:hostname] = hostname
+        yield self
+      end
     end
 
     private
 
-    attr_accessor :data
-
-    def attributes
-      ::Kitchen::Util.stringified_hash data[:attributes]
-    end
-
-    def initialize(data:)
-      self.data = data
+    def resolved_hostnames
+      @resolved_hostnames ||= ::Set.new
     end
   end
 end
