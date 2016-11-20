@@ -31,6 +31,7 @@ module Terraform
       ::Terraform::Command.new subcommand: ::Terraform::ApplyCommand,
                                target: config[:plan] do |options|
         options.color = config[:color]
+        options.parallelism = config[:parallelism]
         options.state = config[:state]
       end
     end
@@ -94,6 +95,7 @@ module Terraform
     def configure_plan(options:)
       options.color = config[:color]
       options.out = config[:plan]
+      options.parallelism = config[:parallelism]
       options.var = config[:variables]
       options.var_file = config[:variable_files]
     end

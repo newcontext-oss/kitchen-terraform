@@ -14,6 +14,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'forwardable'
+require 'rubygems/version'
+
 module Terraform
-  VERSION = '0.5.0'
+  # Version of Terraform
+  class Version
+    extend ::Forwardable
+
+    def_delegator :value, :approximate_recommendation, :major_minor
+
+    def ==(other)
+      major_minor == other.major_minor
+    end
+
+    alias eql? ==
+
+    def to_s
+      "v#{value}"
+    end
+
+    private
+
+    attr_accessor :value, :version
+
+    def initialize(value:)
+      self.value = ::Gem::Version.create value.slice(/v?(\d+(\.\d+)*)/, 1)
+    end
+  end
 end

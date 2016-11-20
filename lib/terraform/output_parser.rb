@@ -14,6 +14,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'json'
+
 module Terraform
-  PROJECT_VERSION = '0.4.0'
+  # A parser for output command values
+  class OutputParser
+    def each_name(&block)
+      Hash(json_output).each_key(&block)
+    end
+
+    def iterate_parsed_output(&block)
+      Array(parsed_output)
+        .each { |list_value| list_value.split(',').each(&block) }
+    end
+
+    def parsed_output
+      json_output.fetch 'value'
+    rescue ::JSON::ParserError
+      value
+    end
+
+    private
+
+    attr_accessor :value
+
+    def initialize(value:)
+      self.value = value
+    end
+
+    def json_output
+      ::JSON.parse value
+    end
+  end
 end
