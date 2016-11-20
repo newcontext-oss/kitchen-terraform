@@ -14,18 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # Behaviour for OutputCommand with Terraform 0.6
-  module ZeroSixOutput
-    def options
-      "-state=#{state}"
-    end
+require 'terraform/validate_command'
 
-    private
+::RSpec.shared_examples ::Terraform::ValidateCommand do
+  describe '#name' do
+    subject { described_instance.name }
 
-    def processed_output(raw_output:)
-      return raw_output if return_raw
-      raw_output.chomp.tap { |value| return list ? value.split(',') : value }
-    end
+    it('is "validate"') { is_expected.to eq 'validate' }
   end
 end

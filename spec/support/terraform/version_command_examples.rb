@@ -14,19 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_input_file'
+require 'terraform/version_command'
 
-module Terraform
-  # Behaviour for a command to show a state
-  module ShowCommand
-    include CommandWithInputFile
+::RSpec.shared_examples ::Terraform::VersionCommand do
+  describe '#name' do
+    subject { described_instance.name }
 
-    def input_file
-      target
-    end
-
-    def name
-      'show'
-    end
+    it('is "version"') { is_expected.to eq 'version' }
   end
 end

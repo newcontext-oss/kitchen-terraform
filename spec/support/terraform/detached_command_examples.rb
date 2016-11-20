@@ -14,19 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_input_file'
+require 'terraform/detached_command'
 
-module Terraform
-  # Behaviour for a command to show a state
-  module ShowCommand
-    include CommandWithInputFile
+::RSpec.shared_examples ::Terraform::DetachedCommand do
+  describe '#options' do
+    subject { described_instance.options.to_s }
 
-    def input_file
-      target
-    end
-
-    def name
-      'show'
-    end
+    it('include -input=false') { is_expected.to include '-input=false' }
   end
 end

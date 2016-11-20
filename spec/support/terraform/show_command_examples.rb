@@ -14,19 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_input_file'
+require 'terraform/show_command'
+require_relative 'command_with_input_file_examples'
+require_relative 'colored_command_examples'
 
-module Terraform
-  # Behaviour for a command to show a state
-  module ShowCommand
-    include CommandWithInputFile
+::RSpec.shared_examples ::Terraform::ShowCommand do
+  it_behaves_like 'colored command'
 
-    def input_file
-      target
-    end
+  it_behaves_like ::Terraform::CommandWithInputFile
 
-    def name
-      'show'
-    end
+  describe '#input_file' do
+    subject { described_instance.input_file }
+
+    it('is the target') { is_expected.to be described_instance.target }
+  end
+
+  describe '#name' do
+    subject { described_instance.name }
+
+    it('is "show"') { is_expected.to eq 'show' }
   end
 end

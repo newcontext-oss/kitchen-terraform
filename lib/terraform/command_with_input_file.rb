@@ -15,14 +15,12 @@
 # limitations under the License.
 
 module Terraform
-  # Shared color switch for Terraform
-  module ColorSwitch
-    def color_switch
-      color ? '' : '-no-color'
+  # Behaviour for a command with an input file
+  module CommandWithInputFile
+    def if_requirements_not_met
+      [true].find(proc { yield 'missing input file' }) do |value|
+        value == ::File.exist?(input_file)
+      end
     end
-
-    private
-
-    attr_accessor :color
   end
 end

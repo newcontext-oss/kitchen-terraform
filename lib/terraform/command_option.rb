@@ -14,21 +14,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'json'
-
 module Terraform
-  # Behaviour for OutputCommand with Terraform 0.7
-  module ZeroSevenOutput
-    def options
-      "-json=true -state=#{state}"
+  # An option for a command
+  class CommandOption
+    attr_reader :key, :value
+
+    def ==(other)
+      tuple == other.tuple
+    end
+
+    alias eql? ==
+
+    def hash
+      key.hash & value.hash
+    end
+
+    def to_s
+      "-#{key}#{formatted_value}"
+    end
+
+    def tuple
+      [key, value]
     end
 
     private
 
-    def processed_output(raw_output:)
-      return raw_output if return_raw
-      JSON.parse(raw_output).fetch('value')
-          .tap { |value| return list ? Array(value) : value }
+    attr_writer :key, :value
+
+    def formatted_value
+      String(value).sub(/(\S)/, '=\1')
+    end
+
+    def initialize(key:, value: '')
+      self.key = key
+      self.value = value
     end
   end
 end

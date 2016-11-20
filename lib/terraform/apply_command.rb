@@ -14,30 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-require_relative 'color_switch'
+require_relative 'command_with_input_file'
+require_relative 'command_with_output_file'
+require_relative 'detached_command'
 
 module Terraform
-  # Command to apply an execution plan
-  class ApplyCommand < Command
-    include ColorSwitch
+  # Behaviour for a command to apply an execution plan
+  module ApplyCommand
+    include CommandWithInputFile
+
+    include CommandWithOutputFile
+
+    include DetachedCommand
+
+    def input_file
+      target
+    end
 
     def name
       'apply'
     end
 
-    def options
-      "-input=false -parallelism=#{parallelism} -state=#{state} #{color_switch}"
-    end
-
-    private
-
-    attr_accessor :parallelism, :state
-
-    def initialize_attributes(color:, parallelism:, state:)
-      self.color = color
-      self.parallelism = parallelism
-      self.state = state
+    def output_file
+      options.state
     end
   end
 end

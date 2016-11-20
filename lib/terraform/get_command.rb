@@ -14,17 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-
 module Terraform
-  # Command to get modules
-  class GetCommand < Command
+  # Behaviour for a command to get dependency modules
+  module GetCommand
     def name
       'get'
     end
 
     def options
-      '-update=true'
+      super.tap { |options| options.update = true }
     end
   end
 end
