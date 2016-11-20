@@ -14,12 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/variables_config'
+require 'terraform/file_configs'
 
-::RSpec.shared_examples ::Terraform::VariablesConfig do
-  describe '#configure_variables' do
-    subject { described_instance[:variables] }
+::RSpec.shared_examples ::Terraform::FileConfigs do
+  describe '#configure_files' do
+    describe '[:plan]' do
+      subject { described_instance[:plan] }
 
-    it('defaults [:variables] to an empty map') { is_expected.to eq({}) }
+      it 'is defaulted to "terraform.tfplan"' do
+        is_expected.to include 'terraform.tfplan'
+      end
+    end
+
+    describe '[:state]' do
+      subject { described_instance[:state] }
+
+      it 'is defaulted to "terraform.tfstate"' do
+        is_expected.to include 'terraform.tfstate'
+      end
+    end
   end
 end

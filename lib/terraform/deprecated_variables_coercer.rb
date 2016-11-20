@@ -14,12 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/variables_config'
+module Terraform
+  # Coerces deprecated variables config
+  class DeprecatedVariablesCoercer
+    def coerce(attr:, value:)
+      configurable.config_deprecated attr: attr, remediation: 'Use a mapping',
+                                     type: 'a list or string'
+      configurable[attr] =
+        ::Hash[Array(value).map { |string| string.split '=' }]
+    end
 
-::RSpec.shared_examples ::Terraform::VariablesConfig do
-  describe '#configure_variables' do
-    subject { described_instance[:variables] }
+    private
 
-    it('defaults [:variables] to an empty map') { is_expected.to eq({}) }
+    attr_accessor :configurable
+
+    def initialize(configurable:)
+      self.configurable = configurable
+    end
   end
 end

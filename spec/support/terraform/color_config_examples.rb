@@ -16,41 +16,10 @@
 
 require 'terraform/color_config'
 
-RSpec.shared_examples Terraform::ColorConfig do
-  describe '#coerce_color(value:)' do
-    let(:call_method) { described_instance.coerce_color value: value }
+::RSpec.shared_examples ::Terraform::ColorConfig do
+  describe '#configure_color' do
+    subject { described_instance[:color] }
 
-    context 'when the value can be coerced to be a boolean' do
-      let(:value) { true }
-
-      before { call_method }
-
-      subject { described_instance[:color] }
-
-      it('updates the config assignment') { is_expected.to eq value }
-    end
-
-    context 'when the value can not be coerced to be a boolean' do
-      let(:value) { 'a' }
-
-      after { call_method }
-
-      subject { described_instance }
-
-      it 'an error is reported' do
-        is_expected.to receive(:config_error).with attribute: 'color',
-                                                   expected: 'a boolean'
-      end
-    end
-  end
-
-  describe '#finalize_config!(instance)' do
-    include_context 'finalize_config! instance'
-
-    describe '[:color]' do
-      subject { described_instance[:color] }
-
-      it('defaults to true') { is_expected.to eq true }
-    end
+    it('defaults [:color] to true') { is_expected.to be true }
   end
 end

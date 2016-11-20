@@ -14,21 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require_relative 'apply_timeout_coercer'
+require_relative 'simple_config'
+
 module Terraform
   # Behaviour for the [:apply_timeout] config option
   module ApplyTimeoutConfig
-    def self.included(configurable_class)
-      configurable_class
-        .required_config :apply_timeout do |_, value, configurable|
-          configurable.coerce_apply_timeout value: value
-        end
-      configurable_class.default_config :apply_timeout, 600
+    include ::Terraform::SimpleConfig
+
+    def self.extended(configurable_class)
+      configurable_class.configure_apply_timeout
     end
 
-    def coerce_apply_timeout(value:)
-      config[:apply_timeout] = Integer value
-    rescue ArgumentError, TypeError
-      config_error attribute: 'apply_timeout', expected: 'an integer'
+    def configure_apply_timeout
+      configure_required attr: :apply_timeout,
+                         coercer_class: ::Terraform::ApplyTimeoutCoercer
+      default_config :apply_timeout, 600
     end
   end
 end
