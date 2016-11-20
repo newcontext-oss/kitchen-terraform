@@ -14,7 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/group'
+require 'hashie/extensions/coercion'
+require 'hashie/hash'
 
-RSpec.describe Terraform::Group do
+module Terraform
+  # InSpec attributes of a group
+  class GroupAttributes < ::Hashie::Hash
+    include ::Hashie::Extensions::Coercion
+
+    coerce_value ::Object, ::String
+
+    def self.coerce(hash)
+      self[hash]
+    end
+
+    def resolve(resolver:)
+      dup.each_pair do |key, value|
+        resolver.resolve attributes: self, key: key, value: value
+      end
+    end
+  end
 end
