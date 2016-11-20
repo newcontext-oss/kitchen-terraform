@@ -17,8 +17,8 @@
 module Terraform
   # Resolves group hostnames using a client
   class GroupHostnamesResolver
-    def resolve(group:, hostnames:)
-      client.iterate_output name: hostnames do |output_value|
+    def resolve(group:)
+      client.iterate_output name: group.hostnames do |output_value|
         group.store_hostname value: output_value
       end
     end

@@ -14,22 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/integer_coercer'
-require 'terraform/simple_config'
+require 'forwardable'
+require 'terraform/simple_coercer'
 
 module Terraform
-  # Behaviour for the [:apply_timeout] config option
-  module ApplyTimeoutConfig
-    include ::Terraform::SimpleConfig
+  # A coercer for config values that must be integers
+  class IntegerCoercer
+    extend Forwardable
 
-    def self.extended(configurable_class)
-      configurable_class.configure_apply_timeout
-    end
+    def_delegator :coercer, :coerce
 
-    def configure_apply_timeout
-      configure_required attr: :apply_timeout,
-                         coercer_class: ::Terraform::IntegerCoercer
-      default_config :apply_timeout, 600
+    private
+
+    attr_accessor :coercer
+
+    def initialize(configurable:)
+      self.coercer = SimpleCoercer.new configurable: configurable,
+                                       expected: 'an integer',
+                                       method: method(:Integer)
     end
   end
 end

@@ -14,24 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'set'
+
 module Terraform
-  # Resolves group attributes using a client
-  class GroupAttributesResolver
-    def resolve(attributes:)
-      client.each_output_name do |output_name|
-        attributes.soft_store output_name, output_name
-      end
-      attributes.each_pair do |key, value|
-        attributes.store key, client.output(name: value)
-      end
+  class GroupHostnames
+    def if_undefined
+      config_value.scan(/^\s*$/) { yield }
+    end
+
+    def resolve(client:, &block)
+      resolve_values
+      resolved_values.each(&block)
+    end
+
+    def to_s
+      config_value
     end
 
     private
 
-    attr_accessor :client
+    attr_accessor :config_value, :resolved_values
 
-    def initialize(client:)
-      self.client = client
+    def initialize(config_value)
+      self.config_value = String config_value
+      self.resolved_values = ::Set.new
+    end
+
+    def resolve_values
+      if_undefined { return resolve_values.add 'localhost' }
+      client.iterate_output name: config_value, &resolved_values.method(:add)
     end
   end
 end

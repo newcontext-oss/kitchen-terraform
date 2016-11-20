@@ -14,17 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'fileutils'
 require 'kitchen'
 require 'terraform/client'
 require 'terraform/configurable'
+require 'terraform/version'
 
 module Kitchen
   module Driver
     # Terraform state lifecycle activities manager
-    class Terraform < Base
-      include ::Terraform::Client
-
+    class Terraform < ::Kitchen::Driver::Base
       include ::Terraform::Configurable
 
       kitchen_driver_api_version 2
@@ -32,29 +30,70 @@ module Kitchen
       no_parallel_for
 
       def create(_state = nil)
-        %i(plan state)
-          .each { |option| FileUtils.mkdir_p File.dirname provisioner[option] }
       end
 
       def destroy(_state = nil)
-        return if !File.exist?(provisioner[:state]) || current_state.empty?
-
-        create
-        validate_configuration_files
-        download_modules
-        plan_execution destroy: true
-        apply_execution_plan
+        if_state_exist { client.apply_destructively }
       end
 
       def verify_dependencies
-        case version
-        when /(v[^0]|v0\.[^678])/
-          raise Kitchen::UserError,
-                'Only Terraform v0.8, v0.7, and v0.6 are supported'
-        when /v0\.6/
-          log_deprecation aspect: 'v0.6', remediation: 'Update to v0.8 or v0.7',
-                          version: '1.0'
+        if_version_not_supported do
+          raise ::Kitchen::UserError, "Terraform #{version} is not supported" \
+                                        "\nInstall Terraform #{latest_version}"
         end
+        if_version_deprecated do
+          log_deprecation aspect: "Terraform #{version}",
+                          remediation: "Install Terraform #{latest_version}"
+        end
+      end
+
+      private
+
+      def client
+        @client ||= ::Terraform::Client.new config: provisioner, logger: logger
+      end
+
+      def deprecated_versions
+        @deprecated_versions ||= [::Terraform::Version.new(value: '0.6')]
+      end
+
+      def if_state_exist(&block)
+        /\w+/.match silent_client.state, &block
+      end
+
+      def if_version_deprecated
+        deprecated_versions.find proc { return }, &version.method(:==)
+
+        yield
+      end
+
+      def if_version_not_supported(&block)
+        supported_versions.find block, &version.method(:==)
+      end
+
+      def latest_version
+        @latest_version ||= ::Terraform::Version.new value: '0.8'
+      end
+
+      def silent_client
+        ::Terraform::Client.new config: silent_config, logger: debug_logger
+      end
+
+      def silent_config
+        provisioner.dup.tap { |config| config[:color] = false }
+      end
+
+      def supported_version
+        @supported_version ||= ::Terraform::Version.new value: '0.7'
+      end
+
+      def supported_versions
+        @supported_versions ||=
+          [latest_version, supported_version] + deprecated_versions
+      end
+
+      def version
+        @version ||= ::Terraform::Client.new(logger: debug_logger).version
       end
     end
   end
