@@ -16,7 +16,7 @@
 
 require 'forwardable'
 require 'kitchen'
-require_relative 'version'
+require_relative 'project_version'
 
 module Terraform
   # Common logic for classes that include Kitchen::Configurable
@@ -26,7 +26,7 @@ module Terraform
     def_delegators :instance, :driver, :provisioner, :transport
 
     def self.included(configurable_class)
-      configurable_class.plugin_version VERSION
+      configurable_class.plugin_version ::Terraform::PROJECT_VERSION
     end
 
     def config_deprecated(attribute:, remediation:, type:, version:)
