@@ -16,10 +16,11 @@
 
 require 'forwardable'
 require 'kitchen'
+require_relative 'debug_logger'
 require_relative 'project_version'
 
 module Terraform
-  # Common logic for classes that include Kitchen::Configurable
+  # Behaviour for objects that extend ::Kitchen::Configurable
   module Configurable
     extend ::Forwardable
 
@@ -41,6 +42,8 @@ module Terraform
                                     "interpretable as #{expected}"
     end
 
+    def debug_logger
+      @debug_logger ||= logger.dup.extend ::Terraform::DebugLogger
     end
 
     def instance_pathname(filename:)

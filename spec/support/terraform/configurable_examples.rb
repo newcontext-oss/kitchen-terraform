@@ -77,12 +77,20 @@ require_relative 'configurable_context'
     end
   end
 
-  describe '#driver' do
-    include_context '#driver'
+  describe '#debug_logger' do
+    subject { described_instance.debug_logger }
 
+    it 'is a debug logger' do
+      is_expected.to be_kind_of ::Terraform::DebugLogger
+    end
+  end
+
+  describe '#driver' do
     subject { described_instance.driver }
 
-    it('returns the driver of the instance') { is_expected.to be driver }
+    it 'returns the driver of the instance' do
+      is_expected.to be instance.driver
+    end
   end
 
   describe '#instance_pathname' do
@@ -135,20 +143,18 @@ require_relative 'configurable_context'
   end
 
   describe '#provisioner' do
-    include_context '#provisioner'
-
     subject { described_instance.provisioner }
 
     it 'returns the provisioner of the instance' do
-      is_expected.to be provisioner
+      is_expected.to be instance.provisioner
     end
   end
 
   describe '#transport' do
-    include_context '#transport'
-
     subject { described_instance.transport }
 
-    it('returns the transport of the instance') { is_expected.to be transport }
+    it 'returns the transport of the instance' do
+      is_expected.to be instance.transport
+    end
   end
 end
