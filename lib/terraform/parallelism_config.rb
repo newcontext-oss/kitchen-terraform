@@ -14,21 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'terraform/integer_coercer'
+require 'terraform/simple_config'
+
 module Terraform
   # Behaviour for the [:parallelism] config option
   module ParallelismConfig
-    def self.included(configurable_class)
-      configurable_class
-        .required_config :parallelism do |_, value, configurable|
-          configurable.coerce_parallelism value: value
-        end
-      configurable_class.default_config :parallelism, 10
+    include ::Terraform::SimpleConfig
+
+    def self.extended(configurable_class)
+      configurable_class.configure_parallelism
     end
 
-    def coerce_parallelism(value:)
-      config[:parallelism] = Integer value
-    rescue ::ArgumentError, ::TypeError
-      config_error attribute: 'parallelism', expected: 'an integer'
+    def configure_parallelism
+      configure_required attr: :parallelism,
+                         coercer_class: ::Terraform::IntegerCoercer
+      default_config :parallelism, 10
     end
   end
 end

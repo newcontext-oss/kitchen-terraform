@@ -28,10 +28,15 @@ module Terraform
       self[hash]
     end
 
-    def resolve(resolver:)
-      dup.each_pair do |key, value|
-        resolver.resolve attributes: self, key: key, value: value
-      end
+    def resolve(client:)
+      client.each_output_name { |name| soft_store name, name }
+      dup.each_pair { |key, value| store key, client.output(name: value) }
+    end
+
+    private
+
+    def soft_store(key:, value:)
+      fetch(key) { store key, value }
     end
   end
 end

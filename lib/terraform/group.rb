@@ -14,61 +14,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'forwardable'
 require 'hashie/dash'
 require 'hashie/extensions/dash/coercion'
-require 'set'
 require 'terraform/group_attributes'
+require 'terraform/group_hostnames'
 
 module Terraform
   # Group of Terraform server instances to be verified
   class Group < ::Hashie::Dash
-    extend ::Forwardable
-
     include ::Hashie::Extensions::Dash::Coercion
-
-    def_delegator :attributes, :resolve, :resolve_attributes
 
     property :attributes, coerce: ::Terraform::GroupAttributes,
                           default: ::Terraform::GroupAttributes.new
 
+    property :backend
+
+    coerce_key :backend, ->(value) { coerce_backend value }
+
     property :controls, coerce: ::Array[::String], default: []
 
-    property :hostname, coerce: ::String
+    property :hostname, coerce: ::String, default: 'localhost'
 
-    property :hostnames, coerce: ::String, default: ''
+    property :hostnames, coerce: ::Terraform::GroupHostnames,
+                         default: ::Terraform::GroupHostnames.new('')
 
     property :name, coerce: ::String, required: true
 
     property :port
 
-    coerce_key :port, ->(value) { Integer value }
+    coerce_key :port, method(:Integer)
 
     property :username, coerce: ::String
 
-    def if_local
-      yield if hostnames.empty?
+    def self.coerce_backend(value)
+      hostnames.if_undefined { return 'local' }
+
+      value
     end
 
-    def resolve_hostnames(resolver:)
-      resolver.resolve group: self, hostnames: hostnames
+    def description
+      "host '#{hostname}' of group '#{name}'"
     end
 
-    def store_hostname(value:)
-      resolved_hostnames.add value
-    end
-
-    def with_each_hostname
-      resolved_hostnames.each do |hostname|
-        self[:hostname] = hostname
-        yield self
-      end
-    end
-
-    private
-
-    def resolved_hostnames
-      @resolved_hostnames ||= ::Set.new
+    def resolve(client:)
+      attributes.resolve client: client
+      hostnames
+        .resolve(client: client) { |hostname| yield merge hostname: hostname }
     end
   end
 end

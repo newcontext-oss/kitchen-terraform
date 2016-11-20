@@ -14,29 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'delegate'
-require_relative 'group'
+require 'terraform/group'
 
 module Terraform
   # Groups of server instances to be verified
-  class Groups < ::SimpleDelegator
-    def each_with_each_hostname(&block)
-      each { |group| group.with_each_hostname(&block) }
-    end
-
-    def resolve_attributes(resolver:)
-      each { |group| group.resolve_attributes resolver: resolver }
-    end
-
-    def resolve_hostnames(resolver:)
-      each { |group| group.resolve_hostnames resolver: resolver }
+  class Groups
+    def resolve(client:, &block)
+      groups.each { |group| group.resolve client: client, &block }
     end
 
     private
 
-    def initialize(value)
-      super
-      map!(&::Terraform::Group.method(:new))
+    attr_accessor :groups
+
+    def initialize(groups)
+      self.groups = Array(groups).map(&::Terraform::Group.method(:new))
     end
   end
 end

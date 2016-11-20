@@ -14,24 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'forwardable'
-require_relative 'simple_coercer'
+::RSpec.shared_context 'client' do
+  let(:client) { instance_double client_class }
 
-module Terraform
-  # A coercer for the [:apply_timeout] value
-  class ApplyTimeoutCoercer
-    extend Forwardable
+  let(:client_class) { ::Terraform::Client }
 
-    def_delegator :coercer, :coerce
-
-    private
-
-    attr_accessor :coercer
-
-    def initialize(configurable:)
-      self.coercer = SimpleCoercer.new configurable: configurable,
-                                       expected: 'an integer',
-                                       method: method(:Integer)
-    end
+  before do
+    allow(client_class).to receive(:new).with(
+      config: kind_of(::Kitchen::Configurable),
+      logger: kind_of(::Kitchen::Logger)
+    ).and_return client
   end
 end
