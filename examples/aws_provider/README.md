@@ -1,3 +1,24 @@
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Getting started with kitchen-terraform](#)
+- [Simple Example - Getting Started](#)
+	- [Our Tools](#)
+	- [Prerequisites](#)
+	- [Setting up our development environment](#)
+	- [Setting up Test Kitchen](#)
+	- [Writing a test](#)
+- [Complex Example](#)
+	- [Terraform Configuration](#)
+	- [Test Kitchen Configuration](#)
+		- [Driver](#)
+		- [Provisioner](#)
+		- [Transport](#)
+		- [Verifier](#)
+		- [Platforms](#)
+		- [Suites](#)
+		- [Missing Configuration](#)
+	- [Executing Tests](#)
+
 # Getting started with kitchen-terraform
 
 # Simple Example - Getting Started
