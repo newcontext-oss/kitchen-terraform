@@ -1,0 +1,28 @@
+---
+driver:
+  name: terraform
+provisioner:
+  name: terraform
+  variable_files:
+    - test/fixtures/credentials.tfvars
+transport:
+  name: ssh
+  connection_retries: 76
+verifier:
+  name: terraform
+  format: doc
+  groups:
+    - name: contrived
+      attributes:
+        other_host_address: different_host_address
+      controls:
+        - ami_id
+        - reachable_other_host
+        - running_service
+      hostnames: contrived_hostnames
+      port: 22
+      username: ubuntu
+platforms:
+  - name: ubuntu
+suites:
+  - name: example
