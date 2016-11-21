@@ -33,7 +33,7 @@ Once Bundler is installed, add kitchen-terraform to the project's Gemfile:
 ```rb
 source 'https://rubygems.org'
 
-gem 'kitchen-terraform', '~> 0.1'
+gem 'kitchen-terraform', '~> 0.4'
 ```
 
 Then, use Bundler to install the gems:
