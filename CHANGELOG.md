@@ -8,6 +8,10 @@ major version 0.y.z will maintain a stable public interface.
 
 ## [0.4.0] - 2016-11-??
 
+### Fixed
+
+* Use the current version in the Gemfile example (thanks [@walterdolce])
+
 ## [0.3.0] - 2016-10-04
 
 ### Added
@@ -142,5 +146,6 @@ major version 0.y.z will maintain a stable public interface.
 [@mrheath]: https://github.com/mrheath
 [@nellshamrell]: https://github.com/nellshamrell
 [@nictrix]: https://github.com/nictrix
+[@walterdolce]: https://github.com/walterdolce
 [Keep a CHANGELOG]: http://keepachangelog.com/
 [Semantic Versioning]: http://semver.org/
