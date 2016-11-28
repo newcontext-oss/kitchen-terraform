@@ -37,15 +37,9 @@ The verifier defines a single `default` group that includes a single test for th
 The suite name corresponds to the integration test directory pathname.
 
 # Executing Tests
-There are some requirements in order to successfully run kitchen-terraform with Docker. Docker must be installed on the system runninb kitchen-terraform.
+There are some requirements in order to successfully run `kitchen-terraform` with Docker. Docker must be installed on the system running `kitchen-terraform`.
 
-Additionally, a container must be available that allows ssh to the container. For example, the dockerfile used for this tutorial includes the following line:
-
-```
-CMD ["/usr/sbin/ssh", "-D"]
-```
-
-Please see the references for creating a dockerfile that will provide the proper container configuration.
+Additionally, a container must be available that allows ssh to the container. For example, the Docker image used for this tutorial has `openssh-server` preinstalled. Additionally, the container must be run in a daemonized mode, so the [main.tf]: main.tf file contains a `docker_container` resource with the `must_run` attribute set to `true`. 
 
 ## Test Kitchen Execution
 
@@ -56,4 +50,4 @@ $ bundle exec kitchen test
 
 ## References
 * [Terraform Docker Provider](https://www.terraform.io/docs/providers/docker/index.html)
-* [Dockerizing an SSH daemon service](https://docs.docker.com/engine/examples/running_ssh_service/)
+* [Ubuntu SSHD Container](https://hub.docker.com/r/rastasheep/ubuntu-sshd/)
