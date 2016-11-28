@@ -15,7 +15,6 @@ resource "docker_image" "chef_client" {
 resource "docker_container" "chef_client" {
   image = "${data.docker_registry_image.chef_client.name}"
   name = "chef_client"
-  #command = [ "chef-client", "-z" ]
   ports {
     internal = 22
     external = 2222
