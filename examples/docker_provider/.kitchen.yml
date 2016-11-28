@@ -7,7 +7,8 @@ provisioner:
   variables:
     docker_host: "unix:///var/run/docker.sock"
     docker_container: "terraform"
-    docker_image: "errygg/chef-client:latest"
+#    docker_image: "errygg/chef-client:latest"
+    docker_image: "base/ubuntu:latest"
 
 platforms:
   - name: terraform
