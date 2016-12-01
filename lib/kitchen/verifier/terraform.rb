@@ -29,24 +29,36 @@ module Kitchen
 
       kitchen_verifier_api_version 2
 
-      def add_targets(runner:)
-        collect_tests.each { |test| runner.add_target test }
-      end
-
       def call(state)
-        self.inspec_runner_options = runner_options transport, state
-        config[:groups].each { |group| group.evaluate verifier: self }
+        verify_groups options: runner_options(transport, state)
       end
 
-      def execute
-        ::Terraform::InspecRunner.new(inspec_runner_options)
-                                 .tap do |inspec_runner|
-                                   inspec_runner.evaluate verifier: self
-                                 end
+      private
+
+      def add_targets(inspec_runner:)
+        collect_tests.each { |test| inspec_runner.add_target test }
       end
 
-      def merge(options:)
-        inspec_runner_options.merge! options
+      def execute(group:, options:)
+        options.merge! group.options
+        ::Inspec::Runner.new(options).tap do |inspec_runner|
+          add_targets inspec_runner: inspec_runner
+          validate exit_code: inspec_runner.run
+        end
+      end
+
+      def execute_local(group:, options:)
+        options[:backend] = 'local'
+        info "Verifying group '#{group.name}'"
+        execute group: group, options: options
+      end
+
+      def execute_remote(group:, options:)
+        driver.output_value list: true, name: group.hostnames do |hostname|
+          options[:host] = hostname
+          info "Verifying host '#{hostname}' of group '#{group.name}'"
+          execute group: group, options: options
+        end
       end
 
       def resolve_attributes(group:)
@@ -60,21 +72,21 @@ module Kitchen
         end
       end
 
-      def resolve_hostnames(group:, &block)
-        driver.output_value list: true, name: group.hostnames, &block
+      def validate(exit_code:)
+        return if exit_code.zero?
+
+        raise ::Kitchen::InstanceFailure, "Inspec Runner returns #{exit_code}"
       end
 
-      def verify(exit_code:)
-        raise InstanceFailure, "Inspec Runner returns #{exit_code}" unless
-          exit_code.zero?
+      def verify(group:, options:)
+        resolve_attributes group: group
+        group.if_local { return execute_local group: group, options: options }
+        execute_remote group: group, options: options
       end
 
-      private
-
-      attr_accessor :inspec_runner_options
-
-      def load_needed_dependencies!
-        require 'terraform/inspec_runner'
+      def verify_groups(options:)
+        config[:groups]
+          .each { |group| verify group: group, options: options.dup }
       end
     end
   end
