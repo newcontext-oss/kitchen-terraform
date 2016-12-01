@@ -1,8 +1,3 @@
-variable "access_key" {
-  type        = "string"
-  description = "AWS access key ID"
-}
-
 variable "amis" {
   type        = "map"
   description = "Map of AWS regions to AMIs"
@@ -22,9 +17,4 @@ variable "region" {
   type        = "string"
   description = "AWS region"
   default     = "us-east-1"
-}
-
-variable "secret_key" {
-  type        = "string"
-  description = "AWS secret access key"
 }
