@@ -3,8 +3,10 @@ driver:
   name: terraform
 provisioner:
   name: terraform
+  directory: >-
+    test/fixtures/<%= `terraform -version`.slice(/v(\d+\.\d+)/, 1) %>
   variable_files:
-    - test/fixtures/credentials.tfvars
+  - test/fixtures/credentials.tfvars
 transport:
   name: ssh
   connection_retries: 76
