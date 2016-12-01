@@ -45,6 +45,8 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'pry', '~> 0.10', '>= 0.10.3'
 
+  specification.add_development_dependency 'pry-coolline', '~> 0.2'
+
   specification.add_development_dependency 'rspec', '~> 3.4', '>= 3.4.0'
 
   specification.add_development_dependency 'rubocop', '~> 0.40', '>= 0.40.0'
