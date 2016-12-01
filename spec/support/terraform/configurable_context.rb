@@ -42,8 +42,8 @@ RSpec.shared_context '#instance' do
   end
 end
 
-RSpec.shared_context '#logger' do
-  let(:logger) { instance_double Kitchen::Logger }
+::RSpec.shared_context '#logger' do
+  let(:logger) { ::Kitchen::Logger.new }
 
   before do
     allow(described_instance).to receive(:logger).with(no_args)

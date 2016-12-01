@@ -14,25 +14,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'kitchen/util'
+
 module Terraform
   # Group of Terraform server instances to be verified
   class Group
     def each_attribute(&block)
-      data[:attributes].each_pair(&block)
-    end
-
-    def evaluate(verifier:)
-      verifier.merge options: options
-      verifier.resolve_attributes group: self
-      verifier.resolve_hostnames group: self do |hostname|
-        verifier.info "Verifying host '#{hostname}' of group '#{data[:name]}'"
-        verifier.merge options: { host: hostname }
-        verifier.execute
-      end
+      data[:attributes].dup.each_pair(&block)
     end
 
     def hostnames
       data[:hostnames]
+    end
+
+    def if_local
+      yield if hostnames.empty?
+    end
+
+    def name
+      data[:name]
+    end
+
+    def options
+      {
+        attributes: attributes, controls: data[:controls], port: data[:port],
+        user: data[:username]
+      }
     end
 
     def store_attribute(key:, value:)
@@ -43,15 +50,12 @@ module Terraform
 
     attr_accessor :data
 
-    def initialize(data:)
-      self.data = data
+    def attributes
+      ::Kitchen::Util.stringified_hash data[:attributes]
     end
 
-    def options
-      {
-        attributes: data[:attributes], controls: data[:controls],
-        port: data[:port], user: data[:username]
-      }
+    def initialize(data:)
+      self.data = data
     end
   end
 end

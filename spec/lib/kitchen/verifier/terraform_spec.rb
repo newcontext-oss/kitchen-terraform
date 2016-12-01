@@ -15,199 +15,135 @@
 # limitations under the License.
 
 require 'kitchen/verifier/terraform'
+require 'inspec/runner'
 require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
 require 'support/terraform/groups_config_examples'
 require 'terraform/group'
 
-RSpec.describe Kitchen::Verifier::Terraform do
+::RSpec.describe ::Kitchen::Verifier::Terraform do
   include_context 'config'
 
   let(:described_instance) { described_class.new config }
 
-  let(:inspec_runner_options) { instance_double Hash }
-
-  before do
-    allow(described_instance).to receive(:inspec_runner_options).with(no_args)
-      .and_return inspec_runner_options
-  end
-
-  it_behaves_like Terraform::Configurable
-
-  it_behaves_like Terraform::GroupsConfig
-
-  describe '#add_targets(runner:)' do
-    let(:runner) { instance_double Terraform::InspecRunner }
-
-    let(:test) { instance_double Object }
+  shared_context '#resolve_attributes' do
+    include_context '#driver'
 
     before do
-      allow(described_instance).to receive(:collect_tests).with(no_args)
-        .and_return [test]
-    end
-
-    after { described_instance.add_targets runner: runner }
-
-    subject { runner }
-
-    it 'adds its tests to the runner' do
-      is_expected.to receive(:add_target).with test
+      allow(driver).to receive(:output_value)
+        .with(name: 'unresolved_attribute_value')
+        .and_return 'resolved_attribute_value'
     end
   end
+
+  shared_context '#verify_groups' do
+    include_context '#resolve_attributes'
+
+    let :group do
+      ::Terraform::Group.new data: {
+        attributes: { attribute_key: 'unresolved_attribute_value' },
+        controls: ['control'], hostnames: hostnames, port: 1234, user: 'user'
+      }
+    end
+
+    before { allow(config).to receive(:[]).with(:groups).and_return [group] }
+  end
+
+  it_behaves_like ::Terraform::Configurable
+
+  it_behaves_like ::Terraform::GroupsConfig
 
   describe '#call(state)' do
+    include_context '#logger'
+
     include_context '#transport'
 
-    let(:evaluate) { receive(:evaluate).with verifier: described_instance }
+    include_context '#verify_groups'
 
-    let(:group) { instance_double Terraform::Group }
+    shared_examples 'exit code validator' do
+      let(:output_names) { instance_double Array }
 
-    let(:runner_key) { instance_double Object }
+      let(:output_value) { instance_double Object }
 
-    let(:runner_options) { { runner_key => runner_value } }
+      let(:runner) { instance_double ::Inspec::Runner }
 
-    let(:runner_value) { instance_double Object }
+      let(:runner_options) { { runner_key: 'runner_value' } }
 
-    let :set_options do
-      receive(:inspec_runner_options=).with runner_options
-    end
+      let(:state) { instance_double ::Object }
 
-    let(:state) { instance_double Object }
+      before do
+        allow(driver).to receive(:each_output_name).with(no_args)
+          .and_yield output_name
 
-    before do
-      allow(described_instance).to receive(:runner_options)
-        .with(transport, state).and_return runner_options
+        allow(group).to receive(:store_attribute)
+          .with(key: output_name, value: output_name)
 
-      allow(config).to receive(:[]).with(:groups).and_return [group]
+        allow(group).to receive(:store_attribute)
+          .with(key: key, value: output_value)
 
-      allow(group).to evaluate
-    end
+        allow(group).to receive(:each_attribute).with(no_args)
+          .and_yield(key, output_name)
 
-    after { described_instance.call state }
+        allow(described_instance).to receive(:runner_options)
+          .with(transport, state).and_return runner_options
 
-    describe 'setting options' do
-      subject { described_instance }
+        allow(::Inspec::Runner).to receive(:new)
+          .with(hash_including(options)).and_return runner
 
-      it 'uses logic of Kitchen::Verifier::Inspec' do
-        is_expected.to set_options
+        allow(described_instance).to receive(:collect_tests)
+          .with(no_args).and_return []
+
+        allow(runner).to receive(:run).with(no_args).and_return exit_code
+      end
+
+      subject { proc { described_instance.call state } }
+
+      context 'when the value is zero' do
+        let(:exit_code) { 0 }
+
+        it('takes no action') { is_expected.to_not raise_error }
+      end
+
+      context 'when the value is not zero' do
+        let(:exit_code) { 1234 }
+
+        it 'raises an instance failure' do
+          is_expected.to raise_error ::Kitchen::InstanceFailure, /1234/
+        end
       end
     end
 
-    describe 'evaluating tests' do
-      subject { group }
+    context 'when the group is local' do
+      let(:hostnames) { '' }
 
-      it('each group is evaluated') { is_expected.to evaluate }
-    end
-  end
-
-  describe '#execute' do
-    let(:inspec_runner) { instance_double Terraform::InspecRunner }
-
-    let :inspec_runner_class do
-      class_double(Terraform::InspecRunner).as_stubbed_const
-    end
-
-    before do
-      allow(inspec_runner_class).to receive(:new).with(inspec_runner_options)
-        .and_return inspec_runner
-    end
-
-    after { described_instance.execute }
-
-    subject { inspec_runner }
-
-    it 'evaluates the configuration' do
-      is_expected.to receive(:evaluate).with verifier: described_instance
-    end
-  end
-
-  describe '#merge(options:)' do
-    let(:options) { instance_double Object }
-
-    after { described_instance.merge options: options }
-
-    subject { inspec_runner_options }
-
-    it 'prioritizes the provided options' do
-      is_expected.to receive(:merge!).with options
-    end
-  end
-
-  describe '#resolve_attributes(group:)' do
-    include_context '#driver'
-
-    let(:group) { instance_double Terraform::Group }
-
-    let(:key) { instance_double Object }
-
-    let(:output_name) { instance_double Object }
-
-    let(:output_names) { instance_double Array }
-
-    let(:output_value) { instance_double Object }
-
-    before do
-      allow(driver).to receive(:each_output_name).with(no_args)
-        .and_yield output_name
-
-      allow(group).to receive(:store_attribute)
-        .with(key: output_name, value: output_name)
-
-      allow(group).to receive(:store_attribute)
-        .with(key: key, value: output_value)
-
-      allow(group).to receive(:each_attribute).with(no_args)
-        .and_yield(key, output_name)
-
-      allow(driver).to receive(:output_value).with(name: output_name)
-        .and_return output_value
-    end
-
-    after { described_instance.resolve_attributes group: group }
-
-    subject { group }
-
-    it 'updates each attribute with the resolved output value' do
-      is_expected.to receive(:store_attribute).with key: key,
-                                                    value: output_value
-    end
-  end
-
-  describe '#resolve_hostnames(group:, &block)' do
-    include_context '#driver'
-
-    let(:group) { instance_double Terraform::Group }
-
-    let(:hostnames) { instance_double Object }
-
-    before do
-      allow(group).to receive(:hostnames).with(no_args).and_return hostnames
-    end
-
-    after { described_instance.resolve_hostnames group: group }
-
-    subject { driver }
-
-    it 'yields each hostname' do
-      is_expected.to receive(:output_value).with list: true, name: hostnames
-    end
-  end
-
-  describe '#verify(exit_code:)' do
-    subject { proc { described_instance.verify exit_code: exit_code } }
-
-    context 'when the exit code is 0' do
-      let(:exit_code) { 0 }
-
-      it('does not raise an error') { is_expected.to_not raise_error }
-    end
-
-    context 'when the exit code is not 0' do
-      let(:exit_code) { 1 }
-
-      it 'raises an instance failure' do
-        is_expected.to raise_error Kitchen::InstanceFailure
+      let :options do
+        {
+          attributes: { 'attribute_key' => 'resolved_attribute_value' },
+          backend: 'local', controls: ['control'], runner_key: 'runner_value'
+        }
       end
+
+      it_behaves_like 'exit code validator'
+    end
+
+    context 'when the group is remote' do
+      let(:hostnames) { 'unresolved_hostnames' }
+
+      let :options do
+        {
+          attributes: { 'attribute_key' => 'resolved_attribute_value' },
+          controls: ['control'], host: 'resolved_hostname',
+          runner_key: 'runner_value'
+        }
+      end
+
+      before do
+        allow(driver).to receive(:output_value)
+          .with(list: true, name: 'unresolved_hostnames')
+          .and_yield 'resolved_hostname'
+      end
+
+      it_behaves_like 'exit code validator'
     end
   end
 end
