@@ -52,7 +52,7 @@ resource "aws_route_table_association" "us-east-1b-public" {
 }
 
 resource "aws_security_group" "kitchen_terraform_example" {
-  name        = "kitchen-terraform-example-${var.user}"
+  name        = "kitchen-terraform-example"
   description = "Allow all inbound traffic"
   vpc_id      = "${aws_vpc.kitchen_terraform_example.id}"
 
@@ -71,13 +71,13 @@ resource "aws_security_group" "kitchen_terraform_example" {
   }
 
   tags {
-    Name      = "kitchen-terraform-example-${var.user}"
+    Name      = "kitchen-terraform-example"
     Terraform = "true"
   }
 }
 
 resource "aws_key_pair" "kitchen_terraform_example" {
-  key_name   = "kitchen-terraform-example-${var.user}"
+  key_name   = "kitchen-terraform-example"
   public_key = "${file("${var.public_key_pathname}")}"
 }
 
@@ -91,7 +91,7 @@ resource "aws_instance" "kitchen_terraform_example_1" {
   subnet_id              = "${aws_subnet.kitchen_terraform_example_1b.id}"
 
   tags {
-    Name      = "kitchen-terraform-example-1-${var.user}-${count.index}"
+    Name      = "kitchen-terraform-example-1-${count.index}"
     Terraform = "true"
   }
 }
@@ -105,7 +105,7 @@ resource "aws_instance" "kitchen_terraform_example_2" {
   subnet_id                   = "${aws_subnet.kitchen_terraform_example_1b.id}"
 
   tags {
-    Name      = "kitchen-terraform-example-2-${var.user}"
+    Name      = "kitchen-terraform-example-2"
     Terraform = "true"
   }
 }
