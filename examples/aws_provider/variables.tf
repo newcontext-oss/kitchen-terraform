@@ -28,8 +28,3 @@ variable "secret_key" {
   type        = "string"
   description = "AWS secret access key"
 }
-
-variable "user" {
-  type        = "string"
-  description = "Username of account running Terraform"
-}
