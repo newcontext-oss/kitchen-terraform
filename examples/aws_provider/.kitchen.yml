@@ -5,6 +5,7 @@ provisioner:
   name: terraform
   directory: >-
     test/fixtures/<%= `terraform -version`.slice(/v(\d+\.\d+)/, 1) %>
+  parallelism: 4
 transport:
   name: ssh
   connection_retries: 76
