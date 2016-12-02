@@ -21,7 +21,9 @@ require 'support/terraform/color_switch_examples'
 RSpec.describe Terraform::ApplyCommand do
   let(:color) { instance_double Object }
 
-  let(:described_instance) { described_class.new color: color, state: state }
+  let :described_instance do
+    described_class.new color: color, parallelism: 1234, state: state
+  end
 
   let(:state) { instance_double Object }
 
@@ -38,9 +40,9 @@ RSpec.describe Terraform::ApplyCommand do
 
     subject { described_instance.options }
 
-    it 'returns "-input=false -state=<state_pathname> ' \
-         '-color=<true or false>"' do
-      is_expected.to eq "-input=false -state=#{state} -color=<true or false>"
+    it 'include "color", "input", "parallelism", and "state"' do
+      is_expected.to eq "-input=false -parallelism=1234 -state=#{state} " \
+                          '-color=<true or false>'
     end
   end
 end

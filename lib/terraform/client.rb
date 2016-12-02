@@ -30,8 +30,8 @@ module Terraform
 
     def apply_execution_plan
       execute command: ApplyCommand.new(
-        color: provisioner[:color], state: provisioner[:state],
-        target: provisioner[:plan]
+        color: provisioner[:color], parallelism: provisioner[:parallelism],
+        state: provisioner[:state], target: provisioner[:plan]
       ), timeout: provisioner[:apply_timeout]
     end
 
@@ -66,8 +66,8 @@ module Terraform
     def plan_execution(destroy:)
       execute command: PlanCommand.new(
         color: provisioner[:color], destroy: destroy, out: provisioner[:plan],
-        state: provisioner[:state], target: provisioner[:directory],
-        variables: provisioner[:variables],
+        parallelism: provisioner[:parallelism], state: provisioner[:state],
+        target: provisioner[:directory], variables: provisioner[:variables],
         variable_files: provisioner[:variable_files]
       )
     end

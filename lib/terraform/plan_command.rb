@@ -27,20 +27,23 @@ module Terraform
     end
 
     def options
-      "-destroy=#{destroy} -input=false -out=#{out} -state=#{state} " \
+      "-destroy=#{destroy} -input=false -out=#{out} " \
+        "-parallelism=#{parallelism} -state=#{state} " \
         "#{color_switch}#{processed_variables}#{processed_variable_files}"
     end
 
     private
 
-    attr_accessor :destroy, :out, :state, :variables, :variable_files
+    attr_accessor :destroy, :out, :parallelism, :state, :variables,
+                  :variable_files
 
     def initialize_attributes(
-      color:, destroy:, out:, state:, variables:, variable_files:
+      color:, destroy:, out:, parallelism:, state:, variables:, variable_files:
     )
       self.color = color
       self.destroy = destroy
       self.out = out
+      self.parallelism = parallelism
       self.state = state
       self.variables = variables
       self.variable_files = variable_files
