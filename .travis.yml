@@ -1,0 +1,11 @@
+# https://travis-ci.org/newcontext-oss/kitchen-terraform
+---
+language: ruby
+rvm:
+  - 2.3.3
+  - 2.2.6
+  - 2.1.10
+script:
+  - bundle exec rspec --require support/coverage
+  - bundle exec rubocop --display-cop-names --format clang
+  - bundle exec rubycritic
