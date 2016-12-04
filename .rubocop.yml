@@ -1,6 +1,9 @@
----
 AllCops:
   TargetRubyVersion: 2.3
+Metrics/BlockLength:
+  Exclude:
+    - Guardfile
+    - kitchen-terraform.gemspec
 Metrics/ParameterLists:
   Exclude:
     - lib/terraform/group.rb
