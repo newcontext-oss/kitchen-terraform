@@ -4,6 +4,7 @@ Metrics/BlockLength:
   Exclude:
     - Guardfile
     - kitchen-terraform.gemspec
+    - spec/**/*.rb
 Metrics/ParameterLists:
   Exclude:
     - lib/terraform/group.rb
