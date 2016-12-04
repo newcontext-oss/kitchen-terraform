@@ -49,6 +49,7 @@ module Kitchen
       def verify_dependencies
         case version
         when /v0\.7/
+          return
         when /v0\.6/
           log_deprecation aspect: 'v0.6', remediation: 'Update to v0.7',
                           version: '1.0'
