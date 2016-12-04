@@ -64,12 +64,7 @@ module Terraform
     end
 
     def plan_execution(destroy:)
-      execute command: PlanCommand.new(
-        color: provisioner[:color], destroy: destroy, out: provisioner[:plan],
-        parallelism: provisioner[:parallelism], state: provisioner[:state],
-        target: provisioner[:directory], variables: provisioner[:variables],
-        variable_files: provisioner[:variable_files]
-      )
+      execute command: plan_command(destroy: destroy)
     end
 
     def validate_configuration_files
@@ -80,6 +75,17 @@ module Terraform
       execute command: VersionCommand.new do |value|
         return value.slice(/v\d+\.\d+\.\d+/)
       end
+    end
+
+    private
+
+    def plan_command(destroy:)
+      PlanCommand
+        .new color: provisioner[:color], destroy: destroy,
+             out: provisioner[:plan], parallelism: provisioner[:parallelism],
+             state: provisioner[:state], target: provisioner[:directory],
+             variables: provisioner[:variables],
+             variable_files: provisioner[:variable_files]
     end
   end
 end
