@@ -59,7 +59,7 @@ Gem::Specification.new do |specification|
 
   specification.cert_chain = ['certs/ncs-alane-public_cert.pem']
 
-  specification.required_ruby_version = ['~> 2.3', '>= 2.1.0']
+  specification.required_ruby_version = ['>= 2.1', '< 2.4']
 
   specification.requirements = ['Terraform >= 0.6.0, < 0.8.0']
 
