@@ -1,8 +1,5 @@
 # https://travis-ci.org/newcontext-oss/kitchen-terraform
 ---
-addons:
-  code_climate:
-    repo_token: $CODE_CLIMATE_REPO_TOKEN
 after_success:
   - bundle exec codeclimate-test-reporter
 language: ruby
