@@ -28,6 +28,8 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'bundler-audit', '~> 0.5', '>= 0.5.0'
 
+  specification.add_development_dependency 'codeclimate-test-reporter', '~> 1.0'
+
   specification.add_development_dependency 'guard', '~> 2.14', '>= 2.14.0'
 
   specification.add_development_dependency 'guard-bundler', '>= 2.1.0', '~> 2.1'
@@ -47,10 +49,6 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'rubocop', '~> 0.40', '>= 0.40.0'
 
-  specification.add_development_dependency 'rubycritic', '~> 2.9'
-
-  specification.add_development_dependency 'simplecov', '~> 0.11', '>= 0.11.2'
-
   specification.add_runtime_dependency 'inspec', '~> 1.0'
 
   specification.add_runtime_dependency 'kitchen-inspec', '~> 0.14', '>= 0.14.0'
@@ -61,9 +59,7 @@ Gem::Specification.new do |specification|
 
   specification.cert_chain = ['certs/ncs-alane-public_cert.pem']
 
-  specification.required_ruby_version = ['~> 2.3', '>= 2.3.1']
-
-  specification.required_rubygems_version = ['~> 2.6', '>= 2.6.3']
+  specification.required_ruby_version = ['>= 2.1', '< 2.4']
 
   specification.requirements = ['Terraform >= 0.6.0, < 0.8.0']
 

@@ -52,8 +52,7 @@ module Terraform
                        .new "terraform #{name} #{options} #{target}", returns: 0
     end
 
-    def initialize_attributes(**_keyword_arguments)
-    end
+    def initialize_attributes(**_keyword_arguments) end
 
     def processed_output(raw_output:)
       raw_output
