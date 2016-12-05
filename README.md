@@ -1,6 +1,6 @@
 # kitchen-terraform
 
-![kitchen-terraform logo](assets/logo.svg)
+![kitchen-terraform logo](assets/logo.png)
 
 [![Gem Version](https://badge.fury.io/rb/kitchen-terraform.svg)](https://badge.fury.io/rb/kitchen-terraform)
 [![Code Climate](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/gpa.svg)](https://codeclimate.com/github/newcontext-oss/kitchen-terraform)
