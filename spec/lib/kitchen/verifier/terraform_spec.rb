@@ -147,21 +147,20 @@ RSpec.describe Kitchen::Verifier::Terraform do
     let(:output_value) { instance_double Object }
 
     before do
+      allow(driver).to receive(:each_output_name).with(no_args)
+        .and_yield output_name
+
+      allow(group).to receive(:store_attribute)
+        .with(key: output_name, value: output_name)
+
+      allow(group).to receive(:store_attribute)
+        .with(key: key, value: output_value)
+
       allow(group).to receive(:each_attribute).with(no_args)
-        .and_yield key, output_name
-
-      allow(group).to receive(:store_output_names).with(name: output_name)
-
-      allow(group).to receive(:merge_attributes).with(no_args)
+        .and_yield(key, output_name)
 
       allow(driver).to receive(:output_value).with(name: output_name)
         .and_return output_value
-
-      allow(output_names).to receive(:each).with(no_args)
-        .and_yield output_name
-
-      allow(driver).to receive(:list_output_names).with(no_args)
-        .and_return output_names
     end
 
     after { described_instance.resolve_attributes group: group }

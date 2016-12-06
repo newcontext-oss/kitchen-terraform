@@ -49,14 +49,11 @@ module Kitchen
         inspec_runner_options.merge! options
       end
 
-      def resolve_default_attributes(group:)
-        driver.list_output_names.each do |output_name|
-          group.store_output_name name: output_name
+      def resolve_attributes(group:)
+        driver.each_output_name do |output_name|
+          group.store_attribute key: output_name,
+                                value: output_name
         end
-        group.merge_attributes
-      end
-
-      def resolve_user_attributes(group:)
         group.each_attribute do |key, output_name|
           group.store_attribute key: key,
                                 value: driver.output_value(name: output_name)

@@ -54,18 +54,13 @@ module Terraform
       ) { |value| list ? value.each(&block) : (return value) }
     end
 
-    def list_output_names
-      output_names = []
-      state_json = execute(
+    def each_output_name(&block)
+      execute(
         command: OutputCommand.new(
           list: false, state: provisioner[:state], version: version,
           return_raw: true
         )
-      ) { |output| output }
-      JSON.parse(state_json).each_key do |output_name|
-        output_names << output_name
-      end
-      output_names
+      ) { |output| JSON.parse(output).each_key(&block) }
     end
 
     def plan_execution(destroy:)

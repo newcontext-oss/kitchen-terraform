@@ -23,8 +23,7 @@ module Terraform
 
     def evaluate(verifier:)
       verifier.merge options: options
-      verifier.resolve_default_attributes group: self
-      verifier.resolve_user_attributes group: self
+      verifier.resolve_attributes group: self
       verifier.resolve_hostnames group: self do |hostname|
         verifier.info "Verifying host '#{hostname}' of group '#{data[:name]}'"
         verifier.merge options: { host: hostname }
@@ -36,27 +35,16 @@ module Terraform
       data[:hostnames]
     end
 
-    def store_output_name(name:)
-      output_names.push name
-    end
-
-    def merge_attributes
-      output_names.each do |output|
-        data[:attributes].key?(output) ? next : store_attribute(key: output, value: output)
-      end
-    end
-
     def store_attribute(key:, value:)
       data[:attributes][key] = value
     end
 
     private
 
-    attr_accessor :data, :output_names
+    attr_accessor :data
 
-    def initialize(data:, output_names: [])
+    def initialize(data:)
       self.data = data
-      self.output_names = output_names
     end
 
     def options
