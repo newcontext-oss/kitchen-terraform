@@ -272,8 +272,8 @@ Each group consists of:
 
 - a name to use for logging purposes
 
-- a mapping of InSpec attribute names to Terraform output variable
-  names to define for the suite's InSpec profile. By default, an attribute with an equivalent name will be defined for each output variable; this mapping allows for additional or overridden associations.
+- a mapping of InSpec profile attribute names to Terraform output variable
+  names; the attributes will be with the resolved output values
 
 - a collection of controls to include from the suite's InSpec profile
 
@@ -307,7 +307,9 @@ The default `groups` collection is empty.
 
 For each group:
 
-- the default `attributes` mapping is empty
+- the default `attributes` mapping consists of equivalently named
+  attributes for each output variable; additional or overridden
+  associations can be added.
 
 - the default `controls` collection is empty
 
