@@ -5,3 +5,7 @@ output "contrived_hostnames" {
 output "other_host_address" {
   value = "${module.example.example_2_public_ip}"
 }
+
+output "security_group" {
+  value = "${module.example.security_group}"
+}
