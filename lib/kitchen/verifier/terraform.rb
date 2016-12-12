@@ -35,15 +35,15 @@ module Kitchen
 
       private
 
-      def add_targets(inspec_runner:)
-        collect_tests.each { |test| inspec_runner.add_target test }
+      def add_targets(runner:)
+        collect_tests.each { |test| runner.add_target test }
       end
 
       def execute(group:, options:)
         options.merge! group.options
-        ::Inspec::Runner.new(options).tap do |inspec_runner|
-          add_targets inspec_runner: inspec_runner
-          validate exit_code: inspec_runner.run
+        ::Inspec::Runner.new(options).tap do |runner|
+          add_targets runner: runner
+          validate exit_code: runner.run
         end
       end
 
