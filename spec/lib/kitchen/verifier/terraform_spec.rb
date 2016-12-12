@@ -26,27 +26,87 @@ require 'terraform/group'
 
   let(:described_instance) { described_class.new config }
 
+  shared_context '#add_targets' do
+    before do
+      allow(described_instance).to receive(:collect_tests)
+        .with(no_args).and_return []
+    end
+  end
+
+  shared_context '#execute' do
+    include_context '#add_targets'
+
+    let(:runner) { instance_double ::Inspec::Runner }
+
+    before do
+      allow(::Inspec::Runner).to receive(:new)
+        .with(hash_including(options)).and_return runner
+
+      allow(runner).to receive(:run).with(no_args).and_return exit_code
+    end
+  end
+
   shared_context '#resolve_attributes' do
     include_context '#driver'
 
     before do
+      allow(driver).to receive(:each_output_name)
+        .with(no_args).and_yield 'default_attribute_name'
+
       allow(driver).to receive(:output_value)
-        .with(name: 'unresolved_attribute_value')
-        .and_return 'resolved_attribute_value'
+        .with(name: 'default_attribute_name')
+        .and_return 'resolved_default_output_value'
+
+      allow(driver).to receive(:output_value)
+        .with(name: 'provided_output_name')
+        .and_return 'resolved_provided_output_value'
     end
   end
 
-  shared_context '#verify_groups' do
+  shared_context '#verify' do
+    include_context '#execute'
+
     include_context '#resolve_attributes'
+  end
+
+  shared_context '#verify_groups' do
+    include_context '#verify'
 
     let :group do
       ::Terraform::Group.new data: {
-        attributes: { attribute_key: 'unresolved_attribute_value' },
+        attributes: { provided_attribute_name: 'provided_output_name' },
         controls: ['control'], hostnames: hostnames, port: 1234, user: 'user'
       }
     end
 
     before { allow(config).to receive(:[]).with(:groups).and_return [group] }
+  end
+
+  shared_examples '#validate' do
+    let(:runner_options) { { runner_key: 'runner_value' } }
+
+    let(:state) { instance_double ::Object }
+
+    before do
+      allow(described_instance).to receive(:runner_options)
+        .with(transport, state).and_return runner_options
+    end
+
+    subject { proc { described_instance.call state } }
+
+    context 'when the value is zero' do
+      let(:exit_code) { 0 }
+
+      it('takes no action') { is_expected.to_not raise_error }
+    end
+
+    context 'when the value is not zero' do
+      let(:exit_code) { 1234 }
+
+      it 'raises an instance failure' do
+        is_expected.to raise_error ::Kitchen::InstanceFailure, /1234/
+      end
+    end
   end
 
   it_behaves_like ::Terraform::Configurable
@@ -60,70 +120,20 @@ require 'terraform/group'
 
     include_context '#verify_groups'
 
-    shared_examples 'exit code validator' do
-      let(:output_names) { instance_double Array }
-
-      let(:output_value) { instance_double Object }
-
-      let(:runner) { instance_double ::Inspec::Runner }
-
-      let(:runner_options) { { runner_key: 'runner_value' } }
-
-      let(:state) { instance_double ::Object }
-
-      before do
-        allow(driver).to receive(:each_output_name).with(no_args)
-          .and_yield output_name
-
-        allow(group).to receive(:store_attribute)
-          .with(key: output_name, value: output_name)
-
-        allow(group).to receive(:store_attribute)
-          .with(key: key, value: output_value)
-
-        allow(group).to receive(:each_attribute).with(no_args)
-          .and_yield(key, output_name)
-
-        allow(described_instance).to receive(:runner_options)
-          .with(transport, state).and_return runner_options
-
-        allow(::Inspec::Runner).to receive(:new)
-          .with(hash_including(options)).and_return runner
-
-        allow(described_instance).to receive(:collect_tests)
-          .with(no_args).and_return []
-
-        allow(runner).to receive(:run).with(no_args).and_return exit_code
-      end
-
-      subject { proc { described_instance.call state } }
-
-      context 'when the value is zero' do
-        let(:exit_code) { 0 }
-
-        it('takes no action') { is_expected.to_not raise_error }
-      end
-
-      context 'when the value is not zero' do
-        let(:exit_code) { 1234 }
-
-        it 'raises an instance failure' do
-          is_expected.to raise_error ::Kitchen::InstanceFailure, /1234/
-        end
-      end
-    end
-
     context 'when the group is local' do
       let(:hostnames) { '' }
 
       let :options do
         {
-          attributes: { 'attribute_key' => 'resolved_attribute_value' },
+          attributes: {
+            'default_attribute_name' => 'resolved_default_output_value',
+            'provided_attribute_name' => 'resolved_provided_output_value'
+          },
           backend: 'local', controls: ['control'], runner_key: 'runner_value'
         }
       end
 
-      it_behaves_like 'exit code validator'
+      it_behaves_like '#validate'
     end
 
     context 'when the group is remote' do
@@ -131,7 +141,10 @@ require 'terraform/group'
 
       let :options do
         {
-          attributes: { 'attribute_key' => 'resolved_attribute_value' },
+          attributes: {
+            'default_attribute_name' => 'resolved_default_output_value',
+            'provided_attribute_name' => 'resolved_provided_output_value'
+          },
           controls: ['control'], host: 'resolved_hostname',
           runner_key: 'runner_value'
         }
@@ -143,7 +156,7 @@ require 'terraform/group'
           .and_yield 'resolved_hostname'
       end
 
-      it_behaves_like 'exit code validator'
+      it_behaves_like '#validate'
     end
   end
 end
