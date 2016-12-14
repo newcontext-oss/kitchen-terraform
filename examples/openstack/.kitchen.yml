@@ -1,0 +1,37 @@
+---
+driver:
+  name: terraform
+
+provisioner:
+  name: terraform
+  # The number of seconds to wait for the Terraform apply command to be
+  # successful before raising an error.
+  apply_timeout: 1000
+  color: true
+  directory: ./
+  variable_files:
+    - ./my-variables.tfvars
+transport:
+  name: ssh
+  username: ubuntu
+  ssh_key: ./dummy_keypair/cloud.key
+verifier:
+  name: terraform
+  format: doc
+  groups:
+    - name: masters
+      controls:
+        - nano_installed
+      hostnames: masters_ips
+      port: 22
+      username: ubuntu
+    - name: workers
+      controls:
+        - curl_installed
+      hostnames: workers_ips
+      port: 22
+      username: ubuntu
+platforms:
+  - name: ubuntu
+suites:
+  - name: default

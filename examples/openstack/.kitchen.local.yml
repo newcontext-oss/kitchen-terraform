@@ -1,0 +1,11 @@
+---
+provisioner:
+  directory: ./test/fixtures/0.7
+  variable_files:
+    - ./my-variables.tfvars
+transport:
+  name: ssh
+  username: ubuntu
+  ssh_key: ./dummy_keypair/cloud.key
+suites:
+  - name: default
