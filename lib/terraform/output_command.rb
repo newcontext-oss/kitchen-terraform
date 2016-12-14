@@ -30,12 +30,13 @@ module Terraform
 
     private
 
-    attr_accessor :list, :state
+    attr_accessor :list, :state, :return_raw
 
-    def initialize_attributes(list:, version:, state:)
+    def initialize_attributes(list:, version:, state:, return_raw: false)
       extend_behaviour version: version
       self.list = list
       self.state = state
+      self.return_raw = return_raw
     end
 
     def version_behaviours

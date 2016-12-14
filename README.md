@@ -1,5 +1,11 @@
 # kitchen-terraform
 
+[![Gem Version](https://badge.fury.io/rb/kitchen-terraform.svg)](https://badge.fury.io/rb/kitchen-terraform)
+[![Code Climate](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/gpa.svg)](https://codeclimate.com/github/newcontext-oss/kitchen-terraform)
+[![Issue Count](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/issue_count.svg)](https://codeclimate.com/github/newcontext-oss/kitchen-terraform)
+[![Build Status Master](https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master)](https://travis-ci.org/newcontext-oss/kitchen-terraform)
+[![Test Coverage](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/coverage.svg)](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/coverage)
+
 kitchen-terraform is a set of [Test Kitchen] plugins for testing
 [Terraform configuration].
 
@@ -33,7 +39,7 @@ Once Bundler is installed, add kitchen-terraform to the project's Gemfile:
 ```rb
 source 'https://rubygems.org'
 
-gem 'kitchen-terraform', '~> 0.1'
+gem 'kitchen-terraform', '~> 0.4'
 ```
 
 Then, use Bundler to install the gems:
@@ -272,8 +278,8 @@ Each group consists of:
 
 - a name to use for logging purposes
 
-- a mapping of InSpec attribute names to Terraform output variable
-  names to define for the suite's InSpec profile
+- a mapping of InSpec profile attribute names to Terraform output variable
+  names; the attributes will be with the resolved output values
 
 - a collection of controls to include from the suite's InSpec profile
 
@@ -307,7 +313,9 @@ The default `groups` collection is empty.
 
 For each group:
 
-- the default `attributes` mapping is empty
+- the default `attributes` mapping consists of equivalently named
+  attributes for each output variable; additional or overridden
+  associations can be added.
 
 - the default `controls` collection is empty
 
