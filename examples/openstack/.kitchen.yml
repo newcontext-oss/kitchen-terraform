@@ -22,13 +22,13 @@ verifier:
     - name: masters
       controls:
         - nano_installed
-      hostnames: masters_ips
+      hostnames: master_0_public_ip
       port: 22
       username: ubuntu
     - name: workers
       controls:
         - curl_installed
-      hostnames: workers_ips
+      hostnames: workers_public_ips
       port: 22
       username: ubuntu
 platforms:

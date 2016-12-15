@@ -39,16 +39,16 @@ This was tested with:
  * ruby 2.3.1
 
 ## Running tests
-The Terraform files create a cluster of OpenStack vms. Each vm is either: a master or a worker. You can change the number of master or worker vms anytime.
+The Terraform files create a cluster of OpenStack vms. Each vm is either:
+ a master or a worker. You can change the number of master or worker vms anytime.
 
 In this example, by default, tests are run on 1 master vm and all worker vms.
-This is set in `.kitchen.yml` by `masters_ips` and `workers_ips`. Values of
- `masters_ips` and `workers_ips` are taken from `test/fixtures/0.7/outputs.tf`.
+This is set in `.kitchen.yml` by `master_0_public_ip` and `workers_public_ips`. Values of
+ `master_0_public_ip` and `workers_public_ips` are taken from `outputs.tf`.
 If you want to run tests on all master vms, you need to edit
- `test/fixtures/0.7/outputs.tf` so that it contains:
+ `.kitchen.yml` so that it contains `masters_public_ips` instead of `master_0_public_ip`.
+Then run
 ```
-output "masters_ips" {
-  value = "${module.default.masters_public_ips}"
-}
+bundle exec kitchen converge
+bundle exec kitchen verify
 ```
-Then run `bundle exec kitchen converge` and `bundle exec kitchen verify`.
