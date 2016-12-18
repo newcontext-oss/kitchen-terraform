@@ -7,8 +7,6 @@ provisioner:
   # The number of seconds to wait for the Terraform apply command to be
   # successful before raising an error.
   apply_timeout: 1000
-  color: true
-  directory: ./
   variable_files:
     - ./my-variables.tfvars
 transport:
@@ -23,14 +21,10 @@ verifier:
       controls:
         - nano_installed
       hostnames: master_0_public_ip
-      port: 22
-      username: ubuntu
     - name: workers
       controls:
         - curl_installed
       hostnames: workers_public_ips
-      port: 22
-      username: ubuntu
 platforms:
   - name: ubuntu
 suites:

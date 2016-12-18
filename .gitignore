@@ -8,7 +8,7 @@
 */.idea/
 certs/private_key.pem
 coverage/
-examples/openstack/my-variables.tfvars
-examples/openstack/.kitchen/
-examples/openstack/.terraform/
+examples/openstack_provider/my-variables.tfvars
+examples/openstack_provider/.kitchen/
+examples/openstack_provider/.terraform/
 tmp/

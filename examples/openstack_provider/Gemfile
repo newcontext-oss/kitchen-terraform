@@ -1,0 +1,4 @@
+source 'https://rubygems.org/' do
+  gem 'kitchen-terraform', path: File.expand_path("#{File.dirname(__FILE__)}/../..")
+  gem 'test-kitchen'
+end
