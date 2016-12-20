@@ -13,7 +13,7 @@ resource "docker_image" "ubuntu" {
 }
 
 resource "docker_container" "ubuntu" {
-  image = "${data.docker_registry_image.ubuntu.name}"
+  image = "${docker_image.ubuntu.name}"
   name = "ubuntu_container"
   ports {
     internal = 22
