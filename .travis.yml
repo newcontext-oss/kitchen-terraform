@@ -1,17 +1,34 @@
 # https://travis-ci.org/newcontext-oss/kitchen-terraform
 ---
-cache: bundler
-
-install:
-  - bundle install --jobs=3 --retry=3 --without=development
-  - cd examples/docker_provider
-  - bundle install --jobs=3 --retry=3 --without=development
-  - cd ../..
-
 sudo: true
 
 services:
   - docker
+
+env:
+  - PATH="terraform:$PATH"
+
+language: ruby
+
+rvm:
+  - 2.3.3
+  - 2.2.6
+  - 2.1.10
+
+cache: bundler
+
+before_install:
+  - "curl --remote-name terraform.zip \
+     https://releases.hashicorp.com/terraform/0.7.13/\
+     terraform_0.7.13_linux_amd64.zip"
+  - mkdir terraform
+
+install:
+  - unzip terraform.zip -d terraform
+  - bundle install --jobs=3 --retry=3 --without=development
+  - cd examples/docker_provider
+  - bundle install --jobs=3 --retry=3 --without=development
+  - cd ../..
 
 before_script: bundle exec bundle-audit check --update
 
@@ -24,10 +41,3 @@ script:
 
 after_success:
   - bundle exec codeclimate-test-reporter
-
-language: ruby
-
-rvm:
-  - 2.3.3
-  - 2.2.6
-  - 2.1.10
