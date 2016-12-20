@@ -4,9 +4,9 @@ cache: bundler
 
 install:
   - bundle install --jobs=3 --retry=3 --without=development
-  - >-
-    cd examples/docker_provider;
-    bundle install --jobs=3 --retry=3 --without=development
+  - cd examples/docker_provider
+  - bundle install --jobs=3 --retry=3 --without=development
+  - cd ../..
 
 sudo: true
 
@@ -18,7 +18,9 @@ before_script: bundle exec bundle-audit check --update
 script:
   - bundle exec rspec --require support/coverage
   - bundle exec rubocop --display-cop-names --format clang
-  - cd examples/docker_provider; bundle exec kitchen test
+  - cd examples/docker_provider
+  - bundle exec kitchen test
+  - cd ../..
 
 after_success:
   - bundle exec codeclimate-test-reporter
