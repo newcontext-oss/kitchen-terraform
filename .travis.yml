@@ -5,9 +5,6 @@ sudo: true
 services:
   - docker
 
-env:
-  - PATH="terraform:$PATH"
-
 language: ruby
 
 rvm:
@@ -24,6 +21,7 @@ before_install:
 
 install:
   - unzip terraform.zip -d terraform
+  - export PATH="terraform/:$PATH"
   - bundle install --jobs=3 --retry=3 --without=development
   - cd examples/docker_provider
   - bundle install --jobs=3 --retry=3 --without=development
