@@ -1,17 +1,27 @@
 # https://travis-ci.org/newcontext-oss/kitchen-terraform
 ---
-install: bundle install --jobs=3 --retry=3 --without=development
+cache: bundler
+
+install:
+  - bundle install --jobs=3 --retry=3 --without=development
+  - >-
+    cd examples/docker_provider;
+    bundle install --jobs=3 --retry=3 --without=development
+
+sudo: true
+
+services:
+  - docker
 
 before_script: bundle exec bundle-audit check --update
 
 script:
   - bundle exec rspec --require support/coverage
   - bundle exec rubocop --display-cop-names --format clang
+  - cd examples/docker_provider; bundle exec kitchen test
 
 after_success:
   - bundle exec codeclimate-test-reporter
-
-cache: bundler
 
 language: ruby
 
