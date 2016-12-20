@@ -18,9 +18,8 @@ rvm:
 cache: bundler
 
 before_install:
-  - "curl --remote-name terraform.zip \
-     https://releases.hashicorp.com/terraform/0.7.13/\
-     terraform_0.7.13_linux_amd64.zip"
+  - "curl --output terraform.zip https://releases.hashicorp.com/terraform/\
+     0.7.13/terraform_0.7.13_linux_amd64.zip"
   - mkdir terraform
 
 install:
