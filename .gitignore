@@ -2,9 +2,8 @@
 */.idea/
 **/Gemfile.lock
 *.gem
-.kitchen/*
+**/.kitchen/*
 coverage/
 examples/detailed/.kitchen.local.yml
-examples/detailed/.kitchen/
 examples/detailed/.terraform/
 tmp/
