@@ -37,9 +37,9 @@ which means it can be [installed with Bundler].
 Once Bundler is installed, add kitchen-terraform to the project's Gemfile:
 
 ```rb
-source 'https://rubygems.org'
-
-gem 'kitchen-terraform', '~> 0.4'
+source 'https://rubygems.org/' do
+  gem 'kitchen-terraform', '~> 0.4'
+end
 ```
 
 Then, use Bundler to install the gems:
