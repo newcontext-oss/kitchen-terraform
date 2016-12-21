@@ -10,6 +10,8 @@ major version 0.y.z will maintain a stable public interface.
 
 ### Added
 
+* A shiny, new logo (thanks [@ksexton])
+
 * A shiny, new [Travis CI build plan] (thanks [@justindossey])
 
 * Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury and @m00gs])
@@ -27,8 +29,8 @@ major version 0.y.z will maintain a stable public interface.
 * Provisioner configuration for the `terraform apply -parallelism`
   option (thanks [@s3lehtin])
 
-* Clay Thomas, Erik R. Rygg, and Walter Dolce join the gem specification
-  authors
+* Clay Thomas, Erik R. Rygg, Kyle Sexton, and Walter Dolce join the gem
+  specification authors
 
 ### Changed
 
@@ -174,6 +176,7 @@ major version 0.y.z will maintain a stable public interface.
 [@jbussdieker]: https://github.com/jbussdieker
 [@justindossey]: https://github.com/justindossey
 [@kevindickerson]: https://github.com/kevindickerson
+[@ksexton]: https://github.com/ksexton
 [@m00gs]: https://github.com/m00gs
 [@maniacal]: https://github.com/maniacal
 [@mrheath]: https://github.com/mrheath
