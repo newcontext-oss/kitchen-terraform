@@ -6,7 +6,34 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
-## [0.4.0] - 2016-11-??
+## [0.4.0] - 2016-12-23
+
+### Added
+
+* A shiny, new [Travis CI build plan] (thanks [@justindossey])
+
+* Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury and @m00gs])
+
+* [Code Climate coverage]
+
+* Group attributes default to a mapping of all Terraform output
+  variables to equivalently named InSpec attributes (thanks [@shinka81])
+
+* A Docker provider example (thanks [@errygg])
+
+* Groups with no hostnames will have their controls executed locally; in
+  theory, this enables testing of any provider API
+
+* Provisioner configuration for the `terraform apply -parallelism`
+  option (thanks [@s3lehtin])
+
+* Clay Thomas, Erik R. Rygg, and Walter Dolce join the gem specification
+  authors
+
+### Changed
+
+* Removed the pin on the RubyGems version from the gem specification
+  (thanks [@jbussdieker])
 
 ### Fixed
 
@@ -137,15 +164,25 @@ major version 0.y.z will maintain a stable public interface.
 [0.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.0...v0.1.1
 [0.1.2]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.1...v0.1.2
 [0.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.2...v0.2.0
+[0.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.2.0...v0.3.0
+[0.4.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.3.0...v0.4.0
 [@amaltson]: https://github.com/amaltson
 [@cullenmcdermott]: https://github.com/cullenmcdermott
+[@errygg]: https://github.com/errygg
 [@esword]: https://github.com/esword
 [@fivetwentysix]: https://github.com/fivetwentysix
+[@jbussdieker]: https://github.com/jbussdieker
+[@justindossey]: https://github.com/justindossey
 [@kevindickerson]: https://github.com/kevindickerson
+[@m00gs]: https://github.com/m00gs
 [@maniacal]: https://github.com/maniacal
 [@mrheath]: https://github.com/mrheath
 [@nellshamrell]: https://github.com/nellshamrell
 [@nictrix]: https://github.com/nictrix
+[@s3lehtin]: https://github.com/s3lehtin
+[@shinka81]: https://github.com/shinka81
 [@walterdolce]: https://github.com/walterdolce
+[Code Climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
 [Keep a CHANGELOG]: http://keepachangelog.com/
 [Semantic Versioning]: http://semver.org/
+[Travis CI build plan]: https://travis-ci.org/newcontext-oss/kitchen-terraform
