@@ -1,39 +1,45 @@
-# https://travis-ci.org/newcontext-oss/kitchen-terraform
----
 sudo: true
-
 services:
-  - docker
-
+- docker
+env:
+  global:
+    secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
 language: ruby
-
 rvm:
-  - 2.3.3
-  - 2.2.6
-  - 2.1.10
-
-cache: bundler
-
+- 2.3.3
+- 2.2.6
+- 2.1.10
+cache:
+- bundler
 before_install:
-  - "curl --output terraform.zip https://releases.hashicorp.com/terraform/\
-     0.7.13/terraform_0.7.13_linux_amd64.zip"
-  - mkdir terraform
-
+- openssl aes-256-cbc -K $encrypted_8cfc0ec71995_key -iv $encrypted_8cfc0ec71995_iv
+  -in certs/private_key.pem.enc -out certs/private_key.pem -d
+- curl --output terraform.zip https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip
+- mkdir terraform
 install:
-  - unzip terraform.zip -d terraform
-  - bundle install --jobs=3 --retry=3 --without=development
-  - cd examples/docker_provider
-  - bundle install --jobs=3 --retry=3 --without=development
-  - cd ../..
-
-before_script: bundle exec bundle-audit check --update
-
+- unzip terraform.zip -d terraform
+- bundle install --jobs=3 --retry=3 --without=development
+- cd examples/docker_provider
+- bundle install --jobs=3 --retry=3 --without=development
+- cd ../..
+before_script:
+- bundle exec bundle-audit check --update
 script:
-  - bundle exec rspec --require support/coverage
-  - bundle exec rubocop --display-cop-names --format clang
-  - cd examples/docker_provider
-  - PATH="../../terraform/:$PATH" bundle exec kitchen test
-  - cd ../..
-
+- bundle exec rspec --require support/coverage
+- bundle exec rubocop --display-cop-names --format clang
+- cd examples/docker_provider
+- PATH="../../terraform/:$PATH" bundle exec kitchen test
+- cd ../..
 after_success:
-  - bundle exec codeclimate-test-reporter
+- bundle exec codeclimate-test-reporter
+before_deploy:
+- gem cert --add certs/public-key.pem
+deploy:
+  provider: rubygems
+  api_key:
+    secure: Y52epwcQvGsZ4c7LbHBZCGbgUzh0ujUMp0rEWrwr0o+7Ty86PsGkdLgfRi5V2/BXjw5l8pU8QHCCPyLAcjOhDwLtr87dVfw0FOtY7q22eqNfMdfIqc0AfwdmgcrLF6fr7LZHS678YKMzXepoi6FSnIV0BfG7ZEV3/iM9CIl0YzU7l04MGB0QGinE5frAt2g/LPWwtdky1CHOqUc08/wSHjn0ytSUImV4dqV8iaQwtS6WorRgohrgikY1/Ae2rpssMPiRQxHCL8RT5RtVf0Ph7CmYER/DmaPUwzPoFTwD1+tCcXqZCMdeLnhc9hDT09+myvG6XYFI8NWvvhiBqIi+gihvqrKbOvPBIZUZuHjwCQAcXhf3C7VtPo6wkHVdUzCCUqpXIcvKgLDzrh5UcAgZf2H77+MgH9JP4kre3NxIWFiIZ/mhmu5yrCz753TzIUPRAxqIppVIP73fJ2nuUPuCv8+hGKrdVq4ekwHi7y0B4gYakw82+hBG/p1jG+KtyChrjXP/2xppRrCNkHfNuwo1NAOtmOpDVCofdjuWeR0/rhFDNY/zzdZdE19lzSqPGkSKGYnguA5FICjy1kxD5VMICj2S2zbK5cg+y2wn1/0JF31paSjX+y8t1vl7ziWMaO+zX62zED6hxWtOELt0W2mlQ6RJLpdUjb6h9cQzop0ubrY=
+  gem: kitchen-terraform
+  on:
+    branch: master
+    tags: true
+    repo: newcontext-oss/kitchen-terraform
