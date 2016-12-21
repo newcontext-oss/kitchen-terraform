@@ -6,5 +6,6 @@
 **/inspec.lock
 *.gem
 */.idea/
+certs/private_key.pem
 coverage/
 tmp/

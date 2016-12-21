@@ -60,12 +60,11 @@ Gem::Specification.new do |specification|
 
   specification.add_runtime_dependency 'test-kitchen', '~> 1.10', '>= 1.10.0'
 
-  specification.cert_chain = ['certs/ncs-alane-public_cert.pem']
+  specification.cert_chain = ['certs/public_cert.pem']
 
   specification.required_ruby_version = ['>= 2.1', '< 2.4']
 
   specification.requirements = ['Terraform >= 0.6.0, < 0.8.0']
 
-  specification.signing_key =
-    File.expand_path '~/.gem/ncs-alane-private_key.pem'
+  specification.signing_key = 'certs/private_key.pem'
 end
