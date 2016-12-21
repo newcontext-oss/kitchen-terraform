@@ -82,6 +82,8 @@ RSpec.shared_context '#provisioner' do
     allow(provisioner).to receive(:[]).with(:directory)
       .and_return provisioner_directory
 
+    allow(provisioner).to receive(:[]).with(:parallelism).and_return 1234
+
     allow(provisioner).to receive(:[]).with(:plan).and_return provisioner_plan
 
     allow(provisioner).to receive(:[]).with(:state).and_return provisioner_state

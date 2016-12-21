@@ -22,8 +22,9 @@ RSpec.describe Terraform::PlanCommand do
   let(:color) { instance_double Object }
 
   let :described_instance do
-    described_class.new color: color, destroy: destroy, out: out, state: state,
-                        variables: variables, variable_files: [variable_file]
+    described_class.new color: color, destroy: destroy, out: out,
+                        parallelism: 1234, state: state, variables: variables,
+                        variable_files: [variable_file]
   end
 
   let(:destroy) { instance_double Object }
@@ -49,13 +50,12 @@ RSpec.describe Terraform::PlanCommand do
 
     subject { described_instance.options }
 
-    it 'returns "-destroy=<true_or_false> -input=false ' \
-         '-out=<plan_pathname> -state=<state_pathname> ' \
-         '-color=<true or false> [-var=\'<variable_assignment>\'...] ' \
-         '[-var-file=<variable_pathname>...]"' do
+    it 'include "destroy", "input", "out", "parallelism", "state", "color", ' \
+         '"var", and "var-file"' do
       is_expected.to eq "-destroy=#{destroy} -input=false -out=#{out} " \
-                          "-state=#{state} -color=<true or false> " \
-                          "-var='key=value' -var-file=#{variable_file}"
+                          "-parallelism=1234 -state=#{state} " \
+                          "-color=<true or false> -var='key=value' " \
+                          "-var-file=#{variable_file}"
     end
   end
 end
