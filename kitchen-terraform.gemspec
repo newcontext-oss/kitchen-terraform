@@ -52,6 +52,8 @@ Gem::Specification.new do |specification|
 
   specification.add_development_dependency 'rubocop', '~> 0.40', '>= 0.40.0'
 
+  specification.add_development_dependency 'travis', '~> 1.8'
+
   specification.add_runtime_dependency 'inspec', '~> 1.0'
 
   specification.add_runtime_dependency 'kitchen-inspec', '~> 0.14', '>= 0.14.0'

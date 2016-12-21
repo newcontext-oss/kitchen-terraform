@@ -17,6 +17,7 @@ source 'https://rubygems.org/' do
     gem 'guard-rubocop'
     gem 'guard-rubycritic'
     gem 'pry'
+    gem 'travis'
   end
 
   group :test do
