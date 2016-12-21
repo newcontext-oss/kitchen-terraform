@@ -618,6 +618,18 @@ prevent the successful execution of this example.
 instances in the test suite's only group and an address to use in the
 suite's Inspec controls.
 
+## AWS Configuration
+
+Before continuing, review the instructions on configuring the
+[AWS account] with an isolated user for enhanced security.
+
+In order to execute this example, AWS credentials must be provided
+according to the [credentials provider chain rules].
+
+[AWS account]: AWS.md
+
+[credentials provider chain rules]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#config-settings-and-precedence
+
 ## Test Kitchen Configuration
 
 The [Test Kitchen configuration](.kitchen.yml) includes all of the plugins provided by
@@ -629,8 +641,8 @@ The driver has no configuration options.
 
 ### Provisioner
 
-The provisioner is configured to use a [variables file](test/fixtures/credentials.tfvars) to provide some
-of the variables required by the example module.
+The provisioner is configured to use a test fixture module based on the
+installed version of Terraform.
 
 ### Transport
 
@@ -638,7 +650,7 @@ The SSH transport is used due to the AMI used in the example module.
 
 ### Verifier
 
-The verifier is configured with a single group named `contrived`.
+The verifier is configured with two groups, `contrived` and `local`.
 
 The `contrived` group uses the value of the `different_host_address` output
 to define an Inspec control attribute named `other_host_address` and
@@ -646,6 +658,9 @@ includes all of the suite's [profile's controls]. The group uses the
 value of the `contrived_hostnames` output to obtain the targets to
 execute the controls on and provides a static port and username based on
 the AMI used in the example module.
+
+The `local` group omits the `hostnames` setting, which means that the
+specified control will be executed locally.
 
 [profile's controls]: test/integration/example/controls
 
@@ -661,30 +676,19 @@ as usual.
 
 ### Missing Configuration
 
-Several required configuration options are missing from the Test Kitchen
-configuration; these must be provided in a local Test Kitchen
+A couple of required configuration options are missing from the Test
+Kitchen configuration; these must be provided in a local Test Kitchen
 configuration.
-
-Before continuing, review the instructions on configuring the
-[AWS account] with an isolated user for enhanced security.
-
-[AWS account]: AWS.md
 
 *.kitchen.local.yml*
 
 ```yaml
 ---
 provisioner:
-  directory: test/fixtures/<version of Terraform installed>
+  variables:
+    public_key_pathname: <pathname/of/public/ssh/key>
 transport:
   ssh_key: <pathname/of/private/ssh/key>
-suites:
-  - name: example
-    provisioner:
-      variables:
-        access_key: <aws_access_key_id>
-        public_key_pathname: <pathname/of/public/ssh/key>
-        secret_key: <aws_secret_access_key>
 ```
 
 ## Executing Tests

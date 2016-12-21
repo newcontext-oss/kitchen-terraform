@@ -14,19 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-security_group = attribute 'security_group', {}
-overridden_security_group = attribute 'overridden_security_group', {}
+require 'awspec'
 
-control 'security_group' do
-  describe 'the `security_group` output' do
-    subject { ec2_instance.security_groups }
+control 'local_security_group' do
+  describe 'the security group' do
+    let(:example_security_group) { security_group 'kitchen-terraform-example' }
 
-    it 'is mapped to the `security_group` attribute' do
-      is_expected.to eq security_group
+    describe 'ingress' do
+      subject { example_security_group.inbound }
+
+      it('is open to the world') { is_expected.to be_opened.for '0.0.0.0/0' }
     end
 
-    it 'equals the `overridden_security_group` attribute' do
-      is_expected.to eq overridden_security_group
+    describe 'egress' do
+      subject { example_security_group.outbound }
+
+      it('is open to the world') { is_expected.to be_opened.for '0.0.0.0/0' }
     end
   end
 end

@@ -14,25 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'inspec'
-require 'kitchen'
+security_group = attribute 'security_group', {}
+overridden_security_group = attribute 'overridden_security_group', {}
 
-module Terraform
-  # Inspec::Runner with convenience methods for use by
-  # Kitchen::Verifier::Terraform
-  class InspecRunner < Inspec::Runner
-    attr_reader :conf
+control 'remote_security_group' do
+  describe 'the `security_group` output' do
+    subject { ec2_instance.security_groups }
 
-    def evaluate(verifier:)
-      verifier.add_targets runner: self
-      verifier.verify exit_code: run
+    it 'is mapped to the `security_group` attribute' do
+      is_expected.to eq security_group
     end
 
-    private
-
-    def initialize(conf = {})
-      conf[:attributes] = Kitchen::Util.stringified_hash conf[:attributes]
-      super
+    it 'equals the `overridden_security_group` attribute' do
+      is_expected.to eq overridden_security_group
     end
   end
 end

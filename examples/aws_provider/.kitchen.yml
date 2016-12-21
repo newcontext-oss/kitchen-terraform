@@ -3,8 +3,8 @@ driver:
   name: terraform
 provisioner:
   name: terraform
-  variable_files:
-    - test/fixtures/credentials.tfvars
+  directory: >-
+    test/fixtures/<%= `terraform -version`.slice(/v(\d+\.\d+)/, 1) %>
 transport:
   name: ssh
   connection_retries: 76
@@ -14,14 +14,17 @@ verifier:
   groups:
     - name: contrived
       attributes:
-        other_host_address: different_host_address
+        overridden_security_group: security_group
       controls:
-        - ami_id
         - reachable_other_host
+        - remote_security_group
         - running_service
       hostnames: contrived_hostnames
       port: 22
       username: ubuntu
+    - name: local
+      controls:
+        - local_security_group
 platforms:
   - name: ubuntu
 suites:

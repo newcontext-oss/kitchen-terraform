@@ -15,7 +15,9 @@
 # limitations under the License.
 
 control 'running_service' do
-  describe service 'cron' do
-    it { is_expected.to be_running }
+  describe 'the cron service' do
+    subject { service 'cron' }
+
+    it('is running') { is_expected.to be_running }
   end
 end
