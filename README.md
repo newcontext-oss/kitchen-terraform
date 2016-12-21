@@ -15,7 +15,7 @@ kitchen-terraform is a set of [Test Kitchen] plugins for testing
 
 ## Requirements
 
-- [Ruby] **(~> 2.3)**
+- [Ruby] **(~> 2.1)**
 
 - [Bundler] **(~> 1.12)**
 
