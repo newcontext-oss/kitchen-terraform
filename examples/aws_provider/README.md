@@ -652,15 +652,16 @@ The SSH transport is used due to the AMI used in the example module.
 
 The verifier is configured with two groups, `contrived` and `local`.
 
-The `contrived` group uses the value of the `different_host_address` output
-to define an Inspec control attribute named `other_host_address` and
-includes all of the suite's [profile's controls]. The group uses the
-value of the `contrived_hostnames` output to obtain the targets to
+The `contrived` group uses the value of the `security_group` output
+to define an Inspec control attribute named `overridden_security_group`
+and includes most of the suite's [profile's controls]. The group uses
+the value of the `contrived_hostnames` output to obtain the targets to
 execute the controls on and provides a static port and username based on
 the AMI used in the example module.
 
-The `local` group omits the `hostnames` setting, which means that the
-specified control will be executed locally.
+The `local` group omits the `hostnames` setting, which means that its
+specified control will be executed locally rather than on remotely
+on a server in the Terraform state.
 
 [profile's controls]: test/integration/example/controls
 
