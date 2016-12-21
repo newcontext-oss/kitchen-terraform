@@ -23,7 +23,7 @@ Gem::Specification.new do |specification|
 
   specification.email = 'kitchen-terraform@newcontext.com'
 
-  specification.homepage = 'https://github.com/newcontext/kitchen-terraform'
+  specification.homepage = 'https://github.com/newcontext-oss/kitchen-terraform'
 
   specification.license = 'Apache-2.0'
 
