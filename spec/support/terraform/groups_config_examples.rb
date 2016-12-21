@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'terraform/groups_config'
-require 'terraform/inspec_runner'
 require 'support/terraform/configurable_context'
 
 RSpec.shared_examples Terraform::GroupsConfig do

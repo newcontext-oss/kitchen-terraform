@@ -1,9 +1,10 @@
 **/.bundle/
-*/.idea/
+**/.kitchen.local.yml
+**/.kitchen/
+**/.terraform/
 **/Gemfile.lock
+**/inspec.lock
 *.gem
-**/.kitchen/*
+*/.idea/
 coverage/
-examples/detailed/.kitchen.local.yml
-examples/detailed/.terraform/
 tmp/

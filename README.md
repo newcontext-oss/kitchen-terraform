@@ -268,43 +268,50 @@ configuration defined by that plugin with the exception of the `port` and
 
 ##### groups
 
-A collection of group mappings containing [InSpec control] and
-connection options for the different server instance groups in the
+A collection of mappings that define how to test different resources in the
 Terraform configuration.
-
-[InSpec control]: http://inspec.io/docs/reference/dsl_inspec/
 
 Each group consists of:
 
-- a name to use for logging purposes
+- a `name` to use for logging purposes
+
+- an optional `attributes` mapping of InSpec profile attribute names to
+  Terraform output variable names to define for the suite's InSpec profile
+
+- a `controls` collection of [InSpec controls] to include from the suite's
+  InSpec profile
 
 - a mapping of InSpec profile attribute names to Terraform output variable
   names; the attributes will be with the resolved output values
 
-- a collection of controls to include from the suite's InSpec profile
+- an optional `hostnames` output variable name to use for extracting hostnames
+  from the Terraform state; the resolved output value is assumed to be a
+  list of strings or a string in CSV format
 
-- a hostnames output variable name to use for extracting hostnames from
-  the Terraform state; the output value is assumed to be in CSV format
+- an optional `port` to use when connecting to the group's hosts
 
-- the port to use when connecting to the group's hosts
+- an optional `username` to use when connecting to the group's hosts
 
-- the username to use when connecting to the group's hosts
+If `hostnames` is empty then the group's `controls` will be executed
+locally; this enables testing of a provider's API to verify non-server
+resources.
+
+[InSpec controls]: http://inspec.io/docs/reference/dsl_inspec/
 
 ###### Example .kitchen.yml
 
 ```yaml
----
 verifier:
   name: terraform
   groups:
-    - name: arbitrary
-      attributes:
-        foo: bar
-      controls:
-        - biz
-      hostnames: hostnames_output
-      port: 123
-      username: test-user
+  - name: arbitrary
+    attributes:
+      foo: bar
+    controls:
+    - biz
+    hostnames: hostnames_output
+    port: 123
+    username: test-user
 ```
 
 ###### Defaults
@@ -318,6 +325,8 @@ For each group:
   associations can be added.
 
 - the default `controls` collection is empty
+
+- the default `hostnames` string is empty
 
 - the default `port` is obtained from the transport
 

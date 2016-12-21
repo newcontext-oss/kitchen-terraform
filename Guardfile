@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-group :red_green_refactor, halt_on_fail: true do
-  require 'guard/rspec/dsl'
+require 'guard/rspec/dsl'
 
+directories %w(lib spec)
+
+group :red_green_refactor, halt_on_fail: true do
   Guard::RSpec::Dsl.new(self).tap do |dsl|
     guard :rspec, all_after_pass: true, all_on_start: true,
                   bundler_env: :inherit, cmd: 'bundle exec rspec' do
