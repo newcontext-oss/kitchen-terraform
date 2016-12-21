@@ -19,6 +19,7 @@ require 'terraform/apply_timeout_config'
 require 'terraform/color_config'
 require 'terraform/configurable'
 require 'terraform/directory_config'
+require 'terraform/parallelism_config'
 require 'terraform/plan_config'
 require 'terraform/state_config'
 require 'terraform/variable_files_config'
@@ -35,6 +36,8 @@ module Kitchen
       include ::Terraform::Configurable
 
       include ::Terraform::DirectoryConfig
+
+      include ::Terraform::ParallelismConfig
 
       include ::Terraform::PlanConfig
 

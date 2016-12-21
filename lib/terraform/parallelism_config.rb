@@ -14,30 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-require_relative 'color_switch'
-
 module Terraform
-  # Command to apply an execution plan
-  class ApplyCommand < Command
-    include ColorSwitch
-
-    def name
-      'apply'
+  # Behaviour for the [:parallelism] config option
+  module ParallelismConfig
+    def self.included(configurable_class)
+      configurable_class
+        .required_config :parallelism do |_, value, configurable|
+          configurable.coerce_parallelism value: value
+        end
+      configurable_class.default_config :parallelism, 10
     end
 
-    def options
-      "-input=false -parallelism=#{parallelism} -state=#{state} #{color_switch}"
-    end
-
-    private
-
-    attr_accessor :parallelism, :state
-
-    def initialize_attributes(color:, parallelism:, state:)
-      self.color = color
-      self.parallelism = parallelism
-      self.state = state
+    def coerce_parallelism(value:)
+      config[:parallelism] = Integer value
+    rescue ::ArgumentError, ::TypeError
+      config_error attribute: 'parallelism', expected: 'an integer'
     end
   end
 end

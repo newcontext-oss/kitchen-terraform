@@ -21,6 +21,7 @@ require 'support/terraform/command_context'
 require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
 require 'support/terraform/directory_config_examples'
+require 'support/terraform/parallelism_config_examples'
 require 'support/terraform/plan_config_examples'
 require 'support/terraform/state_config_examples'
 require 'support/terraform/variable_files_config_examples'
@@ -38,6 +39,8 @@ RSpec.describe Kitchen::Provisioner::Terraform do
   it_behaves_like Terraform::Configurable
 
   it_behaves_like Terraform::DirectoryConfig
+
+  it_behaves_like ::Terraform::ParallelismConfig
 
   it_behaves_like Terraform::PlanConfig
 

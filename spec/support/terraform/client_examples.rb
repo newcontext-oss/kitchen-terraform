@@ -32,7 +32,7 @@ RSpec.shared_examples Terraform::Client do
 
     before do
       allow(apply_command_class).to receive(:new).with(
-        color: provisioner_color, state: provisioner_state,
+        color: provisioner_color, parallelism: 1234, state: provisioner_state,
         target: provisioner_plan
       ).and_return apply_command
     end
@@ -157,8 +157,8 @@ RSpec.shared_examples Terraform::Client do
     before do
       allow(plan_command_class).to receive(:new).with(
         color: provisioner_color, destroy: destroy, out: provisioner_plan,
-        state: provisioner_state, target: provisioner_directory,
-        variables: provisioner_variables,
+        parallelism: 1234, state: provisioner_state,
+        target: provisioner_directory, variables: provisioner_variables,
         variable_files: provisioner_variable_files
       ).and_return plan_command
     end

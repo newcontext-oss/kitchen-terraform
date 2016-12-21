@@ -181,6 +181,23 @@ provisioner:
 
 The default `directory` is the current working directory of Test Kitchen.
 
+##### parallelism
+
+The number of concurrent operations to allow for the Terraform `apply` and
+`plan` commands.
+
+###### Example .kitchen.yml
+
+```yaml
+provisioner:
+  name: terraform
+  parallelism: 2
+```
+
+###### Default
+
+The default `parallelism` is 10.
+
 ##### variable_files
 
 A collection of pathnames of [Terraform variable files] to be evaluated
