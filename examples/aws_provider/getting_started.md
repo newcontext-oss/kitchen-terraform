@@ -430,8 +430,8 @@ And hey, it passed! You should see output that includes:
 
 ```
 Command lsb_release -a
-stdout
-should match /Ubuntu/
+  stdout
+    should match /Ubuntu/
 ```
 
 It's nice that it passed...but we still need to make sure that it fails
