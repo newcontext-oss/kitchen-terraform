@@ -47,7 +47,7 @@ provisioner:
 
 ### Dependencies
 This was tested with:
- * kitchen-terraform 0.3.0, commit 1316da402fc590f6d3db5f470fc471cba55b548f
+ * kitchen-terraform 0.4.0
  * Test Kitchen 1.14.2
  * Terraform 0.7.13
  * Ruby 2.3.1
