@@ -1,4 +1,4 @@
-## Getting Started
+# Getting Started
 
 Hello! This tutorial will walk you through setting up a Terraform config
 to spin up an [Amazon Web Services (AWS)] EC2 instance using Inspec and
@@ -6,14 +6,14 @@ kitchen-terraform from scratch.
 
 (Note: these instructions are for Unix based systems only)
 
-### Our Tools
+## Our Tools
 
 * [Terraform]
 * [Test Kitchen]
 * [InSpec]
 * [kitchen-terraform]
 
-### Prerequisites
+## Prerequisites
 
 Make sure you have the following prerequisites for this tutorial
 
@@ -29,7 +29,7 @@ Make sure you have the following prerequisites for this tutorial
 
 So let's start building this config from scratch!
 
-### Setting up our development environment
+## Setting up our development environment
 
 First, let's create a new directory for our config:
 
@@ -72,7 +72,7 @@ Close and save the file then run `bundler` to install these gems:
 $ bundle install
 ```
 
-### Setting up Test Kitchen
+## Setting up Test Kitchen
 
 Now let's set up Test Kitchen.
 
@@ -256,7 +256,7 @@ suites:
 
 Save and close the file.
 
-### Writing a test
+## Writing a test
 
 Now, we have some work to do on our workstation. First, let's set up
 an `inspec` directory within our test directories

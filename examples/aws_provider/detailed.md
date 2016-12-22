@@ -1,4 +1,4 @@
-## Detailed
+# Detailed
 
 This directory contains a complex example Terraform project that
 creates infrastructure on AWS and utilizes kitchen-terraform for testing
@@ -8,7 +8,7 @@ While the complexity of the Terraform code has been kept to a minimum,
 it is possible that the configuration of a user's AWS account may still
 prevent the successful execution of this example.
 
-### Terraform Configuration
+## Terraform Configuration
 
 [variables.tf] defines the required inputs for the example module.
 
@@ -20,7 +20,7 @@ prevent the successful execution of this example.
 instances in the test suite's only group and an address to use in the
 suite's Inspec controls.
 
-### AWS Configuration
+## AWS Configuration
 
 Before continuing, review the instructions on configuring the
 [AWS account] with an isolated user for enhanced security.
@@ -28,25 +28,25 @@ Before continuing, review the instructions on configuring the
 In order to execute this example, AWS credentials must be provided
 according to the [credentials provider chain rules].
 
-### Test Kitchen Configuration
+## Test Kitchen Configuration
 
 The [Test Kitchen configuration] includes all of the plugins provided by
 kitchen-terraform.
 
-#### Driver
+### Driver
 
 The driver has no configuration options.
 
-#### Provisioner
+### Provisioner
 
 The provisioner is configured to use 4 concurrent operations to apply a
 test fixture module based on the installed version of Terraform.
 
-#### Transport
+### Transport
 
 The SSH transport is used due to the AMI used in the example module.
 
-#### Verifier
+### Verifier
 
 The verifier is configured with two groups, `contrived` and `local`.
 
@@ -61,17 +61,17 @@ The `local` group omits the `hostnames` setting, which means that its
 specified control will be executed locally rather than on remotely
 on a server in the Terraform state.
 
-#### Platforms
+### Platforms
 
 The platforms configuration is currently irrelevant but must not be
 empty.
 
-#### Suites
+### Suites
 
 The suite name corresponds to the [integration test directory pathname]
 as usual.
 
-#### Missing Configuration
+### Missing Configuration
 
 A couple of required configuration options are missing from the Test
 Kitchen configuration; these must be provided in a local Test Kitchen
@@ -88,7 +88,7 @@ transport:
   ssh_key: <pathname/of/private/ssh/key>
 ```
 
-### Executing Tests
+## Executing Tests
 
 __WARNING__ Creating AWS resources could cost money and be charged to
 the AWS Account's bill; neither kitchen-terraform nor its maintainers
