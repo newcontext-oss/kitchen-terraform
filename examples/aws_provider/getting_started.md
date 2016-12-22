@@ -295,7 +295,7 @@ $ vim main.tf
 
 And add this content:
 
-```
+```hcl
 provider "aws" {
   access_key = "${var.access_key}"
   secret_key = "${var.secret_key}"
@@ -320,7 +320,7 @@ $ vim variables.tf
 
 And add in this content:
 
-```
+```hcl
 variable "access_key" {}
 variable "secret_key" {}
 variable "key_name" {}
@@ -340,7 +340,7 @@ $ vim testing.tfvars
 And add in this content (substitute in the appropriate values for your
 AWS account, region, etc.)
 
-```
+```hcl
 access_key = "my_aws_access_key"
 secret_key = "my_aws_secret_key"
 key_name = "my_aws_key_pair_name"
@@ -362,7 +362,7 @@ $ vim output.tf
 
 And add this content:
 
-```
+```hcl
 output "public_dns" {
   value = "${aws_instance.example.public_dns}"
 }
@@ -453,7 +453,7 @@ $ vim testing.tfvars
 
 And change this content:
 
-```
+```hcl
 region = "us-east-1"
 instance_type = "m3.medium"
 ami = "ami-fce3c696"
@@ -462,7 +462,7 @@ ami = "ami-fce3c696"
 To this content (we are changing our AMI type to be an Amazon Linux AMI
 within the us-east-1 AWS region.
 
-```
+```hcl
 region = "us-east-1"
 instance_type = "m3.medium"
 ami = "ami-6869aa05"
@@ -569,7 +569,7 @@ verifier:
 
 And open up your `testing.tfvars` file and switch back to an Ubuntu AMI
 
-```
+```hcl
 region = "us-east-1"
 instance_type = "m3.medium"
 ami = "ami-fce3c696"
