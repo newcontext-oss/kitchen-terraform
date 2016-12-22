@@ -606,3 +606,4 @@ $ bundle exec kitchen destroy
 [InSpec]: https://github.com/chef/inspec
 [Terraform]: https://www.terraform.io/
 [Test Kitchen]: https://github.com/test-kitchen/test-kitchen
+[kitchen-terraform]: https://github.com/newcontext-oss/kitchen-terraform

@@ -107,7 +107,6 @@ $ bundle exec kitchen test --destroy always
 [credentials provider chain rules]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#config-settings-and-precedence
 [example.tf]: example.tf
 [integration test directory pathname]: test/integration/example
-[kitchen-terraform]: https://github.com/newcontext-oss/kitchen-terraform
 [missing configuration]: README.md#user-content-missing-configuration
 [outputs.tf]: outputs.tf
 [profile's controls]: test/integration/example/controls
