@@ -23,14 +23,16 @@ major version 0.y.z will maintain a stable public interface.
 
 * A Docker provider example (thanks [@errygg])
 
+* An OpenStack provider example (thanks [@xmik])
+
 * Groups with no hostnames will have their controls executed locally; in
   theory, this enables testing of any provider API
 
 * Provisioner configuration for the `terraform apply -parallelism`
   option (thanks [@s3lehtin])
 
-* Clay Thomas, Erik R. Rygg, Kyle Sexton, and Walter Dolce join the gem
-  specification authors
+* Clay Thomas, Ewa Czechowska, Erik R. Rygg, Kyle Sexton, and Walter
+  Dolce join the gem specification authors
 
 ### Changed
 
@@ -185,6 +187,7 @@ major version 0.y.z will maintain a stable public interface.
 [@s3lehtin]: https://github.com/s3lehtin
 [@shinka81]: https://github.com/shinka81
 [@walterdolce]: https://github.com/walterdolce
+[@xmik]: https://github.com/xmik
 [Code Climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
 [Keep a CHANGELOG]: http://keepachangelog.com/
 [Semantic Versioning]: http://semver.org/
