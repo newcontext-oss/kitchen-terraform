@@ -38,7 +38,7 @@ script:
 after_success:
 - bundle exec codeclimate-test-reporter
 before_deploy:
-- gem cert --add certs/public-key.pem
+- gem cert --add certs/public_cert.pem
 deploy:
   provider: rubygems
   api_key:
