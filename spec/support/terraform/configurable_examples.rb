@@ -15,10 +15,8 @@
 # limitations under the License.
 
 require 'kitchen'
-require 'kitchen/provisioner/terraform'
-require 'kitchen/transport/ssh'
+require 'support/terraform/configurable_context'
 require 'terraform/configurable'
-require_relative 'configurable_context'
 
 ::RSpec.shared_examples ::Terraform::Configurable do
   let(:attr) { object }
@@ -64,16 +62,14 @@ require_relative 'configurable_context'
   end
 
   describe '#config_error' do
-    let(:expected) { instance_double ::Object }
-
     subject do
-      proc { described_instance.config_error attr: attr, expected: expected }
+      proc { described_instance.config_error attr: attr, expected: 'expected' }
     end
 
     it 'raises a user error regarding the config attribute' do
       is_expected.to raise_error ::Kitchen::UserError,
                                  "#{formatted_config} must be interpretable " \
-                                   "as #{expected}"
+                                   'as expected'
     end
   end
 
