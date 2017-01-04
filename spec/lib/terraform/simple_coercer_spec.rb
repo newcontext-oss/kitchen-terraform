@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/simple_coercer'
 require 'support/terraform/configurable_context'
+require 'terraform/simple_coercer'
 
 ::RSpec.describe ::Terraform::SimpleCoercer do
   include_context 'instance'
