@@ -15,9 +15,12 @@
 # limitations under the License.
 
 require 'support/terraform/configurable_context'
+require 'support/terraform/simple_config_examples'
 require 'terraform/parallelism_config'
 
 ::RSpec.shared_examples ::Terraform::ParallelismConfig do
+  it_behaves_like ::Terraform::SimpleConfig
+
   describe '#configure_parallelism' do
     subject { described_instance[:parallelism] }
 

@@ -14,23 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/simple_coercer'
+require 'support/terraform/configurable_context'
+require 'terraform/integer_coercer'
 
-module Terraform
-  # A coercer for config values that must be integers
-  class IntegerCoercer
-    def coerce(attr:, value:)
-      coercer.coerce attr: attr, value: value
-    end
+::RSpec.describe ::Terraform::IntegerCoercer do
+  include_context 'instance'
 
-    private
+  let(:described_instance) { described_class.new configurable: provisioner }
 
-    attr_accessor :coercer
+  describe '#coerce' do
+    before { described_instance.coerce attr: :attr, value: '1234' }
 
-    def initialize(configurable:)
-      self.coercer = SimpleCoercer.new configurable: configurable,
-                                       expected: 'an integer',
-                                       method: method(:Integer)
+    subject { provisioner[:attr] }
+
+    it 'coerces config[:attr] to be an integer' do
+      is_expected.to eq 1234
     end
   end
 end
