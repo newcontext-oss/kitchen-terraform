@@ -14,16 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/client'
+require 'kitchen'
+require 'terraform/debug_logger'
 
-::RSpec.shared_context 'client' do
-  let(:client) { instance_double client_class }
+::RSpec.describe ::Terraform::DebugLogger do
+  let(:described_instance) { described_class.new logger: logger }
 
-  let(:client_class) { ::Terraform::Client }
+  let(:logger) { instance_double ::Kitchen::Logger }
 
-  before do
-    allow(client_class).to receive(:new)
-      .with(config: kind_of(::Kitchen::Configurable), logger: duck_type(:<<))
-      .and_return client
+  describe '#<<' do
+    after { described_instance << 'message' }
+
+    subject { logger }
+
+    it 'forwards the message to #debug of the wrapped logger' do
+      is_expected.to receive(:debug).with 'message'
+    end
   end
 end

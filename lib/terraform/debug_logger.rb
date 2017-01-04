@@ -14,13 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'forwardable'
-
 module Terraform
-  # Behaviour for a logger that defaults to the debug level
-  module DebugLogger
-    extend ::Forwardable
+  # Wrapper for a logger to always use the debug level
+  class DebugLogger
+    def <<(message)
+      logger.debug message
+    end
 
-    def_delegator :self, :debug, :<<
+    private
+
+    attr_accessor :logger
+
+    def initialize(logger:)
+      self.logger = logger
+    end
   end
 end
