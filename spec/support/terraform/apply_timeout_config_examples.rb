@@ -14,9 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/simple_config_examples'
 require 'terraform/apply_timeout_config'
 
 ::RSpec.shared_examples ::Terraform::ApplyTimeoutConfig do
+  it_behaves_like ::Terraform::SimpleConfig
+
   describe '#configure_apply_timeout' do
     subject { described_instance[:apply_timeout] }
 
