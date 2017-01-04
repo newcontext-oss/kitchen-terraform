@@ -43,7 +43,7 @@ module Terraform
     end
 
     def debug_logger
-      @debug_logger ||= logger.dup.extend ::Terraform::DebugLogger
+      @debug_logger ||= ::Terraform::DebugLogger.new logger: logger
     end
 
     def instance_pathname(filename:)
