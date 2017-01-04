@@ -21,11 +21,9 @@ module Terraform
   class Command
     attr_reader :options, :target
 
-    def if_requirements_not_met
-    end
+    def if_requirements_not_met; end
 
-    def prepare
-    end
+    def prepare; end
 
     def name
       'help'

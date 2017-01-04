@@ -29,8 +29,7 @@ module Kitchen
 
       no_parallel_for
 
-      def create(_state = nil)
-      end
+      def create(_state = nil); end
 
       def destroy(_state = nil)
         if_state_exist { client.apply_destructively }
