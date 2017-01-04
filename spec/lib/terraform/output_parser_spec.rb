@@ -19,6 +19,19 @@ require 'terraform/output_parser'
 ::RSpec.describe ::Terraform::OutputParser do
   let(:described_instance) { described_class.new value: value }
 
+  describe '#each_name' do
+    let :value do
+      ::JSON.dump 'output_name_1' => 'output_value_1',
+                  'output_name_2' => 'output_value_2'
+    end
+
+    subject { ->(block) { described_instance.each_name(&block) } }
+
+    it 'yields each output name' do
+      is_expected.to yield_successive_args 'output_name_1', 'output_name_2'
+    end
+  end
+
   describe '#iterate_parsed_output' do
     subject { ->(block) { described_instance.iterate_parsed_output(&block) } }
 

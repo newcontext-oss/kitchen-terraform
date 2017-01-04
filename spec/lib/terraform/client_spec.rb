@@ -36,6 +36,8 @@ require 'support/terraform/configurable_context'
   end
 
   shared_context '#output_parser' do
+    let(:version) { '0.7' }
+
     before do
       allow(described_instance).to receive(:version).with(no_args)
         .and_return ::Terraform::Version.new value: version
@@ -87,12 +89,25 @@ require 'support/terraform/configurable_context'
     it_behaves_like '#apply', 'destructive'
   end
 
+  describe '#each_output_name' do
+    include_context '#output_parser'
+
+    let :output_value do
+      ::JSON.dump 'output_name_1' => 'output_value_1',
+                  'output_name_2' => 'output_value_2'
+    end
+
+    subject { ->(block) { described_instance.each_output_name(&block) } }
+
+    it 'yields each output name' do
+      is_expected.to yield_successive_args 'output_name_1', 'output_name_2'
+    end
+  end
+
   describe '#iterate_output' do
     include_context '#output_parser'
 
     let(:output_value) { ::JSON.dump 'value' => %w(value1 value2) }
-
-    let(:version) { '0.7' }
 
     subject do
       ->(block) { described_instance.iterate_output name: 'name', &block }
