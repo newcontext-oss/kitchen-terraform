@@ -14,24 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/simple_coercer'
+require 'terraform/variable_files_coercer'
 
-module Terraform
-  # A coercer for the [:variable_files] config option
-  class VariableFilesCoercer
-    def coerce(attr:, value:)
-      coercer.coerce attr: attr, value: value
-    end
+::RSpec.describe ::Terraform::VariableFilesCoercer do
+  let(:configurable) { {} }
 
-    private
+  let(:described_instance) { described_class.new configurable: configurable }
 
-    attr_accessor :coercer
+  describe '#coerce' do
+    context 'when the value is not an array' do
+      before { described_instance.coerce attr: :attr, value: 'value' }
 
-    def initialize(configurable:)
-      self.coercer =
-        ::Terraform::SimpleCoercer.new configurable: configurable,
-                                       expected: 'a list of variable files',
-                                       method: method(:Array)
+      subject { configurable[:attr] }
+
+      it('coerces the value to be an array') { is_expected.to eq ['value'] }
     end
   end
 end
