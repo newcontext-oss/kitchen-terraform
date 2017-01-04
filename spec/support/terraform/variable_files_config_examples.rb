@@ -14,9 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/simple_config_examples'
 require 'terraform/variable_files_config'
 
 ::RSpec.shared_examples ::Terraform::VariableFilesConfig do
+  it_behaves_like ::Terraform::SimpleConfig
+
   describe '#configure_variable_files' do
     subject { described_instance[:variable_files] }
 
