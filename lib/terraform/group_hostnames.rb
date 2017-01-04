@@ -14,17 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'set'
-
 module Terraform
+  # Hostnames output variable for Group
   class GroupHostnames
-    def if_undefined
-      config_value.scan(/^\s*$/) { yield }
-    end
-
     def resolve(client:, &block)
-      resolve_values
-      resolved_values.each(&block)
+      config_value.scan(/^\s*$/) { return yield 'localhost' }
+
+      client.iterate_output name: config_value, &block
     end
 
     def to_s
@@ -33,16 +29,10 @@ module Terraform
 
     private
 
-    attr_accessor :config_value, :resolved_values
+    attr_accessor :config_value
 
-    def initialize(config_value)
+    def initialize(config_value = '')
       self.config_value = String config_value
-      self.resolved_values = ::Set.new
-    end
-
-    def resolve_values
-      if_undefined { return resolve_values.add 'localhost' }
-      client.iterate_output name: config_value, &resolved_values.method(:add)
     end
   end
 end

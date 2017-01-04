@@ -27,30 +27,20 @@ module Terraform
     property :attributes, coerce: ::Terraform::GroupAttributes,
                           default: ::Terraform::GroupAttributes.new
 
-    property :backend
-
-    coerce_key :backend, ->(value) { coerce_backend value }
-
     property :controls, coerce: ::Array[::String], default: []
 
-    property :hostname, coerce: ::String, default: 'localhost'
+    property :hostname, coerce: ::String
 
     property :hostnames, coerce: ::Terraform::GroupHostnames,
-                         default: ::Terraform::GroupHostnames.new('')
+                         default: ::Terraform::GroupHostnames.new
 
     property :name, coerce: ::String, required: true
 
     property :port
 
-    coerce_key :port, method(:Integer)
+    coerce_key :port, ->(value) { Integer value }
 
     property :username, coerce: ::String
-
-    def self.coerce_backend(value)
-      hostnames.if_undefined { return 'local' }
-
-      value
-    end
 
     def description
       "host '#{hostname}' of group '#{name}'"
@@ -60,6 +50,12 @@ module Terraform
       attributes.resolve client: client
       hostnames
         .resolve(client: client) { |hostname| yield merge hostname: hostname }
+    end
+
+    private
+
+    def initialize(attributes = {}, &block)
+      super Hash(attributes), &block
     end
   end
 end

@@ -33,37 +33,35 @@ require 'support/terraform/groups_config_examples'
   describe '#call(state)' do
     include_context 'client'
 
-    let :config do
-      {
-        groups: [
-          {
-            attributes: { attribute_name: 'attribute output name' },
-            controls: ['control'], hostnames: 'hostnames output name',
-            name: 'group', port: 1234, username: 'username'
-          }
-        ], kitchen_root: 'kitchen/root', test_base_path: 'test/base/path'
-      }
+    let :resolved_group do
+      unresolved_group
+        .merge attributes: { attribute_name: 'attribute output value' },
+               hostname: 'localhost'
     end
 
     let(:runner) { instance_double ::Inspec::Runner }
 
     let(:runner_class) { class_double(::Inspec::Runner).as_stubbed_const }
 
-    let(:verifier) { described_class.new config }
+    let :unresolved_group do
+      ::Terraform::Group
+        .new attributes: { attribute_name: 'attribute output name' },
+             controls: ['control'], name: 'group', port: 1234,
+             username: 'username'
+    end
 
     before do
-      allow(client).to receive(:output).with(name: 'attribute output name')
-        .and_return 'attribute output value'
+      default_config
+        .merge! groups: [unresolved_group], test_base_path: 'test/base/path'
 
-      allow(client).to receive(:iterate_output)
-        .with(name: 'hostnames output name')
-        .and_yield 'a hostnames output value'
+      allow(unresolved_group).to receive(:resolve).with(client: client)
+        .and_yield resolved_group
 
       allow(runner_class).to receive(:new).with(
         hash_including(
           attributes: { 'attribute_name' => 'attribute output value' },
-          controls: ['control'], host: 'a hostnames output value',
-          port: 1234, user: 'username'
+          'backend' => 'local', controls: ['control'],
+          'host' => 'localhost', 'port' => 1234, 'user' => 'username'
         )
       ).and_return runner
 

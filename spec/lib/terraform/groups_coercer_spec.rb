@@ -24,12 +24,14 @@ require 'support/terraform/configurable_context'
 
   describe '#coerce' do
     context 'when the value is a list of valid group mappings' do
-      before { described_instance.coerce attr: :groups, value: [] }
+      before do
+        described_instance.coerce attr: :groups, value: [{ name: 'name' }]
+      end
 
       subject { provisioner[:groups] }
 
       it 'coerces the value to groups' do
-        is_expected.to be_instance_of ::Terraform::Groups
+        is_expected.to contain_exactly instance_of ::Terraform::Group
       end
     end
 
