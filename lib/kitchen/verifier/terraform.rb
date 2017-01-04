@@ -31,7 +31,7 @@ module Kitchen
       kitchen_verifier_api_version 2
 
       def call(state)
-        config[:groups].resolve client: client do |group|
+        resolve_groups do |group|
           self.group = group
           config[:attributes] = group.attributes
           info "Verifying #{group.description}"
@@ -47,10 +47,22 @@ module Kitchen
         ::Terraform::Client.new config: provisioner, logger: debug_logger
       end
 
-      def runner_options(transport, state = {})
-        super.merge backend: group.backend, controls: group.controls,
-                    host: group.hostname, port: group.port,
-                    user: group.username
+      def configure_backend(options:)
+        /(local)host/.match group.hostname do |match|
+          options.merge! 'backend' => match[1]
+        end
+      end
+
+      def resolve_groups(&block)
+        config[:groups].each { |group| group.resolve client: client, &block }
+      end
+
+      def runner_options(transport, state = {}, platform = nil, suite = nil)
+        super.tap do |options|
+          options.merge! controls: group.controls, 'host' => group.hostname,
+                         'port' => group.port, 'user' => group.username
+          configure_backend options: options
+        end
       end
     end
   end

@@ -24,12 +24,12 @@ module Terraform
 
     coerce_value ::Object, ::String
 
-    def self.coerce(hash)
-      self[hash]
+    def self.coerce(config_value)
+      self[config_value]
     end
 
     def resolve(client:)
-      client.each_output_name { |name| soft_store name, name }
+      client.each_output_name { |name| soft_store key: name, value: name }
       dup.each_pair { |key, value| store key, client.output(name: value) }
     end
 

@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'groups_coercer'
-require_relative 'simple_config'
+require 'terraform/groups_coercer'
+require 'terraform/simple_config'
 
 module Terraform
   # Behaviour for the [:groups] config option

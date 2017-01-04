@@ -15,14 +15,13 @@
 # limitations under the License.
 
 require 'hashie/extensions/coercion'
-require_relative 'groups'
+require 'terraform/group'
 
 module Terraform
   # A coercer for [:groups] config values
   class GroupsCoercer
     def coerce(attr:, value:)
-      configurable[attr] =
-        ::Terraform::Groups.new Array(value).map(&method(:Hash))
+      configurable[attr] = Array(value).map(&::Terraform::Group.method(:new))
     rescue ::TypeError, ::Hashie::CoercionError
       configurable.config_error attr: attr, expected: 'a group mapping'
     end

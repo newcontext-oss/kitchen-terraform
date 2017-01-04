@@ -14,9 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/simple_config_examples'
 require 'terraform/groups_config'
 
 ::RSpec.shared_examples ::Terraform::GroupsConfig do
+  it_behaves_like ::Terraform::SimpleConfig
+
   describe '#configure_groups' do
     subject { described_instance[:groups] }
 
