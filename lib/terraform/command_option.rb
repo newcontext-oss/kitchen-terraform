@@ -30,7 +30,7 @@ module Terraform
     end
 
     def to_s
-      "-#{key}#{formatted_value}"
+      "-#{key}=#{value}"
     end
 
     def tuple
@@ -41,13 +41,13 @@ module Terraform
 
     attr_writer :key, :value
 
-    def formatted_value
-      String(value).sub(/(\S)/, '=\1')
+    def initialize(key:, value: '')
+      self.key = formatted string: key
+      self.value = formatted string: value
     end
 
-    def initialize(key:, value: '')
-      self.key = key
-      self.value = value
+    def formatted(string:)
+      String(string).gsub(/\s/, '')
     end
   end
 end

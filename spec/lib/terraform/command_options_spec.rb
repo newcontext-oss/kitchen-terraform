@@ -21,7 +21,7 @@ require 'terraform/command_options'
 
   let(:options) { ::Set.new }
 
-  let(:value) { instance_double ::Object }
+  let(:value) { 'value' }
 
   shared_examples '#fetch' do |key|
     before { options.add ::Terraform::CommandOption.new key: key, value: value }
