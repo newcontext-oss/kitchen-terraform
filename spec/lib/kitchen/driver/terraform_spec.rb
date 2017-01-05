@@ -35,14 +35,16 @@ require 'support/terraform/configurable_examples'
   describe '#destroy' do
     include_context 'client'
 
-    before { allow(client).to receive(:state).with(no_args).and_return state }
+    let :allow_load_state do
+      allow(client).to receive(:load_state).with(no_args)
+    end
 
     after { described_instance.destroy }
 
     subject { client }
 
     context 'when a state does exist' do
-      let(:state) { 'foo' }
+      before { allow_load_state.and_yield }
 
       it 'applies destructively' do
         is_expected.to receive(:apply_destructively).with no_args
@@ -50,7 +52,7 @@ require 'support/terraform/configurable_examples'
     end
 
     context 'when a state does not exist' do
-      let(:state) { '' }
+      before { allow_load_state }
 
       it('takes no action') { is_expected.to_not receive :apply_destructively }
     end
