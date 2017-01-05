@@ -22,7 +22,7 @@ require 'terraform/debug_logger'
 
   let(:logger) { instance_double ::Kitchen::Logger }
 
-  describe '#<<' do
+  shared_examples '#debug' do
     after { described_instance << 'message' }
 
     subject { logger }
@@ -31,4 +31,8 @@ require 'terraform/debug_logger'
       is_expected.to receive(:debug).with 'message'
     end
   end
+
+  describe('#<< ') { it_behaves_like '#debug' }
+
+  describe('#debug') { it_behaves_like '#debug' }
 end
