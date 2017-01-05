@@ -17,9 +17,11 @@
 module Terraform
   # Wrapper for a logger to always use the debug level
   class DebugLogger
-    def <<(message)
+    def debug(message)
       logger.debug message
     end
+
+    alias << debug
 
     private
 
