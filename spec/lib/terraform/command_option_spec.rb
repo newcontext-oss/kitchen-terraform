@@ -17,13 +17,15 @@
 require 'terraform/command_option'
 
 ::RSpec.describe ::Terraform::CommandOption do
-  let(:described_instance) { described_class.new key: 'key', value: 'value' }
+  let(:described_instance) { described_class.new key: 'key', value: value }
 
   let(:equivalent_instance) { described_class.new key: ' key', value: 'value ' }
 
   let :unequivalent_instance do
     described_class.new key: 'other_key', value: 'other_value'
   end
+
+  let(:value) { 'value' }
 
   shared_examples '#==' do
     context 'when the options do have equivalent tuples' do
@@ -58,8 +60,18 @@ require 'terraform/command_option'
   describe '#to_s' do
     subject { described_instance.to_s }
 
-    it 'returns the tuple formatted for the command line' do
-      is_expected.to eq '-key=value'
+    context 'when the option does have a value' do
+      it 'returns the tuple formatted for the command line' do
+        is_expected.to eq '-key=value'
+      end
+    end
+
+    context 'when the option does not have a value' do
+      let(:value) { '' }
+
+      it 'returns the key formatted for the command line' do
+        is_expected.to eq '-key'
+      end
     end
   end
 
