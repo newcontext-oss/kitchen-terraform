@@ -32,7 +32,7 @@ module Kitchen
       def create(_state = nil); end
 
       def destroy(_state = nil)
-        if_state_exist { client.apply_destructively }
+        silent_client.load_state { client.apply_destructively }
       end
 
       def verify_dependencies
@@ -55,10 +55,6 @@ module Kitchen
 
       def deprecated_versions
         @deprecated_versions ||= [::Terraform::Version.new(value: '0.6')]
-      end
-
-      def if_state_exist(&block)
-        /\w+/.match silent_client.state, &block
       end
 
       def if_version_deprecated

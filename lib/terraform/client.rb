@@ -38,12 +38,14 @@ module Terraform
       output_parser(name: name).iterate_parsed_output(&block)
     end
 
-    def output(name:)
-      output_parser(name: name).parsed_output
+    def load_state(&block)
+      invoker.execute(command: factory.show_command) do |state|
+        /\w+/.match state, &block
+      end
     end
 
-    def state
-      invoker.execute(command: factory.show_command) { |value| return value }
+    def output(name:)
+      output_parser(name: name).parsed_output
     end
 
     def version

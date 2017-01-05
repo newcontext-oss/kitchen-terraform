@@ -118,6 +118,27 @@ require 'support/terraform/configurable_context'
     end
   end
 
+  describe '#load_state' do
+    before do
+      allow(invoker).to receive(:execute)
+        .with(command: kind_of(::Terraform::ShowCommand)).and_yield state
+    end
+
+    subject { ->(block) { described_instance.load_state(&block) } }
+
+    context 'when state does exist' do
+      let(:state) { 'state' }
+
+      it('yields') { is_expected.to yield_control }
+    end
+
+    context 'when state does not exist' do
+      let(:state) { '' }
+
+      it('takes no action') { is_expected.to_not yield_control }
+    end
+  end
+
   describe '#output' do
     include_context '#output_parser'
 
@@ -128,17 +149,6 @@ require 'support/terraform/configurable_context'
     subject { described_instance.output name: 'name' }
 
     it('returns the output value') { is_expected.to eq 'value' }
-  end
-
-  describe '#state' do
-    before do
-      allow(invoker).to receive(:execute)
-        .with(command: kind_of(::Terraform::ShowCommand)).and_yield 'state'
-    end
-
-    subject { described_instance.state }
-
-    it('returns the state') { is_expected.to eq 'state' }
   end
 
   describe '#version' do
