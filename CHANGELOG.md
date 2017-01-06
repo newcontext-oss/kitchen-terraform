@@ -14,6 +14,10 @@ major version 0.y.z will maintain a stable public interface.
 
 * Support for Ruby 2.4
 
+### Fixed
+
+* Docker provider example's group controls configuration
+
 ## [0.4.0] - 2016-12-24
 
 ### Added

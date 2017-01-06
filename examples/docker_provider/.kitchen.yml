@@ -14,17 +14,17 @@ platforms:
 
 transport:
   name: ssh
-  password: root 
+  password: root
 
 suites:
   - name: default
 
 verifier:
-  name: terraform 
+  name: terraform
   format: doc
   groups:
-  - name: default
-    tests:
-      - operating_system
-    port: 2222
-    hostnames: localhost
+    - name: default
+      controls:
+        - operating_system
+      port: 2222
+      hostnames: localhost
