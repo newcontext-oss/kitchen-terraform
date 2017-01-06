@@ -64,7 +64,7 @@ Gem::Specification.new do |specification|
 
   specification.cert_chain = ['certs/public_cert.pem']
 
-  specification.required_ruby_version = ['>= 2.1', '< 2.4']
+  specification.required_ruby_version = ['>= 2.1', '< 2.5']
 
   specification.requirements = ['Terraform >= 0.6, < 0.9']
 

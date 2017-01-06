@@ -12,6 +12,8 @@ major version 0.y.z will maintain a stable public interface.
 
 * Support for Terraform v0.8
 
+* Support for Ruby 2.4
+
 ## [0.4.0] - 2016-12-24
 
 ### Added
