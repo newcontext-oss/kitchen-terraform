@@ -48,10 +48,11 @@ module Kitchen
 
       def verify_dependencies
         case version
-        when /(v[^0]|v0\.[^67])/
-          raise Kitchen::UserError, 'Only Terraform v0.7 and v0.6 are supported'
+        when /(v[^0]|v0\.[^678])/
+          raise Kitchen::UserError,
+                'Only Terraform v0.8, v0.7, and v0.6 are supported'
         when /v0\.6/
-          log_deprecation aspect: 'v0.6', remediation: 'Update to v0.7',
+          log_deprecation aspect: 'v0.6', remediation: 'Update to v0.8 or v0.7',
                           version: '1.0'
         end
       end

@@ -8,6 +8,10 @@ major version 0.y.z will maintain a stable public interface.
 
 ## [0.5.0] - 2017-01-06
 
+### Added
+
+* Support for Terraform v0.8
+
 ## [0.4.0] - 2016-12-24
 
 ### Added

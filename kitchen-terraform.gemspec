@@ -66,7 +66,7 @@ Gem::Specification.new do |specification|
 
   specification.required_ruby_version = ['>= 2.1', '< 2.4']
 
-  specification.requirements = ['Terraform >= 0.6.0, < 0.8.0']
+  specification.requirements = ['Terraform >= 0.6, < 0.9']
 
   specification.signing_key = 'certs/private_key.pem'
 end
