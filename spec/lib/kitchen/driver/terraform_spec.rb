@@ -175,20 +175,22 @@ RSpec.describe Kitchen::Driver::Terraform do
 
     let(:call_method) { described_instance.verify_dependencies }
 
-    context 'when the installed version is v0.8' do
-      before { allow_version.and_return 'v0.8' }
-
+    shared_examples 'a supported version' do
       subject { proc { call_method } }
 
       it('an error is not raised') { is_expected.to_not raise_error }
     end
 
+    context 'when the installed version is v0.8' do
+      before { allow_version.and_return 'v0.8' }
+
+      it_behaves_like 'a supported version'
+    end
+
     context 'when the installed version is v0.7' do
       before { allow_version.and_return 'v0.7' }
 
-      subject { proc { call_method } }
-
-      it('an error is not raised') { is_expected.to_not raise_error }
+      it_behaves_like 'a supported version'
     end
 
     context 'when the installed version is v0.6' do
