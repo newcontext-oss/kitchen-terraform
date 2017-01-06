@@ -14,53 +14,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/verifier/terraform'
+require 'support/terraform/client_context'
 require 'terraform/group'
 
-RSpec.describe Terraform::Group do
-  let(:described_instance) do
-    described_class.new data: data
-  end
+::RSpec.describe ::Terraform::Group do
+  let(:config_value) { { name: 'name' } }
 
-  describe '#each_attribute(&block)' do
-    let(:data) { { attributes: { key_1 => value_1, key_2 => value_2 } } }
+  let(:described_instance) { described_class.new config_value }
 
-    let(:key_1) { instance_double Object }
+  describe '#description' do
+    before { config_value.merge! hostname: 'hostname' }
 
-    let(:value_1) { instance_double Object }
+    subject { described_instance.description }
 
-    let(:key_2) { instance_double Object }
-
-    let(:value_2) { instance_double Object }
-
-    subject { ->(block) { described_instance.each_attribute(&block) } }
-
-    it 'enumerates each attribute pair' do
-      is_expected.to yield_successive_args [key_1, value_1], [key_2, value_2]
+    it 'describes the group' do
+      is_expected.to eq "host 'hostname' of group 'name'"
     end
   end
 
-  describe '#hostnames' do
-    let(:data) { { hostnames: hostnames } }
+  describe '#resolve' do
+    include_context 'client'
 
-    let(:hostnames) { instance_double Object }
+    let(:hostnames) { ::Terraform::GroupHostnames.new }
 
-    subject { described_instance.hostnames }
+    let(:resolved_attributes) { ::Terraform::GroupAttributes.new }
 
-    it('returns the hostnames data') { is_expected.to eq hostnames }
-  end
+    let(:unresolved_attributes) { ::Terraform::GroupAttributes.new }
 
-  describe '#store_attribute(key:, value:)' do
-    let(:data) { { attributes: {} } }
+    before do
+      allow(unresolved_attributes).to receive(:resolve).with client: client
 
-    let(:key) { instance_double Object }
+      allow(hostnames)
+        .to receive(:resolve).with(client: client).and_yield 'hostname'
 
-    let(:value) { instance_double Object }
+      config_value
+        .merge! attributes: unresolved_attributes, hostnames: hostnames
+    end
 
-    before { described_instance.store_attribute key: key, value: value }
+    subject { ->(block) { described_instance.resolve client: client, &block } }
 
-    subject { data[:attributes][key] }
-
-    it('stores the attribute pair data') { is_expected.to eq value }
+    it 'resolves output values and yields the group with a hostname' do
+      is_expected.to yield_with_args hash_including(
+        attributes: resolved_attributes, hostname: 'hostname'
+      )
+    end
   end
 end

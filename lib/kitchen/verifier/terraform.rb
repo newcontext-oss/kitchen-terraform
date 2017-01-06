@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require 'kitchen/verifier/inspec'
+require 'terraform/client'
 require 'terraform/configurable'
 require 'terraform/groups_config'
 
@@ -22,70 +23,46 @@ module Kitchen
   module Verifier
     # Runs tests post-converge to confirm that instances in the Terraform state
     # are in an expected state
-    class Terraform < Inspec
-      include ::Terraform::Configurable
+    class Terraform < ::Kitchen::Verifier::Inspec
+      extend ::Terraform::GroupsConfig
 
-      include ::Terraform::GroupsConfig
+      include ::Terraform::Configurable
 
       kitchen_verifier_api_version 2
 
       def call(state)
-        verify_groups options: runner_options(transport, state)
+        resolve_groups do |group|
+          self.group = group
+          config[:attributes] = group.attributes
+          info "Verifying #{group.description}"
+          super
+        end
       end
 
       private
 
-      def add_targets(runner:)
-        collect_tests.each { |test| runner.add_target test }
+      attr_accessor :group
+
+      def client
+        ::Terraform::Client.new config: provisioner, logger: debug_logger
       end
 
-      def execute(group:, options:)
-        options.merge! group.options
-        ::Inspec::Runner.new(options).tap do |runner|
-          add_targets runner: runner
-          validate exit_code: runner.run
+      def configure_backend(options:)
+        /(local)host/.match group.hostname do |match|
+          options.merge! 'backend' => match[1]
         end
       end
 
-      def execute_local(group:, options:)
-        options[:backend] = 'local'
-        info "Verifying group '#{group.name}'"
-        execute group: group, options: options
+      def resolve_groups(&block)
+        config[:groups].each { |group| group.resolve client: client, &block }
       end
 
-      def execute_remote(group:, options:)
-        driver.output_value list: true, name: group.hostnames do |hostname|
-          options[:host] = hostname
-          info "Verifying host '#{hostname}' of group '#{group.name}'"
-          execute group: group, options: options
+      def runner_options(transport, state = {}, platform = nil, suite = nil)
+        super.tap do |options|
+          options.merge! controls: group.controls, 'host' => group.hostname,
+                         'port' => group.port, 'user' => group.username
+          configure_backend options: options
         end
-      end
-
-      def resolve_attributes(group:)
-        driver.each_output_name do |output_name|
-          group.store_attribute key: output_name, value: output_name
-        end
-        group.each_attribute do |key, output_name|
-          group.store_attribute key: key,
-                                value: driver.output_value(name: output_name)
-        end
-      end
-
-      def validate(exit_code:)
-        return if exit_code.zero?
-
-        raise ::Kitchen::InstanceFailure, "Inspec Runner returns #{exit_code}"
-      end
-
-      def verify(group:, options:)
-        resolve_attributes group: group
-        group.if_local { return execute_local group: group, options: options }
-        execute_remote group: group, options: options
-      end
-
-      def verify_groups(options:)
-        config[:groups]
-          .each { |group| verify group: group, options: options.dup }
       end
     end
   end

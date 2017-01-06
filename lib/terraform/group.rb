@@ -14,48 +14,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/util'
+require 'hashie/dash'
+require 'hashie/extensions/dash/coercion'
+require 'terraform/group_attributes'
+require 'terraform/group_hostnames'
 
 module Terraform
   # Group of Terraform server instances to be verified
-  class Group
-    def each_attribute(&block)
-      data[:attributes].dup.each_pair(&block)
+  class Group < ::Hashie::Dash
+    include ::Hashie::Extensions::Dash::Coercion
+
+    property :attributes, coerce: ::Terraform::GroupAttributes,
+                          default: ::Terraform::GroupAttributes.new
+
+    property :controls, coerce: ::Array[::String], default: []
+
+    property :hostname, coerce: ::String
+
+    property :hostnames, coerce: ::Terraform::GroupHostnames,
+                         default: ::Terraform::GroupHostnames.new
+
+    property :name, coerce: ::String, required: true
+
+    property :port
+
+    coerce_key :port, ->(value) { Integer value }
+
+    property :username, coerce: ::String
+
+    def description
+      "host '#{hostname}' of group '#{name}'"
     end
 
-    def hostnames
-      data[:hostnames]
-    end
-
-    def if_local
-      yield if hostnames.empty?
-    end
-
-    def name
-      data[:name]
-    end
-
-    def options
-      {
-        attributes: attributes, controls: data[:controls], port: data[:port],
-        user: data[:username]
-      }
-    end
-
-    def store_attribute(key:, value:)
-      data[:attributes][key] = value
+    def resolve(client:)
+      attributes.resolve client: client
+      hostnames
+        .resolve(client: client) { |hostname| yield merge hostname: hostname }
     end
 
     private
 
-    attr_accessor :data
-
-    def attributes
-      ::Kitchen::Util.stringified_hash data[:attributes]
-    end
-
-    def initialize(data:)
-      self.data = data
+    def initialize(attributes = {}, &block)
+      super Hash(attributes), &block
     end
   end
 end

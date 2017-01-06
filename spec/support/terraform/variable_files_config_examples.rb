@@ -14,26 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/simple_config_examples'
 require 'terraform/variable_files_config'
 
-RSpec.shared_examples Terraform::VariableFilesConfig do
-  describe '#coerce_variable_files(value:)' do
-    let(:value) { instance_double Object }
+::RSpec.shared_examples ::Terraform::VariableFilesConfig do
+  it_behaves_like ::Terraform::SimpleConfig
 
-    before { described_instance.coerce_variable_files value: value }
-
+  describe '#configure_variable_files' do
     subject { described_instance[:variable_files] }
 
-    it('updates the config assignment') { is_expected.to eq [value] }
-  end
-
-  describe '#finalize_config!(instance)' do
-    include_context 'finalize_config! instance'
-
-    describe '[:variable_files]' do
-      subject { described_instance[:variable_files] }
-
-      it('defaults to an empty collection') { is_expected.to eq [] }
+    it 'defaults [:variable_files] to an empty list' do
+      is_expected.to eq []
     end
   end
 end

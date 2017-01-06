@@ -14,26 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-require_relative 'color_switch'
+require_relative 'command_with_input_file'
 
 module Terraform
-  # Command to show a state or plan
-  class ShowCommand < Command
-    include ColorSwitch
+  # Behaviour for a command to show a state
+  module ShowCommand
+    include CommandWithInputFile
+
+    def input_file
+      target
+    end
 
     def name
       'show'
-    end
-
-    def options
-      color_switch
-    end
-
-    private
-
-    def initialize_attributes(color:)
-      self.color = color
     end
   end
 end

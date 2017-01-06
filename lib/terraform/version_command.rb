@@ -14,17 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command'
-
 module Terraform
-  # Command to obtain the version
-  class VersionCommand < Command
+  # Behaviour for a command to obtain the version
+  module VersionCommand
     def name
       'version'
-    end
-
-    def options
-      ''
     end
   end
 end

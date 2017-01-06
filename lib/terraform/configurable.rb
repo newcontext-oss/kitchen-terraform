@@ -16,45 +16,52 @@
 
 require 'forwardable'
 require 'kitchen'
-require_relative 'version'
+require_relative 'debug_logger'
+require_relative 'project_version'
 
 module Terraform
-  # Common logic for classes that include Kitchen::Configurable
+  # Behaviour for objects that extend ::Kitchen::Configurable
   module Configurable
-    extend Forwardable
+    extend ::Forwardable
+
+    def_delegator :config, :[]=
 
     def_delegators :instance, :driver, :provisioner, :transport
 
     def self.included(configurable_class)
-      configurable_class.plugin_version VERSION
+      configurable_class.plugin_version ::Terraform::PROJECT_VERSION
     end
 
-    def config_deprecated(attribute:, remediation:, type:, version:)
-      log_deprecation aspect: "#{formatted(attribute: attribute)} as #{type}",
-                      remediation: remediation, version: version
+    def config_deprecated(attr:, remediation:, type:)
+      log_deprecation aspect: "#{formatted_config attr: attr} as #{type}",
+                      remediation: remediation
     end
 
-    def config_error(attribute:, expected:)
-      raise Kitchen::UserError, "#{formatted attribute: attribute} must be " \
-                                  "interpretable as #{expected}"
+    def config_error(attr:, expected:)
+      raise ::Kitchen::UserError, "#{formatted_config attr: attr} must be " \
+                                    "interpretable as #{expected}"
+    end
+
+    def debug_logger
+      @debug_logger ||= ::Terraform::DebugLogger.new logger: logger
     end
 
     def instance_pathname(filename:)
-      File.join config[:kitchen_root], '.kitchen', 'kitchen-terraform',
-                instance.name, filename
+      ::File.join config[:kitchen_root], '.kitchen', 'kitchen-terraform',
+                  instance.name, filename
     end
 
-    def log_deprecation(aspect:, remediation:, version:)
+    def log_deprecation(aspect:, remediation:)
       logger.warn 'DEPRECATION NOTICE'
-      logger.warn "Support for #{aspect} will be dropped in " \
-                    "kitchen-terraform v#{version}"
+      logger
+        .warn "Support for #{aspect} will be dropped in kitchen-terraform v1.0"
       logger.warn remediation
     end
 
     private
 
-    def formatted(attribute:)
-      "#{self.class}#{instance.to_str}#config[:#{attribute}]"
+    def formatted_config(attr:)
+      "#{self.class}#{instance.to_str}#config[:#{attr}]"
     end
   end
 end

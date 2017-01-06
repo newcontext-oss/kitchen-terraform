@@ -14,44 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/simple_config_examples'
 require 'terraform/apply_timeout_config'
-require_relative 'configurable_context'
 
-RSpec.shared_examples Terraform::ApplyTimeoutConfig do
-  describe '#coerce_apply_timeout(value:)' do
-    let(:call_method) { described_instance.coerce_apply_timeout value: value }
+::RSpec.shared_examples ::Terraform::ApplyTimeoutConfig do
+  it_behaves_like ::Terraform::SimpleConfig
 
-    context 'when the value can be coerced to be an integer' do
-      let(:value) { 1 }
+  describe '#configure_apply_timeout' do
+    subject { described_instance[:apply_timeout] }
 
-      before { call_method }
-
-      subject { described_instance[:apply_timeout] }
-
-      it('updates the config assignment') { is_expected.to eq value }
-    end
-
-    context 'when the value can not be coerced to be an integer' do
-      let(:value) { 'a' }
-
-      after { call_method }
-
-      subject { described_instance }
-
-      it 'an error is reported' do
-        is_expected.to receive(:config_error).with attribute: 'apply_timeout',
-                                                   expected: 'an integer'
-      end
-    end
-  end
-
-  describe '#finalize_config!(instance)' do
-    include_context 'finalize_config! instance'
-
-    describe '[:apply_timeout]' do
-      subject { described_instance[:apply_timeout] }
-
-      it('defaults to 600 seconds') { is_expected.to eq 600 }
-    end
+    it('defaults [:apply_timeout] to 600') { is_expected.to eq 600 }
   end
 end

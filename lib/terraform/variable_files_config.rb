@@ -14,20 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require_relative 'simple_config'
+require_relative 'variable_files_coercer'
+
 module Terraform
   # Behaviour for the [:variable_files] config option
   module VariableFilesConfig
-    def self.included(configurable_class)
-      configurable_class
-        .required_config :variable_files do |_, value, configurable|
-          configurable.coerce_variable_files value: value
-        end
-      configurable_class.default_config :variable_files, []
-      configurable_class.expand_path_for :variable_files
+    include ::Terraform::SimpleConfig
+
+    def self.extended(configurable_class)
+      configurable_class.configure_variable_files
     end
 
-    def coerce_variable_files(value:)
-      config[:variable_files] = Array value
+    def configure_variable_files
+      configure_required attr: :variable_files,
+                         coercer_class: ::Terraform::VariableFilesCoercer
+      default_config :variable_files, []
+      expand_path_for :variable_files
     end
   end
 end
