@@ -59,3 +59,21 @@ end
 
   before { instance }
 end
+
+::RSpec.shared_context 'limited_client' do
+  let(:limited_client) { instance_double ::Terraform::Client }
+
+  before do
+    allow(described_instance)
+      .to receive(:limited_client).with(no_args).and_return limited_client
+  end
+end
+
+::RSpec.shared_context 'silent_client' do
+  let(:silent_client) { instance_double ::Terraform::Client }
+
+  before do
+    allow(described_instance)
+      .to receive(:silent_client).with(no_args).and_return silent_client
+  end
+end

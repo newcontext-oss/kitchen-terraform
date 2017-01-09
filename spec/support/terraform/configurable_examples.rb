@@ -43,6 +43,20 @@ require 'terraform/configurable'
     end
   end
 
+  describe '#client' do
+    let(:client) { instance_double ::Object }
+
+    before do
+      allow(::Terraform::Client).to receive(:new)
+        .with(config: provisioner, logger: instance_of(::Kitchen::Logger))
+        .and_return client
+    end
+
+    subject { described_instance.client }
+
+    it('returns a configured client') { is_expected.to be client }
+  end
+
   describe '#config_deprecated' do
     let(:remediation) { instance_double ::Object }
 
@@ -77,7 +91,7 @@ require 'terraform/configurable'
     subject { described_instance.debug_logger }
 
     it 'is a debug logger' do
-      is_expected.to be_kind_of ::Terraform::DebugLogger
+      is_expected.to be_instance_of ::Terraform::DebugLogger
     end
   end
 
@@ -97,6 +111,22 @@ require 'terraform/configurable'
     it 'returns a pathname under the hidden instance directory' do
       is_expected
         .to eq 'kitchen/root/.kitchen/kitchen-terraform/suite-platform/filename'
+    end
+  end
+
+  describe '#limited_client' do
+    let(:limited_client) { object }
+
+    before do
+      allow(::Terraform::Client)
+        .to receive(:new).with(logger: instance_of(::Terraform::DebugLogger))
+        .and_return limited_client
+    end
+
+    subject { described_instance.limited_client }
+
+    it 'returns a limited client for use before the plugins are set up' do
+      is_expected.to be limited_client
     end
   end
 
@@ -143,6 +173,23 @@ require 'terraform/configurable'
 
     it 'returns the provisioner of the instance' do
       is_expected.to be instance.provisioner
+    end
+  end
+
+  describe '#silent_client' do
+    let(:silent_client) { object }
+
+    before do
+      allow(::Terraform::Client).to receive(:new).with(
+        config: kind_of(::Kitchen::Configurable),
+        logger: instance_of(::Terraform::DebugLogger)
+      ).and_return silent_client
+    end
+
+    subject { described_instance.silent_client }
+
+    it 'returns a client with color disabled and debug output' do
+      is_expected.to be silent_client
     end
   end
 

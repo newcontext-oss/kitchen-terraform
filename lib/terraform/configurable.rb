@@ -16,8 +16,9 @@
 
 require 'forwardable'
 require 'kitchen'
-require_relative 'debug_logger'
-require_relative 'project_version'
+require 'terraform/client'
+require 'terraform/debug_logger'
+require 'terraform/project_version'
 
 module Terraform
   # Behaviour for objects that extend ::Kitchen::Configurable
@@ -32,6 +33,10 @@ module Terraform
       configurable_class.plugin_version ::Terraform::PROJECT_VERSION
     end
 
+    def client
+      ::Terraform::Client.new config: provisioner, logger: logger
+    end
+
     def config_deprecated(attr:, remediation:, type:)
       log_deprecation aspect: "#{formatted_config attr: attr} as #{type}",
                       remediation: remediation
@@ -43,12 +48,16 @@ module Terraform
     end
 
     def debug_logger
-      @debug_logger ||= ::Terraform::DebugLogger.new logger: logger
+      ::Terraform::DebugLogger.new logger: logger
     end
 
     def instance_pathname(filename:)
       ::File.join config[:kitchen_root], '.kitchen', 'kitchen-terraform',
                   instance.name, filename
+    end
+
+    def limited_client
+      ::Terraform::Client.new logger: debug_logger
     end
 
     def log_deprecation(aspect:, remediation:)
@@ -58,10 +67,18 @@ module Terraform
       logger.warn remediation
     end
 
+    def silent_client
+      ::Terraform::Client.new config: silent_config, logger: debug_logger
+    end
+
     private
 
     def formatted_config(attr:)
       "#{self.class}#{instance.to_str}#config[:#{attr}]"
+    end
+
+    def silent_config
+      provisioner.dup.tap { |config| config[:color] = false }
     end
   end
 end
