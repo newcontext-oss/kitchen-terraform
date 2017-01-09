@@ -15,84 +15,228 @@
 # limitations under the License.
 
 require 'terraform/command_factory'
-require 'support/terraform/apply_command_examples'
 require 'support/terraform/configurable_context'
-require 'support/terraform/destructive_plan_command_examples'
-require 'support/terraform/get_command_examples'
-require 'support/terraform/output_command_examples'
-require 'support/terraform/plan_command_examples'
-require 'support/terraform/show_command_examples'
-require 'support/terraform/validate_command_examples'
-require 'support/terraform/version_command_examples'
 
 ::RSpec.describe ::Terraform::CommandFactory do
   include_context 'instance'
 
-  let(:factory) { described_class.new config: provisioner }
+  let(:described_instance) { described_class.new config: provisioner }
 
   before do
     provisioner[:color] = false
-    provisioner[:variable_files] = ['variable/file']
-    provisioner[:variables] = { variable_name: 'variable_value' }
+    provisioner[:directory] = '/directory'
+    provisioner[:parallelism] = 1234
+    provisioner[:plan] = '/plan/file'
+    provisioner[:state] = '/state/file'
+    provisioner[:variable_files] = ['/variable/file']
+    provisioner[:variables] = { name: 'value' }
+  end
+
+  shared_examples 'color option' do
+    it('is set from config[:color]') { is_expected.to include '-no-color' }
+  end
+
+  shared_examples 'destroy option' do
+    it('is enabled') { is_expected.to include '-destroy=true' }
+  end
+
+  shared_examples 'directory target' do
+    it('is set from config[:directory]') { is_expected.to eq '/directory' }
+  end
+
+  shared_examples 'input option' do
+    it('is disabled') { is_expected.to include '-input=false' }
+  end
+
+  shared_examples 'output command options' do
+    it_behaves_like 'color option'
+
+    it_behaves_like 'state option'
+  end
+
+  shared_examples 'output command target' do
+    it('is arbitrary') { is_expected.to eq 'target' }
+  end
+
+  shared_examples 'parallelism option' do
+    it 'is set from config[:parallelism]' do
+      is_expected.to include '-parallelism=1234'
+    end
+  end
+
+  shared_examples 'plan command options' do
+    it_behaves_like 'color option'
+
+    it_behaves_like 'input option'
+
+    it_behaves_like 'parallelism option'
+
+    it_behaves_like 'var option'
+
+    it_behaves_like 'var-file option'
+
+    it 'out option is set from config[:plan]' do
+      is_expected.to include '-out=/plan/file'
+    end
+  end
+
+  shared_examples 'state option' do
+    it 'is set from config[:state]' do
+      is_expected.to include '-state=/state/file'
+    end
+  end
+
+  shared_examples 'var option' do
+    it 'is set from config[:variables]' do
+      is_expected.to include "-var='name=value'"
+    end
+  end
+
+  shared_examples 'var-file option' do
+    it 'is set from config[:variable_files]' do
+      is_expected.to include '-var-file=/variable/file'
+    end
   end
 
   describe '#apply_command' do
-    it_behaves_like ::Terraform::ApplyCommand do
-      let(:described_instance) { factory.apply_command }
+    let(:command) { described_instance.apply_command }
+
+    describe 'the target' do
+      subject { command.target }
+
+      it('is set from config[:plan]') { is_expected.to eq '/plan/file' }
+    end
+
+    describe 'the options' do
+      subject { command.options.to_s }
+
+      it_behaves_like 'color option'
+
+      it_behaves_like 'input option'
+
+      it_behaves_like 'parallelism option'
+
+      it_behaves_like 'state option'
     end
   end
 
   describe '#destructive_plan_command' do
-    it_behaves_like ::Terraform::DestructivePlanCommand do
-      let(:described_instance) { factory.destructive_plan_command }
+    let(:command) { described_instance.destructive_plan_command }
+
+    describe 'the target' do
+      subject { command.target }
+
+      it_behaves_like 'directory target'
+    end
+
+    describe 'the options' do
+      subject { command.options.to_s }
+
+      it_behaves_like 'destroy option'
+
+      it_behaves_like 'plan command options'
+
+      it_behaves_like 'state option'
     end
   end
 
   describe '#get_command' do
-    it_behaves_like ::Terraform::GetCommand do
-      let(:described_instance) { factory.get_command }
+    let(:command) { described_instance.get_command }
+
+    describe 'the target' do
+      subject { command.target }
+
+      it_behaves_like 'directory target'
+    end
+
+    describe 'the options' do
+      subject { command.options.to_s }
+
+      it('update option is enabled') { is_expected.to include '-update=true' }
     end
   end
 
   describe '#json_output_command' do
-    it_behaves_like ::Terraform::OutputCommand do
-      let(:described_instance) { factory.json_output_command target: object }
+    let(:command) { described_instance.json_output_command target: 'target' }
 
-      describe '#options' do
-        subject { described_instance.options.to_s }
+    describe 'the target' do
+      subject { command.target }
 
-        it('include -json=true') { is_expected.to include '-json=true' }
-      end
+      it_behaves_like 'output command target'
+    end
+
+    describe 'the options' do
+      subject { command.options.to_s }
+
+      it_behaves_like 'output command options'
+
+      it('json option is enabled') { is_expected.to include '-json=true' }
     end
   end
 
   describe '#output_command' do
-    it_behaves_like ::Terraform::OutputCommand do
-      let(:described_instance) { factory.output_command target: object }
+    let(:command) { described_instance.output_command target: 'target' }
+
+    describe 'the target' do
+      subject { command.target }
+
+      it_behaves_like 'output command target'
+    end
+
+    describe 'the options' do
+      subject { command.options.to_s }
+
+      it_behaves_like 'output command options'
     end
   end
 
   describe '#plan_command' do
-    it_behaves_like ::Terraform::PlanCommand do
-      let(:described_instance) { factory.plan_command }
+    let(:command) { described_instance.plan_command }
+
+    describe 'the target' do
+      subject { command.target }
+
+      it_behaves_like 'directory target'
+    end
+
+    describe 'the options' do
+      subject { command.options.to_s }
+
+      it_behaves_like 'plan command options'
     end
   end
 
   describe '#show_command' do
-    it_behaves_like ::Terraform::ShowCommand do
-      let(:described_instance) { factory.show_command }
+    let(:command) { described_instance.show_command }
+
+    describe 'the target' do
+      subject { command.target }
+
+      it('is set from config[:state]') { is_expected.to eq '/state/file' }
+    end
+
+    describe 'the options' do
+      subject { command.options.to_s }
+
+      it_behaves_like 'color option'
     end
   end
 
   describe '#validate_command' do
-    it_behaves_like ::Terraform::ValidateCommand do
-      let(:described_instance) { factory.validate_command }
+    let(:command) { described_instance.validate_command }
+
+    describe 'the target' do
+      subject { command.target }
+
+      it_behaves_like 'directory target'
     end
   end
 
   describe '#version_command' do
-    it_behaves_like ::Terraform::VersionCommand do
-      let(:described_instance) { factory.version_command }
+    subject { described_instance.version_command }
+
+    it 'has no target or options' do
+      is_expected.to be_instance_of ::Terraform::VersionCommand
     end
   end
 end

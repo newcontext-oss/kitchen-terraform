@@ -14,40 +14,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'apply_command'
-require_relative 'command'
-require_relative 'destructive_plan_command'
-require_relative 'get_command'
-require_relative 'output_command'
-require_relative 'plan_command'
-require_relative 'show_command'
-require_relative 'validate_command'
-require_relative 'version_command'
+require 'terraform/apply_command'
+require 'terraform/destructive_plan_command'
+require 'terraform/get_command'
+require 'terraform/output_command'
+require 'terraform/plan_command'
+require 'terraform/show_command'
+require 'terraform/validate_command'
+require 'terraform/version_command'
 
 module Terraform
   # A factory to create commands
   class CommandFactory
     def apply_command
-      ::Terraform::Command.new subcommand: ::Terraform::ApplyCommand,
-                               target: config[:plan] do |options|
+      ::Terraform::ApplyCommand.new target: config[:plan] do |options|
         options.color = config[:color]
+        options.input = false
         options.parallelism = config[:parallelism]
         options.state = config[:state]
       end
     end
 
     def destructive_plan_command
-      ::Terraform::Command
-        .new subcommand: ::Terraform::DestructivePlanCommand,
-             target: config[:directory] do |options|
-        configure_plan options: options
-        options.state = config[:state]
-      end
+      ::Terraform::DestructivePlanCommand
+        .new target: config[:directory] do |options|
+          configure_plan options: options
+          options.destroy = true
+          options.state = config[:state]
+        end
     end
 
     def get_command
-      ::Terraform::Command.new subcommand: ::Terraform::GetCommand,
-                               target: config[:directory]
+      ::Terraform::GetCommand.new target: config[:directory] do |options|
+        options.update = true
+      end
     end
 
     def json_output_command(target:)
@@ -57,8 +57,7 @@ module Terraform
     def output_command(target:, &block)
       block ||= proc {}
 
-      ::Terraform::Command.new subcommand: ::Terraform::OutputCommand,
-                               target: target do |options|
+      ::Terraform::OutputCommand.new target: target do |options|
         options.color = config[:color]
         options.state = config[:state]
         block.call options
@@ -66,26 +65,23 @@ module Terraform
     end
 
     def plan_command
-      ::Terraform::Command.new subcommand: ::Terraform::PlanCommand,
-                               target: config[:directory] do |options|
+      ::Terraform::PlanCommand.new target: config[:directory] do |options|
         configure_plan options: options
       end
     end
 
     def show_command
-      ::Terraform::Command.new subcommand: ::Terraform::ShowCommand,
-                               target: config[:state] do |options|
+      ::Terraform::ShowCommand.new target: config[:state] do |options|
         options.color = config[:color]
       end
     end
 
     def validate_command
-      ::Terraform::Command.new subcommand: ::Terraform::ValidateCommand,
-                               target: config[:directory]
+      ::Terraform::ValidateCommand.new target: config[:directory]
     end
 
     def version_command
-      ::Terraform::Command.new subcommand: ::Terraform::VersionCommand
+      ::Terraform::VersionCommand.new
     end
 
     private
@@ -94,6 +90,7 @@ module Terraform
 
     def configure_plan(options:)
       options.color = config[:color]
+      options.input = false
       options.out = config[:plan]
       options.parallelism = config[:parallelism]
       options.var = config[:variables]
