@@ -20,22 +20,22 @@ require 'mixlib/shellout'
 module Terraform
   # Facilitates execution of commands in a shell
   class ShellOut
-    def self.default_timeout
-      ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT
-    end
-
     def execute(&block)
       block ||= proc {}
 
+      command.prepare
       run_command
       block.call shell_out.stdout
     end
 
     private
 
-    attr_accessor :shell_out
+    attr_accessor :command, :shell_out
 
-    def initialize(command:, logger:, timeout:)
+    def initialize(
+      command:, logger:, timeout: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT
+    )
+      self.command = command
       self.shell_out = ::Mixlib::ShellOut.new command.to_s, live_stream: logger,
                                                             timeout: timeout
     end
@@ -51,7 +51,7 @@ module Terraform
       shell_out.run_command
       shell_out.error!
     rescue *instance_failures => error
-      raise ::Kitchen::InstanceFailure,
+      raise ::Kitchen::StandardError,
             %(`#{shell_out.command}` failed: "#{error}")
     end
   end

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'terraform/command'
 require 'terraform/shell_out'
 
 ::RSpec.describe ::Terraform::ShellOut do
@@ -22,14 +23,6 @@ require 'terraform/shell_out'
   let :described_instance do
     described_class.new command: command, logger: ::Kitchen::Logger.new,
                         timeout: 1234
-  end
-
-  describe '.default_timeout' do
-    subject { described_class.default_timeout }
-
-    it 'returns the default timeout' do
-      is_expected.to be ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT
-    end
   end
 
   describe '#execute' do
@@ -67,7 +60,7 @@ require 'terraform/shell_out'
       end
 
       it 'raises an instance failure' do
-        is_expected.to raise_error ::Kitchen::InstanceFailure,
+        is_expected.to raise_error ::Kitchen::StandardError,
                                    '`terraform help` failed: "error"'
       end
     end
