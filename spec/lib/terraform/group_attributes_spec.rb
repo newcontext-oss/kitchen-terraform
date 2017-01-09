@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/terraform/client_context'
+require 'terraform/client'
 require 'terraform/group_attributes'
 
 ::RSpec.describe ::Terraform::GroupAttributes do
   let(:described_instance) { described_class.coerce config_value }
 
   describe '#resolve' do
-    include_context 'client'
+    let(:client) { instance_double ::Terraform::Client }
 
     let :config_value do
       {

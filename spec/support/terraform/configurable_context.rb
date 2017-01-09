@@ -20,6 +20,15 @@ require 'kitchen/provisioner/terraform'
 require 'kitchen/verifier/terraform'
 require 'terraform/configurable'
 
+::RSpec.shared_context 'client' do
+  let(:client) { instance_double ::Terraform::Client }
+
+  before do
+    allow(described_instance)
+      .to receive(:client).with(no_args).and_return client
+  end
+end
+
 ::RSpec.shared_context 'instance' do
   let(:default_config) { { kitchen_root: kitchen_root } }
 
