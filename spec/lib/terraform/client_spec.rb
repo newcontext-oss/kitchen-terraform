@@ -21,18 +21,7 @@ require 'support/terraform/configurable_context'
   include_context 'instance'
 
   let :described_instance do
-    described_class.new config: provisioner, logger: logger
-  end
-
-  let(:invoker) { instance_double ::Terraform::Invoker }
-
-  let(:logger) { ::Kitchen::Logger.new }
-
-  before do
-    allow(::Terraform::Invoker).to receive(:new).with(logger: logger)
-      .and_return invoker
-
-    allow(invoker).to receive(:execute).with any_args
+    described_class.new config: provisioner, logger: ::Kitchen::Logger.new
   end
 
   shared_context '#output_parser' do
@@ -42,34 +31,69 @@ require 'support/terraform/configurable_context'
       allow(described_instance).to receive(:version).with(no_args)
         .and_return ::Terraform::Version.new value: version
 
-      allow(invoker).to receive(:execute)
-        .with(command: kind_of(::Terraform::OutputCommand))
+      allow(described_instance)
+        .to receive(:execute).with(command: kind_of(::Terraform::OutputCommand))
         .and_yield output_value
     end
   end
 
-  shared_examples '#apply' do |style|
-    before { provisioner[:apply_timeout] = 1234 }
+  shared_examples '#apply' do
+    let(:apply_shell_out) { instance_double ::Terraform::ShellOut }
 
-    subject { invoker }
+    before do
+      provisioner[:apply_timeout] = 1234
 
-    it 'validates the configuration' do
-      is_expected.to receive(:execute)
-        .with command: kind_of(::Terraform::ValidateCommand)
+      allow(::Terraform::ShellOut).to receive(:new).with(
+        command: kind_of(::Terraform::ApplyCommand), logger: duck_type(:<<),
+        timeout: 1234
+      ).and_return apply_shell_out
+
+      allow(apply_shell_out).to receive(:execute).with no_args
     end
 
-    it 'updates the modules' do
-      is_expected.to receive(:execute)
-        .with command: kind_of(::Terraform::GetCommand)
+    shared_examples '#execute' do |command|
+      let(:shell_out) { instance_double ::Terraform::ShellOut }
+
+      before do
+        allow(described_instance)
+          .to receive(:execute).with(command: kind_of(::Terraform::Command))
+
+        allow(described_instance).to receive(:execute)
+          .with(command: kind_of(command_class)).and_call_original
+
+        allow(::Terraform::ShellOut).to receive(:new)
+          .with(command: kind_of(command_class), logger: duck_type(:<<))
+          .and_return shell_out
+      end
+
+      subject { shell_out }
+
+      it "a #{command} command is executed" do
+        is_expected.to receive(:execute).with no_args
+      end
     end
 
-    it "plans #{style} changes" do
-      is_expected.to receive(:execute).with command: kind_of(plan_command_class)
+    it_behaves_like '#execute', 'validate' do
+      let(:command_class) { ::Terraform::ValidateCommand }
     end
 
-    it 'applies the plan' do
-      is_expected.to receive(:execute)
-        .with command: kind_of(::Terraform::ApplyCommand), timeout: 1234
+    it_behaves_like '#execute', 'get' do
+      let(:command_class) { ::Terraform::GetCommand }
+    end
+
+    it_behaves_like '#execute', 'plan' do
+      let(:command_class) { plan_command_class }
+    end
+
+    describe 'the apply command' do
+      before do
+        allow(described_instance)
+          .to receive(:execute).with command: kind_of(::Terraform::Command)
+      end
+
+      subject { apply_shell_out }
+
+      it('is executed') { is_expected.to receive(:execute).with no_args }
     end
   end
 
@@ -78,7 +102,7 @@ require 'support/terraform/configurable_context'
 
     after { described_instance.apply_constructively }
 
-    it_behaves_like '#apply', 'constructive'
+    it_behaves_like '#apply'
   end
 
   describe '#apply_destructively' do
@@ -86,7 +110,7 @@ require 'support/terraform/configurable_context'
 
     after { described_instance.apply_destructively }
 
-    it_behaves_like '#apply', 'destructive'
+    it_behaves_like '#apply'
   end
 
   describe '#each_output_name' do
@@ -120,7 +144,7 @@ require 'support/terraform/configurable_context'
 
   describe '#load_state' do
     before do
-      allow(invoker).to receive(:execute)
+      allow(described_instance).to receive(:execute)
         .with(command: kind_of(::Terraform::ShowCommand)).and_yield state
     end
 
@@ -153,7 +177,7 @@ require 'support/terraform/configurable_context'
 
   describe '#version' do
     before do
-      allow(invoker).to receive(:execute)
+      allow(described_instance).to receive(:execute)
         .with(command: kind_of(::Terraform::VersionCommand)).and_yield '0.1'
     end
 

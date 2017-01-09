@@ -14,20 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_factory'
-require_relative 'invoker'
-require_relative 'output_parser'
-require_relative 'version'
+require 'terraform/command_factory'
+require 'terraform/output_parser'
+require 'terraform/shell_out'
+require 'terraform/version'
 
 module Terraform
   # Client to execute commands
   class Client
     def apply_constructively
-      apply { invoker.execute command: factory.plan_command }
+      apply plan_command: factory.plan_command
     end
 
     def apply_destructively
-      apply { invoker.execute command: factory.destructive_plan_command }
+      apply plan_command: factory.destructive_plan_command
     end
 
     def each_output_name(&block)
@@ -39,7 +39,7 @@ module Terraform
     end
 
     def load_state(&block)
-      invoker.execute(command: factory.show_command) do |state|
+      execute(command: factory.show_command) do |state|
         /\w+/.match state, &block
       end
     end
@@ -49,43 +49,44 @@ module Terraform
     end
 
     def version
-      invoker.execute command: factory.version_command do |value|
+      execute command: factory.version_command do |value|
         return ::Terraform::Version.new value: value
       end
     end
 
     private
 
-    attr_accessor :apply_timeout, :factory, :invoker
+    attr_accessor :apply_timeout, :factory, :logger
 
-    def apply
-      invoker.execute command: factory.validate_command
-      invoker.execute command: factory.get_command
-      yield
-      invoker.execute command: factory.apply_command, timeout: apply_timeout
+    def apply(plan_command:)
+      execute command: factory.validate_command
+      execute command: factory.get_command
+      execute command: plan_command
+      ::Terraform::ShellOut.new(
+        command: factory.apply_command, logger: logger, timeout: apply_timeout
+      ).execute
     end
 
-    def if_json_supported
-      [::Terraform::Version.new(value: '0.7')].find proc { return },
-                                                    &version.method(:==)
-
-      yield
+    def execute(command:, &block)
+      ::Terraform::ShellOut
+        .new(command: command, logger: logger).execute(&block)
     end
 
     def initialize(config: {}, logger:)
       self.apply_timeout = config[:apply_timeout]
       self.factory = ::Terraform::CommandFactory.new config: config
-      self.invoker = ::Terraform::Invoker.new logger: logger
+      self.logger = logger
     end
 
     def output_command(target:)
-      if_json_supported { return factory.json_output_command target: target }
+      version
+        .if_json_not_supported { return factory.output_command target: target }
 
-      factory.output_command target: target
+      factory.json_output_command target: target
     end
 
     def output_parser(name:)
-      invoker.execute command: output_command(target: name) do |value|
+      execute command: output_command(target: name) do |value|
         return ::Terraform::OutputParser.new value: value
       end
     end
