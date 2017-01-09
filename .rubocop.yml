@@ -14,3 +14,5 @@ Metrics/ParameterLists:
 Style/AccessorMethodName:
   Exclude:
     - lib/terraform/command_factory.rb
+Style/AndOr:
+  Enabled: false

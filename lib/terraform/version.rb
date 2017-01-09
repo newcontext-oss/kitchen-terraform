@@ -14,15 +14,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'forwardable'
 require 'rubygems/version'
+require 'terraform/deprecated_version'
+require 'terraform/unsupported_version'
 
 module Terraform
   # Version of Terraform
   class Version
-    extend ::Forwardable
+    def self.deprecated
+      [new(value: '0.6')]
+    end
 
-    def_delegator :value, :approximate_recommendation, :major_minor
+    def self.latest
+      new value: '0.7'
+    end
+
+    def self.load(value:)
+      new(value: value).tap do |version|
+        supported.find(&version.method(:==)) or
+          return ::Terraform::UnsupportedVersion.new version
+        deprecated.find(&version.method(:==)) and
+          return ::Terraform::DeprecatedVersion.new version
+      end
+    end
+
+    def self.supported
+      [latest, *deprecated]
+    end
 
     def ==(other)
       major_minor == other.major_minor
@@ -30,8 +48,18 @@ module Terraform
 
     alias eql? ==
 
+    def if_deprecated; end
+
+    def if_json_not_supported; end
+
+    def if_not_supported; end
+
+    def major_minor
+      value.approximate_recommendation
+    end
+
     def to_s
-      "v#{value}"
+      "Terraform v#{value}"
     end
 
     private

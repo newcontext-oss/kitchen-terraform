@@ -36,9 +36,27 @@ require 'terraform/version'
     end
   end
 
+  describe '#if_deprecated' do
+    subject { ->(block) { described_instance.if_deprecated(&block) } }
+
+    it('does not yield control') { is_expected.to_not yield_control }
+  end
+
+  describe '#if_json_not_supported' do
+    subject { ->(block) { described_instance.if_json_not_supported(&block) } }
+
+    it('does not yield control') { is_expected.to_not yield_control }
+  end
+
+  describe '#if_not_supported' do
+    subject { ->(block) { described_instance.if_not_supported(&block) } }
+
+    it('does not yield control') { is_expected.to_not yield_control }
+  end
+
   describe '#to_s' do
     subject { described_instance.to_s }
 
-    it('returns "v<value>"') { is_expected.to eq 'v1.2.3' }
+    it('returns "Terraform v<value>"') { is_expected.to eq 'Terraform v1.2.3' }
   end
 end
