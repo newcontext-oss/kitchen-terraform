@@ -35,6 +35,8 @@ RSpec.describe Terraform::OutputCommand do
 
   it_behaves_like Terraform::CommandExtender
 
+  it_behaves_like(Terraform::ZeroSevenOutput) { let(:version) { 'v0.8' } }
+
   it_behaves_like(Terraform::ZeroSevenOutput) { let(:version) { 'v0.7' } }
 
   it_behaves_like(Terraform::ZeroSixOutput) { let(:version) { 'v0.6' } }

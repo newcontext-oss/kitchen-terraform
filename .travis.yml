@@ -6,13 +6,14 @@ env:
     secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
 language: ruby
 rvm:
+- 2.4.0
 - 2.3.3
 - 2.2.6
 - 2.1.10
 cache:
 - bundler
 before_install:
-- curl --output terraform.zip https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip
+- curl --output terraform.zip https://releases.hashicorp.com/terraform/0.8.2/terraform_0.8.2_linux_amd64.zip
 - mkdir terraform
 install:
 - unzip terraform.zip -d terraform

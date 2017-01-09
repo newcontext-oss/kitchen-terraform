@@ -31,7 +31,9 @@ The transport defines the mechanism for interacting with the Docker container.
 SSH with password authentication is the mechanism defined here. The Docker container that will be used for this example runs the ssh daemon in the foreground in order to allow the verifier to execute tests on the running container.
 
 ### Verifier
-The verifier defines a single `default` group that includes a single test for the `operating_system` on the `localhost` using port number `2222`. This port is mapped to the docker container's ssh port `22`.
+The verifier defines a single `default` group that includes a single
+control for the `operating_system` on the `localhost` using port number
+`2222`. This port is mapped to the docker container's ssh port `22`.
 
 ### Suites
 The suite name corresponds to the integration test directory pathname.

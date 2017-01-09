@@ -40,7 +40,7 @@ module Terraform
     end
 
     def version_behaviours
-      { /v0.7/ => ZeroSevenOutput, /v0.6/ => ZeroSixOutput }
+      { /v0.[7-8]/ => ZeroSevenOutput, /v0.6/ => ZeroSixOutput }
     end
   end
 end
