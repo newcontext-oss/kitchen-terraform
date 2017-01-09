@@ -15,14 +15,14 @@
 # limitations under the License.
 
 module Terraform
-  # Behaviour for the [:directory], [:plan], and [:state] config options
+  # Behaviour for the [:plan] and [:state] config options
   module FileConfigs
     def self.extended(configurable_class)
       configurable_class.configure_files
     end
 
     def configure_files
-      { directory: './', plan: 'terraform.tfplan', state: 'terraform.tfstate' }
+      { plan: 'terraform.tfplan', state: 'terraform.tfstate' }
         .each_pair do |attr, filename|
           configure_file attr: attr, filename: filename
         end
