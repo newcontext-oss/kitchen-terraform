@@ -14,14 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'fileutils'
+require 'kitchen'
+require 'pathname'
 
 module Terraform
-  # Behaviour for a command with an output file
-  module CommandWithOutputFile
-    def prepare
-      super
-      ::FileUtils.mkdir_p ::File.dirname output_file
+  # A preparation for a command with an input file
+  class PrepareInputFile
+    def execute
+      file.open {}
+    end
+
+    private
+
+    attr_accessor :file
+
+    def initialize(file:)
+      self.file = ::Pathname.new file
     end
   end
 end

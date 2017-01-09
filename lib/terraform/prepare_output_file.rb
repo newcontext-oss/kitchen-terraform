@@ -14,15 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/output_command'
-require_relative 'colored_command_examples'
+require 'fileutils'
+require 'pathname'
 
-::RSpec.shared_examples ::Terraform::OutputCommand do
-  it_behaves_like 'colored command'
+module Terraform
+  # A preparation for a command with an output file
+  class PrepareOutputFile
+    def execute
+      file.parent.mkpath
+      file.open('a') {}
+    end
 
-  describe '#name' do
-    subject { described_instance.name }
+    private
 
-    it('is "output"') { is_expected.to eq 'output' }
+    attr_accessor :file
+
+    def initialize(file:)
+      self.file = ::Pathname.new file
+    end
   end
 end

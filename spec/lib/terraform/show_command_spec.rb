@@ -14,23 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command_with_output_file'
+require 'terraform/show_command'
 
-::RSpec.shared_examples ::Terraform::CommandWithOutputFile do
-  describe '#prepare' do
-    let(:dirname) { object }
+::RSpec.describe ::Terraform::ShowCommand do
+  let(:described_instance) { described_class.new }
 
-    before do
-      allow(::File).to receive(:dirname).with(described_instance.output_file)
-        .and_return dirname
-    end
+  describe '#name' do
+    subject { described_instance.name }
 
-    after { described_instance.prepare }
-
-    subject { ::FileUtils }
-
-    it 'creates the parent directory for the output file' do
-      is_expected.to receive(:mkdir_p).with dirname
-    end
+    it('is "show"') { is_expected.to eq 'show' }
   end
 end

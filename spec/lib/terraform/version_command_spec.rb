@@ -14,10 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-RSpec.shared_examples 'colored command' do
-  describe '#options' do
-    subject { described_instance.options.to_s }
+require 'terraform/version_command'
 
-    it('include -no-color') { is_expected.to include '-no-color' }
+::RSpec.describe ::Terraform::VersionCommand do
+  let(:described_instance) { described_class.new }
+
+  describe '#name' do
+    subject { described_instance.name }
+
+    it('is "version"') { is_expected.to eq 'version' }
   end
 end

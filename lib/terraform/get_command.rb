@@ -14,15 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'terraform/command'
+
 module Terraform
-  # Behaviour for a command to get dependency modules
-  module GetCommand
+  # A command to get dependency modules
+  class GetCommand < ::Terraform::Command
     def name
       'get'
-    end
-
-    def options
-      super.tap { |options| options.update = true }
     end
   end
 end

@@ -14,18 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/get_command'
+require 'terraform/prepare_input_file'
 
-::RSpec.shared_examples ::Terraform::GetCommand do
-  describe '#name' do
-    subject { described_instance.name }
+::RSpec.describe ::Terraform::PrepareInputFile do
+  let(:described_instance) { described_class.new file: '/input/file' }
 
-    it('is "get"') { is_expected.to eq 'get' }
-  end
+  describe '#execute' do
+    let(:file) { instance_double ::Pathname }
 
-  describe '#options' do
-    subject { described_instance.options.to_s }
+    before do
+      allow(::Pathname).to receive(:new).with('/input/file').and_return file
+    end
 
-    it('-update=true') { is_expected.to include '-update=true' }
+    after { described_instance.execute }
+
+    subject { file }
+
+    it 'ensures the file can be opened for reading' do
+      is_expected.to receive :open
+    end
   end
 end

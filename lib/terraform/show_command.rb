@@ -14,19 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_input_file'
+require 'terraform/command'
+require 'terraform/prepare_input_file'
 
 module Terraform
-  # Behaviour for a command to show a state
-  module ShowCommand
-    include CommandWithInputFile
-
-    def input_file
-      target
-    end
-
+  # A command to show a state
+  class ShowCommand < ::Terraform::Command
     def name
       'show'
+    end
+
+    private
+
+    def initialize(target: '')
+      super
+      preparations.push ::Terraform::PrepareInputFile.new file: target
     end
   end
 end

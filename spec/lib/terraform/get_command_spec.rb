@@ -14,12 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/detached_command'
+require 'terraform/get_command'
 
-::RSpec.shared_examples ::Terraform::DetachedCommand do
-  describe '#options' do
-    subject { described_instance.options.to_s }
+::RSpec.describe ::Terraform::GetCommand do
+  let(:described_instance) { described_class.new }
 
-    it('include -input=false') { is_expected.to include '-input=false' }
+  describe '#name' do
+    subject { described_instance.name }
+
+    it('is "get"') { is_expected.to eq 'get' }
   end
 end

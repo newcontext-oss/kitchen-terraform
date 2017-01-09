@@ -16,14 +16,17 @@
 
 require 'terraform/command'
 
-RSpec.describe Terraform::Command do
-  let :described_instance do
-    described_class.new options: options, target: target
+::RSpec.describe ::Terraform::Command do
+  let(:described_instance) { described_class.new target: target }
+
+  let(:options) { ::Terraform::CommandOptions.new }
+
+  let(:target) { object }
+
+  before do
+    allow(::Terraform::CommandOptions)
+      .to receive(:new).with(no_args).and_return options
   end
-
-  let(:options) { instance_double Object }
-
-  let(:target) { instance_double Object }
 
   describe '.new' do
     subject { ->(block) { described_class.new(&block) } }
@@ -33,16 +36,16 @@ RSpec.describe Terraform::Command do
     end
   end
 
-  describe '#if_requirements_not_met' do
-    subject { ->(block) { described_instance.if_requirements_not_met(&block) } }
-
-    it('does not yield') { is_expected.to_not yield_control }
-  end
-
   describe '#name' do
     subject { described_instance.name }
 
     it('is "help"') { is_expected.to eq 'help' }
+  end
+
+  describe '#prepare' do
+    subject { described_instance }
+
+    it('takes no action') { is_expected.to respond_to :prepare }
   end
 
   describe '#to_s' do

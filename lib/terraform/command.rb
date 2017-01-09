@@ -14,19 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_options'
+require 'terraform/command_options'
 
 module Terraform
   # Terraform command to be executed
   class Command
     attr_reader :options, :target
 
-    def if_requirements_not_met; end
-
-    def prepare; end
-
     def name
       'help'
+    end
+
+    def prepare
+      preparations.each(&:execute)
     end
 
     def to_s
@@ -35,16 +35,17 @@ module Terraform
 
     private
 
+    attr_accessor :preparations
+
     attr_writer :options, :target
 
-    def initialize(
-      options: CommandOptions.new, subcommand: Module.new, target: '', &block
-    )
+    def initialize(target: '', &block)
       block ||= proc {}
 
-      self.options = options.tap(&block)
+      self.options = ::Terraform::CommandOptions.new
+      self.preparations = []
       self.target = target
-      extend subcommand
+      block.call options
     end
   end
 end

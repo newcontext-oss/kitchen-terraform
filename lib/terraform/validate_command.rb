@@ -14,9 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'terraform/command'
+
 module Terraform
-  # Behaviour for a command to valdidate configuration files
-  module ValidateCommand
+  # A command to valdidate configuration files
+  class ValidateCommand < ::Terraform::Command
     def name
       'validate'
     end

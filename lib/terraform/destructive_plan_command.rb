@@ -14,22 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_input_file'
-require_relative 'plan_command'
+require 'terraform/prepare_input_file'
+require 'terraform/plan_command'
 
 module Terraform
-  # Behaviour for a command to plan a destructive execution
-  module DestructivePlanCommand
-    include CommandWithInputFile
+  # A command to plan a destructive execution
+  class DestructivePlanCommand < ::Terraform::PlanCommand
+    private
 
-    include PlanCommand
-
-    def input_file
-      options.state
-    end
-
-    def options
-      super.tap { |options| options.destroy = true }
+    def initialize(target: '')
+      super
+      preparations
+        .push ::Terraform::PrepareInputFile.new file: options.state
     end
   end
 end

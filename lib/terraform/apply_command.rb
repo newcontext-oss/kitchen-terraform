@@ -14,29 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_input_file'
-require_relative 'command_with_output_file'
-require_relative 'detached_command'
+require 'terraform/command'
+require 'terraform/prepare_input_file'
+require 'terraform/prepare_output_file'
 
 module Terraform
-  # Behaviour for a command to apply an execution plan
-  module ApplyCommand
-    include CommandWithInputFile
-
-    include CommandWithOutputFile
-
-    include DetachedCommand
-
-    def input_file
-      target
-    end
-
+  # A command to apply an execution plan
+  class ApplyCommand < ::Terraform::Command
     def name
       'apply'
     end
 
-    def output_file
-      options.state
+    private
+
+    def initialize(target: '')
+      super
+      preparations.concat [
+        ::Terraform::PrepareInputFile.new(file: target),
+        ::Terraform::PrepareOutputFile.new(file: options.state)
+      ]
     end
   end
 end

@@ -14,13 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # Behaviour for a command with an input file
-  module CommandWithInputFile
-    def if_requirements_not_met
-      [true].find(proc { yield 'missing input file' }) do |value|
-        value == ::File.exist?(input_file)
-      end
-    end
+require 'terraform/validate_command'
+
+::RSpec.describe ::Terraform::ValidateCommand do
+  let(:described_instance) { described_class.new }
+
+  describe '#name' do
+    subject { described_instance.name }
+
+    it('is "validate"') { is_expected.to eq 'validate' }
   end
 end

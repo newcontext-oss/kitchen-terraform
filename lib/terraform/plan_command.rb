@@ -14,22 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'command_with_output_file'
-require_relative 'detached_command'
+require 'terraform/command'
+require 'terraform/prepare_output_file'
 
 module Terraform
-  # Behaviour for a command to plan an execution
-  module PlanCommand
-    include CommandWithOutputFile
-
-    include DetachedCommand
-
+  # A command to plan an execution
+  class PlanCommand < ::Terraform::Command
     def name
       'plan'
     end
 
-    def output_file
-      options.out
+    private
+
+    def initialize(target: '')
+      super
+      preparations.push ::Terraform::PrepareOutputFile.new file: options.out
     end
   end
 end

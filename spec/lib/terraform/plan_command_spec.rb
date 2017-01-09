@@ -14,12 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/validate_command'
+require 'terraform/plan_command'
 
-::RSpec.shared_examples ::Terraform::ValidateCommand do
+::RSpec.describe ::Terraform::PlanCommand do
+  let :described_instance do
+    described_class.new { |options| options.out = '/output/file' }
+  end
+
   describe '#name' do
     subject { described_instance.name }
 
-    it('is "validate"') { is_expected.to eq 'validate' }
+    it('is "plan"') { is_expected.to eq 'plan' }
+  end
+
+  describe '#prepare' do
+    let :prepare_output_file do
+      instance_double ::Terraform::PrepareOutputFile
+    end
+
+    before do
+      allow(::Terraform::PrepareOutputFile).to receive(:new)
+        .with(file: '/output/file').and_return prepare_output_file
+    end
+
+    after { described_instance.prepare }
+
+    subject { prepare_output_file }
+
+    it 'prepares the output out file' do
+      is_expected.to receive(:execute).with no_args
+    end
   end
 end
