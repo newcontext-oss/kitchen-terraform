@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'kitchen'
-require 'terraform/client'
 require 'terraform/configurable'
 require 'terraform/version'
 
@@ -32,63 +31,41 @@ module Kitchen
       def create(_state = nil); end
 
       def destroy(_state = nil)
-        silent_client.load_state { client.apply_destructively }
+        load_state { client.apply_destructively }
+      rescue ::Kitchen::StandardError, ::SystemCallError => error
+        raise ::Kitchen::ActionFailed, error.message
       end
 
       def verify_dependencies
-        if_version_not_supported do
-          raise ::Kitchen::UserError, "Terraform #{version} is not supported" \
-                                        "\nInstall Terraform #{latest_version}"
-        end
-        if_version_deprecated do
-          log_deprecation aspect: "Terraform #{version}",
-                          remediation: "Install Terraform #{latest_version}"
-        end
+        verify_supported_version
+        check_deprecated_version
       end
 
       private
 
-      def client
-        @client ||= ::Terraform::Client.new config: provisioner, logger: logger
+      def check_deprecated_version
+        version.if_deprecated do
+          log_deprecation aspect: version.to_s,
+                          remediation: "Install #{::Terraform::Version.latest}"
+        end
       end
 
-      def deprecated_versions
-        @deprecated_versions ||= [::Terraform::Version.new(value: '0.6')]
+      def load_state(&block)
+        silent_client.load_state(&block)
+      rescue ::Errno::ENOENT => error
+        debug error.message
       end
 
-      def if_version_deprecated
-        deprecated_versions.find proc { return }, &version.method(:==)
-
-        yield
-      end
-
-      def if_version_not_supported(&block)
-        supported_versions.find block, &version.method(:==)
-      end
-
-      def latest_version
-        @latest_version ||= ::Terraform::Version.new value: '0.8'
-      end
-
-      def silent_client
-        ::Terraform::Client.new config: silent_config, logger: debug_logger
-      end
-
-      def silent_config
-        provisioner.dup.tap { |config| config[:color] = false }
-      end
-
-      def supported_version
-        @supported_version ||= ::Terraform::Version.new value: '0.7'
-      end
-
-      def supported_versions
-        @supported_versions ||=
-          [latest_version, supported_version] + deprecated_versions
+      def verify_supported_version
+        version.if_not_supported do
+          raise ::Kitchen::UserError,
+                "#{version} is not supported\nInstall " \
+                  "#{::Terraform::Version.latest}"
+        end
       end
 
       def version
-        @version ||= ::Terraform::Client.new(logger: debug_logger).version
+        @version ||= limited_client.version
       end
     end
   end

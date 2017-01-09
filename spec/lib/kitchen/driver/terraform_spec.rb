@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'kitchen/driver/terraform'
-require 'support/terraform/client_context'
 require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
 
@@ -35,16 +34,18 @@ require 'support/terraform/configurable_examples'
   describe '#destroy' do
     include_context 'client'
 
+    include_context 'silent_client'
+
     let :allow_load_state do
-      allow(client).to receive(:load_state).with(no_args)
+      allow(silent_client).to receive(:load_state).with(no_args)
     end
-
-    after { described_instance.destroy }
-
-    subject { client }
 
     context 'when a state does exist' do
       before { allow_load_state.and_yield }
+
+      after { described_instance.destroy }
+
+      subject { client }
 
       it 'applies destructively' do
         is_expected.to receive(:apply_destructively).with no_args
@@ -52,21 +53,34 @@ require 'support/terraform/configurable_examples'
     end
 
     context 'when a state does not exist' do
-      before { allow_load_state }
+      before { allow_load_state.and_raise ::Errno::ENOENT, 'state file' }
 
-      it('takes no action') { is_expected.to_not receive :apply_destructively }
+      after { described_instance.destroy }
+
+      subject { described_instance }
+
+      it 'logs a debug message' do
+        is_expected.to receive(:debug).with(/state file/)
+      end
+    end
+
+    context 'when a command fails' do
+      before { allow_load_state.and_raise ::SystemCallError, 'system call' }
+
+      subject { proc { described_instance.destroy } }
+
+      it 'raises an action failed error' do
+        is_expected.to raise_error ::Kitchen::ActionFailed, /system call/
+      end
     end
   end
 
   describe '#verify_dependencies' do
-    include_context 'client'
+    include_context 'limited_client'
 
     before do
-      allow(client_class).to receive(:new)
-        .with(logger: kind_of(::Terraform::DebugLogger)).and_return client
-
-      allow(client).to receive(:version).with(no_args)
-        .and_return ::Terraform::Version.new value: version
+      allow(limited_client).to receive(:version).with(no_args)
+        .and_return ::Terraform::Version.load value: version
     end
 
     context 'when the Terraform version is not supported' do

@@ -16,7 +16,6 @@
 
 require 'kitchen'
 require 'terraform/apply_timeout_config'
-require 'terraform/client'
 require 'terraform/color_config'
 require 'terraform/configurable'
 require 'terraform/directory_config'
@@ -48,8 +47,9 @@ module Kitchen
       kitchen_provisioner_api_version 2
 
       def call(_state = nil)
-        ::Terraform::Client
-          .new(config: self, logger: logger).apply_constructively
+        client.apply_constructively
+      rescue ::Kitchen::StandardError, ::SystemCallError => error
+        raise ::Kitchen::ActionFailed, error.message
       end
     end
   end

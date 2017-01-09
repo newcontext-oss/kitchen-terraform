@@ -26,7 +26,7 @@ module Terraform
     end
 
     def self.latest
-      new value: '0.7'
+      new value: '0.8'
     end
 
     def self.load(value:)
@@ -39,7 +39,7 @@ module Terraform
     end
 
     def self.supported
-      [latest, *deprecated]
+      [latest, ::Terraform::Version.new(value: '0.7'), *deprecated]
     end
 
     def ==(other)

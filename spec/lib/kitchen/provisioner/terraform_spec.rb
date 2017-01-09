@@ -16,7 +16,6 @@
 
 require 'kitchen/provisioner/terraform'
 require 'support/terraform/apply_timeout_config_examples'
-require 'support/terraform/client_context'
 require 'support/terraform/color_config_examples'
 require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
@@ -50,12 +49,27 @@ require 'support/terraform/variables_config_examples'
   describe '#call(_state = nil)' do
     include_context 'client'
 
-    after { described_instance.call }
+    context 'when all commands do not fail' do
+      after { described_instance.call }
 
-    subject { client }
+      subject { client }
 
-    it 'applies constructively' do
-      is_expected.to receive(:apply_constructively).with no_args
+      it 'applies constructively' do
+        is_expected.to receive(:apply_constructively).with no_args
+      end
+    end
+
+    context 'when a command does fail' do
+      before do
+        allow(client).to receive(:apply_constructively)
+          .with(no_args).and_raise ::SystemCallError, 'system call'
+      end
+
+      subject { proc { described_instance.call } }
+
+      it 'raises an action failed error' do
+        is_expected.to raise_error ::Kitchen::ActionFailed, /system call/
+      end
     end
   end
 end

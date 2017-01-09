@@ -16,7 +16,6 @@
 
 require 'inspec'
 require 'kitchen/verifier/terraform'
-require 'support/terraform/client_context'
 require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
 require 'support/terraform/groups_config_examples'
@@ -31,7 +30,7 @@ require 'support/terraform/groups_config_examples'
   it_behaves_like ::Terraform::GroupsConfig
 
   describe '#call(state)' do
-    include_context 'client'
+    include_context 'silent_client'
 
     let :resolved_group do
       unresolved_group
@@ -54,7 +53,7 @@ require 'support/terraform/groups_config_examples'
       default_config
         .merge! groups: [unresolved_group], test_base_path: 'test/base/path'
 
-      allow(unresolved_group).to receive(:resolve).with(client: client)
+      allow(unresolved_group).to receive(:resolve).with(client: silent_client)
         .and_yield resolved_group
 
       allow(runner_class).to receive(:new).with(

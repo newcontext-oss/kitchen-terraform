@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require 'kitchen/verifier/inspec'
-require 'terraform/client'
 require 'terraform/configurable'
 require 'terraform/groups_config'
 
@@ -37,15 +36,13 @@ module Kitchen
           info "Verifying #{group.description}"
           super
         end
+      rescue ::Kitchen::StandardError, ::SystemCallError => error
+        raise ::Kitchen::ActionFailed, error.message
       end
 
       private
 
       attr_accessor :group
-
-      def client
-        ::Terraform::Client.new config: provisioner, logger: debug_logger
-      end
 
       def configure_backend(options:)
         /(local)host/.match group.hostname do |match|
@@ -54,7 +51,8 @@ module Kitchen
       end
 
       def resolve_groups(&block)
-        config[:groups].each { |group| group.resolve client: client, &block }
+        config[:groups]
+          .each { |group| group.resolve client: silent_client, &block }
       end
 
       def runner_options(transport, state = {}, platform = nil, suite = nil)
