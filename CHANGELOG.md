@@ -17,6 +17,8 @@ major version 0.y.z will maintain a stable public interface.
 
 ### Fixed
 
+* Broken reference to the Getting Started guide
+
 * Output names for Terraform 0.6 are correctly parsed
 
 ## [0.5.0] - 2017-01-09
