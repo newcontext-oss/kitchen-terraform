@@ -6,6 +6,12 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
+## [0.6.0] - 2017-xx-yy
+
+### Changed
+
+* Restructured code for better distribution of responsibilities
+
 ## [0.5.0] - 2017-01-09
 
 ### Added
@@ -183,6 +189,7 @@ major version 0.y.z will maintain a stable public interface.
 [0.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.2.0...v0.3.0
 [0.4.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.3.0...v0.4.0
 [0.5.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.4.0...v0.5.0
+[0.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.0...v0.6.0
 [@amaltson]: https://github.com/amaltson
 [@cullenmcdermott]: https://github.com/cullenmcdermott
 [@errygg]: https://github.com/errygg
