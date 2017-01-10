@@ -12,6 +12,9 @@ major version 0.y.z will maintain a stable public interface.
 
 * Restructured code for better distribution of responsibilities
 
+* Intermediate workflow Terraform commands will be logged at the debug
+  level
+
 ## [0.5.0] - 2017-01-09
 
 ### Added
