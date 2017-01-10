@@ -17,7 +17,7 @@ major version 0.y.z will maintain a stable public interface.
 
 ### Fixed
 
-* Broken reference to the Getting Started guide
+* Broken reference to the Getting Started guide (thanks [@nellshamrell])
 
 * Output names for Terraform 0.6 are correctly parsed
 
@@ -48,7 +48,7 @@ major version 0.y.z will maintain a stable public interface.
 
 * A shiny, new [Travis CI build plan] (thanks [@justindossey])
 
-* Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury and @m00gs])
+* Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury] and [@m00gs])
 
 * [Code Climate coverage]
 
