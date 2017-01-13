@@ -24,35 +24,70 @@ require 'support/terraform/configurable_context'
   let(:described_instance) { described_class.new configurable: provisioner }
 
   describe '#coerce' do
-    context 'when the value is a list of valid group mappings' do
-      before do
-        described_instance.coerce attr: :groups, value: [{ name: 'name' }]
+    let(:call_method) { described_instance.coerce attr: :attr, value: value }
+
+    context 'when the value is a valid list of group mappings' do
+      shared_examples 'it has a dynamic default' do
+        let :transport do
+          ::Kitchen::Transport::Ssh.new property => transport_property_value
+        end
+
+        before { call_method }
+
+        subject { ->(block) { provisioner[:attr].map(&property).each(&block) } }
+
+        context 'when the group property is specified' do
+          let :value do
+            [
+              { name: 'name1', property => group_property_value },
+              { name: 'name2', property => group_property_value }
+            ]
+          end
+
+          it 'uses the specified value' do
+            is_expected.to yield_successive_args group_property_value,
+                                                 group_property_value
+          end
+        end
+
+        context 'when the group property is not specified' do
+          let(:value) { [{ name: 'name1' }, { name: 'name2' }] }
+
+          it 'uses the transport value' do
+            is_expected.to yield_successive_args transport_property_value,
+                                                 transport_property_value
+          end
+        end
       end
 
-      subject { provisioner[:groups] }
+      describe 'each group mapping port' do
+        it_behaves_like 'it has a dynamic default' do
+          let(:group_property_value) { 2468 }
 
-      it 'coerces the value to groups' do
-        is_expected.to contain_exactly instance_of ::Terraform::Group
+          let(:property) { :port }
+
+          let(:transport_property_value) { 3579 }
+        end
+      end
+
+      describe 'each group mapping username' do
+        it_behaves_like 'it has a dynamic default' do
+          let(:group_property_value) { 'username' }
+
+          let(:property) { :username }
+
+          let(:transport_property_value) { 'default_username' }
+        end
       end
     end
 
-    context 'when the value is a list of invalid group mappings' do
+    context 'when the value is not a valid list of group mappings' do
+      let(:value) { { name: 'name' } }
+
       it_behaves_like 'a user error has occurred' do
-        let :described_method do
-          described_instance.coerce attr: :groups, value: { name: 'name' }
-        end
+        let(:described_method) { call_method }
 
-        let(:message) { /:groups.*a group mapping/ }
-      end
-    end
-
-    context 'when the value is a list of unexpected elements' do
-      it_behaves_like 'a user error has occurred' do
-        let :described_method do
-          described_instance.coerce attr: :groups, value: ''
-        end
-
-        let(:message) { /:groups.*a group mapping/ }
+        let(:message) { /:attr.*a list of group mappings/ }
       end
     end
   end

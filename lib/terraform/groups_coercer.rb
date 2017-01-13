@@ -21,17 +21,23 @@ module Terraform
   # A coercer for [:groups] config values
   class GroupsCoercer
     def coerce(attr:, value:)
-      configurable[attr] = Array(value).map(&::Terraform::Group.method(:new))
+      configurable[attr] = Array(value).map do |group|
+        ::Terraform::Group.new defaults.merge group
+      end
     rescue ::TypeError, ::Hashie::CoercionError
-      configurable.config_error attr: attr, expected: 'a group mapping'
+      configurable.config_error attr: attr, expected: 'a list of group mappings'
     end
 
     private
 
-    attr_accessor :configurable
+    attr_accessor :configurable, :defaults
 
     def initialize(configurable:)
       self.configurable = configurable
+      self.defaults = {
+        port: configurable.transport[:port],
+        username: configurable.transport[:username]
+      }
     end
   end
 end
