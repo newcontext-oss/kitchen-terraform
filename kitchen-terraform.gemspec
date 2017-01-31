@@ -9,7 +9,7 @@ require 'terraform/project_version.rb'
 ::Gem::Specification.new do |specification|
   specification.authors = [
     'Aaron Lane', 'Clay Thomas', 'Erik R. Rygg', 'Ewa Czechowska',
-    'Kevin Dickerson', 'Kyle Sexton', 'Michael Glenney',
+    'Kevin Dickerson', 'Kyle Sexton', 'Matt Long', 'Michael Glenney',
     'Nell Shamrell-Harrington', 'Nick Willever', 'Walter Dolce'
   ]
 
