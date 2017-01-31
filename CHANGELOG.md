@@ -21,6 +21,9 @@ major version 0.y.z will maintain a stable public interface.
 
 * Output names for Terraform 0.6 are correctly parsed
 
+* Incomplete InSpec control definition in the Getting Started guide (
+  thanks [@burythehammer])
+
 ## [0.5.1] - 2017-02-17
 
 ### Fixed
@@ -208,6 +211,7 @@ major version 0.y.z will maintain a stable public interface.
 [0.5.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.0...v0.5.1
 [0.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.0...v0.6.0
 [@amaltson]: https://github.com/amaltson
+[@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott
 [@errygg]: https://github.com/errygg
 [@esword]: https://github.com/esword
