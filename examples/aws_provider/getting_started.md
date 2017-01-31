@@ -415,8 +415,10 @@ And let's add in a very basic test to make sure we are running on an
 Ubuntu system.
 
 ```ruby
-describe command('lsb_release -a') do
-  its('stdout') { should match (/Ubuntu/) }
+control 'operating_system' do
+  describe command('lsb_release -a') do
+    its('stdout') { should match (/Ubuntu/) }
+  end
 end
 ```
 
