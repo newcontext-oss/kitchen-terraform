@@ -11,7 +11,7 @@ major version 0.y.z will maintain a stable public interface.
 ### Fixed
 
 * Support for Terraform configurations that do not define any outputs
-  (thanks @johnrengelman)
+  (thanks [@johnrengelman])
 
 ## [0.5.0] - 2017-01-09
 
