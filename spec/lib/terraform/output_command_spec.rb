@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'support/terraform/command_context'
 require 'support/terraform/command_extender_examples'
 require 'support/terraform/zero_seven_output_examples'
 require 'support/terraform/zero_six_output_examples'
@@ -23,11 +24,13 @@ RSpec.describe Terraform::OutputCommand do
   let :described_instance do
     described_class.new(
       list: list, version: version,
-      state: state, return_raw: false
+      state: state, return_raw: return_raw
     )
   end
 
-  let(:list) { instance_double Object }
+  let(:list) { true }
+
+  let(:return_raw) { false }
 
   let(:state) { instance_double Object }
 
@@ -45,5 +48,43 @@ RSpec.describe Terraform::OutputCommand do
     subject { described_instance.name }
 
     it('returns "output"') { is_expected.to eq 'output' }
+  end
+
+  describe '#output' do
+    include_context '#shell_out'
+
+    subject { described_instance.output }
+
+    context 'when the shell command fails because the state file has no ' \
+              'outputs defined' do
+      before do
+        allow(shell_out).to receive :live_stream=
+
+        allow(shell_out).to receive :timeout=
+
+        allow(shell_out).to receive :run_command
+
+        allow(shell_out).to receive(:error!).with(no_args)
+          .and_raise ::Mixlib::ShellOut::ShellCommandFailed, 'no outputs'
+
+        described_instance.run logger: [], timeout: 123
+      end
+
+      context 'when the expected output is raw' do
+        let(:return_raw) { true }
+
+        it('returns raw JSON') { is_expected.to eq '{}' }
+      end
+
+      context 'when the expected output is a list' do
+        it('returns an empty list') { is_expected.to eq [] }
+      end
+
+      context 'when the expected output is not a list' do
+        let(:list) { false }
+
+        it('returns an empty string') { is_expected.to eq '' }
+      end
+    end
   end
 end
