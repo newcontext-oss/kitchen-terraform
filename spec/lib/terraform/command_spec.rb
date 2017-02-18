@@ -71,19 +71,31 @@ RSpec.describe Terraform::Command do
       allow(shell_out).to check_error
     end
 
-    after { described_instance.run logger: logger, timeout: timeout }
+    describe 'executing the shell out command' do
+      after { described_instance.run logger: logger, timeout: timeout }
 
-    subject { shell_out }
+      subject { shell_out }
 
-    it 'uses the logger for live streaming' do
-      is_expected.to set_live_stream
+      it 'uses the logger for live streaming' do
+        is_expected.to set_live_stream
+      end
+
+      it('configures a timeout duration') { is_expected.to set_timeout }
+
+      it('runs the command') { is_expected.to run_command }
     end
 
-    it('configures a timeout duration') { is_expected.to set_timeout }
+    describe 'checking for errors' do
+      context 'when there is an error' do
+        before { allow(shell_out).to check_error.and_raise }
 
-    it('runs the command') { is_expected.to run_command }
+        subject do
+          proc { described_instance.run logger: logger, timeout: timeout }
+        end
 
-    it('checks for errors') { is_expected.to check_error }
+        it('raises the exception') { is_expected.to raise_error }
+      end
+    end
   end
 
   describe '#to_s' do

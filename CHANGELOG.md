@@ -6,6 +6,13 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
+## [0.5.1] - 2017-02-17
+
+### Fixed
+
+* Support for Terraform configurations that do not define any outputs
+  (thanks @johnrengelman)
+
 ## [0.5.0] - 2017-01-09
 
 ### Added
@@ -183,12 +190,14 @@ major version 0.y.z will maintain a stable public interface.
 [0.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.2.0...v0.3.0
 [0.4.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.3.0...v0.4.0
 [0.5.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.4.0...v0.5.0
+[0.5.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.0...v0.5.1
 [@amaltson]: https://github.com/amaltson
 [@cullenmcdermott]: https://github.com/cullenmcdermott
 [@errygg]: https://github.com/errygg
 [@esword]: https://github.com/esword
 [@fivetwentysix]: https://github.com/fivetwentysix
 [@jbussdieker]: https://github.com/jbussdieker
+[@johnrengelman]: https://github.com/johnrengelman
 [@justindossey]: https://github.com/justindossey
 [@kevindickerson]: https://github.com/kevindickerson
 [@ksexton]: https://github.com/ksexton

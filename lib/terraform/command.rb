@@ -36,6 +36,8 @@ module Terraform
       shell_out.timeout = timeout
       shell_out.run_command
       shell_out.error!
+    rescue => exception
+      handle_error exception: exception
     end
 
     def to_s
@@ -45,6 +47,10 @@ module Terraform
     private
 
     attr_accessor :shell_out
+
+    def handle_error(exception:)
+      raise exception
+    end
 
     def initialize(target: '', **keyword_arguments)
       initialize_attributes(**keyword_arguments)

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'mixlib/shellout'
 require_relative 'command'
 require_relative 'command_extender'
 require_relative 'zero_six_output'
@@ -31,6 +32,18 @@ module Terraform
     private
 
     attr_accessor :list, :state, :return_raw
+
+    def handle_error(exception:)
+      raise exception if !exception.is_a?(
+        Mixlib::ShellOut::ShellCommandFailed
+      ) | !exception.message.match(/no outputs/)
+
+      define_singleton_method :output do
+        return '{}' if return_raw
+
+        list ? [] : ''
+      end
+    end
 
     def initialize_attributes(list:, version:, state:, return_raw: false)
       extend_behaviour version: version
