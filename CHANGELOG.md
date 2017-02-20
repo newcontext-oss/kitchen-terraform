@@ -8,6 +8,11 @@ major version 0.y.z will maintain a stable public interface.
 
 ## [0.6.0] - 2017-02-22
 
+### Added
+
+* Driver configuration option to specify the pathanme of the Terraform
+  command-line interface
+
 ### Changed
 
 * Restructured code for better distribution of responsibilities

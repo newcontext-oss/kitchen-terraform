@@ -57,11 +57,11 @@ end
 
   let(:verifier) { ::Kitchen::Verifier::Terraform.new default_config }
 
-  before { instance }
-end
+  before do
+    allow(::File).to receive(:which).with('terraform').and_return '/terraform'
 
-::RSpec.shared_context 'limited_client' do
-  include_context 'client', client_type: :limited_client
+    instance
+  end
 end
 
 ::RSpec.shared_context 'silent_client' do

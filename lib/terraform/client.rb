@@ -57,24 +57,26 @@ module Terraform
 
     private
 
-    attr_accessor :apply_timeout, :factory, :logger
+    attr_accessor :apply_timeout, :cli, :factory, :logger
 
     def apply(plan_command:)
       execute command: factory.validate_command
       execute command: factory.get_command
       execute command: plan_command
       ::Terraform::ShellOut.new(
-        command: factory.apply_command, logger: logger, timeout: apply_timeout
+        cli: cli, command: factory.apply_command, logger: logger,
+        timeout: apply_timeout
       ).execute
     end
 
     def execute(command:, &block)
       ::Terraform::ShellOut
-        .new(command: command, logger: logger).execute(&block)
+        .new(cli: cli, command: command, logger: logger).execute(&block)
     end
 
     def initialize(config: {}, logger:)
       self.apply_timeout = config[:apply_timeout]
+      self.cli = config[:cli]
       self.factory = ::Terraform::CommandFactory.new config: config
       self.logger = logger
     end

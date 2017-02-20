@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require 'kitchen'
+require 'terraform/cli_config'
 require 'terraform/configurable'
 require 'terraform/version'
 
@@ -22,6 +23,8 @@ module Kitchen
   module Driver
     # Terraform state lifecycle activities manager
     class Terraform < ::Kitchen::Driver::Base
+      extend ::Terraform::CLIConfig
+
       include ::Terraform::Configurable
 
       kitchen_driver_api_version 2
@@ -65,7 +68,8 @@ module Kitchen
       end
 
       def version
-        @version ||= limited_client.version
+        @version ||=
+          ::Terraform::Client.new(config: self, logger: debug_logger).version
       end
     end
   end

@@ -33,11 +33,12 @@ module Terraform
     attr_accessor :command, :shell_out
 
     def initialize(
-      command:, logger:, timeout: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT
+      cli:, command:, logger:, timeout: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT
     )
       self.command = command
-      self.shell_out = ::Mixlib::ShellOut.new command.to_s, live_stream: logger,
-                                                            timeout: timeout
+      self.shell_out = ::Mixlib::ShellOut.new "#{cli} #{command}",
+                                              live_stream: logger,
+                                              timeout: timeout
     end
 
     def instance_failures

@@ -48,8 +48,8 @@ require 'terraform/command'
   describe '#to_s' do
     subject { described_instance.to_s }
 
-    it 'is "terraform <name> <options> <target>"' do
-      is_expected.to eq "terraform help #{options} #{target}"
+    it 'is "<name> <options> <target>"' do
+      is_expected.to eq "help #{options} #{target}"
     end
   end
 end

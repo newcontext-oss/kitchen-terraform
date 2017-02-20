@@ -14,40 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command_options'
+require 'ptools'
 
 module Terraform
-  # Terraform command to be executed
-  class Command
-    attr_reader :options, :target
-
-    def name
-      /(\w+)Command/.match(self.class.to_s) { |match| return match[1].downcase }
-
-      'help'
-    end
-
-    def prepare
-      preparations.each(&:execute)
-    end
-
-    def to_s
-      "#{name} #{options} #{target}".strip
-    end
-
-    private
-
-    attr_accessor :preparations
-
-    attr_writer :options, :target
-
-    def initialize(target: '', &block)
-      block ||= proc {}
-
-      self.options = ::Terraform::CommandOptions.new
-      self.preparations = []
-      self.target = target
-      block.call options
+  # Behaviour for the [:cli] config option
+  module CLIConfig
+    def self.extended(configurable_class)
+      configurable_class.required_config :cli do |key, value, configurable|
+        configurable[key] = ::File.expand_path value
+      end
+      configurable_class.default_config(:cli) { ::File.which 'terraform' }
     end
   end
 end

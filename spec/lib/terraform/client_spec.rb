@@ -58,8 +58,8 @@ require 'terraform/client'
       provisioner[:apply_timeout] = 1234
 
       allow(::Terraform::ShellOut).to receive(:new).with(
-        command: kind_of(::Terraform::ApplyCommand), logger: duck_type(:<<),
-        timeout: 1234
+        cli: duck_type(:to_s), command: kind_of(::Terraform::ApplyCommand),
+        logger: duck_type(:<<), timeout: 1234
       ).and_return apply_shell_out
 
       allow(apply_shell_out).to receive(:execute).with no_args
@@ -75,9 +75,10 @@ require 'terraform/client'
         allow(described_instance).to receive(:execute)
           .with(command: kind_of(command_class)).and_call_original
 
-        allow(::Terraform::ShellOut).to receive(:new)
-          .with(command: kind_of(command_class), logger: duck_type(:<<))
-          .and_return shell_out
+        allow(::Terraform::ShellOut).to receive(:new).with(
+          cli: duck_type(:to_s), command: kind_of(command_class),
+          logger: duck_type(:<<)
+        ).and_return shell_out
       end
 
       subject { shell_out }

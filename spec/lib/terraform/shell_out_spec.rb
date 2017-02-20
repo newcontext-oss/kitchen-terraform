@@ -21,17 +21,17 @@ require 'terraform/shell_out'
   let(:command) { ::Terraform::Command.new }
 
   let :described_instance do
-    described_class.new command: command, logger: ::Kitchen::Logger.new,
-                        timeout: 1234
+    described_class.new cli: '/cli', command: command,
+                        logger: ::Kitchen::Logger.new, timeout: 1234
   end
 
   describe '#execute' do
-    let(:shell_out) { instance_double ::Mixlib::ShellOut }
+    let(:shell_out) { ::Mixlib::ShellOut.new '/cli help' }
 
     before do
       allow(::Mixlib::ShellOut).to receive(:new).with(
-        'terraform help', live_stream: instance_of(::Kitchen::Logger),
-                          timeout: kind_of(::Integer)
+        '/cli help', live_stream: instance_of(::Kitchen::Logger),
+                     timeout: kind_of(::Integer)
       ).and_return shell_out
 
       allow(shell_out).to receive(:run_command).with no_args
@@ -55,13 +55,11 @@ require 'terraform/shell_out'
       before do
         allow(shell_out).to receive(:error!).with(no_args)
           .and_raise ::Mixlib::ShellOut::ShellCommandFailed, 'error'
-
-        allow(shell_out).to receive(:command).with(no_args).and_return command
       end
 
       it 'raises an instance failure' do
         is_expected.to raise_error ::Kitchen::StandardError,
-                                   '`terraform help` failed: "error"'
+                                   '`/cli help` failed: "error"'
       end
     end
   end

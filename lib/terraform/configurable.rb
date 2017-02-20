@@ -35,7 +35,7 @@ module Terraform
     end
 
     def client
-      ::Terraform::Client.new config: provisioner, logger: logger
+      ::Terraform::Client.new config: verbose_config, logger: logger
     end
 
     def config_deprecated(attr:, remediation:, type:)
@@ -57,10 +57,6 @@ module Terraform
                 .join '.kitchen', 'kitchen-terraform', instance.name, filename
     end
 
-    def limited_client
-      ::Terraform::Client.new logger: debug_logger
-    end
-
     def log_deprecation(aspect:, remediation:)
       logger.warn 'DEPRECATION NOTICE'
       logger
@@ -79,7 +75,11 @@ module Terraform
     end
 
     def silent_config
-      provisioner.dup.tap { |config| config[:color] = false }
+      verbose_config.tap { |config| config[:color] = false }
+    end
+
+    def verbose_config
+      provisioner.dup.tap { |config| config[:cli] = driver[:cli] }
     end
   end
 end
