@@ -49,7 +49,7 @@ require 'terraform/configurable'
 
     before do
       allow(::Terraform::Client).to receive(:new)
-        .with(config: provisioner, logger: instance_of(::Kitchen::Logger))
+        .with(config: duck_type(:[]), logger: instance_of(::Kitchen::Logger))
         .and_return client
     end
 
@@ -110,22 +110,6 @@ require 'terraform/configurable'
     it 'returns a pathname under the hidden instance directory' do
       is_expected.to eq '/kitchen/root/.kitchen/kitchen-terraform/' \
                           'suite-platform/filename'
-    end
-  end
-
-  describe '#limited_client' do
-    let(:limited_client) { object }
-
-    before do
-      allow(::Terraform::Client)
-        .to receive(:new).with(logger: instance_of(::Terraform::DebugLogger))
-        .and_return limited_client
-    end
-
-    subject { described_instance.limited_client }
-
-    it 'returns a limited client for use before the plugins are set up' do
-      is_expected.to be limited_client
     end
   end
 

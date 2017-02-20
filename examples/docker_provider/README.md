@@ -17,7 +17,8 @@ This example will walk you through how to setup your environment to utilize kitc
 `.kitchen.yml` contains the Test Kitchen configuration to enable the testing of the Terraform project.
 
 ### Driver
-The driver is defined as terraform and does not have any additional configurations.
+The driver is defined as terraform and uses the default configuration
+options.
 
 ### Provisioner
 The provisioner defines specific variables for Docker to include the host, container, and image used.

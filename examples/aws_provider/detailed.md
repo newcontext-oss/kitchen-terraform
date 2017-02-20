@@ -35,7 +35,7 @@ kitchen-terraform.
 
 ### Driver
 
-The driver has no configuration options.
+The default driver configuration options are used.
 
 ### Provisioner
 

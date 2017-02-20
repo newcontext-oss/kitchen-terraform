@@ -16,6 +16,7 @@
 
 require 'kitchen/driver/terraform'
 require 'support/raise_error_examples'
+require 'support/terraform/cli_config_examples'
 require 'support/terraform/configurable_context'
 require 'support/terraform/configurable_examples'
 
@@ -23,6 +24,8 @@ require 'support/terraform/configurable_examples'
   include_context 'instance'
 
   let(:described_instance) { driver }
+
+  it_behaves_like ::Terraform::CLIConfig
 
   it_behaves_like ::Terraform::Configurable
 
@@ -77,10 +80,13 @@ require 'support/terraform/configurable_examples'
   end
 
   describe '#verify_dependencies' do
-    include_context 'limited_client'
+    include_context 'client'
 
     before do
-      allow(limited_client).to receive(:version).with(no_args)
+      allow(::Terraform::Client).to receive(:new)
+        .with(config: driver, logger: duck_type(:<<)).and_return client
+
+      allow(client).to receive(:version).with(no_args)
         .and_return ::Terraform::Version.create value: version
     end
 

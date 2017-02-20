@@ -97,15 +97,28 @@ provisioner.
 
 #### Configuration
 
-There are no configuration options for the driver.
+##### cli
 
-##### Example .kitchen.yml
+The pathname of the Terraform command-line interface (CLI) executable or
+an executable that implements an equivalent interface.
+
+[command-line interface]: https://www.terraform.io/docs/commands/index.html
+
+###### Example .kitchen.yml
 
 ```yaml
 ---
 driver:
   name: terraform
+  cli: /usr/local/bin/terraform
 ```
+
+###### Default
+
+The default `cli` is `'terraform'`, and is assumed to exist in the
+user's [PATH].
+
+[PATH]: http://www.linfo.org/path_env_var.html
 
 ### Provisioner
 
