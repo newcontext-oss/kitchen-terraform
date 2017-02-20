@@ -29,6 +29,9 @@ major version 0.y.z will maintain a stable public interface.
 * Incomplete InSpec control definition in the Getting Started guide (
   thanks [@burythehammer])
 
+* Missing descriptions of the plan and state provisioner configuration
+  options
+
 ## [0.5.1] - 2017-02-17
 
 ### Fixed

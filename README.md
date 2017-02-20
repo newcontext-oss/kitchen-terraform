@@ -211,6 +211,47 @@ provisioner:
 
 The default `parallelism` is 10.
 
+##### plan
+
+The pathname of the [execution plan] that Terraform will generate and
+apply.
+
+[execution plan]: https://www.terraform.io/docs/commands/plan.html#_out_path
+
+###### Example .kitchen.yml
+
+```yaml
+---
+provisioner:
+  name: terraform
+  plan: /terraform/plan
+```
+
+###### Default
+
+The default `plan` is under the current working directory of Test
+Kitchen at `.kitchen/kitchen-terraform/<suite_name>/terraform.tfplan`.
+
+##### state
+
+The pathname of the [state file] that Terraform will generate.
+
+[state file]: https://www.terraform.io/docs/commands/apply.html#_state_out_path
+
+###### Example .kitchen.yml
+
+```yaml
+---
+provisioner:
+  name: terraform
+  state: /terraform/state
+```
+
+###### Default
+
+The default `state` is under the current working directory of Test
+Kitchen at `.kitchen/kitchen-terraform/<suite_name>/terraform.tfstate`.
+
 ##### variable_files
 
 A collection of pathnames of [Terraform variable files] to be evaluated
