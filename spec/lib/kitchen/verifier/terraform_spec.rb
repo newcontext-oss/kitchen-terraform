@@ -58,7 +58,11 @@ require 'support/terraform/groups_config_examples'
 
       allow(runner_class).to receive(:new).with(
         hash_including(
-          attributes: { 'attribute_name' => 'attribute output value' },
+          attributes: {
+            'attribute_name' => 'attribute output value',
+            'terraform_state' => '/kitchen/root/.kitchen/kitchen-terraform/' \
+                                   'suite-platform/terraform.tfstate'
+          },
           'backend' => 'local', controls: ['control'],
           'host' => 'localhost', 'port' => 1234, 'user' => 'username'
         )

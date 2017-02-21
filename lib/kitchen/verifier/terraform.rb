@@ -32,7 +32,9 @@ module Kitchen
       def call(state)
         resolve_groups do |group|
           self.group = group
-          config[:attributes] = group.attributes
+          config[:attributes] = {
+            'terraform_state' => provisioner[:state].to_path
+          }.merge group.attributes
           info "Verifying #{group.description}"
           super
         end
