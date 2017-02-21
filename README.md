@@ -392,8 +392,9 @@ The default `groups` collection is empty.
 For each group:
 
 - the default `attributes` mapping consists of equivalently named
-  attributes for each output variable; additional or overridden
-  associations can be added.
+  attributes for each output variable as well as a "terraform_state"
+  attribute containing the pathname of the state file; additional or
+  overridden associations can be added.
 
 - the default `controls` collection is empty
 

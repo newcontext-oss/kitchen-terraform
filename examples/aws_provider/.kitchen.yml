@@ -26,6 +26,7 @@ verifier:
     - name: local
       controls:
         - local_security_group
+        - state_file
 platforms:
   - name: ubuntu
 suites:

@@ -13,6 +13,9 @@ major version 0.y.z will maintain a stable public interface.
 * Driver configuration option to specify the pathanme of the Terraform
   command-line interface
 
+* "terraform_state" InSpec attribute containing the pathname of the
+  state file
+
 ### Changed
 
 * Restructured code for better distribution of responsibilities

@@ -58,8 +58,8 @@ execute the controls on and provides a static port and username based on
 the AMI used in the example module.
 
 The `local` group omits the `hostnames` setting, which means that its
-specified control will be executed locally rather than on remotely
-on a server in the Terraform state.
+specified controls will be executed locally rather than remotely on a
+server in the Terraform state.
 
 ### Platforms
 
