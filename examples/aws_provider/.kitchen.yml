@@ -3,8 +3,9 @@ driver:
   name: terraform
 provisioner:
   name: terraform
-  directory: >-
-    test/fixtures/<%= `terraform -version`.slice(/v(\d+\.\d+)/, 1) %>
+  directory: test/fixtures/<%=
+    `terraform -version`.include? '0.6' and 'deprecated' or 'supported'
+  %>
   parallelism: 4
 transport:
   name: ssh
