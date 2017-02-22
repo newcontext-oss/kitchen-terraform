@@ -96,6 +96,7 @@ module Terraform
       options.input = false
       options.out = config[:plan]
       options.parallelism = config[:parallelism]
+      options.state = config[:state]
       options.var = config[:variables]
       options.var_file = config[:variable_files]
     end
