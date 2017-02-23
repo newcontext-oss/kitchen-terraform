@@ -6,6 +6,14 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
+## [0.6.1] - 2017-02-22
+
+### Fixed
+
+* `terraform plan` during `kitchen converge` was not reading the state
+  file so subsequent converges would create duplicate state
+  (thanks [@johnrengelman])
+
 ## [0.6.0] - 2017-02-22
 
 ### Added

@@ -73,6 +73,8 @@ require 'support/terraform/configurable_context'
 
     it_behaves_like 'parallelism option'
 
+    it_behaves_like 'state option'
+
     it_behaves_like 'var option'
 
     it_behaves_like 'var-file option'
@@ -125,8 +127,6 @@ require 'support/terraform/configurable_context'
       it_behaves_like 'destroy option'
 
       it_behaves_like 'plan command options'
-
-      it_behaves_like 'state option'
     end
   end
 
