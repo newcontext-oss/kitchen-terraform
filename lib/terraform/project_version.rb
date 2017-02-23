@@ -15,5 +15,5 @@
 # limitations under the License.
 
 module Terraform
-  PROJECT_VERSION = '0.6.0'
+  PROJECT_VERSION = '0.6.1'
 end

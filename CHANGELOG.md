@@ -6,6 +6,14 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
+## [0.6.1] - 2017-02-22
+
+### Fixed
+
+* `terraform plan` during `kitchen converge` was not reading the state
+  file so subsequent converges would create duplicate state
+  (thanks [@johnrengelman])
+
 ## [0.6.0] - 2017-02-22
 
 ### Added
@@ -221,6 +229,7 @@ major version 0.y.z will maintain a stable public interface.
 [0.5.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.4.0...v0.5.0
 [0.5.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.0...v0.5.1
 [0.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.1...v0.6.0
+[0.6.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.6.0...v0.6.1
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott
