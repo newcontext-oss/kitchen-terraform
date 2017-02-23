@@ -40,7 +40,6 @@ module Terraform
         .new target: config[:directory] do |options|
           configure_plan options: options
           options.destroy = true
-          options.state = config[:state]
         end
     end
 
