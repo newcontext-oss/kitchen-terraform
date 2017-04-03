@@ -34,8 +34,7 @@ module Terraform
     property :hostnames, coerce: ::Terraform::GroupHostnames,
                          default: ::Terraform::GroupHostnames.new
 
-    property :for_each, coerce: ::Hash,
-                        default: ::Hash.new({'__default_key' => nil })
+    property :for_each, coerce: ::Hash
 
     property :name, coerce: ::String, required: true
 
@@ -52,9 +51,13 @@ module Terraform
     def resolve(client:)
       attributes.resolve client: client
       hostnames.resolve(client: client) do |hostname|
-        for_each.each_pair do |k, v|
-          client.iterate_output(name: v).each do |output|
-            yield merge hostname: hostname, attributes: v.nil? ? attributes : attributes.merge({ k => output })
+        if for_each.nil?
+          yield merge hostname: hostname
+        else
+          for_each.each_pair do |k, v|
+            client.iterate_output(name: v).each do |output|
+              yield merge hostname: hostname, attributes: attributes.merge({ k => output })
+            end
           end
         end
       end
