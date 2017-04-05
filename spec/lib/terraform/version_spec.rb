@@ -24,7 +24,7 @@ require 'terraform/version'
     subject { described_class.create value: value }
 
     context 'when the value is supported and not deprecated' do
-      let(:value) { '0.8' }
+      let(:value) { '0.9' }
 
       it 'returns a Version' do
         is_expected.to be_instance_of ::Terraform::Version

@@ -91,13 +91,13 @@ require 'support/terraform/configurable_examples'
     end
 
     context 'when the Terraform version is not supported' do
-      let(:version) { '0.9' }
+      let(:version) { '0.10' }
 
       it_behaves_like 'a user error has occurred' do
         let(:described_method) { described_instance.verify_dependencies }
 
         let :message do
-          "Terraform v0.9 is not supported\nInstall Terraform v0.8"
+          "Terraform v0.10 is not supported\nInstall Terraform v0.9"
         end
       end
     end
@@ -111,7 +111,7 @@ require 'support/terraform/configurable_examples'
 
       it 'logs a deprecation' do
         is_expected.to receive(:log_deprecation)
-          .with aspect: 'Terraform v0.6', remediation: 'Install Terraform v0.8'
+          .with aspect: 'Terraform v0.6', remediation: 'Install Terraform v0.9'
       end
     end
   end
