@@ -5,7 +5,7 @@
 **/Gemfile.lock
 **/inspec.lock
 *.gem
-*/.idea/
+**/.idea/
 certs/private_key.pem
 coverage/
 examples/openstack_provider/my-variables.tfvars
