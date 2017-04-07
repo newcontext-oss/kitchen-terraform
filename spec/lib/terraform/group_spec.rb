@@ -51,7 +51,7 @@ require 'terraform/group'
         .merge! attributes: unresolved_attributes, hostnames: hostnames
     end
 
-    subject { ->(block) { described_instance.resolve client: client, &block } }
+    subject do lambda do |block| described_instance.resolve client: client, &block end end
 
     it 'resolves output values and yields the group with a hostname' do
       is_expected.to yield_with_args hash_including(

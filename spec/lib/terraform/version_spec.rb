@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-#
+
 # Copyright 2016-2017 New Context Services, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

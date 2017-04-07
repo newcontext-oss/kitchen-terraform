@@ -20,7 +20,7 @@ require 'terraform/no_output_parser'
   let(:described_instance) { described_class.new }
 
   describe '#each_name' do
-    subject { ->(block) { described_instance.each_name(&block) } }
+    subject do lambda do |block| described_instance.each_name(&block) end end
 
     it 'does not yield' do
       is_expected.to_not yield_control
@@ -28,7 +28,7 @@ require 'terraform/no_output_parser'
   end
 
   describe '#iterate_parsed_output' do
-    subject { ->(block) { described_instance.iterate_parsed_output(&block) } }
+    subject do lambda do |block| described_instance.iterate_parsed_output(&block) end end
 
     it 'does not yield' do
       is_expected.to_not yield_control

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-#
+
 # Copyright 2016-2017 New Context Services, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +15,13 @@
 # limitations under the License.
 
 ::RSpec.shared_examples 'control is yielded' do
-  subject { ->(block) { described_instance.send described_method, &block } }
+  subject do lambda do |block| described_instance.send described_method, &block end end
 
   it('does yield control') { is_expected.to yield_control }
 end
 
 ::RSpec.shared_examples 'control is not yielded' do
-  subject { ->(block) { described_instance.send described_method, &block } }
+  subject do lambda do |block| described_instance.send described_method, &block end end
 
   it('does not yield control') { is_expected.to_not yield_control }
 end

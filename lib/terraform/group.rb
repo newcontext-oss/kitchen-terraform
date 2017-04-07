@@ -38,7 +38,7 @@ module Terraform
 
     property :port
 
-    coerce_key :port, ->(value) { Integer value }
+    coerce_key(:port, lambda do |value| Integer value end)
 
     property :username, coerce: ::String
 

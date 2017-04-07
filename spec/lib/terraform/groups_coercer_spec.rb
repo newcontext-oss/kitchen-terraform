@@ -34,7 +34,7 @@ require 'support/terraform/configurable_context'
 
         before { call_method }
 
-        subject { ->(block) { provisioner[:attr].map(&property).each(&block) } }
+        subject do lambda do |block| provisioner[:attr].map(&property).each(&block) end end
 
         context 'when the group property is specified' do
           let :value do
