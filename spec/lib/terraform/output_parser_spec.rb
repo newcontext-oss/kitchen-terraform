@@ -50,7 +50,7 @@ require 'terraform/version'
                   'output_name_2' => 'output_value_2'
     end
 
-    subject { ->(block) { described_instance.each_name(&block) } }
+    subject do lambda do |block| described_instance.each_name(&block) end end
 
     it 'yields each output name' do
       is_expected.to yield_successive_args 'output_name_1', 'output_name_2'
@@ -58,9 +58,9 @@ require 'terraform/version'
   end
 
   describe '#iterate_parsed_output' do
-    let(:output) { ::JSON.dump 'value' => %w(foo bar) }
+    let(:output) { ::JSON.dump 'value' => ['foo', 'bar'] }
 
-    subject { ->(block) { described_instance.iterate_parsed_output(&block) } }
+    subject do lambda do |block| described_instance.iterate_parsed_output(&block) end end
 
     it 'yields each element' do
       is_expected.to yield_successive_args 'foo', 'bar'

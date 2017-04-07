@@ -25,7 +25,7 @@ module Terraform
     def self.extended(configurable_class)
       configurable_class.configure_required(
         attr: :directory, coercer_class: ::Terraform::PathnameCoercer,
-        default_value: ->(configurable) { configurable[:kitchen_root] }
+        default_value: lambda do |configurable| configurable[:kitchen_root] end
       )
     end
   end

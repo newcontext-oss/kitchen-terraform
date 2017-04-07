@@ -129,7 +129,7 @@ require 'terraform/client'
   end
 
   describe '#each_output_name' do
-    subject { ->(block) { described_instance.each_output_name(&block) } }
+    subject do lambda do |block| described_instance.each_output_name(&block) end end
 
     context 'when outputs are defined', :outputs do
       let :output_value do
@@ -148,12 +148,10 @@ require 'terraform/client'
   end
 
   describe '#iterate_output' do
-    subject do
-      ->(block) { described_instance.iterate_output name: 'name', &block }
-    end
+    subject do lambda do |block| described_instance.iterate_output name: 'name', &block end end
 
     context 'when outputs are defined', :outputs do
-      let(:output_value) { ::JSON.dump 'value' => %w(value1 value2) }
+      let(:output_value) { ::JSON.dump 'value' => ['value1', 'value2'] }
 
       it 'iterates the output values' do
         is_expected.to yield_successive_args 'value1', 'value2'

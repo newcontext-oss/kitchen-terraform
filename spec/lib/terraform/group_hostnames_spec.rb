@@ -25,7 +25,7 @@ require 'terraform/group_hostnames'
   describe '#resolve' do
     let(:client) { instance_double ::Terraform::Client }
 
-    subject { ->(block) { described_instance.resolve client: client, &block } }
+    subject do lambda do |block| described_instance.resolve client: client, &block end end
 
     context 'when a hostnames output name is specified' do
       before do

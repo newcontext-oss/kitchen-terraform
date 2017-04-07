@@ -24,7 +24,7 @@ require 'terraform/deprecated_output_parser'
       "output_name_1 = output_value_1\noutput_name_2 = output_value_2"
     end
 
-    subject { ->(block) { described_instance.each_name(&block) } }
+    subject do lambda do |block| described_instance.each_name(&block) end end
 
     it 'yields each output name' do
       is_expected.to yield_successive_args 'output_name_1', 'output_name_2'
@@ -32,7 +32,7 @@ require 'terraform/deprecated_output_parser'
   end
 
   describe '#iterate_parsed_output' do
-    subject { ->(block) { described_instance.iterate_parsed_output(&block) } }
+    subject do lambda do |block| described_instance.iterate_parsed_output(&block) end end
 
     let(:output) { 'foo,bar' }
 

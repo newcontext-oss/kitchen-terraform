@@ -32,7 +32,7 @@ require 'terraform/command'
   it_behaves_like('#name') { let(:name) { 'help' } }
 
   describe '.new' do
-    subject { ->(block) { described_class.new(&block) } }
+    subject do lambda do |block| described_class.new(&block) end end
 
     it 'yields command options for configuration' do
       is_expected.to yield_with_args Terraform::CommandOptions

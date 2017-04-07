@@ -2,7 +2,7 @@
 
 require 'guard/rspec/dsl'
 
-directories %w(lib spec)
+directories ['lib', 'spec']
 
 group :red_green_refactor, halt_on_fail: true do
   ::Guard::RSpec::Dsl.new(self).tap do |dsl|
