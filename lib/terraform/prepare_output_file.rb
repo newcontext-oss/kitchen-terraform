@@ -17,14 +17,14 @@
 module Terraform
   # A preparation for a command with an output file
   class PrepareOutputFile
+    attr_accessor :file, :parent_directory
+
     def execute
       parent_directory.mkpath
-      file.open('a') {}
+      file.open "a" do end
     end
 
     private
-
-    attr_accessor :file, :parent_directory
 
     def initialize(file:)
       self.file = file

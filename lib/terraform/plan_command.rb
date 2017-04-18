@@ -15,9 +15,8 @@
 # limitations under the License.
 
 require "pathname"
-require 'terraform/command'
-require 'terraform/prepare_output_file'
-
+require "terraform/command"
+require "terraform/prepare_output_file"
 module Terraform
   # A command to plan an execution
   class PlanCommand < ::Terraform::Command

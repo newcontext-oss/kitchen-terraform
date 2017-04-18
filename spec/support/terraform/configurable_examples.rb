@@ -14,118 +14,97 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-require 'support/raise_error_examples'
-require 'support/terraform/configurable_context'
-require 'terraform/configurable'
+require "kitchen"
+require "support/raise_error_examples"
+require "support/terraform/configurable_context"
+require "terraform/configurable"
 
 ::RSpec.shared_examples ::Terraform::Configurable do
-  let(:attr) { object }
+  let :attr do instance_double ::Object end
 
-  let :formatted_config do
-    "#{described_class}#{instance.to_str}#config[:#{attr}]"
+  let :formatted_config do "#{described_class}#{instance.to_str}#config[:#{attr}]" end
+
+  describe "@api_version" do
+    subject :api_version do described_class.instance_variable_get :@api_version end
+
+    it "equals 2" do is_expected.to eq 2 end
   end
 
-  describe '@api_version' do
-    subject :api_version do
-      described_class.instance_variable_get :@api_version
-    end
+  describe "@plugin_version" do
+    subject :plugin_version do described_class.instance_variable_get :@plugin_version end
 
-    it('equals 2') { is_expected.to eq 2 }
+    it "equals the gem version" do is_expected.to be ::Terraform::PROJECT_VERSION end
   end
 
-  describe '@plugin_version' do
-    subject :plugin_version do
-      described_class.instance_variable_get :@plugin_version
-    end
-
-    it 'equals the gem version' do
-      is_expected.to be ::Terraform::PROJECT_VERSION
-    end
-  end
-
-  describe '#client' do
-    let(:client) { instance_double ::Object }
+  describe "#client" do
+    let :client do instance_double ::Object end
 
     before do
-      allow(::Terraform::Client).to receive(:new)
-        .with(config: duck_type(:[]), logger: instance_of(::Kitchen::Logger))
-        .and_return client
+      allow(::Terraform::Client)
+        .to receive(:new).with(config: duck_type(:[]), logger: instance_of(::Kitchen::Logger)).and_return client
     end
 
-    subject { described_instance.client }
+    subject do described_instance.client end
 
-    it('returns a configured client') { is_expected.to be client }
+    it "returns a configured client" do is_expected.to be client end
   end
 
-  describe '#config_deprecated' do
-    let(:remediation) { instance_double ::Object }
+  describe "#config_deprecated" do
+    let :remediation do instance_double ::Object end
 
-    let(:type) { instance_double ::Object }
+    let :type do instance_double ::Object end
 
-    after do
-      described_instance.config_deprecated attr: attr, remediation: remediation,
-                                           type: type
-    end
+    after do described_instance.config_deprecated attr: attr, remediation: remediation, type: type end
 
-    subject { described_instance }
+    subject do described_instance end
 
-    it 'logs the deprecation' do
-      is_expected.to receive(:log_deprecation)
-        .with aspect: "#{formatted_config} as #{type}", remediation: remediation
+    it "logs the deprecation" do
+      is_expected.to receive(:log_deprecation).with aspect: "#{formatted_config} as #{type}", remediation: remediation
     end
   end
 
-  describe '#config_error' do
-    it_behaves_like 'a user error has occurred' do
-      let :described_method do
-        described_instance.config_error attr: attr, expected: 'expected'
-      end
+  describe "#config_error" do
+    it_behaves_like "a user error has occurred" do
+      let :described_method do described_instance.config_error attr: attr, expected: "expected" end
 
-      let(:message) { "#{formatted_config} must be interpretable as expected" }
+      let :message do "#{formatted_config} must be interpretable as expected" end
     end
   end
 
-  describe '#debug_logger' do
-    subject { described_instance.debug_logger }
+  describe "#debug_logger" do
+    subject do described_instance.debug_logger end
 
-    it 'is a debug logger' do
-      is_expected.to be_instance_of ::Terraform::DebugLogger
-    end
+    it "is a debug logger" do is_expected.to be_instance_of ::Terraform::DebugLogger end
   end
 
-  describe '#driver' do
-    subject { described_instance.driver }
+  describe "#driver" do
+    subject do described_instance.driver end
 
-    it 'returns the driver of the instance' do
-      is_expected.to be instance.driver
-    end
+    it "returns the driver of the instance" do is_expected.to be instance.driver end
   end
 
-  describe '#instance_pathname' do
-    let(:filename) { 'filename' }
+  describe "#instance_pathname" do
+    let :filename do "filename" end
 
     subject do described_instance.instance_pathname filename: filename end
 
-    it 'returns a pathname under the hidden instance directory' do
-      is_expected.to eq '/kitchen/root/.kitchen/kitchen-terraform/' \
-                          'suite-platform/filename'
+    it "returns a pathname under the hidden instance directory" do
+      is_expected.to eq "/kitchen/root/.kitchen/kitchen-terraform/suite-platform/filename"
     end
   end
 
-  describe '#log_deprecation' do
-    let(:aspect) { object }
+  describe "#log_deprecation" do
+    let :aspect do object end
 
-    let(:remediation) { object }
+    let :remediation do object end
 
-    let(:warn_deprecation) { receive(:warn).with 'DEPRECATION NOTICE' }
+    let :warn_deprecation do receive(:warn).with "DEPRECATION NOTICE" end
 
     let :warn_deprecated_feature do
-      receive(:warn)
-        .with "Support for #{aspect} will be dropped in kitchen-terraform v1.0"
+      receive(:warn).with "Support for #{aspect} will be dropped in kitchen-terraform v1.0"
     end
 
-    let(:warn_remediation) { receive(:warn).with remediation }
+    let :warn_remediation do receive(:warn).with remediation end
 
     before do
       allow(logger).to warn_deprecation
@@ -135,52 +114,40 @@ require 'terraform/configurable'
       allow(logger).to warn_remediation
     end
 
-    after do
-      described_instance.log_deprecation aspect: aspect,
-                                         remediation: remediation
-    end
+    after do described_instance.log_deprecation aspect: aspect, remediation: remediation end
 
-    subject { logger }
+    subject do logger end
 
-    it('warns of the deprecation') { is_expected.to warn_deprecation }
+    it "warns of the deprecation" do is_expected.to warn_deprecation end
 
-    it 'warns of the deprecated feature' do
-      is_expected.to warn_deprecated_feature
-    end
+    it "warns of the deprecated feature" do is_expected.to warn_deprecated_feature end
 
-    it('warns of the remediation') { is_expected.to warn_remediation }
+    it "warns of the remediation" do is_expected.to warn_remediation end
   end
 
-  describe '#provisioner' do
-    subject { described_instance.provisioner }
+  describe "#provisioner" do
+    subject do described_instance.provisioner end
 
-    it 'returns the provisioner of the instance' do
-      is_expected.to be instance.provisioner
-    end
+    it "returns the provisioner of the instance" do is_expected.to be instance.provisioner end
   end
 
-  describe '#silent_client' do
-    let(:silent_client) { object }
+  describe "#silent_client" do
+    let :silent_client do instance_double ::Object end
 
     before do
-      allow(::Terraform::Client).to receive(:new).with(
-        config: kind_of(::Kitchen::Configurable),
-        logger: instance_of(::Terraform::DebugLogger)
-      ).and_return silent_client
+      allow(::Terraform::Client)
+        .to receive(:new).with(config: kind_of(::Kitchen::Configurable), logger: instance_of(::Terraform::DebugLogger))
+        .and_return silent_client
     end
 
-    subject { described_instance.silent_client }
+    subject do described_instance.silent_client end
 
-    it 'returns a client with color disabled and debug output' do
-      is_expected.to be silent_client
-    end
+    it "returns a client with color disabled and debug output" do is_expected.to be silent_client end
   end
 
-  describe '#transport' do
-    subject { described_instance.transport }
+  describe "#transport" do
+    subject do described_instance.transport end
 
-    it 'returns the transport of the instance' do
-      is_expected.to be instance.transport
-    end
+    it "returns the transport of the instance" do is_expected.to be instance.transport end
   end
 end
