@@ -1,2 +1,2 @@
- --color --fail-fast --format doc --order random --require spec_helper \
+ --color --fail-fast --format doc --require spec_helper \
   --require support/coverage
