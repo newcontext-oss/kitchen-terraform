@@ -14,21 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an output file
-  class PrepareOutputFile
-    def execute
-      parent_directory.mkpath
-      file.open('a') {}
-    end
+require "kitchen/verifier/terraform"
 
-    private
-
-    attr_accessor :file, :parent_directory
-
-    def initialize(file:)
-      self.file = file
-      self.parent_directory = file.parent
+module Kitchen
+  module Verifier
+    class Terraform < ::Kitchen::Verifier::Inspec
+      ConfigureInspecRunnerUser =
+        lambda do |group:, options:| group.key? :username and options.store "user", group.fetch(:username) end
     end
   end
 end

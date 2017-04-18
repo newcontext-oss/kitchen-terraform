@@ -14,21 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an output file
-  class PrepareOutputFile
-    def execute
-      parent_directory.mkpath
-      file.open('a') {}
-    end
+require "kitchen/verifier/terraform/configure_inspec_runner_controls"
 
-    private
+::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls do
+  let :controls do instance_double ::Object end
 
-    attr_accessor :file, :parent_directory
+  let :options do {} end
 
-    def initialize(file:)
-      self.file = file
-      self.parent_directory = file.parent
-    end
-  end
+  before do described_class.call group: {controls: controls}, options: options end
+
+  subject do options.fetch :controls end
+
+  it "associates :controls with the group's :controls in the options" do is_expected.to be controls end
 end

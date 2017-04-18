@@ -105,7 +105,7 @@ require 'terraform/configurable'
   describe '#instance_pathname' do
     let(:filename) { 'filename' }
 
-    subject { described_instance.instance_pathname(filename: filename).to_path }
+    subject do described_instance.instance_pathname filename: filename end
 
     it 'returns a pathname under the hidden instance directory' do
       is_expected.to eq '/kitchen/root/.kitchen/kitchen-terraform/' \

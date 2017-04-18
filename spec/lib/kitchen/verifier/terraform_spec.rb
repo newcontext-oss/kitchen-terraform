@@ -14,77 +14,68 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'inspec'
-require 'kitchen/verifier/terraform'
-require 'support/terraform/configurable_context'
-require 'support/terraform/configurable_examples'
-require 'support/terraform/groups_config_examples'
+require "inspec"
+require "kitchen/verifier/terraform"
+require "support/kitchen/instance_context"
+require "support/kitchen/verifier/terraform/configure_inspec_runner_attributes_context"
+require "support/terraform/configurable_context"
+require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
-  include_context 'instance'
+  it_behaves_like ::Terraform::Configurable do
+    include_context "instance"
 
-  let(:described_instance) { verifier }
+    let :described_instance do verifier end
+  end
 
-  it_behaves_like ::Terraform::Configurable
+  describe "#call(state)" do
+    include_context "silent_client"
 
-  it_behaves_like ::Terraform::GroupsConfig
+    include_context ::Kitchen::Instance
 
-  describe '#call(state)' do
-    include_context 'silent_client'
-
-    let :resolved_group do
-      unresolved_group
-        .merge attributes: { attribute_name: 'attribute output value' },
-               hostname: 'localhost'
+    include_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call" do
+      let :client do silent_client end
     end
 
-    let(:runner) { instance_double ::Inspec::Runner }
+    let :described_instance do verifier end
 
-    let(:runner_class) { class_double(::Inspec::Runner).as_stubbed_const }
+    let :group do {attributes: {}, controls: ["control"], name: "name", port: 1234, username: "username"} end
 
-    let :unresolved_group do
-      ::Terraform::Group
-        .new attributes: { attribute_name: 'attribute output name' },
-             controls: ['control'], name: 'group', port: 1234,
-             username: 'username'
-    end
+    let :host do instance_double ::Object end
+
+    let :runner do instance_double ::Inspec::Runner end
+
+    let :runner_class do class_double(::Inspec::Runner).as_stubbed_const end
 
     before do
-      default_config
-        .merge! groups: [unresolved_group], test_base_path: 'test/base/path'
-
-      allow(unresolved_group).to receive(:resolve).with(client: silent_client)
-        .and_yield resolved_group
+      default_config.merge! groups: [group], test_base_path: "/test/base/path"
 
       allow(runner_class).to receive(:new).with(
-        hash_including(
+        including(
           attributes: {
-            'attribute_name' => 'attribute output value',
-            'terraform_state' => '/kitchen/root/.kitchen/kitchen-terraform/' \
-                                   'suite-platform/terraform.tfstate'
-          },
-          'backend' => 'local', controls: ['control'],
-          'host' => 'localhost', 'port' => 1234, 'user' => 'username'
+            "output_name_one" => "output_value_one", "output_name_two" => "output_value_two",
+            "terraform_state" => "/kitchen/root/.kitchen/kitchen-terraform/suite-platform/terraform.tfstate"
+          }, "backend" => "local", controls: ["control"], "host" => "localhost", "port" => 1234, "user" => "username"
         )
       ).and_return runner
 
       allow(runner).to receive(:run).with(no_args).and_return exit_code
+
+      instance
     end
 
-    subject { proc { described_instance.call({}) } }
+    subject do lambda do described_instance.call ::Hash.new end end
 
-    context 'when the Inspec Runner does return 0' do
-      let(:exit_code) { 0 }
+    context "when the InSpec runner returns an object equivalent to 0" do
+      let :exit_code do 0 end
 
-      it('does not raise an error') { is_expected.to_not raise_error }
+      it "does not raise an error" do is_expected.to_not raise_error end
     end
 
-    context 'when the Inspec Runner does not return 0' do
-      let(:exit_code) { 1 }
+    context "when the InSpec runner returns an object not equivalent to 0" do
+      let :exit_code do 1 end
 
-      it 'raises an ActionFailed error' do
-        is_expected.to raise_error ::Kitchen::ActionFailed
-      end
+      it "does raise an error" do is_expected.to raise_error ::Kitchen::ActionFailed end
     end
   end
 end

@@ -14,21 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an output file
-  class PrepareOutputFile
-    def execute
-      parent_directory.mkpath
-      file.open('a') {}
-    end
+require "kitchen/verifier/terraform"
 
-    private
-
-    attr_accessor :file, :parent_directory
-
-    def initialize(file:)
-      self.file = file
-      self.parent_directory = file.parent
-    end
+::Kitchen::Verifier::Terraform::EnumerateGroupHosts = lambda do |client:, group:, &block|
+  if group.key? :hostnames
+    client.iterate_output name: group.fetch(:hostnames) do |hostname| block.call host: hostname end
+  else
+    block.call host: "localhost"
   end
 end

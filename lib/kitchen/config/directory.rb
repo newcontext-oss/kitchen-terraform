@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2016 New Context Services, Inc.
+# Copyright 2016-2017 New Context Services, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an output file
-  class PrepareOutputFile
-    def execute
-      parent_directory.mkpath
-      file.open('a') {}
-    end
+require "dry-validation"
+require "kitchen/config/process_schema"
 
-    private
-
-    attr_accessor :file, :parent_directory
-
-    def initialize(file:)
-      self.file = file
-      self.parent_directory = file.parent
+module Kitchen
+  class Config
+    Directory = lambda do |plugin_class:|
+      plugin_class.required_config :directory do |attribute, value, plugin|
+        ::Kitchen::Config::ProcessSchema.call(
+          attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).filled :str? end,
+          value: value
+        )
+      end
+      plugin_class.default_config :directory do |plugin| plugin[:kitchen_root] end
     end
   end
 end
