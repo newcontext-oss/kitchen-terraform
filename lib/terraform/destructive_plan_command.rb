@@ -15,8 +15,8 @@
 # limitations under the License.
 
 require "pathname"
-require 'terraform/prepare_input_file'
-require 'terraform/plan_command'
+require "terraform/prepare_input_file"
+require "terraform/plan_command"
 
 module Terraform
   # A command to plan a destructive execution

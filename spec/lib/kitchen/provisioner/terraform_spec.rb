@@ -21,35 +21,36 @@ require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Provisioner::Terraform do
   shared_context "plugin" do include_context ::Kitchen::Instance do let :provisioner do described_instance end end end
+
   it_behaves_like ::Terraform::Configurable do
     include_context "instance"
+
     let :described_instance do provisioner end
   end
-  describe '#call(_state = nil)' do
-    include_context 'client'
+
+  describe "#call(_state = nil)" do
+    include_context "client"
+
     include_context "instance"
+
     let :described_instance do provisioner end
-    context 'when all commands do not fail' do
-      after { described_instance.call }
 
-      subject { client }
+    context "when all commands do not fail" do
+      after do described_instance.call end
 
-      it 'applies constructively' do
-        is_expected.to receive(:apply_constructively).with no_args
-      end
+      subject do client end
+
+      it "applies constructively" do is_expected.to receive(:apply_constructively).with no_args end
     end
 
-    context 'when a command does fail' do
+    context "when a command does fail" do
       before do
-        allow(client).to receive(:apply_constructively)
-          .with(no_args).and_raise ::SystemCallError, 'system call'
+        allow(client).to receive(:apply_constructively).with(no_args).and_raise ::SystemCallError, "system call"
       end
 
-      subject { proc { described_instance.call } }
+      subject do proc do described_instance.call end end
 
-      it 'raises an action failed error' do
-        is_expected.to raise_error ::Kitchen::ActionFailed, /system call/
-      end
+      it "raises an action failed error" do is_expected.to raise_error ::Kitchen::ActionFailed, /system call/ end
     end
   end
 end

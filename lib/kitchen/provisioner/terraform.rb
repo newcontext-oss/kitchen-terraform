@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
+require "kitchen"
 require "kitchen/config/apply_timeout"
 require "kitchen/config/color"
 require "kitchen/config/directory"

@@ -14,17 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'forwardable'
-require 'kitchen'
-require 'terraform/client'
-require 'terraform/debug_logger'
-require 'terraform/project_version'
-
+require "forwardable"
+require "kitchen"
+require "terraform/client"
+require "terraform/debug_logger"
+require "terraform/project_version"
 module Terraform
   # Behaviour for objects that extend ::Kitchen::Configurable
   module Configurable
     extend ::Forwardable
-
     def_delegator :config, :[]=
 
     def_delegators :instance, :driver, :provisioner, :transport

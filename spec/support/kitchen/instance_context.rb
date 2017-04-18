@@ -15,19 +15,30 @@
 # limitations under the License.
 
 require "kitchen"
+
 ::RSpec.shared_context ::Kitchen::Instance do
   let :default_config do {kitchen_root: kitchen_root} end
+
   let :driver do ::Kitchen::Driver::Terraform.new default_config end
+
   let :instance do
     ::Kitchen::Instance.new driver: driver, logger: logger, platform: platform, provisioner: provisioner,
                             state_file: object, suite: suite, transport: transport, verifier: verifier
   end
+
   let :kitchen_root do "/kitchen/root" end
+
   let :logger do ::Kitchen::Logger.new end
+
   let :platform do ::Kitchen::Platform.new name: "platform" end
+
   let :provisioner do ::Kitchen::Provisioner::Terraform.new default_config end
+
   let :suite do ::Kitchen::Suite.new name: "suite" end
+
   let :transport do ::Kitchen::Transport::Ssh.new end
+
   let :verifier do ::Kitchen::Verifier::Terraform.new default_config end
+
   before do allow(::File).to receive(:which).with("terraform").and_return "/terraform" end
 end

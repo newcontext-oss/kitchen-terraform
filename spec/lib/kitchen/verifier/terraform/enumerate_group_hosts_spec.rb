@@ -15,20 +15,28 @@
 # limitations under the License.
 
 require "kitchen/verifier/terraform/enumerate_group_hosts"
+
 ::RSpec.describe ::Kitchen::Verifier::Terraform::EnumerateGroupHosts do
   describe ".call" do
     let :client do instance_double ::Terraform::Client end
+
     let :group do {} end
+
     subject do lambda do |block| described_class.call client: client, group: group, &block end end
+
     context "when the group omits :hostnames" do
       it "yields 'localhost'" do is_expected.to yield_with_args host: "localhost" end
     end
+
     context "when the group associates :hostnames with an object" do
       let :hostnames do instance_double ::Object end
+
       before do
         group.store :hostnames, hostnames
+
         allow(client).to receive(:iterate_output).with(name: hostnames).and_yield "hostname"
       end
+
       it "yields each resolved hostname" do is_expected.to yield_with_args host: "hostname" end
     end
   end

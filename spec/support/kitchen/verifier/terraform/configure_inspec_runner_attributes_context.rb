@@ -17,7 +17,9 @@
 ::RSpec.shared_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call" do
   before do
     allow(client).to receive(:each_output_name).with(no_args).and_yield("output_name_one").and_yield "output_name_two"
+
     allow(client).to receive(:output).with(name: "output_name_one").and_return "output_value_one"
+
     allow(client).to receive(:output).with(name: "output_name_two").and_return "output_value_two"
   end
 end

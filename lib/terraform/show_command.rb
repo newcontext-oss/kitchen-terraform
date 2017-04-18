@@ -15,9 +15,8 @@
 # limitations under the License.
 
 require "pathname"
-require 'terraform/command'
-require 'terraform/prepare_input_file'
-
+require "terraform/command"
+require "terraform/prepare_input_file"
 module Terraform
   # A command to show a state
   class ShowCommand < ::Terraform::Command

@@ -15,10 +15,9 @@
 # limitations under the License.
 
 require "pathname"
-require 'terraform/command'
-require 'terraform/prepare_input_file'
-require 'terraform/prepare_output_file'
-
+require "terraform/command"
+require "terraform/prepare_input_file"
+require "terraform/prepare_output_file"
 module Terraform
   # A command to apply an execution plan
   class ApplyCommand < ::Terraform::Command
