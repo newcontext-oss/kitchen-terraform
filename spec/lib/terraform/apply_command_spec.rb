@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "pathname"
 require 'support/terraform/command_examples'
 require 'terraform/apply_command'
 
@@ -28,10 +29,9 @@ require 'terraform/apply_command'
 
   before do
     allow(::Terraform::PrepareInputFile)
-      .to receive(:new).with(file: 'target').and_return prepare_input_file
-
+      .to receive(:new).with(file: ::Pathname.new("target")).and_return prepare_input_file
     allow(::Terraform::PrepareOutputFile)
-      .to receive(:new).with(file: 'state-out').and_return prepare_output_file
+      .to receive(:new).with(file: ::Pathname.new("state-out")).and_return prepare_output_file
   end
 
   it_behaves_like('#name') { let(:name) { 'apply' } }

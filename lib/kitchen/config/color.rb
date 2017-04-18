@@ -14,21 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an output file
-  class PrepareOutputFile
-    def execute
-      parent_directory.mkpath
-      file.open('a') {}
-    end
+require "dry-validation"
+require "kitchen/config/process_schema"
 
-    private
-
-    attr_accessor :file, :parent_directory
-
-    def initialize(file:)
-      self.file = file
-      self.parent_directory = file.parent
+module Kitchen
+  class Config
+    Color = lambda do |plugin_class:|
+      plugin_class.required_config :color do |attribute, value, plugin|
+        ::Kitchen::Config::ProcessSchema.call(
+          attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).filled :bool? end,
+          value: value
+        )
+      end
+      plugin_class.default_config :color, true
     end
   end
 end

@@ -344,28 +344,26 @@ Terraform configuration.
 
 Each group consists of:
 
-- a `name` to use for logging purposes
+- a required `name` to distinguish the group
 
 - an optional `attributes` mapping of InSpec profile attribute names to
-  Terraform output variable names to define for the suite's InSpec profile
+  Terraform output variable names; the attributes will be assigned the
+  variable values when the profile is executed
 
-- a `controls` collection of [InSpec controls] to include from the suite's
-  InSpec profile
+- an optional `controls` collection of [InSpec controls] to
+  selectively include from the suite's InSpec profile
 
-- a mapping of InSpec profile attribute names to Terraform output variable
-  names; the attributes will be with the resolved output values
-
-- an optional `hostnames` output variable name to use for extracting hostnames
-  from the Terraform state; the resolved output value is assumed to be a
-  list of strings or a string in CSV format
+- an optional `hostnames` output variable name to use for extracting
+  hostnames from the Terraform state; the resolved output value is
+  assumed to be a list of strings or a string in CSV format
 
 - an optional `port` to use when connecting to the group's hosts
 
 - an optional `username` to use when connecting to the group's hosts
 
-If `hostnames` is empty then the group's `controls` will be executed
-locally; this enables testing of a provider's API to verify non-server
-resources.
+If `hostnames` is not specified then the group's `controls` will be
+executed locally; this enables testing of a provider's API to verify
+non-server resources.
 
 [InSpec controls]: http://inspec.io/docs/reference/dsl_inspec/
 
@@ -394,12 +392,13 @@ For each group:
 - the default `attributes` mapping consists of equivalently named
   attributes for each output variable as well as a "terraform_state"
   attribute containing the pathname of the state file; additional or
-  overridden associations can be added.
+  overridden associations can be added
 
-- the default `controls` collection is empty
+- the default `controls` collection is empty, which results in all
+  of the profile's controls being applied
 
 - the default `hostnames` string is empty
 
-- the default `port` is obtained from the transport
+- the default `port` is obtained from the verifier or the transport
 
 - the default `username` is obtained from the transport

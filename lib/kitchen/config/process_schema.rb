@@ -14,21 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an output file
-  class PrepareOutputFile
-    def execute
-      parent_directory.mkpath
-      file.open('a') {}
-    end
+require "kitchen"
 
-    private
-
-    attr_accessor :file, :parent_directory
-
-    def initialize(file:)
-      self.file = file
-      self.parent_directory = file.parent
+module Kitchen
+  class Config
+    ProcessSchema = lambda do |attribute:, plugin:, schema:, value:|
+      schema.call(value: value).messages.tap do |messages|
+        raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" unless messages.empty?
+      end
     end
   end
 end

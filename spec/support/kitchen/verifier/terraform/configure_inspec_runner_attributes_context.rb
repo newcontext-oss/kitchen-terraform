@@ -14,21 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an output file
-  class PrepareOutputFile
-    def execute
-      parent_directory.mkpath
-      file.open('a') {}
-    end
-
-    private
-
-    attr_accessor :file, :parent_directory
-
-    def initialize(file:)
-      self.file = file
-      self.parent_directory = file.parent
-    end
+::RSpec.shared_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call" do
+  before do
+    allow(client).to receive(:each_output_name).with(no_args).and_yield("output_name_one").and_yield "output_name_two"
+    allow(client).to receive(:output).with(name: "output_name_one").and_return "output_value_one"
+    allow(client).to receive(:output).with(name: "output_name_two").and_return "output_value_two"
   end
 end

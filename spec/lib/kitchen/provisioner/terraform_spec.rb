@@ -14,41 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/terraform'
-require 'support/terraform/apply_timeout_config_examples'
-require 'support/terraform/color_config_examples'
-require 'support/terraform/configurable_context'
-require 'support/terraform/configurable_examples'
-require 'support/terraform/directory_config_examples'
-require 'support/terraform/file_configs_examples'
-require 'support/terraform/parallelism_config_examples'
-require 'support/terraform/variable_files_config_examples'
-require 'support/terraform/variables_config_examples'
+require "kitchen/provisioner/terraform"
+require "support/kitchen/instance_context"
+require "support/terraform/configurable_context"
+require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Provisioner::Terraform do
-  include_context 'instance'
-
-  let(:described_instance) { provisioner }
-
-  it_behaves_like ::Terraform::ApplyTimeoutConfig
-
-  it_behaves_like ::Terraform::ColorConfig
-
-  it_behaves_like ::Terraform::Configurable
-
-  it_behaves_like ::Terraform::DirectoryConfig
-
-  it_behaves_like ::Terraform::FileConfigs
-
-  it_behaves_like ::Terraform::ParallelismConfig
-
-  it_behaves_like ::Terraform::VariableFilesConfig
-
-  it_behaves_like ::Terraform::VariablesConfig
-
+  shared_context "plugin" do include_context ::Kitchen::Instance do let :provisioner do described_instance end end end
+  it_behaves_like ::Terraform::Configurable do
+    include_context "instance"
+    let :described_instance do provisioner end
+  end
   describe '#call(_state = nil)' do
     include_context 'client'
-
+    include_context "instance"
+    let :described_instance do provisioner end
     context 'when all commands do not fail' do
       after { described_instance.call }
 

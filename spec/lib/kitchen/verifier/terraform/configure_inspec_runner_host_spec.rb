@@ -14,21 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an output file
-  class PrepareOutputFile
-    def execute
-      parent_directory.mkpath
-      file.open('a') {}
-    end
+require "kitchen/verifier/terraform/configure_inspec_runner_host"
 
-    private
+::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost do
+  let :host do instance_double ::Object end
 
-    attr_accessor :file, :parent_directory
+  let :options do {} end
 
-    def initialize(file:)
-      self.file = file
-      self.parent_directory = file.parent
-    end
-  end
+  before do described_class.call host: host, options: options end
+
+  subject do options.fetch "host" end
+
+  it "associates 'host' with the host in the options" do is_expected.to be host end
 end

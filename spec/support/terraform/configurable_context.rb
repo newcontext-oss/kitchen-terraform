@@ -18,6 +18,7 @@ require 'kitchen'
 require 'kitchen/driver/terraform'
 require 'kitchen/provisioner/terraform'
 require 'kitchen/verifier/terraform'
+require 'support/kitchen/instance_context'
 require 'terraform/configurable'
 
 ::RSpec.shared_context 'client' do |client_type: :client|
@@ -30,38 +31,7 @@ require 'terraform/configurable'
 end
 
 ::RSpec.shared_context 'instance' do
-  let(:default_config) { { kitchen_root: kitchen_root } }
-
-  let(:driver) { ::Kitchen::Driver::Terraform.new default_config }
-
-  let :instance do
-    ::Kitchen::Instance.new driver: driver, logger: logger, platform: platform,
-                            provisioner: provisioner, state_file: object,
-                            suite: suite, transport: transport,
-                            verifier: verifier
-  end
-
-  let(:kitchen_root) { '/kitchen/root' }
-
-  let(:logger) { ::Kitchen::Logger.new }
-
-  let(:platform) { ::Kitchen::Platform.new name: 'platform' }
-
-  let :provisioner do
-    ::Kitchen::Provisioner::Terraform.new default_config
-  end
-
-  let(:suite) { ::Kitchen::Suite.new name: 'suite' }
-
-  let(:transport) { ::Kitchen::Transport::Ssh.new }
-
-  let(:verifier) { ::Kitchen::Verifier::Terraform.new default_config }
-
-  before do
-    allow(::File).to receive(:which).with('terraform').and_return '/terraform'
-
-    instance
-  end
+  include_context(::Kitchen::Instance) { before { instance } }
 end
 
 ::RSpec.shared_context 'silent_client' do
