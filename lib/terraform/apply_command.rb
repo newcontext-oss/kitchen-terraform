@@ -26,8 +26,8 @@ module Terraform
     def initialize(target: '')
       super
       preparations.concat [
-        ::Terraform::PrepareInputFile.new(file: target),
-        ::Terraform::PrepareOutputFile.new(file: options.state)
+        ::Terraform::PrepareOutputFile.new(file: options.state_out),
+        ::Terraform::PrepareInputFile.new(file: target)
       ]
     end
   end

@@ -86,4 +86,12 @@ require 'terraform/command_options'
   describe '#state=' do
     it_behaves_like '#store', 'state'
   end
+  
+  describe '#state_out' do
+    it_behaves_like '#fetch', 'state-out'
+  end
+
+  describe '#state_out=' do
+    it_behaves_like '#store', 'state-out'
+  end
 end

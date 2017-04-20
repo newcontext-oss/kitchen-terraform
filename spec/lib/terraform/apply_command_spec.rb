@@ -19,7 +19,7 @@ require 'terraform/apply_command'
 
 ::RSpec.describe ::Terraform::ApplyCommand do
   let :described_instance do
-    described_class.new(target: 'target') { |options| options.state = 'state' }
+    described_class.new(target: 'target') { |options| options.state_out = 'state-out' }
   end
 
   let(:prepare_input_file) { instance_double ::Terraform::PrepareInputFile }
@@ -31,7 +31,7 @@ require 'terraform/apply_command'
       .to receive(:new).with(file: 'target').and_return prepare_input_file
 
     allow(::Terraform::PrepareOutputFile)
-      .to receive(:new).with(file: 'state').and_return prepare_output_file
+      .to receive(:new).with(file: 'state-out').and_return prepare_output_file
   end
 
   it_behaves_like('#name') { let(:name) { 'apply' } }
