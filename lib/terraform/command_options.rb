@@ -56,6 +56,14 @@ module Terraform
       store key: 'state', value: value
     end
 
+    def state_out
+      fetch key: 'state-out'
+    end
+
+    def state_out=(value)
+      store key: 'state-out', value: value
+    end
+
     def update=(value)
       store key: 'update', value: value
     end

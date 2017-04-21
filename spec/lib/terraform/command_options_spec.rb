@@ -26,13 +26,13 @@ require 'terraform/command_options'
   shared_examples '#fetch' do |key|
     before { options.add ::Terraform::CommandOption.new key: key, value: value }
 
-    subject { described_instance.send key }
+    subject { described_instance.send key.tr '-', '_' }
 
     it("fetches -#{key}") { is_expected.to eq value }
   end
 
   shared_examples '#store' do |key|
-    before { described_instance.send "#{key}=", value }
+    before { described_instance.send "#{key.tr '-', '_'}=", value }
 
     subject { described_instance.to_s }
 
@@ -85,5 +85,13 @@ require 'terraform/command_options'
 
   describe '#state=' do
     it_behaves_like '#store', 'state'
+  end
+  
+  describe '#state_out' do
+    it_behaves_like '#fetch', 'state-out'
+  end
+
+  describe '#state_out=' do
+    it_behaves_like '#store', 'state-out'
   end
 end
