@@ -31,7 +31,7 @@ module Terraform
         options.color = config[:color]
         options.input = false
         options.parallelism = config[:parallelism]
-        options.state = config[:state]
+        options.state_out = config[:state]
       end
     end
 

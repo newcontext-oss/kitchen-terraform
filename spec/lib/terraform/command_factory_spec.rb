@@ -90,6 +90,12 @@ require 'support/terraform/configurable_context'
     end
   end
 
+  shared_examples 'state-out option' do
+    it 'is set from config[:state]' do
+      is_expected.to include '-state-out=/state/file'
+    end
+  end
+
   shared_examples 'var option' do
     it 'is set from config[:variables]' do
       is_expected.to include "-var='name=value'"
@@ -114,7 +120,7 @@ require 'support/terraform/configurable_context'
 
       it_behaves_like 'parallelism option'
 
-      it_behaves_like 'state option'
+      it_behaves_like 'state-out option'
     end
   end
 
