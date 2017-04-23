@@ -6,7 +6,7 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
-## [0.7.0] - 2017-04-05
+## [0.7.0] - 2017-04-23
 
 ### Added
 
