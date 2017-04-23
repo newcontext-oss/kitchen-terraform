@@ -14,22 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
-require "terraform/prepare_input_file"
-require "terraform/plan_command"
+require "kitchen"
 
-module Terraform
-  # A command to plan a destructive execution
-  class DestructivePlanCommand < ::Terraform::PlanCommand
-    def name
-      "plan"
-    end
-
-    private
-
-    def initialize(target: "", &block)
-      super target: target, &block
-      preparations.push ::Terraform::PrepareInputFile.new file: ::Pathname.new(options.state)
+module Kitchen
+  class Config
+    ProcessSchema = lambda do |attribute:, plugin:, schema:, value:|
+      schema.call(value: value).messages.tap do |messages|
+        raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" unless messages.empty?
+      end
     end
   end
 end

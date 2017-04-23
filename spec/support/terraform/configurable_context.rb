@@ -14,56 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-require 'kitchen/driver/terraform'
-require 'kitchen/provisioner/terraform'
-require 'kitchen/verifier/terraform'
-require 'terraform/configurable'
+require "kitchen"
+require "kitchen/driver/terraform"
+require "kitchen/provisioner/terraform"
+require "kitchen/verifier/terraform"
+require "support/kitchen/instance_context"
+require "terraform/configurable"
 
-::RSpec.shared_context 'client' do |client_type: :client|
-  let(client_type) { instance_double ::Terraform::Client }
+::RSpec.shared_context "client" do |client_type: :client|
+  let client_type do instance_double ::Terraform::Client end
 
-  before do
-    allow(described_instance)
-      .to receive(client_type).with(no_args).and_return send client_type
-  end
+  before do allow(described_instance).to receive(client_type).with(no_args).and_return send client_type end
 end
 
-::RSpec.shared_context 'instance' do
-  let(:default_config) { { kitchen_root: kitchen_root } }
+::RSpec.shared_context "instance" do include_context ::Kitchen::Instance do before do instance end end end
 
-  let(:driver) { ::Kitchen::Driver::Terraform.new default_config }
-
-  let :instance do
-    ::Kitchen::Instance.new driver: driver, logger: logger, platform: platform,
-                            provisioner: provisioner, state_file: object,
-                            suite: suite, transport: transport,
-                            verifier: verifier
-  end
-
-  let(:kitchen_root) { '/kitchen/root' }
-
-  let(:logger) { ::Kitchen::Logger.new }
-
-  let(:platform) { ::Kitchen::Platform.new name: 'platform' }
-
-  let :provisioner do
-    ::Kitchen::Provisioner::Terraform.new default_config
-  end
-
-  let(:suite) { ::Kitchen::Suite.new name: 'suite' }
-
-  let(:transport) { ::Kitchen::Transport::Ssh.new }
-
-  let(:verifier) { ::Kitchen::Verifier::Terraform.new default_config }
-
-  before do
-    allow(::File).to receive(:which).with('terraform').and_return '/terraform'
-
-    instance
-  end
-end
-
-::RSpec.shared_context 'silent_client' do
-  include_context 'client', client_type: :silent_client
-end
+::RSpec.shared_context "silent_client" do include_context "client", client_type: :silent_client end

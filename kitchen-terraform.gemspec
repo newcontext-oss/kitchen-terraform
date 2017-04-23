@@ -64,11 +64,15 @@ require 'terraform/project_version.rb'
 
   specification.add_development_dependency 'travis', '~> 1.8'
 
+  specification.add_runtime_dependency 'dry-types', '~> 0.9'
+
+  specification.add_runtime_dependency 'dry-validation', '~> 0.10'
+
   specification.add_runtime_dependency 'hashie', '~> 3.5'
 
   specification.add_runtime_dependency 'inspec', '~> 1.0'
 
-  specification.add_runtime_dependency 'kitchen-inspec', '~> 0.14', '>= 0.14.0'
+  specification.add_runtime_dependency 'kitchen-inspec', '~> 0.18'
 
   specification.add_runtime_dependency 'mixlib-shellout', '~> 2.2', '>= 2.2.6'
 

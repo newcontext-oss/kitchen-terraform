@@ -14,62 +14,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/provisioner/terraform'
-require 'support/terraform/apply_timeout_config_examples'
-require 'support/terraform/color_config_examples'
-require 'support/terraform/configurable_context'
-require 'support/terraform/configurable_examples'
-require 'support/terraform/directory_config_examples'
-require 'support/terraform/file_configs_examples'
-require 'support/terraform/parallelism_config_examples'
-require 'support/terraform/variable_files_config_examples'
-require 'support/terraform/variables_config_examples'
+require "kitchen/provisioner/terraform"
+require "support/kitchen/instance_context"
+require "support/terraform/configurable_context"
+require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Provisioner::Terraform do
-  include_context 'instance'
+  shared_context "plugin" do include_context ::Kitchen::Instance do let :provisioner do described_instance end end end
 
-  let(:described_instance) { provisioner }
+  it_behaves_like ::Terraform::Configurable do
+    include_context "instance"
 
-  it_behaves_like ::Terraform::ApplyTimeoutConfig
+    let :described_instance do provisioner end
+  end
 
-  it_behaves_like ::Terraform::ColorConfig
+  describe "#call(_state = nil)" do
+    include_context "client"
 
-  it_behaves_like ::Terraform::Configurable
+    include_context "instance"
 
-  it_behaves_like ::Terraform::DirectoryConfig
+    let :described_instance do provisioner end
 
-  it_behaves_like ::Terraform::FileConfigs
+    context "when all commands do not fail" do
+      after do described_instance.call end
 
-  it_behaves_like ::Terraform::ParallelismConfig
+      subject do client end
 
-  it_behaves_like ::Terraform::VariableFilesConfig
-
-  it_behaves_like ::Terraform::VariablesConfig
-
-  describe '#call(_state = nil)' do
-    include_context 'client'
-
-    context 'when all commands do not fail' do
-      after { described_instance.call }
-
-      subject { client }
-
-      it 'applies constructively' do
-        is_expected.to receive(:apply_constructively).with no_args
-      end
+      it "applies constructively" do is_expected.to receive(:apply_constructively).with no_args end
     end
 
-    context 'when a command does fail' do
+    context "when a command does fail" do
       before do
-        allow(client).to receive(:apply_constructively)
-          .with(no_args).and_raise ::SystemCallError, 'system call'
+        allow(client).to receive(:apply_constructively).with(no_args).and_raise ::SystemCallError, "system call"
       end
 
-      subject { proc { described_instance.call } }
+      subject do proc do described_instance.call end end
 
-      it 'raises an action failed error' do
-        is_expected.to raise_error ::Kitchen::ActionFailed, /system call/
-      end
+      it "raises an action failed error" do is_expected.to raise_error ::Kitchen::ActionFailed, /system call/ end
     end
   end
 end

@@ -14,33 +14,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-require 'terraform/apply_timeout_config'
-require 'terraform/color_config'
-require 'terraform/configurable'
-require 'terraform/directory_config'
-require 'terraform/file_configs'
-require 'terraform/parallelism_config'
-require 'terraform/variable_files_config'
-require 'terraform/variables_config'
+require "kitchen"
+require "kitchen/config/apply_timeout"
+require "kitchen/config/color"
+require "kitchen/config/directory"
+require "kitchen/config/parallelism"
+require "kitchen/config/plan"
+require "kitchen/config/state"
+require "kitchen/config/variable_files"
+require "kitchen/config/variables"
+require "terraform/configurable"
 
 module Kitchen
   module Provisioner
     # Applies constructive Terraform plans
     class Terraform < ::Kitchen::Provisioner::Base
-      extend ::Terraform::ApplyTimeoutConfig
+      ::Kitchen::Config::ApplyTimeout.call plugin_class: self
 
-      extend ::Terraform::ColorConfig
+      ::Kitchen::Config::Color.call plugin_class: self
 
-      extend ::Terraform::DirectoryConfig
+      ::Kitchen::Config::Directory.call plugin_class: self
 
-      extend ::Terraform::FileConfigs
+      ::Kitchen::Config::Parallelism.call plugin_class: self
 
-      extend ::Terraform::ParallelismConfig
+      ::Kitchen::Config::Plan.call plugin_class: self
 
-      extend ::Terraform::VariableFilesConfig
+      ::Kitchen::Config::State.call plugin_class: self
 
-      extend ::Terraform::VariablesConfig
+      ::Kitchen::Config::VariableFiles.call plugin_class: self
+
+      ::Kitchen::Config::Variables.call plugin_class: self
 
       include ::Terraform::Configurable
 

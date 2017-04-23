@@ -14,29 +14,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen/verifier/inspec'
-require 'terraform/configurable'
-require 'terraform/groups_config'
+require "kitchen/config/groups"
+require "kitchen/verifier/inspec"
+require "kitchen/verifier/terraform"
+require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
+require "kitchen/verifier/terraform/configure_inspec_runner_backend"
+require "kitchen/verifier/terraform/configure_inspec_runner_controls"
+require "kitchen/verifier/terraform/configure_inspec_runner_host"
+require "kitchen/verifier/terraform/configure_inspec_runner_port"
+require "kitchen/verifier/terraform/configure_inspec_runner_user"
+require "kitchen/verifier/terraform/enumerate_group_hosts"
+require "terraform/configurable"
 
 module Kitchen
   module Verifier
-    # Runs tests post-converge to confirm that instances in the Terraform state
-    # are in an expected state
+    # Runs tests post-converge to confirm that instances in the Terraform state are in an expected state
     class Terraform < ::Kitchen::Verifier::Inspec
-      extend ::Terraform::GroupsConfig
-
-      include ::Terraform::Configurable
+      ::Kitchen::Config::Groups.call plugin_class: self
 
       kitchen_verifier_api_version 2
 
+      include ::Terraform::Configurable
+
       def call(state)
-        resolve_groups do |group|
-          self.group = group
-          config[:attributes] = {
-            'terraform_state' => provisioner[:state].to_path
-          }.merge group.attributes
-          info "Verifying #{group.description}"
-          super
+        config.fetch(:groups).each do |group|
+          state.store :group, group
+          ::Kitchen::Verifier::Terraform::EnumerateGroupHosts.call client: silent_client, group: group do |host:|
+            state.store :host, host
+            info "Verifying '#{host}' of group '#{group.fetch :name}'"
+            super state
+          end
         end
       rescue ::Kitchen::StandardError, ::SystemCallError => error
         raise ::Kitchen::ActionFailed, error.message
@@ -44,24 +51,19 @@ module Kitchen
 
       private
 
-      attr_accessor :group
-
-      def configure_backend(options:)
-        /(local)host/.match group.hostname do |match|
-          options.merge! 'backend' => match[1]
-        end
-      end
-
-      def resolve_groups(&block)
-        config[:groups]
-          .each { |group| group.resolve client: silent_client, &block }
+      def configure_inspec_runner(group:, host:, options:)
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend.call host: host, options: options
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost.call host: host, options: options
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort.call group: group, options: options
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser.call group: group, options: options
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
+          .call client: silent_client, config: config, group: group, terraform_state: provisioner[:state]
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls.call group: group, options: options
       end
 
       def runner_options(transport, state = {}, platform = nil, suite = nil)
-        super.tap do |options|
-          options.merge! controls: group.controls, 'host' => group.hostname,
-                         'port' => group.port, 'user' => group.username
-          configure_backend options: options
+        super(transport, state, platform, suite).tap do |options|
+          configure_inspec_runner group: state.fetch(:group), host: state.fetch(:host), options: options
         end
       end
     end

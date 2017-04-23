@@ -14,16 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-require 'terraform/cli_config'
-require 'terraform/configurable'
-require 'terraform/version'
+require "kitchen"
+require "kitchen/config/cli"
+require "terraform/configurable"
+require "terraform/version"
 
 module Kitchen
   module Driver
     # Terraform state lifecycle activities manager
     class Terraform < ::Kitchen::Driver::Base
-      extend ::Terraform::CLIConfig
+      ::Kitchen::Config::CLI.call plugin_class: self
 
       include ::Terraform::Configurable
 
@@ -34,24 +34,21 @@ module Kitchen
       def create(_state = nil); end
 
       def destroy(_state = nil)
-        load_state { client.apply_destructively }
+        load_state do client.apply_destructively end
       rescue ::Kitchen::StandardError, ::SystemCallError => error
         raise ::Kitchen::ActionFailed, error.message
       end
 
       def verify_dependencies
-        verify_supported_version
-        check_deprecated_version
+        version.if_not_supported do
+          raise ::Kitchen::UserError, "#{version} is not supported\nInstall #{::Terraform::Version.latest}"
+        end
+        version.if_deprecated do
+          log_deprecation aspect: version.to_s, remediation: "Install #{::Terraform::Version.latest}"
+        end
       end
 
       private
-
-      def check_deprecated_version
-        version.if_deprecated do
-          log_deprecation aspect: version.to_s,
-                          remediation: "Install #{::Terraform::Version.latest}"
-        end
-      end
 
       def load_state(&block)
         silent_client.load_state(&block)
@@ -59,17 +56,8 @@ module Kitchen
         debug error.message
       end
 
-      def verify_supported_version
-        version.if_not_supported do
-          raise ::Kitchen::UserError,
-                "#{version} is not supported\nInstall " \
-                  "#{::Terraform::Version.latest}"
-        end
-      end
-
       def version
-        @version ||=
-          ::Terraform::Client.new(config: self, logger: debug_logger).version
+        @version ||= ::Terraform::Client.new(config: self, logger: debug_logger).version
       end
     end
   end

@@ -14,17 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command'
-require 'terraform/prepare_input_file'
-
+require "pathname"
+require "terraform/command"
+require "terraform/prepare_input_file"
 module Terraform
   # A command to show a state
   class ShowCommand < ::Terraform::Command
     private
 
-    def initialize(target: '')
-      super
-      preparations.push ::Terraform::PrepareInputFile.new file: target
+    def initialize(target: "", &block)
+      super target: target, &block
+      preparations.push ::Terraform::PrepareInputFile.new file: ::Pathname.new(target)
     end
   end
 end

@@ -14,22 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
-require "terraform/prepare_input_file"
-require "terraform/plan_command"
+require "kitchen/verifier/terraform/configure_inspec_runner_controls"
 
-module Terraform
-  # A command to plan a destructive execution
-  class DestructivePlanCommand < ::Terraform::PlanCommand
-    def name
-      "plan"
-    end
+::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls do
+  let :controls do instance_double ::Object end
 
-    private
+  let :options do {} end
 
-    def initialize(target: "", &block)
-      super target: target, &block
-      preparations.push ::Terraform::PrepareInputFile.new file: ::Pathname.new(options.state)
-    end
-  end
+  before do described_class.call group: {controls: controls}, options: options end
+
+  subject do options.fetch :controls end
+
+  it "associates :controls with the group's :controls in the options" do is_expected.to be controls end
 end

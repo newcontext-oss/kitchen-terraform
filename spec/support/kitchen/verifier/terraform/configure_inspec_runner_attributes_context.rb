@@ -14,22 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
-require "terraform/prepare_input_file"
-require "terraform/plan_command"
+::RSpec.shared_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call" do
+  before do
+    allow(client).to receive(:each_output_name).with(no_args).and_yield("output_name_one").and_yield "output_name_two"
 
-module Terraform
-  # A command to plan a destructive execution
-  class DestructivePlanCommand < ::Terraform::PlanCommand
-    def name
-      "plan"
-    end
+    allow(client).to receive(:output).with(name: "output_name_one").and_return "output_value_one"
 
-    private
-
-    def initialize(target: "", &block)
-      super target: target, &block
-      preparations.push ::Terraform::PrepareInputFile.new file: ::Pathname.new(options.state)
-    end
+    allow(client).to receive(:output).with(name: "output_name_two").and_return "output_value_two"
   end
 end

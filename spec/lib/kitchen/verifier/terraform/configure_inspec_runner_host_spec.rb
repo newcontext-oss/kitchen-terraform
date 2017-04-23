@@ -14,22 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
-require "terraform/prepare_input_file"
-require "terraform/plan_command"
+require "kitchen/verifier/terraform/configure_inspec_runner_host"
 
-module Terraform
-  # A command to plan a destructive execution
-  class DestructivePlanCommand < ::Terraform::PlanCommand
-    def name
-      "plan"
-    end
+::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost do
+  let :host do instance_double ::Object end
 
-    private
+  let :options do {} end
 
-    def initialize(target: "", &block)
-      super target: target, &block
-      preparations.push ::Terraform::PrepareInputFile.new file: ::Pathname.new(options.state)
-    end
-  end
+  before do described_class.call host: host, options: options end
+
+  subject do options.fetch "host" end
+
+  it "associates 'host' with the host in the options" do is_expected.to be host end
 end

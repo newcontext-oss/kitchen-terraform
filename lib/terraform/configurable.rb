@@ -14,18 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'forwardable'
-require 'kitchen'
-require 'pathname'
-require 'terraform/client'
-require 'terraform/debug_logger'
-require 'terraform/project_version'
-
+require "forwardable"
+require "kitchen"
+require "terraform/client"
+require "terraform/debug_logger"
+require "terraform/project_version"
 module Terraform
   # Behaviour for objects that extend ::Kitchen::Configurable
   module Configurable
     extend ::Forwardable
-
     def_delegator :config, :[]=
 
     def_delegators :instance, :driver, :provisioner, :transport
@@ -39,13 +36,11 @@ module Terraform
     end
 
     def config_deprecated(attr:, remediation:, type:)
-      log_deprecation aspect: "#{formatted_config attr: attr} as #{type}",
-                      remediation: remediation
+      log_deprecation aspect: "#{formatted_config attr: attr} as #{type}", remediation: remediation
     end
 
     def config_error(attr:, expected:)
-      raise ::Kitchen::UserError, "#{formatted_config attr: attr} must be " \
-                                    "interpretable as #{expected}"
+      raise ::Kitchen::UserError, "#{formatted_config attr: attr} must be interpretable as #{expected}"
     end
 
     def debug_logger
@@ -53,14 +48,12 @@ module Terraform
     end
 
     def instance_pathname(filename:)
-      ::Pathname.new(config[:kitchen_root])
-                .join '.kitchen', 'kitchen-terraform', instance.name, filename
+      ::File.join config.fetch(:kitchen_root), ".kitchen", "kitchen-terraform", instance.name, filename
     end
 
     def log_deprecation(aspect:, remediation:)
-      logger.warn 'DEPRECATION NOTICE'
-      logger
-        .warn "Support for #{aspect} will be dropped in kitchen-terraform v1.0"
+      logger.warn "DEPRECATION NOTICE"
+      logger.warn "Support for #{aspect} will be dropped in kitchen-terraform v1.0"
       logger.warn remediation
     end
 
@@ -75,11 +68,11 @@ module Terraform
     end
 
     def silent_config
-      verbose_config.tap { |config| config[:color] = false }
+      verbose_config.tap do |config| config[:color] = false end
     end
 
     def verbose_config
-      provisioner.dup.tap { |config| config[:cli] = driver[:cli] }
+      provisioner.dup.tap do |config| config[:cli] = driver[:cli] end
     end
   end
 end

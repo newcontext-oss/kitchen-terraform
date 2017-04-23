@@ -14,22 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
-require "terraform/prepare_input_file"
-require "terraform/plan_command"
+require "kitchen/verifier/terraform"
 
-module Terraform
-  # A command to plan a destructive execution
-  class DestructivePlanCommand < ::Terraform::PlanCommand
-    def name
-      "plan"
-    end
-
-    private
-
-    def initialize(target: "", &block)
-      super target: target, &block
-      preparations.push ::Terraform::PrepareInputFile.new file: ::Pathname.new(options.state)
-    end
+::Kitchen::Verifier::Terraform::EnumerateGroupHosts = lambda do |client:, group:, &block|
+  if group.key? :hostnames
+    client.iterate_output name: group.fetch(:hostnames) do |hostname| block.call host: hostname end
+  else
+    block.call host: "localhost"
   end
 end

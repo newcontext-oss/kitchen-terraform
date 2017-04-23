@@ -14,22 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
-require "terraform/prepare_input_file"
-require "terraform/plan_command"
+require "kitchen/verifier/terraform"
 
-module Terraform
-  # A command to plan a destructive execution
-  class DestructivePlanCommand < ::Terraform::PlanCommand
-    def name
-      "plan"
-    end
-
-    private
-
-    def initialize(target: "", &block)
-      super target: target, &block
-      preparations.push ::Terraform::PrepareInputFile.new file: ::Pathname.new(options.state)
+module Kitchen
+  module Verifier
+    class Terraform < ::Kitchen::Verifier::Inspec
+      ConfigureInspecRunnerControls = lambda do |group:, options:|
+        options.store :controls, group.fetch(:controls, [])
+      end
     end
   end
 end
