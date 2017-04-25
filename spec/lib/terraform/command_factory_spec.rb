@@ -147,32 +147,14 @@ require 'support/terraform/configurable_context'
   end
 
   describe '#output_command' do
-    let :command do
-      described_instance
-        .output_command target: ::Pathname.new('/target'),
-                        version: ::Terraform::Version.create(value: version)
-    end
-
-    let(:version) { '0.7' }
+    let :command do described_instance.output_command target: ::Pathname.new('/target') end
 
     it_behaves_like('a target is set') { let(:target) { '/target' } }
 
     it_behaves_like 'options are specified' do
-      context 'when the version does support JSON' do
-        it_behaves_like 'output command options'
+      it_behaves_like 'output command options'
 
-        it('json option is enabled') { is_expected.to include '-json=true' }
-      end
-
-      context 'when the version does not support JSON' do
-        let(:version) { '0.6' }
-
-        it_behaves_like 'output command options'
-
-        it 'json option is not enabled' do
-          is_expected.to_not include '-json=true'
-        end
-      end
+      it 'json option is enabled' do is_expected.to include '-json=true' end
     end
   end
 

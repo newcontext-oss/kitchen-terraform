@@ -15,34 +15,9 @@
 # limitations under the License.
 
 require 'terraform/output_parser'
-require 'terraform/version'
 
 ::RSpec.describe ::Terraform::OutputParser do
   let(:described_instance) { described_class.new output: output }
-
-  describe '.create' do
-    subject do
-      described_class
-        .create output: 'output',
-                version: ::Terraform::Version.create(value: version)
-    end
-
-    context 'when the version does support JSON' do
-      let(:version) { '0.8' }
-
-      it 'returns an OutputParser' do
-        is_expected.to be_instance_of described_class
-      end
-    end
-
-    context 'when the version does not support JSON' do
-      let(:version) { '0.6' }
-
-      it 'returns a DeprecatedOutputParser' do
-        is_expected.to be_instance_of ::Terraform::DeprecatedOutputParser
-      end
-    end
-  end
 
   describe '#each_name' do
     let :output do

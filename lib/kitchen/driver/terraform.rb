@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
 require "kitchen/config/cli"
+require "kitchen/driver/terraform/verify_client_version"
 require "terraform/configurable"
-require "terraform/version"
 
 module Kitchen
   module Driver
@@ -40,12 +39,8 @@ module Kitchen
       end
 
       def verify_dependencies
-        version.if_not_supported do
-          raise ::Kitchen::UserError, "#{version} is not supported\nInstall #{::Terraform::Version.latest}"
-        end
-        version.if_deprecated do
-          log_deprecation aspect: version.to_s, remediation: "Install #{::Terraform::Version.latest}"
-        end
+        ::Kitchen::Driver::Terraform::VerifyClientVersion
+          .call client: ::Terraform::Client.new(config: self, logger: debug_logger), logger: logger
       end
 
       private
@@ -54,10 +49,6 @@ module Kitchen
         silent_client.load_state(&block)
       rescue ::Errno::ENOENT => error
         debug error.message
-      end
-
-      def version
-        @version ||= ::Terraform::Client.new(config: self, logger: debug_logger).version
       end
     end
   end

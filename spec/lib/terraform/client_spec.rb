@@ -26,28 +26,16 @@ require 'terraform/client'
   end
 
   shared_context 'outputs are defined', :outputs do
-    let(:version) { '0.7' }
-
     before do
-      allow(described_instance).to receive(:version).with(no_args)
-        .and_return ::Terraform::Version.new value: version
-
       allow(described_instance)
-        .to receive(:execute).with(command: kind_of(::Terraform::OutputCommand))
-        .and_yield output_value
+        .to receive(:execute).with(command: kind_of(::Terraform::OutputCommand)).and_yield output_value
     end
   end
 
   shared_context 'outputs are not defined', :no_outputs do
-    let(:version) { '0.7' }
-
     before do
-      allow(described_instance).to receive(:version).with(no_args)
-        .and_return ::Terraform::Version.new value: version
-
       allow(described_instance).to receive(:execute)
-        .with(command: kind_of(::Terraform::OutputCommand))
-        .and_raise ::Kitchen::StandardError, 'no outputs'
+        .with(command: kind_of(::Terraform::OutputCommand)).and_raise ::Kitchen::StandardError, 'no outputs'
     end
   end
 
@@ -190,8 +178,6 @@ require 'terraform/client'
     context 'when outputs are defined', :outputs do
       let(:output_value) { ::JSON.dump 'value' => 'value' }
 
-      let(:version) { '0.6' }
-
       it('returns the output value') { is_expected.to eq 'value' }
     end
 
@@ -203,13 +189,11 @@ require 'terraform/client'
   describe '#version' do
     before do
       allow(described_instance).to receive(:execute)
-        .with(command: kind_of(::Terraform::VersionCommand)).and_yield '0.9'
+        .with(command: kind_of(::Terraform::VersionCommand)).and_yield 'Terraform v0.9.0'
     end
 
     subject { described_instance.version }
 
-    it 'returns the version' do
-      is_expected.to be_instance_of ::Terraform::Version
-    end
+    it 'returns the version' do is_expected.to eq '0.9.0' end
   end
 end

@@ -21,11 +21,9 @@ require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
-  it_behaves_like ::Terraform::Configurable do
-    include_context "instance"
+  let :described_instance do driver end
 
-    let :described_instance do driver end
-  end
+  it_behaves_like ::Terraform::Configurable do include_context "instance" end
 
   describe ".serial_actions" do
     include_context "instance"
@@ -43,8 +41,6 @@ require "support/terraform/configurable_examples"
     include_context "silent_client"
 
     let :allow_load_state do allow(silent_client).to receive(:load_state).with no_args end
-
-    let :described_instance do driver end
 
     context "when a state does exist" do
       before do allow_load_state.and_yield end
@@ -76,38 +72,14 @@ require "support/terraform/configurable_examples"
   end
 
   describe "#verify_dependencies" do
-    include_context "client"
-
     include_context "instance"
 
-    let :described_instance do driver end
+    after do described_instance.verify_dependencies end
 
-    before do
-      allow(::Terraform::Client).to receive(:new).with(config: driver, logger: duck_type(:<<)).and_return client
+    subject do ::Kitchen::Driver::Terraform::VerifyClientVersion end
 
-      allow(client).to receive(:version).with(no_args).and_return ::Terraform::Version.create value: version
-    end
-
-    context "when the Terraform version is not supported" do
-      let :version do "0.10" end
-
-      it_behaves_like "a user error has occurred" do
-        let :described_method do described_instance.verify_dependencies end
-
-        let :message do "Terraform v0.10 is not supported\nInstall Terraform v0.9" end
-      end
-    end
-
-    context "when the Terraform version is deprecated" do
-      let :version do "0.6" end
-
-      after do described_instance.verify_dependencies end
-
-      subject do described_instance end
-
-      it "logs a deprecation" do
-        is_expected.to receive(:log_deprecation).with aspect: "Terraform v0.6", remediation: "Install Terraform v0.9"
-      end
+    it "verifies the Terraform client version" do
+      is_expected.to receive(:call).with client: kind_of(::Terraform::Client), logger: duck_type(:<<)
     end
   end
 end

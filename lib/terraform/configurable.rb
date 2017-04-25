@@ -35,10 +35,6 @@ module Terraform
       ::Terraform::Client.new config: verbose_config, logger: logger
     end
 
-    def config_deprecated(attr:, remediation:, type:)
-      log_deprecation aspect: "#{formatted_config attr: attr} as #{type}", remediation: remediation
-    end
-
     def config_error(attr:, expected:)
       raise ::Kitchen::UserError, "#{formatted_config attr: attr} must be interpretable as #{expected}"
     end
@@ -49,12 +45,6 @@ module Terraform
 
     def instance_pathname(filename:)
       ::File.join config.fetch(:kitchen_root), ".kitchen", "kitchen-terraform", instance.name, filename
-    end
-
-    def log_deprecation(aspect:, remediation:)
-      logger.warn "DEPRECATION NOTICE"
-      logger.warn "Support for #{aspect} will be dropped in kitchen-terraform v1.0"
-      logger.warn remediation
     end
 
     def silent_client
