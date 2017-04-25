@@ -12,6 +12,10 @@ major version 0.y.z will maintain a stable public interface.
 
 * Dropped support for Terraform version 0.6
 
+### Fixed
+
+* Added missing URL to 0.7.0 changes
+
 ## [0.7.0] - 2017-04-23
 
 ### Added
@@ -242,6 +246,7 @@ major version 0.y.z will maintain a stable public interface.
 [0.5.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.0...v0.5.1
 [0.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.1...v0.6.0
 [0.6.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.6.0...v0.6.1
+[0.7.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.6.1...v0.7.0
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott
