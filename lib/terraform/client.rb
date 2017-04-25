@@ -18,7 +18,6 @@ require 'terraform/command_factory'
 require 'terraform/no_output_parser'
 require 'terraform/output_parser'
 require 'terraform/shell_out'
-require 'terraform/version'
 
 module Terraform
   # Client to execute commands
@@ -50,9 +49,7 @@ module Terraform
     end
 
     def version
-      execute command: factory.version_command do |value|
-        return ::Terraform::Version.create value: value
-      end
+      execute command: factory.version_command do |value| return value.slice /v(\d+\.\d+\.\d+)/, 1 end
     end
 
     private
@@ -82,14 +79,11 @@ module Terraform
     end
 
     def output_parser(name:)
-      execute(
-        command: factory.output_command(target: name, version: version)
-      ) do |value|
-        return ::Terraform::OutputParser.create output: value, version: version
+      execute command: factory.output_command(target: name) do |value|
+        return ::Terraform::OutputParser.new output: value
       end
     rescue ::Kitchen::StandardError => exception
-      raise exception unless exception.message =~ /no outputs/
-
+      /no outputs/.match? exception.message or raise exception
       ::Terraform::NoOutputParser.new
     end
   end

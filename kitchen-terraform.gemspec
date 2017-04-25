@@ -84,7 +84,7 @@ require 'terraform/project_version.rb'
 
   specification.required_ruby_version = ['>= 2.1', '< 2.5']
 
-  specification.requirements = ['Terraform >= 0.6, < 0.10']
+  specification.requirements = ["Terraform >= 0.7, < 0.10"]
 
   specification.signing_key = 'certs/private_key.pem'
 end

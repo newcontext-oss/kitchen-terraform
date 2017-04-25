@@ -49,20 +49,6 @@ require "terraform/configurable"
     it "returns a configured client" do is_expected.to be client end
   end
 
-  describe "#config_deprecated" do
-    let :remediation do instance_double ::Object end
-
-    let :type do instance_double ::Object end
-
-    after do described_instance.config_deprecated attr: attr, remediation: remediation, type: type end
-
-    subject do described_instance end
-
-    it "logs the deprecation" do
-      is_expected.to receive(:log_deprecation).with aspect: "#{formatted_config} as #{type}", remediation: remediation
-    end
-  end
-
   describe "#config_error" do
     it_behaves_like "a user error has occurred" do
       let :described_method do described_instance.config_error attr: attr, expected: "expected" end
@@ -91,38 +77,6 @@ require "terraform/configurable"
     it "returns a pathname under the hidden instance directory" do
       is_expected.to eq "/kitchen/root/.kitchen/kitchen-terraform/suite-platform/filename"
     end
-  end
-
-  describe "#log_deprecation" do
-    let :aspect do object end
-
-    let :remediation do object end
-
-    let :warn_deprecation do receive(:warn).with "DEPRECATION NOTICE" end
-
-    let :warn_deprecated_feature do
-      receive(:warn).with "Support for #{aspect} will be dropped in kitchen-terraform v1.0"
-    end
-
-    let :warn_remediation do receive(:warn).with remediation end
-
-    before do
-      allow(logger).to warn_deprecation
-
-      allow(logger).to warn_deprecated_feature
-
-      allow(logger).to warn_remediation
-    end
-
-    after do described_instance.log_deprecation aspect: aspect, remediation: remediation end
-
-    subject do logger end
-
-    it "warns of the deprecation" do is_expected.to warn_deprecation end
-
-    it "warns of the deprecated feature" do is_expected.to warn_deprecated_feature end
-
-    it "warns of the remediation" do is_expected.to warn_remediation end
   end
 
   describe "#provisioner" do

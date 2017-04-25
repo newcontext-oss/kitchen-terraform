@@ -49,11 +49,12 @@ module Terraform
       end
     end
 
-    def output_command(target:, version:)
-      version
-        .if_json_not_supported { return base_output_command target: target }
-
-      json_output_command target: target
+    def output_command(target:)
+      ::Terraform::OutputCommand.new target: target do |options|
+        options.color = config[:color]
+        options.json = true
+        options.state = config[:state]
+      end
     end
 
     def plan_command
@@ -80,16 +81,6 @@ module Terraform
 
     attr_accessor :config
 
-    def base_output_command(target:, &block)
-      block ||= proc {}
-
-      ::Terraform::OutputCommand.new target: target do |options|
-        options.color = config[:color]
-        options.state = config[:state]
-        block.call options
-      end
-    end
-
     def configure_plan(options:)
       options.color = config[:color]
       options.input = false
@@ -102,10 +93,6 @@ module Terraform
 
     def initialize(config:)
       self.config = config
-    end
-
-    def json_output_command(target:)
-      base_output_command(target: target) { |options| options.json = true }
     end
   end
 end

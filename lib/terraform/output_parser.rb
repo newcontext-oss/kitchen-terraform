@@ -15,19 +15,10 @@
 # limitations under the License.
 
 require 'json'
-require 'terraform/deprecated_output_parser'
 
 module Terraform
   # A parser for output command values
   class OutputParser
-    def self.create(output:, version:)
-      version.if_json_not_supported do
-        return ::Terraform::DeprecatedOutputParser.new output: output
-      end
-
-      new output: output
-    end
-
     def each_name(&block)
       json_output.each_key(&block)
     end
