@@ -36,29 +36,29 @@ require "terraform/project_version.rb"
 
   specification.license = "Apache-2.0"
 
-  specification.add_development_dependency "bundler-audit", "~> 0.5", ">= 0.5.0"
+  specification.add_development_dependency "bundler-audit", "~> 0.5"
 
   specification.add_development_dependency "codeclimate-test-reporter", "~> 1.0"
 
-  specification.add_development_dependency "guard", "~> 2.14", ">= 2.14.0"
+  specification.add_development_dependency "guard", "~> 2.14"
 
-  specification.add_development_dependency "guard-bundler", ">= 2.1.0", "~> 2.1"
+  specification.add_development_dependency "guard-bundler", "~> 2.1"
 
-  specification.add_development_dependency "guard-bundler-audit", ">= 0.1.2", "~> 0.1"
+  specification.add_development_dependency "guard-bundler-audit", "~> 0.1"
 
-  specification.add_development_dependency "guard-rspec", "~> 4.7", ">= 4.7.2"
+  specification.add_development_dependency "guard-rspec", "~> 4.7"
 
-  specification.add_development_dependency "guard-rubocop", "~> 1.2", ">= 1.2.0"
+  specification.add_development_dependency "guard-rubocop", "~> 1.2"
 
   specification.add_development_dependency "guard-rubycritic", "~> 2.9"
 
-  specification.add_development_dependency "pry", "~> 0.10", ">= 0.10.3"
+  specification.add_development_dependency "pry", "~> 0.10"
 
   specification.add_development_dependency "pry-coolline", "~> 0.2"
 
-  specification.add_development_dependency "rspec", "~> 3.4", ">= 3.4.0"
+  specification.add_development_dependency "rspec", "~> 3.4"
 
-  specification.add_development_dependency "rubocop", "~> 0.40", ">= 0.40.0"
+  specification.add_development_dependency "rubocop", "~> 0.40"
 
   specification.add_development_dependency "travis", "~> 1.8"
 
@@ -68,11 +68,11 @@ require "terraform/project_version.rb"
 
   specification.add_runtime_dependency "kitchen-inspec", "~> 0.18"
 
-  specification.add_runtime_dependency "mixlib-shellout", "~> 2.2", ">= 2.2.6"
+  specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
 
   specification.add_runtime_dependency "ptools", "~> 1.3"
 
-  specification.add_runtime_dependency "test-kitchen", "~> 1.10", ">= 1.10.0"
+  specification.add_runtime_dependency "test-kitchen", "~> 1.10"
 
   specification.cert_chain = ["certs/public_cert.pem"]
 
