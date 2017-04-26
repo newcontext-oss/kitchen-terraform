@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative 'support/helpers'
+require "support/helpers"
 
 ::RSpec.configure do |configuration|
   configuration.disable_monkey_patching!

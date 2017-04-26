@@ -14,179 +14,161 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command_factory'
-require 'support/terraform/configurable_context'
+require "terraform/command_factory"
+require "support/terraform/configurable_context"
 
 ::RSpec.describe ::Terraform::CommandFactory do
-  include_context 'instance'
+  include_context "instance"
 
-  let(:described_instance) { described_class.new config: provisioner }
+  let :described_instance do described_class.new config: provisioner end
 
   before do
     provisioner[:color] = false
-    provisioner[:directory] = ::Pathname.new '/directory'
+
+    provisioner[:directory] = ::Pathname.new "/directory"
+
     provisioner[:parallelism] = 1234
-    provisioner[:plan] = ::Pathname.new '/plan/file'
-    provisioner[:state] = ::Pathname.new '/state/file'
-    provisioner[:variable_files] = [::Pathname.new('/variable/file')]
-    provisioner[:variables] = { name: 'value' }
+
+    provisioner[:plan] = ::Pathname.new "/plan/file"
+
+    provisioner[:state] = ::Pathname.new "/state/file"
+
+    provisioner[:variable_files] = [::Pathname.new("/variable/file")]
+
+    provisioner[:variables] = {name: "value"}
   end
 
-  shared_examples 'a target is set' do
-    subject { command.target.to_path }
+  shared_examples "a target is set" do
+    subject do command.target.to_path end
 
-    it('specifies a target') { is_expected.to eq target }
+    it "specifies a target" do is_expected.to eq target end
   end
 
-  shared_examples 'color option' do
-    it('is set from config[:color]') { is_expected.to include '-no-color' }
+  shared_examples "color option" do it "is set from config[:color]" do is_expected.to include "-no-color" end end
+
+  shared_examples "destroy option" do it "is enabled" do is_expected.to include "-destroy=true" end end
+
+  shared_examples "input option" do it "is disabled" do is_expected.to include "-input=false" end end
+
+  shared_examples "options are specified" do subject do command.options.to_s end end
+
+  shared_examples "output command options" do
+    it_behaves_like "color option"
+
+    it_behaves_like "state option"
   end
 
-  shared_examples 'destroy option' do
-    it('is enabled') { is_expected.to include '-destroy=true' }
+  shared_examples "parallelism option" do
+    it "is set from config[:parallelism]" do is_expected.to include "-parallelism=1234" end
   end
 
-  shared_examples 'input option' do
-    it('is disabled') { is_expected.to include '-input=false' }
+  shared_examples "plan command options" do
+    it_behaves_like "color option"
+
+    it_behaves_like "input option"
+
+    it_behaves_like "parallelism option"
+
+    it_behaves_like "state option"
+
+    it_behaves_like "var option"
+
+    it_behaves_like "var-file option"
+
+    it "out option is set from config[:plan]" do is_expected.to include "-out=/plan/file" end
   end
 
-  shared_examples 'options are specified' do
-    subject { command.options.to_s }
+  shared_examples "state option" do
+    it "is set from config[:state]" do is_expected.to include "-state=/state/file" end
   end
 
-  shared_examples 'output command options' do
-    it_behaves_like 'color option'
-
-    it_behaves_like 'state option'
+  shared_examples "state-out option" do
+    it "is set from config[:state]" do is_expected.to include "-state-out=/state/file" end
   end
 
-  shared_examples 'parallelism option' do
-    it 'is set from config[:parallelism]' do
-      is_expected.to include '-parallelism=1234'
+  shared_examples "var option" do
+    it "is set from config[:variables]" do is_expected.to include "-var='name=value'" end
+  end
+
+  shared_examples "var-file option" do
+    it "is set from config[:variable_files]" do is_expected.to include "-var-file=/variable/file" end
+  end
+
+  describe "#apply_command" do
+    let :command do described_instance.apply_command end
+
+    it_behaves_like "a target is set" do let :target do "/plan/file" end end
+
+    it_behaves_like "options are specified" do
+      it_behaves_like "color option"
+
+      it_behaves_like "input option"
+
+      it_behaves_like "parallelism option"
+
+      it_behaves_like "state-out option"
     end
   end
 
-  shared_examples 'plan command options' do
-    it_behaves_like 'color option'
+  describe "#destructive_plan_command" do
+    let :command do described_instance.destructive_plan_command end
 
-    it_behaves_like 'input option'
+    it_behaves_like "a target is set" do let :target do "/directory" end end
 
-    it_behaves_like 'parallelism option'
+    it_behaves_like "options are specified" do
+      it_behaves_like "destroy option"
 
-    it_behaves_like 'state option'
-
-    it_behaves_like 'var option'
-
-    it_behaves_like 'var-file option'
-
-    it 'out option is set from config[:plan]' do
-      is_expected.to include '-out=/plan/file'
+      it_behaves_like "plan command options"
     end
   end
 
-  shared_examples 'state option' do
-    it 'is set from config[:state]' do
-      is_expected.to include '-state=/state/file'
+  describe "#get_command" do
+    let :command do described_instance.get_command end
+
+    it_behaves_like "a target is set" do let :target do "/directory" end end
+
+    it_behaves_like "options are specified" do
+      it "update option is enabled" do is_expected.to include "-update=true" end
     end
   end
 
-  shared_examples 'state-out option' do
-    it 'is set from config[:state]' do
-      is_expected.to include '-state-out=/state/file'
+  describe "#output_command" do
+    let :command do described_instance.output_command target: ::Pathname.new("/target") end
+
+    it_behaves_like "a target is set" do let :target do "/target" end end
+
+    it_behaves_like "options are specified" do
+      it_behaves_like "output command options"
+
+      it "json option is enabled" do is_expected.to include "-json=true" end
     end
   end
 
-  shared_examples 'var option' do
-    it 'is set from config[:variables]' do
-      is_expected.to include "-var='name=value'"
-    end
+  describe "#plan_command" do
+    let :command do described_instance.plan_command end
+
+    it_behaves_like "a target is set" do let :target do "/directory" end end
+
+    it_behaves_like "options are specified" do it_behaves_like "plan command options" end
   end
 
-  shared_examples 'var-file option' do
-    it 'is set from config[:variable_files]' do
-      is_expected.to include '-var-file=/variable/file'
-    end
+  describe "#show_command" do
+    let :command do described_instance.show_command end
+
+    it_behaves_like "a target is set" do let :target do "/state/file" end end
+
+    it_behaves_like "options are specified" do it_behaves_like "color option" end
   end
 
-  describe '#apply_command' do
-    let(:command) { described_instance.apply_command }
+  describe "#validate_command" do
+    let :command do described_instance.validate_command end
 
-    it_behaves_like('a target is set') { let(:target) { '/plan/file' } }
-
-    it_behaves_like 'options are specified' do
-      it_behaves_like 'color option'
-
-      it_behaves_like 'input option'
-
-      it_behaves_like 'parallelism option'
-
-      it_behaves_like 'state-out option'
-    end
+    it_behaves_like "a target is set" do let :target do "/directory" end end
   end
 
-  describe '#destructive_plan_command' do
-    let(:command) { described_instance.destructive_plan_command }
+  describe "#version_command" do
+    subject do described_instance.version_command end
 
-    it_behaves_like('a target is set') { let(:target) { '/directory' } }
-
-    it_behaves_like 'options are specified' do
-      it_behaves_like 'destroy option'
-
-      it_behaves_like 'plan command options'
-    end
-  end
-
-  describe '#get_command' do
-    let(:command) { described_instance.get_command }
-
-    it_behaves_like('a target is set') { let(:target) { '/directory' } }
-
-    it_behaves_like 'options are specified' do
-      it('update option is enabled') { is_expected.to include '-update=true' }
-    end
-  end
-
-  describe '#output_command' do
-    let :command do described_instance.output_command target: ::Pathname.new('/target') end
-
-    it_behaves_like('a target is set') { let(:target) { '/target' } }
-
-    it_behaves_like 'options are specified' do
-      it_behaves_like 'output command options'
-
-      it 'json option is enabled' do is_expected.to include '-json=true' end
-    end
-  end
-
-  describe '#plan_command' do
-    let(:command) { described_instance.plan_command }
-
-    it_behaves_like('a target is set') { let(:target) { '/directory' } }
-
-    it_behaves_like 'options are specified' do
-      it_behaves_like 'plan command options'
-    end
-  end
-
-  describe '#show_command' do
-    let(:command) { described_instance.show_command }
-
-    it_behaves_like('a target is set') { let(:target) { '/state/file' } }
-
-    it_behaves_like('options are specified') { it_behaves_like 'color option' }
-  end
-
-  describe '#validate_command' do
-    let(:command) { described_instance.validate_command }
-
-    it_behaves_like('a target is set') { let(:target) { '/directory' } }
-  end
-
-  describe '#version_command' do
-    subject { described_instance.version_command }
-
-    it 'has no target or options' do
-      is_expected.to be_instance_of ::Terraform::VersionCommand
-    end
+    it "has no target or options" do is_expected.to be_instance_of ::Terraform::VersionCommand end
   end
 end

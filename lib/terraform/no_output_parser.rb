@@ -22,7 +22,7 @@ module Terraform
     def iterate_parsed_output; end
 
     def parsed_output
-      ''
+      ""
     end
   end
 end

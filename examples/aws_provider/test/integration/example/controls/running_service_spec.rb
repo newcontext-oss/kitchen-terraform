@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-control 'running_service' do
-  describe 'the cron service' do
-    subject { service 'cron' }
+control "running_service" do
+  describe "the cron service" do
+    subject do service "cron" end
 
-    it('is running') { is_expected.to be_running }
+    it "is running" do is_expected.to be_running end
   end
 end

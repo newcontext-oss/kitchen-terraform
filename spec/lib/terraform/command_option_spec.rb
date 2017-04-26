@@ -14,72 +14,60 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command_option'
+require "terraform/command_option"
 
 ::RSpec.describe ::Terraform::CommandOption do
-  let(:described_instance) { described_class.new key: 'key', value: value }
+  let :described_instance do described_class.new key: "key", value: value end
 
-  let(:equivalent_instance) { described_class.new key: ' key', value: 'value ' }
+  let :equivalent_instance do described_class.new key: " key", value: "value " end
 
-  let :unequivalent_instance do
-    described_class.new key: 'other_key', value: 'other_value'
-  end
+  let :unequivalent_instance do described_class.new key: "other_key", value: "other_value" end
 
-  let(:value) { 'value' }
+  let :value do "value" end
 
-  shared_examples '#==' do
-    context 'when the options do have equivalent tuples' do
-      subject { described_instance == equivalent_instance }
+  shared_examples "#==" do
+    context "when the options do have equivalent tuples" do
+      subject do described_instance == equivalent_instance end
 
-      it('they are equivalent') { is_expected.to be_truthy }
+      it "they are equivalent" do is_expected.to be_truthy end
     end
 
-    context 'when the options do not have equivalent tuples' do
-      subject { described_instance == unequivalent_instance }
+    context "when the options do not have equivalent tuples" do
+      subject do described_instance == unequivalent_instance end
 
-      it('they are not equivalent') { is_expected.to be_falsey }
+      it "they are not equivalent" do is_expected.to be_falsey end
     end
   end
 
-  describe('#==') { it_behaves_like '#==' }
+  describe "#==" do it_behaves_like "#==" end
 
-  describe('#eql?') { it_behaves_like '#==' }
+  describe "#eql?" do it_behaves_like "#==" end
 
-  describe '#hash' do
-    subject { described_instance.hash }
+  describe "#hash" do
+    subject do described_instance.hash end
 
-    it 'is equivalent for equivalent instances' do
-      is_expected.to eq equivalent_instance.hash
+    it "is equivalent for equivalent instances" do is_expected.to eq equivalent_instance.hash end
+
+    it "is not equivalent for unequivalent instances" do is_expected.to_not eq unequivalent_instance.hash end
+  end
+
+  describe "#to_s" do
+    subject do described_instance.to_s end
+
+    context "when the option does have a value" do
+      it "returns the tuple formatted for the command line" do is_expected.to eq "-key=value" end
     end
 
-    it 'is not equivalent for unequivalent instances' do
-      is_expected.to_not eq unequivalent_instance.hash
+    context "when the option does not have a value" do
+      let :value do "" end
+
+      it "returns the key formatted for the command line" do is_expected.to eq "-key" end
     end
   end
 
-  describe '#to_s' do
-    subject { described_instance.to_s }
+  describe "#tuple" do
+    subject do described_instance.tuple end
 
-    context 'when the option does have a value' do
-      it 'returns the tuple formatted for the command line' do
-        is_expected.to eq '-key=value'
-      end
-    end
-
-    context 'when the option does not have a value' do
-      let(:value) { '' }
-
-      it 'returns the key formatted for the command line' do
-        is_expected.to eq '-key'
-      end
-    end
-  end
-
-  describe '#tuple' do
-    subject { described_instance.tuple }
-
-    it 'returns an array of the key and the value' do
-      is_expected.to contain_exactly 'key', 'value'
-    end
+    it "returns an array of the key and the value" do is_expected.to contain_exactly "key", "value" end
   end
 end

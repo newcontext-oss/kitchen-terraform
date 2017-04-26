@@ -14,22 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'awspec'
+require "awspec"
 
-control 'local_security_group' do
-  describe 'the security group' do
-    let(:example_security_group) { security_group 'kitchen-terraform-example' }
+control "local_security_group" do
+  describe "the security group" do
+    let :example_security_group do security_group "kitchen-terraform-example" end
 
-    describe 'ingress' do
-      subject { example_security_group.inbound }
+    describe "ingress" do
+      subject do example_security_group.inbound end
 
-      it('is open to the world') { is_expected.to be_opened.for '0.0.0.0/0' }
+      it "is open to the world" do is_expected.to be_opened.for "0.0.0.0/0" end
     end
 
-    describe 'egress' do
-      subject { example_security_group.outbound }
+    describe "egress" do
+      subject do example_security_group.outbound end
 
-      it('is open to the world') { is_expected.to be_opened.for '0.0.0.0/0' }
+      it "is open to the world" do is_expected.to be_opened.for "0.0.0.0/0" end
     end
   end
 end

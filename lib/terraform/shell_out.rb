@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-require 'mixlib/shellout'
+require "kitchen"
+require "mixlib/shellout"
 
 module Terraform
   # Facilitates execution of commands in a shell
@@ -32,28 +32,20 @@ module Terraform
 
     attr_accessor :command, :shell_out
 
-    def initialize(
-      cli:, command:, logger:, timeout: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT
-    )
+    def initialize(cli:, command:, logger:, timeout: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
       self.command = command
-      self.shell_out = ::Mixlib::ShellOut.new "#{cli} #{command}",
-                                              live_stream: logger,
-                                              timeout: timeout
+      self.shell_out = ::Mixlib::ShellOut.new "#{cli} #{command}", live_stream: logger, timeout: timeout
     end
 
     def instance_failures
-      [
-        ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout,
-        ::Mixlib::ShellOut::ShellCommandFailed
-      ]
+      [::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout, ::Mixlib::ShellOut::ShellCommandFailed]
     end
 
     def run_command
       shell_out.run_command
       shell_out.error!
     rescue *instance_failures => error
-      raise ::Kitchen::StandardError,
-            %(`#{shell_out.command}` failed: "#{error.message}")
+      raise ::Kitchen::StandardError, "`#{shell_out.command}` failed: '#{error.message}'"
     end
   end
 end

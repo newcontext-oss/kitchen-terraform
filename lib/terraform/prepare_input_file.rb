@@ -14,13 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-
 module Terraform
   # A preparation for a command with an input file
   class PrepareInputFile
     def execute
-      file.open {}
+      file.open do end
     end
 
     private

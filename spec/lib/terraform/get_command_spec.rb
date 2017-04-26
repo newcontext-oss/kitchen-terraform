@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/terraform/command_examples'
-require 'terraform/get_command'
+require "support/terraform/command_examples"
+require "terraform/get_command"
 
 ::RSpec.describe ::Terraform::GetCommand do
-  let(:described_instance) { described_class.new }
+  let :described_instance do described_class.new end
 
-  it_behaves_like('#name') { let(:name) { 'get' } }
+  it_behaves_like "#name" do let :name do "get" end end
 end

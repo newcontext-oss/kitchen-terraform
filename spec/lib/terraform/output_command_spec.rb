@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/terraform/command_examples'
-require 'terraform/output_command'
+require "support/terraform/command_examples"
+require "terraform/output_command"
 
 ::RSpec.describe ::Terraform::OutputCommand do
-  let(:described_instance) { described_class.new }
+  let :described_instance do described_class.new end
 
-  it_behaves_like('#name') { let(:name) { 'output' } }
+  it_behaves_like "#name" do let :name do "output" end end
 end

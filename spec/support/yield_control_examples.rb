@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec.shared_examples 'control is yielded' do
+::RSpec.shared_examples "control is yielded" do
   subject do lambda do |block| described_instance.send described_method, &block end end
 
-  it('does yield control') { is_expected.to yield_control }
+  it "does yield control" do is_expected.to yield_control end
 end
 
-::RSpec.shared_examples 'control is not yielded' do
+::RSpec.shared_examples "control is not yielded" do
   subject do lambda do |block| described_instance.send described_method, &block end end
 
-  it('does not yield control') { is_expected.to_not yield_control }
+  it "does not yield control" do is_expected.to_not yield_control end
 end

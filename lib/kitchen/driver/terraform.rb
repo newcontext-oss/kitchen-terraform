@@ -46,7 +46,7 @@ module Kitchen
       private
 
       def load_state(&block)
-        silent_client.load_state(&block)
+        silent_client.load_state &block
       rescue ::Errno::ENOENT => error
         debug error.message
       end

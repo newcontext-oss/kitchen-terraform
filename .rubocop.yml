@@ -13,10 +13,6 @@ Metrics/BlockLength:
     - spec/**/*.rb
 Metrics/LineLength:
   Max: 120
-Metrics/ParameterLists:
-  Exclude:
-    - lib/terraform/group.rb
-    - lib/terraform/plan_command.rb
 Style/AccessorMethodName:
   Exclude:
     - lib/terraform/command_factory.rb
@@ -30,48 +26,7 @@ Style/PercentLiteralDelimiters:
   Enabled: false
 Style/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
-  Exclude:
-    - lib/terraform/command_options.rb
-    - spec/lib/terraform/command_factory_spec.rb
 Style/StringLiterals:
   EnforcedStyle: double_quotes
-  Exclude:
-    - Gemfile
-    - Guardfile
-    - examples/**/*
-    - kitchen-terraform.gemspec
-    - lib/terraform/command.rb
-    - lib/terraform/command_option.rb
-    - lib/terraform/command_options.rb
-    - lib/terraform/get_command.rb
-    - lib/terraform/no_output_parser.rb
-    - lib/terraform/output_command.rb
-    - lib/terraform/prepare_input_file.rb
-    - lib/terraform/shell_out.rb
-    - lib/terraform/unsupported_version.rb
-    - lib/terraform/validate_command.rb
-    - lib/terraform/version.rb
-    - lib/terraform/version_command.rb
-    - spec/lib/terraform/command_option_spec.rb
-    - spec/lib/terraform/command_options_spec.rb
-    - spec/lib/terraform/command_spec.rb
-    - spec/lib/terraform/debug_logger_spec.rb
-    - spec/lib/terraform/destructive_plan_command_spec.rb
-    - spec/lib/terraform/get_command_spec.rb
-    - spec/lib/terraform/no_output_parser_spec.rb
-    - spec/lib/terraform/output_command_spec.rb
-    - spec/lib/terraform/plan_command_spec.rb
-    - spec/lib/terraform/prepare_input_file_spec.rb
-    - spec/lib/terraform/prepare_output_file_spec.rb
-    - spec/lib/terraform/shell_out_spec.rb
-    - spec/lib/terraform/show_command_spec.rb
-    - spec/lib/terraform/unsupported_version_spec.rb
-    - spec/lib/terraform/validate_command_spec.rb
-    - spec/lib/terraform/version_command_spec.rb
-    - spec/lib/terraform/version_spec.rb
-    - spec/spec_helper.rb
-    - spec/support/raise_error_examples.rb
-    - spec/support/terraform/command_examples.rb
-    - spec/support/yield_control_examples.rb
 Style/WordArray:
   EnforcedStyle: brackets

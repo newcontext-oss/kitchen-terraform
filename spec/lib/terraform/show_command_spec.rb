@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/terraform/command_examples'
-require 'terraform/show_command'
+require "support/terraform/command_examples"
+require "terraform/show_command"
 
 ::RSpec.describe ::Terraform::ShowCommand do
-  let(:described_instance) { described_class.new }
+  let :described_instance do described_class.new end
 
-  it_behaves_like('#name') { let(:name) { 'show' } }
+  it_behaves_like "#name" do let :name do "show" end end
 end

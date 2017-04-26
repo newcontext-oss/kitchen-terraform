@@ -14,74 +14,72 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'set'
-require_relative 'command_option'
+require "set"
+require "terraform/command_option"
 
 module Terraform
   # Options for commands
   class CommandOptions
     def color=(value)
-      store key: { false => 'no-color' }.fetch(value) { return }
+      value or store key: "no-color"
     end
 
     def destroy=(value)
-      store key: 'destroy', value: value
+      store key: "destroy", value: value
     end
 
     def input=(value)
-      store key: 'input', value: value
+      store key: "input", value: value
     end
 
     def json=(value)
-      store key: 'json', value: value
+      store key: "json", value: value
     end
 
     def out
-      fetch key: 'out'
+      fetch key: "out"
     end
 
     def out=(value)
-      store key: 'out', value: value
+      store key: "out", value: value
     end
 
     def parallelism=(value)
-      store key: 'parallelism', value: value
+      store key: "parallelism", value: value
     end
 
     def state
-      fetch key: 'state'
+      fetch key: "state"
     end
 
     def state=(value)
-      store key: 'state', value: value
+      store key: "state", value: value
     end
 
     def state_out
-      fetch key: 'state-out'
+      fetch key: "state-out"
     end
 
     def state_out=(value)
-      store key: 'state-out', value: value
+      store key: "state-out", value: value
     end
 
     def update=(value)
-      store key: 'update', value: value
+      store key: "update", value: value
     end
 
     def var=(value)
       value.each_pair do |variable_name, variable_value|
-        store key: 'var', value: "'#{variable_name}=#{variable_value}'"
+        store key: "var", value: "'#{variable_name}=#{variable_value}'"
       end
     end
 
     def var_file=(value)
-      value.each { |file| store key: 'var-file', value: file }
+      value.each do |file| store key: "var-file", value: file end
     end
 
     def to_s
-      options.each_with_object ::String.new do |option, string|
-        string.concat "#{option} "
-      end
+      options.each_with_object ::String.new do |option, string| string.concat "#{option} " end
     end
 
     private
@@ -89,7 +87,7 @@ module Terraform
     attr_accessor :options
 
     def fetch(key:)
-      options.find { |option| option.key == key }.value
+      options.find do |option| option.key == key end.value
     end
 
     def initialize(options: ::Set.new)
@@ -97,7 +95,7 @@ module Terraform
     end
 
     def store(**keyword_arguments)
-      options.add ::Terraform::CommandOption.new(**keyword_arguments)
+      options.add ::Terraform::CommandOption.new **keyword_arguments
     end
   end
 end

@@ -14,39 +14,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/prepare_output_file'
+require "terraform/prepare_output_file"
 
 ::RSpec.describe ::Terraform::PrepareOutputFile do
-  let(:described_instance) { described_class.new file: file }
+  let :described_instance do described_class.new file: file end
 
-  let(:file) { instance_double ::Pathname }
+  let :file do instance_double ::Pathname end
 
-  let(:parent_directory) { instance_double ::Pathname }
+  let :parent_directory do instance_double ::Pathname end
 
-  before do
-    allow(file)
-      .to receive(:parent).with(no_args).and_return parent_directory
-  end
+  before do allow(file).to receive(:parent).with(no_args).and_return parent_directory end
 
-  describe '#execute' do
+  describe "#execute" do
     before do
       allow(parent_directory).to receive(:mkpath).with no_args
 
-      allow(file).to receive(:open).with 'a'
+      allow(file).to receive(:open).with "a"
     end
 
-    after { described_instance.execute }
+    after do described_instance.execute end
 
-    context 'the parent directory' do
-      subject { parent_directory }
+    context "the parent directory" do
+      subject do parent_directory end
 
-      it('is created') { is_expected.to receive(:mkpath).with no_args }
+      it "is created" do is_expected.to receive(:mkpath).with no_args end
     end
 
-    context 'the output file' do
-      subject { file }
+    context "the output file" do
+      subject do file end
 
-      it('is ensured to be writable') { is_expected.to receive(:open).with 'a' }
+      it "is ensured to be writable" do is_expected.to receive(:open).with "a" end
     end
   end
 end
