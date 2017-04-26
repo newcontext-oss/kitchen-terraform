@@ -13,7 +13,7 @@ rvm:
 cache:
 - bundler
 before_install:
-- curl --output terraform_0.9.zip https://releases.hashicorp.com/terraform/0.9.3/terraform_0.9.3_linux_amd64.zip
+- curl --output terraform_0.9.zip https://releases.hashicorp.com/terraform/0.9.4/terraform_0.9.4_linux_amd64.zip
 - curl --output terraform_0.8.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip
 - mkdir -p terraform/{0.9,0.8}
 - gem update --system
