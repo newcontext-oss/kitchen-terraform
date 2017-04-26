@@ -43,7 +43,7 @@ module Terraform
 
     attr_writer :key, :value
 
-    def initialize(key:, value: '')
+    def initialize(key:, value: "")
       self.key = key
       self.stripped_key = stripped_string config_string: key
       self.stripped_value = stripped_string config_string: value
@@ -55,11 +55,11 @@ module Terraform
     end
 
     def formatted_value
-      stripped_value.sub(/(\S)/, '=\1')
+      stripped_value.sub /(\S)/, "=\\1"
     end
 
     def stripped_string(config_string:)
-      String(config_string).gsub(/\s/, '')
+      String(config_string).gsub /\s/, ""
     end
   end
 end

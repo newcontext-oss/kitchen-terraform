@@ -14,52 +14,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command'
-require 'terraform/shell_out'
+require "terraform/command"
+require "terraform/shell_out"
 
 ::RSpec.describe ::Terraform::ShellOut do
-  let(:command) { ::Terraform::Command.new }
+  let :command do ::Terraform::Command.new end
 
   let :described_instance do
-    described_class.new cli: '/cli', command: command,
-                        logger: ::Kitchen::Logger.new, timeout: 1234
+    described_class.new cli: "/cli", command: command, logger: ::Kitchen::Logger.new, timeout: 1234
   end
 
-  describe '#execute' do
-    let(:shell_out) { ::Mixlib::ShellOut.new '/cli help' }
+  describe "#execute" do
+    let :shell_out do ::Mixlib::ShellOut.new "/cli help" end
 
     before do
-      allow(::Mixlib::ShellOut).to receive(:new).with(
-        '/cli help', live_stream: instance_of(::Kitchen::Logger),
-                     timeout: kind_of(::Integer)
-      ).and_return shell_out
+      allow(::Mixlib::ShellOut)
+        .to receive(:new).with("/cli help", live_stream: instance_of(::Kitchen::Logger), timeout: kind_of(::Integer))
+        .and_return shell_out
 
       allow(shell_out).to receive(:run_command).with no_args
     end
 
-    subject { proc { |block| described_instance.execute(&block) } }
+    subject do proc do |block| described_instance.execute &block end end
 
-    context 'when the command does execute successfully' do
+    context "when the command does execute successfully" do
       before do
         allow(shell_out).to receive(:error!).with no_args
 
-        allow(shell_out).to receive(:stdout).with(no_args).and_return 'stdout'
+        allow(shell_out).to receive(:stdout).with(no_args).and_return "stdout"
       end
 
-      it 'yields the standard output' do
-        is_expected.to yield_with_args 'stdout'
-      end
+      it "yields the standard output" do is_expected.to yield_with_args "stdout" end
     end
 
-    context 'when the command does not execute successfully' do
+    context "when the command does not execute successfully" do
       before do
-        allow(shell_out).to receive(:error!).with(no_args)
-          .and_raise ::Mixlib::ShellOut::ShellCommandFailed, 'error'
+        allow(shell_out).to receive(:error!).with(no_args).and_raise ::Mixlib::ShellOut::ShellCommandFailed, "error"
       end
 
-      it 'raises an instance failure' do
-        is_expected.to raise_error ::Kitchen::StandardError,
-                                   '`/cli help` failed: "error"'
+      it "raises an instance failure" do
+        is_expected.to raise_error ::Kitchen::StandardError, "`/cli help` failed: 'error'"
       end
     end
   end

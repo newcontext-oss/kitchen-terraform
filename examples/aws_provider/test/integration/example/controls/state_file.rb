@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-terraform_state = attribute 'terraform_state', {}
+terraform_state = attribute "terraform_state", {}
 
-control 'state_file' do
-  describe 'the Terraform state file' do
-    subject { json(terraform_state).terraform_version }
+control "state_file" do
+  describe "the Terraform state file" do
+    subject do json(terraform_state).terraform_version end
 
-    it('is accessible') { is_expected.to match(/\d+\.\d+\.\d+/) }
+    it "is accessible" do is_expected.to match /\d+\.\d+\.\d+/ end
   end
 end

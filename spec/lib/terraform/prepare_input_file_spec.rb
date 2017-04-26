@@ -14,20 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/prepare_input_file'
+require "terraform/prepare_input_file"
 
 ::RSpec.describe ::Terraform::PrepareInputFile do
-  let(:described_instance) { described_class.new file: file }
+  let :described_instance do described_class.new file: file end
 
-  let(:file) { instance_double ::Pathname }
+  let :file do instance_double ::Pathname end
 
-  describe '#execute' do
-    after { described_instance.execute }
+  describe "#execute" do
+    after do described_instance.execute end
 
-    subject { file }
+    subject do file end
 
-    it 'ensures the file can be opened for reading' do
-      is_expected.to receive :open
-    end
+    it "ensures the file can be opened for reading" do is_expected.to receive :open end
   end
 end

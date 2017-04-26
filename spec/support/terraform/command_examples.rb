@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec.shared_examples '#name' do
-  subject { described_instance.name }
+::RSpec.shared_examples "#name" do
+  subject do described_instance.name end
 
-  it('matches the command') { is_expected.to eq name }
+  it "matches the command" do is_expected.to eq name end
 end

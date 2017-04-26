@@ -14,12 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
+require "kitchen"
 
-::RSpec.shared_examples 'a user error has occurred' do
-  subject { proc { described_method } }
+::RSpec.shared_examples "a user error has occurred" do
+  subject do proc do described_method end end
 
-  it 'raises a UserError' do
-    is_expected.to raise_error ::Kitchen::UserError, message
-  end
+  it "raises a UserError" do is_expected.to raise_error ::Kitchen::UserError, message end
 end

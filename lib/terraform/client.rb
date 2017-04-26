@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command_factory'
-require 'terraform/no_output_parser'
-require 'terraform/output_parser'
-require 'terraform/shell_out'
+require "terraform/command_factory"
+require "terraform/no_output_parser"
+require "terraform/output_parser"
+require "terraform/shell_out"
 
 module Terraform
   # Client to execute commands
@@ -31,17 +31,15 @@ module Terraform
     end
 
     def each_output_name(&block)
-      output_parser(name: '').each_name(&block)
+      output_parser(name: "").each_name &block
     end
 
     def iterate_output(name:, &block)
-      output_parser(name: name).iterate_parsed_output(&block)
+      output_parser(name: name).iterate_parsed_output &block
     end
 
     def load_state(&block)
-      execute(command: factory.show_command) do |state|
-        /\w+/.match state, &block
-      end
+      execute command: factory.show_command do |state| /\w+/.match state, &block end
     end
 
     def output(name:)
@@ -60,15 +58,12 @@ module Terraform
       execute command: factory.validate_command
       execute command: factory.get_command
       execute command: plan_command
-      ::Terraform::ShellOut.new(
-        cli: cli, command: factory.apply_command, logger: logger,
-        timeout: apply_timeout
-      ).execute
+      ::Terraform::ShellOut
+        .new(cli: cli, command: factory.apply_command, logger: logger, timeout: apply_timeout).execute
     end
 
     def execute(command:, &block)
-      ::Terraform::ShellOut
-        .new(cli: cli, command: command, logger: logger).execute(&block)
+      ::Terraform::ShellOut.new(cli: cli, command: command, logger: logger).execute &block
     end
 
     def initialize(config: {}, logger:)

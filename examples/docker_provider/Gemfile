@@ -1,5 +1,3 @@
 # frozen_string_literal: true
 
-source 'https://rubygems.org/' do
-  gem 'kitchen-terraform', path: '../../'
-end
+source "https://rubygems.org/" do gem "kitchen-terraform", path: "../../" end

@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/terraform/command_examples'
-require 'terraform/destructive_plan_command'
+require "support/terraform/command_examples"
+require "terraform/destructive_plan_command"
 
 ::RSpec.describe ::Terraform::DestructivePlanCommand do
   let :described_instance do
@@ -25,33 +25,29 @@ require 'terraform/destructive_plan_command'
     end
   end
 
-  let(:output_file) { ::Pathname.new '/output/file' }
+  let :output_file do ::Pathname.new "/output/file" end
 
-  let(:state_file) { ::Pathname.new '/state/file' }
+  let :state_file do ::Pathname.new "/state/file" end
 
-  it_behaves_like('#name') { let(:name) { 'plan' } }
+  it_behaves_like "#name" do let :name do "plan" end end
 
-  describe '#prepare' do
-    let(:prepare_input_file) { instance_double ::Terraform::PrepareInputFile }
+  describe "#prepare" do
+    let :prepare_input_file do instance_double ::Terraform::PrepareInputFile end
 
-    let(:prepare_output_file) { instance_double ::Terraform::PrepareOutputFile }
+    let :prepare_output_file do instance_double ::Terraform::PrepareOutputFile end
 
     before do
-      allow(::Terraform::PrepareOutputFile)
-        .to receive(:new).with(file: output_file).and_return prepare_output_file
+      allow(::Terraform::PrepareOutputFile).to receive(:new).with(file: output_file).and_return prepare_output_file
 
-      allow(::Terraform::PrepareInputFile)
-        .to receive(:new).with(file: state_file).and_return prepare_input_file
+      allow(::Terraform::PrepareInputFile).to receive(:new).with(file: state_file).and_return prepare_input_file
 
       allow(prepare_output_file).to receive(:execute).with no_args
     end
 
-    after { described_instance.prepare }
+    after do described_instance.prepare end
 
-    subject { prepare_input_file }
+    subject do prepare_input_file end
 
-    it 'prepares the input state file' do
-      is_expected.to receive(:execute).with no_args
-    end
+    it "prepares the input state file" do is_expected.to receive(:execute).with no_args end
   end
 end

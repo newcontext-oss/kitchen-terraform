@@ -14,35 +14,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'pathname'
-require 'support/terraform/command_examples'
-require 'terraform/plan_command'
+require "pathname"
+require "support/terraform/command_examples"
+require "terraform/plan_command"
 
 ::RSpec.describe ::Terraform::PlanCommand do
-  let :described_instance do
-    described_class.new { |options| options.out = output_file }
-  end
+  let :described_instance do described_class.new do |options| options.out = output_file end end
 
-  let(:output_file) { ::Pathname.new '/output/file' }
+  let :output_file do ::Pathname.new "/output/file" end
 
-  it_behaves_like('#name') { let(:name) { 'plan' } }
+  it_behaves_like "#name" do let :name do "plan" end end
 
-  describe '#prepare' do
-    let :prepare_output_file do
-      instance_double ::Terraform::PrepareOutputFile
-    end
+  describe "#prepare" do
+    let :prepare_output_file do instance_double ::Terraform::PrepareOutputFile end
 
     before do
-      allow(::Terraform::PrepareOutputFile).to receive(:new)
-        .with(file: output_file).and_return prepare_output_file
+      allow(::Terraform::PrepareOutputFile).to receive(:new).with(file: output_file).and_return prepare_output_file
     end
 
-    after { described_instance.prepare }
+    after do described_instance.prepare end
 
-    subject { prepare_output_file }
+    subject do prepare_output_file end
 
-    it 'prepares the output out file' do
-      is_expected.to receive(:execute).with no_args
-    end
+    it "prepares the output out file" do is_expected.to receive(:execute).with no_args end
   end
 end

@@ -14,14 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/apply_command'
-require 'terraform/destructive_plan_command'
-require 'terraform/get_command'
-require 'terraform/output_command'
-require 'terraform/plan_command'
-require 'terraform/show_command'
-require 'terraform/validate_command'
-require 'terraform/version_command'
+require "terraform/apply_command"
+require "terraform/destructive_plan_command"
+require "terraform/get_command"
+require "terraform/output_command"
+require "terraform/plan_command"
+require "terraform/show_command"
+require "terraform/validate_command"
+require "terraform/version_command"
 
 module Terraform
   # A factory to create commands
@@ -36,17 +36,14 @@ module Terraform
     end
 
     def destructive_plan_command
-      ::Terraform::DestructivePlanCommand
-        .new target: config[:directory] do |options|
-          configure_plan options: options
-          options.destroy = true
-        end
+      ::Terraform::DestructivePlanCommand.new target: config[:directory] do |options|
+        configure_plan options: options
+        options.destroy = true
+      end
     end
 
     def get_command
-      ::Terraform::GetCommand.new target: config[:directory] do |options|
-        options.update = true
-      end
+      ::Terraform::GetCommand.new target: config[:directory] do |options| options.update = true end
     end
 
     def output_command(target:)
@@ -58,15 +55,11 @@ module Terraform
     end
 
     def plan_command
-      ::Terraform::PlanCommand.new target: config[:directory] do |options|
-        configure_plan options: options
-      end
+      ::Terraform::PlanCommand.new target: config[:directory] do |options| configure_plan options: options end
     end
 
     def show_command
-      ::Terraform::ShowCommand.new target: config[:state] do |options|
-        options.color = config[:color]
-      end
+      ::Terraform::ShowCommand.new target: config[:state] do |options| options.color = config[:color] end
     end
 
     def validate_command

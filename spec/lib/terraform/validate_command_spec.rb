@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/terraform/command_examples'
-require 'terraform/validate_command'
+require "support/terraform/command_examples"
+require "terraform/validate_command"
 
 ::RSpec.describe ::Terraform::ValidateCommand do
-  let(:described_instance) { described_class.new }
+  let :described_instance do described_class.new end
 
-  it_behaves_like('#name') { let(:name) { 'validate' } }
+  it_behaves_like "#name" do let :name do "validate" end end
 end

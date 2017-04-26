@@ -14,25 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-require 'terraform/debug_logger'
+require "kitchen"
+require "terraform/debug_logger"
 
 ::RSpec.describe ::Terraform::DebugLogger do
-  let(:described_instance) { described_class.new logger: logger }
+  let :described_instance do described_class.new logger: logger end
 
-  let(:logger) { instance_double ::Kitchen::Logger }
+  let :logger do instance_double ::Kitchen::Logger end
 
-  shared_examples '#debug' do
-    after { described_instance << 'message' }
+  shared_examples "#debug" do
+    after do described_instance << "message" end
 
-    subject { logger }
+    subject do logger end
 
-    it 'forwards the message to #debug of the wrapped logger' do
-      is_expected.to receive(:debug).with 'message'
-    end
+    it "forwards the message to #debug of the wrapped logger" do is_expected.to receive(:debug).with "message" end
   end
 
-  describe('#<< ') { it_behaves_like '#debug' }
+  describe "#<< " do it_behaves_like "#debug" end
 
-  describe('#debug') { it_behaves_like '#debug' }
+  describe "#debug" do it_behaves_like "#debug" end
 end

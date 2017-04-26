@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'terraform/command_options'
+require "terraform/command_options"
 
 module Terraform
   # Terraform command to be executed
@@ -22,13 +22,13 @@ module Terraform
     attr_reader :options, :target
 
     def name
-      /(\w+)Command/.match(self.class.to_s) { |match| return match[1].downcase }
+      /(\w+)Command/.match self.class.to_s do |match| return match[1].downcase end
 
-      'help'
+      "help"
     end
 
     def prepare
-      preparations.each(&:execute)
+      preparations.each &:execute
     end
 
     def to_s
@@ -41,8 +41,8 @@ module Terraform
 
     attr_writer :options, :target
 
-    def initialize(target: '', &block)
-      block ||= proc {}
+    def initialize(target: "", &block)
+      block ||= proc do end
 
       self.options = ::Terraform::CommandOptions.new
       self.preparations = []

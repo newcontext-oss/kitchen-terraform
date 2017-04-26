@@ -14,186 +14,172 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'support/terraform/configurable_context'
-require 'support/yield_control_examples'
-require 'terraform/client'
+require "support/terraform/configurable_context"
+require "support/yield_control_examples"
+require "terraform/client"
 
 ::RSpec.describe ::Terraform::Client do
-  include_context 'instance'
+  include_context "instance"
 
-  let :described_instance do
-    described_class.new config: provisioner, logger: ::Kitchen::Logger.new
-  end
+  let :described_instance do described_class.new config: provisioner, logger: ::Kitchen::Logger.new end
 
-  shared_context 'outputs are defined', :outputs do
+  shared_context "outputs are defined" do
     before do
       allow(described_instance)
         .to receive(:execute).with(command: kind_of(::Terraform::OutputCommand)).and_yield output_value
     end
   end
 
-  shared_context 'outputs are not defined', :no_outputs do
+  shared_context "outputs are not defined" do
     before do
       allow(described_instance).to receive(:execute)
-        .with(command: kind_of(::Terraform::OutputCommand)).and_raise ::Kitchen::StandardError, 'no outputs'
+        .with(command: kind_of(::Terraform::OutputCommand)).and_raise ::Kitchen::StandardError, "no outputs"
     end
   end
 
-  shared_examples '#apply' do
-    let(:apply_shell_out) { instance_double ::Terraform::ShellOut }
+  shared_examples "#apply" do
+    let :apply_shell_out do instance_double ::Terraform::ShellOut end
 
     before do
       provisioner[:apply_timeout] = 1234
 
-      allow(::Terraform::ShellOut).to receive(:new).with(
-        cli: duck_type(:to_s), command: kind_of(::Terraform::ApplyCommand),
-        logger: duck_type(:<<), timeout: 1234
-      ).and_return apply_shell_out
+      allow(::Terraform::ShellOut).to receive(:new)
+        .with(cli: duck_type(:to_s), command: kind_of(::Terraform::ApplyCommand), logger: duck_type(:<<), timeout: 1234)
+        .and_return apply_shell_out
 
       allow(apply_shell_out).to receive(:execute).with no_args
     end
 
-    shared_examples '#execute' do |command|
-      let(:shell_out) { instance_double ::Terraform::ShellOut }
+    shared_examples "#execute" do |command|
+      let :shell_out do instance_double ::Terraform::ShellOut end
 
       before do
-        allow(described_instance)
-          .to receive(:execute).with(command: kind_of(::Terraform::Command))
+        allow(described_instance).to receive(:execute).with command: kind_of(::Terraform::Command)
 
-        allow(described_instance).to receive(:execute)
-          .with(command: kind_of(command_class)).and_call_original
+        allow(described_instance).to receive(:execute).with(command: kind_of(command_class)).and_call_original
 
-        allow(::Terraform::ShellOut).to receive(:new).with(
-          cli: duck_type(:to_s), command: kind_of(command_class),
-          logger: duck_type(:<<)
-        ).and_return shell_out
+        allow(::Terraform::ShellOut).to receive(:new)
+          .with(cli: duck_type(:to_s), command: kind_of(command_class), logger: duck_type(:<<)).and_return shell_out
       end
 
-      subject { shell_out }
+      subject do shell_out end
 
-      it "a #{command} command is executed" do
-        is_expected.to receive(:execute).with no_args
-      end
+      it "a #{command} command is executed" do is_expected.to receive(:execute).with no_args end
     end
 
-    it_behaves_like '#execute', 'validate' do
-      let(:command_class) { ::Terraform::ValidateCommand }
-    end
+    it_behaves_like "#execute", "validate" do let :command_class do ::Terraform::ValidateCommand end end
 
-    it_behaves_like '#execute', 'get' do
-      let(:command_class) { ::Terraform::GetCommand }
-    end
+    it_behaves_like "#execute", "get" do let :command_class do ::Terraform::GetCommand end end
 
-    it_behaves_like '#execute', 'plan' do
-      let(:command_class) { plan_command_class }
-    end
+    it_behaves_like "#execute", "plan" do let :command_class do plan_command_class end end
 
-    describe 'the apply command' do
-      before do
-        allow(described_instance)
-          .to receive(:execute).with command: kind_of(::Terraform::Command)
-      end
+    describe "the apply command" do
+      before do allow(described_instance).to receive(:execute).with command: kind_of(::Terraform::Command) end
 
-      subject { apply_shell_out }
+      subject do apply_shell_out end
 
-      it('is executed') { is_expected.to receive(:execute).with no_args }
+      it "is executed" do is_expected.to receive(:execute).with no_args end
     end
   end
 
-  describe '#apply_constructively' do
-    let(:plan_command_class) { ::Terraform::PlanCommand }
+  describe "#apply_constructively" do
+    let :plan_command_class do ::Terraform::PlanCommand end
 
-    after { described_instance.apply_constructively }
+    after do described_instance.apply_constructively end
 
-    it_behaves_like '#apply'
+    it_behaves_like "#apply"
   end
 
-  describe '#apply_destructively' do
-    let(:plan_command_class) { ::Terraform::DestructivePlanCommand }
+  describe "#apply_destructively" do
+    let :plan_command_class do ::Terraform::DestructivePlanCommand end
 
-    after { described_instance.apply_destructively }
+    after do described_instance.apply_destructively end
 
-    it_behaves_like '#apply'
+    it_behaves_like "#apply"
   end
 
-  describe '#each_output_name' do
-    subject do lambda do |block| described_instance.each_output_name(&block) end end
+  describe "#each_output_name" do
+    subject do lambda do |block| described_instance.each_output_name &block end end
 
-    context 'when outputs are defined', :outputs do
-      let :output_value do
-        ::JSON.dump 'output_name_1' => 'output_value_1',
-                    'output_name_2' => 'output_value_2'
-      end
+    context "when outputs are defined" do
+      include_context "outputs are defined"
 
-      it 'yields each output name' do
-        is_expected.to yield_successive_args 'output_name_1', 'output_name_2'
-      end
+      let :output_value do ::JSON.dump "output_name_1" => "output_value_1", "output_name_2" => "output_value_2" end
+
+      it "yields each output name" do is_expected.to yield_successive_args "output_name_1", "output_name_2" end
     end
 
-    context 'when outputs are not defined', :no_outputs do
-      it('does not yield') { is_expected.to_not yield_control }
-    end
-  end
+    context "when outputs are not defined" do
+      include_context "outputs are not defined"
 
-  describe '#iterate_output' do
-    subject do lambda do |block| described_instance.iterate_output name: 'name', &block end end
-
-    context 'when outputs are defined', :outputs do
-      let(:output_value) { ::JSON.dump 'value' => ['value1', 'value2'] }
-
-      it 'iterates the output values' do
-        is_expected.to yield_successive_args 'value1', 'value2'
-      end
-    end
-
-    context 'when outputs are not defined', :no_outputs do
-      it('does not yield') { is_expected.to_not yield_control }
+      it "does not yield" do is_expected.to_not yield_control end
     end
   end
 
-  describe '#load_state' do
-    let(:described_method) { :load_state }
+  describe "#iterate_output" do
+    subject do lambda do |block| described_instance.iterate_output name: "name", &block end end
+
+    context "when outputs are defined" do
+      include_context "outputs are defined"
+
+      let :output_value do ::JSON.dump "value" => ["value1", "value2"] end
+
+      it "iterates the output values" do is_expected.to yield_successive_args "value1", "value2" end
+    end
+
+    context "when outputs are not defined" do
+      include_context "outputs are not defined"
+
+      it "does not yield" do is_expected.to_not yield_control end
+    end
+  end
+
+  describe "#load_state" do
+    let :described_method do :load_state end
 
     before do
-      allow(described_instance).to receive(:execute)
-        .with(command: kind_of(::Terraform::ShowCommand)).and_yield state
+      allow(described_instance).to receive(:execute).with(command: kind_of(::Terraform::ShowCommand)).and_yield state
     end
 
-    context 'when state does exist' do
-      let(:state) { 'state' }
+    context "when state does exist" do
+      let :state do "state" end
 
-      it_behaves_like 'control is yielded'
+      it_behaves_like "control is yielded"
     end
 
-    context 'when state does not exist' do
-      let(:state) { '' }
+    context "when state does not exist" do
+      let :state do "" end
 
-      it_behaves_like 'control is not yielded'
-    end
-  end
-
-  describe '#output' do
-    subject { described_instance.output name: 'name' }
-
-    context 'when outputs are defined', :outputs do
-      let(:output_value) { ::JSON.dump 'value' => 'value' }
-
-      it('returns the output value') { is_expected.to eq 'value' }
-    end
-
-    context 'when outputs are not defined', :no_outputs do
-      it('returns an empty string') { is_expected.to eq '' }
+      it_behaves_like "control is not yielded"
     end
   end
 
-  describe '#version' do
+  describe "#output" do
+    subject do described_instance.output name: "name" end
+
+    context "when outputs are defined" do
+      include_context "outputs are defined"
+
+      let :output_value do ::JSON.dump "value" => "value" end
+
+      it "returns the output value" do is_expected.to eq "value" end
+    end
+
+    context "when outputs are not defined" do
+      include_context "outputs are not defined"
+
+      it "returns an empty string" do is_expected.to eq "" end
+    end
+  end
+
+  describe "#version" do
     before do
-      allow(described_instance).to receive(:execute)
-        .with(command: kind_of(::Terraform::VersionCommand)).and_yield 'Terraform v0.9.0'
+      allow(described_instance)
+        .to receive(:execute).with(command: kind_of(::Terraform::VersionCommand)).and_yield "Terraform v0.9.0"
     end
 
-    subject { described_instance.version }
+    subject do described_instance.version end
 
-    it 'returns the version' do is_expected.to eq '0.9.0' end
+    it "returns the version" do is_expected.to eq "0.9.0" end
   end
 end
