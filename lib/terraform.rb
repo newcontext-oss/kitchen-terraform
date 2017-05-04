@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/verifier/terraform"
-
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend =
-  lambda do |host:, options:| /^localhost$/.match host do options.store "backend", "local" end end
+# Namespace for kitchen-terraform
+module Terraform
+end

@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "terraform"
 require "terraform/command"
 
-module Terraform
-  # A command to valdidate configuration files
-  class ValidateCommand < ::Terraform::Command
-  end
+# A command to valdidate configuration files
+class ::Terraform::ValidateCommand < ::Terraform::Command
 end

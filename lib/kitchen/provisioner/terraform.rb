@@ -25,35 +25,31 @@ require "kitchen/config/variable_files"
 require "kitchen/config/variables"
 require "terraform/configurable"
 
-module Kitchen
-  module Provisioner
-    # Applies constructive Terraform plans
-    class Terraform < ::Kitchen::Provisioner::Base
-      ::Kitchen::Config::ApplyTimeout.call plugin_class: self
+# Applies constructive Terraform plans
+class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
+  ::Kitchen::Config::ApplyTimeout.call plugin_class: self
 
-      ::Kitchen::Config::Color.call plugin_class: self
+  ::Kitchen::Config::Color.call plugin_class: self
 
-      ::Kitchen::Config::Directory.call plugin_class: self
+  ::Kitchen::Config::Directory.call plugin_class: self
 
-      ::Kitchen::Config::Parallelism.call plugin_class: self
+  ::Kitchen::Config::Parallelism.call plugin_class: self
 
-      ::Kitchen::Config::Plan.call plugin_class: self
+  ::Kitchen::Config::Plan.call plugin_class: self
 
-      ::Kitchen::Config::State.call plugin_class: self
+  ::Kitchen::Config::State.call plugin_class: self
 
-      ::Kitchen::Config::VariableFiles.call plugin_class: self
+  ::Kitchen::Config::VariableFiles.call plugin_class: self
 
-      ::Kitchen::Config::Variables.call plugin_class: self
+  ::Kitchen::Config::Variables.call plugin_class: self
 
-      include ::Terraform::Configurable
+  include ::Terraform::Configurable
 
-      kitchen_provisioner_api_version 2
+  kitchen_provisioner_api_version 2
 
-      def call(_state = nil)
-        client.apply_constructively
-      rescue ::Kitchen::StandardError, ::SystemCallError => error
-        raise ::Kitchen::ActionFailed, error.message
-      end
-    end
+  def call(_state = nil)
+    client.apply_constructively
+  rescue ::Kitchen::StandardError, ::SystemCallError => error
+    raise ::Kitchen::ActionFailed, error.message
   end
 end

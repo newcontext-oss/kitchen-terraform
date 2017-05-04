@@ -14,20 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
+
+::Kitchen::Config::CLI = lambda do |plugin_class:|
+  plugin_class.required_config :cli do |attribute, value, plugin|
+    ::Kitchen::Config::ProcessSchema.call(
+      attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).filled :str? end,
+      value: value
+    )
+  end
+  plugin_class.default_config :cli do ::File.which "terraform" end
+end
+
 require "dry-validation"
 require "kitchen/config/process_schema"
 require "ptools"
-
-module Kitchen
-  class Config
-    CLI = lambda do |plugin_class:|
-      plugin_class.required_config :cli do |attribute, value, plugin|
-        ::Kitchen::Config::ProcessSchema.call(
-          attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).filled :str? end,
-          value: value
-        )
-      end
-      plugin_class.default_config :cli do ::File.which "terraform" end
-    end
-  end
-end

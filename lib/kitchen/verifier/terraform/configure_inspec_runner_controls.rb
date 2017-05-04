@@ -16,12 +16,5 @@
 
 require "kitchen/verifier/terraform"
 
-module Kitchen
-  module Verifier
-    class Terraform < ::Kitchen::Verifier::Inspec
-      ConfigureInspecRunnerControls = lambda do |group:, options:|
-        options.store :controls, group.fetch(:controls, [])
-      end
-    end
-  end
-end
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls =
+  lambda do |group:, options:| options.store :controls, group.fetch(:controls, []) end

@@ -14,42 +14,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
 require "kitchen/config/cli"
-require "kitchen/driver/terraform/verify_client_version"
 require "terraform/configurable"
 
-module Kitchen
-  module Driver
-    # Terraform state lifecycle activities manager
-    class Terraform < ::Kitchen::Driver::Base
-      ::Kitchen::Config::CLI.call plugin_class: self
+# Terraform state lifecycle activities manager
+class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
+  ::Kitchen::Config::CLI.call plugin_class: self
 
-      include ::Terraform::Configurable
+  include ::Terraform::Configurable
 
-      kitchen_driver_api_version 2
+  kitchen_driver_api_version 2
 
-      no_parallel_for
+  no_parallel_for
 
-      def create(_state = nil); end
+  def create(_state = nil); end
 
-      def destroy(_state = nil)
-        load_state do client.apply_destructively end
-      rescue ::Kitchen::StandardError, ::SystemCallError => error
-        raise ::Kitchen::ActionFailed, error.message
-      end
+  def destroy(_state = nil)
+    load_state do client.apply_destructively end
+  rescue ::Kitchen::StandardError, ::SystemCallError => error
+    raise ::Kitchen::ActionFailed, error.message
+  end
 
-      def verify_dependencies
-        ::Kitchen::Driver::Terraform::VerifyClientVersion
-          .call client: ::Terraform::Client.new(config: self, logger: debug_logger), logger: logger
-      end
+  def verify_dependencies
+    ::Kitchen::Driver::Terraform::VerifyClientVersion
+      .call client: ::Terraform::Client.new(config: self, logger: debug_logger), logger: logger
+  end
 
-      private
+  private
 
-      def load_state(&block)
-        silent_client.load_state &block
-      rescue ::Errno::ENOENT => error
-        debug error.message
-      end
-    end
+  def load_state(&block)
+    silent_client.load_state &block
+  rescue ::Errno::ENOENT => error
+    debug error.message
   end
 end
+
+require "kitchen/driver/terraform/verify_client_version"
+require "terraform/client"

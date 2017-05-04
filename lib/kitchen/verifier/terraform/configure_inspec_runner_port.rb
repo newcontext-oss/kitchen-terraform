@@ -16,11 +16,5 @@
 
 require "kitchen/verifier/terraform"
 
-module Kitchen
-  module Verifier
-    class Terraform < ::Kitchen::Verifier::Inspec
-      ConfigureInspecRunnerPort =
-        lambda do |group:, options:| group.key? :port and options.store "port", group.fetch(:port) end
-    end
-  end
-end
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort =
+  lambda do |group:, options:| group.key? :port and options.store "port", group.fetch(:port) end

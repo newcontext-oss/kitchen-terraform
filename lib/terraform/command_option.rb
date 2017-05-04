@@ -14,52 +14,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # An option for a command
-  class CommandOption
-    attr_reader :key, :value
+require "terraform"
 
-    def ==(other)
-      tuple == other.tuple
-    end
+# An option for a command
+class ::Terraform::CommandOption
+  attr_reader :key, :value
 
-    alias eql? ==
+  def ==(other)
+    tuple == other.tuple
+  end
 
-    def hash
-      stripped_key.hash & stripped_value.hash
-    end
+  alias eql? ==
 
-    def to_s
-      "#{formatted_key}#{formatted_value}"
-    end
+  def hash
+    stripped_key.hash & stripped_value.hash
+  end
 
-    def tuple
-      [stripped_key, stripped_value]
-    end
+  def to_s
+    "#{formatted_key}#{formatted_value}"
+  end
 
-    private
+  def tuple
+    [stripped_key, stripped_value]
+  end
 
-    attr_accessor :stripped_key, :stripped_value
+  private
 
-    attr_writer :key, :value
+  attr_accessor :stripped_key, :stripped_value
 
-    def initialize(key:, value: "")
-      self.key = key
-      self.stripped_key = stripped_string config_string: key
-      self.stripped_value = stripped_string config_string: value
-      self.value = value
-    end
+  attr_writer :key, :value
 
-    def formatted_key
-      "-#{stripped_key}"
-    end
+  def initialize(key:, value: "")
+    self.key = key
+    self.stripped_key = stripped_string config_string: key
+    self.stripped_value = stripped_string config_string: value
+    self.value = value
+  end
 
-    def formatted_value
-      stripped_value.sub /(\S)/, "=\\1"
-    end
+  def formatted_key
+    "-#{stripped_key}"
+  end
 
-    def stripped_string(config_string:)
-      String(config_string).gsub /\s/, ""
-    end
+  def formatted_value
+    stripped_value.sub /(\S)/, "=\\1"
+  end
+
+  def stripped_string(config_string:)
+    String(config_string).gsub /\s/, ""
   end
 end

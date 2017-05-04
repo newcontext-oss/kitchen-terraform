@@ -16,12 +16,8 @@
 
 require "kitchen"
 
-module Kitchen
-  class Config
-    ProcessSchema = lambda do |attribute:, plugin:, schema:, value:|
-      schema.call(value: value).messages.tap do |messages|
-        raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" unless messages.empty?
-      end
-    end
+::Kitchen::Config::ProcessSchema = lambda do |attribute:, plugin:, schema:, value:|
+  schema.call(value: value).messages.tap do |messages|
+    raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" unless messages.empty?
   end
 end

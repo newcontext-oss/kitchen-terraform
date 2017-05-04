@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "terraform"
 require "terraform/command"
 
-module Terraform
-  # A command to obtain the version
-  class VersionCommand < ::Terraform::Command
-  end
+# A command to obtain the version
+class ::Terraform::VersionCommand < ::Terraform::Command
 end
