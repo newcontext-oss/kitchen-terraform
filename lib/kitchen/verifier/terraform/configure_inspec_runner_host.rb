@@ -16,10 +16,4 @@
 
 require "kitchen/verifier/terraform"
 
-module Kitchen
-  module Verifier
-    class Terraform < ::Kitchen::Verifier::Inspec
-      ConfigureInspecRunnerHost = lambda do |host:, options:| options.store "host", host end
-    end
-  end
-end
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost = lambda do |host:, options:| options.store "host", host end

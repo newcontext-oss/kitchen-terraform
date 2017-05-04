@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "terraform"
 require "terraform/command"
 
-module Terraform
-  # A command to retrieve extract values of output variables
-  class OutputCommand < ::Terraform::Command
-  end
+# A command to retrieve extract values of output variables
+class ::Terraform::OutputCommand < ::Terraform::Command
 end

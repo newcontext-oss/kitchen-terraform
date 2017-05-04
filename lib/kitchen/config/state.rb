@@ -14,19 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
+
+::Kitchen::Config::State = lambda do |plugin_class:|
+  plugin_class.required_config :state do |attribute, value, plugin|
+    ::Kitchen::Config::ProcessSchema.call(
+      attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).filled :str? end,
+      value: value
+    )
+  end
+  plugin_class.default_config :state do |plugin| plugin.instance_pathname filename: "terraform.tfstate" end
+end
+
 require "dry-validation"
 require "kitchen/config/process_schema"
-
-module Kitchen
-  class Config
-    State = lambda do |plugin_class:|
-      plugin_class.required_config :state do |attribute, value, plugin|
-        ::Kitchen::Config::ProcessSchema.call(
-          attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).filled :str? end,
-          value: value
-        )
-      end
-      plugin_class.default_config :state do |plugin| plugin.instance_pathname filename: "terraform.tfstate" end
-    end
-  end
-end

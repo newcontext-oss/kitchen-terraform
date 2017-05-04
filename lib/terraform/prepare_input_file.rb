@@ -14,19 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A preparation for a command with an input file
-  class PrepareInputFile
-    def execute
-      file.open do end
-    end
+require "terraform"
 
-    private
+# A preparation for a command with an input file
+class ::Terraform::PrepareInputFile
+  def execute
+    file.open do end
+  end
 
-    attr_accessor :file
+  private
 
-    def initialize(file:)
-      self.file = file
-    end
+  attr_accessor :file
+
+  def initialize(file:)
+    self.file = file
   end
 end

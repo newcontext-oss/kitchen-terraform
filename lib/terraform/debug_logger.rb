@@ -14,21 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # Wrapper for a logger to always use the debug level
-  class DebugLogger
-    def debug(message)
-      logger.debug message
-    end
+require "terraform"
 
-    alias << debug
+# Wrapper for a logger to always use the debug level
+class ::Terraform::DebugLogger
+  def debug(message)
+    logger.debug message
+  end
 
-    private
+  alias << debug
 
-    attr_accessor :logger
+  private
 
-    def initialize(logger:)
-      self.logger = logger
-    end
+  attr_accessor :logger
+
+  def initialize(logger:)
+    self.logger = logger
   end
 end

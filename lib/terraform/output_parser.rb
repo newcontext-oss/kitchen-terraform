@@ -14,33 +14,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "json"
+require "terraform"
 
-module Terraform
-  # A parser for output command values
-  class OutputParser
-    def each_name(&block)
-      json_output.each_key &block
-    end
+# A parser for output command values
+class ::Terraform::OutputParser
+  def each_name(&block)
+    json_output.each_key &block
+  end
 
-    def iterate_parsed_output(&block)
-      Array(parsed_output).each &block
-    end
+  def iterate_parsed_output(&block)
+    Array(parsed_output).each &block
+  end
 
-    def parsed_output
-      json_output.fetch "value"
-    end
+  def parsed_output
+    json_output.fetch "value"
+  end
 
-    private
+  private
 
-    attr_accessor :output
+  attr_accessor :output
 
-    def initialize(output:)
-      self.output = output
-    end
+  def initialize(output:)
+    self.output = output
+  end
 
-    def json_output
-      ::JSON.parse output
-    end
+  def json_output
+    ::JSON.parse output
   end
 end
+
+require "json"

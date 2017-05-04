@@ -15,54 +15,56 @@
 # limitations under the License.
 
 require "forwardable"
+require "terraform"
+
+# Behaviour for objects that extend ::Kitchen::Configurable
+module ::Terraform::Configurable
+  extend ::Forwardable
+
+  def_delegator :config, :[]=
+
+  def_delegators :instance, :driver, :provisioner, :transport
+
+  def self.included(configurable_class)
+    configurable_class.plugin_version ::Terraform::PROJECT_VERSION
+  end
+
+  def client
+    ::Terraform::Client.new config: verbose_config, logger: logger
+  end
+
+  def config_error(attr:, expected:)
+    raise ::Kitchen::UserError, "#{formatted_config attr: attr} must be interpretable as #{expected}"
+  end
+
+  def debug_logger
+    ::Terraform::DebugLogger.new logger: logger
+  end
+
+  def instance_pathname(filename:)
+    ::File.join config.fetch(:kitchen_root), ".kitchen", "kitchen-terraform", instance.name, filename
+  end
+
+  def silent_client
+    ::Terraform::Client.new config: silent_config, logger: debug_logger
+  end
+
+  private
+
+  def formatted_config(attr:)
+    "#{self.class}#{instance.to_str}#config[:#{attr}]"
+  end
+
+  def silent_config
+    verbose_config.tap do |config| config[:color] = false end
+  end
+
+  def verbose_config
+    provisioner.dup.tap do |config| config[:cli] = driver[:cli] end
+  end
+end
+
 require "kitchen"
 require "terraform/client"
 require "terraform/debug_logger"
 require "terraform/project_version"
-module Terraform
-  # Behaviour for objects that extend ::Kitchen::Configurable
-  module Configurable
-    extend ::Forwardable
-    def_delegator :config, :[]=
-
-    def_delegators :instance, :driver, :provisioner, :transport
-
-    def self.included(configurable_class)
-      configurable_class.plugin_version ::Terraform::PROJECT_VERSION
-    end
-
-    def client
-      ::Terraform::Client.new config: verbose_config, logger: logger
-    end
-
-    def config_error(attr:, expected:)
-      raise ::Kitchen::UserError, "#{formatted_config attr: attr} must be interpretable as #{expected}"
-    end
-
-    def debug_logger
-      ::Terraform::DebugLogger.new logger: logger
-    end
-
-    def instance_pathname(filename:)
-      ::File.join config.fetch(:kitchen_root), ".kitchen", "kitchen-terraform", instance.name, filename
-    end
-
-    def silent_client
-      ::Terraform::Client.new config: silent_config, logger: debug_logger
-    end
-
-    private
-
-    def formatted_config(attr:)
-      "#{self.class}#{instance.to_str}#config[:#{attr}]"
-    end
-
-    def silent_config
-      verbose_config.tap do |config| config[:color] = false end
-    end
-
-    def verbose_config
-      provisioner.dup.tap do |config| config[:cli] = driver[:cli] end
-    end
-  end
-end
