@@ -14,15 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  # A null parser for when there are no outputs defined
-  class NoOutputParser
-    def each_name; end
+require "terraform"
 
-    def iterate_parsed_output; end
+# A null parser for when there are no outputs defined
+class ::Terraform::NoOutputParser
+  def each_name; end
 
-    def parsed_output
-      ""
-    end
+  def iterate_parsed_output; end
+
+  def parsed_output
+    ""
   end
 end

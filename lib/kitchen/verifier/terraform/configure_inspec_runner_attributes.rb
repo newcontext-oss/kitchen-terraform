@@ -16,18 +16,12 @@
 
 require "kitchen/verifier/terraform"
 
-module Kitchen
-  module Verifier
-    class Terraform < ::Kitchen::Verifier::Inspec
-      ConfigureInspecRunnerAttributes = lambda do |client:, config:, group:, terraform_state:|
-        {"terraform_state" => terraform_state}.tap do |attributes|
-          client.each_output_name do |output_name| attributes.store output_name, client.output(name: output_name) end
-          group.fetch(:attributes, {}).each_pair do |attribute_name, output_name|
-            attributes.store attribute_name.to_s, client.output(name: output_name)
-          end
-          config.store :attributes, attributes
-        end
-      end
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes = lambda do |client:, config:, group:, terraform_state:|
+  {"terraform_state" => terraform_state}.tap do |attributes|
+    client.each_output_name do |output_name| attributes.store output_name, client.output(name: output_name) end
+    group.fetch(:attributes, {}).each_pair do |attribute_name, output_name|
+      attributes.store attribute_name.to_s, client.output(name: output_name)
     end
+    config.store :attributes, attributes
   end
 end

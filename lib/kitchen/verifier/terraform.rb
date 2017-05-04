@@ -14,9 +14,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
 require "kitchen/config/groups"
 require "kitchen/verifier/inspec"
-require "kitchen/verifier/terraform"
+require "terraform/configurable"
+
+# Runs tests post-converge to confirm that instances in the Terraform state are in an expected state
+class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
+  ::Kitchen::Config::Groups.call plugin_class: self
+
+  kitchen_verifier_api_version 2
+
+  include ::Terraform::Configurable
+
+  def call(state)
+    config.fetch(:groups).each do |group|
+      state.store :group, group
+      ::Kitchen::Verifier::Terraform::EnumerateGroupHosts.call client: silent_client, group: group do |host:|
+        state.store :host, host
+        info "Verifying '#{host}' of group '#{group.fetch :name}'"
+        super state
+      end
+    end
+  rescue ::Kitchen::StandardError, ::SystemCallError => error
+    raise ::Kitchen::ActionFailed, error.message
+  end
+
+  private
+
+  def configure_inspec_runner(group:, host:, options:)
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend.call host: host, options: options
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost.call host: host, options: options
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort.call group: group, options: options
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser.call group: group, options: options
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
+      .call client: silent_client, config: config, group: group, terraform_state: provisioner[:state]
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls.call group: group, options: options
+  end
+
+  def runner_options(transport, state = {}, platform = nil, suite = nil)
+    super(transport, state, platform, suite).tap do |options|
+      configure_inspec_runner group: state.fetch(:group), host: state.fetch(:host), options: options
+    end
+  end
+end
+
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
 require "kitchen/verifier/terraform/configure_inspec_runner_backend"
 require "kitchen/verifier/terraform/configure_inspec_runner_controls"
@@ -24,48 +66,3 @@ require "kitchen/verifier/terraform/configure_inspec_runner_host"
 require "kitchen/verifier/terraform/configure_inspec_runner_port"
 require "kitchen/verifier/terraform/configure_inspec_runner_user"
 require "kitchen/verifier/terraform/enumerate_group_hosts"
-require "terraform/configurable"
-
-module Kitchen
-  module Verifier
-    # Runs tests post-converge to confirm that instances in the Terraform state are in an expected state
-    class Terraform < ::Kitchen::Verifier::Inspec
-      ::Kitchen::Config::Groups.call plugin_class: self
-
-      kitchen_verifier_api_version 2
-
-      include ::Terraform::Configurable
-
-      def call(state)
-        config.fetch(:groups).each do |group|
-          state.store :group, group
-          ::Kitchen::Verifier::Terraform::EnumerateGroupHosts.call client: silent_client, group: group do |host:|
-            state.store :host, host
-            info "Verifying '#{host}' of group '#{group.fetch :name}'"
-            super state
-          end
-        end
-      rescue ::Kitchen::StandardError, ::SystemCallError => error
-        raise ::Kitchen::ActionFailed, error.message
-      end
-
-      private
-
-      def configure_inspec_runner(group:, host:, options:)
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend.call host: host, options: options
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost.call host: host, options: options
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort.call group: group, options: options
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser.call group: group, options: options
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
-          .call client: silent_client, config: config, group: group, terraform_state: provisioner[:state]
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls.call group: group, options: options
-      end
-
-      def runner_options(transport, state = {}, platform = nil, suite = nil)
-        super(transport, state, platform, suite).tap do |options|
-          configure_inspec_runner group: state.fetch(:group), host: state.fetch(:host), options: options
-        end
-      end
-    end
-  end
-end

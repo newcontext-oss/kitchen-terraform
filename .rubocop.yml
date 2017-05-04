@@ -20,6 +20,8 @@ Style/AndOr:
   Enabled: false
 Style/BlockDelimiters:
   Enabled: false
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
 Style/Lambda:
   EnforcedStyle: lambda
 Style/PercentLiteralDelimiters:

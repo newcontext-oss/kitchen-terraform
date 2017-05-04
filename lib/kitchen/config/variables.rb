@@ -14,19 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
+
+::Kitchen::Config::Variables = lambda do |plugin_class:|
+  plugin_class.required_config :variables do |attribute, value, plugin|
+    ::Kitchen::Config::ProcessSchema.call(
+      attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).value :hash? end,
+      value: value
+    )
+  end
+  plugin_class.default_config :variables, {}
+end
+
 require "dry-validation"
 require "kitchen/config/process_schema"
-
-module Kitchen
-  class Config
-    Variables = lambda do |plugin_class:|
-      plugin_class.required_config :variables do |attribute, value, plugin|
-        ::Kitchen::Config::ProcessSchema.call(
-          attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).value :hash? end,
-          value: value
-        )
-      end
-      plugin_class.default_config :variables, {}
-    end
-  end
-end

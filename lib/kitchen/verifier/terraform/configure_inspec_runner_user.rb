@@ -16,11 +16,5 @@
 
 require "kitchen/verifier/terraform"
 
-module Kitchen
-  module Verifier
-    class Terraform < ::Kitchen::Verifier::Inspec
-      ConfigureInspecRunnerUser =
-        lambda do |group:, options:| group.key? :username and options.store "user", group.fetch(:username) end
-    end
-  end
-end
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser =
+  lambda do |group:, options:| group.key? :username and options.store "user", group.fetch(:username) end

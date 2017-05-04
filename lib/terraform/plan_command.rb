@@ -14,17 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "pathname"
+require "terraform"
 require "terraform/command"
-require "terraform/prepare_output_file"
-module Terraform
-  # A command to plan an execution
-  class PlanCommand < ::Terraform::Command
-    private
 
-    def initialize(target: "", &block)
-      super target: target, &block
-      preparations.push ::Terraform::PrepareOutputFile.new file: Pathname.new(options.out)
-    end
+# A command to plan an execution
+class ::Terraform::PlanCommand < ::Terraform::Command
+  private
+
+  def initialize(target: "", &block)
+    super target: target, &block
+    preparations.push ::Terraform::PrepareOutputFile.new file: Pathname.new(options.out)
   end
 end
+
+require "pathname"
+require "terraform/prepare_output_file"

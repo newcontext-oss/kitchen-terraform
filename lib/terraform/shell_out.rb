@@ -14,38 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
-require "mixlib/shellout"
+require "terraform"
 
-module Terraform
-  # Facilitates execution of commands in a shell
-  class ShellOut
-    def execute(&block)
-      block ||= proc {}
+# Facilitates execution of commands in a shell
+class ::Terraform::ShellOut
+  def execute(&block)
+    block ||= proc {}
 
-      command.prepare
-      run_command
-      block.call shell_out.stdout
-    end
+    command.prepare
+    run_command
+    block.call shell_out.stdout
+  end
 
-    private
+  private
 
-    attr_accessor :command, :shell_out
+  attr_accessor :command, :shell_out
 
-    def initialize(cli:, command:, logger:, timeout: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
-      self.command = command
-      self.shell_out = ::Mixlib::ShellOut.new "#{cli} #{command}", live_stream: logger, timeout: timeout
-    end
+  def initialize(cli:, command:, logger:, timeout: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT)
+    self.command = command
+    self.shell_out = ::Mixlib::ShellOut.new "#{cli} #{command}", live_stream: logger, timeout: timeout
+  end
 
-    def instance_failures
-      [::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout, ::Mixlib::ShellOut::ShellCommandFailed]
-    end
-
-    def run_command
-      shell_out.run_command
-      shell_out.error!
-    rescue *instance_failures => error
-      raise ::Kitchen::StandardError, "`#{shell_out.command}` failed: '#{error.message}'"
-    end
+  def run_command
+    shell_out.run_command
+    shell_out.error!
+  rescue ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout,
+         ::Mixlib::ShellOut::ShellCommandFailed => error
+    raise ::Kitchen::StandardError, "`#{shell_out.command}` failed: '#{error.message}'"
   end
 end
+
+require "kitchen"
+require "mixlib/shellout"

@@ -14,6 +14,73 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "terraform"
+
+# A factory to create commands
+class ::Terraform::CommandFactory
+  def apply_command
+    ::Terraform::ApplyCommand.new target: config[:plan] do |options|
+      options.color = config[:color]
+      options.input = false
+      options.parallelism = config[:parallelism]
+      options.state_out = config[:state]
+    end
+  end
+
+  def destructive_plan_command
+    ::Terraform::DestructivePlanCommand.new target: config[:directory] do |options|
+      configure_plan options: options
+      options.destroy = true
+    end
+  end
+
+  def get_command
+    ::Terraform::GetCommand.new target: config[:directory] do |options| options.update = true end
+  end
+
+  def output_command(target:)
+    ::Terraform::OutputCommand.new target: target do |options|
+      options.color = config[:color]
+      options.json = true
+      options.state = config[:state]
+    end
+  end
+
+  def plan_command
+    ::Terraform::PlanCommand.new target: config[:directory] do |options| configure_plan options: options end
+  end
+
+  def show_command
+    ::Terraform::ShowCommand.new target: config[:state] do |options| options.color = config[:color] end
+  end
+
+  def validate_command
+    ::Terraform::ValidateCommand.new target: config[:directory]
+  end
+
+  def version_command
+    ::Terraform::VersionCommand.new
+  end
+
+  private
+
+  attr_accessor :config
+
+  def configure_plan(options:)
+    options.color = config[:color]
+    options.input = false
+    options.out = config[:plan]
+    options.parallelism = config[:parallelism]
+    options.state = config[:state]
+    options.var = config[:variables]
+    options.var_file = config[:variable_files]
+  end
+
+  def initialize(config:)
+    self.config = config
+  end
+end
+
 require "terraform/apply_command"
 require "terraform/destructive_plan_command"
 require "terraform/get_command"
@@ -22,70 +89,3 @@ require "terraform/plan_command"
 require "terraform/show_command"
 require "terraform/validate_command"
 require "terraform/version_command"
-
-module Terraform
-  # A factory to create commands
-  class CommandFactory
-    def apply_command
-      ::Terraform::ApplyCommand.new target: config[:plan] do |options|
-        options.color = config[:color]
-        options.input = false
-        options.parallelism = config[:parallelism]
-        options.state_out = config[:state]
-      end
-    end
-
-    def destructive_plan_command
-      ::Terraform::DestructivePlanCommand.new target: config[:directory] do |options|
-        configure_plan options: options
-        options.destroy = true
-      end
-    end
-
-    def get_command
-      ::Terraform::GetCommand.new target: config[:directory] do |options| options.update = true end
-    end
-
-    def output_command(target:)
-      ::Terraform::OutputCommand.new target: target do |options|
-        options.color = config[:color]
-        options.json = true
-        options.state = config[:state]
-      end
-    end
-
-    def plan_command
-      ::Terraform::PlanCommand.new target: config[:directory] do |options| configure_plan options: options end
-    end
-
-    def show_command
-      ::Terraform::ShowCommand.new target: config[:state] do |options| options.color = config[:color] end
-    end
-
-    def validate_command
-      ::Terraform::ValidateCommand.new target: config[:directory]
-    end
-
-    def version_command
-      ::Terraform::VersionCommand.new
-    end
-
-    private
-
-    attr_accessor :config
-
-    def configure_plan(options:)
-      options.color = config[:color]
-      options.input = false
-      options.out = config[:plan]
-      options.parallelism = config[:parallelism]
-      options.state = config[:state]
-      options.var = config[:variables]
-      options.var_file = config[:variable_files]
-    end
-
-    def initialize(config:)
-      self.config = config
-    end
-  end
-end
