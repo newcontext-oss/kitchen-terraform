@@ -14,9 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "terraform"
-require "terraform/command"
+require "kitchen/terraform/client/execute_command"
+require "mixlib/shellout"
 
-# A command to obtain the version
-class ::Terraform::VersionCommand < ::Terraform::Command
+# Command to retrieve the version
+::Kitchen::Terraform::Client::Version = lambda do |cli:, logger:, timeout:, &block|
+  ::Mixlib::ShellOut.new(cli, "version", live_stream: logger, timeout: timeout).tap do |shell_out|
+    ::Kitchen::Terraform::Client::ExecuteCommand.call shell_out: shell_out
+    block.call version: Float(shell_out.stdout.slice(/v(\d+\.\d+)/, 1))
+  end
 end

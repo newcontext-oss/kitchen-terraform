@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "terraform"
+require "kitchen/terraform"
 
 # Client to execute commands
-class ::Terraform::Client
+class ::Kitchen::Terraform::Client
   def apply_constructively
     apply plan_command: factory.plan_command
   end
@@ -42,10 +42,6 @@ class ::Terraform::Client
     output_parser(name: name).parsed_output
   end
 
-  def version
-    execute command: factory.version_command do |value| return value.slice /v(\d+\.\d+\.\d+)/, 1 end
-  end
-
   private
 
   attr_accessor :apply_timeout, :cli, :factory, :logger
@@ -54,7 +50,8 @@ class ::Terraform::Client
     execute command: factory.validate_command
     execute command: factory.get_command
     execute command: plan_command
-    ::Terraform::ShellOut.new(cli: cli, command: factory.apply_command, logger: logger, timeout: apply_timeout).execute
+    ::Terraform::ShellOut
+      .new(cli: cli, command: factory.apply_command, logger: logger, timeout: apply_timeout).execute
   end
 
   def execute(command:, &block)

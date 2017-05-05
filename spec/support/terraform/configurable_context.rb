@@ -22,7 +22,7 @@ require "support/kitchen/instance_context"
 require "terraform/configurable"
 
 ::RSpec.shared_context "client" do |client_type: :client|
-  let client_type do instance_double ::Terraform::Client end
+  let client_type do instance_double ::Kitchen::Terraform::Client end
 
   before do allow(described_instance).to receive(client_type).with(no_args).and_return send client_type end
 end
