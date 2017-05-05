@@ -14,11 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/client/version"
 require "support/raise_error_examples"
 require "support/kitchen/instance_context"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
+require "terraform/configurable"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
   let :described_instance do driver end
@@ -74,12 +77,27 @@ require "support/terraform/configurable_examples"
   describe "#verify_dependencies" do
     include_context "instance"
 
-    after do described_instance.verify_dependencies end
+    before do
+      allow(::Kitchen::Terraform::Client::Version).to receive(:call)
+        .with(cli: described_instance[:cli], logger: described_instance.debug_logger).and_yield version: version
+    end
 
-    subject do ::Kitchen::Driver::Terraform::VerifyClientVersion end
+    context "when the client version is deprecated" do
+      let :version do 0.7 end
 
-    it "verifies the Terraform client version" do
-      is_expected.to receive(:call).with client: kind_of(::Terraform::Client), logger: duck_type(:<<)
+      after do described_instance.verify_dependencies end
+
+      subject do logger end
+
+      it "logs a warning message" do is_expected.to receive(:warn).with kind_of ::String end
+    end
+
+    context "when the client version is invalid" do
+      let :version do 1.0 end
+
+      subject do proc do described_instance.verify_dependencies end end
+
+      it "raises a user error" do is_expected.to raise_error ::Kitchen::UserError end
     end
   end
 end

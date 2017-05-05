@@ -165,10 +165,4 @@ require "support/terraform/configurable_context"
 
     it_behaves_like "a target is set" do let :target do "/directory" end end
   end
-
-  describe "#version_command" do
-    subject do described_instance.version_command end
-
-    it "has no target or options" do is_expected.to be_instance_of ::Terraform::VersionCommand end
-  end
 end

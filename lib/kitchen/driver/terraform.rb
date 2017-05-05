@@ -37,8 +37,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   def verify_dependencies
-    ::Kitchen::Driver::Terraform::VerifyClientVersion
-      .call client: ::Terraform::Client.new(config: self, logger: debug_logger), logger: logger
+    ::Kitchen::Terraform::Client::Version.call cli: config[:cli], logger: debug_logger do |version:|
+      ::Kitchen::Driver::Terraform::VerifyClientVersion.call(
+        version: version, when_deprecated: lambda do |message:| logger.warn message end,
+        when_invalid: lambda do |message:| raise ::Kitchen::UserError, message end
+      )
+    end
   end
 
   private
@@ -51,4 +55,5 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 end
 
 require "kitchen/driver/terraform/verify_client_version"
-require "terraform/client"
+require "kitchen/terraform/client"
+require "kitchen/terraform/client/version"

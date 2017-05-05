@@ -58,10 +58,6 @@ class ::Terraform::CommandFactory
     ::Terraform::ValidateCommand.new target: config[:directory]
   end
 
-  def version_command
-    ::Terraform::VersionCommand.new
-  end
-
   private
 
   attr_accessor :config
@@ -88,4 +84,3 @@ require "terraform/output_command"
 require "terraform/plan_command"
 require "terraform/show_command"
 require "terraform/validate_command"
-require "terraform/version_command"
