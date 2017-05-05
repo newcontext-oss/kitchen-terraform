@@ -18,7 +18,7 @@ require "kitchen/verifier/terraform/enumerate_group_hosts"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform::EnumerateGroupHosts do
   describe ".call" do
-    let :client do instance_double ::Terraform::Client end
+    let :client do instance_double ::Kitchen::Terraform::Client end
 
     let :group do {} end
 

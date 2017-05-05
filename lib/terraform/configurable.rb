@@ -30,7 +30,7 @@ module ::Terraform::Configurable
   end
 
   def client
-    ::Terraform::Client.new config: verbose_config, logger: logger
+    ::Kitchen::Terraform::Client.new config: verbose_config, logger: logger
   end
 
   def config_error(attr:, expected:)
@@ -38,7 +38,7 @@ module ::Terraform::Configurable
   end
 
   def debug_logger
-    ::Terraform::DebugLogger.new logger: logger
+    @debug_logger ||= ::Terraform::DebugLogger.new logger: logger
   end
 
   def instance_pathname(filename:)
@@ -46,7 +46,7 @@ module ::Terraform::Configurable
   end
 
   def silent_client
-    ::Terraform::Client.new config: silent_config, logger: debug_logger
+    ::Kitchen::Terraform::Client.new config: silent_config, logger: debug_logger
   end
 
   private
@@ -65,6 +65,6 @@ module ::Terraform::Configurable
 end
 
 require "kitchen"
-require "terraform/client"
+require "kitchen/terraform/client"
 require "terraform/debug_logger"
 require "terraform/project_version"

@@ -14,11 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/terraform/command_examples"
-require "terraform/version_command"
+require "kitchen/terraform/client"
+require "mixlib/shellout"
 
-::RSpec.describe ::Terraform::VersionCommand do
-  let :described_instance do described_class.new end
-
-  it_behaves_like "#name" do let :name do "version" end end
+::Kitchen::Terraform::Client::ExecuteCommand = lambda do |shell_out:|
+  begin
+    shell_out.run_command
+    shell_out.error!
+  rescue ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout,
+         ::Mixlib::ShellOut::ShellCommandFailed => error
+    raise ::Kitchen::StandardError, "`#{shell_out.command}` failed: '#{error.message}'"
+  end
 end

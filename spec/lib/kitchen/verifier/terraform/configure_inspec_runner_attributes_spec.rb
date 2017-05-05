@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "terraform/client"
+require "kitchen/terraform/client"
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
 require "support/kitchen/verifier/terraform/configure_inspec_runner_attributes_context"
 
@@ -22,7 +22,7 @@ require "support/kitchen/verifier/terraform/configure_inspec_runner_attributes_c
   describe ".call" do
     include_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call"
 
-    let :client do instance_double ::Terraform::Client end
+    let :client do instance_double ::Kitchen::Terraform::Client end
 
     let :config do {} end
 

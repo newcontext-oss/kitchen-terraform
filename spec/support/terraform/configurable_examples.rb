@@ -40,7 +40,7 @@ require "terraform/configurable"
     let :client do instance_double ::Object end
 
     before do
-      allow(::Terraform::Client)
+      allow(::Kitchen::Terraform::Client)
         .to receive(:new).with(config: duck_type(:[]), logger: instance_of(::Kitchen::Logger)).and_return client
     end
 
@@ -89,7 +89,7 @@ require "terraform/configurable"
     let :silent_client do instance_double ::Object end
 
     before do
-      allow(::Terraform::Client)
+      allow(::Kitchen::Terraform::Client)
         .to receive(:new).with(config: kind_of(::Kitchen::Configurable), logger: instance_of(::Terraform::DebugLogger))
         .and_return silent_client
     end

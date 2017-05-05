@@ -14,11 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "json"
+require "kitchen"
+require "kitchen/terraform/client"
 require "support/terraform/configurable_context"
 require "support/yield_control_examples"
-require "terraform/client"
+require "terraform/apply_command"
+require "terraform/command"
+require "terraform/destructive_plan_command"
+require "terraform/get_command"
+require "terraform/output_command"
+require "terraform/plan_command"
+require "terraform/show_command"
+require "terraform/validate_command"
+require "terraform/shell_out"
 
-::RSpec.describe ::Terraform::Client do
+::RSpec.describe ::Kitchen::Terraform::Client do
   include_context "instance"
 
   let :described_instance do described_class.new config: provisioner, logger: ::Kitchen::Logger.new end
@@ -170,16 +181,5 @@ require "terraform/client"
 
       it "returns an empty string" do is_expected.to eq "" end
     end
-  end
-
-  describe "#version" do
-    before do
-      allow(described_instance)
-        .to receive(:execute).with(command: kind_of(::Terraform::VersionCommand)).and_yield "Terraform v0.9.0"
-    end
-
-    subject do described_instance.version end
-
-    it "returns the version" do is_expected.to eq "0.9.0" end
   end
 end
