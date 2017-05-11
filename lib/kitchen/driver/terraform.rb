@@ -19,41 +19,17 @@ require "kitchen/config/cli"
 require "terraform/configurable"
 
 # Terraform state lifecycle activities manager
-class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
-  ::Kitchen::Config::CLI.call plugin_class: self
+::Kitchen::Driver::Terraform = ::Class.new ::Kitchen::Driver::Base
+::Kitchen::Driver::Terraform.kitchen_driver_api_version 2
+# FIXME: should concurrency be disabled to prevent problems from using the same plan or state files?
+::Kitchen::Driver::Terraform.no_parallel_for
+::Kitchen::Config::CLI.call plugin_class: ::Kitchen::Driver::Terraform
+::Kitchen::Driver::Terraform.send :include, ::Terraform::Configurable
 
-  include ::Terraform::Configurable
+require "kitchen/driver/terraform/create"
+require "kitchen/driver/terraform/destroy"
+require "kitchen/driver/terraform/verify_dependencies"
 
-  kitchen_driver_api_version 2
-
-  no_parallel_for
-
-  def create(_state = nil); end
-
-  def destroy(_state = nil)
-    load_state do client.apply_destructively end
-  rescue ::Kitchen::StandardError, ::SystemCallError => error
-    raise ::Kitchen::ActionFailed, error.message
-  end
-
-  def verify_dependencies
-    ::Kitchen::Terraform::Client::Version.call cli: config[:cli], logger: debug_logger do |version:|
-      ::Kitchen::Driver::Terraform::VerifyClientVersion.call(
-        version: version, when_deprecated: lambda do |message:| logger.warn message end,
-        when_invalid: lambda do |message:| raise ::Kitchen::UserError, message end
-      )
-    end
-  end
-
-  private
-
-  def load_state(&block)
-    silent_client.load_state &block
-  rescue ::Errno::ENOENT => error
-    debug error.message
-  end
-end
-
-require "kitchen/driver/terraform/verify_client_version"
-require "kitchen/terraform/client"
-require "kitchen/terraform/client/version"
+::Kitchen::Driver::Terraform.send :define_method, :create, ::Kitchen::Driver::Terraform::Create
+::Kitchen::Driver::Terraform.send :define_method, :destroy, ::Kitchen::Driver::Terraform::Destroy
+::Kitchen::Driver::Terraform.send :define_method, :verify_dependencies, ::Kitchen::Driver::Terraform::VerifyDependencies

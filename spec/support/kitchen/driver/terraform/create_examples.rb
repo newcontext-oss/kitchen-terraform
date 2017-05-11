@@ -14,25 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/provisioner/terraform"
-require "support/kitchen/provisioner/terraform/call_examples"
-require "support/terraform/configurable_context"
-require "support/terraform/configurable_examples"
+require "kitchen/driver/terraform/create"
 
-::RSpec.describe ::Kitchen::Provisioner::Terraform do
-  include_context "instance"
-
-  let :described_instance do provisioner end
-
-  it_behaves_like ::Terraform::Configurable
-
-  describe "#call" do
-    include_context "client"
-
-    it_behaves_like "::Kitchen::Provisioner::Terraform::Call" do
-      let :described_method do
-        described_instance.method :call
-      end
+::RSpec.shared_examples "::Kitchen::Driver::Terraform::Create" do
+  subject do
+    lambda do
+      described_method.call instance_double ::Object
     end
+  end
+
+  it "does not raise an error" do
+    is_expected.to_not raise_error
   end
 end

@@ -14,44 +14,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/terraform/client/execute_command"
 require "kitchen/terraform/client/version"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::Version do
   describe ".call" do
-    let :cli do "cli" end
+    context "when the string thrown with :success does not match the expected format" do
+      before do
+        allow(::Kitchen::Terraform::Client::ExecuteCommand)
+          .to receive(:call).with command: "version", config: "config", logger: "logger" do
+            throw :success, "This is unexpected output"
+          end
+      end
 
-    let :logger do instance_double ::Object end
+      subject do
+        catch :failure do
+          described_class.call config: "config", logger: "logger"
+        end
+      end
 
-    let :shell_out do instance_double ::Mixlib::ShellOut end
-
-    let :stdout do
-      "Terraform v0.9.3\n\nYour version of Terraform is out of date! The latest version is 0.9.4. You can update by " \
-        "downloading from www.terraform.io"
+      it "throws :failure with a string describing the failure" do
+        is_expected.to eq "Terraform client version output did not contain a string matching 'vX.Y'"
+      end
     end
 
-    let :timeout do instance_double ::Object end
+    context "when the string thrown with :success does match the expected format" do
+      before do
+        allow(::Kitchen::Terraform::Client::ExecuteCommand)
+          .to receive(:call).with command: "version", config: "config", logger: "logger" do
+            throw :success, "Terraform v0.9.3\n\nYour version of Terraform is out of date! The latest version is " \
+                              "0.9.4. You can update by downloading from www.terraform.io"
+          end
+      end
 
-    before do
-      allow(::Mixlib::ShellOut)
-        .to receive(:new).with(cli, "version", live_stream: logger, timeout: timeout).and_return shell_out
+      subject do
+        catch :success do
+          described_class.call config: "config", logger: "logger"
+        end
+      end
 
-      allow(::Kitchen::Terraform::Client::ExecuteCommand).to receive(:call).with shell_out: shell_out
-
-      allow(shell_out).to receive(:stdout).and_return stdout
-    end
-
-    describe "the shell out command" do
-      after do described_class.call cli: cli, logger: logger, timeout: timeout do end end
-
-      subject do ::Kitchen::Terraform::Client::ExecuteCommand end
-
-      it "is executed" do is_expected.to receive(:call).with shell_out: shell_out end
-    end
-
-    describe "the version value" do
-      subject do lambda do |block| described_class.call cli: cli, logger: logger, timeout: timeout, &block end end
-
-      it "is yielded" do is_expected.to yield_with_args version: 0.9 end
+      it "throws :success with a float representing the version" do
+        is_expected.to eq 0.9
+      end
     end
   end
 end

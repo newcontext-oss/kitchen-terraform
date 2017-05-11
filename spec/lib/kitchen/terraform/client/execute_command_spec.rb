@@ -17,54 +17,89 @@
 require "kitchen/terraform/client/execute_command"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::ExecuteCommand do
-  describe "#call" do
-    let :shell_out do instance_double ::Mixlib::ShellOut end
-
-    describe "executing" do
-      before do allow(shell_out).to receive(:error!).with no_args end
-
-      after do described_class.call shell_out: shell_out end
-
-      subject do shell_out end
-
-      it "runs the shell out command" do is_expected.to receive(:run_command).with no_args end
+  describe ".call" do
+    let :shell_out do
+      instance_double ::Mixlib::ShellOut
     end
 
-    describe "error handling" do
-      subject do proc do described_class.call shell_out: shell_out end end
+    before do
+      allow(::Mixlib::ShellOut).to receive(:new)
+        .with("cli", "command", "-no-color", "target", live_stream: "logger", timeout: "timeout").and_return shell_out
 
+      allow(shell_out).to receive(:run_command).with no_args
+    end
+
+    context "when the execution is a failure" do
       context "when an error occurs during execution" do
         shared_examples "an expected error has occurred" do
           before do
-            allow(shell_out).to receive(:run_command).with no_args
-
             allow(shell_out).to receive(:error!).with(no_args).and_raise error
 
             allow(shell_out).to receive(:command).with(no_args).and_return "command"
           end
 
-          it "raises a standard error" do
-            is_expected.to raise_error ::Kitchen::StandardError, /`command` failed: '.+'/
+          subject do
+            catch :failure do
+              described_class.call command: "command", config: {apply_timeout: "timeout", cli: "cli"}, logger: "logger",
+                                   options: {color: false}, target: "target"
+            end
+          end
+
+          it "throws :failure with a string describing the execution failure" do
+            is_expected.to match /`command` failed: '.+'/
           end
         end
 
         context "when the error is due to incorrect permissions" do
-          it_behaves_like "an expected error has occurred" do let :error do ::Errno::EACCES end end
+          it_behaves_like "an expected error has occurred" do
+            let :error do
+              ::Errno::EACCES
+            end
+          end
         end
 
         context "when the error is due to a missing file" do
-          it_behaves_like "an expected error has occurred" do let :error do ::Errno::ENOENT end end
+          it_behaves_like "an expected error has occurred" do
+            let :error do
+              ::Errno::ENOENT
+            end
+          end
         end
 
         context "when the error is due to a command timeout" do
-          it_behaves_like "an expected error has occurred" do let :error do ::Mixlib::ShellOut::CommandTimeout end end
+          it_behaves_like "an expected error has occurred" do
+            let :error do
+              ::Mixlib::ShellOut::CommandTimeout
+            end
+          end
         end
 
         context "when the error is due to a failed shell out command" do
           it_behaves_like "an expected error has occurred" do
-            let :error do ::Mixlib::ShellOut::ShellCommandFailed end
+            let :error do
+              ::Mixlib::ShellOut::ShellCommandFailed
+            end
           end
         end
+      end
+    end
+
+    context "when the execution is a success" do
+      before do
+        allow(shell_out).to receive(:error!).with no_args
+
+        allow(shell_out).to receive(:stdout).with(no_args).and_return "stdout"
+      end
+
+      subject do
+        catch :success do
+          described_class.call command: "command", config: {apply_timeout: "timeout", cli: "cli"}, logger: "logger",
+                               options: {color: false}, target: "target"
+        end
+      end
+
+      it "throws :success with a string containing the standard output" do
+        is_expected.to eq "stdout"
       end
     end
   end

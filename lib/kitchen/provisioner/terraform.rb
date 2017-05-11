@@ -26,30 +26,18 @@ require "kitchen/config/variables"
 require "terraform/configurable"
 
 # Applies constructive Terraform plans
-class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
-  ::Kitchen::Config::ApplyTimeout.call plugin_class: self
+::Kitchen::Provisioner::Terraform = ::Class.new ::Kitchen::Provisioner::Base
+::Kitchen::Provisioner::Terraform.kitchen_provisioner_api_version 2
+::Kitchen::Config::ApplyTimeout.call plugin_class: ::Kitchen::Provisioner::Terraform
+::Kitchen::Config::Color.call plugin_class: ::Kitchen::Provisioner::Terraform
+::Kitchen::Config::Directory.call plugin_class: ::Kitchen::Provisioner::Terraform
+::Kitchen::Config::Parallelism.call plugin_class: ::Kitchen::Provisioner::Terraform
+::Kitchen::Config::Plan.call plugin_class: ::Kitchen::Provisioner::Terraform
+::Kitchen::Config::State.call plugin_class: ::Kitchen::Provisioner::Terraform
+::Kitchen::Config::VariableFiles.call plugin_class: ::Kitchen::Provisioner::Terraform
+::Kitchen::Config::Variables.call plugin_class: ::Kitchen::Provisioner::Terraform
+::Kitchen::Provisioner::Terraform.send :include, ::Terraform::Configurable
 
-  ::Kitchen::Config::Color.call plugin_class: self
+require "kitchen/provisioner/terraform/call"
 
-  ::Kitchen::Config::Directory.call plugin_class: self
-
-  ::Kitchen::Config::Parallelism.call plugin_class: self
-
-  ::Kitchen::Config::Plan.call plugin_class: self
-
-  ::Kitchen::Config::State.call plugin_class: self
-
-  ::Kitchen::Config::VariableFiles.call plugin_class: self
-
-  ::Kitchen::Config::Variables.call plugin_class: self
-
-  include ::Terraform::Configurable
-
-  kitchen_provisioner_api_version 2
-
-  def call(_state = nil)
-    client.apply_constructively
-  rescue ::Kitchen::StandardError, ::SystemCallError => error
-    raise ::Kitchen::ActionFailed, error.message
-  end
-end
+::Kitchen::Provisioner::Terraform.send :define_method, :call, ::Kitchen::Provisioner::Terraform::Call

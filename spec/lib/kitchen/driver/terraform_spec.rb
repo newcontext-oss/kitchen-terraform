@@ -14,90 +14,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
 require "kitchen/driver/terraform"
-require "kitchen/terraform/client/version"
-require "support/raise_error_examples"
-require "support/kitchen/instance_context"
+require "support/kitchen/driver/terraform/create_examples"
+require "support/kitchen/driver/terraform/destroy_examples"
+require "support/kitchen/driver/terraform/verify_dependencies_examples"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
-require "terraform/configurable"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
-  let :described_instance do driver end
+  include_context "instance"
 
-  it_behaves_like ::Terraform::Configurable do include_context "instance" end
+  let :described_instance do
+    driver
+  end
+
+  it_behaves_like ::Terraform::Configurable
 
   describe ".serial_actions" do
-    include_context "instance"
+    subject do
+      described_class.serial_actions
+    end
 
-    subject :serial_actions do described_class.serial_actions end
+    it "is empty" do
+      is_expected.to be_empty
+    end
+  end
 
-    it "is empty" do is_expected.to be_empty end
+  describe "#create" do
+    it_behaves_like "::Kitchen::Driver::Terraform::Create" do
+      let :described_method do
+        described_instance.method :create
+      end
+    end
   end
 
   describe "#destroy" do
     include_context "client"
 
-    include_context "instance"
-
-    include_context "silent_client"
-
-    let :allow_load_state do allow(silent_client).to receive(:load_state).with no_args end
-
-    context "when a state does exist" do
-      before do allow_load_state.and_yield end
-
-      after do described_instance.destroy end
-
-      subject do client end
-
-      it "applies destructively" do is_expected.to receive(:apply_destructively).with no_args end
-    end
-
-    context "when a state does not exist" do
-      before do allow_load_state.and_raise ::Errno::ENOENT, "state file" end
-
-      after do described_instance.destroy end
-
-      subject do described_instance end
-
-      it "logs a debug message" do is_expected.to receive(:debug).with(/state file/) end
-    end
-
-    context "when a command fails" do
-      before do allow_load_state.and_raise ::SystemCallError, "system call" end
-
-      subject do proc do described_instance.destroy end end
-
-      it "raises an action failed error" do is_expected.to raise_error ::Kitchen::ActionFailed, /system call/ end
+    it_behaves_like "::Kitchen::Driver::Terraform::Destroy" do
+      let :described_method do
+        described_instance.method :destroy
+      end
     end
   end
 
   describe "#verify_dependencies" do
-    include_context "instance"
-
-    before do
-      allow(::Kitchen::Terraform::Client::Version).to receive(:call)
-        .with(cli: described_instance[:cli], logger: described_instance.debug_logger).and_yield version: version
-    end
-
-    context "when the client version is deprecated" do
-      let :version do 0.7 end
-
-      after do described_instance.verify_dependencies end
-
-      subject do logger end
-
-      it "logs a warning message" do is_expected.to receive(:warn).with kind_of ::String end
-    end
-
-    context "when the client version is invalid" do
-      let :version do 1.0 end
-
-      subject do proc do described_instance.verify_dependencies end end
-
-      it "raises a user error" do is_expected.to raise_error ::Kitchen::UserError end
+    it_behaves_like "::Kitchen::Driver::Terraform::VerifyDependencies" do
+      let :described_method do
+        described_instance.method :verify_dependencies
+      end
     end
   end
 end
