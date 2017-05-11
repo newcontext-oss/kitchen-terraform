@@ -1,18 +1,19 @@
 AllCops:
   DefaultFormatter: clang
   DisplayCopNames: true
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.4
 Lint/AmbiguousOperator:
   Enabled: false
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
+Lint/NonLocalExitFromIterator:
+  Enabled: false
 Metrics/BlockLength:
-  Exclude:
-    - Guardfile
-    - kitchen-terraform.gemspec
-    - spec/**/*.rb
+  Enabled: false
 Metrics/LineLength:
   Max: 120
+Metrics/ParameterLists:
+  Enabled: false
 Style/AccessorMethodName:
   Exclude:
     - lib/terraform/command_factory.rb
@@ -24,6 +25,12 @@ Style/ClassAndModuleChildren:
   EnforcedStyle: compact
 Style/Lambda:
   EnforcedStyle: lambda
+Style/MultilineBlockChain:
+  Enabled: false
+Style/NegatedIf:
+  Enabled: false
+Style/Not:
+  Enabled: false
 Style/PercentLiteralDelimiters:
   Enabled: false
 Style/SpaceInsideHashLiteralBraces:
