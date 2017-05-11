@@ -14,25 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/provisioner/terraform"
-require "support/kitchen/provisioner/terraform/call_examples"
-require "support/terraform/configurable_context"
-require "support/terraform/configurable_examples"
+require "kitchen"
+require "kitchen/driver/terraform"
 
-::RSpec.describe ::Kitchen::Provisioner::Terraform do
-  include_context "instance"
-
-  let :described_instance do provisioner end
-
-  it_behaves_like ::Terraform::Configurable
-
-  describe "#call" do
-    include_context "client"
-
-    it_behaves_like "::Kitchen::Provisioner::Terraform::Call" do
-      let :described_method do
-        described_instance.method :call
-      end
+::Kitchen::Driver::Terraform::Destroy = lambda do |_state|
+  catch :failure do
+    catch :success do
+      client.apply_destructively
+    end.tap do |success|
+      logger.debug success
     end
+    return
+  end.tap do |failure|
+    raise ::Kitchen::ActionFailed, failure
   end
 end

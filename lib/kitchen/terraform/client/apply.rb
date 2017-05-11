@@ -17,14 +17,12 @@
 require "kitchen/terraform/client"
 require "kitchen/terraform/client/execute_command"
 
-# Command to retrieve the version
-::Kitchen::Terraform::Client::Version = lambda do |config:, logger:|
-  catch :success do
-    ::Kitchen::Terraform::Client::ExecuteCommand.call(command: "version", config: config, logger: logger)
-  end.tap do |output|
-    /v(\d+\.\d+)/.match output do |match_data|
-      throw :success, Float(match_data[1])
-    end
-    throw :failure, "Terraform client version output did not contain a string matching 'vX.Y'"
-  end
+# Command to apply a plan
+::Kitchen::Terraform::Client::Apply = lambda do |config:, logger:|
+  ::Kitchen::Terraform::Client::ExecuteCommand.call command: "apply", config: config, logger: logger,
+                                                    options: {
+                                                      color: config.fetch(:color), input: false,
+                                                      parallelism: config.fetch(:parallelism),
+                                                      state_out: config.fetch(:state)
+                                                    }, target: config.fetch(:plan)
 end

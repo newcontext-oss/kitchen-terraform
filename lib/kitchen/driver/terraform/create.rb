@@ -14,22 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "terraform"
-require "terraform/command"
+require "kitchen/driver/terraform"
 
-# A command to apply an execution plan
-class ::Terraform::ApplyCommand < ::Terraform::Command
-  private
-
-  def initialize(target: "", &block)
-    super target: target, &block
-    preparations.concat [
-      ::Terraform::PrepareInputFile.new(file: ::Pathname.new(target)),
-      ::Terraform::PrepareOutputFile.new(file: ::Pathname.new(options.state_out))
-    ]
-  end
-end
-
-require "pathname"
-require "terraform/prepare_input_file"
-require "terraform/prepare_output_file"
+::Kitchen::Driver::Terraform::Create = lambda do |_state| end

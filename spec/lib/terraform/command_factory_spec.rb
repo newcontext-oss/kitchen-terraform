@@ -82,32 +82,12 @@ require "support/terraform/configurable_context"
     it "is set from config[:state]" do is_expected.to include "-state=/state/file" end
   end
 
-  shared_examples "state-out option" do
-    it "is set from config[:state]" do is_expected.to include "-state-out=/state/file" end
-  end
-
   shared_examples "var option" do
     it "is set from config[:variables]" do is_expected.to include "-var='name=value'" end
   end
 
   shared_examples "var-file option" do
     it "is set from config[:variable_files]" do is_expected.to include "-var-file=/variable/file" end
-  end
-
-  describe "#apply_command" do
-    let :command do described_instance.apply_command end
-
-    it_behaves_like "a target is set" do let :target do "/plan/file" end end
-
-    it_behaves_like "options are specified" do
-      it_behaves_like "color option"
-
-      it_behaves_like "input option"
-
-      it_behaves_like "parallelism option"
-
-      it_behaves_like "state-out option"
-    end
   end
 
   describe "#destructive_plan_command" do
