@@ -14,31 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "inspec"
+require "kitchen"
 require "kitchen/verifier/terraform"
-require "support/kitchen/instance_context"
-require "support/kitchen/verifier/terraform/call_examples"
-require "support/terraform/configurable_context"
-require "support/terraform/configurable_examples"
+require "kitchen/verifier/terraform/enumerate_group_hosts"
 
-::RSpec.describe ::Kitchen::Verifier::Terraform do
-  it_behaves_like ::Terraform::Configurable do
-    include_context "instance"
-
-    let :described_instance do verifier end
-  end
-
-  describe "#call(state)" do
-    include_context "silent_client"
-
-    include_context ::Kitchen::Instance
-
-    let :described_instance do verifier end
-
-    it_behaves_like "::Kitchen::Verifier::Terraform::Call" do
-      let :described_method do
-        described_instance.method :call
+::Kitchen::Verifier::Terraform::Call = lambda do |state|
+  begin
+    config.fetch(:groups).each do |group|
+      state.store :group, group
+      ::Kitchen::Verifier::Terraform::EnumerateGroupHosts.call client: silent_client, group: group do |host:|
+        state.store :host, host
+        info "Verifying '#{host}' of group '#{group.fetch :name}'"
+        super state
       end
     end
+  rescue ::Kitchen::StandardError, ::SystemCallError => error
+    raise ::Kitchen::ActionFailed, error.message
   end
 end
