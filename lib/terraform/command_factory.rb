@@ -15,18 +15,15 @@
 # limitations under the License.
 
 require "terraform"
+require "terraform/destructive_plan_command"
+require "terraform/get_command"
+require "terraform/output_command"
+require "terraform/plan_command"
+require "terraform/show_command"
+require "terraform/validate_command"
 
 # A factory to create commands
 class ::Terraform::CommandFactory
-  def apply_command
-    ::Terraform::ApplyCommand.new target: config[:plan] do |options|
-      options.color = config[:color]
-      options.input = false
-      options.parallelism = config[:parallelism]
-      options.state_out = config[:state]
-    end
-  end
-
   def destructive_plan_command
     ::Terraform::DestructivePlanCommand.new target: config[:directory] do |options|
       configure_plan options: options
@@ -76,11 +73,3 @@ class ::Terraform::CommandFactory
     self.config = config
   end
 end
-
-require "terraform/apply_command"
-require "terraform/destructive_plan_command"
-require "terraform/get_command"
-require "terraform/output_command"
-require "terraform/plan_command"
-require "terraform/show_command"
-require "terraform/validate_command"

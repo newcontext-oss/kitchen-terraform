@@ -19,15 +19,14 @@ require "kitchen"
 require "kitchen/terraform/client"
 require "support/terraform/configurable_context"
 require "support/yield_control_examples"
-require "terraform/apply_command"
 require "terraform/command"
 require "terraform/destructive_plan_command"
 require "terraform/get_command"
 require "terraform/output_command"
 require "terraform/plan_command"
+require "terraform/shell_out"
 require "terraform/show_command"
 require "terraform/validate_command"
-require "terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Client do
   include_context "instance"
@@ -49,16 +48,10 @@ require "terraform/shell_out"
   end
 
   shared_examples "#apply" do
-    let :apply_shell_out do instance_double ::Terraform::ShellOut end
-
     before do
       provisioner[:apply_timeout] = 1234
 
-      allow(::Terraform::ShellOut).to receive(:new)
-        .with(cli: duck_type(:to_s), command: kind_of(::Terraform::ApplyCommand), logger: duck_type(:<<), timeout: 1234)
-        .and_return apply_shell_out
-
-      allow(apply_shell_out).to receive(:execute).with no_args
+      allow(::Kitchen::Terraform::Client::Apply).to receive(:call).with config: provisioner, logger: duck_type(:<<)
     end
 
     shared_examples "#execute" do |command|
@@ -85,11 +78,17 @@ require "terraform/shell_out"
     it_behaves_like "#execute", "plan" do let :command_class do plan_command_class end end
 
     describe "the apply command" do
-      before do allow(described_instance).to receive(:execute).with command: kind_of(::Terraform::Command) end
+      before do
+        allow(described_instance).to receive(:execute).with command: kind_of(::Terraform::Command)
+      end
 
-      subject do apply_shell_out end
+      subject do
+        ::Kitchen::Terraform::Client::Apply
+      end
 
-      it "is executed" do is_expected.to receive(:execute).with no_args end
+      it "is executed" do
+        is_expected.to receive(:call).with config: provisioner, logger: duck_type(:<<)
+      end
     end
   end
 

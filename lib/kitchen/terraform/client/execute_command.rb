@@ -15,14 +15,25 @@
 # limitations under the License.
 
 require "kitchen/terraform/client"
+require "kitchen/terraform/client/process_options"
 require "mixlib/shellout"
 
-::Kitchen::Terraform::Client::ExecuteCommand = lambda do |shell_out:|
-  begin
-    shell_out.run_command
-    shell_out.error!
-  rescue ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout,
-         ::Mixlib::ShellOut::ShellCommandFailed => error
-    raise ::Kitchen::StandardError, "`#{shell_out.command}` failed: '#{error.message}'"
+::Kitchen::Terraform::Client::ExecuteCommand = lambda do |command:, config:, logger:, options: {}, target: ""|
+  catch :success do
+    ::Kitchen::Terraform::Client::ProcessOptions.call unprocessed_options: options
+  end.tap do |processed_options|
+    ::Mixlib::ShellOut.new(
+      config.fetch(:cli), command, *processed_options, target,
+      live_stream: logger, timeout: config.fetch(:apply_timeout)
+    ).tap do |shell_out|
+      begin
+        shell_out.run_command
+        shell_out.error!
+        throw :success, shell_out.stdout
+      rescue ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout,
+             ::Mixlib::ShellOut::ShellCommandFailed => error
+        throw :failure, "`#{shell_out.command}` failed: '#{error.message}'"
+      end
+    end
   end
 end

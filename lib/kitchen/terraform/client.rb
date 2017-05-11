@@ -15,6 +15,10 @@
 # limitations under the License.
 
 require "kitchen/terraform"
+require "terraform/command_factory"
+require "terraform/no_output_parser"
+require "terraform/output_parser"
+require "terraform/shell_out"
 
 # Client to execute commands
 class ::Kitchen::Terraform::Client
@@ -44,14 +48,13 @@ class ::Kitchen::Terraform::Client
 
   private
 
-  attr_accessor :apply_timeout, :cli, :factory, :logger
+  attr_accessor :apply_timeout, :cli, :config, :factory, :logger
 
   def apply(plan_command:)
     execute command: factory.validate_command
     execute command: factory.get_command
     execute command: plan_command
-    ::Terraform::ShellOut
-      .new(cli: cli, command: factory.apply_command, logger: logger, timeout: apply_timeout).execute
+    ::Kitchen::Terraform::Client::Apply.call config: config, logger: logger
   end
 
   def execute(command:, &block)
@@ -61,6 +64,7 @@ class ::Kitchen::Terraform::Client
   def initialize(config: {}, logger:)
     self.apply_timeout = config[:apply_timeout]
     self.cli = config[:cli]
+    self.config = config
     self.factory = ::Terraform::CommandFactory.new config: config
     self.logger = logger
   end
@@ -75,7 +79,4 @@ class ::Kitchen::Terraform::Client
   end
 end
 
-require "terraform/command_factory"
-require "terraform/no_output_parser"
-require "terraform/output_parser"
-require "terraform/shell_out"
+require "kitchen/terraform/client/apply"
