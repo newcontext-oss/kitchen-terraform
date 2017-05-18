@@ -31,7 +31,7 @@ require "terraform/validate_command"
 ::RSpec.describe ::Kitchen::Terraform::Client do
   include_context "instance"
 
-  let :described_instance do described_class.new config: provisioner, logger: ::Kitchen::Logger.new end
+  let :described_instance do described_class.new config: driver, logger: ::Kitchen::Logger.new end
 
   shared_context "outputs are defined" do
     before do
@@ -49,9 +49,9 @@ require "terraform/validate_command"
 
   shared_examples "#apply" do
     before do
-      provisioner[:apply_timeout] = 1234
+      driver[:apply_timeout] = 1234
 
-      allow(::Kitchen::Terraform::Client::Apply).to receive(:call).with config: provisioner, logger: duck_type(:<<)
+      allow(::Kitchen::Terraform::Client::Apply).to receive :call
     end
 
     shared_examples "#execute" do |command|
@@ -87,7 +87,17 @@ require "terraform/validate_command"
       end
 
       it "is executed" do
-        is_expected.to receive(:call).with config: provisioner, logger: duck_type(:<<)
+        is_expected.to receive(:call)
+          .with cli: driver[:cli],
+                logger: duck_type(:<<),
+                options: {
+                  color: driver[:color],
+                  input: false,
+                  parallelism: driver[:parallelism],
+                  state_out: driver[:state]
+                },
+                target: driver[:plan],
+                timeout: driver[:apply_timeout]
       end
     end
   end

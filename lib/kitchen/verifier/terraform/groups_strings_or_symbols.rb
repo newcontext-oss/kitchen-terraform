@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2016-2017 New Context Services, Inc.
+# Copyright 2016 New Context Services, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,17 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
+require "kitchen/verifier/terraform"
 
-::Kitchen::Config::VariableFiles = lambda do |plugin_class:|
-  plugin_class.required_config :variable_files do |attribute, value, plugin|
-    ::Kitchen::Config::ProcessSchema.call(
-      attribute: attribute, plugin: plugin,
-      schema: ::Dry::Validation.Schema do required(:value).each :filled?, :str? end, value: value
-    )
+::Kitchen::Verifier::Terraform::GroupsStringsOrSymbols = lambda do |hash|
+  hash.to_a.flatten.all? do |element|
+    element.is_a?(::String) | element.is_a?(::Symbol)
   end
-  plugin_class.default_config :variable_files, []
 end
-
-require "dry-validation"
-require "kitchen/config/process_schema"

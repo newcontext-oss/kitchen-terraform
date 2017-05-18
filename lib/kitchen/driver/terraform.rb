@@ -15,16 +15,118 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/config/cli"
+require "kitchen/terraform/define_config_attribute"
+require "ptools"
 require "terraform/configurable"
 
 # Terraform state lifecycle activities manager
 ::Kitchen::Driver::Terraform = ::Class.new ::Kitchen::Driver::Base
+
 ::Kitchen::Driver::Terraform.kitchen_driver_api_version 2
+
 # FIXME: should concurrency be disabled to prevent problems from using the same plan or state files?
 ::Kitchen::Driver::Terraform.no_parallel_for
-::Kitchen::Config::CLI.call plugin_class: ::Kitchen::Driver::Terraform
+
 ::Kitchen::Driver::Terraform.send :include, ::Terraform::Configurable
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :apply_timeout,
+  initialize_default_value: lambda do |_plugin|
+    600
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).filled :int?
+  end
+)
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :cli,
+  initialize_default_value: lambda do |_plugin|
+    ::File.which "terraform"
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).filled :str?
+  end
+)
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :color,
+  initialize_default_value: lambda do |_plugin|
+    true
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).filled :bool?
+  end
+)
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :directory,
+  initialize_default_value: lambda do |plugin|
+    plugin[:kitchen_root]
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).filled :str?
+  end
+)
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :parallelism,
+  initialize_default_value: lambda do |_plugin|
+    10
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).filled :int?
+  end
+)
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :plan,
+  initialize_default_value: lambda do |plugin|
+    plugin.instance_pathname filename: "terraform.tfplan"
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).filled :str?
+  end
+)
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :state,
+  initialize_default_value: lambda do |plugin|
+    plugin.instance_pathname filename: "terraform.tfstate"
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).filled :str?
+  end
+)
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :variable_files,
+  initialize_default_value: lambda do |_plugin|
+    []
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).each :filled?, :str?
+  end
+)
+
+::Kitchen::Terraform::DefineConfigAttribute.call(
+  attribute: :variables,
+  initialize_default_value: lambda do |_plugin|
+    {}
+  end,
+  plugin_class: ::Kitchen::Driver::Terraform,
+  schema: lambda do
+    required(:value).value :hash?
+  end
+)
 
 require "kitchen/driver/terraform/create"
 require "kitchen/driver/terraform/destroy"

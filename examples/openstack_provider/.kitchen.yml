@@ -4,9 +4,7 @@ driver:
 
 provisioner:
   name: terraform
-  # The number of seconds to wait for the Terraform apply command to be
-  # successful before raising an error.
-  apply_timeout: 1000
+  command_timeout: 1000
   variable_files:
     - ./my-variables.tfvars
 transport:

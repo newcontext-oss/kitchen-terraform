@@ -15,6 +15,15 @@
 # limitations under the License.
 
 require "kitchen/driver/terraform"
+require "support/kitchen/driver/terraform/config_attribute_apply_timeout_examples"
+require "support/kitchen/driver/terraform/config_attribute_cli_examples"
+require "support/kitchen/driver/terraform/config_attribute_color_examples"
+require "support/kitchen/driver/terraform/config_attribute_directory_examples"
+require "support/kitchen/driver/terraform/config_attribute_parallelism_examples"
+require "support/kitchen/driver/terraform/config_attribute_plan_examples"
+require "support/kitchen/driver/terraform/config_attribute_state_examples"
+require "support/kitchen/driver/terraform/config_attribute_variable_files_examples"
+require "support/kitchen/driver/terraform/config_attribute_variables_examples"
 require "support/kitchen/driver/terraform/create_examples"
 require "support/kitchen/driver/terraform/destroy_examples"
 require "support/kitchen/driver/terraform/verify_dependencies_examples"
@@ -29,6 +38,24 @@ require "support/terraform/configurable_examples"
   end
 
   it_behaves_like ::Terraform::Configurable
+
+  it_behaves_like "config attribute :apply_timeout"
+
+  it_behaves_like "config attribute :cli"
+
+  it_behaves_like "config attribute :color"
+
+  it_behaves_like "config attribute :directory"
+
+  it_behaves_like "config attribute :parallelism"
+
+  it_behaves_like "config attribute :plan"
+
+  it_behaves_like "config attribute :state"
+
+  it_behaves_like "config attribute :variable_files"
+
+  it_behaves_like "config attribute :variables"
 
   describe ".serial_actions" do
     subject do
