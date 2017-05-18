@@ -15,27 +15,11 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/config/apply_timeout"
-require "kitchen/config/color"
-require "kitchen/config/directory"
-require "kitchen/config/parallelism"
-require "kitchen/config/plan"
-require "kitchen/config/state"
-require "kitchen/config/variable_files"
-require "kitchen/config/variables"
 require "terraform/configurable"
 
 # Applies constructive Terraform plans
 ::Kitchen::Provisioner::Terraform = ::Class.new ::Kitchen::Provisioner::Base
 ::Kitchen::Provisioner::Terraform.kitchen_provisioner_api_version 2
-::Kitchen::Config::ApplyTimeout.call plugin_class: ::Kitchen::Provisioner::Terraform
-::Kitchen::Config::Color.call plugin_class: ::Kitchen::Provisioner::Terraform
-::Kitchen::Config::Directory.call plugin_class: ::Kitchen::Provisioner::Terraform
-::Kitchen::Config::Parallelism.call plugin_class: ::Kitchen::Provisioner::Terraform
-::Kitchen::Config::Plan.call plugin_class: ::Kitchen::Provisioner::Terraform
-::Kitchen::Config::State.call plugin_class: ::Kitchen::Provisioner::Terraform
-::Kitchen::Config::VariableFiles.call plugin_class: ::Kitchen::Provisioner::Terraform
-::Kitchen::Config::Variables.call plugin_class: ::Kitchen::Provisioner::Terraform
 ::Kitchen::Provisioner::Terraform.send :include, ::Terraform::Configurable
 
 require "kitchen/provisioner/terraform/call"

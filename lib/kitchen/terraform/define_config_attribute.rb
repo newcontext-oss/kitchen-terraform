@@ -14,17 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
-
-::Kitchen::Config::Color = lambda do |plugin_class:|
-  plugin_class.required_config :color do |attribute, value, plugin|
-    ::Kitchen::Config::ProcessSchema.call(
-      attribute: attribute, plugin: plugin, schema: ::Dry::Validation.Schema do required(:value).filled :bool? end,
-      value: value
-    )
-  end
-  plugin_class.default_config :color, true
-end
-
 require "dry-validation"
-require "kitchen/config/process_schema"
+require "kitchen"
+require "kitchen/terraform"
+
+::Kitchen::Terraform::DefineConfigAttribute = lambda do |attribute:, initialize_default_value:, plugin_class:, schema:|
+  plugin_class.required_config attribute do |_attribute, value, plugin|
+    ::Dry::Validation.Schema(&schema).call(value: value).messages.tap do |messages|
+      raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" if not messages.empty?
+    end
+  end
+  plugin_class.default_config attribute, &initialize_default_value
+end

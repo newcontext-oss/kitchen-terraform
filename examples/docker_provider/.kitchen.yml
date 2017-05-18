@@ -1,23 +1,17 @@
 ---
 driver:
   name: terraform
-
-provisioner:
-  name: terraform
   variables:
     docker_host: "unix:///var/run/docker.sock"
     docker_container: "terraform"
     docker_image: "rastasheep/ubuntu-sshd:latest"
 
-platforms:
-  - name: terraform
+provisioner:
+  name: terraform
 
 transport:
   name: ssh
   password: root
-
-suites:
-  - name: default
 
 verifier:
   name: terraform
@@ -28,3 +22,9 @@ verifier:
         - operating_system
       port: 2222
       hostnames: localhost
+
+platforms:
+  - name: terraform
+
+suites:
+  - name: default
