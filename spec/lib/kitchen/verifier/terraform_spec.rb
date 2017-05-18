@@ -17,6 +17,7 @@
 require "inspec"
 require "kitchen/verifier/terraform"
 require "support/kitchen/instance_context"
+require "support/kitchen/verifier/terraform/config_attribute_groups_examples"
 require "support/kitchen/verifier/terraform/call_examples"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
@@ -27,6 +28,8 @@ require "support/terraform/configurable_examples"
 
     let :described_instance do verifier end
   end
+
+  it_behaves_like "config attribute :groups"
 
   describe "#call(state)" do
     include_context "silent_client"

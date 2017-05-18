@@ -30,7 +30,7 @@ module ::Terraform::Configurable
   end
 
   def client
-    ::Kitchen::Terraform::Client.new config: verbose_config, logger: logger
+    ::Kitchen::Terraform::Client.new config: driver, logger: logger
   end
 
   def config_error(attr:, expected:)
@@ -56,11 +56,7 @@ module ::Terraform::Configurable
   end
 
   def silent_config
-    verbose_config.tap do |config| config[:color] = false end
-  end
-
-  def verbose_config
-    provisioner.dup.tap do |config| config[:cli] = driver[:cli] end
+    driver.tap do |config| config[:color] = false end
   end
 end
 

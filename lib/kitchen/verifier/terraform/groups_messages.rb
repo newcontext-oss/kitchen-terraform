@@ -14,10 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
+require "kitchen/verifier/terraform"
 
-::Kitchen::Config::ProcessSchema = lambda do |attribute:, plugin:, schema:, value:|
-  schema.call(value: value).messages.tap do |messages|
-    raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" unless messages.empty?
-  end
+::Kitchen::Verifier::Terraform::GroupsMessages = lambda do
+  super().merge en: {errors: {strings_or_symbols?: "keys and values must be strings or symbols"}}
 end

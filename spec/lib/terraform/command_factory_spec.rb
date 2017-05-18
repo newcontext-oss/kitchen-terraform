@@ -20,22 +20,24 @@ require "support/terraform/configurable_context"
 ::RSpec.describe ::Terraform::CommandFactory do
   include_context "instance"
 
-  let :described_instance do described_class.new config: provisioner end
+  let :described_instance do
+    described_class.new config: driver
+  end
 
   before do
-    provisioner[:color] = false
+    driver[:color] = false
 
-    provisioner[:directory] = ::Pathname.new "/directory"
+    driver[:directory] = ::Pathname.new "/directory"
 
-    provisioner[:parallelism] = 1234
+    driver[:parallelism] = 1234
 
-    provisioner[:plan] = ::Pathname.new "/plan/file"
+    driver[:plan] = ::Pathname.new "/plan/file"
 
-    provisioner[:state] = ::Pathname.new "/state/file"
+    driver[:state] = ::Pathname.new "/state/file"
 
-    provisioner[:variable_files] = [::Pathname.new("/variable/file")]
+    driver[:variable_files] = [::Pathname.new("/variable/file")]
 
-    provisioner[:variables] = {name: "value"}
+    driver[:variables] = {name: "value"}
   end
 
   shared_examples "a target is set" do

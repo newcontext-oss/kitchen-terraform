@@ -1,12 +1,10 @@
 ---
 driver:
   name: terraform
+  directory: test/fixtures/<%= `terraform -version`.include? '0.6' and 'deprecated' or 'supported' %>
+  parallelism: 4
 provisioner:
   name: terraform
-  directory: test/fixtures/<%=
-    `terraform -version`.include? '0.6' and 'deprecated' or 'supported'
-  %>
-  parallelism: 4
 transport:
   name: ssh
   connection_retries: 76
