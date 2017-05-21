@@ -17,10 +17,10 @@
 require "fileutils"
 require "kitchen/terraform"
 
-::Kitchen::Terraform::VerifyDirectory = lambda do |directory:|
+::Kitchen::Terraform::CreateDirectories = lambda do |directories:, directories_creator: ::FileUtils|
   begin
-    ::FileUtils.makedirs directory
-    throw :success, "Verified directory #{directory}"
+    directories_creator.makedirs directories
+    throw :success, "Created directories #{directories}"
   rescue ::SystemCallError => error
     throw :failure, error.message
   end

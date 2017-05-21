@@ -33,14 +33,6 @@ require "kitchen/terraform/verify_directory"
         logger.warn verified_client_version
       end
     end
-    [config.fetch(:directory), ::File.dirname(config.fetch(:plan)), ::File.dirname(config.fetch(:state))]
-      .each do |directory|
-        catch :success do
-          ::Kitchen::Terraform::VerifyDirectory.call directory: directory
-        end.tap do |verified_directory|
-          logger.debug verified_directory
-        end
-      end
     return
   end.tap do |failure|
     raise ::Kitchen::UserError, failure

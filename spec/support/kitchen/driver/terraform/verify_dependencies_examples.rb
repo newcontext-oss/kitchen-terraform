@@ -26,9 +26,6 @@ require "kitchen/terraform/verify_client_version"
 
     allow(::Kitchen::Terraform::VerifyClientVersion)
       .to receive(:call).with(version: "version").and_throw :success, "verified version"
-
-    allow(::Kitchen::Terraform::VerifyDirectory)
-      .to receive(:call).with(directory: kind_of(::String)).and_throw :success, "verified directory"
   end
 
   subject do
@@ -61,14 +58,6 @@ require "kitchen/terraform/verify_client_version"
     it_behaves_like "the verification of dependencies is a failure"
   end
 
-  context "when the verification of a directory is a failure" do
-    before do
-      allow(::Kitchen::Terraform::VerifyDirectory)
-        .to receive(:call).with(directory: "/kitchen/root").and_throw :failure, "failure"
-    end
-
-    it_behaves_like "the verification of dependencies is a failure"
-  end
 
   context "when the verification of dependencies is a success" do
     it "does not raise an error" do
