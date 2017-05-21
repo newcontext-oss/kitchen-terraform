@@ -21,9 +21,9 @@ module Kitchen
     class Terraform < ::Kitchen::Verifier::Inspec
       ConfigureInspecRunnerAttributes = lambda do |client:, config:, group:, terraform_state:|
         {"terraform_state" => terraform_state}.tap do |attributes|
-          client.each_output_name do |output_name| attributes.store output_name, client.output(name: output_name) end
+          client.output.each do |name, value| attributes.store name, value end
           group.fetch(:attributes, {}).each_pair do |attribute_name, output_name|
-            attributes.store attribute_name.to_s, client.output(name: output_name)
+            attributes.store attribute_name.to_s, attributes[output_name]
           end
           config.store :attributes, attributes
         end

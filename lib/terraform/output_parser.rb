@@ -19,16 +19,10 @@ require "json"
 module Terraform
   # A parser for output command values
   class OutputParser
-    def each_name(&block)
-      json_output.each_key &block
-    end
-
-    def iterate_parsed_output(&block)
-      Array(parsed_output).each &block
-    end
-
     def parsed_output
-      json_output.fetch "value"
+      out = json_output
+      out.dup.each { |key, value| out[key] = value["value"] }
+      out
     end
 
     private

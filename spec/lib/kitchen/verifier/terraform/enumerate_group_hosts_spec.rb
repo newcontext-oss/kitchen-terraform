@@ -34,7 +34,7 @@ require "kitchen/verifier/terraform/enumerate_group_hosts"
       before do
         group.store :hostnames, hostnames
 
-        allow(client).to receive(:iterate_output).with(name: hostnames).and_yield "hostname"
+        allow(client).to receive(:output_search).with(name: hostnames).and_return ["hostname"]
       end
 
       it "yields each resolved hostname" do is_expected.to yield_with_args host: "hostname" end

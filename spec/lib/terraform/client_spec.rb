@@ -98,39 +98,21 @@ require "terraform/client"
     it_behaves_like "#apply"
   end
 
-  describe "#each_output_name" do
-    subject do lambda do |block| described_instance.each_output_name &block end end
+  describe "#output" do
+    subject do described_instance.output end
 
     context "when outputs are defined" do
       include_context "outputs are defined"
 
-      let :output_value do ::JSON.dump "output_name_1" => "output_value_1", "output_name_2" => "output_value_2" end
+      let :output_value do ::JSON.dump "name1" => {"value" => "value1"}, "name2" => {"value" => "value2"} end
 
-      it "yields each output name" do is_expected.to yield_successive_args "output_name_1", "output_name_2" end
+      it "returns the hash" do is_expected.to eq("name1" => "value1", "name2" => "value2")  end
     end
 
     context "when outputs are not defined" do
       include_context "outputs are not defined"
 
-      it "does not yield" do is_expected.to_not yield_control end
-    end
-  end
-
-  describe "#iterate_output" do
-    subject do lambda do |block| described_instance.iterate_output name: "name", &block end end
-
-    context "when outputs are defined" do
-      include_context "outputs are defined"
-
-      let :output_value do ::JSON.dump "value" => ["value1", "value2"] end
-
-      it "iterates the output values" do is_expected.to yield_successive_args "value1", "value2" end
-    end
-
-    context "when outputs are not defined" do
-      include_context "outputs are not defined"
-
-      it "does not yield" do is_expected.to_not yield_control end
+      it "returns empty hash" do is_expected.to eq({}) end
     end
   end
 
@@ -154,8 +136,8 @@ require "terraform/client"
     end
   end
 
-  describe "#output" do
-    subject do described_instance.output name: "name" end
+  describe "#output_search" do
+    subject do described_instance.output_search name: "name" end
 
     context "when outputs are defined" do
       include_context "outputs are defined"
@@ -168,7 +150,7 @@ require "terraform/client"
     context "when outputs are not defined" do
       include_context "outputs are not defined"
 
-      it "returns an empty string" do is_expected.to eq "" end
+      it "returns an empty string" do is_expected.to eq("") end
     end
   end
 

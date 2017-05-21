@@ -14,15 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec.shared_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call" do
-  before do
-    allow(client).to receive(:output).with(no_args).and_return(
-        "output_name_one" => "output_value_one",
-        "output_name_two" => "output_value_two"
-    )
+require "terraform/output_search_parser"
 
-    allow(client).to receive(:output_search).with(name: "output_name_one").and_return "output_value_one"
+::RSpec.describe ::Terraform::OutputSearchParser do
+  let :described_instance do described_class.new output: output end
 
-    allow(client).to receive(:output_search).with(name: "output_name_two").and_return "output_value_two"
+  describe '#parsed_output' do
+    let :output do
+      ::JSON.dump "value" => "output_value_1"
+    end
+
+    subject do described_instance.parsed_output end
+
+    it 'returns each output name' do
+      is_expected.to eq "output_value_1"
+    end
   end
 end

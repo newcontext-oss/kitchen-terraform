@@ -14,15 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec.shared_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call" do
-  before do
-    allow(client).to receive(:output).with(no_args).and_return(
-        "output_name_one" => "output_value_one",
-        "output_name_two" => "output_value_two"
-    )
-
-    allow(client).to receive(:output_search).with(name: "output_name_one").and_return "output_value_one"
-
-    allow(client).to receive(:output_search).with(name: "output_name_two").and_return "output_value_two"
+module Terraform
+  # A null parser for when there are no outputs defined
+  class NoOutputSearchParser
+    def parsed_output
+      ""
+    end
   end
 end

@@ -16,7 +16,9 @@
 
 require "terraform/command_factory"
 require "terraform/no_output_parser"
+require "terraform/no_output_search_parser"
 require "terraform/output_parser"
+require "terraform/output_search_parser"
 require "terraform/shell_out"
 
 module Terraform
@@ -30,24 +32,22 @@ module Terraform
       apply plan_command: factory.destructive_plan_command
     end
 
-    def each_output_name(&block)
-      output_parser(name: "").each_name &block
-    end
-
-    def iterate_output(name:, &block)
-      output_parser(name: name).iterate_parsed_output &block
-    end
-
     def load_state(&block)
       execute command: factory.show_command do |state| /\w+/.match state, &block end
     end
 
-    def output(name:)
-      output_parser(name: name).parsed_output
+    def output_search(name:)
+      output_search_parser(name: name).parsed_output
+    end
+
+    def output()
+      output_parser().parsed_output
     end
 
     def version
-      execute command: factory.version_command do |value| return value.slice /v(\d+\.\d+\.\d+)/, 1 end
+      @version ||= execute command: factory.version_command do |value|
+        execute command: factory.version_command do |value| return value.slice /v(\d+\.\d+\.\d+)/, 1 end
+      end
     end
 
     private
@@ -73,8 +73,17 @@ module Terraform
       self.logger = logger
     end
 
-    def output_parser(name:)
+    def output_search_parser(name:)
       execute command: factory.output_command(target: name) do |value|
+        return ::Terraform::OutputSearchParser.new output: value
+      end
+    rescue ::Kitchen::StandardError => exception
+      /no outputs/.match? exception.message or raise exception
+      ::Terraform::NoOutputSearchParser.new
+    end
+
+    def output_parser()
+      execute command: factory.output_command(target: "") do |value|
         return ::Terraform::OutputParser.new output: value
       end
     rescue ::Kitchen::StandardError => exception

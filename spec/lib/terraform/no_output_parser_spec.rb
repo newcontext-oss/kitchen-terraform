@@ -19,21 +19,9 @@ require "terraform/no_output_parser"
 ::RSpec.describe ::Terraform::NoOutputParser do
   let :described_instance do described_class.new end
 
-  describe "#each_name" do
-    subject do lambda do |block| described_instance.each_name &block end end
-
-    it "does not yield" do is_expected.to_not yield_control end
-  end
-
-  describe "#iterate_parsed_output" do
-    subject do lambda do |block| described_instance.iterate_parsed_output &block end end
-
-    it "does not yield" do is_expected.to_not yield_control end
-  end
-
   describe "#parsed_output" do
     subject do described_instance.parsed_output end
 
-    it "returns an empty string" do is_expected.to eq "" end
+    it "returns an empty hash" do is_expected.to eq({}) end
   end
 end

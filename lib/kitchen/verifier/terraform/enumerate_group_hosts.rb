@@ -18,7 +18,9 @@ require "kitchen/verifier/terraform"
 
 ::Kitchen::Verifier::Terraform::EnumerateGroupHosts = lambda do |client:, group:, &block|
   if group.key? :hostnames
-    client.iterate_output name: group.fetch(:hostnames) do |hostname| block.call host: hostname end
+    client.output_search(name: group.fetch(:hostnames)).each do |hostname|
+      block.call host: hostname
+    end
   else
     block.call host: "localhost"
   end
