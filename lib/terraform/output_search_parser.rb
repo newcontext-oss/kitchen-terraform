@@ -14,14 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/verifier/terraform"
+require "json"
 
-::Kitchen::Verifier::Terraform::EnumerateGroupHosts = lambda do |client:, group:, &block|
-  if group.key? :hostnames
-    client.output_search(name: group.fetch(:hostnames)).each do |hostname|
-      block.call host: hostname
+module Terraform
+  # A parser for output command values
+  class OutputSearchParser
+    def parsed_output
+      json_output["value"]
     end
-  else
-    block.call host: "localhost"
+
+    private
+
+    attr_accessor :output
+
+    def initialize(output:)
+      self.output = output
+    end
+
+    def json_output
+      ::JSON.parse output
+    end
   end
 end

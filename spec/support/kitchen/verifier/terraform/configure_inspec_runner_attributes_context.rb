@@ -16,10 +16,12 @@
 
 ::RSpec.shared_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call" do
   before do
-    allow(client).to receive(:each_output_name).with(no_args).and_yield("output_name_one").and_yield "output_name_two"
+    allow(client).to receive(:output).with(no_args)
+      .and_return "output_name_one" => "output_value_one",
+                  "output_name_two" => "output_value_two"
 
-    allow(client).to receive(:output).with(name: "output_name_one").and_return "output_value_one"
+    allow(client).to receive(:output_search).with(name: "output_name_one").and_return "output_value_one"
 
-    allow(client).to receive(:output).with(name: "output_name_two").and_return "output_value_two"
+    allow(client).to receive(:output_search).with(name: "output_name_two").and_return "output_value_two"
   end
 end

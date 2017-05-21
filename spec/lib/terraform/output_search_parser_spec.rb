@@ -14,14 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/verifier/terraform"
+require "terraform/output_search_parser"
 
-::Kitchen::Verifier::Terraform::EnumerateGroupHosts = lambda do |client:, group:, &block|
-  if group.key? :hostnames
-    client.output_search(name: group.fetch(:hostnames)).each do |hostname|
-      block.call host: hostname
+::RSpec.describe ::Terraform::OutputSearchParser do
+  let :described_instance do described_class.new output: output end
+
+  describe "#parsed_output" do
+    let :output do
+      ::JSON.dump "value" => "output_value_1"
     end
-  else
-    block.call host: "localhost"
+
+    subject do described_instance.parsed_output end
+
+    it "returns each output name" do
+      is_expected.to eq "output_value_1"
+    end
   end
 end

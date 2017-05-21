@@ -19,27 +19,17 @@ require "terraform/output_parser"
 ::RSpec.describe ::Terraform::OutputParser do
   let :described_instance do described_class.new output: output end
 
-  describe "#each_name" do
-    let :output do ::JSON.dump "output_name_1" => "output_value_1", "output_name_2" => "output_value_2" end
-
-    subject do lambda do |block| described_instance.each_name &block end end
-
-    it "yields each output name" do is_expected.to yield_successive_args "output_name_1", "output_name_2" end
-  end
-
-  describe "#iterate_parsed_output" do
-    let :output do ::JSON.dump "value" => ["foo", "bar"] end
-
-    subject do lambda do |block| described_instance.iterate_parsed_output &block end end
-
-    it "yields each element" do is_expected.to yield_successive_args "foo", "bar" end
-  end
-
   describe "#parsed_output" do
-    let :output do ::JSON.dump "value" => "foo" end
+    let :output do
+      ::JSON.dump "output_name_1" => {"value" => "output_value_1"},
+                  "output_name_2" => {"value" => "output_value_2"}
+    end
 
     subject do described_instance.parsed_output end
 
-    it "returns the value's 'value' field" do is_expected.to eq "foo" end
+    it "returns each output name" do
+      is_expected.to eq "output_name_1" => "output_value_1",
+                        "output_name_2" => "output_value_2"
+    end
   end
 end

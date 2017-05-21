@@ -14,14 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/verifier/terraform"
-
-::Kitchen::Verifier::Terraform::EnumerateGroupHosts = lambda do |client:, group:, &block|
-  if group.key? :hostnames
-    client.output_search(name: group.fetch(:hostnames)).each do |hostname|
-      block.call host: hostname
+module Terraform
+  # A null parser for when there are no outputs defined
+  class NoOutputSearchParser
+    def parsed_output
+      ""
     end
-  else
-    block.call host: "localhost"
   end
 end
