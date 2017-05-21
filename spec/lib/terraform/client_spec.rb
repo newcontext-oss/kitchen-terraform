@@ -106,7 +106,7 @@ require "terraform/client"
 
       let :output_value do ::JSON.dump "name1" => {"value" => "value1"}, "name2" => {"value" => "value2"} end
 
-      it "returns the hash" do is_expected.to eq("name1" => "value1", "name2" => "value2")  end
+      it "returns the hash" do is_expected.to eq("name1" => "value1", "name2" => "value2") end
     end
 
     context "when outputs are not defined" do

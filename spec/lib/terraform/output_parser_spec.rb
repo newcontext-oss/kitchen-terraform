@@ -19,7 +19,7 @@ require "terraform/output_parser"
 ::RSpec.describe ::Terraform::OutputParser do
   let :described_instance do described_class.new output: output end
 
-  describe '#parsed_output' do
+  describe "#parsed_output" do
     let :output do
       ::JSON.dump "output_name_1" => {"value" => "output_value_1"},
                   "output_name_2" => {"value" => "output_value_2"}
@@ -27,10 +27,9 @@ require "terraform/output_parser"
 
     subject do described_instance.parsed_output end
 
-    it 'returns each output name' do
+    it "returns each output name" do
       is_expected.to eq "output_name_1" => "output_value_1",
                         "output_name_2" => "output_value_2"
-
     end
   end
 end

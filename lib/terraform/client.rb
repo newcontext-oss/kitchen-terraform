@@ -40,14 +40,12 @@ module Terraform
       output_search_parser(name: name).parsed_output
     end
 
-    def output()
-      output_parser().parsed_output
+    def output
+      output_parser.parsed_output
     end
 
     def version
-      @version ||= execute command: factory.version_command do |value|
-        execute command: factory.version_command do |value| return value.slice /v(\d+\.\d+\.\d+)/, 1 end
-      end
+      @version ||= execute command: factory.version_command do |value| return value.slice /v(\d+\.\d+\.\d+)/, 1 end
     end
 
     private
@@ -82,7 +80,7 @@ module Terraform
       ::Terraform::NoOutputSearchParser.new
     end
 
-    def output_parser()
+    def output_parser
       execute command: factory.output_command(target: "") do |value|
         return ::Terraform::OutputParser.new output: value
       end

@@ -19,14 +19,14 @@ require "terraform/output_search_parser"
 ::RSpec.describe ::Terraform::OutputSearchParser do
   let :described_instance do described_class.new output: output end
 
-  describe '#parsed_output' do
+  describe "#parsed_output" do
     let :output do
       ::JSON.dump "value" => "output_value_1"
     end
 
     subject do described_instance.parsed_output end
 
-    it 'returns each output name' do
+    it "returns each output name" do
       is_expected.to eq "output_value_1"
     end
   end
