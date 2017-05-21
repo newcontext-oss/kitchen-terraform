@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen/driver/terraform/create"
+require "support/kitchen/terraform/create_directories_context"
 
 ::RSpec.shared_examples "::Kitchen::Driver::Terraform::Create" do
   subject do
@@ -23,7 +24,19 @@ require "kitchen/driver/terraform/create"
     end
   end
 
-  it "does not raise an error" do
-    is_expected.to_not raise_error
+  context "when the operation to create directories is a failure" do
+    include_context "::Kitchen::Terraform::CreateDirectories :failure"
+
+    it "raises an action failed error" do
+      is_expected.to raise_error ::Kitchen::ActionFailed, kind_of(::String)
+    end
+  end
+
+  context "when the operation to create directories is a success" do
+    include_context "::Kitchen::Terraform::CreateDirectories :success"
+
+    it "does not raise an error" do
+      is_expected.to_not raise_error
+    end
   end
 end

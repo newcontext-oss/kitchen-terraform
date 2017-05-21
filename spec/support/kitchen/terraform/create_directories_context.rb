@@ -14,24 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/driver/terraform"
-require "kitchen/terraform/create_directories"
+require "fileutils"
 
-::Kitchen::Driver::Terraform::Create = lambda do |_state|
-  catch :failure do
-    catch :success do
-      ::Kitchen::Terraform::CreateDirectories
-        .call directories: [
-          self[:directory],
-          ::File.dirname(self[:plan]),
-          ::File.dirname(self[:state])
-        ]
-    end.tap do |created_directories|
-      logger.debug created_directories
-    end
-    return
-  end.tap do |failure|
-    raise ::Kitchen::ActionFailed,
-          failure
+::RSpec.shared_context "::Kitchen::Terraform::CreateDirectories :failure" do
+  let :file_utils do
+    class_double(::FileUtils).as_stubbed_const
+  end
+
+  before do
+    allow(file_utils)
+      .to receive(:makedirs).with(including(kind_of(::String))).and_raise ::SystemCallError, "system call error"
+  end
+end
+
+::RSpec.shared_context "::Kitchen::Terraform::CreateDirectories :success" do
+  let :file_utils do
+    class_double(::FileUtils).as_stubbed_const
+  end
+
+  before do
+    allow(file_utils).to receive(:makedirs).with including kind_of ::String
   end
 end

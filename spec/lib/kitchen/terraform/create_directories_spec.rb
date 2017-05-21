@@ -14,18 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/verify_directory"
+require "kitchen/terraform/create_directories"
+require "support/kitchen/terraform/create_directories_context"
 
-::RSpec.describe ::Kitchen::Terraform::VerifyDirectory do
+::RSpec.describe ::Kitchen::Terraform::CreateDirectories do
   describe ".call" do
-    context "when the verification is a failure" do
-      before do
-        allow(::FileUtils).to receive(:makedirs).with("/directory").and_raise ::SystemCallError, "system call error"
-      end
+    context "when the creation is a failure" do
+      include_context "::Kitchen::Terraform::CreateDirectories :failure"
 
       subject do
         catch :failure do
-          described_class.call directory: "/directory"
+          described_class.call directories: ["directory_1", "directory_2"]
         end
       end
 
@@ -35,21 +34,17 @@ require "kitchen/terraform/verify_directory"
     end
 
     context "when the verification is a success" do
-      before do
-        allow(::FileUtils).to receive(:makedirs).with "/directory"
-      end
+      include_context "::Kitchen::Terraform::CreateDirectories :success"
 
       subject do
         catch :success do
-          described_class.call directory: "/directory"
+          described_class.call directories: ["directory_1", "directory_2"]
         end
       end
 
       it "throws :success with a string describing the success" do
-        is_expected.to eq "Verified directory /directory"
+        is_expected.to eq "Created directories [\"directory_1\", \"directory_2\"]"
       end
     end
   end
 end
-
-require "fileutils"
