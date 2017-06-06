@@ -55,7 +55,7 @@ module Terraform
     end
 
     def formatted_value
-      stripped_value.sub(/(\S)/, '=\1')
+      String(value).sub(/(\S)/, '=\1')
     end
 
     def stripped_string(config_string:)
