@@ -73,6 +73,14 @@ require 'terraform/command_option'
         is_expected.to eq '-key'
       end
     end
+
+    context 'when value contains spaces' do
+      let(:value) { 'other value' }
+
+      it 'returns the key formatted for the command line' do
+        is_expected.to eq '-key=other value'
+      end
+    end
   end
 
   describe '#tuple' do
