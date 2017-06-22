@@ -38,11 +38,11 @@ module ::Kitchen::Driver::Terraform::Workflow
   def self.call(config:, destroy: false, logger:)
     ::Kitchen::Terraform::Client::Validate.call(
       cli: config.fetch(:cli), directory: config.fetch(:directory), logger: logger,
-      timeout: config.fetch(:apply_timeout)
+      timeout: config.fetch(:command_timeout)
     ).bind do
       ::Kitchen::Terraform::Client::Get.call cli: config.fetch(:cli), logger: logger,
                                              root_module: config.fetch(:directory),
-                                             timeout: config.fetch(:apply_timeout)
+                                             timeout: config.fetch(:command_timeout)
     end.bind do
       ::Kitchen::Terraform::Client::Plan.call cli: config.fetch(:cli),
                                               logger: logger, options: {
@@ -50,13 +50,13 @@ module ::Kitchen::Driver::Terraform::Workflow
                                                 parallelism: config.fetch(:parallelism), state: config.fetch(:state),
                                                 var: config.fetch(:variables), var_file: config.fetch(:variable_files)
                                               }, root_module: config.fetch(:directory),
-                                              timeout: config.fetch(:apply_timeout)
+                                              timeout: config.fetch(:command_timeout)
     end.bind do
       ::Kitchen::Terraform::Client::Apply.call cli: config.fetch(:cli), logger: logger,
                                                options: {
                                                  color: config.fetch(:color), parallelism: config.fetch(:parallelism),
                                                  state_out: config.fetch(:state)
-                                               }, plan: config.fetch(:plan), timeout: config.fetch(:apply_timeout)
+                                               }, plan: config.fetch(:plan), timeout: config.fetch(:command_timeout)
     end.fmap do
       "driver workflow was a success"
     end.or do |error|
