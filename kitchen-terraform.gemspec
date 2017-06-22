@@ -52,6 +52,8 @@ require "terraform/project_version.rb"
 
   specification.add_development_dependency "guard-rubycritic", "~> 2.9"
 
+  specification.add_development_dependency "guard-yard", "~> 2.2"
+
   specification.add_development_dependency "pry", "~> 0.10"
 
   specification.add_development_dependency "pry-coolline", "~> 0.2"
@@ -62,6 +64,10 @@ require "terraform/project_version.rb"
 
   specification.add_development_dependency "travis", "~> 1.8"
 
+  specification.add_development_dependency "yard", "~> 0.9"
+
+  specification.add_runtime_dependency "dry-monads", "~> 0.3"
+
   specification.add_runtime_dependency "dry-types", "~> 0.9"
 
   specification.add_runtime_dependency "dry-validation", "~> 0.10"
@@ -69,8 +75,6 @@ require "terraform/project_version.rb"
   specification.add_runtime_dependency "kitchen-inspec", "~> 0.18"
 
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
-
-  specification.add_runtime_dependency "ptools", "~> 1.3"
 
   specification.add_runtime_dependency "test-kitchen", "~> 1.10"
 
