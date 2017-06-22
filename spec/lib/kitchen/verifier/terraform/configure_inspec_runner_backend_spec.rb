@@ -17,23 +17,39 @@
 require "kitchen/verifier/terraform/configure_inspec_runner_backend"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend do
-  let :omitted do instance_double ::Object end
-
-  let :options do {} end
-
-  before do described_class.call host: host, options: options end
-
-  subject do options.fetch "backend", omitted end
-
-  context "when the host is 'localhost'" do
-    let :host do "localhost" end
-
-    it "associates 'backend' with 'local' in the options" do is_expected.to eq "local" end
+  let :omitted do
+    instance_double ::Object
   end
 
-  context "when the host is not 'localhost'" do
-    let :host do "abc" end
+  let :options do
+    {}
+  end
 
-    it "omits 'backend'" do is_expected.to be omitted end
+  before do
+    described_class.call hostname: hostname, options: options
+  end
+
+  subject do
+    options.fetch "backend", omitted
+  end
+
+  context "when the hostname is 'localhost'" do
+    let :hostname do
+      "localhost"
+    end
+
+    it "associates 'backend' with 'local' in the options" do
+      is_expected.to eq "local"
+    end
+  end
+
+  context "when the hostname is not 'localhost'" do
+    let :hostname do
+      "abc"
+    end
+
+    it "omits 'backend'" do
+      is_expected.to be omitted
+    end
   end
 end

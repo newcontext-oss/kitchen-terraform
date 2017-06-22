@@ -14,14 +14,80 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/verifier/terraform"
 
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes = lambda do |client:, config:, group:, terraform_state:|
-  {"terraform_state" => terraform_state}.tap do |attributes|
-    client.each_output_name do |output_name| attributes.store output_name, client.output(name: output_name) end
-    group.fetch(:attributes, {}).each_pair do |attribute_name, output_name|
-      attributes.store attribute_name.to_s, client.output(name: output_name)
+# Configures InSpec profile attributes for the InSpec runner used by the verifier.
+#
+# Three different maps are merged to create the profile attributes.
+#
+# The first map is comprised of attributes that are external to the Terraform state.
+#
+#   {
+#     "terraform_state" => "/path/to/terraform/state"
+#   }
+#
+# The second map is comprised of attributes that represent the Terraform output variables of the Terraform state. This
+# map takes precedence in any key conflicts with the first map.
+#
+#   {
+#     "first_output_variable_name" => "first_output_variable_value",
+#     "second_output_variable_name" => "second_output_variable_value"
+#   }
+#
+# The third map is comprised of attributes defined by a group's +:attributes+; the keys are converted to strings and the
+# values are assumed to be Terraform output variable names which are resolved. This map takes precedence in any key
+# conflicts with the second map.
+#
+#   {
+#     first_attribute_name: "second_output_variable_name"
+#   }
+#
+#   # becomes
+#
+#   {
+#     "first_attribute_name" => "second_output_variable_value"
+#   }
+#
+# @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb InSpec runner
+# @see https://github.com/chef/kitchen-inspec/blob/master/lib/kitchen/verifier/inspec.rb kitchen-inspec verifier
+# @see https://www.inspec.io/docs/reference/profiles/ InSpec Profiles
+# @see https://www.terraform.io/docs/configuration/outputs.html Terraform output variables
+# @see https://www.terraform.io/docs/state/index.html Terraform state
+module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
+  extend ::Dry::Monads::Either::Mixin
+
+  extend ::Dry::Monads::Maybe::Mixin
+
+  extend ::Dry::Monads::Try::Mixin
+
+  # Invokes the function
+  #
+  # @param driver [::Kitchen::Driver::Terraform] a kitchen-terraform driver
+  # @param group [::Hash] a kitchen-terraform verifier group
+  # @param terraform_state [::String] the path of a Terraform state file
+  # @return [::Dry::Monads::Either] the result of the function
+  def self.call(driver:, group:, terraform_state:)
+    Right("terraform_state" => terraform_state).bind do |attributes|
+      driver.output.fmap do |output|
+        [attributes, output]
+      end
+    end.bind do |attributes, output|
+      Try ::KeyError do
+        output.each_pair do |output_name, output_body|
+          attributes.store output_name, output_body.fetch("value")
+        end
+        [attributes, output]
+      end
+    end.fmap do |attributes, output|
+      Maybe(group.dig(:attributes)).bind do |group_attributes|
+        group_attributes.each_pair do |attribute_name, output_name|
+          attributes.store attribute_name.to_s, output.fetch(output_name.to_s).fetch("value")
+        end
+      end
+      attributes
+    end.to_either.or do |error|
+      Left "configuring InSpec runner attributes failed\n#{error}"
     end
-    config.store :attributes, attributes
   end
 end

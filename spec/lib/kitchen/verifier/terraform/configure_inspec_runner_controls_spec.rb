@@ -17,13 +17,28 @@
 require "kitchen/verifier/terraform/configure_inspec_runner_controls"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls do
-  let :controls do instance_double ::Object end
+  let :controls do
+    instance_double ::Object
+  end
 
-  let :options do {} end
+  let :options do
+    {}
+  end
 
-  before do described_class.call group: {controls: controls}, options: options end
+  before do
+    described_class.call(
+      group: {
+        controls: controls
+      },
+      options: options
+    )
+  end
 
-  subject do options.fetch :controls end
+  subject do
+    options.fetch :controls
+  end
 
-  it "associates :controls with the group's :controls in the options" do is_expected.to be controls end
+  it "associates :controls with the group's :controls in the options" do
+    is_expected.to be controls
+  end
 end

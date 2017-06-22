@@ -16,5 +16,6 @@
 
 require "kitchen/verifier/terraform"
 
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend =
-  lambda do |host:, options:| /^localhost$/.match host do options.store "backend", "local" end end
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend = lambda do |hostname:, options:|
+  hostname == "localhost" and options.store "backend", "local"
+end
