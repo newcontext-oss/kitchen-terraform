@@ -14,24 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/driver/terraform"
-require "kitchen/terraform/create_directories"
+require "support/kitchen/driver/terraform/create_directories_context"
+require "support/kitchen/driver/terraform/workflow_context"
+require "support/kitchen/terraform/client/execute_command_context"
 
-::Kitchen::Driver::Terraform::Create = lambda do |_state|
-  catch :failure do
-    catch :success do
-      ::Kitchen::Terraform::CreateDirectories
-        .call directories: [
-          self[:directory],
-          ::File.dirname(self[:plan]),
-          ::File.dirname(self[:state])
-        ]
-    end.tap do |created_directories|
-      logger.debug created_directories
-    end
-    return
-  end.tap do |failure|
-    raise ::Kitchen::ActionFailed,
-          failure
-  end
+::RSpec.shared_context "Kitchen::Driver::Terraform" do |failure: true|
+  include_context "Kitchen::Driver::Terraform::Workflow", failure: failure
+
+  include_context "Kitchen::Driver::Terraform::CreateDirectories", failure: false
 end
