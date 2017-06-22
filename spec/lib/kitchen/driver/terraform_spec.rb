@@ -16,12 +16,9 @@
 
 require "json"
 require "kitchen/driver/terraform"
-require "support/kitchen/terraform/client/execute_command_context"
-require "support/kitchen/driver/terraform/workflow_context"
-require "support/kitchen/driver/terraform_context"
-require "support/kitchen/driver/terraform/config_attribute_apply_timeout_examples"
 require "support/kitchen/driver/terraform/config_attribute_cli_examples"
 require "support/kitchen/driver/terraform/config_attribute_color_examples"
+require "support/kitchen/driver/terraform/config_attribute_command_timeout_examples"
 require "support/kitchen/driver/terraform/config_attribute_directory_examples"
 require "support/kitchen/driver/terraform/config_attribute_parallelism_examples"
 require "support/kitchen/driver/terraform/config_attribute_plan_examples"
@@ -29,6 +26,9 @@ require "support/kitchen/driver/terraform/config_attribute_state_examples"
 require "support/kitchen/driver/terraform/config_attribute_variable_files_examples"
 require "support/kitchen/driver/terraform/config_attribute_variables_examples"
 require "support/kitchen/driver/terraform/create_directories_context"
+require "support/kitchen/driver/terraform/workflow_context"
+require "support/kitchen/driver/terraform_context"
+require "support/kitchen/terraform/client/execute_command_context"
 require "support/kitchen/terraform/client/version_context"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
@@ -42,9 +42,9 @@ require "support/terraform/configurable_examples"
 
   it_behaves_like ::Terraform::Configurable
 
-  it_behaves_like "config attribute :apply_timeout"
-
   it_behaves_like "config attribute :cli"
+
+  it_behaves_like "config attribute :command_timeout"
 
   it_behaves_like "config attribute :color"
 

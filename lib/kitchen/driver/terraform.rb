@@ -31,7 +31,7 @@ require "terraform/configurable"
 #
 #   driver:
 #     name: terraform
-#     apply_timeout: 1000
+#     command_timeout: 1000
 #     cli: /usr/local/bin/terraform
 #     color: false
 #     directory: /directory/containing/terraform/configuration
@@ -46,16 +46,6 @@ require "terraform/configurable"
 #
 # ==== Attributes
 #
-# ===== apply_timeout
-#
-# Description:: The number of seconds to wait for the Terraform CLI commands to finish.
-#
-# Type:: Integer
-#
-# Status:: Optional
-#
-# Default:: +600+
-#
 # ===== cli
 #
 # Description:: The path of the Terraform CLI to use for command execution.
@@ -65,6 +55,16 @@ require "terraform/configurable"
 # Status:: Optional
 #
 # Default:: +"terraform"+
+#
+# ===== command_timeout
+#
+# Description:: The number of seconds to wait for the Terraform CLI commands to finish.
+#
+# Type:: Integer
+#
+# Status:: Optional
+#
+# Default:: +600+
 #
 # ===== color
 #
@@ -153,17 +153,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   no_parallel_for
 
   ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :apply_timeout,
-    initialize_default_value: lambda do |_plugin|
-      600
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :int?
-    end
-  )
-
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
     attribute: :cli,
     initialize_default_value: lambda do |_plugin|
       "terraform"
@@ -171,6 +160,17 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     plugin_class: self,
     schema: lambda do
       required(:value).filled :str?
+    end
+  )
+
+  ::Kitchen::Terraform::DefineConfigAttribute.call(
+    attribute: :command_timeout,
+    initialize_default_value: lambda do |_plugin|
+      600
+    end,
+    plugin_class: self,
+    schema: lambda do
+      required(:value).filled :int?
     end
   )
 
@@ -299,7 +299,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def output
     ::Kitchen::Terraform::Client::Output.call cli: config.fetch(:cli), logger: debug_logger,
                                               options: {color: config.fetch(:color), state: config.fetch(:state)},
-                                              timeout: config.fetch(:apply_timeout)
+                                              timeout: config.fetch(:command_timeout)
   end
 
   # The driver verifies that the client version is supported.
@@ -310,7 +310,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Terraform::Client::Version
   def verify_dependencies
     ::Kitchen::Terraform::Client::Version.call(
-      cli: config.fetch(:cli), logger: debug_logger, timeout: config.fetch(:apply_timeout)
+      cli: config.fetch(:cli), logger: debug_logger, timeout: config.fetch(:command_timeout)
     ).bind do |version|
       self.class::VerifyClientVersion.call version: version
     end.fmap do |verified_client_version|
