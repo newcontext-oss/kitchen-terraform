@@ -15,7 +15,10 @@
 # limitations under the License.
 
 require "forwardable"
+require "kitchen"
 require "terraform"
+require "terraform/debug_logger"
+require "terraform/project_version"
 
 # Behaviour for objects that extend ::Kitchen::Configurable
 module ::Terraform::Configurable
@@ -27,10 +30,6 @@ module ::Terraform::Configurable
 
   def self.included(configurable_class)
     configurable_class.plugin_version ::Terraform::PROJECT_VERSION
-  end
-
-  def client
-    ::Kitchen::Terraform::Client.new config: driver, logger: logger
   end
 
   def config_error(attr:, expected:)
@@ -45,22 +44,9 @@ module ::Terraform::Configurable
     ::File.join config.fetch(:kitchen_root), ".kitchen", "kitchen-terraform", instance.name, filename
   end
 
-  def silent_client
-    ::Kitchen::Terraform::Client.new config: silent_config, logger: debug_logger
-  end
-
   private
 
   def formatted_config(attr:)
     "#{self.class}#{instance.to_str}#config[:#{attr}]"
   end
-
-  def silent_config
-    driver.tap do |config| config[:color] = false end
-  end
 end
-
-require "kitchen"
-require "kitchen/terraform/client"
-require "terraform/debug_logger"
-require "terraform/project_version"
