@@ -14,18 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
-require "kitchen/driver/terraform"
+require "support/kitchen/terraform/client/execute_command_context"
 
-::Kitchen::Driver::Terraform::Destroy = lambda do |_state|
-  catch :failure do
-    catch :success do
-      client.apply_destructively
-    end.tap do |success|
-      logger.debug success
-    end
-    return
-  end.tap do |failure|
-    raise ::Kitchen::ActionFailed, failure
-  end
+::RSpec.shared_context "Kitchen::Driver::Terraform::Workflow" do |failure: true|
+  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate", exit_code: 0
+
+  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get", exit_code: 0
+
+  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "plan", exit_code: 0
+
+  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "apply", exit_code: (failure and 1 or 0)
 end

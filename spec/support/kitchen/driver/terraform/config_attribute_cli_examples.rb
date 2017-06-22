@@ -19,29 +19,19 @@ require "support/kitchen/terraform/define_config_attribute_context"
 ::RSpec.shared_examples "config attribute :cli" do
   include_context "Kitchen::Terraform::DefineConfigAttribute", attribute: :cli do
     context "when the config omits :cli" do
-      before do
-        allow(::File).to receive(:which).with("terraform").and_return "`which terraform`"
-      end
-
-      it_behaves_like "a default value is used",
-                      default_value: "`which terraform`"
+      it_behaves_like "a default value is used", default_value: "terraform"
     end
 
     context "when the config associates :cli with a nonstring" do
-      it_behaves_like "the value is invalid",
-                      error_message: /cli.*must be a string/,
-                      value: 123
+      it_behaves_like "the value is invalid", error_message: /cli.*must be a string/, value: 123
     end
 
     context "when the config associates :cli with an empty string" do
-      it_behaves_like "the value is invalid",
-                      error_message: /cli.*must be filled/,
-                      value: ""
+      it_behaves_like "the value is invalid", error_message: /cli.*must be filled/, value: ""
     end
 
     context "when the config associates :cli with a nonempty string" do
-      it_behaves_like "the value is valid",
-                      value: "abc"
+      it_behaves_like "the value is valid", value: "abc"
     end
   end
 end
