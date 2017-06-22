@@ -15,13 +15,16 @@
 # limitations under the License.
 
 require "fileutils"
-require "kitchen/terraform"
 
-::Kitchen::Terraform::CreateDirectories = lambda do |directories:, directories_creator: ::FileUtils|
-  begin
-    directories_creator.makedirs directories
-    throw :success, "Created directories #{directories}"
-  rescue ::SystemCallError => error
-    throw :failure, error.message
+::RSpec.shared_context "Kitchen::Driver::Terraform::CreateDirectories" do |failure: true|
+  let :file_utils do
+    class_double(::FileUtils).as_stubbed_const
+  end
+
+  before do
+    allow(file_utils).to receive(:makedirs).with including kind_of ::String do
+      failure and raise ::SystemCallError,
+                        "mocked error"
+    end
   end
 end
