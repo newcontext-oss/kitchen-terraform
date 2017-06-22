@@ -17,11 +17,34 @@
 require "kitchen"
 require "terraform/configurable"
 
-# Applies constructive Terraform plans
-::Kitchen::Provisioner::Terraform = ::Class.new ::Kitchen::Provisioner::Base
-::Kitchen::Provisioner::Terraform.kitchen_provisioner_api_version 2
-::Kitchen::Provisioner::Terraform.send :include, ::Terraform::Configurable
+# The design of the provisioner is unconventional compared to other Test Kitchen provisioner plugins. Since Terraform
+# creates and provisions resources when applying an execution plan, managed by the driver, the provisioner simply
+# proxies the driver's create action to apply any changes to the existing Terraform state.
+#
+# === Configuration
+#
+# ==== Example .kitchen.yml snippet
+#
+#   provisioner:
+#     name: terraform
+#
+# @see ::Kitchen::Driver::Terraform
+# @see https://www.terraform.io/docs/commands/plan.html Terraform execution plan
+# @see https://www.terraform.io/docs/state/index.html Terraform state
+# @version 2
+class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
+  kitchen_provisioner_api_version 2
 
-require "kitchen/provisioner/terraform/call"
+  include ::Terraform::Configurable
 
-::Kitchen::Provisioner::Terraform.send :define_method, :call, ::Kitchen::Provisioner::Terraform::Call
+  # Proxies the driver's create action.
+  #
+  # @example
+  #   `kitchen converge suite-name`
+  # @param state [::Hash] the mutable instance and provisioner state.
+  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+  # @return [::Dry::Monads::Either] the result of the action.
+  def call(state)
+    instance.driver.create state
+  end
+end

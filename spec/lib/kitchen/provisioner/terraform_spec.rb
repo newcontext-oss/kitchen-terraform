@@ -15,23 +15,39 @@
 # limitations under the License.
 
 require "kitchen/provisioner/terraform"
-require "support/kitchen/provisioner/terraform/call_examples"
+require "support/kitchen/driver/terraform_context"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Provisioner::Terraform do
   include_context "instance"
 
-  let :described_instance do provisioner end
+  let :described_instance do
+    provisioner
+  end
 
   it_behaves_like ::Terraform::Configurable
 
   describe "#call" do
-    include_context "client"
+    subject do
+      lambda do
+        described_instance.call instance_double ::Object
+      end
+    end
 
-    it_behaves_like "::Kitchen::Provisioner::Terraform::Call" do
-      let :described_method do
-        described_instance.method :call
+    context "when the driver create action is a failure" do
+      include_context "Kitchen::Driver::Terraform"
+
+      it "raises an action failed error" do
+        is_expected.to raise_error ::Kitchen::ActionFailed, /driver workflow/
+      end
+    end
+
+    context "when the driver create action is a success" do
+      include_context "Kitchen::Driver::Terraform", failure: false
+
+      it "does not raise an error" do
+        is_expected.to_not raise_error
       end
     end
   end
