@@ -17,25 +17,48 @@
 require "kitchen/verifier/terraform/configure_inspec_runner_user"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser do
-  let :options do {"user" => options_user} end
+  let :options do
+    {
+      "user" => options_user
+    }
+  end
 
-  let :options_user do instance_double ::Object end
+  let :options_user do
+    instance_double ::Object
+  end
 
-  before do described_class.call group: group, options: options end
+  before do
+    described_class.call group: group,
+                         options: options
+  end
 
-  subject do options.fetch "user" end
+  subject do
+    options.fetch "user"
+  end
 
   context "when the group associates :username with an object" do
-    let :group do {username: group_username} end
+    let :group do
+      {
+        username: group_username
+      }
+    end
 
-    let :group_username do instance_double ::Object end
+    let :group_username do
+      instance_double ::Object
+    end
 
-    it "associates the options' 'user' with the group's :username" do is_expected.to eq group_username end
+    it "associates the options' 'user' with the group's :username" do
+      is_expected.to eq group_username
+    end
   end
 
   context "when the group omits :username" do
-    let :group do {} end
+    let :group do
+      {}
+    end
 
-    it "does not change the options' 'user'" do is_expected.to eq options_user end
+    it "does not change the options' 'user'" do
+      is_expected.to eq options_user
+    end
   end
 end

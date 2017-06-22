@@ -16,5 +16,7 @@
 
 require "kitchen/verifier/terraform"
 
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort =
-  lambda do |group:, options:| group.key? :port and options.store "port", group.fetch(:port) end
+# - the default `port` value is obtained from the verifier or the transport
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort = lambda do |group:, options:|
+  group.key? :port and options.store "port", group.fetch(:port)
+end

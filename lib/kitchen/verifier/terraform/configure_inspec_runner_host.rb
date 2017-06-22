@@ -16,4 +16,6 @@
 
 require "kitchen/verifier/terraform"
 
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost = lambda do |host:, options:| options.store "host", host end
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost = lambda do |hostname:, options:|
+  options.store "host", hostname
+end
