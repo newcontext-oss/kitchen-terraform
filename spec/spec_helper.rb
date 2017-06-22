@@ -14,10 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "support/coverage"
 require "support/helpers"
 
 ::RSpec.configure do |configuration|
+  configuration.color = true
+
   configuration.disable_monkey_patching!
+
+  configuration.fail_fast = true
+
+  configuration.formatter = :documentation
 
   configuration.include ::Helpers
 
@@ -26,4 +33,6 @@ require "support/helpers"
 
     mocks.verify_partial_doubles = true
   end
+
+  configuration.profile_examples = 10
 end
