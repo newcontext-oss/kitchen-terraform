@@ -16,39 +16,160 @@
 
 require "kitchen/terraform/client"
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
-require "support/kitchen/verifier/terraform/configure_inspec_runner_attributes_context"
+require "support/kitchen/instance_context"
+require "support/kitchen/terraform/client/execute_command_context"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes do
   describe ".call" do
-    include_context "::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call"
+    include_context ::Kitchen::Instance
 
-    let :client do instance_double ::Kitchen::Terraform::Client end
+    let :group do
+      {}
+    end
 
-    let :config do {} end
+    let :result do
+      described_class.call driver: driver,
+                           group: group,
+                           terraform_state: "terraform_state"
+    end
 
-    let :group do {attributes: {}} end
+    before do
+      driver.finalize_config! instance
+    end
 
-    before do described_class.call client: client, config: config, group: group, terraform_state: "terraform_state" end
+    context "when the Terraform output command result is a failure" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "output"
 
-    subject do config.fetch :attributes end
+      describe "the result" do
+        subject do
+          result
+        end
 
-    describe "defining default static attributes" do
-      it "associates 'terraform_state' to the Terraform state path" do
-        is_expected.to include "terraform_state" => "terraform_state"
+        it "is a failure" do
+          is_expected.to be_failure
+        end
+      end
+
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "describes the failure" do
+          is_expected.to match /configuring InSpec runner attributes failed.*terraform output/m
+        end
       end
     end
 
-    describe "defining default dynamic attributes" do
-      it "associates each Terraform output name and value" do
-        is_expected.to include "output_name_one" => "output_value_one", "output_name_two" => "output_value_two"
+    context "when the Terraform output command result's value is unexpected" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "output",
+                      exit_code: 0,
+                      output: ::JSON.generate(
+                        "name" => {
+                          "unexpected" => "value"
+                        }
+                      )
+
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a failure" do
+          is_expected.to be_failure
+        end
+      end
+
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "describes the failure" do
+          is_expected.to match /configuring InSpec runner attributes failed.*\"value\"/m
+        end
       end
     end
 
-    describe "defining configured attributes" do
-      let :group do {attributes: {"output_name_one" => "output_name_two"}} end
+    context "when the group attribute output names do not match the Terraform output command result's value" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "output",
+                      exit_code: 0,
+                      output: ::JSON.generate(
+                        "output_name" => {
+                          "value" => "output_name value"
+                        }
+                      )
 
-      it "associates each configured attribute name with the resolved value of the configured Terraform output name" do
-        is_expected.to include "output_name_one" => "output_value_two"
+      let :group do
+        {
+          attributes: {
+            attribute_name: "not_output_name"
+          }
+        }
+      end
+
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a failure" do
+          is_expected.to be_failure
+        end
+      end
+
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "describes the failure" do
+          is_expected.to match /configuring InSpec runner attributes failed.*\"not_output_name\"/m
+        end
+      end
+    end
+
+    context "when the group attribute output names match the Terraform output command result's value" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "output",
+                      exit_code: 0,
+                      output: ::JSON.generate(
+                        "output_name" => {
+                          "value" => "output_name value"
+                        }
+                      )
+
+      let :group do
+        {
+          attributes: {
+            attribute_name: "output_name"
+          }
+        }
+      end
+
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a success" do
+          is_expected.to be_success
+        end
+      end
+
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "is the attribute hash" do
+          is_expected.to eq "attribute_name" => "output_name value",
+                            "output_name" => "output_name value",
+                            "terraform_state" => "terraform_state"
+        end
       end
     end
   end

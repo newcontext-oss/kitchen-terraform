@@ -14,7 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/verifier/terraform"
 
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls =
-  lambda do |group:, options:| options.store :controls, group.fetch(:controls, []) end
+# If the collection is empty then all of the profile's controls will be included.
+module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
+  extend ::Dry::Monads::Maybe::Mixin
+
+  def self.call(group:, options:)
+    Maybe(group.dig(:controls)).bind do |controls|
+      options.store :controls, controls
+    end
+  end
+end

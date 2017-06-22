@@ -16,5 +16,8 @@
 
 require "kitchen/verifier/terraform"
 
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser =
-  lambda do |group:, options:| group.key? :username and options.store "user", group.fetch(:username) end
+#
+# - the default `username` value is obtained from the transport
+::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser = lambda do |group:, options:|
+  group.key? :username and options.store "user", group.fetch(:username)
+end

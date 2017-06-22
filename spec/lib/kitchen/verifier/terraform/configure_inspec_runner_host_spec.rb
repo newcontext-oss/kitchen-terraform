@@ -17,13 +17,24 @@
 require "kitchen/verifier/terraform/configure_inspec_runner_host"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost do
-  let :host do instance_double ::Object end
+  let :hostname do
+    instance_double ::Object
+  end
 
-  let :options do {} end
+  let :options do
+    {}
+  end
 
-  before do described_class.call host: host, options: options end
+  before do
+    described_class.call hostname: hostname,
+                         options: options
+  end
 
-  subject do options.fetch "host" end
+  subject do
+    options.fetch "host"
+  end
 
-  it "associates 'host' with the host in the options" do is_expected.to be host end
+  it "associates 'host' with the hostname in the options" do
+    is_expected.to be hostname
+  end
 end

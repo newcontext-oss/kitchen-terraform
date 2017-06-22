@@ -106,27 +106,42 @@ require "support/kitchen/terraform/define_config_attribute_context"
     end
 
     context "when the config associates :groups with an array which includes a hash which associates :name with a " \
-              "nonempty string and associates :attributes with a hash which associates nonstrings and nonsymbols" do
+              "nonempty string and associates :attributes with a hash which has nonstring or nonsymbol keys" do
       it_behaves_like "the value is invalid",
-                      error_message: /groups.*0.*attributes.*keys and values must be strings or symbols/,
+                      error_message: /groups.*0.*attributes.*keys must be strings or symbols/,
                       value: [
                         {
                           name: "abc",
                           attributes: {
-                            123 => true
+                            123 => "abc"
                           }
                         }
                       ]
     end
 
     context "when the config associates :groups with an array which includes a hash which associates :name with a " \
-              "nonempty string and associates :attributes with a hash which associates strings and symobls" do
+              "nonempty string and associates :attributes with a hash which has nonstring values" do
+      it_behaves_like "the value is invalid",
+                      error_message: /groups.*0.*attributes.*values must be strings/,
+                      value: [
+                        {
+                          name: "abc",
+                          attributes: {
+                            "abc" => 123
+                          }
+                        }
+                      ]
+    end
+
+    context "when the config associates :groups with an array which includes a hash which associates :name with a " \
+              "nonempty string and associates :attributes with a hash which has string and symobl keys and string " \
+              "values" do
       it_behaves_like "the value is valid",
                       value: [
                         {
                           name: "abc",
                           attributes: {
-                            "key" => :value,
+                            "key" => "value",
                             key: "value"
                           }
                         }
