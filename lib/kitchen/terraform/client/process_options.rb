@@ -14,43 +14,75 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/terraform/client"
 
-::Kitchen::Terraform::Client::ProcessOptions = lambda do |unprocessed_options:|
-  throw(
-    :success,
-    unprocessed_options.map do |key, value|
-      case key
-      when :color
-        "-no-color" if not value
-      when :destroy
-        "-destroy" if value
-      when :input
-        "-input=#{value}"
-      when :json
-        "-json" if value
-      when :out
-        "-out=#{value}"
-      when :parallelism
-        "-parallelism=#{value}"
-      when :state
-        "-state=#{value}"
-      when :state_out
-        "-state-out=#{value}"
-      when :update
-        "-update" if value
-      when :var
-        value.map do |variable_name, variable_value|
-          "-var='#{variable_name}=#{variable_value}'"
-        end
-      when :var_file
-        value.map do |file|
-          "-var-file=#{file}"
-        end
-      else
-        throw :failure,
-              "'#{key}' is not supported as a ::Kitchen::Terraform::Client option"
+# Processes Terraform Client function options in to Terraform Command-Line Interface (CLI) flags.
+#
+# @see ::Kitchen::Terraform::Client::ProcessOptions::OPTIONS_FLAGS
+# @see https://www.terraform.io/docs/commands/index.html Terraform commands
+module ::Kitchen::Terraform::Client::ProcessOptions
+  extend ::Dry::Monads::Either::Mixin
+  extend ::Dry::Monads::Maybe::Mixin
+  extend ::Dry::Monads::List::Mixin
+  extend ::Dry::Monads::Try::Mixin
+
+  self::OPTIONS_FLAGS = {
+    color: lambda do |value:|
+      "-no-color" if not value
+    end,
+    destroy: lambda do |value:|
+      "-destroy" if value
+    end,
+    input: lambda do |value:|
+      "-input=#{value}"
+    end,
+    json: lambda do |value:|
+      "-json" if value
+    end,
+    out: lambda do |value:|
+      "-out=#{value}"
+    end,
+    parallelism: lambda do |value:|
+      "-parallelism=#{value}"
+    end,
+    state: lambda do |value:|
+      "-state=#{value}"
+    end,
+    state_out: lambda do |value:|
+      "-state-out=#{value}"
+    end,
+    update: lambda do |value:|
+      "-update" if value
+    end,
+    var: lambda do |value:|
+      value.map do |variable_name, variable_value|
+        "-var='#{variable_name}=#{variable_value}'"
       end
-    end.compact.flatten
-  )
+    end,
+    var_file: lambda do |value:|
+      value.map do |file|
+        "-var-file=#{file}"
+      end
+    end
+  }.freeze
+
+  # Invokes the function.
+  #
+  # @param unprocessed_options [::Hash{::Symbol => TrueClass, FalseClass, #to_s, #map}] underscore delimited option keys
+  #        associated with their values.
+  # @return [::Dry::Monads::Either] the result of the function.
+  def self.call(unprocessed_options:)
+    List(unprocessed_options.to_a).fmap(&method(:Right)).typed(::Dry::Monads::Either).traverse do |member|
+      member.bind do |key, value|
+        Maybe(::Kitchen::Terraform::Client::ProcessOptions::OPTIONS_FLAGS.dig(key)).bind do |processor|
+          Right processor.call value: value
+        end.or do
+          Left ":#{key} is not a supported Terraform Client option"
+        end
+      end
+    end.fmap do |options|
+      options.value.flatten.compact.sort
+    end
+  end
 end

@@ -15,6 +15,9 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/driver/terraform"
+require "kitchen/provisioner/terraform"
+require "kitchen/verifier/terraform"
 
 ::RSpec.shared_context ::Kitchen::Instance do
   let :default_config do {kitchen_root: kitchen_root} end
@@ -39,6 +42,4 @@ require "kitchen"
   let :transport do ::Kitchen::Transport::Ssh.new end
 
   let :verifier do ::Kitchen::Verifier::Terraform.new default_config end
-
-  before do allow(::File).to receive(:which).with("terraform").and_return "/terraform" end
 end

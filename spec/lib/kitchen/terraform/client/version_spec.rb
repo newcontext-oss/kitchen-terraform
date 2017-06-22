@@ -14,47 +14,92 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/client/execute_command"
 require "kitchen/terraform/client/version"
+require "support/kitchen/terraform/client/execute_command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::Version do
   describe ".call" do
-    context "when the string thrown with :success does not match the expected format" do
-      before do
-        allow(::Kitchen::Terraform::Client::ExecuteCommand)
-          .to receive(:call).with command: "version", config: "config", logger: "logger" do
-            throw :success, "This is unexpected output"
-          end
-      end
+    let :result do
+      described_class.call cli: "cli",
+                           logger: [],
+                           timeout: 1234
+    end
 
-      subject do
-        catch :failure do
-          described_class.call config: "config", logger: "logger"
+    context "when the Terraform version command result is a failure" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "version"
+
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a failure" do
+          is_expected.to be_failure
         end
       end
 
-      it "throws :failure with a string describing the failure" do
-        is_expected.to eq "Terraform client version output did not contain a string matching 'vX.Y'"
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "describes the failure" do
+          is_expected.to match /Unable to parse Terraform client version output.*cli version/m
+        end
       end
     end
 
-    context "when the string thrown with :success does match the expected format" do
-      before do
-        allow(::Kitchen::Terraform::Client::ExecuteCommand)
-          .to receive(:call).with command: "version", config: "config", logger: "logger" do
-            throw :success, "Terraform v0.9.3\n\nYour version of Terraform is out of date! The latest version is " \
-                              "0.9.4. You can update by downloading from www.terraform.io"
-          end
-      end
+    context "when the Terraform version command result's value is unexpected" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "version",
+                      exit_code: 0
 
-      subject do
-        catch :success do
-          described_class.call config: "config", logger: "logger"
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a failure" do
+          is_expected.to be_failure
         end
       end
 
-      it "throws :success with a float representing the version" do
-        is_expected.to eq 0.9
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "describes the failure" do
+          is_expected.to match /Unable to parse Terraform client version output.*output did not match 'vX.Y'/m
+        end
+      end
+    end
+
+    context "when the output matches the expected format" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "version",
+                      exit_code: 0,
+                      output: "Terraform v1.2.3\n\nSupplementary text!"
+
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a success" do
+          is_expected.to be_success
+        end
+      end
+
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "is a float representing the client's major and minor versions" do
+          is_expected.to eq 1.2
+        end
       end
     end
   end

@@ -36,19 +36,6 @@ require "terraform/configurable"
     it "equals the gem version" do is_expected.to be ::Terraform::PROJECT_VERSION end
   end
 
-  describe "#client" do
-    let :client do instance_double ::Object end
-
-    before do
-      allow(::Kitchen::Terraform::Client)
-        .to receive(:new).with(config: duck_type(:[]), logger: instance_of(::Kitchen::Logger)).and_return client
-    end
-
-    subject do described_instance.client end
-
-    it "returns a configured client" do is_expected.to be client end
-  end
-
   describe "#config_error" do
     it_behaves_like "a user error has occurred" do
       let :described_method do described_instance.config_error attr: attr, expected: "expected" end
@@ -83,20 +70,6 @@ require "terraform/configurable"
     subject do described_instance.provisioner end
 
     it "returns the provisioner of the instance" do is_expected.to be instance.provisioner end
-  end
-
-  describe "#silent_client" do
-    let :silent_client do instance_double ::Object end
-
-    before do
-      allow(::Kitchen::Terraform::Client)
-        .to receive(:new).with(config: kind_of(::Kitchen::Configurable), logger: instance_of(::Terraform::DebugLogger))
-        .and_return silent_client
-    end
-
-    subject do described_instance.silent_client end
-
-    it "returns a client with color disabled and debug output" do is_expected.to be silent_client end
   end
 
   describe "#transport" do

@@ -14,18 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "terraform/prepare_input_file"
+require "support/kitchen/terraform/client/execute_command_context"
 
-::RSpec.describe ::Terraform::PrepareInputFile do
-  let :described_instance do described_class.new file: file end
-
-  let :file do instance_double ::Pathname end
-
-  describe "#execute" do
-    after do described_instance.execute end
-
-    subject do file end
-
-    it "ensures the file can be opened for reading" do is_expected.to receive :open end
-  end
+::RSpec.shared_context "Kitchen::Terraform::Client::Version" do |failure: true, version: 99.9|
+  include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                  command: "version",
+                  exit_code: (failure and 1 or 0),
+                  output: "Terraform v#{version}"
 end
