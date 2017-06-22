@@ -6,7 +6,20 @@ directories ["lib", "spec"]
 
 group :red_green_refactor, halt_on_fail: true do
   ::Guard::RSpec::Dsl.new(self).tap do |dsl|
-    guard :rspec, all_after_pass: true, all_on_start: true, bundler_env: :inherit, cmd: "bundle exec rspec" do
+    guard :bundler do
+      watch "kitchen-terraform.gemspec"
+    end
+
+    guard :bundler_audit, run_on_start: true do
+      watch "Gemfile.lock"
+    end
+
+    guard :yard do
+      watch /lib\/.+\.rb/
+    end
+
+    guard :rspec, all_after_pass: true, all_on_start: true, bundler_env: :inherit, cmd: "bundle exec rspec",
+                  failure_mode: :focus do
       watch dsl.rspec.spec_files
 
       watch dsl.rspec.spec_helper do dsl.rspec.spec_dir end
@@ -36,8 +49,4 @@ group :red_green_refactor, halt_on_fail: true do
       watch dsl.ruby.lib_files
     end
   end
-
-  guard :bundler do watch "kitchen-terraform.gemspec" end
-
-  guard :bundler_audit, run_on_start: true do watch "Gemfile.lock" end
 end
