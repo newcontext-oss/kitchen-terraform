@@ -16,22 +16,18 @@
 
 require "support/kitchen/terraform/define_config_attribute_context"
 
-::RSpec.shared_examples "config attribute :apply_timeout" do
-  include_context "Kitchen::Terraform::DefineConfigAttribute", attribute: :apply_timeout do
-    context "when the config omits :apply_timeout" do
-      it_behaves_like "a default value is used",
-                      default_value: 600
+::RSpec.shared_examples "config attribute :command_timeout" do
+  include_context "Kitchen::Terraform::DefineConfigAttribute", attribute: :command_timeout do
+    context "when the config omits :command_timeout" do
+      it_behaves_like "a default value is used", default_value: 600
     end
 
-    context "when the config associates :apply_timeout with a noninteger" do
-      it_behaves_like "the value is invalid",
-                      error_message: /apply_timeout.*must be an integer/,
-                      value: "abc"
+    context "when the config associates :command_timeout with a noninteger" do
+      it_behaves_like "the value is invalid", error_message: /command_timeout.*must be an integer/, value: "abc"
     end
 
-    context "when the config associates :apply_timeout with an integer" do
-      it_behaves_like "the value is valid",
-                      value: 123
+    context "when the config associates :command_timeout with an integer" do
+      it_behaves_like "the value is valid", value: 123
     end
   end
 end
