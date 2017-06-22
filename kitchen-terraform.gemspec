@@ -80,7 +80,7 @@ require "terraform/project_version.rb"
 
   specification.cert_chain = ["certs/public_cert.pem"]
 
-  specification.required_ruby_version = [">= 2.1", "< 2.5"]
+  specification.required_ruby_version = [">= 2.2", "< 2.5"]
 
   specification.requirements = ["Terraform >= 0.7, < 0.10"]
 
