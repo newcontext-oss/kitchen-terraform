@@ -18,30 +18,76 @@ require "kitchen/terraform/client/process_options"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::ProcessOptions do
   describe ".call" do
-    context "when an unsupported option is detected" do
-      subject do
-        catch :failure do
-          described_class.call unprocessed_options: {
-            unsupported_option: "unsupported_option"
-          }
+    context "when an unsupported option is processed" do
+      let :result do
+        described_class.call unprocessed_options: {
+          unsupported_option: "unsupported_option"
+        }
+      end
+
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a failure" do
+          is_expected.to be_failure
         end
       end
 
-      it "throws :failure with a string describing the failure" do
-        is_expected.to eq "'unsupported_option' is not supported as a ::Kitchen::Terraform::Client option"
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "describes the failure" do
+          is_expected.to match /:unsupported_option is not a supported Terraform Client option/m
+        end
       end
     end
 
     context "when all options are processed" do
-      subject do
-        catch :success do
-          described_class.call unprocessed_options: options
+      let :result do
+        described_class.call unprocessed_options: options
+      end
+
+      shared_examples "a flag is produced" do |flag:|
+        it_behaves_like "the result is a success"
+
+        describe "the result's value" do
+          subject do
+            result.value
+          end
+
+          it "includes #{flag}" do
+            is_expected.to include flag
+          end
         end
       end
 
       shared_examples "no flag is produced" do
-        it "throws :success with an empty array" do
-          is_expected.to be_empty
+        it_behaves_like "the result is a success"
+
+        describe "the result's value" do
+          subject do
+            result.value
+          end
+
+          it "is empty" do
+            is_expected.to be_empty
+          end
+        end
+      end
+
+      shared_examples "the result is a success" do
+        describe "the result" do
+          subject do
+            result
+          end
+
+          it "is a success" do
+            is_expected.to be_success
+          end
         end
       end
 
@@ -52,9 +98,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-no-color'" do
-          is_expected.to include "-no-color"
-        end
+        it_behaves_like "a flag is produced", flag: "-no-color"
       end
 
       context "when the options associate :color with true" do
@@ -84,9 +128,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-destroy'" do
-          is_expected.to include "-destroy"
-        end
+        it_behaves_like "a flag is produced", flag: "-destroy"
       end
 
       context "when the options associate :input with an object" do
@@ -96,9 +138,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-input=object'" do
-          is_expected.to include "-input=object"
-        end
+        it_behaves_like "a flag is produced", flag: "-input=object"
       end
 
       context "when the options associate :json with false" do
@@ -118,9 +158,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-json'" do
-          is_expected.to include "-json"
-        end
+        it_behaves_like "a flag is produced", flag: "-json"
       end
 
       context "when the options associate :out with an object" do
@@ -130,9 +168,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-out=object'" do
-          is_expected.to include "-out=object"
-        end
+        it_behaves_like "a flag is produced", flag: "-out=object"
       end
 
       context "when the options associate :parallelism with an object" do
@@ -142,9 +178,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-parallelism=object'" do
-          is_expected.to include "-parallelism=object"
-        end
+        it_behaves_like "a flag is produced", flag: "-parallelism=object"
       end
 
       context "when the options associate :state with an object" do
@@ -154,9 +188,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-state=object'" do
-          is_expected.to include "-state=object"
-        end
+        it_behaves_like "a flag is produced", flag: "-state=object"
       end
 
       context "when the options associate :state_out with an object" do
@@ -166,9 +198,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-state-out=object'" do
-          is_expected.to include "-state-out=object"
-        end
+        it_behaves_like "a flag is produced", flag: "-state-out=object"
       end
 
       context "when the options associate :update with false" do
@@ -188,9 +218,7 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-json'" do
-          is_expected.to include "-update"
-        end
+        it_behaves_like "a flag is produced", flag: "-update"
       end
 
       context "when the options associate :var with a hash of objects" do
@@ -203,11 +231,9 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-var=\"var_1_name=var_1_value\"', " \
-             "'-var=\"var_2_name=var_2_value\"'" do
-          is_expected.to include "-var='var_1_name=var_1_value'",
-                                 "-var='var_2_name=var_2_value'"
-        end
+        it_behaves_like "a flag is produced", flag: "-var='var_1_name=var_1_value'"
+
+        it_behaves_like "a flag is produced", flag: "-var='var_2_name=var_2_value'"
       end
 
       context "when the options associate :var_file with a array of objects" do
@@ -220,10 +246,9 @@ require "kitchen/terraform/client/process_options"
           }
         end
 
-        it "throws :success with an array including '-var-file=var_file_1', '-var-file=var_file_2'" do
-          is_expected.to include "-var-file=var_file_1",
-                                 "-var-file=var_file_2"
-        end
+        it_behaves_like "a flag is produced", flag: "-var-file=var_file_1"
+
+        it_behaves_like "a flag is produced", flag: "-var-file=var_file_2"
       end
     end
   end

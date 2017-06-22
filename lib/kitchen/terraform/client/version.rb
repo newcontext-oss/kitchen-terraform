@@ -14,17 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/terraform/client"
 require "kitchen/terraform/client/execute_command"
 
-# Command to retrieve the version
-::Kitchen::Terraform::Client::Version = lambda do |config:, logger:|
-  catch :success do
-    ::Kitchen::Terraform::Client::ExecuteCommand.call(command: "version", config: config, logger: logger)
-  end.tap do |output|
-    /v(\d+\.\d+)/.match output do |match_data|
-      throw :success, Float(match_data[1])
-    end
-    throw :failure, "Terraform client version output did not contain a string matching 'vX.Y'"
+# Retrieves the version of the Terraform Command-Line Interface (CLI).
+#
+# @see https://www.terraform.io/docs/commands/index.html Terraform commands
+module ::Kitchen::Terraform::Client::Version
+  extend ::Dry::Monads::Either::Mixin
+
+  extend ::Dry::Monads::Maybe::Mixin
+
+  # Invokes the function.
+  #
+  # @param cli [::String] the path of the Terraform CLI to use to execute the version command.
+  # @param logger [#<<] a logger to receive the stdout and stderr of the version command.
+  # @param timeout [::Integer] the time in seconds to wait for the version command to finish.
+  # @return [::Dry::Monads::Either] the result of the function.
+  def self.call(cli:, logger:, timeout:)
+    ::Kitchen::Terraform::Client::ExecuteCommand
+      .call(cli: cli, command: "version", logger: logger, timeout: timeout)
+      .bind do |output|
+        Maybe output.slice /v(\d+\.\d+)/, 1
+      end.bind do |major_minor_versions|
+        Right Float major_minor_versions
+      end.or do |error|
+        error.nil? and Left "Terraform client version output did not match 'vX.Y'" or Left error
+      end.or do |error|
+        Left "Unable to parse Terraform client version output\n#{error}"
+      end
   end
 end

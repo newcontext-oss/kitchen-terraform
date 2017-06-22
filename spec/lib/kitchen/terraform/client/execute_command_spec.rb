@@ -14,92 +14,143 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "mixlib/shellout"
 require "kitchen/terraform/client/execute_command"
+require "support/kitchen/terraform/client/execute_command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::ExecuteCommand do
   describe ".call" do
-    let :shell_out do
-      instance_double ::Mixlib::ShellOut
+    let :options do
+      {}
     end
 
-    before do
-      allow(::Mixlib::ShellOut).to receive(:new)
-        .with("cli", "command", "-no-color", "target", live_stream: "logger", timeout: "timeout").and_return shell_out
-
-      allow(shell_out).to receive(:run_command).with no_args
+    let :result do
+      described_class.call cli: "cli",
+                           command: "command",
+                           logger: [],
+                           options: options,
+                           target: "target",
+                           timeout: 1234
     end
 
-    context "when the execution is a failure" do
-      context "when an error occurs during execution" do
-        shared_examples "an expected error has occurred" do
-          before do
-            allow(shell_out).to receive(:error!).with(no_args).and_raise error
+    context "when unsupported options are provided" do
+      let :options do
+        {
+          unsupported_option: "unsupported_option"
+        }
+      end
 
-            allow(shell_out).to receive(:command).with(no_args).and_return "command"
-          end
-
-          subject do
-            catch :failure do
-              described_class.call command: "command", config: {apply_timeout: "timeout", cli: "cli"}, logger: "logger",
-                                   options: {color: false}, target: "target"
-            end
-          end
-
-          it "throws :failure with a string describing the execution failure" do
-            is_expected.to match /`command` failed: '.+'/
-          end
+      describe "the result" do
+        subject do
+          result
         end
 
-        context "when the error is due to incorrect permissions" do
-          it_behaves_like "an expected error has occurred" do
-            let :error do
-              ::Errno::EACCES
-            end
-          end
+        it "is a failure" do
+          is_expected.to be_failure
+        end
+      end
+
+      describe "the result's value" do
+        subject do
+          result.value
         end
 
-        context "when the error is due to a missing file" do
-          it_behaves_like "an expected error has occurred" do
-            let :error do
-              ::Errno::ENOENT
-            end
-          end
-        end
-
-        context "when the error is due to a command timeout" do
-          it_behaves_like "an expected error has occurred" do
-            let :error do
-              ::Mixlib::ShellOut::CommandTimeout
-            end
-          end
-        end
-
-        context "when the error is due to a failed shell out command" do
-          it_behaves_like "an expected error has occurred" do
-            let :error do
-              ::Mixlib::ShellOut::ShellCommandFailed
-            end
-          end
+        it "describes the failure" do
+          is_expected.to match /:unsupported/
         end
       end
     end
 
-    context "when the execution is a success" do
-      before do
-        allow(shell_out).to receive(:error!).with no_args
+    shared_examples "the command experiences an error" do |error_class:|
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "command",
+                      error: true,
+                      error_class: error_class
 
-        allow(shell_out).to receive(:stdout).with(no_args).and_return "stdout"
-      end
+      describe "the result" do
+        subject do
+          result
+        end
 
-      subject do
-        catch :success do
-          described_class.call command: "command", config: {apply_timeout: "timeout", cli: "cli"}, logger: "logger",
-                               options: {color: false}, target: "target"
+        it "is a failure" do
+          is_expected.to be_failure
         end
       end
 
-      it "throws :success with a string containing the standard output" do
-        is_expected.to eq "stdout"
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "describes the failure" do
+          is_expected.to match /`cli command target` failed: '.*mocked `cli command target` error'/
+        end
+      end
+    end
+
+    context "when the command experiences a permissions error" do
+      it_behaves_like "the command experiences an error",
+                      error_class: ::Errno::EACCES
+    end
+
+    context "when the command experiences an entry error" do
+      it_behaves_like "the command experiences an error",
+                      error_class: ::Errno::ENOENT
+    end
+
+    context "when the command experiences a timeout error" do
+      it_behaves_like "the command experiences an error",
+                      error_class: ::Mixlib::ShellOut::CommandTimeout
+    end
+
+    context "when the command exits with a nonzero value" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "command"
+
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a failure" do
+          is_expected.to be_failure
+        end
+      end
+
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "describes the failure" do
+          is_expected.to match /`cli command target` failed: '.+'/
+        end
+      end
+    end
+
+    context "when the command exits with a zero value" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand",
+                      command: "command",
+                      exit_code: 0
+
+      describe "the result" do
+        subject do
+          result
+        end
+
+        it "is a success" do
+          is_expected.to be_success
+        end
+      end
+
+      describe "the result's value" do
+        subject do
+          result.value
+        end
+
+        it "is the standard output of the command" do
+          is_expected.to eq "mocked `cli command target` output"
+        end
       end
     end
   end
