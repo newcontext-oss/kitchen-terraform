@@ -109,8 +109,16 @@ require "support/terraform/configurable_examples"
       end
     end
 
+    context "when the result of the directory creation function is a failure" do
+      include_context "Kitchen::Driver::Terraform::CreateDirectories"
+
+      it "raises an action failed error" do
+        is_expected.to raise_error ::Kitchen::ActionFailed, kind_of(::String)
+      end
+    end
+
     context "when the result of the workflow function is a failure" do
-      include_context "Kitchen::Driver::Terraform::Workflow"
+      include_context "Kitchen::Driver::Terraform"
 
       it "raises an action failed error" do
         is_expected.to raise_error ::Kitchen::ActionFailed, /driver workflow/
@@ -118,7 +126,7 @@ require "support/terraform/configurable_examples"
     end
 
     context "when the result of the workflow function is a success" do
-      include_context "Kitchen::Driver::Terraform::Workflow", failure: false
+      include_context "Kitchen::Driver::Terraform", failure: false
 
       it "does not raise an error" do
         is_expected.to_not raise_error
