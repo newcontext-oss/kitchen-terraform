@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "kitchen"
-require "support/raise_error_examples"
 require "support/terraform/configurable_context"
 require "terraform/configurable"
 
@@ -34,14 +33,6 @@ require "terraform/configurable"
     subject :plugin_version do described_class.instance_variable_get :@plugin_version end
 
     it "equals the gem version" do is_expected.to be ::Terraform::PROJECT_VERSION end
-  end
-
-  describe "#config_error" do
-    it_behaves_like "a user error has occurred" do
-      let :described_method do described_instance.config_error attr: attr, expected: "expected" end
-
-      let :message do "#{formatted_config} must be interpretable as expected" end
-    end
   end
 
   describe "#debug_logger" do
