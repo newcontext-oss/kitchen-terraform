@@ -19,7 +19,6 @@ require "kitchen/terraform/client"
 
 # Processes Terraform Client function options in to Terraform Command-Line Interface (CLI) flags.
 #
-# @see ::Kitchen::Terraform::Client::ProcessOptions::OPTIONS_FLAGS
 # @see https://www.terraform.io/docs/commands/index.html Terraform commands
 module ::Kitchen::Terraform::Client::ProcessOptions
   extend ::Dry::Monads::Either::Mixin
