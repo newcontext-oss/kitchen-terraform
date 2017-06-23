@@ -23,6 +23,8 @@ require "terraform/configurable"
 # The verifier utilizes the InSpec infrastructure testing framework to verify the behaviour and state of resources in
 # the Terraform state.
 #
+# InSpec profiles are assumed to be located in `test/integration/<suite-name>/`.
+#
 # === Configuration
 #
 # ==== Example .kitchen.yml snippet
