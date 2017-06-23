@@ -30,7 +30,7 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
   # @param group [::Hash] the group being verified.
   # @param options [::Hash] the Inspec::Runner's options.
   def self.call(group:, options:)
-    Maybe(group.dig(:port)).bind do |port|
+    Maybe(group[:port]).bind do |port|
       options.store "port", port
     end
   end

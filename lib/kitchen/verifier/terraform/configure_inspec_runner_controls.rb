@@ -32,7 +32,7 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
   # @param group [::Hash] the group being verified.
   # @param options [:Hash] the verifier's Inspec::Runner's options.
   def self.call(group:, options:)
-    Maybe(group.dig(:controls)).bind do |controls|
+    Maybe(group[:controls]).bind do |controls|
       options.store :controls, controls
     end
   end

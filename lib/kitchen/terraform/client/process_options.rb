@@ -74,7 +74,7 @@ module ::Kitchen::Terraform::Client::ProcessOptions
   def self.call(unprocessed_options:)
     List(unprocessed_options.to_a).fmap(&method(:Right)).typed(::Dry::Monads::Either).traverse do |member|
       member.bind do |key, value|
-        Maybe(::Kitchen::Terraform::Client::ProcessOptions::OPTIONS_FLAGS.dig(key)).bind do |processor|
+        Maybe(::Kitchen::Terraform::Client::ProcessOptions::OPTIONS_FLAGS[key]).bind do |processor|
           Right processor.call value: value
         end.or do
           Left ":#{key} is not a supported Terraform Client option"
