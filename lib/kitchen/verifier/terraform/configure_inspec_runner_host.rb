@@ -16,6 +16,15 @@
 
 require "kitchen/verifier/terraform"
 
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost = lambda do |hostname:, options:|
-  options.store "host", hostname
+# Configures the host for the Inspec::Runner used by the verifier to verify a group's host.
+#
+# @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb Inspec::Runner
+module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
+  # Invokes the function.
+  #
+  # @param hostname [::String] the hostname of a group's host.
+  # @param options [::Hash] the Inspec::Runner's options.
+  def self.call(hostname:, options:)
+    options.store "host", hostname
+  end
 end

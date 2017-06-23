@@ -16,6 +16,17 @@
 
 require "kitchen/verifier/terraform"
 
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend = lambda do |hostname:, options:|
-  hostname == "localhost" and options.store "backend", "local"
+# Configures the backend for the Inspec::Runner used by the verifier to verify a group's host.
+#
+# If the hostname is "localhost" then the existing backend is overwritten to be "local".
+#
+# @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb Inspec::Runner
+module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend
+  # Invokes the function.
+  #
+  # @param hostname [::String] the hostname being verified.
+  # @param options [::Hash] the verifier's Inspec::Runner options.
+  def self.call(hostname:, options:)
+    hostname == "localhost" and options.store "backend", "local"
+  end
 end

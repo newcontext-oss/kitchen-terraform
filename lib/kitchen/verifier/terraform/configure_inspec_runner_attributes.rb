@@ -17,7 +17,7 @@
 require "dry/monads"
 require "kitchen/verifier/terraform"
 
-# Configures InSpec profile attributes for the InSpec runner used by the verifier.
+# Configures the InSpec profile attributes for the Inspec::Runner used by the verifier to verify a group.
 #
 # Three different maps are merged to create the profile attributes.
 #
@@ -49,7 +49,7 @@ require "kitchen/verifier/terraform"
 #     "first_attribute_name" => "second_output_variable_value"
 #   }
 #
-# @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb InSpec runner
+# @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb Inspec::Runner
 # @see https://github.com/chef/kitchen-inspec/blob/master/lib/kitchen/verifier/inspec.rb kitchen-inspec verifier
 # @see https://www.inspec.io/docs/reference/profiles/ InSpec Profiles
 # @see https://www.terraform.io/docs/configuration/outputs.html Terraform output variables
@@ -87,7 +87,7 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
       end
       attributes
     end.to_either.or do |error|
-      Left "configuring InSpec runner attributes failed\n#{error}"
+      Left "configuring Inspec::Runner attributes failed\n#{error}"
     end
   end
 end

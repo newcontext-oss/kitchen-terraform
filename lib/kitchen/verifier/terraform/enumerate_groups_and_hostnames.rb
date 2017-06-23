@@ -23,7 +23,7 @@ require "kitchen/verifier/terraform"
 # variable which has a value of a string or array containing one or more hostnames; those hostnames will be enumerated
 # with the group.
 #
-# If a group omits +:hostnames: then the hostname +"localhost"+ will be enumerated with that group; this hostname will
+# If a group omits +:hostnames+ then the hostname +"localhost"+ will be enumerated with that group; this hostname will
 # cause the InSpec profile to be executed locally and enable verification of resources in the Terraform state without
 # the use of Secure Shell (SSH).
 #
