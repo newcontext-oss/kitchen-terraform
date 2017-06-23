@@ -20,7 +20,7 @@ require "terraform"
 require "terraform/debug_logger"
 require "terraform/project_version"
 
-# Behaviour for objects that extend ::Kitchen::Configurable
+# Miscellaneous behaviour for objects that extend ::Kitchen::Configurable.
 module ::Terraform::Configurable
   extend ::Forwardable
 
@@ -32,21 +32,11 @@ module ::Terraform::Configurable
     configurable_class.plugin_version ::Terraform::PROJECT_VERSION
   end
 
-  def config_error(attr:, expected:)
-    raise ::Kitchen::UserError, "#{formatted_config attr: attr} must be interpretable as #{expected}"
-  end
-
   def debug_logger
     @debug_logger ||= ::Terraform::DebugLogger.new logger: logger
   end
 
   def instance_pathname(filename:)
     ::File.join config.fetch(:kitchen_root), ".kitchen", "kitchen-terraform", instance.name, filename
-  end
-
-  private
-
-  def formatted_config(attr:)
-    "#{self.class}#{instance.to_str}#config[:#{attr}]"
   end
 end
