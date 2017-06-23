@@ -30,7 +30,7 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
   # @param group [::Hash] the group being verified.
   # @param options [::Hash] the Inspec::Runner's options.
   def self.call(group:, options:)
-    Maybe(group.dig(:username)).bind do |username|
+    Maybe(group[:username]).bind do |username|
       options.store "user", username
     end
   end
