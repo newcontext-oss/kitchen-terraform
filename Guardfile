@@ -14,7 +14,7 @@ group :red_green_refactor, halt_on_fail: true do
       watch "Gemfile.lock"
     end
 
-    guard :yard do
+    guard :yard, cli: "--reload" do
       watch /lib\/.+\.rb/
     end
 
