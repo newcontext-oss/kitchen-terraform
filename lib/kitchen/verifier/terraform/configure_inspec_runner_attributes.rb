@@ -80,7 +80,7 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
         [attributes, output]
       end
     end.fmap do |attributes, output|
-      Maybe(group.dig(:attributes)).bind do |group_attributes|
+      Maybe(group[:attributes]).bind do |group_attributes|
         group_attributes.each_pair do |attribute_name, output_name|
           attributes.store attribute_name.to_s, output.fetch(output_name.to_s).fetch("value")
         end
