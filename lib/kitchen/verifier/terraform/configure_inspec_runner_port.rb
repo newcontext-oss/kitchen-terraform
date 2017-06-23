@@ -14,9 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/verifier/terraform"
 
-# - the default `port` value is obtained from the verifier or the transport
-::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort = lambda do |group:, options:|
-  group.key? :port and options.store "port", group.fetch(:port)
+# Configures the port for the Inspec::Runner used by the verifier to verify a group.
+#
+# The default port is the transport's +:port+.
+#
+# @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb Inspec::Runner
+module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
+  extend ::Dry::Monads::Maybe::Mixin
+
+  # Invokes the function.
+  #
+  # @param group [::Hash] the group being verified.
+  # @param options [::Hash] the Inspec::Runner's options.
+  def self.call(group:, options:)
+    Maybe(group.dig(:port)).bind do |port|
+      options.store "port", port
+    end
+  end
 end

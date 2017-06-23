@@ -57,7 +57,7 @@ require "support/kitchen/terraform/client/execute_command_context"
         end
 
         it "describes the failure" do
-          is_expected.to match /configuring InSpec runner attributes failed.*terraform output/m
+          is_expected.to match /configuring Inspec::Runner attributes failed.*terraform output/m
         end
       end
     end
@@ -88,7 +88,7 @@ require "support/kitchen/terraform/client/execute_command_context"
         end
 
         it "describes the failure" do
-          is_expected.to match /configuring InSpec runner attributes failed.*\"value\"/m
+          is_expected.to match /configuring Inspec::Runner attributes failed.*\"value\"/m
         end
       end
     end
@@ -127,7 +127,7 @@ require "support/kitchen/terraform/client/execute_command_context"
         end
 
         it "describes the failure" do
-          is_expected.to match /configuring InSpec runner attributes failed.*\"not_output_name\"/m
+          is_expected.to match /configuring Inspec::Runner attributes failed.*\"not_output_name\"/m
         end
       end
     end

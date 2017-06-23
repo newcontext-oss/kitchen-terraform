@@ -16,6 +16,6 @@
 
 require "kitchen"
 
-# Namespace for kitchen-terraform
+# The namespace for kitchen-terraform.
 module ::Kitchen::Terraform
 end
