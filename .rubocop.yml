@@ -1,22 +1,36 @@
 AllCops:
   DefaultFormatter: clang
   DisplayCopNames: true
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.2
+Layout/IndentArray:
+  Enabled: false
+Layout/IndentHash:
+  Enabled: false
+  EnforcedStyle: align_braces
+Layout/IndentHeredoc:
+  Enabled: false
+Layout/MultilineBlockLayout:
+  Enabled: false
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
 Lint/AmbiguousOperator:
   Enabled: false
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
 Lint/NonLocalExitFromIterator:
   Enabled: false
+Metrics/AbcSize:
+  Enabled: false
 Metrics/BlockLength:
+  Enabled: false
+Metrics/ClassLength:
   Enabled: false
 Metrics/LineLength:
   Max: 120
+Metrics/MethodLength:
+  Enabled: false
 Metrics/ParameterLists:
   Enabled: false
-Style/AccessorMethodName:
-  Exclude:
-    - lib/terraform/command_factory.rb
 Style/AndOr:
   Enabled: false
 Style/BlockDelimiters:
@@ -27,14 +41,18 @@ Style/Lambda:
   EnforcedStyle: lambda
 Style/MultilineBlockChain:
   Enabled: false
+Style/MutableConstant:
+  Exclude:
+    - lib/terraform/project_version.rb
 Style/NegatedIf:
   Enabled: false
 Style/Not:
   Enabled: false
 Style/PercentLiteralDelimiters:
   Enabled: false
-Style/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space
+Style/RegexpLiteral:
+  AllowInnerSlashes: true
+  EnforcedStyle: slashes
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 Style/WordArray:
