@@ -18,11 +18,22 @@ require "dry-validation"
 require "kitchen"
 require "kitchen/terraform"
 
-::Kitchen::Terraform::DefineConfigAttribute = lambda do |attribute:, initialize_default_value:, plugin_class:, schema:|
-  plugin_class.required_config attribute do |_attribute, value, plugin|
-    ::Dry::Validation.Schema(&schema).call(value: value).messages.tap do |messages|
-      raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" if not messages.empty?
+# Defines a configuration attribute for a plugin class.
+#
+# @see http://dry-rb.org/gems/dry-validation/ DRY Validation
+module ::Kitchen::Terraform::DefineConfigAttribute
+  # Invokes the function.
+  #
+  # @param attribute [::Symbol] the name of the attribute.
+  # @param initialize_default_value [::Proc] a proc to lazily provide a default value.
+  # @param plugin_class [::Class] the class on which the attribute will be defined.
+  # @param schema [::Proc] a proc to define the validation schema of the attribute.
+  def self.call(attribute:, initialize_default_value:, plugin_class:, schema:)
+    plugin_class.required_config attribute do |_attribute, value, plugin|
+      ::Dry::Validation.Schema(&schema).call(value: value).messages.tap do |messages|
+        raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" if not messages.empty?
+      end
     end
+    plugin_class.default_config attribute, &initialize_default_value
   end
-  plugin_class.default_config attribute, &initialize_default_value
 end
