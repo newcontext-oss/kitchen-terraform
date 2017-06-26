@@ -6,11 +6,37 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
-## [1.0.0] - 2017-yy-zz
+## [1.0.0] - 2017-06-26
+
+### Added
+
+* Support for output varibales with spaces
 
 ### Changed
 
 * Dropped support for Terraform version 0.6
+
+* Dropped support for Ruby 2.1
+
+* Improved project documenation
+
+* Moved all provisioner configuration attributes to the driver
+
+* Dropped support for specifying the configuration attribute `variables`
+  in the literal `name=value` notation
+
+* Dropped support for the value of the output variable specified by
+  the configuration attribute `hostnames` being in CSV format
+
+* Renamed the configuration attribute `apply_timeout` to
+  `command_timeout`
+
+* Default the configuration attribute `cli` to `"terraform"`
+
+* Default the configuration attribute `color` to be based on the
+  association of the Test Kitchen process with a terminal emulator
+
+* Improved the engine for validating configuration attribute values
 
 ### Fixed
 
