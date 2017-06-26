@@ -226,14 +226,14 @@ require "kitchen/terraform/client/process_options"
           {
             var: {
               var_1_name: "var_1_value",
-              var_2_name: "var_2_value"
+              var_2_name: "var 2 value"
             }
           }
         end
 
         it_behaves_like "a flag is produced", flag: "-var='var_1_name=var_1_value'"
 
-        it_behaves_like "a flag is produced", flag: "-var='var_2_name=var_2_value'"
+        it_behaves_like "a flag is produced", flag: "-var='var_2_name=var 2 value'"
       end
 
       context "when the options associate :var_file with a array of objects" do
