@@ -26,7 +26,7 @@ module ::Kitchen::Terraform::Client::ProcessOptions
   extend ::Dry::Monads::List::Mixin
   extend ::Dry::Monads::Try::Mixin
 
-  self::OPTIONS_FLAGS = {
+  OPTIONS_FLAGS = {
     color: lambda do |value:|
       "-no-color" if not value
     end,
