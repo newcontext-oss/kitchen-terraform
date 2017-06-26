@@ -19,8 +19,21 @@ require "support/kitchen/terraform/define_config_attribute_context"
 ::RSpec.shared_examples "config attribute :color" do
   include_context "Kitchen::Terraform::DefineConfigAttribute", attribute: :color do
     context "when the config omits :color" do
-      it_behaves_like "a default value is used",
-                      default_value: true
+      context "when the Test Kitchen process is not associated with a terminal device" do
+        before do
+          allow(::Kitchen).to receive(:tty?).with(no_args).and_return false
+        end
+
+        it_behaves_like "a default value is used", default_value: false
+      end
+
+      context "when the Test Kitchen process is associated with a terminal device" do
+        before do
+          allow(::Kitchen).to receive(:tty?).with(no_args).and_return true
+        end
+
+        it_behaves_like "a default value is used", default_value: true
+      end
     end
 
     context "when the config associates :color with a nonboolean" do

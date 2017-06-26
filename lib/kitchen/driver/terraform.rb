@@ -56,6 +56,16 @@ require "terraform/configurable"
 #
 # Default:: +"terraform"+
 #
+# ===== color
+#
+# Description:: Toggle to enable or disable colored output from the Terraform CLI commands.
+#
+# Type:: Boolean
+#
+# Status:: Optional
+#
+# Default:: +true+ if the Test Kitchen process is associated with a terminal device (tty); +false+ if it is not.
+#
 # ===== command_timeout
 #
 # Description:: The number of seconds to wait for the Terraform CLI commands to finish.
@@ -65,16 +75,6 @@ require "terraform/configurable"
 # Status:: Optional
 #
 # Default:: +600+
-#
-# ===== color
-#
-# Description:: Toggle to enable or disable colored output from the Terraform CLI commands.
-#
-# Type:: Boolean
-#
-# Status:: Optional
-#
-# Default:: +true+
 #
 # ===== directory
 #
@@ -177,7 +177,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   ::Kitchen::Terraform::DefineConfigAttribute.call(
     attribute: :color,
     initialize_default_value: lambda do |_plugin|
-      true
+      ::Kitchen.tty?
     end,
     plugin_class: self,
     schema: lambda do
