@@ -19,11 +19,11 @@ require "support/dry/monads/either_matchers"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform::VerifyClientVersion do
   describe ".call" do
-    shared_examples "the version is deprecated" do |version:|
-      subject do
-        described_class.call version: version
-      end
+    subject do
+      described_class.call version: version
+    end
 
+    shared_examples "the version is deprecated" do
       it do
         is_expected.to result_in_success
           .with_the_value "Terraform version #{version} is deprecated and will not be supported by kitchen-terraform " \
@@ -31,11 +31,7 @@ require "support/dry/monads/either_matchers"
       end
     end
 
-    shared_examples "the version is unsupported" do |version:|
-      subject do
-        described_class.call version: version
-      end
-
+    shared_examples "the version is unsupported" do
       it do
         is_expected.to result_in_failure
           .with_the_value "Terraform version #{version} is not supported; supported Terraform versions are 0.7 " \
@@ -43,34 +39,50 @@ require "support/dry/monads/either_matchers"
       end
     end
 
-    shared_examples "the version is supported" do |version:|
-      subject do
-        described_class.call version: version
-      end
-
+    shared_examples "the version is supported" do
       it do
         is_expected.to result_in_success.with_the_value "Terraform version #{version} is supported"
       end
     end
 
     context "when the version is 0.10" do
-      it_behaves_like "the version is unsupported", version: 0.10
+      let :version do
+        0.10
+      end
+
+      it_behaves_like "the version is unsupported"
     end
 
     context "when the version is 0.9" do
-      it_behaves_like "the version is supported", version: 0.9
+      let :version do
+        0.9
+      end
+
+      it_behaves_like "the version is supported"
     end
 
     context "when the version is 0.8" do
-      it_behaves_like "the version is deprecated", version: 0.8
+      let :version do
+        0.8
+      end
+
+      it_behaves_like "the version is deprecated"
     end
 
     context "when the version is 0.7" do
-      it_behaves_like "the version is deprecated", version: 0.7
+      let :version do
+        0.7
+      end
+
+      it_behaves_like "the version is deprecated"
     end
 
     context "when the version is 0.6" do
-      it_behaves_like "the version is unsupported", version: 0.6
+      let :version do
+        0.6
+      end
+
+      it_behaves_like "the version is unsupported"
     end
   end
 end
