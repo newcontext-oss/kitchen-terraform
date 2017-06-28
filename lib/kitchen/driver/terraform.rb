@@ -20,6 +20,8 @@ require "kitchen/terraform/client/output"
 require "kitchen/terraform/client/plan"
 require "kitchen/terraform/client/version"
 require "kitchen/terraform/define_config_attribute"
+require "kitchen/terraform/define_integer_config_attribute"
+require "kitchen/terraform/define_string_config_attribute"
 require "terraform/configurable"
 
 # The kitchen-terraform driver is the bridge between Test Kitchen and Terraform. It manages the state of the configured
@@ -152,27 +154,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   no_parallel_for
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :cli,
-    initialize_default_value: lambda do |_plugin|
-      "terraform"
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :str?
-    end
-  )
+  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :cli,
+                                                         plugin_class: self do
+    "terraform"
+  end
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :command_timeout,
-    initialize_default_value: lambda do |_plugin|
-      600
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :int?
-    end
-  )
+  ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :command_timeout,
+                                                          plugin_class: self do
+    600
+  end
 
   ::Kitchen::Terraform::DefineConfigAttribute.call(
     attribute: :color,
@@ -185,49 +175,25 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     end
   )
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :directory,
-    initialize_default_value: lambda do |plugin|
-      plugin[:kitchen_root]
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :str?
-    end
-  )
+  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :directory,
+                                                         plugin_class: self do |plugin|
+    plugin[:kitchen_root]
+  end
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :parallelism,
-    initialize_default_value: lambda do |_plugin|
-      10
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :int?
-    end
-  )
+  ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :parallelism,
+                                                          plugin_class: self do
+    10
+  end
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :plan,
-    initialize_default_value: lambda do |plugin|
-      plugin.instance_pathname filename: "terraform.tfplan"
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :str?
-    end
-  )
+  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :plan,
+                                                         plugin_class: self do |plugin|
+    plugin.instance_pathname filename: "terraform.tfplan"
+  end
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :state,
-    initialize_default_value: lambda do |plugin|
-      plugin.instance_pathname filename: "terraform.tfstate"
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :str?
-    end
-  )
+  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :state,
+                                                         plugin_class: self do |plugin|
+    plugin.instance_pathname filename: "terraform.tfstate"
+  end
 
   ::Kitchen::Terraform::DefineConfigAttribute.call(
     attribute: :variable_files,
