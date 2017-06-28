@@ -16,6 +16,7 @@
 
 require "dry/monads"
 require "kitchen/driver/terraform/workflow"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/driver/terraform/workflow_context"
 require "support/kitchen/instance_context"
 require "support/kitchen/terraform/client/execute_command_context"
@@ -24,137 +25,61 @@ require "support/kitchen/terraform/client/execute_command_context"
   describe ".call" do
     include_context ::Kitchen::Instance
 
-    let :result do
-      described_class.call config: driver.send(:config), logger: []
+    subject do
+      described_class.call config: driver.send(:config),
+                           logger: []
     end
 
     before do
       driver.finalize_config! instance
     end
 
-    context "when the validate command fails" do
+    context "when the validate command results in failure" do
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /terraform validate/
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /terraform validate/
       end
     end
 
-    context "when the get command fails" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate", exit_code: 0
+    context "when the get command results in failure" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate",
+                                                                    exit_code: 0
 
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /terraform get/
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /terraform get/
       end
     end
 
-    context "when the plan command fails" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate", exit_code: 0
+    context "when the plan command results in failure" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate",
+                                                                    exit_code: 0
 
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get", exit_code: 0
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get",
+                                                                    exit_code: 0
 
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "plan"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /terraform plan/
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /terraform plan/
       end
     end
 
-    context "when the apply command fails" do
+    context "when the apply command results in failure" do
       include_context "Kitchen::Driver::Terraform::Workflow"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /driver workflow was a failure.*terraform apply/m
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /driver workflow was a failure.*terraform apply/m
       end
     end
 
-    context "when all commands succeed" do
+    context "when all commands result in success" do
       include_context "Kitchen::Driver::Terraform::Workflow", failure: false
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "is the command output" do
-          is_expected.to eq "driver workflow was a success"
-        end
+      it do
+        is_expected.to result_in_success.with_the_value "driver workflow was a success"
       end
     end
   end

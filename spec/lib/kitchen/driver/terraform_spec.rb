@@ -16,6 +16,7 @@
 
 require "json"
 require "kitchen/driver/terraform"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/driver/terraform/config_attribute_cli_examples"
 require "support/kitchen/driver/terraform/config_attribute_color_examples"
 require "support/kitchen/driver/terraform/config_attribute_command_timeout_examples"
@@ -135,56 +136,25 @@ require "support/terraform/configurable_examples"
   end
 
   describe "#output" do
-    let :result do
+    subject do
       described_instance.output
     end
 
-    context "when the result of the output function is a failure" do
+    context "when the output function results in failure" do
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /terraform output/
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /terraform output/
       end
     end
 
-    context "when the result of the output function is a success" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output", exit_code: 0, output: ::JSON.generate("key" => "value")
+    context "when the output function results in success" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
+                                                                    exit_code: 0,
+                                                                    output: ::JSON.generate("key" => "value")
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "is the Terraform client output parsed as JSON" do
-          is_expected.to eq "key" => "value"
-        end
+      it do
+        is_expected.to result_in_success.with_the_value "key" => "value"
       end
     end
   end

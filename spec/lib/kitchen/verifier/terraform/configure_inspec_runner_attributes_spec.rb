@@ -16,6 +16,7 @@
 
 require "kitchen/terraform/client"
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/instance_context"
 require "support/kitchen/terraform/client/execute_command_context"
 
@@ -27,81 +28,47 @@ require "support/kitchen/terraform/client/execute_command_context"
       {}
     end
 
-    let :result do
+    before do
+      driver.finalize_config! instance
+    end
+
+    subject do
       described_class.call driver: driver,
                            group: group,
                            terraform_state: "terraform_state"
     end
 
-    before do
-      driver.finalize_config! instance
-    end
+    context "when the Terraform output command results in failure" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output"
 
-    context "when the Terraform output command result is a failure" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output"
-
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /configuring Inspec::Runner attributes failed.*terraform output/m
-        end
+      it do
+        is_expected.to result_in_failure
+          .with_the_value /configuring Inspec::Runner attributes failed.*terraform output/m
       end
     end
 
-    context "when the Terraform output command result's value is unexpected" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output",
-                      exit_code: 0,
-                      output: ::JSON.generate(
-                        "name" => {
-                          "unexpected" => "value"
-                        }
-                      )
+    context "when the value of the Terraform output command result is unexpected" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
+                                                                    exit_code: 0,
+                                                                    output: ::JSON.generate(
+                                                                      "name" => {
+                                                                        "unexpected" => "value"
+                                                                      }
+                                                                    )
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /configuring Inspec::Runner attributes failed.*\"value\"/m
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /configuring Inspec::Runner attributes failed.*\"value\"/m
       end
     end
 
-    context "when the group attribute output names do not match the Terraform output command result's value" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output",
-                      exit_code: 0,
-                      output: ::JSON.generate(
-                        "output_name" => {
-                          "value" => "output_name value"
-                        }
-                      )
+    context "when the group attribute output names do not match the value of the Terraform output command result" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
+                                                                    exit_code: 0,
+                                                                    output: ::JSON.generate(
+                                                                      "output_name" => {
+                                                                        "value" => "output_name value"
+                                                                      }
+                                                                    )
 
       let :group do
         {
@@ -111,36 +78,20 @@ require "support/kitchen/terraform/client/execute_command_context"
         }
       end
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /configuring Inspec::Runner attributes failed.*\"not_output_name\"/m
-        end
+      it do
+        is_expected.to result_in_failure
+          .with_the_value /configuring Inspec::Runner attributes failed.*\"not_output_name\"/m
       end
     end
 
-    context "when the group attribute output names match the Terraform output command result's value" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output",
-                      exit_code: 0,
-                      output: ::JSON.generate(
-                        "output_name" => {
-                          "value" => "output_name value"
-                        }
-                      )
+    context "when the group attribute output names match the value of the Terraform output command result" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
+                                                                    exit_code: 0,
+                                                                    output: ::JSON.generate(
+                                                                      "output_name" => {
+                                                                        "value" => "output_name value"
+                                                                      }
+                                                                    )
 
       let :group do
         {
@@ -150,26 +101,10 @@ require "support/kitchen/terraform/client/execute_command_context"
         }
       end
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "is the attribute hash" do
-          is_expected.to eq "attribute_name" => "output_name value",
-                            "output_name" => "output_name value",
-                            "terraform_state" => "terraform_state"
-        end
+      it do
+        is_expected.to result_in_success.with_the_value "attribute_name" => "output_name value",
+                                                        "output_name" => "output_name value",
+                                                        "terraform_state" => "terraform_state"
       end
     end
   end

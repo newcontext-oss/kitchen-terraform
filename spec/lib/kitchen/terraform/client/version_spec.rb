@@ -15,91 +15,42 @@
 # limitations under the License.
 
 require "kitchen/terraform/client/version"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/client/execute_command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::Version do
   describe ".call" do
-    let :result do
+    subject do
       described_class.call cli: "cli",
                            logger: [],
                            timeout: 1234
     end
 
-    context "when the Terraform version command result is a failure" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "version"
+    context "when the Terraform version command results in failure" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "version"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /Unable to parse Terraform client version output.*cli version/m
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /Unable to parse Terraform client version output.*cli version/m
       end
     end
 
-    context "when the Terraform version command result's value is unexpected" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "version",
-                      exit_code: 0
+    context "when the value of the Terraform version command result does not match the expected format of 'vX.Y'" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "version",
+                                                                    exit_code: 0
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /Unable to parse Terraform client version output.*output did not match 'vX.Y'/m
-        end
+      it do
+        is_expected.to result_in_failure
+          .with_the_value /Unable to parse Terraform client version output.*output did not match 'vX.Y'/m
       end
     end
 
-    context "when the output matches the expected format" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "version",
-                      exit_code: 0,
-                      output: "Terraform v1.2.3\n\nSupplementary text!"
+    context "when the value of the Terraform version command result does match the expected format of 'vX.Y'" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "version",
+                                                                    exit_code: 0,
+                                                                    output: "Terraform v1.2.3\n\nSupplementary text!"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "is a float representing the client's major and minor versions" do
-          is_expected.to eq 1.2
-        end
+      it "should result in success with the value X.Y" do
+        is_expected.to result_in_success.with_the_value 1.2
       end
     end
   end

@@ -15,11 +15,12 @@
 # limitations under the License.
 
 require "kitchen/terraform/client/apply"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/client/execute_command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::Apply do
   describe ".call" do
-    let :result do
+    subject do
       described_class.call cli: "cli",
                            logger: [],
                            options: {},
@@ -27,54 +28,20 @@ require "support/kitchen/terraform/client/execute_command_context"
                            timeout: 1234
     end
 
-    context "when the command execution is a failure" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "apply"
+    context "when the command execution results in failure" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "apply"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /cli apply.*-input=false/
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /cli apply.*-input=false/
       end
     end
 
-    context "when the command execution is a success" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "apply",
-                      exit_code: 0
+    context "when the command execution results in success" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "apply",
+                                                                    exit_code: 0
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "is the output" do
-          is_expected.to match /output/
-        end
+      it do
+        is_expected.to result_in_success.with_the_value /output/
       end
     end
   end

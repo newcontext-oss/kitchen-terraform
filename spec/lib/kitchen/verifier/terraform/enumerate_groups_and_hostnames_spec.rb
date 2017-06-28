@@ -16,6 +16,7 @@
 
 require "json"
 require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/client/execute_command_context"
 require "support/kitchen/instance_context"
 
@@ -29,12 +30,15 @@ require "support/kitchen/instance_context"
 
     let :passed_block do
       lambda do |block|
-        described_class.call driver: driver, groups: [group], &block
+        described_class.call driver: driver,
+                             groups: [group],
+                             &block
       end
     end
 
     let :result do
-      described_class.call driver: driver, groups: [group] do |group:, hostname:|
+      described_class.call driver: driver,
+                           groups: [group] do |group:, hostname:|
       end
     end
 
@@ -51,27 +55,18 @@ require "support/kitchen/instance_context"
         end
 
         it "is called with the group and 'localhost'" do
-          is_expected.to yield_with_args group: group, hostname: "localhost"
+          is_expected.to yield_with_args group: group,
+                                         hostname: "localhost"
         end
       end
 
-      describe "the result" do
+      describe "the function" do
         subject do
           result
         end
 
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the success" do
-          is_expected.to eq "finished enumeration of groups and hostnames"
+        it do
+          is_expected.to result_in_success.with_the_value "finished enumeration of groups and hostnames"
         end
       end
     end
@@ -95,37 +90,26 @@ require "support/kitchen/instance_context"
         end
       end
 
-      describe "the result" do
+      describe "the function" do
         subject do
           result
         end
 
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /terraform output/
+        it do
+          is_expected.to result_in_failure.with_the_value /terraform output/
         end
       end
     end
 
     context "when the group associates :hostnames with an invalid Terraform output name" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output",
-                      exit_code: 0,
-                      output: ::JSON.generate(
-                        "hostnames" => {
-                          "type" => "string",
-                          "value" => "hostname"
-                        }
-                      )
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
+                                                                    exit_code: 0,
+                                                                    output: ::JSON.generate(
+                                                                      "hostnames" => {
+                                                                        "type" => "string",
+                                                                        "value" => "hostname"
+                                                                      }
+                                                                    )
 
       let :group do
         {
@@ -143,37 +127,26 @@ require "support/kitchen/instance_context"
         end
       end
 
-      describe "the result" do
+      describe "the function" do
         subject do
           result
         end
 
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to eq "key not found: \"invalid\""
+        it do
+          is_expected.to result_in_failure.with_the_value "key not found: \"invalid\""
         end
       end
     end
 
     context "when the group associates :hostnames with a valid Terraform output name" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output",
-                      exit_code: 0,
-                      output: ::JSON.generate(
-                        "hostnames" => {
-                          "type" => "string",
-                          "value" => "hostname"
-                        }
-                      )
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
+                                                                    exit_code: 0,
+                                                                    output: ::JSON.generate(
+                                                                      "hostnames" => {
+                                                                        "type" => "string",
+                                                                        "value" => "hostname"
+                                                                      }
+                                                                    )
 
       let :group do
         {
@@ -191,23 +164,13 @@ require "support/kitchen/instance_context"
         end
       end
 
-      describe "the result" do
+      describe "the function" do
         subject do
           result
         end
 
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the success" do
-          is_expected.to eq "finished enumeration of groups and hostnames"
+        it do
+          is_expected.to result_in_failure.with_the_value "finished enumeration of groups and hostnames"
         end
       end
     end

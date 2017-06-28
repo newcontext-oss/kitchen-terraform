@@ -16,6 +16,7 @@
 
 require "mixlib/shellout"
 require "kitchen/terraform/client/execute_command"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/client/execute_command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::ExecuteCommand do
@@ -24,7 +25,7 @@ require "support/kitchen/terraform/client/execute_command_context"
       {}
     end
 
-    let :result do
+    subject do
       described_class.call cli: "cli",
                            command: "command",
                            logger: [],
@@ -40,117 +41,48 @@ require "support/kitchen/terraform/client/execute_command_context"
         }
       end
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /:unsupported/
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /:unsupported/
       end
     end
 
     shared_examples "the command experiences an error" do |error_class:|
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "command",
-                      error: true,
-                      error_class: error_class
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "command",
+                                                                    error: true,
+                                                                    error_class: error_class
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /`cli command target` failed: '.*mocked `cli command target` error'/
-        end
+      it do
+        is_expected.to result_in_failure
+          .with_the_value /`cli command target` failed: '.*mocked `cli command target` error'/
       end
     end
 
     context "when the command experiences a permissions error" do
-      it_behaves_like "the command experiences an error",
-                      error_class: ::Errno::EACCES
+      it_behaves_like "the command experiences an error", error_class: ::Errno::EACCES
     end
 
     context "when the command experiences an entry error" do
-      it_behaves_like "the command experiences an error",
-                      error_class: ::Errno::ENOENT
+      it_behaves_like "the command experiences an error", error_class: ::Errno::ENOENT
     end
 
     context "when the command experiences a timeout error" do
-      it_behaves_like "the command experiences an error",
-                      error_class: ::Mixlib::ShellOut::CommandTimeout
+      it_behaves_like "the command experiences an error", error_class: ::Mixlib::ShellOut::CommandTimeout
     end
 
     context "when the command exits with a nonzero value" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "command"
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "command"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /`cli command target` failed: '.+'/
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /`cli command target` failed: '.+'/
       end
     end
 
     context "when the command exits with a zero value" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "command",
-                      exit_code: 0
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "command",
+                                                                    exit_code: 0
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "is the standard output of the command" do
-          is_expected.to eq "mocked `cli command target` output"
-        end
+      it do
+        is_expected.to result_in_success.with_the_value "mocked `cli command target` output"
       end
     end
   end

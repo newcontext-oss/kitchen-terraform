@@ -15,79 +15,37 @@
 # limitations under the License.
 
 require "kitchen/terraform/client/process_options"
+require "support/dry/monads/either_matchers"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::ProcessOptions do
   describe ".call" do
     context "when an unsupported option is processed" do
-      let :result do
+      subject do
         described_class.call unprocessed_options: {
-          unsupported_option: "unsupported_option"
-        }
+                               unsupported_option: "unsupported_option"
+                             }
       end
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /:unsupported_option is not a supported Terraform Client option/m
-        end
+      it do
+        is_expected.to result_in_failure
+          .with_the_value /:unsupported_option is not a supported Terraform Client option/m
       end
     end
 
     context "when all options are processed" do
-      let :result do
+      subject do
         described_class.call unprocessed_options: options
       end
 
       shared_examples "a flag is produced" do |flag:|
-        it_behaves_like "the result is a success"
-
-        describe "the result's value" do
-          subject do
-            result.value
-          end
-
-          it "includes #{flag}" do
-            is_expected.to include flag
-          end
+        it do
+          is_expected.to result_in_success.with_the_value including flag
         end
       end
 
       shared_examples "no flag is produced" do
-        it_behaves_like "the result is a success"
-
-        describe "the result's value" do
-          subject do
-            result.value
-          end
-
-          it "is empty" do
-            is_expected.to be_empty
-          end
-        end
-      end
-
-      shared_examples "the result is a success" do
-        describe "the result" do
-          subject do
-            result
-          end
-
-          it "is a success" do
-            is_expected.to be_success
-          end
+        it do
+          is_expected.to result_in_success.with_the_value []
         end
       end
 
