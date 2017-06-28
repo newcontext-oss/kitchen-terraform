@@ -14,26 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "fileutils"
-require "kitchen/driver/terraform"
 
-# Creates directories on the filesystem.
-module ::Kitchen::Driver::Terraform::CreateDirectories
-  extend ::Dry::Monads::Either::Mixin
-  extend ::Dry::Monads::Try::Mixin
+::RSpec.shared_context "Kitchen::Terraform::CreateDirectories" do |failure: true|
+  let :file_utils do
+    class_double(::FileUtils).as_stubbed_const
+  end
 
-  # Invokes the function.
-  #
-  # @param directories [::Array<::String>, ::String] the list of directories to create.
-  # @return [::Dry::Monads::Either] the result of the function.
-  def self.call(directories:)
-    Try ::SystemCallError do
-      ::FileUtils.makedirs directories
-    end.to_either.bind do
-      Right "Created directories #{directories}"
-    end.or do |error|
-      Left error.to_s
+  before do
+    allow(file_utils).to receive(:makedirs).with including kind_of ::String do
+      failure and raise ::SystemCallError, "mocked error"
     end
   end
 end

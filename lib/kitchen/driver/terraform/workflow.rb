@@ -19,9 +19,11 @@ require "kitchen/driver/terraform"
 require "kitchen/terraform/client/apply"
 require "kitchen/terraform/client/get"
 require "kitchen/terraform/client/validate"
+require "kitchen/terraform/create_directories"
 
-# Validates Terraform configuration, updates Terraform dependencies, and applies a constructive or destructive Terraform
-# execution plan to a Terraform state.
+# Creates the directories to contain the root Terraform module, the Terraform execution plan, and the Terraform state,
+# then validates the Terraform configuration, updates any Terraform dependencies, and applies a constructive or
+# destructive Terraform execution plan to the Terraform state.
 module ::Kitchen::Driver::Terraform::Workflow
   extend ::Dry::Monads::Either::Mixin
 
@@ -35,28 +37,50 @@ module ::Kitchen::Driver::Terraform::Workflow
   # @see ::Kitchen::Terraform::Client::Get
   # @see ::Kitchen::Terraform::Client::Plan
   # @see ::Kitchen::Terraform::Client::Validate
+  # @see ::Kitchen::Terraform::CreateDirectories
   def self.call(config:, destroy: false, logger:)
-    ::Kitchen::Terraform::Client::Validate.call(
-      cli: config.fetch(:cli), directory: config.fetch(:directory), logger: logger,
-      timeout: config.fetch(:command_timeout)
-    ).bind do
-      ::Kitchen::Terraform::Client::Get.call cli: config.fetch(:cli), logger: logger,
+    ::Kitchen::Terraform::CreateDirectories.call(
+      directories: [
+        config.fetch(:directory),
+        ::File.dirname(config.fetch(:plan)),
+        ::File.dirname(config.fetch(:state))
+      ]
+    ).fmap do |created_directories|
+      logger.debug created_directories
+    end.bind do
+      ::Kitchen::Terraform::Client::Validate.call cli: config.fetch(:cli),
+                                                  directory: config.fetch(:directory),
+                                                  logger: logger,
+                                                  timeout: config.fetch(:command_timeout)
+    end.bind do
+      ::Kitchen::Terraform::Client::Get.call cli: config.fetch(:cli),
+                                             logger: logger,
                                              root_module: config.fetch(:directory),
                                              timeout: config.fetch(:command_timeout)
     end.bind do
       ::Kitchen::Terraform::Client::Plan.call cli: config.fetch(:cli),
-                                              logger: logger, options: {
-                                                color: config.fetch(:color), destroy: destroy, out: config.fetch(:plan),
-                                                parallelism: config.fetch(:parallelism), state: config.fetch(:state),
-                                                var: config.fetch(:variables), var_file: config.fetch(:variable_files)
-                                              }, root_module: config.fetch(:directory),
+                                              logger: logger,
+                                              options: {
+                                                color: config.fetch(:color),
+                                                destroy: destroy,
+                                                out: config.fetch(:plan),
+                                                parallelism: config.fetch(:parallelism),
+                                                state: config.fetch(:state),
+                                                var: config.fetch(:variables),
+                                                var_file: config.fetch(:variable_files)
+                                              },
+                                              root_module: config.fetch(:directory),
                                               timeout: config.fetch(:command_timeout)
     end.bind do
-      ::Kitchen::Terraform::Client::Apply.call cli: config.fetch(:cli), logger: logger,
+      ::Kitchen::Terraform::Client::Apply.call cli: config.fetch(:cli),
+                                               logger: logger,
                                                options: {
-                                                 color: config.fetch(:color), parallelism: config.fetch(:parallelism),
+                                                 color: config.fetch(:color),
+                                                 parallelism: config.fetch(:parallelism),
                                                  state_out: config.fetch(:state)
-                                               }, plan: config.fetch(:plan), timeout: config.fetch(:command_timeout)
+                                               },
+                                               plan: config.fetch(:plan),
+                                               timeout: config.fetch(:command_timeout)
     end.fmap do
       "driver workflow was a success"
     end.or do |error|
