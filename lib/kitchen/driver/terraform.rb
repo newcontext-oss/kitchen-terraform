@@ -253,8 +253,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   include ::Terraform::Configurable
 
-  # The driver creates the directories to contain the root module, the execution plan, and the state, then invokes its
-  # workflow in a constructive manner.
+  # The driver invokes its workflow in a constructive manner.
   #
   # @example
   #   `kitchen create suite-name`
@@ -263,22 +262,17 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @param _state [::Hash] the mutable instance and driver state; this parameter is ignored.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [::Dry::Monads::Either] the result of the workflow function.
-  # @see ::Kitchen::Driver::Terraform::CreateDirectories
   # @see ::Kitchen::Driver::Terraform::Workflow
   def create(_state)
-    self.class::CreateDirectories.call(
-      directories: [config.fetch(:directory), ::File.dirname(config.fetch(:plan)), ::File.dirname(config.fetch(:state))]
-    ).fmap do |created_directories|
-      logger.debug created_directories
-    end.bind do
-      self.class::Workflow.call config: config, logger: logger
-    end.or do |failure|
+    self.class::Workflow.call(
+      config: config,
+      logger: logger
+    ).or do |failure|
       raise ::Kitchen::ActionFailed, failure
     end
   end
 
-  # The driver creates the directories to contain the root module, the execution plan, and the state, then invokes its
-  # workflow in a destructive manner.
+  # The driver invokes its workflow in a destructive manner.
   #
   # @example
   #   `kitchen destroy suite-name`
@@ -287,16 +281,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @param _state [::Hash] the mutable instance and driver state; this parameter is ignored.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [::Dry::Monads::Either] the result of the action.
-  # @see ::Kitchen::Driver::Terraform::CreateDirectories
   # @see ::Kitchen::Driver::Terraform::Workflow
   def destroy(_state)
-    self.class::CreateDirectories.call(
-      directories: [config.fetch(:directory), ::File.dirname(config.fetch(:plan)), ::File.dirname(config.fetch(:state))]
-    ).fmap do |created_directories|
-      logger.debug created_directories
-    end.bind do
-      self.class::Workflow.call config: config, destroy: true, logger: logger
-    end.or do |failure|
+    self.class::Workflow.call(
+      config: config,
+      destroy: true,
+      logger: logger
+    ).or do |failure|
       raise ::Kitchen::ActionFailed, failure
     end
   end
@@ -331,6 +322,5 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 end
 
-require "kitchen/driver/terraform/create_directories"
 require "kitchen/driver/terraform/workflow"
 require "kitchen/driver/terraform/verify_client_version"

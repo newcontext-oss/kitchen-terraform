@@ -14,9 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "support/kitchen/terraform/create_directories_context"
 require "support/kitchen/terraform/client/execute_command_context"
 
 ::RSpec.shared_context "Kitchen::Driver::Terraform::Workflow" do |failure: true|
+  include_context "Kitchen::Terraform::CreateDirectories", failure: false
+
   include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate", exit_code: 0
 
   include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get", exit_code: 0

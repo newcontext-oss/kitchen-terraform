@@ -20,6 +20,7 @@ require "support/dry/monads/either_matchers"
 require "support/kitchen/driver/terraform/workflow_context"
 require "support/kitchen/instance_context"
 require "support/kitchen/terraform/client/execute_command_context"
+require "support/kitchen/terraform/create_directories_context"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform::Workflow do
   describe ".call" do
@@ -27,14 +28,24 @@ require "support/kitchen/terraform/client/execute_command_context"
 
     subject do
       described_class.call config: driver.send(:config),
-                           logger: []
+                           logger: driver.send(:logger)
     end
 
     before do
       driver.finalize_config! instance
     end
 
+    context "when the create directories function results in failure" do
+      include_context "Kitchen::Terraform::CreateDirectories"
+
+      it do
+        is_expected.to result_in_failure.with_the_value kind_of ::String
+      end
+    end
+
     context "when the validate command results in failure" do
+      include_context "Kitchen::Terraform::CreateDirectories", failure: false
+
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate"
 
       it do
@@ -43,6 +54,8 @@ require "support/kitchen/terraform/client/execute_command_context"
     end
 
     context "when the get command results in failure" do
+      include_context "Kitchen::Terraform::CreateDirectories", failure: false
+
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate",
                                                                     exit_code: 0
 
@@ -54,6 +67,8 @@ require "support/kitchen/terraform/client/execute_command_context"
     end
 
     context "when the plan command results in failure" do
+      include_context "Kitchen::Terraform::CreateDirectories", failure: false
+
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate",
                                                                     exit_code: 0
 

@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/driver/terraform/create_directories"
+require "kitchen/terraform/create_directories"
 require "support/dry/monads/either_matchers"
-require "support/kitchen/driver/terraform/create_directories_context"
+require "support/kitchen/terraform/create_directories_context"
 
-::RSpec.describe ::Kitchen::Driver::Terraform::CreateDirectories do
+::RSpec.describe ::Kitchen::Terraform::CreateDirectories do
   describe ".call" do
     subject do
       described_class.call directories: [
@@ -28,7 +28,7 @@ require "support/kitchen/driver/terraform/create_directories_context"
     end
 
     context "when the creation of directories does experience an error" do
-      include_context "Kitchen::Driver::Terraform::CreateDirectories"
+      include_context "Kitchen::Terraform::CreateDirectories"
 
       it do
         is_expected.to result_in_failure.with_the_value /error/
@@ -36,7 +36,7 @@ require "support/kitchen/driver/terraform/create_directories_context"
     end
 
     context "when the creation of directories does not experience an error" do
-      include_context "Kitchen::Driver::Terraform::CreateDirectories", failure: false
+      include_context "Kitchen::Terraform::CreateDirectories", failure: false
 
       it do
         is_expected.to result_in_success.with_the_value "Created directories [\"directory_1\", \"directory_2\"]"
