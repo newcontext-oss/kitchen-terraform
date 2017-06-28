@@ -22,6 +22,10 @@ require "support/helpers"
 
   configuration.disable_monkey_patching!
 
+  configuration.expect_with :rspec do |expect_configuration|
+    expect_configuration.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
+
   configuration.fail_fast = true
 
   configuration.formatter = :documentation

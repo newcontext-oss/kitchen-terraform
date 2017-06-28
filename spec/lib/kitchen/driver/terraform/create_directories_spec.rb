@@ -15,63 +15,31 @@
 # limitations under the License.
 
 require "kitchen/driver/terraform/create_directories"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/driver/terraform/create_directories_context"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform::CreateDirectories do
   describe ".call" do
-    let :result do
+    subject do
       described_class.call directories: [
                              "directory_1",
                              "directory_2"
                            ]
     end
 
-    context "when the directory creation experiences an error" do
+    context "when the creation of directories does experience an error" do
       include_context "Kitchen::Driver::Terraform::CreateDirectories"
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a failure" do
-          is_expected.to be_failure
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the failure" do
-          is_expected.to match /error/
-        end
+      it do
+        is_expected.to result_in_failure.with_the_value /error/
       end
     end
 
-    context "when the creation is a success" do
-      include_context "Kitchen::Driver::Terraform::CreateDirectories",
-                      failure: false
+    context "when the creation of directories does not experience an error" do
+      include_context "Kitchen::Driver::Terraform::CreateDirectories", failure: false
 
-      describe "the result" do
-        subject do
-          result
-        end
-
-        it "is a success" do
-          is_expected.to be_success
-        end
-      end
-
-      describe "the result's value" do
-        subject do
-          result.value
-        end
-
-        it "describes the created directories" do
-          is_expected.to eq "Created directories [\"directory_1\", \"directory_2\"]"
-        end
+      it do
+        is_expected.to result_in_success.with_the_value "Created directories [\"directory_1\", \"directory_2\"]"
       end
     end
   end
