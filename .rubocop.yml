@@ -55,5 +55,7 @@ Style/RegexpLiteral:
   EnforcedStyle: slashes
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+Style/SymbolArray:
+  EnforcedStyle: brackets
 Style/WordArray:
   EnforcedStyle: brackets
