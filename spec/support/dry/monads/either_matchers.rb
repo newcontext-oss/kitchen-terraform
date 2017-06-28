@@ -14,30 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec::Matchers.define :result_in_failure do
-  match do |result|
-    result.failure? and value.nil? or values_match? value, result.value
-  end
-
-  chain :with_the_value, :value
-
-  failure_message do |result|
-    ::String.new("expected result\n  #{result}\nto be a failure").tap do |message|
-      value.nil? or message.concat " with the value\n  #{value}"
+[
+  :failure,
+  :success
+].each do |status|
+  ::RSpec::Matchers.define "result_in_#{status}" do
+    match do |result|
+      result.send "#{status}?" and value.nil? or values_match? value, result.value
     end
-  end
-end
 
-::RSpec::Matchers.define :result_in_success do
-  match do |result|
-    result.success? and value.nil? or values_match? value, result.value
-  end
+    chain :with_the_value, :value
 
-  chain :with_the_value, :value
-
-  failure_message do |result|
-    ::String.new("expected result\n  #{result}\nto be a success").tap do |message|
-      value.nil? or message.concat " with the value\n  #{value}"
+    failure_message do |result|
+      ::String.new("expected result\n  #{result}\nto be a #{status}").tap do |message|
+        value.nil? or message.concat " with the value\n  #{value}"
+      end
     end
   end
 end
