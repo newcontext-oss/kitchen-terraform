@@ -56,4 +56,5 @@ deploy:
     branch: master
     tags: true
     repo: newcontext-oss/kitchen-terraform
+    rvm: 2.4.1
   skip_cleanup: true
