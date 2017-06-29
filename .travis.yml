@@ -19,7 +19,7 @@ cache:
 before_install:
   - gem update --system
   - gem --version
-  - curl --output terraform_$TERRAFORM_VERSION.zip https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_$TERRAFORM_VERSION_linux_amd64.zip
+  - curl --output terraform_$TERRAFORM_VERSION.zip https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_$TERRAFORM_VERSION_linux_amd64.zip --verbose
 install:
   - bundle install --jobs=3 --retry=3 --without=development
   - bundle install --gemfile examples/docker_provider/Gemfile --jobs=3 --retry=3 --without=development
