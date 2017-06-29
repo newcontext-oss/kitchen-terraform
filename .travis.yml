@@ -16,34 +16,29 @@ rvm:
   - 2.2.7
 cache:
   - bundler
+before_install:
+  - gem update --system
+  - gem --version
+  - curl --output terraform_$TERRAFORM_VERSION.zip https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_$TERRAFORM_VERSION_linux_amd64.zip
+install:
+  - bundle install --jobs=3 --retry=3 --without=development
+  - bundle install --gemfile examples/docker_provider/Gemfile --jobs=3 --retry=3 --without=development
+  - mkdir -p terraform/$TERRAFORM_VERSION
+  - unzip terraform_$TERRAFORM_VERSION.zip -d terraform/$TERRAFORM_VERSION
+before_script:
+  - bundle exec bundle-audit check --update
+script:
+  - bundle exec rspec --require support/coverage
+  - bundle exec rubocop --display-cop-names --format clang
+  - cd examples/docker_provider
+  - PATH="../../terraform/$TERRAFORM_VERSION:$PATH" bundle exec kitchen test --log-level debug
+  - cd -
+after_success:
+  - bundle exec codeclimate-test-reporter
 jobs:
   include:
-    - stage: Unit Test
-      before_install:
-        - gem update --system
-        - gem --version
-      install:
-        - bundle install --jobs=3 --retry=3 --without=development
-      before_script:
-        - bundle exec bundle-audit check --update
-      script:
-        - bundle exec rspec --require support/coverage
-        - bundle exec rubocop --display-cop-names --format clang
-      after_success:
-        - bundle exec codeclimate-test-reporter
-    - stage: Integration Test
-      before_install:
-        - gem update --system
-        - gem --version
-        - curl --output terraform_$TERRAFORM_VERSION.zip https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_$TERRAFORM_VERSION_linux_amd64.zip
-        - mkdir -p terraform/$TERRAFORM_VERSION
-      install:
-        - unzip terraform_$TERRAFORM_VERSION.zip -d terraform/$TERRAFORM_VERSION
-        - bundle install --gemfile examples/docker_provider/Gemfile --jobs=3 --retry=3 --without=development
-      script:
-        - cd examples/docker_provider
-        - PATH="../../terraform/$TERRAFORM_VERSION:$PATH" bundle exec kitchen test --log-level debug
-    - stage: Deploy
+    - stage: deploy
+      rvm: 2.4.1
       before_deploy:
         - gem update --system
         - gem --version
@@ -56,7 +51,6 @@ jobs:
         gem: kitchen-terraform
         on:
           branch: master
-          tags: true
           repo: newcontext-oss/kitchen-terraform
-          rvm: 2.4.1
+          tags: true
         skip_cleanup: true
