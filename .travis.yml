@@ -30,14 +30,11 @@ jobs:
       sudo: required
       services:
         - docker
-      before_install:
-        - gem update --system
-        - gem --version
+      install:
+        - bundle install --gemfile examples/docker_provider/Gemfile --jobs=3 --retry=3 --without=development
         - curl --output terraform_0.9.8.zip https://releases.hashicorp.com/terraform/0.9.8/terraform_0.9.8_linux_amd64.zip --verbose
         - curl --output terraform_0.8.8.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip --verbose
         - curl --output terraform_0.7.13.zip https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip --verbose
-      install:
-        - bundle install --gemfile examples/docker_provider/Gemfile --jobs=3 --retry=3 --without=development
         - mkdir -p terraform/0.9.8 && unzip terraform_0.9.8.zip -d terraform/0.9.8
         - mkdir -p terraform/0.8.8 && unzip terraform_0.8.8.zip -d terraform/0.8.8
         - mkdir -p terraform/0.7.13 && unzip terraform_0.7.13.zip -d terraform/0.7.13
@@ -48,6 +45,7 @@ jobs:
         - PATH="../../terraform/0.8.8:$PATH" bundle exec kitchen test --log-level debug
         - rm -rf .kitchen/
         - PATH="../../terraform/0.7.13:$PATH" bundle exec kitchen test --log-level debug
+      after_success: []
     - stage: deploy
       rvm: 2.4.1
       dist: trusty
