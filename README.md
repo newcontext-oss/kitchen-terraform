@@ -73,7 +73,7 @@ various [Terraform providers].
 [Test Kitchen]: http://kitchen.ci/index.html
 [driver]: http://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Driver/Terraform
 [examples directory]: https://github.com/newcontext-oss/kitchen-terraform/examples/
-[gem documentation]: http://www.rubydoc.info/gems/kitchen-terraform/toplevel
+[gem documentation]: http://www.rubydoc.info/gems/kitchen-terraform/index
 [installed with Bundler]: https://bundler.io/index.html#getting-started
 [provisioner]: http://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Provisioner/Terraform
 [verifier]: http://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Verifier/Terraform
