@@ -4,33 +4,59 @@ language: ruby
 env:
   global:
     secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
-# REVIEW: https://www.ruby-lang.org/en/downloads/branches/
-rvm:
-  - 2.4.1
-  - 2.3.4
-  - 2.2.7
 cache:
   - bundler
-before_install:
-  - gem update --system
-  - gem --version
-install:
-  - bundle install --jobs=3 --retry=3
-  - bundle update --jobs=3 --retry=3
-script:
-  - bundle exec bundle-audit check --update
-  - bundle exec rspec
-  - bundle exec rubocop
-after_success:
-  - "[ $TRAVIS_RUBY_VERSION = '2.4.1' ] && bundle exec codeclimate-test-reporter"
 jobs:
   include:
+    - stage: unit
+      rvm: 2.4.1
+      before_install:
+        - gem update --system
+        - gem --version
+      install:
+        - bundle install --jobs=3 --retry=3
+        - bundle update --jobs=3 --retry=3
+      script:
+        - bundle exec bundle-audit check --update
+        - bundle exec rspec
+        - bundle exec rubocop
+      after_success:
+        - bundle exec codeclimate-test-reporter
+    - stage: unit
+      rvm: 2.3.4
+      before_install:
+        - gem update --system
+        - gem --version
+      install:
+        - bundle install --jobs=3 --retry=3
+        - bundle update --jobs=3 --retry=3
+      script:
+        - bundle exec bundle-audit check --update
+        - bundle exec rspec
+        - bundle exec rubocop
+      after_success:
+        - bundle exec codeclimate-test-reporter
+    - stage: unit
+      rvm: 2.2.7
+      before_install:
+        - gem update --system
+        - gem --version
+      install:
+        - bundle install --jobs=3 --retry=3
+        - bundle update --jobs=3 --retry=3
+      script:
+        - bundle exec bundle-audit check --update
+        - bundle exec rspec
+        - bundle exec rubocop
+      after_success:
+        - bundle exec codeclimate-test-reporter
     - stage: integration
       sudo: required
       services:
         - docker
       env:
         - PATH="terraform:$PATH"
+      rvm: 2.4.1
       install:
         - cd examples/docker_provider
         - bundle install --jobs=3 --retry=3 --without=development
@@ -39,13 +65,13 @@ jobs:
         - mkdir terraform && unzip terraform.zip -d terraform
       script:
         - bundle exec kitchen test --log-level debug
-      after_success: []
     - stage: integration
       sudo: required
       services:
         - docker
       env:
         - PATH="terraform:$PATH"
+      rvm: 2.4.1
       install:
         - cd examples/docker_provider
         - bundle install --jobs=3 --retry=3 --without=development
@@ -54,13 +80,13 @@ jobs:
         - mkdir terraform && unzip terraform.zip -d terraform
       script:
         - bundle exec kitchen test --log-level debug
-      after_success: []
     - stage: integration
       sudo: required
       services:
         - docker
       env:
         - PATH="terraform:$PATH"
+      rvm: 2.4.1
       install:
         - cd examples/docker_provider
         - bundle install --jobs=3 --retry=3 --without=development
@@ -69,12 +95,12 @@ jobs:
         - mkdir terraform && unzip terraform.zip -d terraform
       script:
         - bundle exec kitchen test --log-level debug
-      after_success: []
     - stage: deploy
-      install: []
+      rvm: 2.4.1
       script: echo "Deploying to RubyGems.org..."
-      after_success: []
       before_deploy:
+        - gem update --system
+        - gem --version
         - openssl aes-256-cbc -K $encrypted_8cfc0ec71995_key -iv $encrypted_8cfc0ec71995_iv -in certs/private_key.pem.enc -out certs/private_key.pem -d
         - gem cert --add certs/public_cert.pem
       deploy:
