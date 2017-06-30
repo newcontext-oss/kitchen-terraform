@@ -71,9 +71,10 @@ jobs:
         - bundle exec kitchen test --log-level debug
       after_success: []
     - stage: deploy
+      install: []
+      script: []
+      after_success: []
       before_deploy:
-        - gem update --system
-        - gem --version
         - openssl aes-256-cbc -K $encrypted_8cfc0ec71995_key -iv $encrypted_8cfc0ec71995_iv -in certs/private_key.pem.enc -out certs/private_key.pem -d
         - gem cert --add certs/public_cert.pem
       deploy:
