@@ -72,7 +72,7 @@ jobs:
       after_success: []
     - stage: deploy
       install: []
-      script: []
+      script: echo "Deploying to RubyGems.org..."
       after_success: []
       before_deploy:
         - openssl aes-256-cbc -K $encrypted_8cfc0ec71995_key -iv $encrypted_8cfc0ec71995_iv -in certs/private_key.pem.enc -out certs/private_key.pem -d
