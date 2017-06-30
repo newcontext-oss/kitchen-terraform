@@ -3,6 +3,7 @@ AllCops:
   DisplayCopNames: true
   Exclude:
     - bin/*
+    - vendor/*
   TargetRubyVersion: 2.2
 Layout/IndentArray:
   Enabled: false
