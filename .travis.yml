@@ -25,7 +25,7 @@ after_success:
   - "[ $TRAVIS_RUBY_VERSION = '2.4.1' ] && bundle exec codeclimate-test-reporter"
 jobs:
   include:
-    - stage: Terraform v0.9.8 Integration
+    - stage: integration
       sudo: required
       services:
         - docker
@@ -40,7 +40,7 @@ jobs:
       script:
         - bundle exec kitchen test --log-level debug
       after_success: []
-    - stage: Terraform v0.8.8 Integration
+    - stage: integration
       sudo: required
       services:
         - docker
@@ -55,7 +55,7 @@ jobs:
       script:
         - bundle exec kitchen test --log-level debug
       after_success: []
-    - stage: Terraform v0.7.13 Integration
+    - stage: integration
       sudo: required
       services:
         - docker
