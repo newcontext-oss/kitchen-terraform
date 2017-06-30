@@ -19,7 +19,7 @@ jobs:
       script:
         - bundle exec bundle-audit check --update
         - bundle exec rspec
-        - bundle exec rubocop
+        - bundle exec rubocop --config=.rubocop.yml
       after_success:
         - bundle exec codeclimate-test-reporter
     - stage: unit
@@ -33,7 +33,7 @@ jobs:
       script:
         - bundle exec bundle-audit check --update
         - bundle exec rspec
-        - bundle exec rubocop
+        - bundle exec rubocop --config=.rubocop.yml
     - stage: unit
       rvm: 2.2.7
       before_install:
@@ -45,7 +45,7 @@ jobs:
       script:
         - bundle exec bundle-audit check --update
         - bundle exec rspec
-        - bundle exec rubocop
+        - bundle exec rubocop --config=.rubocop.yml
     - stage: integration
       sudo: required
       services:
