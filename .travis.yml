@@ -34,8 +34,6 @@ jobs:
         - bundle exec bundle-audit check --update
         - bundle exec rspec
         - bundle exec rubocop
-      after_success:
-        - bundle exec codeclimate-test-reporter
     - stage: unit
       rvm: 2.2.7
       before_install:
@@ -48,8 +46,6 @@ jobs:
         - bundle exec bundle-audit check --update
         - bundle exec rspec
         - bundle exec rubocop
-      after_success:
-        - bundle exec codeclimate-test-reporter
     - stage: integration
       sudo: required
       services:
