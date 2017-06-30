@@ -1,10 +1,12 @@
 dist: trusty
 sudo: false
 language: ruby
-# REVIEW: https://www.ruby-lang.org/en/downloads/branches/
 env:
   global:
     secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
+  matrix:
+    - PATH="bin:terraform:$PATH"
+# REVIEW: https://www.ruby-lang.org/en/downloads/branches/
 rvm:
   - 2.4.1
   - 2.3.4
@@ -15,41 +17,56 @@ before_install:
   - gem update --system
   - gem --version
 install:
-  - bundle install --jobs=3 --retry=3
+  - bundle install --binstubs=bin --jobs=3 --retry=3
+  - bundle update --jobs=3 --retry=3
 script:
-  - bundle exec bundle-audit check --update
-  - bundle exec rspec
-  - bundle exec rubocop
+  - bundle-audit check --update
+  - rspec
+  - rubocop
 after_success:
   - "[ $TRAVIS_RUBY_VERSION = '2.4.1' ] && bundle exec codeclimate-test-reporter"
 jobs:
   include:
-    - stage: integration
-      rvm: 2.4.1
-      dist: trusty
+    - stage: Terraform v0.9.8 Integration
       sudo: required
       services:
         - docker
       install:
-        - bundle install --gemfile examples/docker_provider/Gemfile --jobs=3 --retry=3 --without=development
-        - curl --output terraform_0.9.8.zip https://releases.hashicorp.com/terraform/0.9.8/terraform_0.9.8_linux_amd64.zip --verbose
-        - curl --output terraform_0.8.8.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip --verbose
-        - curl --output terraform_0.7.13.zip https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip --verbose
-        - mkdir -p terraform/0.9.8 && unzip terraform_0.9.8.zip -d terraform/0.9.8
-        - mkdir -p terraform/0.8.8 && unzip terraform_0.8.8.zip -d terraform/0.8.8
-        - mkdir -p terraform/0.7.13 && unzip terraform_0.7.13.zip -d terraform/0.7.13
-      script:
         - cd examples/docker_provider
-        - PATH="../../terraform/0.9.8:$PATH" bundle exec kitchen test --log-level debug
-        - rm -rf .kitchen/
-        - PATH="../../terraform/0.8.8:$PATH" bundle exec kitchen test --log-level debug
-        - rm -rf .kitchen/
-        - PATH="../../terraform/0.7.13:$PATH" bundle exec kitchen test --log-level debug
+        - bundle install --binstubs --jobs=3 --retry=3 --without=development
+        - bundle update --jobs=3 --retry=3
+        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.9.8/terraform_0.9.8_linux_amd64.zip
+        - mkdir terraform && unzip terraform.zip -d terraform
+      script:
+        - kitchen test --log-level debug
+      after_success: []
+    - stage: Terraform v0.8.8 Integration
+      sudo: required
+      services:
+        - docker
+      install:
+        - cd examples/docker_provider
+        - bundle install --jobs=3 --retry=3 --without=development
+        - bundle update --jobs=3 --retry=3
+        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip
+        - mkdir terraform && unzip terraform.zip -d terraform
+      script:
+        - kitchen test --log-level debug
+      after_success: []
+    - stage: Terraform v0.7.13 Integration
+      sudo: required
+      services:
+        - docker
+      install:
+        - cd examples/docker_provider
+        - bundle install --jobs=3 --retry=3 --without=development
+        - bundle update --jobs=3 --retry=3
+        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip
+        - mkdir terraform && unzip terraform.zip -d terraform
+      script:
+        - kitchen test --log-level debug
       after_success: []
     - stage: deploy
-      rvm: 2.4.1
-      dist: trusty
-      sudo: false
       before_deploy:
         - gem update --system
         - gem --version
