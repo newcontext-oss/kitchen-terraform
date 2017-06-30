@@ -97,6 +97,7 @@ jobs:
         - bundle exec kitchen test --log-level debug
     - stage: deploy
       rvm: 2.4.1
+      install: skip
       script: echo "Deploying to RubyGems.org..."
       before_deploy:
         - gem update --system
