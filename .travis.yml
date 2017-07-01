@@ -19,8 +19,10 @@ after_success:
 jobs:
   include:
     - stage: style
+      before_script: skip
       script:
         - bundle exec rubocop --config=.rubocop.yml
+      after_success: skip
     - stage: integration
       sudo: required
       services:
@@ -33,8 +35,10 @@ jobs:
         - mkdir terraform
         - unzip terraform.zip -d terraform
       bundler_args: --without=development
+      before_script: skip
       script:
         - bundle exec kitchen test --log-level debug
+      after_success: skip
     - stage: integration
       sudo: required
       services:
@@ -47,8 +51,10 @@ jobs:
         - mkdir terraform
         - unzip terraform.zip -d terraform
       bundler_args: --without=development
+      before_script: skip
       script:
         - bundle exec kitchen test --log-level debug
+      after_success: skip
     - stage: integration
       sudo: required
       services:
@@ -61,11 +67,15 @@ jobs:
         - mkdir terraform
         - unzip terraform.zip -d terraform
       bundler_args: --without=development
+      before_script: skip
       script:
         - bundle exec kitchen test --log-level debug
+      after_success: skip
     - stage: deploy
       install: skip
-      script: echo "Deploying to RubyGems.org..."
+      before_script: skip
+      script: skip
+      after_success: skip
       before_deploy:
         - openssl aes-256-cbc -K $encrypted_8cfc0ec71995_key -iv $encrypted_8cfc0ec71995_iv -in certs/private_key.pem.enc -out certs/private_key.pem -d
         - gem cert --add certs/public_cert.pem
