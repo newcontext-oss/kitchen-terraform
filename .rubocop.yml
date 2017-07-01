@@ -2,8 +2,8 @@ AllCops:
   DefaultFormatter: clang
   DisplayCopNames: true
   Exclude:
-    - bin/*
-    - vendor/*
+    - bin/**/*
+    - vendor/**/*
   TargetRubyVersion: 2.2
 Layout/IndentArray:
   Enabled: false
