@@ -20,7 +20,7 @@ jobs:
   include:
     - stage: style
       script:
-        - bundle exec rubocop
+        - bundle exec rubocop --config=.rubocop.yml
     - stage: integration
       sudo: required
       services:
