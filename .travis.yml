@@ -10,9 +10,6 @@ rvm:
   - 2.4.0
   - 2.3.3
   - 2.2.6
-before_install:
-  - gem update --system
-  - gem --version
 before_script:
   - bundle exec bundle-audit check --update
 script:
@@ -22,9 +19,6 @@ after_success:
 jobs:
   include:
     - stage: style
-      before_install:
-        - gem update --system
-        - gem --version
       script:
         - bundle exec rubocop
     - stage: integration
@@ -34,8 +28,6 @@ jobs:
       env:
         - PATH="terraform:$PATH"
       before_install:
-        - gem update --system
-        - gem --version
         - cd examples/docker_provider
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.9.10/terraform_0.9.10_linux_amd64.zip
         - mkdir terraform
@@ -50,8 +42,6 @@ jobs:
       env:
         - PATH="terraform:$PATH"
       before_install:
-        - gem update --system
-        - gem --version
         - cd examples/docker_provider
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip
         - mkdir terraform
@@ -66,8 +56,6 @@ jobs:
       env:
         - PATH="terraform:$PATH"
       before_install:
-        - gem update --system
-        - gem --version
         - cd examples/docker_provider
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip
         - mkdir terraform
@@ -79,8 +67,6 @@ jobs:
       install: skip
       script: echo "Deploying to RubyGems.org..."
       before_deploy:
-        - gem update --system
-        - gem --version
         - openssl aes-256-cbc -K $encrypted_8cfc0ec71995_key -iv $encrypted_8cfc0ec71995_iv -in certs/private_key.pem.enc -out certs/private_key.pem -d
         - gem cert --add certs/public_cert.pem
       deploy:
