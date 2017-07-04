@@ -8,6 +8,10 @@ major version 0.y.z will maintain a stable public interface.
 
 ## [1.0.1] - 2017-07-03
 
+### Added
+
+* David Begin joined the gem specification authors
+
 ### Fixed
 
 * Corrected release date for 1.0.0 in the Change Log
