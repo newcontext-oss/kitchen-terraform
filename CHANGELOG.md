@@ -18,7 +18,7 @@ major version 0.y.z will maintain a stable public interface.
 
 ### Added
 
-* Support for output varibales with spaces
+* Support for output variables with spaces
 
 ### Changed
 
