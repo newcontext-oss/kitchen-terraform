@@ -16,11 +16,13 @@ major version 0.y.z will maintain a stable public interface.
 
 * Corrected broken GitHub links in the Read Me (thanks [@davidbegin])
 
+* Add missing thanks in 1.0.0
+
 ## [1.0.0] - 2017-07-01
 
 ### Added
 
-* Support for output variables with spaces
+* Support for output variables with spaces (thanks [@jbussdieker])
 
 ### Changed
 
