@@ -14,6 +14,8 @@ major version 0.y.z will maintain a stable public interface.
 
 * Added missing diff link for 1.0.0 in the Change Log
 
+* Corrected broken GitHub links in the Read Me (thanks [@davidbegin])
+
 ## [1.0.0] - 2017-07-01
 
 ### Added
@@ -286,6 +288,7 @@ major version 0.y.z will maintain a stable public interface.
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott
+[@davidbegin]: https://github.com/davidbegin
 [@errygg]: https://github.com/errygg
 [@esword]: https://github.com/esword
 [@fivetwentysix]: https://github.com/fivetwentysix
