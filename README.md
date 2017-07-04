@@ -62,7 +62,7 @@ Refer to the [examples directory] for example Terraform projects using
 various [Terraform providers].
 
 [Bundler]: https://bundler.io/index.html
-[Getting Started README]: https://github.com/newcontext-oss/kitchen-terraform/examples/aws_provider/getting_started.md
+[Getting Started README]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/examples/aws_provider/getting_started.md
 [Ruby Gem]: http://guides.rubygems.org/what-is-a-gem/index.html
 [Ruby]: https://www.ruby-lang.org/en/index.html
 [Terraform configuration]: https://www.terraform.io/docs/configuration/index.html
@@ -72,7 +72,7 @@ various [Terraform providers].
 [Test Kitchen configuration]: https://docs.chef.io/config_yml_kitchen.html
 [Test Kitchen]: http://kitchen.ci/index.html
 [driver]: http://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Driver/Terraform
-[examples directory]: https://github.com/newcontext-oss/kitchen-terraform/examples/
+[examples directory]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/examples
 [gem documentation]: http://www.rubydoc.info/gems/kitchen-terraform/index
 [installed with Bundler]: https://bundler.io/index.html#getting-started
 [provisioner]: http://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Provisioner/Terraform
