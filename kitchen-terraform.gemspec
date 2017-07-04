@@ -9,6 +9,7 @@ require "terraform/project_version.rb"
   specification.authors = [
     "Aaron Lane",
     "Clay Thomas",
+    "David Begin",
     "Erik R. Rygg",
     "Ewa Czechowska",
     "John Engelman",
