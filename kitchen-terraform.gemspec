@@ -37,21 +37,13 @@ require "terraform/project_version.rb"
 
   specification.license = "Apache-2.0"
 
-  specification.add_development_dependency "bundler-audit", "~> 0.5"
-
   specification.add_development_dependency "codeclimate-test-reporter", "~> 1.0"
 
   specification.add_development_dependency "guard", "~> 2.14"
 
   specification.add_development_dependency "guard-bundler", "~> 2.1"
 
-  specification.add_development_dependency "guard-bundler-audit", "~> 0.1"
-
   specification.add_development_dependency "guard-rspec", "~> 4.7"
-
-  specification.add_development_dependency "guard-rubocop", "~> 1.2"
-
-  specification.add_development_dependency "guard-rubycritic", "~> 2.9"
 
   specification.add_development_dependency "guard-yard", "~> 2.2"
 
@@ -60,8 +52,6 @@ require "terraform/project_version.rb"
   specification.add_development_dependency "pry-coolline", "~> 0.2"
 
   specification.add_development_dependency "rspec", "~> 3.4"
-
-  specification.add_development_dependency "rubocop", "~> 0.40"
 
   specification.add_development_dependency "travis", "~> 1.8"
 

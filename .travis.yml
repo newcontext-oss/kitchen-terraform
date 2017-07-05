@@ -6,76 +6,67 @@ env:
     secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
 cache:
   - bundler
-rvm:
-  - 2.4.0
-  - 2.3.3
-  - 2.2.6
-before_script:
-  - bundle exec bundle-audit check --update
-script:
-  - bundle exec rspec
-after_success:
-  - "[ $TRAVIS_RUBY_VERSION = '2.4.0' ] && bundle exec codeclimate-test-reporter"
 jobs:
   include:
-    - stage: style
-      before_script: skip
-      script:
-        - bundle exec rubocop --config=.rubocop.yml
-      after_success: []
+    - stage: "unit"
+      rvm: 2.4.0
+      script: "bundle exec rspec"
+      after_success: "bundle exec codeclimate-test-reporter"
+    - stage: "unit"
+      rvm: 2.3.3
+      script: "bundle exec rspec"
+    - stage: "unit"
+      rvm: 2.2.6
+      script: "bundle exec rspec"
     - stage: integration
       sudo: required
       services:
         - docker
       env:
         - PATH="terraform:$PATH"
+      rvm: 2.4.0
       before_install:
         - cd examples/docker_provider
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.9.10/terraform_0.9.10_linux_amd64.zip
         - mkdir terraform
         - unzip terraform.zip -d terraform
       bundler_args: --without=development
-      before_script: skip
       script:
         - bundle exec kitchen test --log-level debug
-      after_success: []
     - stage: integration
       sudo: required
       services:
         - docker
       env:
         - PATH="terraform:$PATH"
+      rvm: 2.4.0
       before_install:
         - cd examples/docker_provider
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip
         - mkdir terraform
         - unzip terraform.zip -d terraform
       bundler_args: --without=development
-      before_script: skip
       script:
         - bundle exec kitchen test --log-level debug
-      after_success: []
     - stage: integration
       sudo: required
       services:
         - docker
       env:
         - PATH="terraform:$PATH"
+      rvm: 2.4.0
       before_install:
         - cd examples/docker_provider
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip
         - mkdir terraform
         - unzip terraform.zip -d terraform
       bundler_args: --without=development
-      before_script: skip
       script:
         - bundle exec kitchen test --log-level debug
-      after_success: []
     - stage: deploy
       install: skip
-      before_script: skip
       script: skip
-      after_success: []
+      rvm: 2.4.0
       before_deploy:
         - openssl aes-256-cbc -K $encrypted_8cfc0ec71995_key -iv $encrypted_8cfc0ec71995_iv -in certs/private_key.pem.enc -out certs/private_key.pem -d
         - gem cert --add certs/public_cert.pem
