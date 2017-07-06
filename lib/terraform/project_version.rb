@@ -15,5 +15,5 @@
 # limitations under the License.
 
 module Terraform
-  PROJECT_VERSION = "1.0.1".freeze
+  PROJECT_VERSION = "1.0.2".freeze
 end
