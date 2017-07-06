@@ -97,6 +97,8 @@ Edit the `.kitchen.yml`:
 ---
 driver:
   name: terraform
+  variable_files:
+    - testing.tfvars
 ```
 
 Now let's add the provisioner. The provisioner we will use is also
@@ -106,11 +108,11 @@ called `terraform`.
 ---
 driver:
   name: terraform
+  variable_files:
+    - testing.tfvars
 
 provisioner:
   name: terraform
-  variable_files:
-    - testing.tfvars
 ```
 
 Now, we need to add in a platform. Although our terraform config will
@@ -120,11 +122,11 @@ determine what OS we use, we need to include at least one value here.
 ---
 driver:
   name: terraform
+  variable_files:
+    - testing.tfvars  
 
 provisioner:
   name: terraform
-  variable_files:
-    - testing.tfvars
 
 platforms:
   - name: ubuntu
@@ -139,11 +141,11 @@ of your AWS keypair - wherever you keep it on your workstation.
 ---
 driver:
   name: terraform
+  variable_files:
+    - testing.tfvars  
 
 provisioner:
   name: terraform
-  variable_files:
-    - testing.tfvars
 
 platforms:
   - name: ubuntu
@@ -161,11 +163,11 @@ laid out in your inspec files.
 ---
 driver:
   name: terraform
+  variable_files:
+    - testing.tfvars
 
 provisioner:
   name: terraform
-  variable_files:
-    - testing.tfvars
 
 platforms:
   - name: ubuntu
@@ -227,11 +229,11 @@ And, last, let's add a test suite to `.kitchen.yml`:
 ---
 driver:
   name: terraform
+  variable_files:
+    - testing.tfvars  
 
 provisioner:
   name: terraform
-  variable_files:
-    - testing.tfvars
 
 platforms:
   - name: ubuntu
