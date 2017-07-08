@@ -263,17 +263,17 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  codeclimate-test-reporter!
-  guard!
-  guard-bundler!
-  guard-rspec!
-  guard-yard!
+  codeclimate-test-reporter (~> 1.0)!
+  guard (~> 2.14)!
+  guard-bundler (~> 2.1)!
+  guard-rspec (~> 4.7)!
+  guard-yard (~> 2.2)!
   kitchen-terraform!
-  pry!
-  pry-coolline!
-  rspec!
-  travis!
-  yard!
+  pry (~> 0.10)!
+  pry-coolline (~> 0.2)!
+  rspec (~> 3.4)!
+  travis (~> 1.8)!
+  yard (~> 0.9)!
 
 BUNDLED WITH
    1.15.1
