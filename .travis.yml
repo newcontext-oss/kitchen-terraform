@@ -10,14 +10,14 @@ jobs:
   include:
     - stage: "unit"
       rvm: 2.4.0
-      script: "bundle exec rspec"
+      script: "bundle exec rspec --backtrace"
       after_success: "bundle exec codeclimate-test-reporter"
     - stage: "unit"
       rvm: 2.3.3
-      script: "bundle exec rspec"
+      script: "bundle exec rspec --backtrace"
     - stage: "unit"
       rvm: 2.2.6
-      script: "bundle exec rspec"
+      script: "bundle exec rspec --backtrace"
     - stage: integration
       sudo: required
       services:
