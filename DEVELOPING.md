@@ -13,9 +13,9 @@
 ## Download, Install and run tests
 
 1. Clone the kitchen-terraform repository:
-   `git clone git@github.com:newcontext/kitchen-terraform.git`
+   `git clone git@github.com:newcontext-oss/kitchen-terraform.git`
 1. Download and install the [required dependencies]
-1. Run `bundle install --trust-policy MediumSecurity`
+1. Run `bundle install`
 1. In a separate terminal you can run `bundle exec guard`
 1. Please get familiar with [the tests] and features
 1. Begin coding!
