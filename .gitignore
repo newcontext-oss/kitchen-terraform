@@ -3,7 +3,7 @@
 **/.kitchen.local.yml
 **/.kitchen/
 **/.terraform/
-**/Gemfile.lock
+examples/*/Gemfile.lock
 **/inspec.lock
 *.gem
 .yardoc/
