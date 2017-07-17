@@ -16,6 +16,13 @@ major version 0.y.z will maintain a stable public interface.
 
 * RSpec produces backtraces for failures in Travis CI
 
+### Changed
+
+* The integration tests use Terraform version 0.9.11 instead of version
+  0.9.10
+
+* The integration tests display the Terraform versions
+
 ### Fixed
 
 * The Getting Started guide uses kitchen-terraform 1.0 configuration
