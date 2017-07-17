@@ -6,6 +6,25 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
+## [1.0.2] - 2017-07-16
+
+### Added
+
+* The Bundler Gemfile.lock is committed to enable Code Climate's
+  bundler-audit engine and to simplify testing and releasing this gem
+  with Travis CI
+
+* RSpec produces backtraces for failures in Travis CI
+
+### Fixed
+
+* The Getting Started guide uses kitchen-terraform 1.0 configuration
+  attributes (thanks [@davidbegin])
+
+* The Developing guide uses the new GitHub organization
+
+* The Developing guide drops reference to gem trust policies
+
 ## [1.0.1] - 2017-07-05
 
 ### Added
@@ -291,6 +310,7 @@ major version 0.y.z will maintain a stable public interface.
 [0.7.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.6.1...v0.7.0
 [1.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.7.0...v1.0.0
 [1.0.1]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.0...v1.0.1
+[1.0.2]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.1...v1.0.2
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott
