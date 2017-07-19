@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/version"
 require "support/terraform/configurable_context"
 require "terraform/configurable"
 
@@ -32,7 +33,9 @@ require "terraform/configurable"
   describe "@plugin_version" do
     subject :plugin_version do described_class.instance_variable_get :@plugin_version end
 
-    it "equals the gem version" do is_expected.to be ::Terraform::PROJECT_VERSION end
+    it "equals the gem version" do
+      is_expected.to eq ::Kitchen::Terraform::VERSION
+    end
   end
 
   describe "#debug_logger" do

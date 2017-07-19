@@ -14,6 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Terraform
-  PROJECT_VERSION = "1.0.2".freeze
-end
+require "kitchen/terraform"
+
+::Kitchen::Terraform::VERSION = "1.1.0".freeze

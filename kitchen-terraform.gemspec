@@ -3,7 +3,7 @@
 ::File.expand_path("../lib", __FILE__)
       .tap do |directory| $LOAD_PATH.unshift directory unless $LOAD_PATH.include? directory end
 
-require "terraform/project_version.rb"
+require "kitchen/terraform/version.rb"
 
 ::Gem::Specification.new do |specification|
   specification.authors = [
@@ -29,7 +29,7 @@ require "terraform/project_version.rb"
 
   specification.summary = "Test Kitchen plugins for testing Terraform projects"
 
-  specification.version = ::Terraform::PROJECT_VERSION
+  specification.version = ::Kitchen::Terraform::VERSION
 
   specification.email = "kitchen-terraform@newcontext.com"
 
