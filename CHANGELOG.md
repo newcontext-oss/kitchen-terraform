@@ -12,6 +12,8 @@ major version 0.y.z will maintain a stable public interface.
 
 * Moved the project version constant to the gem namespace
 
+* Corrected obsolote information in the aws_provider example
+
 ## [1.0.2] - 2017-07-16
 
 ### Added

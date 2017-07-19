@@ -35,12 +35,12 @@ kitchen-terraform.
 
 ### Driver
 
-The default driver configuration options are used.
+The driver is configured to use 4 concurrent operations to apply a
+test fixture module based on the installed version of Terraform.
 
 ### Provisioner
 
-The provisioner is configured to use 4 concurrent operations to apply a
-test fixture module based on the installed version of Terraform.
+The provisioner has no configuration attributes.
 
 ### Transport
 
@@ -81,7 +81,7 @@ configuration.
 
 ```yaml
 ---
-provisioner:
+driver:
   variables:
     public_key_pathname: <pathname/of/public/ssh/key>
 transport:
