@@ -8,6 +8,10 @@ major version 0.y.z will maintain a stable public interface.
 
 ## [1.1.0] - xxxx-yy-zz
 
+### Added
+
+* Added a description to the gem specification
+
 ### Fixed
 
 * Moved the project version constant to the gem namespace

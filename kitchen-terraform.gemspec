@@ -23,11 +23,13 @@ require "kitchen/terraform/version.rb"
     "Walter Dolce"
   ]
 
+  specification.description = "kitchen-terraform is a set of Test Kitchen plugins for testing Terraform configuration"
+
   specification.files = ::Dir.glob "{lib/**/*.rb,LICENSE,README.md}"
 
   specification.name = "kitchen-terraform"
 
-  specification.summary = "Test Kitchen plugins for testing Terraform projects"
+  specification.summary = "Test Kitchen plugins for testing Terraform configuration"
 
   specification.version = ::Kitchen::Terraform::VERSION
 
