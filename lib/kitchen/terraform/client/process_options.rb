@@ -27,11 +27,28 @@ module ::Kitchen::Terraform::Client::ProcessOptions
   extend ::Dry::Monads::Try::Mixin
 
   OPTIONS_FLAGS = {
+    backend: lambda do |value:|
+      if value
+        "-backend=true"
+      else
+        "-backend=false"
+      end
+    end,
     color: lambda do |value:|
       "-no-color" if not value
     end,
     destroy: lambda do |value:|
       "-destroy" if value
+    end,
+    force_copy: lambda do |value:|
+      "-force-copy" if value
+    end,
+    get: lambda do |value:|
+      if value
+        "-get=true"
+      else
+        "-get=false"
+      end
     end,
     input: lambda do |value:|
       "-input=#{value}"
@@ -39,11 +56,24 @@ module ::Kitchen::Terraform::Client::ProcessOptions
     json: lambda do |value:|
       "-json" if value
     end,
+    lock: lambda do |value:|
+      if value
+        "-lock=true"
+      else
+        "-lock=false"
+      end
+    end,
+    lock_timeout: lambda do |value:|
+      "-lock-timeout=#{value}"
+    end,
     out: lambda do |value:|
       "-out=#{value}"
     end,
     parallelism: lambda do |value:|
       "-parallelism=#{value}"
+    end,
+    reconfigure: lambda do |value:|
+      "-reconfigure" if value
     end,
     state: lambda do |value:|
       "-state=#{value}"

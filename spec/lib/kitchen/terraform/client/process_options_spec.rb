@@ -49,6 +49,63 @@ require "support/dry/monads/either_matchers"
         end
       end
 
+      shared_examples "a boolean flag" do |flag:, key:|
+        context "when the options associate #{key} with false" do
+          let :options do
+            {
+              key => false
+            }
+          end
+
+          it_behaves_like "a flag is produced", flag: "#{flag}=false"
+        end
+
+        context "when the options associate #{key} with true" do
+          let :options do
+            {
+              key => true
+            }
+          end
+
+          it_behaves_like "a flag is produced", flag: "#{flag}=true"
+        end
+      end
+
+      shared_examples "an assignment flag" do |flag:, key:|
+        let :options do
+          {
+            key => "object"
+          }
+        end
+
+        it_behaves_like "a flag is produced", flag: "#{flag}=object"
+      end
+
+      shared_examples "a static flag" do |affirmative:, flag:, key:|
+        context "when the options associate :#{key} with false" do
+          let :options do
+            {
+              key => false
+            }
+          end
+
+          affirmative and it_behaves_like "no flag is produced" or it_behaves_like "a flag is produced", flag: flag
+        end
+
+        context "when the options associate :#{key} with true" do
+          let :options do
+            {
+              key => true
+            }
+          end
+
+          affirmative and it_behaves_like "a flag is produced", flag: flag or it_behaves_like "no flag is produced"
+        end
+      end
+
+      it_behaves_like "a boolean flag", flag: "-backend",
+                                        key: :backend
+
       context "when the options associate :color with false" do
         let :options do
           {
@@ -89,6 +146,29 @@ require "support/dry/monads/either_matchers"
         it_behaves_like "a flag is produced", flag: "-destroy"
       end
 
+      context "when the options associate :force_copy with false" do
+        let :options do
+          {
+            force_copy: false
+          }
+        end
+
+        it_behaves_like "no flag is produced"
+      end
+
+      context "when the options associate :force_copy with true" do
+        let :options do
+          {
+            force_copy: true
+          }
+        end
+
+        it_behaves_like "a flag is produced", flag: "-force-copy"
+      end
+
+      it_behaves_like "a boolean flag", flag: "-get",
+                                        key: :get
+
       context "when the options associate :input with an object" do
         let :options do
           {
@@ -119,6 +199,12 @@ require "support/dry/monads/either_matchers"
         it_behaves_like "a flag is produced", flag: "-json"
       end
 
+      it_behaves_like "a boolean flag", flag: "-lock",
+                                        key: :lock
+
+      it_behaves_like "an assignment flag", flag: "-lock-timeout",
+                                            key: :lock_timeout
+
       context "when the options associate :out with an object" do
         let :options do
           {
@@ -138,6 +224,10 @@ require "support/dry/monads/either_matchers"
 
         it_behaves_like "a flag is produced", flag: "-parallelism=object"
       end
+
+      it_behaves_like "a static flag", affirmative: true,
+                                       flag: "-reconfigure",
+                                       key: :reconfigure
 
       context "when the options associate :state with an object" do
         let :options do
