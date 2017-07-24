@@ -97,7 +97,7 @@ module ::Kitchen::Driver::Terraform::Workflow
         logger: logger,
         options: [
           ::Kitchen::Terraform::Client::Options::Input.new(value: false),
-          (::Kitchen::Terraform::Client::Options::NoColor if not config.fetch(:color)),
+          (::Kitchen::Terraform::Client::Options::NoColor.new if not config.fetch(:color)),
           ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config.fetch(:parallelism)),
           ::Kitchen::Terraform::Client::Options::StateOut.new(value: config.fetch(:state)),
         ],
