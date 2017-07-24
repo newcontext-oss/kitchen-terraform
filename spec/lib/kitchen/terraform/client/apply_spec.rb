@@ -23,7 +23,7 @@ require "support/kitchen/terraform/client/execute_command_context"
     subject do
       described_class.call cli: "cli",
                            logger: [],
-                           options: {},
+                           options: [],
                            plan: "plan",
                            timeout: 1234
     end
@@ -32,7 +32,7 @@ require "support/kitchen/terraform/client/execute_command_context"
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "apply"
 
       it do
-        is_expected.to result_in_failure.with_the_value /cli apply.*-input=false/
+        is_expected.to result_in_failure.with_the_value /cli apply/
       end
     end
 

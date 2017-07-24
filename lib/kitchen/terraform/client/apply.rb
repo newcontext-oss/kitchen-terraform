@@ -31,8 +31,11 @@ module ::Kitchen::Terraform::Client::Apply
   # @param timeout [::Integer] the maximum execution time in seconds for the apply command.
   # @return [::Dry::Monads::Either] the result of the function.
   def self.call(cli:, logger:, options:, plan:, timeout:)
-    ::Kitchen::Terraform::Client::ExecuteCommand.call cli: cli, command: "apply", logger: logger,
-                                                      options: options.merge(input: false), target: plan,
+    ::Kitchen::Terraform::Client::ExecuteCommand.call cli: cli,
+                                                      command: "apply",
+                                                      logger: logger,
+                                                      options: options,
+                                                      target: plan,
                                                       timeout: timeout
   end
 end

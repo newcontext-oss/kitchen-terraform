@@ -32,7 +32,7 @@ require "support/kitchen/terraform/client/execute_command_context"
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "plan"
 
       it do
-        is_expected.to result_in_failure.with_the_value /cli plan.*-input=false/
+        is_expected.to result_in_failure.with_the_value /cli plan/
       end
     end
 

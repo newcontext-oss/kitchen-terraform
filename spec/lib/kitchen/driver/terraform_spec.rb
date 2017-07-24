@@ -121,13 +121,39 @@ require "support/terraform/configurable_examples"
       end
     end
 
-    context "when the output function results in success" do
+    context "when the value of the output function result does not match the expected format of JSON" do
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0,
-                                                                    output: ::JSON.generate("key" => "value")
+                                                                    exit_code: 0
 
       it do
-        is_expected.to result_in_success.with_the_value "key" => "value"
+        is_expected.to result_in_failure
+          .with_the_value /parsing Terraform client output as JSON failed\n.*unexpected token/
+      end
+    end
+
+    context "when the value of the output function result matches the expected format of JSON" do
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
+                                                                    exit_code: 0,
+                                                                    output: <<-OUTPUT
+{
+    "output_name": {
+        "sensitive": false,
+        "type": "list",
+        "value": [
+            "output_value_1"
+        ]
+    }
+}
+                                                                    OUTPUT
+
+      it do
+        is_expected.to result_in_success.with_the_value "output_name" => {
+                                                          "sensitive" => false,
+                                                          "type" => "list",
+                                                          "value" => [
+                                                            "output_value_1"
+                                                          ]
+                                                        }
       end
     end
   end

@@ -16,13 +16,18 @@
 
 require "mixlib/shellout"
 require "kitchen/terraform/client/execute_command"
+require "kitchen/terraform/client/options/force_copy"
+require "kitchen/terraform/client/options/no_color"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/client/execute_command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::ExecuteCommand do
   describe ".call" do
     let :options do
-      {}
+      [
+        ::Kitchen::Terraform::Client::Options::ForceCopy.new,
+        ::Kitchen::Terraform::Client::Options::NoColor.new
+      ]
     end
 
     subject do
@@ -34,18 +39,6 @@ require "support/kitchen/terraform/client/execute_command_context"
                            timeout: 1234
     end
 
-    context "when unsupported options are provided" do
-      let :options do
-        {
-          unsupported_option: "unsupported_option"
-        }
-      end
-
-      it do
-        is_expected.to result_in_failure.with_the_value /:unsupported/
-      end
-    end
-
     shared_examples "the command experiences an error" do |error_class:|
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "command",
                                                                     error: true,
@@ -53,7 +46,7 @@ require "support/kitchen/terraform/client/execute_command_context"
 
       it do
         is_expected.to result_in_failure
-          .with_the_value /`cli command target` failed: '.*mocked `cli command target` error'/
+          .with_the_value /`cli command target` failed: '.*mocked `cli command -force-copy -no-color target` error'/
       end
     end
 
@@ -78,11 +71,11 @@ require "support/kitchen/terraform/client/execute_command_context"
     end
 
     context "when the command exits with a zero value" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "command",
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "command -force-copy -no-color",
                                                                     exit_code: 0
 
       it do
-        is_expected.to result_in_success.with_the_value "mocked `cli command target` output"
+        is_expected.to result_in_success.with_the_value "mocked `cli command -force-copy -no-color target` output"
       end
     end
   end

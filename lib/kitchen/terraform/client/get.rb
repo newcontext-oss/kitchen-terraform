@@ -28,8 +28,12 @@ module ::Kitchen::Terraform::Client::Get
   # @param root_module [::String] the path of the root module.
   # @param timeout [::Integer] the maximum execution time in seconds for the get command.
   # @return [::Dry::Monads::Either] the result of the function.
-  def self.call(cli:, logger:, root_module:, timeout:)
-    ::Kitchen::Terraform::Client::ExecuteCommand.call cli: cli, command: "get", logger: logger, options: {update: true},
-                                                      target: root_module, timeout: timeout
+  def self.call(cli:, logger:, options:, root_module:, timeout:)
+    ::Kitchen::Terraform::Client::ExecuteCommand.call cli: cli,
+                                                      command: "get",
+                                                      logger: logger,
+                                                      options: options,
+                                                      target: root_module,
+                                                      timeout: timeout
   end
 end

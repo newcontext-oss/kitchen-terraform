@@ -15,7 +15,11 @@
 # limitations under the License.
 
 require "dry/monads"
+require "json"
 require "kitchen"
+require "kitchen/terraform/client/options/json"
+require "kitchen/terraform/client/options/no_color"
+require "kitchen/terraform/client/options/state"
 require "kitchen/terraform/client/output"
 require "kitchen/terraform/client/plan"
 require "kitchen/terraform/client/version"
@@ -216,6 +220,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       required(:value).value :hash?
     end
   )
+  include ::Dry::Monads::Either::Mixin
+
+  include ::Dry::Monads::Try::Mixin
 
   include ::Terraform::Configurable
 
@@ -258,14 +265,27 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     end
   end
 
-  # The driver proxies the client output function.
+  # The driver parses the client output as JSON.
   #
   # @return [::Dry::Monads::Either] the result of the Terraform Client Output function.
   # @see ::Kitchen::Terraform::Client::Output
   def output
-    ::Kitchen::Terraform::Client::Output.call cli: config.fetch(:cli), logger: debug_logger,
-                                              options: {color: config.fetch(:color), state: config.fetch(:state)},
-                                              timeout: config.fetch(:command_timeout)
+    ::Kitchen::Terraform::Client::Output.call(
+      cli: config.fetch(:cli),
+      logger: debug_logger,
+      options: [
+        (::Kitchen::Terraform::Client::Options::NoColor.new if not config.fetch(:color)),
+        ::Kitchen::Terraform::Client::Options::JSON.new,
+        ::Kitchen::Terraform::Client::Options::State.new(value: config.fetch(:state))
+      ],
+      timeout: config.fetch(:command_timeout)
+    ).bind do |output|
+      Try ::JSON::ParserError do
+        ::JSON.parse output
+      end
+    end.to_either.or do |error|
+      Left "parsing Terraform client output as JSON failed\n#{error}"
+    end
   end
 
   # The driver verifies that the client version is supported.

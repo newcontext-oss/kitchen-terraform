@@ -18,6 +18,16 @@ require "dry/monads"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/client/apply"
 require "kitchen/terraform/client/get"
+require "kitchen/terraform/client/options/destroy"
+require "kitchen/terraform/client/options/input"
+require "kitchen/terraform/client/options/no_color"
+require "kitchen/terraform/client/options/out"
+require "kitchen/terraform/client/options/parallelism"
+require "kitchen/terraform/client/options/state"
+require "kitchen/terraform/client/options/state_out"
+require "kitchen/terraform/client/options/update"
+require "kitchen/terraform/client/options/var"
+require "kitchen/terraform/client/options/var_file"
 require "kitchen/terraform/client/validate"
 require "kitchen/terraform/create_directories"
 
@@ -55,32 +65,45 @@ module ::Kitchen::Driver::Terraform::Workflow
     end.bind do
       ::Kitchen::Terraform::Client::Get.call cli: config.fetch(:cli),
                                              logger: logger,
+                                             options: [
+                                               ::Kitchen::Terraform::Client::Options::Update.new,
+                                             ],
                                              root_module: config.fetch(:directory),
                                              timeout: config.fetch(:command_timeout)
     end.bind do
-      ::Kitchen::Terraform::Client::Plan.call cli: config.fetch(:cli),
-                                              logger: logger,
-                                              options: {
-                                                color: config.fetch(:color),
-                                                destroy: destroy,
-                                                out: config.fetch(:plan),
-                                                parallelism: config.fetch(:parallelism),
-                                                state: config.fetch(:state),
-                                                var: config.fetch(:variables),
-                                                var_file: config.fetch(:variable_files)
-                                              },
-                                              root_module: config.fetch(:directory),
-                                              timeout: config.fetch(:command_timeout)
+      ::Kitchen::Terraform::Client::Plan.call(
+        cli: config.fetch(:cli),
+        logger: logger,
+        options: [
+          (::Kitchen::Terraform::Client::Options::Destroy.new if destroy),
+          ::Kitchen::Terraform::Client::Options::Input.new(value: false),
+          (::Kitchen::Terraform::Client::Options::NoColor.new if not config.fetch(:color)),
+          ::Kitchen::Terraform::Client::Options::Out.new(value: config.fetch(:plan)),
+          ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config.fetch(:parallelism)),
+          ::Kitchen::Terraform::Client::Options::State.new(value: config.fetch(:state)),
+          config.fetch(:variables).map do |name, value|
+            ::Kitchen::Terraform::Client::Options::Var.new name: name, value: value
+          end,
+          config.fetch(:variable_files).map do |value|
+            ::Kitchen::Terraform::Client::Options::VarFile.new value: value
+          end,
+        ],
+        root_module: config.fetch(:directory),
+        timeout: config.fetch(:command_timeout)
+      )
     end.bind do
-      ::Kitchen::Terraform::Client::Apply.call cli: config.fetch(:cli),
-                                               logger: logger,
-                                               options: {
-                                                 color: config.fetch(:color),
-                                                 parallelism: config.fetch(:parallelism),
-                                                 state_out: config.fetch(:state)
-                                               },
-                                               plan: config.fetch(:plan),
-                                               timeout: config.fetch(:command_timeout)
+      ::Kitchen::Terraform::Client::Apply.call(
+        cli: config.fetch(:cli),
+        logger: logger,
+        options: [
+          ::Kitchen::Terraform::Client::Options::Input.new(value: false),
+          (::Kitchen::Terraform::Client::Options::NoColor if not config.fetch(:color)),
+          ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config.fetch(:parallelism)),
+          ::Kitchen::Terraform::Client::Options::StateOut.new(value: config.fetch(:state)),
+        ],
+        plan: config.fetch(:plan),
+        timeout: config.fetch(:command_timeout)
+      )
     end.fmap do
       "driver workflow was a success"
     end.or do |error|

@@ -33,9 +33,7 @@ module ::Kitchen::Terraform::Client::Plan
     ::Kitchen::Terraform::Client::ExecuteCommand.call cli: cli,
                                                       command: "plan",
                                                       logger: logger,
-                                                      options: options.merge(
-                                                        input: false
-                                                      ),
+                                                      options: options,
                                                       target: root_module,
                                                       timeout: timeout
   end

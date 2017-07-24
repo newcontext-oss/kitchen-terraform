@@ -31,43 +31,16 @@ require "support/kitchen/terraform/client/execute_command_context"
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output"
 
       it do
-        is_expected.to result_in_failure.with_the_value /parsing Terraform client output as JSON failed\n.*cli output/
+        is_expected.to result_in_failure.with_the_value /cli output/
       end
     end
 
-    context "when the value of the Terraform output command result does not match the expected format of JSON" do
+    context "when the Terraform output command results in success" do
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
                                                                     exit_code: 0
 
       it do
-        is_expected.to result_in_failure
-          .with_the_value /parsing Terraform client output as JSON failed\n.*unexpected token/
-      end
-    end
-
-    context "when the value of the Terraform output command result matches the expected format of JSON" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0,
-                                                                    output: <<-OUTPUT
-{
-    "output_name": {
-        "sensitive": false,
-        "type": "list",
-        "value": [
-            "output_value_1"
-        ]
-    }
-}
-                                                                    OUTPUT
-
-      it do
-        is_expected.to result_in_success.with_the_value "output_name" => {
-                                                          "sensitive" => false,
-                                                          "type" => "list",
-                                                          "value" => [
-                                                            "output_value_1"
-                                                          ]
-                                                        }
+        is_expected.to result_in_success.with_the_value /output/
       end
     end
   end

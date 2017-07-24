@@ -16,7 +16,6 @@
 
 require "dry/monads"
 require "kitchen/terraform/client"
-require "kitchen/terraform/client/process_options"
 require "mixlib/shellout"
 
 # Executes Terraform commands.
@@ -32,18 +31,22 @@ module ::Kitchen::Terraform::Client::ExecuteCommand
   # @param cli [::String] the path of the Terraform CLI to use for command execution.
   # @param command [::String] the name of the command to execute.
   # @param logger [#<<] a logger to receive the stdout and stderr of the command.
-  # @param options [::Hash] the options for the command.
+  # @param options [::Array] the options for the command.
   # @param target [::String] the target of the command.
   # @param timeout [::Integer] the maximum execution time in seconds for the command.
   # @return [::Dry::Monads::Either] the result of the function.
-  def self.call(cli:, command:, logger:, options: {}, target: "", timeout:)
-    ::Kitchen::Terraform::Client::ProcessOptions.call(unprocessed_options: options).fmap do |processed_options|
-      ::Mixlib::ShellOut.new [cli, command, *processed_options, target].join(" ").strip,
-                             live_stream: logger, timeout: timeout
-    end.bind do |shell_out|
-      Try ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout do
-        shell_out.run_command
-      end
+  def self.call(cli:, command:, logger:, options: [], target: "", timeout:)
+    Try ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout do
+      ::Mixlib::ShellOut.new(
+        [
+          cli,
+          command,
+          *options.map(&:to_s),
+          target
+        ].join(" ").strip,
+        live_stream: logger,
+        timeout: timeout
+      ).run_command
     end.bind do |shell_out|
       Try ::Mixlib::ShellOut::ShellCommandFailed do
         shell_out.error!
