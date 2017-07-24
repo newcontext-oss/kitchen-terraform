@@ -81,10 +81,10 @@ module ::Kitchen::Driver::Terraform::Workflow
           ::Kitchen::Terraform::Client::Options::Out.new(value: config.fetch(:plan)),
           ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config.fetch(:parallelism)),
           ::Kitchen::Terraform::Client::Options::State.new(value: config.fetch(:state)),
-          config.fetch(:variables).map do |name, value|
+          *config.fetch(:variables).map do |name, value|
             ::Kitchen::Terraform::Client::Options::Var.new name: name, value: value
           end,
-          config.fetch(:variable_files).map do |value|
+          *config.fetch(:variable_files).map do |value|
             ::Kitchen::Terraform::Client::Options::VarFile.new value: value
           end,
         ],

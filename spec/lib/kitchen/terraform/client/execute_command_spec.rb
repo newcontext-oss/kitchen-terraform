@@ -17,7 +17,7 @@
 require "mixlib/shellout"
 require "kitchen/terraform/client/execute_command"
 require "kitchen/terraform/client/options/force_copy"
-require "kitchen/terraform/client/options/no_color"
+require "kitchen/terraform/client/options/var"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/client/execute_command_context"
 
@@ -26,7 +26,7 @@ require "support/kitchen/terraform/client/execute_command_context"
     let :options do
       [
         ::Kitchen::Terraform::Client::Options::ForceCopy.new,
-        ::Kitchen::Terraform::Client::Options::NoColor.new
+        ::Kitchen::Terraform::Client::Options::Var.new(name: "name", value: "value")
       ]
     end
 
@@ -45,8 +45,9 @@ require "support/kitchen/terraform/client/execute_command_context"
                                                                     error_class: error_class
 
       it do
-        is_expected.to result_in_failure
-          .with_the_value /`cli command target` failed: '.*mocked `cli command -force-copy -no-color target` error'/
+        is_expected.to result_in_failure.with_the_value(
+          /`cli command target` failed: '.*mocked `cli command -force-copy -var="name=value" target` error'/
+        )
       end
     end
 
@@ -71,11 +72,12 @@ require "support/kitchen/terraform/client/execute_command_context"
     end
 
     context "when the command exits with a zero value" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "command -force-copy -no-color",
+      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "command",
                                                                     exit_code: 0
 
       it do
-        is_expected.to result_in_success.with_the_value "mocked `cli command -force-copy -no-color target` output"
+        is_expected
+          .to result_in_success.with_the_value "mocked `cli command -force-copy -var=\"name=value\" target` output"
       end
     end
   end
