@@ -17,12 +17,22 @@
 require "dry/monads"
 require "json"
 require "kitchen"
+require "kitchen/terraform/client/apply"
+require "kitchen/terraform/client/get"
+require "kitchen/terraform/client/options/destroy"
+require "kitchen/terraform/client/options/input"
 require "kitchen/terraform/client/options/json"
 require "kitchen/terraform/client/options/no_color"
+require "kitchen/terraform/client/options/out"
+require "kitchen/terraform/client/options/parallelism"
 require "kitchen/terraform/client/options/state"
+require "kitchen/terraform/client/options/state_out"
+require "kitchen/terraform/client/options/update"
 require "kitchen/terraform/client/output"
 require "kitchen/terraform/client/plan"
+require "kitchen/terraform/client/validate"
 require "kitchen/terraform/client/version"
+require "kitchen/terraform/create_directories"
 require "kitchen/terraform/define_config_attribute"
 require "kitchen/terraform/define_integer_config_attribute"
 require "kitchen/terraform/define_string_config_attribute"
@@ -146,7 +156,6 @@ require "terraform/configurable"
 #
 # Default:: +{}+
 #
-# @see ::Kitchen::Driver::Terraform::Workflow
 # @see https://en.wikipedia.org/wiki/Working_directory Working directory
 # @see https://www.terraform.io/docs/commands/plan.html Terraform execution plan
 # @see https://www.terraform.io/docs/configuration/variables.html Terraform variables
@@ -234,13 +243,64 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #       the create action concurrently.
   # @param _state [::Hash] the mutable instance and driver state; this parameter is ignored.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [::Dry::Monads::Either] the result of the workflow function.
-  # @see ::Kitchen::Driver::Terraform::Workflow
-  def create(_state)
-    self.class::Workflow.call(
-      config: config,
-      logger: logger
-    ).or do |failure|
+  # @return [::Dry::Monads::Either] the result of the action.
+  def create(_state, additional_plan_options: [])
+    ::Kitchen::Terraform::CreateDirectories.call(
+      directories: [
+        config_directory,
+        ::File.dirname(config_plan),
+        ::File.dirname(config_state)
+      ]
+    ).fmap do |created_directories|
+      logger.debug created_directories
+    end.bind do
+      ::Kitchen::Terraform::Client::Validate.call cli: config_cli,
+                                                  directory: config_directory,
+                                                  logger: logger,
+                                                  timeout: config_command_timeout
+    end.bind do
+      ::Kitchen::Terraform::Client::Get.call cli: config_cli,
+                                             logger: logger,
+                                             options: [
+                                               ::Kitchen::Terraform::Client::Options::Update.new
+                                             ],
+                                             root_module: config_directory,
+                                             timeout: config_command_timeout
+    end.bind do
+      ::Kitchen::Terraform::Client::Plan.call(
+        cli: config_cli,
+        logger: logger,
+        options: [
+          ::Kitchen::Terraform::Client::Options::Input.new(value: false),
+          color_option,
+          ::Kitchen::Terraform::Client::Options::Out.new(value: config_plan),
+          ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
+          ::Kitchen::Terraform::Client::Options::State.new(value: config_state),
+          *config_variables.map do |name, value|
+            ::Kitchen::Terraform::Client::Options::Var.new name: name, value: value
+          end,
+          *config_variable_files.map do |value|
+            ::Kitchen::Terraform::Client::Options::VarFile.new value: value
+          end,
+          *additional_plan_options
+        ],
+        root_module: config_directory,
+        timeout: config_command_timeout
+      )
+    end.bind do
+      ::Kitchen::Terraform::Client::Apply.call(
+        cli: config_cli,
+        logger: logger,
+        options: [
+          ::Kitchen::Terraform::Client::Options::Input.new(value: false),
+          color_option,
+          ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
+          ::Kitchen::Terraform::Client::Options::StateOut.new(value: config_state)
+        ],
+        plan: config_plan,
+        timeout: config_command_timeout
+      )
+    end.or do |failure|
       raise ::Kitchen::ActionFailed, failure
     end
   end
@@ -251,18 +311,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #   `kitchen destroy suite-name`
   # @note The user must ensure that different suites utilize separate Terraform plan and state files if they are to run
   #       the destroy action concurrently.
-  # @param _state [::Hash] the mutable instance and driver state; this parameter is ignored.
+  # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [::Dry::Monads::Either] the result of the action.
-  # @see ::Kitchen::Driver::Terraform::Workflow
-  def destroy(_state)
-    self.class::Workflow.call(
-      config: config,
-      destroy: true,
-      logger: logger
-    ).or do |failure|
-      raise ::Kitchen::ActionFailed, failure
-    end
+  def destroy(state)
+    create state, additional_plan_options: [
+                    ::Kitchen::Terraform::Client::Options::Destroy.new
+                  ]
   end
 
   # The driver parses the client output as JSON.
@@ -271,14 +326,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Terraform::Client::Output
   def output
     ::Kitchen::Terraform::Client::Output.call(
-      cli: config.fetch(:cli),
+      cli: config_cli,
       logger: debug_logger,
       options: [
-        (::Kitchen::Terraform::Client::Options::NoColor.new if not config.fetch(:color)),
+        color_option,
         ::Kitchen::Terraform::Client::Options::JSON.new,
-        ::Kitchen::Terraform::Client::Options::State.new(value: config.fetch(:state))
+        ::Kitchen::Terraform::Client::Options::State.new(value: config_state)
       ],
-      timeout: config.fetch(:command_timeout)
+      timeout: config_command_timeout
     ).bind do |output|
       Try ::JSON::ParserError do
         ::JSON.parse output
@@ -296,7 +351,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Terraform::Client::Version
   def verify_dependencies
     ::Kitchen::Terraform::Client::Version.call(
-      cli: config.fetch(:cli), logger: debug_logger, timeout: config.fetch(:command_timeout)
+      cli: config_cli,
+      logger: debug_logger,
+      timeout: config_command_timeout
     ).bind do |version|
       self.class::VerifyClientVersion.call version: version
     end.fmap do |verified_client_version|
@@ -306,7 +363,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       raise ::Kitchen::UserError, failure
     end
   end
+
+  private
+
+  def color_option
+    @color_option ||= ::Kitchen::Terraform::Client::Options::NoColor.new if not config_color
+  end
 end
 
-require "kitchen/driver/terraform/workflow"
 require "kitchen/driver/terraform/verify_client_version"

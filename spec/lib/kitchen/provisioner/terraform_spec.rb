@@ -39,7 +39,7 @@ require "support/terraform/configurable_examples"
       include_context "Kitchen::Driver::Terraform"
 
       it "raises an action failed error" do
-        is_expected.to raise_error ::Kitchen::ActionFailed, /driver workflow/
+        is_expected.to raise_error ::Kitchen::ActionFailed, /terraform apply/
       end
     end
 

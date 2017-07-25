@@ -172,7 +172,7 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [::Dry::Monads::Either] the result of the action.
   def call(state)
-    self.class::EnumerateGroupsAndHostnames.call driver: driver, groups: config.fetch(:groups) do |group:, hostname:|
+    self.class::EnumerateGroupsAndHostnames.call driver: driver, groups: config_groups do |group:, hostname:|
       state.store :group, group
       state.store :hostname, hostname
       info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"

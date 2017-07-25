@@ -35,5 +35,13 @@ module ::Kitchen::Terraform::DefineConfigAttribute
       end
     end
     plugin_class.default_config attribute, &initialize_default_value
+    plugin_class.send(
+      :define_method,
+      "config_#{attribute}",
+      lambda do
+        instance_variable_defined? "@config_#{attribute}" and instance_variable_get "@config_#{attribute}" or
+          instance_variable_set "@config_#{attribute}", config.fetch(attribute)
+      end
+    )
   end
 end
