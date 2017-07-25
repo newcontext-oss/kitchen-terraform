@@ -20,7 +20,7 @@ require "mixlib/shellout"
   "Kitchen::Terraform::Client::ExecuteCommand"
 ) do |command:, error: false, error_class: ::Mixlib::ShellOut::CommandTimeout, exit_code: 1, output: ""|
   before do
-    allow(::Mixlib::ShellOut).to receive(:new).with(/#{command}/, any_args).and_wrap_original do |new, *arguments|
+    allow(::Mixlib::ShellOut).to receive(:new).with(/^\w+ #{command}/, any_args).and_wrap_original do |new, *arguments|
       new.call(*arguments).tap do |shell_out|
         allow(shell_out).to receive(:run_command) do
           error and raise error_class, "mocked `#{shell_out.command}` error"
