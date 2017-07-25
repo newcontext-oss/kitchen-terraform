@@ -193,6 +193,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     plugin[:kitchen_root]
   end
 
+  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :lock_timeout,
+                                                         plugin_class: self do
+    "0s"
+  end
+
   ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :parallelism,
                                                           plugin_class: self do
     10
@@ -311,7 +316,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #   `kitchen destroy suite-name`
   # @note The user must ensure that different suites utilize separate Terraform plan and state files if they are to run
   #       the destroy action concurrently.
-  # @param _state [::Hash] the mutable instance and driver state.
+  # @param state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [::Dry::Monads::Either] the result of the action.
   def destroy(state)
