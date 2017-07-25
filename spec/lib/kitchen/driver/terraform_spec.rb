@@ -17,6 +17,7 @@
 require "json"
 require "kitchen/driver/terraform"
 require "support/dry/monads/either_matchers"
+require "support/kitchen/driver/terraform/config_attribute_backend_configurations_examples"
 require "support/kitchen/driver/terraform/config_attribute_cli_examples"
 require "support/kitchen/driver/terraform/config_attribute_color_examples"
 require "support/kitchen/driver/terraform/config_attribute_command_timeout_examples"
@@ -111,6 +112,8 @@ require "support/terraform/configurable_examples"
   end
 
   it_behaves_like ::Terraform::Configurable
+
+  it_behaves_like "config attribute :backend_configurations"
 
   it_behaves_like "config attribute :cli"
 

@@ -33,6 +33,7 @@ require "kitchen/terraform/client/plan"
 require "kitchen/terraform/client/validate"
 require "kitchen/terraform/client/version"
 require "kitchen/terraform/create_directories"
+require "kitchen/terraform/define_array_of_strings_config_attribute"
 require "kitchen/terraform/define_config_attribute"
 require "kitchen/terraform/define_integer_config_attribute"
 require "kitchen/terraform/define_string_config_attribute"
@@ -167,6 +168,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   no_parallel_for
 
+  ::Kitchen::Terraform::DefineArrayOfStringsConfigAttribute.call attribute: :backend_configurations,
+                                                                 plugin_class: self do
+    []
+  end
+
   ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :cli,
                                                          plugin_class: self do
     "terraform"
@@ -213,16 +219,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     plugin.instance_pathname filename: "terraform.tfstate"
   end
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :variable_files,
-    initialize_default_value: lambda do |_plugin|
-      []
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).each :filled?, :str?
-    end
-  )
+  ::Kitchen::Terraform::DefineArrayOfStringsConfigAttribute.call attribute: :variable_files,
+                                                                 plugin_class: self do
+    []
+  end
 
   ::Kitchen::Terraform::DefineConfigAttribute.call(
     attribute: :variables,
