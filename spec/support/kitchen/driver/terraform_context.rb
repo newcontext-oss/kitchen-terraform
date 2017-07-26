@@ -15,6 +15,8 @@
 # limitations under the License.
 
 require "support/kitchen/terraform/clear_directory_context"
+require "support/kitchen/terraform/client/execute_command_context"
+require "support/kitchen/terraform/create_directories_context"
 
 ::RSpec.shared_context "Kitchen::Driver::Terraform" do |failure: true|
   include_context "Kitchen::Terraform::CreateDirectories", failure: false
