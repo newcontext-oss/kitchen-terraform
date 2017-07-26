@@ -14,18 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/terraform/clear_directory"
+require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/clear_directory_context"
 
-::RSpec.shared_context "Kitchen::Driver::Terraform" do |failure: true|
-  include_context "Kitchen::Terraform::CreateDirectories", failure: false
+::RSpec.describe ::Kitchen::Terraform::ClearDirectory do
+  describe ".call" do
+    subject do
+      described_class.call directory: "directory",
+                           files: [
+                             "file_1",
+                             "file_2"
+                           ]
+    end
 
-  include_context "Kitchen::Terraform::ClearDirectory"
+    include_context "Kitchen::Terraform::ClearDirectory"
 
-  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate", exit_code: 0
-
-  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get", exit_code: 0
-
-  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "plan", exit_code: 0
-
-  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "apply", exit_code: (failure and 1 or 0)
+    it do
+      is_expected
+        .to result_in_success.with_the_value "Cleared directory \"directory\" of files [\"file_1\", \"file_2\"]"
+    end
+  end
 end

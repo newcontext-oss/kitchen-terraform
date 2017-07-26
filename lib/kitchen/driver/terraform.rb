@@ -17,6 +17,7 @@
 require "dry/monads"
 require "json"
 require "kitchen"
+require "kitchen/terraform/clear_directory"
 require "kitchen/terraform/client/apply"
 require "kitchen/terraform/client/get"
 require "kitchen/terraform/client/options/destroy"
@@ -252,6 +253,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def create(_state, additional_plan_options: [])
     ::Kitchen::Terraform::CreateDirectories.call(
       directories: [
+        module_path,
         config_directory,
         ::File.dirname(config_plan),
         ::File.dirname(config_state)
@@ -263,6 +265,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
                                                   directory: config_directory,
                                                   logger: logger,
                                                   timeout: config_command_timeout
+    end.bind do
+      ::Kitchen::Terraform::ClearDirectory.call directory: module_path,
+                                                files: [
+                                                  "*.tf",
+                                                  "*.tf.json"
+                                                ]
+    end.fmap do |cleared_directory|
+      logger.debug cleared_directory
     end.bind do
       ::Kitchen::Terraform::Client::Get.call cli: config_cli,
                                              logger: logger,
@@ -373,6 +383,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   def color_option
     @color_option ||= ::Kitchen::Terraform::Client::Options::NoColor.new if not config_color
+  end
+
+  def module_path
+    @module_path ||= instance_pathname filename: "/"
   end
 end
 

@@ -29,9 +29,10 @@ require "support/kitchen/driver/terraform/config_attribute_state_examples"
 require "support/kitchen/driver/terraform/config_attribute_variable_files_examples"
 require "support/kitchen/driver/terraform/config_attribute_variables_examples"
 require "support/kitchen/driver/terraform_context"
-require "support/kitchen/terraform/create_directories_context"
+require "support/kitchen/terraform/clear_directory_context"
 require "support/kitchen/terraform/client/execute_command_context"
 require "support/kitchen/terraform/client/version_context"
+require "support/kitchen/terraform/create_directories_context"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
 
@@ -68,6 +69,8 @@ require "support/terraform/configurable_examples"
     context "when the get command results in failure" do
       include_context "Kitchen::Terraform::CreateDirectories", failure: false
 
+      include_context "Kitchen::Terraform::ClearDirectory"
+
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate",
                                                                     exit_code: 0
 
@@ -80,6 +83,8 @@ require "support/terraform/configurable_examples"
 
     context "when the plan command results in failure" do
       include_context "Kitchen::Terraform::CreateDirectories", failure: false
+
+      include_context "Kitchen::Terraform::ClearDirectory"
 
       include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate",
                                                                     exit_code: 0
