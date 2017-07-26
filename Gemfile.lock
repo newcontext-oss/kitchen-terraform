@@ -62,7 +62,7 @@ GEM
     ethon (0.10.1)
       ffi (>= 1.3.0)
     excon (0.57.1)
-    faraday (0.12.1)
+    faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.11.0.1)
       faraday (>= 0.7.4, < 1.0)
@@ -100,7 +100,7 @@ GEM
       yard (>= 0.7.0)
     gyoku (1.3.1)
       builder (>= 2.1.2)
-    hashie (3.5.5)
+    hashie (3.5.6)
     highline (1.7.8)
     htmlentities (4.3.4)
     httpclient (2.8.3)
@@ -148,8 +148,8 @@ GEM
       mixlib-versioning
       thor
     mixlib-log (1.7.1)
-    mixlib-shellout (2.2.7)
-    mixlib-versioning (1.1.0)
+    mixlib-shellout (2.3.2)
+    mixlib-versioning (1.2.1)
     multi_json (1.12.1)
     multipart-post (2.0.0)
     nenv (0.3.0)
@@ -164,7 +164,7 @@ GEM
     notiffany (0.1.1)
       nenv (~> 0.1)
       shellany (~> 0.0)
-    parallel (1.11.2)
+    parallel (1.12.0)
     parslet (1.5.0)
       blankslate (~> 2.0)
     pry (0.10.4)
@@ -276,4 +276,4 @@ DEPENDENCIES
   yard (~> 0.9)!
 
 BUNDLED WITH
-   1.15.1
+   1.15.3
