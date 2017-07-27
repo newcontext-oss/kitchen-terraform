@@ -30,8 +30,7 @@ require "support/kitchen/driver/terraform/config_attribute_variable_files_exampl
 require "support/kitchen/driver/terraform/config_attribute_variables_examples"
 require "support/kitchen/driver/terraform_context"
 require "support/kitchen/terraform/clear_directory_context"
-require "support/kitchen/terraform/client/execute_command_context"
-require "support/kitchen/terraform/client/version_context"
+require "support/kitchen/terraform/client/command_context"
 require "support/kitchen/terraform/create_directories_context"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
@@ -41,6 +40,21 @@ require "support/terraform/configurable_examples"
 
   let :described_instance do
     driver
+  end
+
+  before do
+    default_config.merge!(
+      backend_configurations: [
+        "backend_configuration"
+      ],
+      variable_files: [
+        "variable_file"
+      ],
+      variables: {
+        "name" => "value"
+      },
+      kitchen_root: kitchen_root
+    )
   end
 
   shared_examples "#create" do
@@ -59,10 +73,25 @@ require "support/terraform/configurable_examples"
     context "when the validate command results in failure" do
       include_context "Kitchen::Terraform::CreateDirectories", failure: false
 
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate"
+      include_context "Kitchen::Terraform::Client::Command", subcommand: "validate"
 
       it "raises an action failed error" do
         is_expected.to raise_error ::Kitchen::ActionFailed, /terraform validate/
+      end
+    end
+
+    context "when the init command results in a failure" do
+      include_context "Kitchen::Terraform::CreateDirectories", failure: false
+
+      include_context "Kitchen::Terraform::ClearDirectory"
+
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "validate"
+
+      include_context "Kitchen::Terraform::Client::Command", subcommand: "init"
+
+      it "raises an action failed error" do
+        is_expected.to raise_error ::Kitchen::ActionFailed, /terraform init/
       end
     end
 
@@ -71,10 +100,13 @@ require "support/terraform/configurable_examples"
 
       include_context "Kitchen::Terraform::ClearDirectory"
 
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate",
-                                                                    exit_code: 0
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "validate"
 
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get"
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "init"
+
+      include_context "Kitchen::Terraform::Client::Command", subcommand: "get"
 
       it "raises an action failed error" do
         is_expected.to raise_error ::Kitchen::ActionFailed, /terraform get/
@@ -86,13 +118,16 @@ require "support/terraform/configurable_examples"
 
       include_context "Kitchen::Terraform::ClearDirectory"
 
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate",
-                                                                    exit_code: 0
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "validate"
 
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get",
-                                                                    exit_code: 0
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "init"
 
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "plan"
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "get"
+
+      include_context "Kitchen::Terraform::Client::Command", subcommand: "plan"
 
       it "raises an action failed error" do
         is_expected.to raise_error ::Kitchen::ActionFailed, /terraform plan/
@@ -176,7 +211,8 @@ require "support/terraform/configurable_examples"
     end
 
     context "when the output function results in failure" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output"
+      include_context "Kitchen::Terraform::Client::Command", error: ::Errno::EACCES,
+                                                             subcommand: "output"
 
       it do
         is_expected.to result_in_failure.with_the_value /terraform output/
@@ -184,8 +220,8 @@ require "support/terraform/configurable_examples"
     end
 
     context "when the value of the output function result does not match the expected format of JSON" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "output"
 
       it do
         is_expected.to result_in_failure
@@ -194,9 +230,9 @@ require "support/terraform/configurable_examples"
     end
 
     context "when the value of the output function result matches the expected format of JSON" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0,
-                                                                    output: <<-OUTPUT
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "output",
+                                                             output_contents: <<-OUTPUT
 {
     "output_name": {
         "sensitive": false,
@@ -206,7 +242,7 @@ require "support/terraform/configurable_examples"
         ]
     }
 }
-                                                                    OUTPUT
+                                                             OUTPUT
 
       it do
         is_expected.to result_in_success.with_the_value "output_name" => {
@@ -234,19 +270,23 @@ require "support/terraform/configurable_examples"
     end
 
     context "when the result of the version function is a failure" do
-      include_context "Kitchen::Terraform::Client::Version"
+      include_context "Kitchen::Terraform::Client::Command", subcommand: "version"
 
       it_behaves_like "the verification of dependencies is a failure"
     end
 
     context "when the result of the version verification function is a failure" do
-      include_context "Kitchen::Terraform::Client::Version", failure: false, version: 0.1
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             output_contents: "Terraform v0.1.0",
+                                                             subcommand: "version"
 
       it_behaves_like "the verification of dependencies is a failure"
     end
 
     context "when the result of the version verification function is a success" do
-      include_context "Kitchen::Terraform::Client::Version", failure: false, version: 0.9
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             output_contents: "Terraform v0.9.0",
+                                                             subcommand: "version"
 
       it "does not raise an error" do
         is_expected.to_not raise_error

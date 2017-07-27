@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "support/kitchen/terraform/clear_directory_context"
-require "support/kitchen/terraform/client/execute_command_context"
+require "support/kitchen/terraform/client/command_context"
 require "support/kitchen/terraform/create_directories_context"
 
 ::RSpec.shared_context "Kitchen::Driver::Terraform" do |failure: true|
@@ -23,11 +23,18 @@ require "support/kitchen/terraform/create_directories_context"
 
   include_context "Kitchen::Terraform::ClearDirectory"
 
-  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "validate", exit_code: 0
+  include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                         subcommand: "validate"
 
-  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "get", exit_code: 0
+  include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                         subcommand: "init"
 
-  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "plan", exit_code: 0
+  include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                         subcommand: "get"
 
-  include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "apply", exit_code: (failure and 1 or 0)
+  include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                         subcommand: "plan"
+
+  include_context "Kitchen::Terraform::Client::Command", exit_code: (failure and 1 or 0),
+                                                         subcommand: "apply"
 end

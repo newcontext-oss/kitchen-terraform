@@ -26,19 +26,25 @@ require "kitchen/driver/terraform"
 # Not Supported:: Terraform versions 0.6 and older.
 module ::Kitchen::Driver::Terraform::VerifyClientVersion
   extend ::Dry::Monads::Either::Mixin
+  extend ::Dry::Monads::Maybe::Mixin
+  extend ::Dry::Monads::Try::Mixin
 
   # Invokes the function.
   #
   # @param version [::Float] the Terraform Client version.
   # @return [::Dry::Monads::Either] the result of the function.
   def self.call(version:)
-    if version == 0.9
-      Right "Terraform version #{version} is supported"
-    elsif (0.7..0.8).cover? version
-      Right "Terraform version #{version} is deprecated and will not be supported by kitchen-terraform version " \
-              "2.0; upgrade to Terraform version 0.9 to remain supported"
-    else
-      Left "Terraform version #{version} is not supported; supported Terraform versions are 0.7 through 0.9"
+    Maybe(version.slice(/v(\d+\.\d+)/, 1)).or do
+      Left "Unable to parse Terraform client version output\nTerraform client version output did not match 'vX.Y'"
+    end.bind do |major_minor|
+      if major_minor == "0.9"
+        Right "Terraform version #{major_minor} is supported"
+      elsif ["0.7", "0.8"].include? major_minor
+        Right "Terraform version #{major_minor} is deprecated and will not be supported by kitchen-terraform version " \
+                "2.0; upgrade to Terraform version 0.9 to remain supported"
+      else
+        Left "Terraform version #{major_minor} is not supported; supported Terraform versions are 0.7 through 0.9"
+      end
     end
   end
 end

@@ -20,7 +20,7 @@ require "support/dry/monads/either_matchers"
 ::RSpec.describe ::Kitchen::Driver::Terraform::VerifyClientVersion do
   describe ".call" do
     subject do
-      described_class.call version: version
+      described_class.call version: "Terraform v#{version}"
     end
 
     shared_examples "the version is deprecated" do
@@ -45,9 +45,20 @@ require "support/dry/monads/either_matchers"
       end
     end
 
+    context "when the version is invalid" do
+      let :version do
+        "abc"
+      end
+
+      it do
+        is_expected.to result_in_failure.with_the_value "Unable to parse Terraform client version output\n" \
+                                                          "Terraform client version output did not match 'vX.Y'"
+      end
+    end
+
     context "when the version is 0.10" do
       let :version do
-        0.10
+        "0.10"
       end
 
       it_behaves_like "the version is unsupported"
@@ -55,7 +66,7 @@ require "support/dry/monads/either_matchers"
 
     context "when the version is 0.9" do
       let :version do
-        0.9
+        "0.9"
       end
 
       it_behaves_like "the version is supported"
@@ -63,7 +74,7 @@ require "support/dry/monads/either_matchers"
 
     context "when the version is 0.8" do
       let :version do
-        0.8
+        "0.8"
       end
 
       it_behaves_like "the version is deprecated"
@@ -71,7 +82,7 @@ require "support/dry/monads/either_matchers"
 
     context "when the version is 0.7" do
       let :version do
-        0.7
+        "0.7"
       end
 
       it_behaves_like "the version is deprecated"
@@ -79,7 +90,7 @@ require "support/dry/monads/either_matchers"
 
     context "when the version is 0.6" do
       let :version do
-        0.6
+        "0.6"
       end
 
       it_behaves_like "the version is unsupported"
