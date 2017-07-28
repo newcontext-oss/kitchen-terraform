@@ -45,12 +45,6 @@ require "support/kitchen/terraform/client/command_context"
     end
   end
 
-  shared_examples "the command does not experience an error" do
-    it do
-      is_expected.to result_in_success.with_the_value described_instance
-    end
-  end
-
   describe "#run" do
     subject do
       described_instance.run
@@ -77,30 +71,6 @@ require "support/kitchen/terraform/client/command_context"
       it_behaves_like "the command experiences an error"
     end
 
-    context "when no error occurs" do
-      include_context "Kitchen::Terraform::Client::Command", subcommand: "subcommand"
-
-      it_behaves_like "the command does not experience an error"
-    end
-  end
-
-  describe '#output' do
-    include_context "Kitchen::Terraform::Client::Command", subcommand: "subcommand"
-
-    subject do
-      described_instance.output
-    end
-
-    it do
-      is_expected.to eq "stdout"
-    end
-  end
-
-  describe "#process_errors" do
-    subject do
-      described_instance.process_errors
-    end
-
     context "when the command exits with a nonzero value" do
       include_context "Kitchen::Terraform::Client::Command", subcommand: "subcommand"
 
@@ -111,7 +81,9 @@ require "support/kitchen/terraform/client/command_context"
       include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
                                                              subcommand: "subcommand"
 
-      it_behaves_like "the command does not experience an error"
+      it do
+        is_expected.to result_in_success.with_the_value "stdout"
+      end
     end
   end
 end

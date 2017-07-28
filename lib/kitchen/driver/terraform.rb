@@ -374,9 +374,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         ::Kitchen::Terraform::Client::Options::State.new(value: config_state)
       ],
       subcommand: "output",
-    ).bind do |command|
+    ).bind do |output|
       Try ::JSON::ParserError do
-        ::JSON.parse command.output
+        ::JSON.parse output
       end.to_either
     end.or do |error|
       Left "parsing Terraform client output as JSON failed\n#{error}"
@@ -392,8 +392,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     execute_command(
       command_logger: debug_logger,
       subcommand: "version",
-    ).bind do |command|
-      self.class::VerifyClientVersion.call version: command.output
+    ).bind do |output|
+      self.class::VerifyClientVersion.call version: output
     end.fmap do |verified_client_version|
       logger.warn verified_client_version
     end.or do |failure|
@@ -415,7 +415,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       subcommand: subcommand,
       target: target,
       timeout: config_command_timeout
-    ).run.bind &:process_errors
+    ).run
   end
 
   def module_path

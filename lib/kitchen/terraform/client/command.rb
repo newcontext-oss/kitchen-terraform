@@ -27,31 +27,17 @@ class ::Kitchen::Terraform::Client::Command
 
   include ::Dry::Monads::Try::Mixin
 
-  def process_errors
-    try(
-      errors: [
-        ::Mixlib::ShellOut::ShellCommandFailed
-      ]
-    ) do
-      shell_out.error!
-      self
-    end
-  end
-
-  def output
-    shell_out.stdout
-  end
-
   def run
-    try(
-      errors: [
-        ::Errno::EACCES,
-        ::Errno::ENOENT,
-        ::Mixlib::ShellOut::CommandTimeout
-      ]
-    ) do
+    Try ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout do
       shell_out.run_command
-      self
+    end.bind do
+      Try ::Mixlib::ShellOut::ShellCommandFailed do
+        shell_out.error!
+      end
+    end.to_either.bind do
+      Right shell_out.stdout
+    end.or do |error|
+      Left "#{summary} failed: '#{error}'"
     end
   end
 
@@ -71,11 +57,5 @@ class ::Kitchen::Terraform::Client::Command
       timeout: timeout
     )
     self.summary = "`#{cli} #{subcommand} #{target}`"
-  end
-
-  def try(errors:, &block)
-    Try(*errors, &block).to_either.or do |error|
-      Left "#{summary} failed: '#{error}'"
-    end
   end
 end
