@@ -44,9 +44,9 @@ require "support/kitchen/terraform/client/command_context"
     end
   end
 
-  describe "#run" do
+  describe "#bind" do
     subject do
-      described_instance.run
+      described_instance.bind
     end
 
     context "when a permissions error occurs" do
@@ -77,6 +77,27 @@ require "support/kitchen/terraform/client/command_context"
     end
 
     context "when the command exits with a zero value" do
+      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
+                                                             subcommand: "subcommand"
+
+      it do
+        is_expected.to result_in_success.with_the_value "stdout"
+      end
+    end
+  end
+
+  describe "#or" do
+    subject do
+      described_instance.or
+    end
+
+    context "when #bind results in failure" do
+      include_context "Kitchen::Terraform::Client::Command", subcommand: "subcommand"
+
+      it_behaves_like "the command experiences an error"
+    end
+
+    context "when #bind results in success" do
       include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
                                                              subcommand: "subcommand"
 

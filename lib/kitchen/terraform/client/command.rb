@@ -27,7 +27,7 @@ class ::Kitchen::Terraform::Client::Command
 
   include ::Dry::Monads::Try::Mixin
 
-  def run
+  def bind(&block)
     Try ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout do
       shell_out.run_command
     end.bind do
@@ -38,7 +38,11 @@ class ::Kitchen::Terraform::Client::Command
       Right shell_out.stdout
     end.or do |error|
       Left "#{summary} failed: '#{error}'"
-    end
+    end.bind &(block or method(:Right))
+  end
+
+  def or(&block)
+    bind.or &(block or method(:Left))
   end
 
   private

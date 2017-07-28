@@ -255,9 +255,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ).fmap do |created_directories|
       logger.debug created_directories
     end.bind do
-      execute_command(
+      ::Kitchen::Terraform::Client::Command.new(
+        logger: logger,
         subcommand: "validate",
-        target: config_directory
+        target: config_directory,
+        timeout: config_command_timeout
       )
     end.bind do
       ::Kitchen::Terraform::ClearDirectory.call(
@@ -270,7 +272,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     end.fmap do |cleared_directory|
       logger.debug cleared_directory
     end.bind do
-      execute_command(
+      ::Kitchen::Terraform::Client::Command.new(
+        logger: logger,
         options: [
           ::Kitchen::Terraform::Client::Options::Backend.new(value: true),
           *config_backend_configurations.map do |value|
@@ -285,18 +288,22 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           ::Kitchen::Terraform::Client::Options::Reconfigure.new
         ],
         subcommand: "init",
-        target: "#{config_directory} #{module_path}"
+        target: "#{config_directory} #{module_path}",
+        timeout: config_command_timeout
       )
     end.bind do
-      execute_command(
+      ::Kitchen::Terraform::Client::Command.new(
+        logger: logger,
         options: [
           ::Kitchen::Terraform::Client::Options::Update.new
         ],
         subcommand: "get",
-        target: module_path
+        target: module_path,
+        timeout: config_command_timeout
       )
     end.bind do
-      execute_command(
+      ::Kitchen::Terraform::Client::Command.new(
+        logger: logger,
         options: [
           ::Kitchen::Terraform::Client::Options::Input.new(value: false),
           color_option,
@@ -312,10 +319,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           *additional_plan_options
         ],
         subcommand: "plan",
-        target: module_path
+        target: module_path,
+        timeout: config_command_timeout
       )
     end.bind do
-      execute_command(
+      ::Kitchen::Terraform::Client::Command.new(
+        logger: logger,
         options: [
           ::Kitchen::Terraform::Client::Options::Input.new(value: false),
           color_option,
@@ -323,7 +332,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           ::Kitchen::Terraform::Client::Options::StateOut.new(value: config_state)
         ],
         subcommand: "apply",
-        target: config_plan
+        target: config_plan,
+        timeout: config_command_timeout
       )
     end.or do |failure|
       raise ::Kitchen::ActionFailed, failure
@@ -350,14 +360,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [::Dry::Monads::Either] the result of the Terraform Client Output function.
   # @see ::Kitchen::Terraform::Client::Output
   def output
-    execute_command(
-      command_logger: debug_logger,
+    ::Kitchen::Terraform::Client::Command.new(
+      logger: debug_logger,
       options: [
         color_option,
         ::Kitchen::Terraform::Client::Options::JSON.new,
         ::Kitchen::Terraform::Client::Options::State.new(value: config_state)
       ],
       subcommand: "output",
+      timeout: config_command_timeout
     ).bind do |output|
       Try ::JSON::ParserError do
         ::JSON.parse output
@@ -376,7 +387,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::Client::Command.new(
       logger: debug_logger,
       subcommand: "version",
-    ).run.bind do |output|
+    ).bind do |output|
       self.class::VerifyClientVersion.call version: output
     end.fmap do |verified_client_version|
       logger.warn verified_client_version
@@ -389,16 +400,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   def color_option
     @color_option ||= ::Kitchen::Terraform::Client::Options::NoColor.new if not config_color
-  end
-
-  def execute_command(command_logger: logger, options: [], subcommand:, target: "")
-    ::Kitchen::Terraform::Client::Command.new(
-      logger: command_logger,
-      options: options,
-      subcommand: subcommand,
-      target: target,
-      timeout: config_command_timeout
-    ).run
   end
 
   def module_path
