@@ -45,7 +45,7 @@ class ::Kitchen::Terraform::Client::Command
 
   attr_accessor :shell_out, :summary
 
-  def initialize(logger:, options: [], subcommand:, target: "", timeout:)
+  def initialize(logger:, options: [], subcommand:, target: "", timeout: nil)
     self.shell_out = ::Mixlib::ShellOut.new(
       [
         "terraform",
