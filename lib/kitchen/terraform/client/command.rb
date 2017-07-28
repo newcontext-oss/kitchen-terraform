@@ -45,10 +45,10 @@ class ::Kitchen::Terraform::Client::Command
 
   attr_accessor :shell_out, :summary
 
-  def initialize(cli:, logger:, options: [], subcommand:, target: "", timeout:)
+  def initialize(logger:, options: [], subcommand:, target: "", timeout:)
     self.shell_out = ::Mixlib::ShellOut.new(
       [
-        cli,
+        "terraform",
         subcommand,
         *options.map(&:to_s),
         target
@@ -56,6 +56,6 @@ class ::Kitchen::Terraform::Client::Command
       live_stream: logger,
       timeout: timeout
     )
-    self.summary = "`#{cli} #{subcommand} #{target}`"
+    self.summary = "`terraform #{subcommand} #{target}`"
   end
 end

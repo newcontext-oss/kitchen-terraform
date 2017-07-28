@@ -24,7 +24,6 @@ require "support/kitchen/terraform/client/command_context"
 ::RSpec.describe ::Kitchen::Terraform::Client::Command do
   let :described_instance do
     described_class.new(
-      cli: "cli",
       logger: [],
       options: [
         ::Kitchen::Terraform::Client::Options::ForceCopy.new,
@@ -41,7 +40,7 @@ require "support/kitchen/terraform/client/command_context"
 
   shared_examples "the command experiences an error" do
     it do
-      is_expected.to result_in_failure.with_the_value /`cli subcommand target` failed: '.+'/
+      is_expected.to result_in_failure.with_the_value /`terraform subcommand target` failed: '.+'/
     end
   end
 

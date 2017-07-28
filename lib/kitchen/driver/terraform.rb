@@ -54,7 +54,6 @@ require "terraform/configurable"
 #   driver:
 #     name: terraform
 #     command_timeout: 1000
-#     cli: /usr/local/bin/terraform
 #     color: false
 #     directory: /directory/containing/terraform/configuration
 #     parallelism: 2
@@ -67,16 +66,6 @@ require "terraform/configurable"
 #       variable_name: variable_value
 #
 # ==== Attributes
-#
-# ===== cli
-#
-# Description:: The path of the Terraform CLI to use for command execution.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: +"terraform"+
 #
 # ===== color
 #
@@ -177,11 +166,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
                                                                  expand_path: true,
                                                                  plugin_class: self do
     []
-  end
-
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :cli,
-                                                         plugin_class: self do
-    "terraform"
   end
 
   ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :command_timeout,
@@ -409,7 +393,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   def execute_command(command_logger: logger, options: [], subcommand:, target: "")
     ::Kitchen::Terraform::Client::Command.new(
-      cli: config_cli,
       logger: command_logger,
       options: options,
       subcommand: subcommand,

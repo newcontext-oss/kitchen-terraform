@@ -20,7 +20,7 @@ require "mixlib/shellout"
   "Kitchen::Terraform::Client::Command"
 ) do |exit_code: 1, error: nil, output_contents: "stdout", subcommand:|
   before do
-  allow(::Mixlib::ShellOut).to receive(:new).with(/^\w+ #{subcommand}/, any_args)
+  allow(::Mixlib::ShellOut).to receive(:new).with(/^terraform #{subcommand}/, any_args)
     .and_wrap_original do |method, *arguments|
       method.call(*arguments).tap do |shell_out|
         allow(shell_out).to receive(:exitstatus).and_return exit_code
