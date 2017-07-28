@@ -373,10 +373,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Driver::Terraform::VerifyClientVersion
   # @see ::Kitchen::Terraform::Client::Version
   def verify_dependencies
-    execute_command(
-      command_logger: debug_logger,
+    ::Kitchen::Terraform::Client::Command.new(
+      logger: debug_logger,
       subcommand: "version",
-    ).bind do |output|
+    ).run.bind do |output|
       self.class::VerifyClientVersion.call version: output
     end.fmap do |verified_client_version|
       logger.warn verified_client_version
