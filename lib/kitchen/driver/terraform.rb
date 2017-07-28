@@ -174,6 +174,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   no_parallel_for
 
   ::Kitchen::Terraform::DefineArrayOfStringsConfigAttribute.call attribute: :backend_configurations,
+                                                                 expand_path: true,
                                                                  plugin_class: self do
     []
   end
@@ -200,8 +201,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   )
 
   ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :directory,
+                                                         expand_path: true,
                                                          plugin_class: self do |plugin|
-    plugin[:kitchen_root]
+    "."
   end
 
   ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :lock_timeout,
@@ -215,16 +217,19 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :plan,
+                                                         expand_path: true,
                                                          plugin_class: self do |plugin|
     plugin.instance_pathname filename: "terraform.tfplan"
   end
 
   ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :state,
+                                                         expand_path: true,
                                                          plugin_class: self do |plugin|
     plugin.instance_pathname filename: "terraform.tfstate"
   end
 
   ::Kitchen::Terraform::DefineArrayOfStringsConfigAttribute.call attribute: :variable_files,
+                                                                 expand_path: true,
                                                                  plugin_class: self do
     []
   end
@@ -239,6 +244,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       required(:value).value :hash?
     end
   )
+
   include ::Dry::Monads::Either::Mixin
 
   include ::Dry::Monads::Try::Mixin

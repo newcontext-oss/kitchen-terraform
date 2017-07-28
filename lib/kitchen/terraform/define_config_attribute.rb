@@ -28,13 +28,14 @@ module ::Kitchen::Terraform::DefineConfigAttribute
   # @param initialize_default_value [::Proc] a proc to lazily provide a default value.
   # @param plugin_class [::Class] the plugin class on which the attribute will be defined.
   # @param schema [::Proc] a proc to define the validation schema of the attribute.
-  def self.call(attribute:, initialize_default_value:, plugin_class:, schema:)
+  def self.call(attribute:, expand_path: false, initialize_default_value:, plugin_class:, schema:)
     plugin_class.required_config attribute do |_attribute, value, plugin|
       ::Dry::Validation.Schema(&schema).call(value: value).messages.tap do |messages|
         raise ::Kitchen::UserError, "#{plugin.class} configuration: #{attribute} #{messages}" if not messages.empty?
       end
     end
     plugin_class.default_config attribute, &initialize_default_value
+    plugin_class.expand_path_for attribute if expand_path
     plugin_class.send(
       :define_method,
       "config_#{attribute}",

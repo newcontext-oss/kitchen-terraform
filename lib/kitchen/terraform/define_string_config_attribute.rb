@@ -30,9 +30,10 @@ module ::Kitchen::Terraform::DefineStringConfigAttribute
   # @yieldparam plugin [::Kitchen::Driver::Terraform, ::Kitchen::Provisioner::Terraform, ::Kitchen::Verifier::Terraform]
   #             an instance of the plugin class.
   # @yieldreturn [::Object] the default value of the attribute.
-  def self.call(attribute:, plugin_class:, &initialize_default_value)
+  def self.call(attribute:, expand_path: false, plugin_class:, &initialize_default_value)
     ::Kitchen::Terraform::DefineConfigAttribute.call(
       attribute: attribute,
+      expand_path: expand_path,
       initialize_default_value: initialize_default_value,
       plugin_class: plugin_class,
       schema: lambda do
