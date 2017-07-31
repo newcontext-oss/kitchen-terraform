@@ -254,19 +254,19 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       ]
     ) do |created_directories|
       logger.debug created_directories
-      ::Kitchen::Terraform::Client::Command.validate(
-        logger: logger,
-        target: config_directory,
-        timeout: config_command_timeout
-      ) do
-        ::Kitchen::Terraform::ClearDirectory.call(
-          directory: module_path,
-          files: [
-            "*.tf",
-            "*.tf.json"
-          ]
-        ) do |cleared_directory|
-          logger.debug cleared_directory
+      ::Kitchen::Terraform::ClearDirectory.call(
+        directory: module_path,
+        files: [
+          "*.tf",
+          "*.tf.json"
+        ]
+      ) do |cleared_directory|
+        logger.debug cleared_directory
+        ::Kitchen::Terraform::Client::Command.validate(
+          logger: logger,
+          target: config_directory,
+          timeout: config_command_timeout,
+        ) do
           ::Kitchen::Terraform::Client::Command.init(
             logger: logger,
             options: [

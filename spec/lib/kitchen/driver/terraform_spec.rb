@@ -72,6 +72,8 @@ require "support/terraform/configurable_examples"
     context "when the validate command results in failure" do
       include_context "Kitchen::Terraform::CreateDirectories", failure: false
 
+      include_context "Kitchen::Terraform::ClearDirectory"
+
       include_context "Kitchen::Terraform::Client::Command", subcommand: "validate"
 
       it "raises an action failed error" do
