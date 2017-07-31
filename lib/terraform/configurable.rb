@@ -48,6 +48,8 @@ module ::Terraform::Configurable
   end
 
   def instance_pathname(filename:)
+    raise ::Kitchen::ClientError, "Instance must be provided to #{self}" if instance.nil?
+
     ::File.join config.fetch(:kitchen_root), ".kitchen", "kitchen-terraform", instance.name, filename
   end
 end
