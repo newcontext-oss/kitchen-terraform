@@ -186,7 +186,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :directory,
                                                          expand_path: true,
-                                                         plugin_class: self do |plugin|
+                                                         plugin_class: self do
     "."
   end
 
