@@ -26,8 +26,7 @@ require "mixlib/shellout"
         allow(shell_out).to receive(:exitstatus).and_return exit_code
 
         allow(shell_out).to receive(:run_command) do
-          raise error, "mocked `#{shell_out.command}` error" if not error.nil?
-          shell_out
+          error.nil? and shell_out or raise error, "mocked `#{shell_out.command}` error"
         end
 
         allow(shell_out).to receive(:stdout).and_return output_contents
