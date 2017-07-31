@@ -94,7 +94,7 @@ class ::Kitchen::Terraform::Client::Command
 
   include ::Dry::Monads::Try::Mixin
 
-  def run(&block)
+  def run
     Try ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout do
       shell_out.run_command
     end.bind do
@@ -102,7 +102,7 @@ class ::Kitchen::Terraform::Client::Command
         shell_out.error!
       end
     end.to_either.bind do
-      block.call shell_out.stdout
+      yield shell_out.stdout
     end.or do |error|
       Left "#{summary} failed: '#{error}'"
     end
