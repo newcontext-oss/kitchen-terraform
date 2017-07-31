@@ -34,16 +34,6 @@ class ::Kitchen::Terraform::Client::Command
     ).run &block
   end
 
-  def self.get(logger:, options:, target:, timeout:, &block)
-    new(
-      logger: logger,
-      options: options,
-      subcommand: "get",
-      target: target,
-      timeout: timeout
-    ).run &block
-  end
-
   def self.init(logger:, options:, target:, timeout:, &block)
     new(
       logger: logger,

@@ -88,19 +88,6 @@ require "support/kitchen/terraform/client/command_context"
     )
   end
 
-  describe ".get" do
-    it_behaves_like(
-      "a command is run",
-      arguments: {
-        logger: [],
-        options: [],
-        target: "target",
-        timeout: 1234
-      },
-      subcommand: "get"
-    )
-  end
-
   describe ".init" do
     it_behaves_like(
       "a command is run",

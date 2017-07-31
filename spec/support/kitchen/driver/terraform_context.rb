@@ -30,9 +30,6 @@ require "support/kitchen/terraform/create_directories_context"
                                                          subcommand: "init"
 
   include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
-                                                         subcommand: "get"
-
-  include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
                                                          subcommand: "plan"
 
   include_context "Kitchen::Terraform::Client::Command", exit_code: (failure and 1 or 0),

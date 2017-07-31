@@ -96,24 +96,6 @@ require "support/terraform/configurable_examples"
       end
     end
 
-    context "when the get command results in failure" do
-      include_context "Kitchen::Terraform::CreateDirectories", failure: false
-
-      include_context "Kitchen::Terraform::ClearDirectory"
-
-      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
-                                                             subcommand: "validate"
-
-      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
-                                                             subcommand: "init"
-
-      include_context "Kitchen::Terraform::Client::Command", subcommand: "get"
-
-      it "raises an action failed error" do
-        is_expected.to raise_error ::Kitchen::ActionFailed, /terraform get/
-      end
-    end
-
     context "when the plan command results in failure" do
       include_context "Kitchen::Terraform::CreateDirectories", failure: false
 
@@ -124,9 +106,6 @@ require "support/terraform/configurable_examples"
 
       include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
                                                              subcommand: "init"
-
-      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
-                                                             subcommand: "get"
 
       include_context "Kitchen::Terraform::Client::Command", subcommand: "plan"
 

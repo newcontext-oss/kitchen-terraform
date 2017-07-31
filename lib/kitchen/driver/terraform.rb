@@ -285,46 +285,37 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             target: "#{config_directory} #{module_path}",
             timeout: config_command_timeout
           ) do
-            ::Kitchen::Terraform::Client::Command.get(
+            ::Kitchen::Terraform::Client::Command.plan(
               logger: logger,
               options: [
-                ::Kitchen::Terraform::Client::Options::Update.new
+                ::Kitchen::Terraform::Client::Options::Input.new(value: false),
+                color_option,
+                ::Kitchen::Terraform::Client::Options::Out.new(value: config_plan),
+                ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
+                ::Kitchen::Terraform::Client::Options::State.new(value: config_state),
+                *config_variables.map do |name, value|
+                  ::Kitchen::Terraform::Client::Options::Var.new name: name, value: value
+                end,
+                *config_variable_files.map do |value|
+                  ::Kitchen::Terraform::Client::Options::VarFile.new value: value
+                end,
+                *additional_plan_options
               ],
               target: module_path,
               timeout: config_command_timeout
             ) do
-              ::Kitchen::Terraform::Client::Command.plan(
+              ::Kitchen::Terraform::Client::Command.apply(
                 logger: logger,
                 options: [
                   ::Kitchen::Terraform::Client::Options::Input.new(value: false),
                   color_option,
-                  ::Kitchen::Terraform::Client::Options::Out.new(value: config_plan),
                   ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
-                  ::Kitchen::Terraform::Client::Options::State.new(value: config_state),
-                  *config_variables.map do |name, value|
-                    ::Kitchen::Terraform::Client::Options::Var.new name: name, value: value
-                  end,
-                  *config_variable_files.map do |value|
-                    ::Kitchen::Terraform::Client::Options::VarFile.new value: value
-                  end,
-                  *additional_plan_options
+                  ::Kitchen::Terraform::Client::Options::StateOut.new(value: config_state)
                 ],
                 target: module_path,
                 timeout: config_command_timeout
               ) do
-                ::Kitchen::Terraform::Client::Command.apply(
-                  logger: logger,
-                  options: [
-                    ::Kitchen::Terraform::Client::Options::Input.new(value: false),
-                    color_option,
-                    ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
-                    ::Kitchen::Terraform::Client::Options::StateOut.new(value: config_state)
-                  ],
-                  target: config_plan,
-                  timeout: config_command_timeout
-                ) do
-                  Right logger.debug "#{self}.create resulted in success"
-                end
+                Right logger.debug "#{self}.create resulted in success"
               end
             end
           end
