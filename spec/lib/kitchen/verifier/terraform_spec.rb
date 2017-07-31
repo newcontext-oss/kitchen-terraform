@@ -17,7 +17,7 @@
 require "inspec"
 require "kitchen/verifier/terraform"
 require "support/kitchen/instance_context"
-require "support/kitchen/terraform/client/execute_command_context"
+require "support/kitchen/terraform/client/command_context"
 require "support/kitchen/verifier/terraform/config_attribute_groups_examples"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
@@ -62,14 +62,14 @@ require "support/terraform/configurable_examples"
     end
 
     shared_context "Kitchen::Verifier::Inspec" do |exit_code:|
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output",
+      include_context "Kitchen::Terraform::Client::Command",
                       exit_code: 0,
-                      output: ::JSON.generate(
+                      output_contents: ::JSON.generate(
                         "output_name" => {
                           "value" => "output_name value"
                         }
-                      )
+                      ),
+                      subcommand: "output"
 
       let :runner do
         instance_double ::Inspec::Runner
@@ -107,8 +107,8 @@ require "support/terraform/configurable_examples"
     end
 
     context "when the result of enumerating group hosts is a failure" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output"
+      include_context "Kitchen::Terraform::Client::Command",
+                      subcommand: "output"
 
       before do
         group.store :hostnames,

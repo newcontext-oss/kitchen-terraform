@@ -18,7 +18,7 @@ require "kitchen/terraform/client"
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/instance_context"
-require "support/kitchen/terraform/client/execute_command_context"
+require "support/kitchen/terraform/client/command_context"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes do
   describe ".call" do
@@ -39,7 +39,7 @@ require "support/kitchen/terraform/client/execute_command_context"
     end
 
     context "when the Terraform output command results in failure" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output"
+      include_context "Kitchen::Terraform::Client::Command", subcommand: "output"
 
       it do
         is_expected.to result_in_failure
@@ -48,13 +48,14 @@ require "support/kitchen/terraform/client/execute_command_context"
     end
 
     context "when the value of the Terraform output command result is unexpected" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0,
-                                                                    output: ::JSON.generate(
-                                                                      "name" => {
-                                                                        "unexpected" => "value"
-                                                                      }
-                                                                    )
+      include_context "Kitchen::Terraform::Client::Command",
+                       exit_code: 0,
+                       output_contents: ::JSON.generate(
+                         "name" => {
+                           "unexpected" => "value"
+                         }
+                       ),
+                       subcommand: "output"
 
       it do
         is_expected.to result_in_failure.with_the_value /configuring Inspec::Runner attributes failed.*\"value\"/m
@@ -62,13 +63,14 @@ require "support/kitchen/terraform/client/execute_command_context"
     end
 
     context "when the group attribute output names do not match the value of the Terraform output command result" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0,
-                                                                    output: ::JSON.generate(
-                                                                      "output_name" => {
-                                                                        "value" => "output_name value"
-                                                                      }
-                                                                    )
+      include_context "Kitchen::Terraform::Client::Command",
+                      exit_code: 0,
+                      output_contents: ::JSON.generate(
+                        "output_name" => {
+                          "value" => "output_name value"
+                        }
+                      ),
+                      subcommand: "output"
 
       let :group do
         {
@@ -85,13 +87,14 @@ require "support/kitchen/terraform/client/execute_command_context"
     end
 
     context "when the group attribute output names match the value of the Terraform output command result" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0,
-                                                                    output: ::JSON.generate(
-                                                                      "output_name" => {
-                                                                        "value" => "output_name value"
-                                                                      }
-                                                                    )
+      include_context "Kitchen::Terraform::Client::Command",
+                      exit_code: 0,
+                      output_contents: ::JSON.generate(
+                        "output_name" => {
+                          "value" => "output_name value"
+                        }
+                      ),
+                      subcommand: "output"
 
       let :group do
         {
