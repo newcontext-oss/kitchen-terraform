@@ -252,8 +252,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         ::File.dirname(config_plan),
         ::File.dirname(config_state)
       ]
-    ).fmap do |created_directories|
-      logger.debug created_directories
+    ) do |created_directories|
+      Right logger.debug created_directories
     end.bind do
       ::Kitchen::Terraform::Client::Command.validate(
         logger: logger,

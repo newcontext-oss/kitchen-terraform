@@ -14,17 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/terraform/create_directories"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/create_directories_context"
 
 ::RSpec.describe ::Kitchen::Terraform::CreateDirectories do
   describe ".call" do
+    include ::Dry::Monads::Either::Mixin
+
     subject do
-      described_class.call directories: [
-                             "directory_1",
-                             "directory_2"
-                           ]
+      described_class.call(
+        directories: [
+          "directory_1",
+          "directory_2"
+        ],
+        &method(:Right)
+      )
     end
 
     context "when the creation of directories does experience an error" do
