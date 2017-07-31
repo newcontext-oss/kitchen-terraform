@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/terraform/client/command"
 require "kitchen/terraform/client/options/force_copy"
 require "kitchen/terraform/client/options/var"
@@ -22,63 +23,51 @@ require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/client/command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::Command do
-  let :described_instance do
-    described_class.new(
-      logger: [],
-      options: [
-        ::Kitchen::Terraform::Client::Options::ForceCopy.new,
-        ::Kitchen::Terraform::Client::Options::Var.new(
-          name: "name",
-          value: "value"
-        )
-      ],
-      subcommand: "subcommand",
-      target: "target",
-      timeout: 1234
-    )
-  end
+  shared_examples "a command is run" do |arguments:, subcommand:|
+    include ::Dry::Monads::Either::Mixin
 
-  shared_examples "the command experiences an error" do
-    it do
-      is_expected.to result_in_failure.with_the_value /`terraform subcommand target` failed: '.+'/
-    end
-  end
-
-  describe "#bind" do
     subject do
-      described_instance.bind
+      described_class.send subcommand, **arguments do |result|
+        Right result
+      end
+    end
+
+    shared_examples "the command experiences an error" do
+      it do
+        is_expected.to result_in_failure.with_the_value /`terraform #{subcommand}.*` failed: '.+'/
+      end
     end
 
     context "when a permissions error occurs" do
       include_context "Kitchen::Terraform::Client::Command", error: ::Errno::EACCES,
-                                                             subcommand: "subcommand"
+                                                             subcommand: subcommand
 
       it_behaves_like "the command experiences an error"
     end
 
     context "when an entry error occurs" do
       include_context "Kitchen::Terraform::Client::Command", error: ::Errno::ENOENT,
-                                                             subcommand: "subcommand"
+                                                             subcommand: subcommand
 
       it_behaves_like "the command experiences an error"
     end
 
     context "when a timeout error occurs" do
       include_context "Kitchen::Terraform::Client::Command", error: ::Mixlib::ShellOut::CommandTimeout,
-                                                             subcommand: "subcommand"
+                                                             subcommand: subcommand
 
       it_behaves_like "the command experiences an error"
     end
 
     context "when the command exits with a nonzero value" do
-      include_context "Kitchen::Terraform::Client::Command", subcommand: "subcommand"
+      include_context "Kitchen::Terraform::Client::Command", subcommand: subcommand
 
       it_behaves_like "the command experiences an error"
     end
 
     context "when the command exits with a zero value" do
       include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
-                                                             subcommand: "subcommand"
+                                                             subcommand: subcommand
 
       it do
         is_expected.to result_in_success.with_the_value "stdout"
@@ -86,24 +75,89 @@ require "support/kitchen/terraform/client/command_context"
     end
   end
 
-  describe "#or" do
-    subject do
-      described_instance.or
-    end
+  describe ".apply" do
+    it_behaves_like(
+      "a command is run",
+      arguments: {
+        logger: [],
+        options: [],
+        target: "target",
+        timeout: 1234
+      },
+      subcommand: "apply"
+    )
+  end
 
-    context "when #bind results in failure" do
-      include_context "Kitchen::Terraform::Client::Command", subcommand: "subcommand"
+  describe ".get" do
+    it_behaves_like(
+      "a command is run",
+      arguments: {
+        logger: [],
+        options: [],
+        target: "target",
+        timeout: 1234
+      },
+      subcommand: "get"
+    )
+  end
 
-      it_behaves_like "the command experiences an error"
-    end
+  describe ".init" do
+    it_behaves_like(
+      "a command is run",
+      arguments: {
+        logger: [],
+        options: [],
+        target: "target",
+        timeout: 1234
+      },
+      subcommand: "init"
+    )
+  end
 
-    context "when #bind results in success" do
-      include_context "Kitchen::Terraform::Client::Command", exit_code: 0,
-                                                             subcommand: "subcommand"
+  describe ".output" do
+    it_behaves_like(
+      "a command is run",
+      arguments: {
+        logger: [],
+        options: [],
+        timeout: 1234
+      },
+      subcommand: "output"
+    )
+  end
 
-      it do
-        is_expected.to result_in_success.with_the_value "stdout"
-      end
-    end
+  describe ".plan" do
+    it_behaves_like(
+      "a command is run",
+      arguments: {
+        logger: [],
+        options: [],
+        target: "target",
+        timeout: 1234
+      },
+      subcommand: "plan"
+    )
+  end
+
+  describe ".validate" do
+    it_behaves_like(
+      "a command is run",
+      arguments: {
+        logger: [],
+        target: "target",
+        timeout: 1234
+      },
+      subcommand: "validate"
+    )
+  end
+
+  describe ".version" do
+    it_behaves_like(
+      "a command is run",
+      arguments: {
+        logger: []
+      },
+      subcommand: "version"
+    )
   end
 end

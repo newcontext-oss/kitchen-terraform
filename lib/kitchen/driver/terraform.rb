@@ -255,86 +255,83 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ).fmap do |created_directories|
       logger.debug created_directories
     end.bind do
-      ::Kitchen::Terraform::Client::Command.new(
+      ::Kitchen::Terraform::Client::Command.validate(
         logger: logger,
-        subcommand: "validate",
         target: config_directory,
         timeout: config_command_timeout
-      )
-    end.bind do
-      ::Kitchen::Terraform::ClearDirectory.call(
-        directory: module_path,
-        files: [
-          "*.tf",
-          "*.tf.json"
-        ]
-      )
-    end.fmap do |cleared_directory|
-      logger.debug cleared_directory
-    end.bind do
-      ::Kitchen::Terraform::Client::Command.new(
-        logger: logger,
-        options: [
-          ::Kitchen::Terraform::Client::Options::Backend.new(value: true),
-          *config_backend_configurations.map do |value|
-            ::Kitchen::Terraform::Client::Options::BackendConfig.new value: value
-          end,
-          ::Kitchen::Terraform::Client::Options::ForceCopy.new,
-          ::Kitchen::Terraform::Client::Options::Get.new(value: true),
-          ::Kitchen::Terraform::Client::Options::Input.new(value: false),
-          ::Kitchen::Terraform::Client::Options::Lock.new(value: true),
-          ::Kitchen::Terraform::Client::Options::LockTimeout.new(value: config_lock_timeout),
-          color_option,
-          ::Kitchen::Terraform::Client::Options::Reconfigure.new
-        ],
-        subcommand: "init",
-        target: "#{config_directory} #{module_path}",
-        timeout: config_command_timeout
-      )
-    end.bind do
-      ::Kitchen::Terraform::Client::Command.new(
-        logger: logger,
-        options: [
-          ::Kitchen::Terraform::Client::Options::Update.new
-        ],
-        subcommand: "get",
-        target: module_path,
-        timeout: config_command_timeout
-      )
-    end.bind do
-      ::Kitchen::Terraform::Client::Command.new(
-        logger: logger,
-        options: [
-          ::Kitchen::Terraform::Client::Options::Input.new(value: false),
-          color_option,
-          ::Kitchen::Terraform::Client::Options::Out.new(value: config_plan),
-          ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
-          ::Kitchen::Terraform::Client::Options::State.new(value: config_state),
-          *config_variables.map do |name, value|
-            ::Kitchen::Terraform::Client::Options::Var.new name: name, value: value
-          end,
-          *config_variable_files.map do |value|
-            ::Kitchen::Terraform::Client::Options::VarFile.new value: value
-          end,
-          *additional_plan_options
-        ],
-        subcommand: "plan",
-        target: module_path,
-        timeout: config_command_timeout
-      )
-    end.bind do
-      ::Kitchen::Terraform::Client::Command.new(
-        logger: logger,
-        options: [
-          ::Kitchen::Terraform::Client::Options::Input.new(value: false),
-          color_option,
-          ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
-          ::Kitchen::Terraform::Client::Options::StateOut.new(value: config_state)
-        ],
-        subcommand: "apply",
-        target: config_plan,
-        timeout: config_command_timeout
-      )
+      ) do
+        ::Kitchen::Terraform::ClearDirectory.call(
+          directory: module_path,
+          files: [
+            "*.tf",
+            "*.tf.json"
+          ]
+        )
+      end.fmap do |cleared_directory|
+        logger.debug cleared_directory
+      end.bind do
+        ::Kitchen::Terraform::Client::Command.init(
+          logger: logger,
+          options: [
+            ::Kitchen::Terraform::Client::Options::Backend.new(value: true),
+            *config_backend_configurations.map do |value|
+              ::Kitchen::Terraform::Client::Options::BackendConfig.new value: value
+            end,
+            ::Kitchen::Terraform::Client::Options::ForceCopy.new,
+            ::Kitchen::Terraform::Client::Options::Get.new(value: true),
+            ::Kitchen::Terraform::Client::Options::Input.new(value: false),
+            ::Kitchen::Terraform::Client::Options::Lock.new(value: true),
+            ::Kitchen::Terraform::Client::Options::LockTimeout.new(value: config_lock_timeout),
+            color_option,
+            ::Kitchen::Terraform::Client::Options::Reconfigure.new
+          ],
+          target: "#{config_directory} #{module_path}",
+          timeout: config_command_timeout
+        ) do
+          ::Kitchen::Terraform::Client::Command.get(
+            logger: logger,
+            options: [
+              ::Kitchen::Terraform::Client::Options::Update.new
+            ],
+            target: module_path,
+            timeout: config_command_timeout
+          ) do
+            ::Kitchen::Terraform::Client::Command.plan(
+              logger: logger,
+              options: [
+                ::Kitchen::Terraform::Client::Options::Input.new(value: false),
+                color_option,
+                ::Kitchen::Terraform::Client::Options::Out.new(value: config_plan),
+                ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
+                ::Kitchen::Terraform::Client::Options::State.new(value: config_state),
+                *config_variables.map do |name, value|
+                  ::Kitchen::Terraform::Client::Options::Var.new name: name, value: value
+                end,
+                *config_variable_files.map do |value|
+                  ::Kitchen::Terraform::Client::Options::VarFile.new value: value
+                end,
+                *additional_plan_options
+              ],
+              target: module_path,
+              timeout: config_command_timeout
+            ) do
+              ::Kitchen::Terraform::Client::Command.apply(
+                logger: logger,
+                options: [
+                  ::Kitchen::Terraform::Client::Options::Input.new(value: false),
+                  color_option,
+                  ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
+                  ::Kitchen::Terraform::Client::Options::StateOut.new(value: config_state)
+                ],
+                target: config_plan,
+                timeout: config_command_timeout
+              ) do
+                Right logger.debug "#{self}.create resulted in success"
+              end
+            end
+          end
+        end
+      end
     end.or do |failure|
       raise ::Kitchen::ActionFailed, failure
     end
@@ -360,16 +357,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [::Dry::Monads::Either] the result of the Terraform Client Output function.
   # @see ::Kitchen::Terraform::Client::Output
   def output
-    ::Kitchen::Terraform::Client::Command.new(
+    ::Kitchen::Terraform::Client::Command.output(
       logger: debug_logger,
       options: [
         color_option,
         ::Kitchen::Terraform::Client::Options::JSON.new,
         ::Kitchen::Terraform::Client::Options::State.new(value: config_state)
       ],
-      subcommand: "output",
       timeout: config_command_timeout
-    ).bind do |output|
+    ) do |output|
       Try ::JSON::ParserError do
         ::JSON.parse output
       end.to_either
@@ -384,10 +380,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Driver::Terraform::VerifyClientVersion
   # @see ::Kitchen::Terraform::Client::Version
   def verify_dependencies
-    ::Kitchen::Terraform::Client::Command.new(
-      logger: debug_logger,
-      subcommand: "version",
-    ).bind do |output|
+    ::Kitchen::Terraform::Client::Command.version(
+      logger: debug_logger
+    ) do |output|
       self.class::VerifyClientVersion.call version: output
     end.fmap do |verified_client_version|
       logger.warn verified_client_version

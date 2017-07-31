@@ -22,12 +22,83 @@ require "mixlib/shellout"
 #
 # @see https://www.terraform.io/docs/commands/index.html Terraform commands
 class ::Kitchen::Terraform::Client::Command
+  extend ::Dry::Monads::Either::Mixin
+
+  def self.apply(logger:, options:, target:, timeout:, &block)
+    new(
+      logger: logger,
+      options: options,
+      subcommand: "apply",
+      target: target,
+      timeout: timeout
+    ).run &block
+  end
+
+  def self.get(logger:, options:, target:, timeout:, &block)
+    new(
+      logger: logger,
+      options: options,
+      subcommand: "get",
+      target: target,
+      timeout: timeout
+    ).run &block
+  end
+
+  def self.init(logger:, options:, target:, timeout:, &block)
+    new(
+      logger: logger,
+      options: options,
+      subcommand: "init",
+      target: target,
+      timeout: timeout
+    ).run &block
+  end
+
+  def self.output(logger:, options:, timeout:, &block)
+    new(
+      logger: logger,
+      options: options,
+      subcommand: "output",
+      target: "",
+      timeout: timeout
+    ).run &block
+  end
+
+  def self.plan(logger:, options:, target:, timeout:, &block)
+    new(
+      logger: logger,
+      options: options,
+      subcommand: "plan",
+      target: target,
+      timeout: timeout
+    ).run &block
+  end
+
+  def self.validate(logger:, target:, timeout:, &block)
+    new(
+      logger: logger,
+      options: [],
+      subcommand: "validate",
+      target: target,
+      timeout: timeout
+    ).run &block
+  end
+
+  def self.version(logger:, &block)
+    new(
+      logger: logger,
+      options: [],
+      target: "",
+      timeout: nil,
+      subcommand: "version"
+    ).run &block
+  end
 
   include ::Dry::Monads::Either::Mixin
 
   include ::Dry::Monads::Try::Mixin
 
-  def bind(&block)
+  def run(&block)
     Try ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout do
       shell_out.run_command
     end.bind do
@@ -35,21 +106,17 @@ class ::Kitchen::Terraform::Client::Command
         shell_out.error!
       end
     end.to_either.bind do
-      Right shell_out.stdout
+      block.call shell_out.stdout
     end.or do |error|
       Left "#{summary} failed: '#{error}'"
-    end.bind &(block or method(:Right))
-  end
-
-  def or(&block)
-    bind.or &(block or method(:Left))
+    end
   end
 
   private
 
   attr_accessor :shell_out, :summary
 
-  def initialize(logger:, options: [], subcommand:, target: "", timeout: nil)
+  def initialize(logger:, options:, subcommand:, target:, timeout:)
     self.shell_out = ::Mixlib::ShellOut.new(
       [
         "terraform",
