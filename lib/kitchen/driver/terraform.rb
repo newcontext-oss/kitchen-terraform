@@ -266,6 +266,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           logger: logger,
           target: config_directory,
           timeout: config_command_timeout,
+          working_directory: config_kitchen_root
         ) do
           ::Kitchen::Terraform::Client::Command.init(
             logger: logger,
@@ -283,7 +284,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
               ::Kitchen::Terraform::Client::Options::Reconfigure.new
             ],
             target: "#{config_directory} #{module_path}",
-            timeout: config_command_timeout
+            timeout: config_command_timeout,
+            working_directory: config_kitchen_root
           ) do
             ::Kitchen::Terraform::Client::Command.plan(
               logger: logger,
@@ -302,7 +304,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
                 *additional_plan_options
               ],
               target: module_path,
-              timeout: config_command_timeout
+              timeout: config_command_timeout,
+              working_directory: module_path
             ) do
               ::Kitchen::Terraform::Client::Command.apply(
                 logger: logger,
@@ -312,8 +315,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
                   ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
                   ::Kitchen::Terraform::Client::Options::StateOut.new(value: config_state)
                 ],
-                target: module_path,
-                timeout: config_command_timeout
+                target: config_plan,
+                timeout: config_command_timeout,
+                working_directory: module_path
               ) do
                 Right logger.debug "#{self}.create resulted in success"
               end
@@ -354,6 +358,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         ::Kitchen::Terraform::Client::Options::State.new(value: config_state)
       ],
       timeout: config_command_timeout,
+      working_directory: module_path
     ) do |output|
       Try ::JSON::ParserError do
         ::JSON.parse output
@@ -370,7 +375,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Terraform::Client::Version
   def verify_dependencies
     ::Kitchen::Terraform::Client::Command.version(
-      logger: debug_logger
+      logger: debug_logger,
+      working_directory: ::Dir.pwd
     ) do |output|
       self.class::VerifyClientVersion.call version: output
     end.fmap do |verified_client_version|
@@ -384,6 +390,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   def color_option
     @color_option ||= ::Kitchen::Terraform::Client::Options::NoColor.new if not config_color
+  end
+
+  def config_kitchen_root
+    @config_kitchen_root ||= config.fetch :kitchen_root
   end
 
   def module_path

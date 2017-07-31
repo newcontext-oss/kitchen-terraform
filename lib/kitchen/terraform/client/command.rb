@@ -24,63 +24,69 @@ require "mixlib/shellout"
 class ::Kitchen::Terraform::Client::Command
   extend ::Dry::Monads::Either::Mixin
 
-  def self.apply(logger:, options:, target:, timeout:, &block)
+  def self.apply(logger:, options:, target:, timeout:, working_directory:, &block)
     new(
       logger: logger,
       options: options,
       subcommand: "apply",
       target: target,
-      timeout: timeout
+      timeout: timeout,
+      working_directory: working_directory
     ).run &block
   end
 
-  def self.init(logger:, options:, target:, timeout:, &block)
+  def self.init(logger:, options:, target:, timeout:, working_directory:, &block)
     new(
       logger: logger,
       options: options,
       subcommand: "init",
       target: target,
-      timeout: timeout
+      timeout: timeout,
+      working_directory: working_directory
     ).run &block
   end
 
-  def self.output(logger:, options:, timeout:, &block)
+  def self.output(logger:, options:, timeout:, working_directory:, &block)
     new(
       logger: logger,
       options: options,
       subcommand: "output",
       target: "",
-      timeout: timeout
+      timeout: timeout,
+      working_directory: working_directory
     ).run &block
   end
 
-  def self.plan(logger:, options:, target:, timeout:, &block)
+  def self.plan(logger:, options:, target:, timeout:, working_directory:, &block)
     new(
       logger: logger,
       options: options,
       subcommand: "plan",
       target: target,
-      timeout: timeout
+      timeout: timeout,
+      working_directory: working_directory
     ).run &block
   end
 
-  def self.validate(logger:, target:, timeout:, &block)
+  def self.validate(logger:, target:, timeout:, working_directory:, &block)
     new(
       logger: logger,
       options: [],
       subcommand: "validate",
       target: target,
-      timeout: timeout
+      timeout: timeout,
+      working_directory: working_directory
     ).run &block
   end
 
-  def self.version(logger:, &block)
+  def self.version(logger:, working_directory:, &block)
     new(
       logger: logger,
       options: [],
       target: "",
       timeout: nil,
-      subcommand: "version"
+      subcommand: "version",
+      working_directory: working_directory
     ).run &block
   end
 
@@ -106,7 +112,7 @@ class ::Kitchen::Terraform::Client::Command
 
   attr_accessor :shell_out, :summary
 
-  def initialize(logger:, options:, subcommand:, target:, timeout:)
+  def initialize(logger:, options:, subcommand:, target:, timeout:, working_directory:)
     self.shell_out = ::Mixlib::ShellOut.new(
       [
         "terraform",
@@ -114,6 +120,7 @@ class ::Kitchen::Terraform::Client::Command
         *options.map(&:to_s),
         target
       ].join(" ").strip,
+      cwd: working_directory,
       live_stream: logger,
       timeout: timeout
     )

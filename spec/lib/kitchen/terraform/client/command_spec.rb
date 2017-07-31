@@ -82,7 +82,8 @@ require "support/kitchen/terraform/client/command_context"
         logger: [],
         options: [],
         target: "target",
-        timeout: 1234
+        timeout: 1234,
+        working_directory: "working_directory"
       },
       subcommand: "apply"
     )
@@ -95,7 +96,8 @@ require "support/kitchen/terraform/client/command_context"
         logger: [],
         options: [],
         target: "target",
-        timeout: 1234
+        timeout: 1234,
+        working_directory: "working_directory"
       },
       subcommand: "init"
     )
@@ -107,7 +109,8 @@ require "support/kitchen/terraform/client/command_context"
       arguments: {
         logger: [],
         options: [],
-        timeout: 1234
+        timeout: 1234,
+        working_directory: "working_directory"
       },
       subcommand: "output"
     )
@@ -120,7 +123,8 @@ require "support/kitchen/terraform/client/command_context"
         logger: [],
         options: [],
         target: "target",
-        timeout: 1234
+        timeout: 1234,
+        working_directory: "working_directory"
       },
       subcommand: "plan"
     )
@@ -132,7 +136,8 @@ require "support/kitchen/terraform/client/command_context"
       arguments: {
         logger: [],
         target: "target",
-        timeout: 1234
+        timeout: 1234,
+        working_directory: "working_directory"
       },
       subcommand: "validate"
     )
@@ -142,7 +147,8 @@ require "support/kitchen/terraform/client/command_context"
     it_behaves_like(
       "a command is run",
       arguments: {
-        logger: []
+        logger: [],
+        working_directory: "working_directory"
       },
       subcommand: "version"
     )
