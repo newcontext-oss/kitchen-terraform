@@ -14,18 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/terraform/clear_directory"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/clear_directory_context"
 
 ::RSpec.describe ::Kitchen::Terraform::ClearDirectory do
   describe ".call" do
+    include ::Dry::Monads::Either::Mixin
+
     subject do
-      described_class.call directory: "directory",
-                           files: [
-                             "file_1",
-                             "file_2"
-                           ]
+      described_class.call(
+        directory: "directory",
+        files: [
+          "file_1",
+          "file_2"
+        ],
+        &method(:Right)
+      )
     end
 
     include_context "Kitchen::Terraform::ClearDirectory"
