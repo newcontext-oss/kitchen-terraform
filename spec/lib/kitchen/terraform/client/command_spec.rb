@@ -35,7 +35,7 @@ require "support/kitchen/terraform/client/command_context"
 
     shared_examples "the command experiences an error" do
       it do
-        is_expected.to result_in_failure.with_the_value /`terraform #{subcommand}.*` failed: '.+'/
+        is_expected.to result_in_failure.with_the_value /Command failed: `terraform #{subcommand}.*`\n.+/
       end
     end
 

@@ -203,7 +203,7 @@ require "support/terraform/configurable_examples"
 
       it do
         is_expected.to result_in_failure
-          .with_the_value /parsing Terraform client output as JSON failed\n.*unexpected token/
+          .with_the_value /parsing Terraform client output as JSON failed.*unexpected token/m
       end
     end
 

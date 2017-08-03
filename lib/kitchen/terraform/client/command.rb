@@ -102,10 +102,10 @@ class ::Kitchen::Terraform::Client::Command
         shell_out.error!
       end
     end.to_either.bind do
-      logger.debug "#{summary} succeeded"
+      logger.debug "Command succeeded: #{summary}"
       yield shell_out.stdout
     end.or do |error|
-      Left "#{summary} failed: '#{error}'"
+      Left "Command failed: #{summary}\n#{error}"
     end
   end
 
