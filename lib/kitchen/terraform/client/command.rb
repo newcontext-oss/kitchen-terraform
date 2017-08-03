@@ -102,6 +102,7 @@ class ::Kitchen::Terraform::Client::Command
         shell_out.error!
       end
     end.to_either.bind do
+      logger.debug "#{summary} succeeded"
       yield shell_out.stdout
     end.or do |error|
       Left "#{summary} failed: '#{error}'"
@@ -110,9 +111,10 @@ class ::Kitchen::Terraform::Client::Command
 
   private
 
-  attr_accessor :shell_out, :summary
+  attr_accessor :logger, :shell_out, :summary
 
   def initialize(logger:, options:, subcommand:, target:, timeout:, working_directory:)
+    self.logger = logger
     self.shell_out = ::Mixlib::ShellOut.new(
       [
         "terraform",
@@ -124,6 +126,6 @@ class ::Kitchen::Terraform::Client::Command
       live_stream: logger,
       timeout: timeout
     )
-    self.summary = "`terraform #{subcommand} #{target}`"
+    self.summary = "`#{shell_out.command}`"
   end
 end

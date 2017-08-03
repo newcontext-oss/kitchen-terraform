@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "dry/monads"
+require "kitchen/logger"
 require "kitchen/terraform/client/command"
 require "kitchen/terraform/client/options/force_copy"
 require "kitchen/terraform/client/options/var"
@@ -79,7 +80,7 @@ require "support/kitchen/terraform/client/command_context"
     it_behaves_like(
       "a command is run",
       arguments: {
-        logger: [],
+        logger: ::Kitchen::Logger.new,
         options: [],
         target: "target",
         timeout: 1234,
@@ -93,7 +94,7 @@ require "support/kitchen/terraform/client/command_context"
     it_behaves_like(
       "a command is run",
       arguments: {
-        logger: [],
+        logger: ::Kitchen::Logger.new,
         options: [],
         target: "target",
         timeout: 1234,
@@ -107,7 +108,7 @@ require "support/kitchen/terraform/client/command_context"
     it_behaves_like(
       "a command is run",
       arguments: {
-        logger: [],
+        logger: ::Kitchen::Logger.new,
         options: [],
         timeout: 1234,
         working_directory: "working_directory"
@@ -120,7 +121,7 @@ require "support/kitchen/terraform/client/command_context"
     it_behaves_like(
       "a command is run",
       arguments: {
-        logger: [],
+        logger: ::Kitchen::Logger.new,
         options: [],
         target: "target",
         timeout: 1234,
@@ -134,7 +135,7 @@ require "support/kitchen/terraform/client/command_context"
     it_behaves_like(
       "a command is run",
       arguments: {
-        logger: [],
+        logger: ::Kitchen::Logger.new,
         target: "target",
         timeout: 1234,
         working_directory: "working_directory"
@@ -147,7 +148,7 @@ require "support/kitchen/terraform/client/command_context"
     it_behaves_like(
       "a command is run",
       arguments: {
-        logger: [],
+        logger: ::Kitchen::Logger.new,
         working_directory: "working_directory"
       },
       subcommand: "version"
