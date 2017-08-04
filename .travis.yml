@@ -23,41 +23,13 @@ jobs:
       services:
         - docker
       env:
-        - PATH="terraform_0.9.11:$PATH"
+        - PATH="terraform_0.10.0:$PATH"
       rvm: 2.4.0
       before_install:
         - cd examples/docker_provider
-        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.9.11/terraform_0.9.11_linux_amd64.zip
-        - mkdir terraform_0.9.11
-        - unzip terraform.zip -d terraform_0.9.11
-      script:
-        - bundle exec kitchen test --log-level debug
-    - stage: integration
-      sudo: required
-      services:
-        - docker
-      env:
-        - PATH="terraform_0.8.8:$PATH"
-      rvm: 2.4.0
-      before_install:
-        - cd examples/docker_provider
-        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.8.8/terraform_0.8.8_linux_amd64.zip
-        - mkdir terraform_0.8.8
-        - unzip terraform.zip -d terraform_0.8.8
-      script:
-        - bundle exec kitchen test --log-level debug
-    - stage: integration
-      sudo: required
-      services:
-        - docker
-      env:
-        - PATH="terraform_0.7.13:$PATH"
-      rvm: 2.4.0
-      before_install:
-        - cd examples/docker_provider
-        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.7.13/terraform_0.7.13_linux_amd64.zip
-        - mkdir terraform_0.7.13
-        - unzip terraform.zip -d terraform_0.7.13
+        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.10.0/terraform_0.10.0_linux_amd64.zip
+        - mkdir terraform_0.10.0
+        - unzip terraform.zip -d terraform_0.10.0
       script:
         - bundle exec kitchen test --log-level debug
     - stage: deploy

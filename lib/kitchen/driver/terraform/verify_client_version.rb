@@ -37,13 +37,10 @@ module ::Kitchen::Driver::Terraform::VerifyClientVersion
     Maybe(version.slice(/v(\d+\.\d+)/, 1)).or do
       Left "Unable to parse Terraform client version output\nTerraform client version output did not match 'vX.Y'"
     end.bind do |major_minor|
-      if major_minor == "0.9"
+      if major_minor == "0.10"
         Right "Terraform version #{major_minor} is supported"
-      elsif ["0.7", "0.8"].include? major_minor
-        Right "Terraform version #{major_minor} is deprecated and will not be supported by kitchen-terraform version " \
-                "2.0; upgrade to Terraform version 0.9 to remain supported"
       else
-        Left "Terraform version #{major_minor} is not supported; supported Terraform versions are 0.7 through 0.9"
+        Left "Terraform version #{major_minor} is not supported; upgrade to Terraform version 0.10"
       end
     end
   end

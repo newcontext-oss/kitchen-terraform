@@ -23,19 +23,10 @@ require "support/dry/monads/either_matchers"
       described_class.call version: "Terraform v#{version}"
     end
 
-    shared_examples "the version is deprecated" do
-      it do
-        is_expected.to result_in_success
-          .with_the_value "Terraform version #{version} is deprecated and will not be supported by kitchen-terraform " \
-                          "version 2.0; upgrade to Terraform version 0.9 to remain supported"
-      end
-    end
-
     shared_examples "the version is unsupported" do
       it do
         is_expected.to result_in_failure
-          .with_the_value "Terraform version #{version} is not supported; supported Terraform versions are 0.7 " \
-                            "through 0.9"
+          .with_the_value "Terraform version #{version} is not supported; upgrade to Terraform version 0.10"
       end
     end
 
@@ -61,7 +52,7 @@ require "support/dry/monads/either_matchers"
         "0.10"
       end
 
-      it_behaves_like "the version is unsupported"
+      it_behaves_like "the version is supported"
     end
 
     context "when the version is 0.9" do
@@ -69,7 +60,7 @@ require "support/dry/monads/either_matchers"
         "0.9"
       end
 
-      it_behaves_like "the version is supported"
+      it_behaves_like "the version is unsupported"
     end
 
     context "when the version is 0.8" do
@@ -77,7 +68,7 @@ require "support/dry/monads/either_matchers"
         "0.8"
       end
 
-      it_behaves_like "the version is deprecated"
+      it_behaves_like "the version is unsupported"
     end
 
     context "when the version is 0.7" do
@@ -85,7 +76,7 @@ require "support/dry/monads/either_matchers"
         "0.7"
       end
 
-      it_behaves_like "the version is deprecated"
+      it_behaves_like "the version is unsupported"
     end
 
     context "when the version is 0.6" do
