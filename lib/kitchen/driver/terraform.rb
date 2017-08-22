@@ -22,7 +22,7 @@ require "kitchen/terraform/create_directories"
 require "kitchen/terraform/client/command"
 require "kitchen/terraform/client/options"
 require "kitchen/terraform/define_array_of_strings_config_attribute"
-require "kitchen/terraform/define_hash_of_strings_config_attribute"
+require "kitchen/terraform/define_hash_of_symbols_and_strings_config_attribute"
 require "kitchen/terraform/define_config_attribute"
 require "kitchen/terraform/define_integer_config_attribute"
 require "kitchen/terraform/define_optional_file_path_config_attribute"
@@ -144,7 +144,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   no_parallel_for
 
-  ::Kitchen::Terraform::DefineHashOfStringsConfigAttribute.call(
+  ::Kitchen::Terraform::DefineHashOfSymbolsAndStringsConfigAttribute.call(
     attribute: :backend_configurations,
     plugin_class: self
   )
@@ -198,7 +198,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     []
   end
 
-  ::Kitchen::Terraform::DefineHashOfStringsConfigAttribute.call(
+  ::Kitchen::Terraform::DefineHashOfSymbolsAndStringsConfigAttribute.call(
     attribute: :variables,
     plugin_class: self
   )

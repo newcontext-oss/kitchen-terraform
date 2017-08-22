@@ -43,11 +43,11 @@ require "support/kitchen/terraform/define_config_attribute_context"
       )
     end
 
-    context "when the config associates :backend_configurations with a hash which has nonstring or nonsymbol keys" do
+    context "when the config associates :backend_configurations with a hash which has nonsymbol keys" do
       it_behaves_like(
         "the value is invalid",
-        error_message: /backend_configurations.*keys must be strings or symbols/,
-        value: {123 => "abc"}
+        error_message: /backend_configurations.*keys must be symbols/,
+        value: {"key" => "value"}
       )
     end
 
@@ -55,18 +55,14 @@ require "support/kitchen/terraform/define_config_attribute_context"
       it_behaves_like(
         "the value is invalid",
         error_message: /backend_configurations.*values must be strings/,
-        value: {"abc" => 123}
+        value: {key: :value}
       )
     end
 
-    context "when the config associates :backend_configurations with a hash which has string and symobl keys and " \
-              "string values" do
+    context "when the config associates :backend_configurations with a hash which has symobl keys and string values" do
       it_behaves_like(
         "the value is valid",
-        value: {
-          "key" => "value",
-          key: "value"
-        }
+        value: {key: "value"}
       )
     end
   end
