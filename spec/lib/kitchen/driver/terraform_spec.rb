@@ -23,7 +23,6 @@ require "support/kitchen/driver/terraform/config_attribute_command_timeout_examp
 require "support/kitchen/driver/terraform/config_attribute_directory_examples"
 require "support/kitchen/driver/terraform/config_attribute_lock_timeout_examples"
 require "support/kitchen/driver/terraform/config_attribute_parallelism_examples"
-require "support/kitchen/driver/terraform/config_attribute_plan_examples"
 require "support/kitchen/driver/terraform/config_attribute_state_examples"
 require "support/kitchen/driver/terraform/config_attribute_variable_files_examples"
 require "support/kitchen/driver/terraform/config_attribute_variables_examples"
@@ -144,8 +143,6 @@ require "support/terraform/configurable_examples"
   it_behaves_like "config attribute :lock_timeout"
 
   it_behaves_like "config attribute :parallelism"
-
-  it_behaves_like "config attribute :plan"
 
   it_behaves_like "config attribute :state"
 

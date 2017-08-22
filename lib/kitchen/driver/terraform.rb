@@ -41,7 +41,6 @@ require "terraform/configurable"
 #     color: false
 #     directory: /directory/containing/terraform/configuration
 #     parallelism: 2
-#     plan: /terraform/plan
 #     state: /terraform/state
 #     variable_files:
 #       - /first/terraform/variable/file
@@ -84,23 +83,12 @@ require "terraform/configurable"
 # ===== parallelism
 #
 # Description:: The maximum number of concurrent operations to allow while walking the resource graph for the Terraform
-#               CLI apply and plan commands.
+#               CLI apply commands.
 # Type:: Integer
 #
 # Status:: Optional
 #
 # Default:: +10+
-#
-# ===== plan
-#
-# Description:: The path of the Terraform execution plan that will be generated and applied.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: A descendant of the working directory of the Test Kitchen process:
-#           +".kitchen/kitchen-terraform/<suite_name>/terraform.tfplan"+
 #
 # ===== state
 #
@@ -115,8 +103,8 @@ require "terraform/configurable"
 #
 # ===== variable_files
 #
-# Description:: A collection of paths of Terraform variable files to be evaluated during the creation of the Terraform
-#               execution plan.
+# Description:: A collection of paths of Terraform variable files to be evaluated during the application of Terraform
+#               state changes.
 #
 # Type:: Array
 #
@@ -126,8 +114,8 @@ require "terraform/configurable"
 #
 # ===== variables
 #
-# Description:: A mapping of Terraform variable names and values to be overridden during the creation of the Terraform
-#               execution plan.
+# Description:: A mapping of Terraform variable names and values to be overridden during the application of Terraform
+#               state changes.
 #
 # Type:: Hash
 #
@@ -136,7 +124,6 @@ require "terraform/configurable"
 # Default:: +{}+
 #
 # @see https://en.wikipedia.org/wiki/Working_directory Working directory
-# @see https://www.terraform.io/docs/commands/plan.html Terraform execution plan
 # @see https://www.terraform.io/docs/configuration/variables.html Terraform variables
 # @see https://www.terraform.io/docs/internals/graph.html Terraform resource graph
 # @see https://www.terraform.io/docs/state/index.html Terraform state
@@ -183,11 +170,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     10
   end
 
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :plan,
-                                                         expand_path: true,
-                                                         plugin_class: self do |plugin|
-    plugin.instance_pathname filename: "terraform.tfplan"
-  end
 
   ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :state,
                                                          expand_path: true,
@@ -216,7 +198,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #
   # @example
   #   `kitchen create suite-name`
-  # @note The user must ensure that different suites utilize separate Terraform plan and state files if they are to run
+  # @note The user must ensure that different suites utilize separate Terraform state files if they are to run
   #       the create action concurrently.
   # @param _state [::Hash] the mutable instance and driver state; this parameter is ignored.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
@@ -311,7 +293,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #
   # @example
   #   `kitchen destroy suite-name`
-  # @note The user must ensure that different suites utilize separate Terraform plan and state files if they are to run
+  # @note The user must ensure that different suites utilize separate Terraform state files if they are to run
   #       the destroy action concurrently.
   # @param state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
