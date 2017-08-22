@@ -18,26 +18,9 @@ require "dry/monads"
 require "json"
 require "kitchen"
 require "kitchen/terraform/clear_directory"
-require "kitchen/terraform/client/command"
-require "kitchen/terraform/client/options/backend"
-require "kitchen/terraform/client/options/backend_config"
-require "kitchen/terraform/client/options/destroy"
-require "kitchen/terraform/client/options/force_copy"
-require "kitchen/terraform/client/options/get"
-require "kitchen/terraform/client/options/input"
-require "kitchen/terraform/client/options/json"
-require "kitchen/terraform/client/options/lock"
-require "kitchen/terraform/client/options/lock_timeout"
-require "kitchen/terraform/client/options/no_color"
-require "kitchen/terraform/client/options/out"
-require "kitchen/terraform/client/options/parallelism"
-require "kitchen/terraform/client/options/reconfigure"
-require "kitchen/terraform/client/options/state"
-require "kitchen/terraform/client/options/state_out"
-require "kitchen/terraform/client/options/update"
-require "kitchen/terraform/client/options/var"
-require "kitchen/terraform/client/options/var_file"
 require "kitchen/terraform/create_directories"
+require "kitchen/terraform/client/command"
+require "kitchen/terraform/client/options"
 require "kitchen/terraform/define_array_of_strings_config_attribute"
 require "kitchen/terraform/define_config_attribute"
 require "kitchen/terraform/define_integer_config_attribute"
@@ -388,16 +371,76 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   private
 
-  def color_option
-    @color_option ||= ::Kitchen::Terraform::Client::Options::NoColor.new if not config_color
+  def apply_options
+    ::Kitchen::Terraform::Client::Options
+      .new
+      .enable_lock
+      .lock_timeout(duration: config_lock_timeout)
+      .disable_input
+      .enable_auto_approve
+      .maybe_no_color(toggle: !config_color)
+      .parallelism(concurrent_operations: config_parallelism)
+      .enable_refresh
+      .state(path: config_state)
+      .state_out(path: config_state)
+      .vars(keys_and_values: config_variables)
+      .var_files(paths: config_variable_files)
   end
 
   def config_kitchen_root
     @config_kitchen_root ||= config.fetch :kitchen_root
   end
 
-  def module_path
-    @module_path ||= instance_pathname filename: "/"
+  def destroy_options
+    ::Kitchen::Terraform::Client::Options
+      .new
+      .enable_lock
+      .lock_timeout(duration: config_lock_timeout)
+      .disable_input
+      .maybe_no_color(toggle: !config_color)
+      .parallelism(concurrent_operations: config_parallelism)
+      .enable_refresh
+      .state(path: config_state)
+      .state_out(path: config_state)
+      .vars(keys_and_values: config_variables)
+      .var_files(paths: config_variable_files)
+      .force
+  end
+
+  def init_options
+    ::Kitchen::Terraform::Client::Options
+      .new
+      .disable_input
+      .enable_lock
+      .lock_timeout(duration: config_lock_timeout)
+      .maybe_no_color(toggle: !config_color)
+      .upgrade
+      .from_module(source: config_directory)
+      .enable_backend
+      .force_copy
+      .backend_configs(keys_and_values: config_backend_configurations)
+      .enable_get
+      .maybe_plugin_dir(path: config_plugin_directory)
+  end
+
+  def instance_directory
+    @instance_directory ||= instance_pathname filename: "/"
+  end
+
+  def output_options
+    ::Kitchen::Terraform::Client::Options
+      .new
+      .json
+      .state(path: config_state)
+  end
+
+  def validate_options
+    ::Kitchen::Terraform::Client::Options
+      .new
+      .enable_check_variables
+      .maybe_no_color(toggle: !config_color)
+      .vars(keys_and_values: config_variables)
+      .var_files(paths: config_variable_files)
   end
 end
 

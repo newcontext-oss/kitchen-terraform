@@ -17,6 +17,7 @@
 require "dry/monads"
 require "kitchen/terraform/client"
 require "mixlib/shellout"
+require "kitchen/terraform/client/options"
 
 # Represents a Terraform command.
 #
