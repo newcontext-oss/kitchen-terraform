@@ -27,11 +27,11 @@ module ::Kitchen::Terraform::CreateDirectories
   #
   # @param directories [::Array<::String>, ::String] the list of directories to create.
   # @return [::Dry::Monads::Either] the result of the function.
-  def self.call(directories:, &block)
+  def self.call(directories:)
     Try ::SystemCallError do
       ::FileUtils.makedirs directories
     end.to_either.bind do
-      block.call "Created directories #{directories}"
+      Right "Created directories #{directories}"
     end.or do |error|
       Left error.to_s
     end
