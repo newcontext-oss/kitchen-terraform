@@ -25,108 +25,146 @@ require "kitchen/terraform/client/options"
 class ::Kitchen::Terraform::Client::Command
   extend ::Dry::Monads::Either::Mixin
 
-  def self.apply(logger:, options:, target:, timeout:, working_directory:, &block)
-    new(
+  extend ::Dry::Monads::Try::Mixin
+
+  def self.apply(logger:, options:, timeout:, working_directory:)
+    run(
       logger: logger,
       options: options,
       subcommand: "apply",
-      target: target,
       timeout: timeout,
       working_directory: working_directory
-    ).run &block
+    )
   end
 
-  def self.init(logger:, options:, target:, timeout:, working_directory:, &block)
-    new(
+  def self.destroy(logger:, options:, timeout:, working_directory:)
+    run(
+      logger: logger,
+      options: options,
+      subcommand: "destroy",
+      timeout: timeout,
+      working_directory: working_directory
+    )
+  end
+
+  def self.init(logger:, options:, timeout:, working_directory:)
+    run(
       logger: logger,
       options: options,
       subcommand: "init",
-      target: target,
       timeout: timeout,
       working_directory: working_directory
-    ).run &block
+    )
   end
 
-  def self.output(logger:, options:, timeout:, working_directory:, &block)
-    new(
+  def self.output(logger:, options:, timeout:, working_directory:)
+    run(
       logger: logger,
       options: options,
       subcommand: "output",
-      target: "",
       timeout: timeout,
       working_directory: working_directory
-    ).run &block
+    )
   end
 
-  def self.plan(logger:, options:, target:, timeout:, working_directory:, &block)
-    new(
+  def self.plan(logger:, options:, timeout:, working_directory:)
+    run(
       logger: logger,
       options: options,
       subcommand: "plan",
-      target: target,
       timeout: timeout,
       working_directory: working_directory
-    ).run &block
+    )
   end
 
-  def self.validate(logger:, target:, timeout:, working_directory:, &block)
-    new(
+  def self.validate(logger:, options:, timeout:, working_directory:)
+    run(
       logger: logger,
-      options: [],
+      options: options,
       subcommand: "validate",
-      target: target,
       timeout: timeout,
       working_directory: working_directory
-    ).run &block
+    )
   end
 
-  def self.version(logger:, working_directory:, &block)
-    new(
+  def self.version(logger:, working_directory:)
+    run(
       logger: logger,
-      options: [],
-      target: "",
-      timeout: nil,
       subcommand: "version",
       working_directory: working_directory
-    ).run &block
+    )
   end
 
-  include ::Dry::Monads::Either::Mixin
+  attr_reader :output
 
-  include ::Dry::Monads::Try::Mixin
+  def ==(other)
+    other.is_a? self.class and to_s == other.to_s
+  end
 
-  def run
-    Try ::Errno::EACCES, ::Errno::ENOENT, ::Mixlib::ShellOut::CommandTimeout do
-      shell_out.run_command
-    end.bind do
-      Try ::Mixlib::ShellOut::ShellCommandFailed do
-        shell_out.error!
-      end
-    end.to_either.bind do
-      logger.debug "Command succeeded: #{summary}"
-      yield shell_out.stdout
-    end.or do |error|
-      Left "Command failed: #{summary}\n#{error}"
-    end
+  def eq(other)
+    self == other
+  end
+
+  def match(pattern)
+    to_s.match pattern
+  end
+
+  def to_s
+    "Output of command `#{@command}`: #{@output}"
   end
 
   private
 
-  attr_accessor :logger, :shell_out, :summary
+  def self.run(
+    logger:,
+    options: ::Kitchen::Terraform::Client::Options.new,
+    subcommand:,
+    timeout: nil,
+    working_directory:
+  )
+    Try ::Mixlib::ShellOut::InvalidCommandOption do
+      ::Mixlib::ShellOut.new(
+        "terraform #{subcommand} #{options}".strip,
+        cwd: working_directory,
+        live_stream: logger,
+        timeout: timeout
+      )
+    end.to_either.bind do |shell_out|
+      Try(
+        ::Errno::EACCES,
+        ::Errno::ENOENT,
+        ::Mixlib::ShellOut::CommandTimeout,
+        ::Mixlib::ShellOut::ShellCommandFailed
+      ) do
+        logger.debug "Running client command: #{shell_out.command}"
+        shell_out.run_command
+        shell_out.error!
+      end.to_either.bind do
+        Right(
+          new(
+            command: shell_out.command,
+            output: shell_out.stdout
+          )
+        )
+      end.or do |error|
+        Left(
+          new(
+            command: shell_out.command,
+            output: error
+          )
+        )
+      end
+    end.or do |value|
+      if value.kind_of? self
+        Left value
+      else
+        Left new "Constructing client command #{subcommand}", value
+      end
+    end
+  end
 
-  def initialize(logger:, options:, subcommand:, target:, timeout:, working_directory:)
-    self.logger = logger
-    self.shell_out = ::Mixlib::ShellOut.new(
-      [
-        "terraform",
-        subcommand,
-        *options.map(&:to_s),
-        target
-      ].join(" ").strip,
-      cwd: working_directory,
-      live_stream: logger,
-      timeout: timeout
-    )
-    self.summary = "`#{shell_out.command}`"
+  def initialize(command:, output:)
+    @command = command.to_s
+    @output = output.to_s
   end
 end
