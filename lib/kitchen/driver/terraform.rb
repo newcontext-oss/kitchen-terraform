@@ -25,6 +25,7 @@ require "kitchen/terraform/define_array_of_strings_config_attribute"
 require "kitchen/terraform/define_hash_of_strings_config_attribute"
 require "kitchen/terraform/define_config_attribute"
 require "kitchen/terraform/define_integer_config_attribute"
+require "kitchen/terraform/define_optional_file_path_config_attribute"
 require "kitchen/terraform/define_string_config_attribute"
 require "terraform/configurable"
 
@@ -90,6 +91,15 @@ require "terraform/configurable"
 #
 # Default:: +10+
 #
+# ===== plugin_directory
+#
+# Description:: The path of the directory containing customized Terraform provider plugins to install in place of the
+#               official Terraform provider plugins.
+#
+# Type:: String
+#
+# Status:: Optional
+#
 # ===== state
 #
 # Description:: The path of the Terraform state that will be generated and managed.
@@ -124,6 +134,7 @@ require "terraform/configurable"
 # Default:: +{}+
 #
 # @see https://en.wikipedia.org/wiki/Working_directory Working directory
+# @see https://www.terraform.io/docs/commands/init.html#plugin-installation Terraform plugin installation
 # @see https://www.terraform.io/docs/configuration/variables.html Terraform variables
 # @see https://www.terraform.io/docs/internals/graph.html Terraform resource graph
 # @see https://www.terraform.io/docs/state/index.html Terraform state
@@ -170,6 +181,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     10
   end
 
+  ::Kitchen::Terraform::DefineOptionalFilePathConfigAttribute.call(
+    attribute: :plugin_directory,
+    plugin_class: self
+  )
 
   ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :state,
                                                          expand_path: true,
