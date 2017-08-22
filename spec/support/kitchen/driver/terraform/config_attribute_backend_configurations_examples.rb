@@ -17,38 +17,57 @@
 require "support/kitchen/terraform/define_config_attribute_context"
 
 ::RSpec.shared_examples "config attribute :backend_configurations" do
-  include_context "Kitchen::Terraform::DefineConfigAttribute", attribute: :backend_configurations do
+  include_context(
+    "Kitchen::Terraform::DefineConfigAttribute",
+    attribute: :backend_configurations
+  ) do
     context "when the config omits :backend_configurations" do
-      it_behaves_like "a default value is used",
-                      default_value: []
+      it_behaves_like(
+        "a default value is used",
+        default_value: {}
+      )
     end
 
-    context "when the config associates :backend_configurations with a nonarray" do
-      it_behaves_like "the value is invalid",
-                      error_message: /backend_configurations.*must be an array/,
-                      value: "abc"
+    context "when the config associates :backend_configurations with a nonhash" do
+      it_behaves_like(
+        "the value is invalid",
+        error_message: /backend_configurations.*must be a hash/,
+        value: []
+      )
     end
 
-    context "when the config associates :backend_configurations with an empty array" do
-      it_behaves_like "the value is valid",
-                      value: []
+    context "when the config associates :backend_configurations with a an empty hash" do
+      it_behaves_like(
+        "the value is valid",
+        value: {}
+      )
     end
 
-    context "when the config associates :backend_configurations with an array which includes a nonstring" do
-      it_behaves_like "the value is invalid",
-                      error_message: /backend_configurations.*0.*must be a string/,
-                      value: [123]
+    context "when the config associates :backend_configurations with a hash which has nonstring or nonsymbol keys" do
+      it_behaves_like(
+        "the value is invalid",
+        error_message: /backend_configurations.*keys must be strings or symbols/,
+        value: {123 => "abc"}
+      )
     end
 
-    context "when the config associates :backend_configurations with an array which includes an empty string" do
-      it_behaves_like "the value is invalid",
-                      error_message: /backend_configurations.*0.*must be filled/,
-                      value: [""]
+    context "when the config associates :backend_configurations with a hash which has nonstring values" do
+      it_behaves_like(
+        "the value is invalid",
+        error_message: /backend_configurations.*values must be strings/,
+        value: {"abc" => 123}
+      )
     end
 
-    context "when the config associates :backend_configurations with an array which includes a nonempty string" do
-      it_behaves_like "the value is valid",
-                      value: ["abc"]
+    context "when the config associates :backend_configurations with a hash which has string and symobl keys and " \
+              "string values" do
+      it_behaves_like(
+        "the value is valid",
+        value: {
+          "key" => "value",
+          key: "value"
+        }
+      )
     end
   end
 end

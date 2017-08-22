@@ -22,6 +22,7 @@ require "kitchen/terraform/create_directories"
 require "kitchen/terraform/client/command"
 require "kitchen/terraform/client/options"
 require "kitchen/terraform/define_array_of_strings_config_attribute"
+require "kitchen/terraform/define_hash_of_strings_config_attribute"
 require "kitchen/terraform/define_config_attribute"
 require "kitchen/terraform/define_integer_config_attribute"
 require "kitchen/terraform/define_string_config_attribute"
@@ -145,11 +146,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   no_parallel_for
 
-  ::Kitchen::Terraform::DefineArrayOfStringsConfigAttribute.call attribute: :backend_configurations,
-                                                                 expand_path: true,
-                                                                 plugin_class: self do
-    []
-  end
+  ::Kitchen::Terraform::DefineHashOfStringsConfigAttribute.call(
+    attribute: :backend_configurations,
+    plugin_class: self
+  )
 
   ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :command_timeout,
                                                           plugin_class: self do
@@ -201,15 +201,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     []
   end
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
+  ::Kitchen::Terraform::DefineHashOfStringsConfigAttribute.call(
     attribute: :variables,
-    initialize_default_value: lambda do |_plugin|
-      {}
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).value :hash?
-    end
+    plugin_class: self
   )
 
   include ::Dry::Monads::Either::Mixin
