@@ -27,12 +27,12 @@ module ::Kitchen::Terraform::ClearDirectory
   # @param directory ::String the path of the directory to clear.
   # @param files [::Array<::String>, ::String] a list of files to clear from the directory.
   # @return [::Dry::Monads::Either] the result of the function.
-  def self.call(directory:, files:, &block)
+  def self.call(directory:, files:)
     ::FileUtils.safe_unlink(
       files.map do |file|
         ::Dir.glob ::File.join directory, file
       end.flatten
     )
-    block.call "Cleared directory \"#{directory}\" of files #{files}"
+    Right "Cleared directory \"#{directory}\" of files #{files}"
   end
 end

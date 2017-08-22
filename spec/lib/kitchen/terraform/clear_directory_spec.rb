@@ -29,8 +29,7 @@ require "support/kitchen/terraform/clear_directory_context"
         files: [
           "file_1",
           "file_2"
-        ],
-        &method(:Right)
+        ]
       )
     end
 
