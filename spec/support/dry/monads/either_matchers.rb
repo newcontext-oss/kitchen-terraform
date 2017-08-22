@@ -27,7 +27,7 @@
 
     failure_message do |result|
       ::String.new("expected result\n  #{result}\nto be a #{status}").tap do |message|
-        value.nil? or message.concat " with the value\n  #{value}"
+        value.nil? or message.concat " with the value\n  #{value.inspect}"
       end
     end
   end
