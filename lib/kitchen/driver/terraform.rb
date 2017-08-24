@@ -209,114 +209,48 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   include ::Terraform::Configurable
 
-  # The driver invokes its workflow in a constructive manner.
+  # The driver invokes its constructive workflow.
   #
+  # 1. Create the instance directory: `.kitchen/kitchen-terraform/<suite>-<platform>`
+  # 2. Clear the instance directory of Terraform configuration files
+  # 3. Execute `terraform init` in the instance directory
+  # 4. Execute `terraform validate` in the instance directory
+  # 5. Execute `terraform apply` in the instance directory
+  #
+  # @example
+  #   `kitchen help create`
   # @example
   #   `kitchen create suite-name`
   # @note The user must ensure that different suites utilize separate Terraform state files if they are to run
   #       the create action concurrently.
   # @param _state [::Hash] the mutable instance and driver state; this parameter is ignored.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [::Dry::Monads::Either] the result of the action.
-  def create(_state, additional_plan_options: [])
-    ::Kitchen::Terraform::CreateDirectories.call(
-      directories: [
-        module_path,
-        config_directory,
-        ::File.dirname(config_plan),
-        ::File.dirname(config_state)
-      ]
-    ) do |created_directories|
-      logger.debug created_directories
-      ::Kitchen::Terraform::ClearDirectory.call(
-        directory: module_path,
-        files: [
-          "*.tf",
-          "*.tf.json"
-        ]
-      ) do |cleared_directory|
-        logger.debug cleared_directory
-        ::Kitchen::Terraform::Client::Command.validate(
-          logger: logger,
-          target: config_directory,
-          timeout: config_command_timeout,
-          working_directory: config_kitchen_root
-        ) do
-          ::Kitchen::Terraform::Client::Command.init(
-            logger: logger,
-            options: [
-              ::Kitchen::Terraform::Client::Options::Backend.new(value: true),
-              *config_backend_configurations.map do |value|
-                ::Kitchen::Terraform::Client::Options::BackendConfig.new value: value
-              end,
-              ::Kitchen::Terraform::Client::Options::ForceCopy.new,
-              ::Kitchen::Terraform::Client::Options::Get.new(value: true),
-              ::Kitchen::Terraform::Client::Options::Input.new(value: false),
-              ::Kitchen::Terraform::Client::Options::Lock.new(value: true),
-              ::Kitchen::Terraform::Client::Options::LockTimeout.new(value: config_lock_timeout),
-              color_option,
-              ::Kitchen::Terraform::Client::Options::Reconfigure.new
-            ],
-            target: "#{config_directory} #{module_path}",
-            timeout: config_command_timeout,
-            working_directory: config_kitchen_root
-          ) do
-            ::Kitchen::Terraform::Client::Command.plan(
-              logger: logger,
-              options: [
-                ::Kitchen::Terraform::Client::Options::Input.new(value: false),
-                color_option,
-                ::Kitchen::Terraform::Client::Options::Out.new(value: config_plan),
-                ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
-                ::Kitchen::Terraform::Client::Options::State.new(value: config_state),
-                *config_variables.map do |name, value|
-                  ::Kitchen::Terraform::Client::Options::Var.new name: name, value: value
-                end,
-                *config_variable_files.map do |value|
-                  ::Kitchen::Terraform::Client::Options::VarFile.new value: value
-                end,
-                *additional_plan_options
-              ],
-              target: module_path,
-              timeout: config_command_timeout,
-              working_directory: module_path
-            ) do
-              ::Kitchen::Terraform::Client::Command.apply(
-                logger: logger,
-                options: [
-                  ::Kitchen::Terraform::Client::Options::Input.new(value: false),
-                  color_option,
-                  ::Kitchen::Terraform::Client::Options::Parallelism.new(value: config_parallelism),
-                  ::Kitchen::Terraform::Client::Options::StateOut.new(value: config_state)
-                ],
-                target: config_plan,
-                timeout: config_command_timeout,
-                working_directory: module_path
-              ) do
-                Right logger.debug "#{self}.create resulted in success"
-              end
-            end
-          end
-        end
-      end
-    end.or do |failure|
-      raise ::Kitchen::ActionFailed, failure
+  def create(_state)
+    workflow do
+      run_apply
     end
   end
 
-  # The driver invokes its workflow in a destructive manner.
+  # The driver invokes its destructive workflow.
   #
+  # 1. Create the instance directory: `.kitchen/kitchen-terraform/<suite>-<platform>`
+  # 2. Clear the instance directory of Terraform configuration files
+  # 3. Execute `terraform init` in the instance directory
+  # 4. Execute `terraform validate` in the instance directory
+  # 5. Execute `terraform destroy` in the instance directory
+  #
+  # @example
+  #   `kitchen help destroy`
   # @example
   #   `kitchen destroy suite-name`
   # @note The user must ensure that different suites utilize separate Terraform state files if they are to run
   #       the destroy action concurrently.
   # @param state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [::Dry::Monads::Either] the result of the action.
-  def destroy(state)
-    create state, additional_plan_options: [
-                    ::Kitchen::Terraform::Client::Options::Destroy.new
-                  ]
+  def destroy(_state)
+    workflow do
+      run_destroy
+    end
   end
 
   # The driver parses the client output as JSON.
@@ -326,16 +260,16 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def output
     ::Kitchen::Terraform::Client::Command.output(
       logger: debug_logger,
-      options: [
-        color_option,
-        ::Kitchen::Terraform::Client::Options::JSON.new,
-        ::Kitchen::Terraform::Client::Options::State.new(value: config_state)
-      ],
+      options:
+        ::Kitchen::Terraform::Client::Options
+          .new
+          .json
+          .state(path: config_state),
       timeout: config_command_timeout,
-      working_directory: module_path
-    ) do |output|
+      working_directory: instance_directory
+    ).bind do |command|
       Try ::JSON::ParserError do
-        ::JSON.parse output
+        ::JSON.parse command.output
       end.to_either
     end.or do |error|
       Left "parsing Terraform client output as JSON failed\n#{error}"
@@ -351,10 +285,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::Client::Command.version(
       logger: debug_logger,
       working_directory: ::Dir.pwd
-    ) do |output|
-      self.class::VerifyClientVersion.call version: output
-    end.fmap do |verified_client_version|
-      logger.warn verified_client_version
+    ).bind do |command|
+      self.class::VerifyClientVersion.call version: command.output
+    end.bind do |verified_client_version|
+      Right logger.warn verified_client_version
     end.or do |failure|
       raise ::Kitchen::UserError, failure
     end
@@ -362,76 +296,162 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   private
 
-  def apply_options
-    ::Kitchen::Terraform::Client::Options
-      .new
-      .enable_lock
-      .lock_timeout(duration: config_lock_timeout)
-      .disable_input
-      .enable_auto_approve
-      .maybe_no_color(toggle: !config_color)
-      .parallelism(concurrent_operations: config_parallelism)
-      .enable_refresh
-      .state(path: config_state)
-      .state_out(path: config_state)
-      .vars(keys_and_values: config_variables)
-      .var_files(paths: config_variable_files)
+  # @api private
+  def prepare_instance_directory
+    ::Kitchen::Terraform::CreateDirectories
+      .call(
+        directories: [instance_directory]
+      )
+      .bind do |created_directories|
+        logger.debug created_directories
+        ::Kitchen::Terraform::ClearDirectory
+          .call(
+            directory: instance_directory,
+            files: [
+              "*.tf",
+              "*.tf.json"
+            ]
+          )
+      end
+      .bind do |cleared_directory|
+        Right logger.debug cleared_directory
+      end
   end
 
-  def config_kitchen_root
-    @config_kitchen_root ||= config.fetch :kitchen_root
+  # Runs the apply subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the apply subcommand.
+  # @see ::Kitchen::Terraform::Client::Command#apply
+  def run_apply
+    ::Kitchen::Terraform::Client::Command
+      .apply(
+        logger: logger,
+        options:
+          ::Kitchen::Terraform::Client::Options
+            .new
+            .enable_lock
+            .lock_timeout(duration: config_lock_timeout)
+            .disable_input
+            .enable_auto_approve
+            .maybe_no_color(toggle: !config_color)
+            .parallelism(concurrent_operations: config_parallelism)
+            .enable_refresh
+            .state(path: config_state)
+            .state_out(path: config_state)
+            .vars(keys_and_values: config_variables)
+            .var_files(paths: config_variable_files),
+        timeout: config_command_timeout,
+        working_directory: instance_directory
+      )
   end
 
-  def destroy_options
-    ::Kitchen::Terraform::Client::Options
-      .new
-      .enable_lock
-      .lock_timeout(duration: config_lock_timeout)
-      .disable_input
-      .maybe_no_color(toggle: !config_color)
-      .parallelism(concurrent_operations: config_parallelism)
-      .enable_refresh
-      .state(path: config_state)
-      .state_out(path: config_state)
-      .vars(keys_and_values: config_variables)
-      .var_files(paths: config_variable_files)
-      .force
+  # Runs the destroy subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the destroy subcommand.
+  # @see ::Kitchen::Terraform::Client::Command#destroy
+  def run_destroy
+    ::Kitchen::Terraform::Client::Command
+      .destroy(
+        logger: logger,
+        options:
+          ::Kitchen::Terraform::Client::Options
+            .new
+            .enable_lock
+            .lock_timeout(duration: config_lock_timeout)
+            .disable_input
+            .maybe_no_color(toggle: !config_color)
+            .parallelism(concurrent_operations: config_parallelism)
+            .enable_refresh
+            .state(path: config_state)
+            .state_out(path: config_state)
+            .vars(keys_and_values: config_variables)
+            .var_files(paths: config_variable_files)
+            .force,
+        timeout: config_command_timeout,
+        working_directory: instance_directory
+      )
   end
 
-  def init_options
-    ::Kitchen::Terraform::Client::Options
-      .new
-      .disable_input
-      .enable_lock
-      .lock_timeout(duration: config_lock_timeout)
-      .maybe_no_color(toggle: !config_color)
-      .upgrade
-      .from_module(source: config_directory)
-      .enable_backend
-      .force_copy
-      .backend_configs(keys_and_values: config_backend_configurations)
-      .enable_get
-      .maybe_plugin_dir(path: config_plugin_directory)
+  # Runs the init subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the init subcommand.
+  # @see ::Kitchen::Terraform::Client::Command#init
+  def run_init
+    ::Kitchen::Terraform::Client::Command
+      .init(
+        logger: logger,
+        options:
+          ::Kitchen::Terraform::Client::Options
+            .new
+            .disable_input
+            .enable_lock
+            .lock_timeout(duration: config_lock_timeout)
+            .maybe_no_color(toggle: !config_color)
+            .upgrade
+            .from_module(source: config_directory)
+            .enable_backend
+            .force_copy
+            .backend_configs(keys_and_values: config_backend_configurations)
+            .enable_get
+            .maybe_plugin_dir(path: config_plugin_directory),
+        timeout: config_command_timeout,
+        working_directory: instance_directory
+      )
   end
 
+  # Runs the validate subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the validate subcommand.
+  # @see ::Kitchen::Terraform::Client::Command#validate
+  def run_validate
+    ::Kitchen::Terraform::Client::Command
+      .validate(
+        logger: logger,
+        options:
+          ::Kitchen::Terraform::Client::Options
+            .new
+            .enable_check_variables
+            .maybe_no_color(toggle: !config_color)
+            .vars(keys_and_values: config_variables)
+            .var_files(paths: config_variable_files),
+        timeout: config_command_timeout,
+        working_directory: instance_directory
+      )
+  end
+
+  # The path to the Test Kitchen suite instance directory.
+
+  # @api private
+  # @return [::String] the path to the Test Kitchen suite instance directory.
   def instance_directory
     @instance_directory ||= instance_pathname filename: "/"
   end
 
-  def output_options
-    ::Kitchen::Terraform::Client::Options
-      .new
-      .json
-      .state(path: config_state)
-  end
-
-  def validate_options
-    ::Kitchen::Terraform::Client::Options
-      .new
-      .enable_check_variables
-      .maybe_no_color(toggle: !config_color)
-      .vars(keys_and_values: config_variables)
-      .var_files(paths: config_variable_files)
+  # Prepares the instance directory, runs init and validate, and then yields for a subcommand.
+  #
+  # @api private
+  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+  def workflow
+    prepare_instance_directory
+      .bind do
+        run_init
+      end
+      .bind do
+        run_validate
+      end
+      .bind do
+        yield
+      end
+      .or do |failure|
+        raise(
+          ::Kitchen::ActionFailed,
+          failure
+        )
+      end
   end
 end
 
