@@ -177,8 +177,8 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
       state.store :hostname, hostname
       info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"
       super state
-    end.fmap do |success|
-      logger.debug success
+    end.bind do |success|
+      Right logger.debug success
     end.or do |failure|
       raise ::Kitchen::ActionFailed, failure
     end
