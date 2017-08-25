@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "dry/monads"
+require "fileutils"
 require "json"
 require "kitchen"
 require "kitchen/terraform/clear_directory"
@@ -249,7 +250,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   def destroy(_state)
     workflow do
-      run_destroy
+      run_destroy.bind do
+        remove_instance_directory
+      end
     end
   end
 
@@ -316,6 +319,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .bind do |cleared_directory|
         Right logger.debug cleared_directory
       end
+  end
+
+  # @api private
+  def remove_instance_directory
+    Try do
+      ::FileUtils.remove_dir instance_directory
+    end
+    .to_either
   end
 
   # Runs the apply subcommand.

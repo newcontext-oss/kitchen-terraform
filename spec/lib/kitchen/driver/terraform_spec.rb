@@ -197,7 +197,7 @@ require "support/terraform/configurable_examples"
       end
     end
 
-    context "when each command results in success" do
+    context "when the function to remove the instance directory results in failure" do
       include_context "Kitchen::Terraform::CreateDirectories.call success"
 
       include_context "Kitchen::Terraform::ClearDirectory"
@@ -207,6 +207,35 @@ require "support/terraform/configurable_examples"
       include_context "Kitchen::Terraform::Client::Command.validate success"
 
       include_context "Kitchen::Terraform::Client::Command.destroy success"
+
+      before do
+        allow(::FileUtils).to receive(:remove_dir).and_raise "failed to remove directory"
+      end
+
+      it "raises an action failed error" do
+        is_expected.to(
+          raise_error(
+            ::Kitchen::ActionFailed,
+            "failed to remove directory"
+          )
+        )
+      end
+    end
+
+    context "when all steps result in success" do
+      include_context "Kitchen::Terraform::CreateDirectories.call success"
+
+      include_context "Kitchen::Terraform::ClearDirectory"
+
+      include_context "Kitchen::Terraform::Client::Command.init success"
+
+      include_context "Kitchen::Terraform::Client::Command.validate success"
+
+      include_context "Kitchen::Terraform::Client::Command.destroy success"
+
+      before do
+        allow(::FileUtils).to receive :remove_dir
+      end
 
       it "raises no error" do
         is_expected.to_not raise_error
