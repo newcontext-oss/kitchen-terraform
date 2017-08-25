@@ -1,48 +1,85 @@
-# Example running kitchen-terraform with the terraform docker provider
+# Terraform Docker Provider Example
 
-This example will walk you through how to setup your environment to utilize kitchen-terraform to manage and test a local docker container.
+This is an example of how to utilize kitchen-terraform to test a Docker
+container running on localhost configured with the
+[Terraform Docker Provider].
 
-## Terraform Configuration
+## Requirements
 
-[main.tf] defines the docker provider and associated resources.
-[main.tf]: main.tf
+A Docker host be listening on the Unix socket located at
+`unix://localhost/var/run/docker.sock`.
 
-[output.tf] defines the output variables available for the Terraform provisioner.
-[output.tf]: output.tf
+The Docker container to be tested must be running an SSH daemon in the
+foreground to enable the kitchen-terraform verifier to remotely execute
+tests.
 
-[variables.tf] defines the input variables available for the Terraform provisioner.
-[variables.tf]: variables.tf
+## Terraform Configuration File
 
-## Test Kitchen Configuration
-`.kitchen.yml` contains the Test Kitchen configuration to enable the testing of the Terraform project.
+The Terraform configuration exists in [main.tf].
+
+### Terraform Configuration
+
+The configuration is restricted to Terraform versions equal to or
+greater than 0.10.2 and less than 0.11.0.
+
+The local backend is configured to demonstrate support for backends.
+
+### Docker Provider
+
+The Docker provider is configured to communicate with a Docker host
+listening on a Unix socket on localhost.
+
+### Docker Registry Image Data Source
+
+A [SSH daemon Docker image] from the public registry is configured as a
+data source.
+
+### Docker Image
+
+A Docker image is configured on the Docker host using the data source.
+
+### Docker Container
+
+A Docker container based on the Docker image is configured to be running
+on the Docker host. The container forwards localhost:2222 to its
+internal SSH daemon.
+
+### Outputs
+
+The path of the backend state file and the localhost hostname are
+configured as outputs for use by the kitchen-terraform verifier.
+
+## Test Kitchen Configuration File
+
+The Test Kitchen configuration exists in [.kitchen.yml].
 
 ### Driver
-The driver is defined as terraform and uses the default configuration
-options.
+
+The kitchen-terraform driver is enabled.
 
 ### Provisioner
-The provisioner defines specific variables for Docker to include the host, container, and image used.
 
-### Platforms
-This section is irrelevant, but must be populated.
+The kitchen-terraform provisioner is enabled.
 
 ### Transport
-The transport defines the mechanism for interacting with the Docker container.
-
-SSH with password authentication is the mechanism defined here. The Docker container that will be used for this example runs the ssh daemon in the foreground in order to allow the verifier to execute tests on the running container.
+The Test Kitchen SSH transport is configured to use password
+authentication.
 
 ### Verifier
-The verifier defines a single `default` group that includes a single
-control for the `operating_system` on the `localhost` using port number
-`2222`. This port is mapped to the docker container's ssh port `22`.
+The kitchen-terraform verifier is configured with two groups.
+
+The `container` group includes a control for the operating system of the
+Docker container. Iterating over the elements of the `hostnames` output,
+the verifier will run the control against `localhost` over SSH on port
+`2222`.
+
+### Platforms
+
+The platforms provide arbitrary grouping for the test suite matrix.
 
 ### Suites
+
 The suite name corresponds to the integration test directory pathname.
-
-# Executing Tests
-There are some requirements in order to successfully run `kitchen-terraform` with Docker. Docker must be installed on the system running `kitchen-terraform`.
-
-Additionally, a container must be available that allows ssh to the container. For example, the Docker image used for this tutorial has `openssh-server` preinstalled. Additionally, the container must be run in a daemonized mode, so the [main.tf]: main.tf file contains a `docker_container` resource with the `must_run` attribute set to `true`. 
 
 ## Test Kitchen Execution
 
@@ -51,6 +88,5 @@ $ bundle install
 $ bundle exec kitchen test
 ```
 
-## References
-* [Terraform Docker Provider](https://www.terraform.io/docs/providers/docker/index.html)
-* [Ubuntu SSHD Container](https://hub.docker.com/r/rastasheep/ubuntu-sshd/)
+[Terraform Docker Provider]: https://www.terraform.io/docs/providers/docker/index.html
+[SSH daemon Docker image]: https://hub.docker.com/r/rastasheep/ubuntu-sshd/
