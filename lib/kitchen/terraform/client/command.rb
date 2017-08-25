@@ -136,7 +136,6 @@ class ::Kitchen::Terraform::Client::Command
         ::Mixlib::ShellOut::CommandTimeout,
         ::Mixlib::ShellOut::ShellCommandFailed
       ) do
-        logger.debug "Running client command: #{shell_out.command}"
         shell_out.run_command
         shell_out.error!
       end.to_either.bind do
@@ -160,6 +159,8 @@ class ::Kitchen::Terraform::Client::Command
       else
         Left new "Constructing client command #{subcommand}", value
       end
+    end.tap do |result|
+      logger.debug result.value
     end
   end
 
