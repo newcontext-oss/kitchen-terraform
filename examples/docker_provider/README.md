@@ -51,7 +51,7 @@ configured as outputs for use by the kitchen-terraform verifier.
 
 ## Test Kitchen Configuration File
 
-The Test Kitchen configuration exists in [.kitchen.yml].
+The Test Kitchen configuration exists in (.kitchen.yml).
 
 ### Driver
 
@@ -62,10 +62,12 @@ The kitchen-terraform driver is enabled.
 The kitchen-terraform provisioner is enabled.
 
 ### Transport
+
 The Test Kitchen SSH transport is configured to use password
 authentication.
 
 ### Verifier
+
 The kitchen-terraform verifier is configured with two groups.
 
 The `container` group includes a control for the operating system of the
@@ -79,7 +81,8 @@ The platforms provide arbitrary grouping for the test suite matrix.
 
 ### Suites
 
-The suite name corresponds to the integration test directory pathname.
+The suite name corresponds to the directory containing the Inspec
+profile.
 
 ## Test Kitchen Execution
 
