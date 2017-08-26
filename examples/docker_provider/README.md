@@ -15,7 +15,7 @@ tests.
 
 ## Terraform Configuration File
 
-The Terraform configuration exists in [main.tf].
+The Terraform configuration exists in (main.tf).
 
 ### Terraform Configuration
 
