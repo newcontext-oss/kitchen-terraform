@@ -7,7 +7,7 @@ PATH
       dry-validation (~> 0.10)
       kitchen-inspec (~> 0.18)
       mixlib-shellout (~> 2.2)
-      test-kitchen (~> 1.10)
+      test-kitchen (~> 1.16.0)
 
 GEM
   remote: https://rubygems.org/
@@ -211,7 +211,7 @@ GEM
     simplecov-html (0.10.2)
     slop (3.6.0)
     sslshake (1.2.0)
-    test-kitchen (1.17.0)
+    test-kitchen (1.16.0)
       mixlib-install (>= 1.2, < 3.0)
       mixlib-shellout (>= 1.2, < 3.0)
       net-scp (~> 1.1)

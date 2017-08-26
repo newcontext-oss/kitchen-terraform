@@ -69,7 +69,11 @@ require "kitchen/terraform/version.rb"
 
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
 
-  specification.add_runtime_dependency "test-kitchen", "~> 1.10"
+  specification
+    .add_runtime_dependency(
+      "test-kitchen",
+      "~> 1.16.0"
+    )
 
   specification.cert_chain = ["certs/public_cert.pem"]
 
