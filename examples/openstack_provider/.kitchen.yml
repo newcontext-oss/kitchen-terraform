@@ -1,29 +1,29 @@
 ---
 driver:
-  name: terraform
-
-provisioner:
-  name: terraform
+  name: "terraform"
   command_timeout: 1000
   variable_files:
-    - ./my-variables.tfvars
+    - "./my-variables.tfvars"
+provisioner:
+  name: "terraform"
 transport:
-  name: ssh
-  username: ubuntu
-  ssh_key: ./dummy_keypair/cloud.key
+  name: "ssh"
+  ssh_key: "./dummy_keypair/cloud.key"
+  username: "ubuntu"
 verifier:
-  name: terraform
-  format: doc
+  name: "terraform"
   groups:
-    - name: masters
+    -
+      name: "master"
       controls:
-        - nano_installed
-      hostnames: master_0_public_ip
-    - name: workers
+        - "nano_installed"
+      hostnames: "master_address"
+    -
+      name: "workers"
       controls:
-        - curl_installed
-      hostnames: workers_public_ips
+        - "curl_installed"
+      hostnames: "workers_addresses"
 platforms:
-  - name: ubuntu
+  - name: "ubuntu"
 suites:
-  - name: default
+  - name: "example"
