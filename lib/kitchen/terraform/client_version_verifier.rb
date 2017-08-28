@@ -15,33 +15,43 @@
 # limitations under the License.
 
 require "dry/monads"
-require "kitchen/driver/terraform"
+require "kitchen/terraform"
+require "rubygems"
 
-# Verifies that the provided Terraform Client version is supported.
+# Verifies that the output of the Terraform Client version subcommand indicates a supported version of Terraform.
 #
-# Supported:: Terraform version 0.9.
-#
-# Deprecated:: Terraform versions 0.7 and 0.8.
-#
-# Not Supported:: Terraform versions 0.6 and older.
-module ::Kitchen::Driver::Terraform::VerifyClientVersion
-  extend ::Dry::Monads::Either::Mixin
-  extend ::Dry::Monads::Maybe::Mixin
-  extend ::Dry::Monads::Try::Mixin
+# Supported:: Terraform version ~> 0.10.2.
+class ::Kitchen::Terraform::ClientVersionVerifier
+  include ::Dry::Monads::Either::Mixin
 
   # Invokes the function.
   #
   # @param version [::Float] the Terraform Client version.
   # @return [::Dry::Monads::Either] the result of the function.
-  def self.call(version:)
-    Maybe(version.slice(/v(\d+\.\d+)/, 1)).or do
-      Left "Unable to parse Terraform client version output\nTerraform client version output did not match 'vX.Y'"
-    end.bind do |major_minor|
-      if major_minor == "0.10"
-        Right "Terraform version #{major_minor} is supported"
+  def verify(version_output:)
+    Right(
+      ::Gem::Version
+        .new(
+          version_output
+            .slice(
+              /v(\d+\.\d+\.\d+)/,
+              1
+            )
+        )
+    ).bind do |version|
+      if requirement.satisfied_by? version
+        Right "Terraform version #{version} is supported"
       else
-        Left "Terraform version #{major_minor} is not supported; upgrade to Terraform version 0.10"
+        Left "Terraform version #{version} is not supported; upgrade to Terraform version ~> 0.10.2"
       end
     end
+  end
+
+  private
+
+  attr_reader :requirement
+
+  def initialize
+    @requirement = ::Gem::Requirement.new "~> 0.10.2"
   end
 end

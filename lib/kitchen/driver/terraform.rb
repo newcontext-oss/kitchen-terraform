@@ -19,12 +19,13 @@ require "fileutils"
 require "json"
 require "kitchen"
 require "kitchen/terraform/clear_directory"
-require "kitchen/terraform/create_directories"
 require "kitchen/terraform/client/command"
 require "kitchen/terraform/client/options"
+require "kitchen/terraform/client_version_verifier"
+require "kitchen/terraform/create_directories"
 require "kitchen/terraform/define_array_of_strings_config_attribute"
-require "kitchen/terraform/define_hash_of_symbols_and_strings_config_attribute"
 require "kitchen/terraform/define_config_attribute"
+require "kitchen/terraform/define_hash_of_symbols_and_strings_config_attribute"
 require "kitchen/terraform/define_integer_config_attribute"
 require "kitchen/terraform/define_optional_file_path_config_attribute"
 require "kitchen/terraform/define_string_config_attribute"
@@ -285,16 +286,25 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Driver::Terraform::VerifyClientVersion
   # @see ::Kitchen::Terraform::Client::Version
   def verify_dependencies
-    ::Kitchen::Terraform::Client::Command.version(
-      logger: debug_logger,
-      working_directory: ::Dir.pwd
-    ).bind do |command|
-      self.class::VerifyClientVersion.call version: command.output
-    end.bind do |verified_client_version|
-      Right logger.warn verified_client_version
-    end.or do |failure|
-      raise ::Kitchen::UserError, failure
-    end
+    ::Kitchen::Terraform::Client::Command
+      .version(
+        logger: debug_logger,
+        working_directory: ::Dir.pwd
+      )
+      .bind do |command|
+        ::Kitchen::Terraform::ClientVersionVerifier
+          .new
+          .verify version_output: command.output
+      end
+      .bind do |verified_client_version|
+        Right logger.warn verified_client_version
+      end
+      .or do |failure|
+        raise(
+          ::Kitchen::UserError,
+          failure
+        )
+      end
   end
 
   private
@@ -465,5 +475,3 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       end
   end
 end
-
-require "kitchen/driver/terraform/verify_client_version"

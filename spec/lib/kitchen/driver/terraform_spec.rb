@@ -317,7 +317,7 @@ require "support/terraform/configurable_examples"
     context "when the result of the version verification function is a failure" do
       include_context(
         "Kitchen::Terraform::Client::Command.version success",
-        output_contents: "Terraform v0.9.0"
+        output_contents: "Terraform v0.10.1"
       )
 
       it_behaves_like "the verification of dependencies is a failure"
@@ -326,7 +326,7 @@ require "support/terraform/configurable_examples"
     context "when the result of the version verification function is a success" do
       include_context(
         "Kitchen::Terraform::Client::Command.version success",
-        output_contents: "Terraform v0.10.0"
+        output_contents: "Terraform v0.10.2"
       )
 
       it "does not raise an error" do
