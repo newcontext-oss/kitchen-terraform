@@ -19,14 +19,14 @@ require "kitchen/terraform"
 require "rubygems"
 
 # Verifies that the output of the Terraform Client version subcommand indicates a supported version of Terraform.
-#
-# Supported:: Terraform version ~> 0.10.2.
 class ::Kitchen::Terraform::ClientVersionVerifier
   include ::Dry::Monads::Either::Mixin
 
-  # Invokes the function.
+  # Verifies output from the Terraform Client version subcommand against the support version.
   #
-  # @param version [::Float] the Terraform Client version.
+  # Supported:: Terraform version ~> 0.10.2.
+  #
+  # @param version_output [::String] the Terraform Client version subcommand output.
   # @return [::Dry::Monads::Either] the result of the function.
   def verify(version_output:)
     Right(
