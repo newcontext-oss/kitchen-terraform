@@ -23,7 +23,7 @@ jobs:
       services:
         - docker
       env:
-        - "PATH=\"$PWD/terraform:$PATH\""
+        - "PATH=\"$PATH:$PWD/terraform\""
       rvm: 2.4.0
       before_install:
         - cd examples/docker_provider
