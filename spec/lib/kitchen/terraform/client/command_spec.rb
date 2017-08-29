@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/logger"
+require "kitchen"
 require "kitchen/terraform/client/command"
 require "kitchen/terraform/client/options"
 require "mixlib/shellout"

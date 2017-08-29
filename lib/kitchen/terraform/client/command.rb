@@ -19,7 +19,7 @@ require "kitchen/terraform/client"
 require "mixlib/shellout"
 require "kitchen/terraform/client/options"
 
-# Represents a Terraform command.
+# Represents the result of running a Terraform command.
 #
 # @see https://www.terraform.io/docs/commands/index.html Terraform commands
 class ::Kitchen::Terraform::Client::Command
@@ -27,6 +27,16 @@ class ::Kitchen::Terraform::Client::Command
 
   extend ::Dry::Monads::Try::Mixin
 
+  # Runs the apply command.
+  #
+  # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param options [::Kitchen::Terraform::Client::Options] options for the command.
+  # @param timeout [::Integer] the number of seconds to wait for the command to finish.
+  # @param working_directory[::String] the path to the directory in which to run the command.
+  # @return [::Dry::Monads::Either] the result of running the command.
+  # @see ::Kitchen::Logger
+  # @see ::Kitchen::Terraform::DebugLogger
+  # @see https://www.terraform.io/docs/commands/apply.html Terraform Command: apply
   def self.apply(logger:, options:, timeout:, working_directory:)
     run(
       logger: logger,
@@ -37,6 +47,16 @@ class ::Kitchen::Terraform::Client::Command
     )
   end
 
+  # Runs the destroy command.
+  #
+  # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param options [::Kitchen::Terraform::Client::Options] options for the command.
+  # @param timeout [::Integer] the number of seconds to wait for the command to finish.
+  # @param working_directory[::String] the path to the directory in which to run the command.
+  # @return [::Dry::Monads::Either] the result of running the command.
+  # @see ::Kitchen::Logger
+  # @see ::Kitchen::Terraform::DebugLogger
+  # @see https://www.terraform.io/docs/commands/destroy.html Terraform Command: destroy
   def self.destroy(logger:, options:, timeout:, working_directory:)
     run(
       logger: logger,
@@ -47,6 +67,16 @@ class ::Kitchen::Terraform::Client::Command
     )
   end
 
+  # Runs the init command.
+  #
+  # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param options [::Kitchen::Terraform::Client::Options] options for the command.
+  # @param timeout [::Integer] the number of seconds to wait for the command to finish.
+  # @param working_directory[::String] the path to the directory in which to run the command.
+  # @return [::Dry::Monads::Either] the result of running the command.
+  # @see ::Kitchen::Logger
+  # @see ::Kitchen::Terraform::DebugLogger
+  # @see https://www.terraform.io/docs/commands/destroy.html Terraform Command: init
   def self.init(logger:, options:, timeout:, working_directory:)
     run(
       logger: logger,
@@ -57,6 +87,16 @@ class ::Kitchen::Terraform::Client::Command
     )
   end
 
+  # Runs the output command.
+  #
+  # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param options [::Kitchen::Terraform::Client::Options] options for the command.
+  # @param timeout [::Integer] the number of seconds to wait for the command to finish.
+  # @param working_directory[::String] the path to the directory in which to run the command.
+  # @return [::Dry::Monads::Either] the result of running the command.
+  # @see ::Kitchen::Logger
+  # @see ::Kitchen::Terraform::DebugLogger
+  # @see https://www.terraform.io/docs/commands/destroy.html Terraform Command: output
   def self.output(logger:, options:, timeout:, working_directory:)
     run(
       logger: logger,
@@ -67,6 +107,16 @@ class ::Kitchen::Terraform::Client::Command
     )
   end
 
+  # Runs the plan command.
+  #
+  # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param options [::Kitchen::Terraform::Client::Options] options for the command.
+  # @param timeout [::Integer] the number of seconds to wait for the command to finish.
+  # @param working_directory[::String] the path to the directory in which to run the command.
+  # @return [::Dry::Monads::Either] the result of running the command.
+  # @see ::Kitchen::Logger
+  # @see ::Kitchen::Terraform::DebugLogger
+  # @see https://www.terraform.io/docs/commands/destroy.html Terraform Command: plan
   def self.plan(logger:, options:, timeout:, working_directory:)
     run(
       logger: logger,
@@ -77,6 +127,16 @@ class ::Kitchen::Terraform::Client::Command
     )
   end
 
+  # Runs the validate command.
+  #
+  # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param options [::Kitchen::Terraform::Client::Options] options for the command.
+  # @param timeout [::Integer] the number of seconds to wait for the command to finish.
+  # @param working_directory[::String] the path to the directory in which to run the command.
+  # @return [::Dry::Monads::Either] the result of running the command.
+  # @see ::Kitchen::Logger
+  # @see ::Kitchen::Terraform::DebugLogger
+  # @see https://www.terraform.io/docs/commands/destroy.html Terraform Command: validate
   def self.validate(logger:, options:, timeout:, working_directory:)
     run(
       logger: logger,
@@ -87,6 +147,14 @@ class ::Kitchen::Terraform::Client::Command
     )
   end
 
+  # Runs the version command.
+  #
+  # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param working_directory[::String] the path to the directory in which to run the command.
+  # @return [::Dry::Monads::Either] the result of running the command.
+  # @see ::Kitchen::Logger
+  # @see ::Kitchen::Terraform::DebugLogger
+  # @see https://www.terraform.io/docs/commands/destroy.html Terraform Command: version
   def self.version(logger:, working_directory:)
     run(
       logger: logger,
@@ -95,26 +163,54 @@ class ::Kitchen::Terraform::Client::Command
     )
   end
 
+  # @!attribute [r] output
+  #   @return [::String] output generated by running.
   attr_reader :output
 
+  # Determines equality between self and other.
+  #
+  # @param other [::Object]
+  # @return [::TrueClass, ::FalseClass] true if self and other are equivalent commands or false
+  # @see ::BasicObject#==
   def ==(other)
-    other.is_a? self.class and to_s == other.to_s
+    self.class == other.class and to_s == other.to_s
   end
 
-  def eq(other)
+  # Determines equality between the hash keys of self and other.
+  #
+  # @param other [::Object]
+  # @return [::TrueClass, ::FalseClass] true if self and other have equivalent hash keys or false
+  # @see ::Object#eql?
+  def eql?(other)
     self == other
   end
 
+  # Searches for a match between the string representation of self and pattern.
+  #
+  # @param pattern [::Object] a pattern to match against.
+  # @return [::MatchData, ::NilClass] if a match is found then a description of the match; else nil.
   def match(pattern)
     to_s.match pattern
   end
 
+  # The string representation of self.
+  #
+  # @return [::String] self as a string.
   def to_s
     "Output of command `#{@command}`: #{@output}"
   end
 
   private
 
+  # Run a command.
+  #
+  # @api private
+  # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param options [::Kitchen::Terraform::Client::Options] options for the command.
+  # @param timeout [::Integer] the number of seconds to wait for the command to finish.
+  # @param working_directory[::String] the path to the directory in which to run the command.
+  # @return [::Dry::Monads::Either] the result of running the command.
+  # @see ::Kitchen::Logger
   def self.run(
     logger:,
     options: ::Kitchen::Terraform::Client::Options.new,
@@ -129,43 +225,48 @@ class ::Kitchen::Terraform::Client::Command
         live_stream: logger,
         timeout: timeout
       )
-    end.to_either.bind do |shell_out|
-      Try(
-        ::Errno::EACCES,
-        ::Errno::ENOENT,
-        ::Mixlib::ShellOut::CommandTimeout,
-        ::Mixlib::ShellOut::ShellCommandFailed
-      ) do
-        shell_out.run_command
-        shell_out.error!
-      end.to_either.bind do
-        Right(
-          new(
-            command: shell_out.command,
-            output: shell_out.stdout
-          )
-        )
-      end.or do |error|
-        Left(
-          new(
-            command: shell_out.command,
-            output: error
-          )
-        )
-      end
-    end.or do |value|
-      if value.kind_of? self
-        Left value
-      else
-        Left new "Constructing client command #{subcommand}", value
-      end
-    end.tap do |result|
-      logger.debug result.value
     end
+      .to_either
+      .bind do |shell_out|
+        Try(
+          ::Errno::EACCES,
+          ::Errno::ENOENT,
+          ::Mixlib::ShellOut::CommandTimeout,
+          ::Mixlib::ShellOut::ShellCommandFailed
+        ) do
+          shell_out.run_command
+          shell_out.error!
+        end
+          .to_either
+          .bind do
+            Right(
+              new(
+                command: shell_out.command,
+                output: shell_out.stdout
+              )
+            )
+          end
+          .or do |error|
+            Left(
+              new(
+                command: shell_out.command,
+                output: error
+              )
+            )
+          end
+      end
+      .tap do |result|
+        logger.debug result.value
+      end
   end
 
+  # Initializes self.
+  #
+  # @api private
+  # @param command [::Object] the command that was run.
+  # @param output [::Object] the output of the command that was run.
   def initialize(command:, output:)
-    @command = command.to_s
-    @output = output.to_s
+    @command = command
+    @output = output
   end
 end
