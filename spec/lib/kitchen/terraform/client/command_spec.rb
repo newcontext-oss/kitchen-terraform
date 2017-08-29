@@ -23,13 +23,27 @@ require "support/kitchen/terraform/client/command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::Command do
   shared_examples "a command is run" do |subcommand:|
+    subject do
+      described_class
+        .send(
+          subcommand,
+          logger: ::Kitchen::Logger.new,
+          options:
+            ::Kitchen::Terraform::Client::Options
+              .new
+              .no_color,
+          timeout: 1234,
+          working_directory: "working_directory"
+        )
+    end
+
     shared_examples "the command experiences an error" do |message:|
       it do
         is_expected.to result_in_failure.with_the_value kind_of described_class
       end
 
       it do
-        is_expected.to result_in_failure.with_the_value matching "terraform #{subcommand}"
+        is_expected.to result_in_failure.with_the_value matching "terraform #{subcommand} -no-color"
       end
 
       it do
@@ -105,135 +119,51 @@ require "support/kitchen/terraform/client/command_context"
   end
 
   describe ".apply" do
-    subject do
-      described_class
-        .apply(
-          logger: ::Kitchen::Logger.new,
-          options:
-            ::Kitchen::Terraform::Client::Options
-              .new
-              .no_color,
-          timeout: 1234,
-          working_directory: "working_directory"
-        )
-    end
-
     it_behaves_like(
       "a command is run",
-       subcommand: "apply -no-color"
+      subcommand: "apply"
     )
   end
 
   describe ".destroy" do
-    subject do
-      described_class
-        .destroy(
-          logger: ::Kitchen::Logger.new,
-          options:
-            ::Kitchen::Terraform::Client::Options
-              .new
-              .no_color,
-          timeout: 1234,
-          working_directory: "working_directory"
-        )
-    end
-
     it_behaves_like(
       "a command is run",
-       subcommand: "destroy -no-color"
+      subcommand: "destroy"
     )
   end
 
   describe ".init" do
-    subject do
-      described_class
-        .init(
-          logger: ::Kitchen::Logger.new,
-          options:
-            ::Kitchen::Terraform::Client::Options.new.no_color,
-          timeout: 1234,
-          working_directory: "working_directory"
-        )
-    end
-
     it_behaves_like(
       "a command is run",
-       subcommand: "init -no-color"
+      subcommand: "init"
     )
   end
 
   describe ".output" do
-    subject do
-      described_class
-        .output(
-          logger: ::Kitchen::Logger.new,
-          options:
-            ::Kitchen::Terraform::Client::Options
-              .new
-              .no_color,
-          timeout: 1234,
-          working_directory: "working_directory"
-        )
-    end
-
     it_behaves_like(
       "a command is run",
-       subcommand: "output -no-color"
+      subcommand: "output"
     )
   end
 
   describe ".plan" do
-    subject do
-      described_class
-        .plan(
-          logger: ::Kitchen::Logger.new,
-          options:
-            ::Kitchen::Terraform::Client::Options
-              .new
-              .no_color,
-          timeout: 1234,
-          working_directory: "working_directory"
-        )
-    end
-
     it_behaves_like(
       "a command is run",
-       subcommand: "plan -no-color"
+      subcommand: "plan"
     )
   end
 
   describe ".validate" do
-    subject do
-      described_class
-        .validate(
-          logger: ::Kitchen::Logger.new,
-          options:
-            ::Kitchen::Terraform::Client::Options
-              .new
-              .no_color,
-          timeout: 1234,
-          working_directory: "working_directory"
-        )
-    end
-
     it_behaves_like(
       "a command is run",
-       subcommand: "validate -no-color"
+      subcommand: "validate"
     )
   end
 
   describe ".version" do
-    subject do
-      described_class
-        .version(
-          logger: ::Kitchen::Logger.new,
-          working_directory: "working_directory"
-        )
-    end
-
     it_behaves_like(
       "a command is run",
-       subcommand: "version"
+      subcommand: "version"
     )
   end
 end

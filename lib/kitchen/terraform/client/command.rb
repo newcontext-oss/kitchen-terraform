@@ -150,15 +150,24 @@ class ::Kitchen::Terraform::Client::Command
   # Runs the version command.
   #
   # @param logger [::Kitchen::Logger, ::Terraform::DebugLogger] a logger to capture the run output of the command.
+  # @param options [::Kitchen::Terraform::Client::Options] options for the command.
+  # @param timeout [::Integer] the number of seconds to wait for the command to finish.
   # @param working_directory[::String] the path to the directory in which to run the command.
   # @return [::Dry::Monads::Either] the result of running the command.
   # @see ::Kitchen::Logger
   # @see ::Kitchen::Terraform::DebugLogger
   # @see https://www.terraform.io/docs/commands/destroy.html Terraform Command: version
-  def self.version(logger:, working_directory:)
+  def self.version(
+    logger:,
+    options: ::Kitchen::Terraform::Client::Options,
+    timeout: nil,
+    working_directory:
+  )
     run(
       logger: logger,
+      options: options,
       subcommand: "version",
+      timeout: timeout,
       working_directory: working_directory
     )
   end
@@ -211,13 +220,8 @@ class ::Kitchen::Terraform::Client::Command
   # @param working_directory[::String] the path to the directory in which to run the command.
   # @return [::Dry::Monads::Either] the result of running the command.
   # @see ::Kitchen::Logger
-  def self.run(
-    logger:,
-    options: ::Kitchen::Terraform::Client::Options.new,
-    subcommand:,
-    timeout: nil,
-    working_directory:
-  )
+  def self
+    .run(logger:, options:, subcommand:, timeout:, working_directory:)
     Try ::Mixlib::ShellOut::InvalidCommandOption do
       ::Mixlib::ShellOut.new(
         "terraform #{subcommand} #{options}".strip,
