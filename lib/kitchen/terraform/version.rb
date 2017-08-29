@@ -16,4 +16,4 @@
 
 require "kitchen/terraform"
 
-::Kitchen::Terraform::VERSION = "1.1.0".freeze
+::Kitchen::Terraform::VERSION = "2.0.0".freeze

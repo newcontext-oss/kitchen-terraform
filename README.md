@@ -29,7 +29,7 @@ Gemfile:
 
 ```rb
 source "https://rubygems.org/" do
-  gem "kitchen-terraform", "~> 1.0"
+  gem "kitchen-terraform", "~> 2.0"
 end
 ```
 
