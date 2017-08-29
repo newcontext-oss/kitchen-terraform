@@ -19,10 +19,10 @@ require "kitchen"
 require "kitchen/terraform"
 require "kitchen/terraform/define_config_attribute"
 
-# Defines a string configuration attribute for a plugin class.
+# Defines an array of strings configuration attribute for a plugin class.
 #
 # @see http://dry-rb.org/gems/dry-validation/ DRY Validation
-module ::Kitchen::Terraform::DefineStringConfigAttribute
+module ::Kitchen::Terraform::DefineArrayOfStringsConfigAttribute
   # Invokes the function.
   #
   # @param attribute [::Symbol] the name of the attribute.
@@ -37,7 +37,7 @@ module ::Kitchen::Terraform::DefineStringConfigAttribute
       initialize_default_value: initialize_default_value,
       plugin_class: plugin_class,
       schema: lambda do
-        required(:value).filled :str?
+        required(:value).each :filled?, :str?
       end
     )
   end

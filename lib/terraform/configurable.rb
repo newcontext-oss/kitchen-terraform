@@ -36,7 +36,20 @@ module ::Terraform::Configurable
     @debug_logger ||= ::Terraform::DebugLogger.new logger: logger
   end
 
+  def finalize_config!(instance)
+    raise ::Kitchen::ClientError, "Instance must be provided to #{self}" if instance.nil?
+
+    @instance = instance
+    validate_config!
+    expand_paths!
+    load_needed_dependencies!
+
+    self
+  end
+
   def instance_pathname(filename:)
+    raise ::Kitchen::ClientError, "Instance must be provided to #{self}" if instance.nil?
+
     ::File.join config.fetch(:kitchen_root), ".kitchen", "kitchen-terraform", instance.name, filename
   end
 end

@@ -62,7 +62,7 @@ require "support/kitchen/instance_context"
     end
 
     it "associates :#{attribute} with #{default_value}" do
-      is_expected.to eq default_value
+      is_expected.to match default_value
     end
   end
 end

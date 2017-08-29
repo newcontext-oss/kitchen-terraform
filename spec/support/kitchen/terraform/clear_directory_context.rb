@@ -14,21 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[
-  :failure,
-  :success
-].each do |status|
-  ::RSpec::Matchers.define "result_in_#{status}" do
-    match do |result|
-      result.send "#{status}?" and value.nil? or values_match? value, result.value
-    end
+require "fileutils"
 
-    chain :with_the_value, :value
+::RSpec.shared_context "Kitchen::Terraform::ClearDirectory" do
+  let :file_utils do
+    class_double(::FileUtils).as_stubbed_const
+  end
 
-    failure_message do |result|
-      ::String.new("expected result\n  #{result}\nto be a #{status}").tap do |message|
-        value.nil? or message.concat " with the value\n  #{value.inspect}"
-      end
-    end
+  before do
+    allow(file_utils).to receive(:safe_unlink).with kind_of ::Array
   end
 end

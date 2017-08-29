@@ -1,61 +1,98 @@
-# Detailed
+# Terraform AWS Provider Detailed Example
 
-This directory contains a complex example Terraform project that
-creates infrastructure on AWS and utilizes kitchen-terraform for testing
-the server instances.
+This is a detailed example of how to utilize kitchen-terraform to test
+AWS resources configured with the [Terraform AWS Provider].
 
-While the complexity of the Terraform code has been kept to a minimum,
-it is possible that the configuration of a user's AWS account may still
-prevent the successful execution of this example.
+## Requirements
 
-## Terraform Configuration
+AWS credentials must be provided according to the
+[credentials provider chain rules]. These credentials must be authorized
+to manage all of the resources in the [Terraform module].
 
-[variables.tf] defines the required inputs for the example module.
+The use of an isolated user as described in the supplemental
+[AWS Account Configuration] article is recommended.
 
-[example.tf] creates three server instances: two in the
-*kitchen_terraform_example_1* group and one in the
-*kitchen_terraform_example_2* group.
+## Terraform Configuration Files
 
-[outputs.tf] defines two output variables: the hostnames of the
-instances in the test suite's only group and an address to use in the
-suite's Inspec controls.
+The Terraform configuration exists in (module.tf) and
+(test/fixtures/us_east_1/main.tf). The module contains the AWS
+configuration and the us-east-1 test fixture configuration depends on
+the module.
+
+### AWS Configuration Module
+
+#### Variables
+
+The module requires an instances AMI, a key pair public key, a provider
+region, and a subnet availability zone to be provided as inputs.
+
+#### AWS Provider
+
+The module configures the AWS Provider to manage resources in a variable
+region.
+
+#### Resources
+
+The module configures a virtual private cloud with three instances and
+adequate network egress and ingress to allow internal communication as
+well communication with localhost.
+
+#### Outputs
+
+The module exports various resource attributes to be used in integration 
+testing with kitchen-terraform.
+
+### us-east-1 Test Fixture Configuration
+
+#### Terraform Configuration
+
+The configuration is restricted to Terraform versions equal to or
+greater than 0.10.2 and less than 0.11.0.
+
+#### Variable
+
+The configuration requires a key pair public key to be provided as
+an input.
+
+#### Module
+
+The configuration includes the module and provides values specific to
+the us-east-1 region for the variable inputs.
+
+#### Outputs
+
+The configuration forwards the outputs of the module.
 
 ## AWS Configuration
 
-Before continuing, review the instructions on configuring the
-[AWS account] with an isolated user for enhanced security.
+## Test Kitchen Configuration File
 
-In order to execute this example, AWS credentials must be provided
-according to the [credentials provider chain rules].
-
-## Test Kitchen Configuration
-
-The [Test Kitchen configuration] includes all of the plugins provided by
-kitchen-terraform.
+The Test Kitchen configuration exists in (.kitchen.yml).
 
 ### Driver
 
-The driver is configured to use 4 concurrent operations to apply a
-test fixture module based on the installed version of Terraform.
+The kitchen-terraform driver is configured to use the us-east-1 test
+fixture configuration and to use 4 concurrent operations in its actions.
 
 ### Provisioner
 
-The provisioner has no configuration attributes.
+The kitchen-terraform provisioner is enabled.
 
 ### Transport
 
-The SSH transport is used due to the AMI used in the example module.
+The Test Kitchen SSH transport is enabled.
 
 ### Verifier
 
-The verifier is configured with two groups, `contrived` and `local`.
+The kitchen-terraform verifier is configured with two groups,
+`remote` and `local`.
 
-The `contrived` group uses the value of the `security_group` output
+The `remote` group uses the value of the `security_group` output
 to define an Inspec control attribute named `overridden_security_group`
-and includes most of the suite's [profile's controls]. The group uses
-the value of the `contrived_hostnames` output to obtain the targets to
-execute the controls on and provides a static port and username based on
-the AMI used in the example module.
+and includes some of the controls of the profile of the suite. The
+group uses the value of the `test_target_public_dns` output to obtain
+the hostnames to execute the controls on and provides a static port and
+username based on the AMI used in the example module.
 
 The `local` group omits the `hostnames` setting, which means that its
 specified controls will be executed locally rather than remotely on a
@@ -63,19 +100,17 @@ server in the Terraform state.
 
 ### Platforms
 
-The platforms configuration is currently irrelevant but must not be
-empty.
+The platforms provide arbitrary grouping for the test suite matrix.
 
 ### Suites
 
-The suite name corresponds to the [integration test directory pathname]
-as usual.
+The suite name corresponds to the [directory of the Inspec profile].
 
 ### Missing Configuration
 
-A couple of required configuration options are missing from the Test
-Kitchen configuration; these must be provided in a local Test Kitchen
-configuration.
+Public and private key configuration attributes must be provided
+in a local Test Kitchen configuration. This demonstrates how
+[embedded Ruby] can be used in Test Kitchen configuration.
 
 *.kitchen.local.yml*
 
@@ -83,31 +118,24 @@ configuration.
 ---
 driver:
   variables:
-    public_key_pathname: <pathname/of/public/ssh/key>
+    key_pair_public_key: "<%= ::File.read '/path/to/public/key' %>"
 transport:
-  ssh_key: <pathname/of/private/ssh/key>
+  ssh_key: "/path/to/private/key"
 ```
 
-## Executing Tests
-
-__WARNING__ Creating AWS resources could cost money and be charged to
-the AWS Account's bill; neither kitchen-terraform nor its maintainers
-are responsible for any incurred costs.
-
-Assuming that the [missing configuration] has been provided, testing the
-example module is simple:
+## Test Kitchen Execution
 
 ```bash
 $ bundle install
-$ bundle exec kitchen test --destroy always
+$ bundle exec kitchen test
 ```
 
-[AWS account]: AWS.md
-[Test Kitchen configuration]: .kitchen.yml
+[AWS Account Configuration]: AWS.md
+[Terraform AWS Provider]: https://www.terraform.io/docs/providers/aws/index.html
+[Terraform module]: module.tf
 [credentials provider chain rules]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#config-settings-and-precedence
-[example.tf]: example.tf
-[integration test directory pathname]: test/integration/example
+[directory of the Inspec profile]: test/integration/example/
+[embedded Ruby]: http://www.stuartellis.name/articles/erb/
 [missing configuration]: README.md#user-content-missing-configuration
 [outputs.tf]: outputs.tf
-[profile's controls]: test/integration/example/controls
 [variables.tf]: variables.tf

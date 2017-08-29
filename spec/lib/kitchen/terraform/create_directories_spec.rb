@@ -14,21 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/monads"
 require "kitchen/terraform/create_directories"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/create_directories_context"
 
 ::RSpec.describe ::Kitchen::Terraform::CreateDirectories do
   describe ".call" do
+    include ::Dry::Monads::Either::Mixin
+
     subject do
-      described_class.call directories: [
-                             "directory_1",
-                             "directory_2"
-                           ]
+      described_class.call(
+        directories: [
+          "directory_1",
+          "directory_2"
+        ]
+      )
     end
 
     context "when the creation of directories does experience an error" do
-      include_context "Kitchen::Terraform::CreateDirectories"
+      include_context "Kitchen::Terraform::CreateDirectories.call failure"
 
       it do
         is_expected.to result_in_failure.with_the_value /error/
@@ -36,7 +41,7 @@ require "support/kitchen/terraform/create_directories_context"
     end
 
     context "when the creation of directories does not experience an error" do
-      include_context "Kitchen::Terraform::CreateDirectories", failure: false
+      include_context "Kitchen::Terraform::CreateDirectories.call success"
 
       it do
         is_expected.to result_in_success.with_the_value "Created directories [\"directory_1\", \"directory_2\"]"

@@ -16,50 +16,50 @@
 
 require "support/kitchen/terraform/define_config_attribute_context"
 
-::RSpec.shared_examples "config attribute :variables" do
+::RSpec.shared_examples "config attribute :backend_configurations" do
   include_context(
     "Kitchen::Terraform::DefineConfigAttribute",
-    attribute: :variables
+    attribute: :backend_configurations
   ) do
-    context "when the config omits :variables" do
+    context "when the config omits :backend_configurations" do
       it_behaves_like(
         "a default value is used",
         default_value: {}
       )
     end
 
-    context "when the config associates :variables with a nonhash" do
+    context "when the config associates :backend_configurations with a nonhash" do
       it_behaves_like(
         "the value is invalid",
-        error_message: /variables.*must be a hash/,
+        error_message: /backend_configurations.*must be a hash/,
         value: []
       )
     end
 
-    context "when the config associates :variables with a an empty hash" do
+    context "when the config associates :backend_configurations with a an empty hash" do
       it_behaves_like(
         "the value is valid",
         value: {}
       )
     end
 
-    context "when the config associates :variables with a hash which has nonsymbol keys" do
+    context "when the config associates :backend_configurations with a hash which has nonsymbol keys" do
       it_behaves_like(
         "the value is invalid",
-        error_message: /variables.*keys must be symbols/,
+        error_message: /backend_configurations.*keys must be symbols/,
         value: {"key" => "value"}
       )
     end
 
-    context "when the config associates :variables with a hash which has nonstring values" do
+    context "when the config associates :backend_configurations with a hash which has nonstring values" do
       it_behaves_like(
         "the value is invalid",
-        error_message: /variables.*values must be strings/,
+        error_message: /backend_configurations.*values must be strings/,
         value: {key: :value}
       )
     end
 
-    context "when the config associates :variables with a hash which has symobl keys and string values" do
+    context "when the config associates :backend_configurations with a hash which has symobl keys and string values" do
       it_behaves_like(
         "the value is valid",
         value: {key: "value"}

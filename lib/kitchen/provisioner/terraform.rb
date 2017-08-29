@@ -43,7 +43,6 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   #   `kitchen converge suite-name`
   # @param state [::Hash] the mutable instance and provisioner state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [::Dry::Monads::Either] the result of the action.
   def call(state)
     instance.driver.create state
   end

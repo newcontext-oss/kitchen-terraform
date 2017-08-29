@@ -16,53 +16,38 @@
 
 require "support/kitchen/terraform/define_config_attribute_context"
 
-::RSpec.shared_examples "config attribute :variables" do
+::RSpec.shared_examples "config attribute :plugin_directory" do
   include_context(
     "Kitchen::Terraform::DefineConfigAttribute",
-    attribute: :variables
+    attribute: :plugin_directory
   ) do
-    context "when the config omits :variables" do
+    context "when the config omits :plugin_directory" do
       it_behaves_like(
         "a default value is used",
-        default_value: {}
+        default_value: nil
       )
     end
 
-    context "when the config associates :variables with a nonhash" do
+    context "when the config associates :plugin_directory with a nonstring" do
       it_behaves_like(
         "the value is invalid",
-        error_message: /variables.*must be a hash/,
-        value: []
+        error_message: /plugin_directory.*must be a string/,
+        value: 123
       )
     end
 
-    context "when the config associates :variables with a an empty hash" do
+    context "when the config associates :plugin_directory with an empty string" do
+      it_behaves_like(
+        "the value is invalid",
+        error_message: /plugin_directory.*must be filled/,
+        value: ""
+      )
+    end
+
+    context "when the config associates :plugin_directory with a nonempty string" do
       it_behaves_like(
         "the value is valid",
-        value: {}
-      )
-    end
-
-    context "when the config associates :variables with a hash which has nonsymbol keys" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /variables.*keys must be symbols/,
-        value: {"key" => "value"}
-      )
-    end
-
-    context "when the config associates :variables with a hash which has nonstring values" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /variables.*values must be strings/,
-        value: {key: :value}
-      )
-    end
-
-    context "when the config associates :variables with a hash which has symobl keys and string values" do
-      it_behaves_like(
-        "the value is valid",
-        value: {key: "value"}
+        value: "abc"
       )
     end
   end

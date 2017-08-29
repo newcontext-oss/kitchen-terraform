@@ -14,21 +14,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[
-  :failure,
-  :success
-].each do |status|
-  ::RSpec::Matchers.define "result_in_#{status}" do
-    match do |result|
-      result.send "#{status}?" and value.nil? or values_match? value, result.value
+require "dry/monads"
+require "kitchen/terraform/clear_directory"
+require "support/dry/monads/either_matchers"
+require "support/kitchen/terraform/clear_directory_context"
+
+::RSpec.describe ::Kitchen::Terraform::ClearDirectory do
+  describe ".call" do
+    include ::Dry::Monads::Either::Mixin
+
+    subject do
+      described_class.call(
+        directory: "directory",
+        files: [
+          "file_1",
+          "file_2"
+        ]
+      )
     end
 
-    chain :with_the_value, :value
+    include_context "Kitchen::Terraform::ClearDirectory"
 
-    failure_message do |result|
-      ::String.new("expected result\n  #{result}\nto be a #{status}").tap do |message|
-        value.nil? or message.concat " with the value\n  #{value.inspect}"
-      end
+    it do
+      is_expected
+        .to result_in_success.with_the_value "Cleared directory \"directory\" of files [\"file_1\", \"file_2\"]"
     end
   end
 end

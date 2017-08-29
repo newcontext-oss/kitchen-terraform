@@ -15,29 +15,34 @@
 # limitations under the License.
 
 require "dry-validation"
-require "kitchen"
 require "kitchen/terraform"
 require "kitchen/terraform/define_config_attribute"
 
-# Defines a string configuration attribute for a plugin class.
+# Defines an optional file path configuration attribute for a plugin class. If the attribute is associated in the
+# configuration then its value must be a string and its value is assumed to be a file path that is expandable relative
+# to the working directory of Test Kitchen. If the attribute is not associated in the configuration then it has no
+# value.
 #
 # @see http://dry-rb.org/gems/dry-validation/ DRY Validation
-module ::Kitchen::Terraform::DefineStringConfigAttribute
+module ::Kitchen::Terraform::DefineOptionalFilePathConfigAttribute
   # Invokes the function.
   #
   # @param attribute [::Symbol] the name of the attribute.
   # @param plugin_class [::Class] the plugin class on which the attribute will be defined.
-  # @yieldparam plugin [::Kitchen::Driver::Terraform, ::Kitchen::Provisioner::Terraform, ::Kitchen::Verifier::Terraform]
-  #             an instance of the plugin class.
-  # @yieldreturn [::Object] the default value of the attribute.
-  def self.call(attribute:, expand_path: false, plugin_class:, &initialize_default_value)
+  def self.call(attribute:, plugin_class:)
     ::Kitchen::Terraform::DefineConfigAttribute.call(
       attribute: attribute,
-      expand_path: expand_path,
-      initialize_default_value: initialize_default_value,
+      expand_path: true,
+      initialize_default_value: lambda do |_|
+        nil
+      end,
       plugin_class: plugin_class,
       schema: lambda do
-        required(:value).filled :str?
+        optional(:value)
+          .maybe(
+            :str?,
+            :filled?
+          )
       end
     )
   end

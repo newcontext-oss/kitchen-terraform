@@ -36,15 +36,15 @@ require "support/terraform/configurable_examples"
     end
 
     context "when the driver create action is a failure" do
-      include_context "Kitchen::Driver::Terraform"
+      include_context "Kitchen::Driver::Terraform#create failure"
 
       it "raises an action failed error" do
-        is_expected.to raise_error ::Kitchen::ActionFailed, /driver workflow/
+        is_expected.to raise_error ::Kitchen::ActionFailed
       end
     end
 
     context "when the driver create action is a success" do
-      include_context "Kitchen::Driver::Terraform", failure: false
+      include_context "Kitchen::Driver::Terraform#create success"
 
       it "does not raise an error" do
         is_expected.to_not raise_error

@@ -17,17 +17,12 @@
 require "json"
 require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"
 require "support/dry/monads/either_matchers"
-require "support/kitchen/terraform/client/execute_command_context"
-require "support/kitchen/instance_context"
+require "support/kitchen/driver/terraform_context"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames do
-  include_context ::Kitchen::Instance
+  include_context "Kitchen::Driver::Terraform finalized instance"
 
   describe ".call" do
-    before do
-      driver.finalize_config! instance
-    end
-
     let :passed_block do
       lambda do |block|
         described_class.call driver: driver,
@@ -72,7 +67,7 @@ require "support/kitchen/instance_context"
     end
 
     context "when a group associates :hostnames with a string but the output command is a failure" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output"
+      include_context "Kitchen::Driver::Terraform#output failure"
 
       let :group do
         {
@@ -102,14 +97,17 @@ require "support/kitchen/instance_context"
     end
 
     context "when the group associates :hostnames with an invalid Terraform output name" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0,
-                                                                    output: ::JSON.generate(
-                                                                      "hostnames" => {
-                                                                        "type" => "string",
-                                                                        "value" => "hostname"
-                                                                      }
-                                                                    )
+      include_context(
+        "Kitchen::Driver::Terraform#output success",
+        output_contents:
+          ::JSON
+            .generate(
+              "hostnames" => {
+                "type" => "string",
+                "value" => "hostname"
+              }
+            )
+      )
 
       let :group do
         {
@@ -139,14 +137,17 @@ require "support/kitchen/instance_context"
     end
 
     context "when the group associates :hostnames with a valid Terraform output name" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand", command: "output",
-                                                                    exit_code: 0,
-                                                                    output: ::JSON.generate(
-                                                                      "hostnames" => {
-                                                                        "type" => "string",
-                                                                        "value" => "hostname"
-                                                                      }
-                                                                    )
+      include_context(
+        "Kitchen::Driver::Terraform#output success",
+        output_contents:
+          ::JSON
+            .generate(
+              "hostnames" => {
+                "type" => "string",
+                "value" => "hostname"
+              }
+            )
+      )
 
       let :group do
         {

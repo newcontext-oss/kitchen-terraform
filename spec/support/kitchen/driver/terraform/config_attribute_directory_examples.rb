@@ -29,13 +29,13 @@ require "support/kitchen/terraform/define_config_attribute_context"
                       value: 123
     end
 
-    context "when the config associates :cli with an empty string" do
+    context "when the config associates :directory with an empty string" do
       it_behaves_like "the value is invalid",
                       error_message: /directory.*must be filled/,
                       value: ""
     end
 
-    context "when the config associates :cli with a nonempty string" do
+    context "when the config associates :directory with a nonempty string" do
       it_behaves_like "the value is valid",
                       value: "abc"
     end
