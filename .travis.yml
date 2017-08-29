@@ -26,11 +26,11 @@ jobs:
         - "PATH=\"$PATH:$PWD/terraform\""
       rvm: 2.4.0
       before_install:
-        - cd examples/docker_provider
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.10.2/terraform_0.10.2_linux_amd64.zip
         - "sha256sum terraform.zip | grep \"6c1b5ce1a78bc7bb895055052d9074e519f51293770871acfe2dbd289e2f2aaa\""
         - mkdir terraform
         - unzip terraform.zip -d terraform
+        - cd examples/docker_provider
       script:
         - bundle exec kitchen test --log-level debug
     - stage: deploy
