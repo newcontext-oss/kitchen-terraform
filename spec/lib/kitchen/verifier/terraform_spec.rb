@@ -64,7 +64,7 @@ require "support/terraform/configurable_examples"
     shared_context "Kitchen::Verifier::Inspec" do |exit_code:|
       include_context(
         "Kitchen::Driver::Terraform#output success",
-        output_contents: ::JSON.generate("output_name" => {"value" => "output_name value"})
+        output: ::JSON.generate("output_name" => {"value" => "output_name value"})
       )
 
       let :runner do

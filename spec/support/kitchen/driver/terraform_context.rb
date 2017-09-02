@@ -56,9 +56,9 @@ end
   include_context "Kitchen::Terraform::Client::Command.output failure"
 end
 
-::RSpec.shared_context "Kitchen::Driver::Terraform#output success" do |output_contents: "output_contents"|
+::RSpec.shared_context "Kitchen::Driver::Terraform#output success" do |output: "output"|
   include_context(
     "Kitchen::Terraform::Client::Command.output success",
-    output_contents: output_contents
+    output: output
   )
 end

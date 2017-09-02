@@ -22,147 +22,148 @@ require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/client/command_context"
 
 ::RSpec.describe ::Kitchen::Terraform::Client::Command do
-  shared_examples "a command is run" do |subcommand:|
+  shared_examples "a command is created" do |subcommand:|
     subject do
       described_class
         .send(
           subcommand,
-          logger: ::Kitchen::Logger.new,
           options:
             ::Kitchen::Terraform::Client::Options
               .new
               .no_color,
-          timeout: 1234,
           working_directory: "working_directory"
         )
     end
 
-    shared_examples "the command experiences an error" do |message:|
-      it do
-        is_expected.to result_in_failure.with_the_value kind_of described_class
-      end
+    context "when an invalid command option is sent to the shell out constructor" do
+      include_context(
+        "Kitchen::Terraform::Client::Command.create failure",
+        subcommand: subcommand
+      )
 
       it do
-        is_expected.to result_in_failure.with_the_value matching "terraform #{subcommand} -no-color"
-      end
-
-      it do
-        is_expected.to result_in_failure.with_the_value matching message
+        is_expected.to result_in_failure.with_the_value matching "invalid command option"
       end
     end
 
-    context "when a permissions error occurs" do
-      include_context(
-        "Kitchen::Terraform::Client::Command error failure",
-        error: ::Errno::EACCES,
-        subcommand: subcommand
-      )
-
-      it_behaves_like(
-        "the command experiences an error",
-        message: "Permission denied - mocked error"
-      )
-    end
-
-    context "when an entry error occurs" do
-      include_context(
-        "Kitchen::Terraform::Client::Command error failure",
-        error: ::Errno::ENOENT,
-        subcommand: subcommand
-      )
-
-      it_behaves_like(
-        "the command experiences an error",
-        message: "No such file or directory - mocked error"
-      )
-    end
-
-    context "when a timeout error occurs" do
-      include_context(
-        "Kitchen::Terraform::Client::Command error failure",
-        error: ::Mixlib::ShellOut::CommandTimeout,
-        subcommand: subcommand
-      )
-
-      it_behaves_like(
-        "the command experiences an error",
-        message: "mocked error"
-      )
-    end
-
-    context "when the command exits with a nonzero value" do
-      include_context(
-        "Kitchen::Terraform::Client::Command status failure",
-        subcommand: subcommand
-      )
-
-      it_behaves_like(
-        "the command experiences an error",
-        message: "Begin output of terraform #{subcommand}"
-      )
-    end
-
-    context "when the command exits with a zero value" do
-      include_context(
-        "Kitchen::Terraform::Client::Command success",
-        subcommand: subcommand
-      )
-
+    context "when no invalid command option is sent to the shell out constructor" do
       it do
-        is_expected.to result_in_success.with_the_value kind_of described_class
-      end
-
-      it do
-        is_expected.to result_in_success.with_the_value matching "terraform #{subcommand}"
+        is_expected
+          .to(
+            result_in_success do |value|
+              "terraform #{subcommand} -no-color" == value.command
+            end
+          )
       end
     end
   end
 
   describe ".apply" do
     it_behaves_like(
-      "a command is run",
+      "a command is created",
       subcommand: "apply"
     )
   end
 
   describe ".destroy" do
     it_behaves_like(
-      "a command is run",
+      "a command is created",
       subcommand: "destroy"
     )
   end
 
   describe ".init" do
     it_behaves_like(
-      "a command is run",
+      "a command is created",
       subcommand: "init"
     )
   end
 
   describe ".output" do
     it_behaves_like(
-      "a command is run",
+      "a command is created",
       subcommand: "output"
     )
   end
 
-  describe ".plan" do
-    it_behaves_like(
-      "a command is run",
-      subcommand: "plan"
-    )
+  describe ".run" do
+    let :shell_out do
+      described_class
+        .apply(
+          options: ::Kitchen::Terraform::Client::Options.new,
+          working_directory: "working_directory"
+        ).value
+    end
+
+    subject do
+      described_class
+        .run(
+          logger: ::Kitchen::Logger.new,
+          shell_out: shell_out,
+          timeout: 1234
+        )
+    end
+
+    context "when a permissions error occurs" do
+      include_context(
+        "Kitchen::Terraform::Client::Command.run error failure",
+        error: ::Errno::EACCES
+      )
+
+      it do
+        is_expected.to result_in_failure.with_the_value "Permission denied - mocked error"
+      end
+    end
+
+    context "when an entry error occurs" do
+      include_context(
+        "Kitchen::Terraform::Client::Command.run error failure",
+        error: ::Errno::ENOENT
+      )
+
+      it do
+        is_expected.to result_in_failure.with_the_value "No such file or directory - mocked error"
+      end
+    end
+
+    context "when a timeout error occurs" do
+      include_context(
+        "Kitchen::Terraform::Client::Command.run error failure",
+        error: ::Mixlib::ShellOut::CommandTimeout
+      )
+
+      it do
+        is_expected.to result_in_failure.with_the_value "mocked error"
+      end
+    end
+
+    context "when the command exits with a nonzero value" do
+      include_context "Kitchen::Terraform::Client::Command.run status failure"
+
+      it do
+        is_expected.to result_in_failure.with_the_value matching "Expected process to exit with \\[0\\]"
+      end
+    end
+
+    context "when the command exits with a zero value" do
+      include_context "Kitchen::Terraform::Client::Command.run success"
+
+      it do
+        is_expected.to result_in_success.with_the_value "output"
+      end
+    end
   end
 
   describe ".validate" do
     it_behaves_like(
-      "a command is run",
+      "a command is created",
       subcommand: "validate"
     )
   end
 
   describe ".version" do
     it_behaves_like(
-      "a command is run",
+      "a command is created",
       subcommand: "version"
     )
   end

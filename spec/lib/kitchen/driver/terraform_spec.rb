@@ -268,7 +268,7 @@ require "support/terraform/configurable_examples"
     context "when the value of the output function result matches the expected format of JSON" do
       include_context(
         "Kitchen::Terraform::Client::Command.output success",
-        output_contents:
+        output:
           ::JSON
             .dump(
               output_name: {
@@ -317,7 +317,7 @@ require "support/terraform/configurable_examples"
     context "when the result of the version verification function is a failure" do
       include_context(
         "Kitchen::Terraform::Client::Command.version success",
-        output_contents: "Terraform v0.10.1"
+        output: "Terraform v0.10.1"
       )
 
       it_behaves_like "the verification of dependencies is a failure"
@@ -326,7 +326,7 @@ require "support/terraform/configurable_examples"
     context "when the result of the version verification function is a success" do
       include_context(
         "Kitchen::Terraform::Client::Command.version success",
-        output_contents: "Terraform v0.10.2"
+        output: "Terraform v0.10.2"
       )
 
       it "does not raise an error" do

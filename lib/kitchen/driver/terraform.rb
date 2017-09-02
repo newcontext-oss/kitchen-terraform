@@ -281,22 +281,16 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Terraform::Client::Command.Output
   # @see ::JSON.parse
   def output
-    ::Kitchen::Terraform::Client::Command.output(
-      logger: debug_logger,
-      options:
-        ::Kitchen::Terraform::Client::Options
-          .new
-          .json
-          .state(path: config_state),
-      timeout: config_command_timeout,
-      working_directory: instance_directory
-    ).bind do |command|
-      Try ::JSON::ParserError do
-        ::JSON.parse command.output
-      end.to_either
-    end.or do |error|
-      Left "parsing Terraform client output as JSON failed\n#{error}"
-    end
+    run_output
+      .bind do |output|
+        Try ::JSON::ParserError do
+          ::JSON.parse output
+        end
+          .to_either
+      end
+      .or do |error|
+        Left "parsing Terraform client output as JSON failed\n#{error}"
+      end
   end
 
   # The driver verifies that the client version is supported.
@@ -305,15 +299,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @see ::Kitchen::Terraform::Client::Command.version
   # @see ::Kitchen::Terraform::ClientVersionVerifier#verify
   def verify_dependencies
-    ::Kitchen::Terraform::Client::Command
-      .version(
-        logger: debug_logger,
-        working_directory: ::Dir.pwd
-      )
-      .bind do |command|
+    run_version
+      .bind do |output|
         ::Kitchen::Terraform::ClientVersionVerifier
           .new
-          .verify version_output: command.output
+          .verify version_output: output
       end
       .bind do |verified_client_version|
         Right logger.warn verified_client_version
@@ -368,32 +358,50 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     .to_either
   end
 
+  # Runs a Terraform Client command shell out with the default logger and the configured timeout.
+  #
+  # @api private
+  # @param result [::Dry::Monads::Either] the result of a shell out creation
+  # @return [::Dry::Monads::Either] the result of running the shell out
+  def run(result:)
+    result
+      .bind do |shell_out|
+        ::Kitchen::Terraform::Client::Command
+          .run(
+            logger: logger,
+            shell_out: shell_out,
+            timeout: config_command_timeout
+          )
+    end
+  end
+
   # Runs the Terraform Client apply subcommand.
   #
   # @api private
   # @return [::Dry::Monads::Either] the result of the apply subcommand.
   # @see ::Kitchen::Terraform::Client::Command.apply
   def run_apply
-    ::Kitchen::Terraform::Client::Command
-      .apply(
-        logger: logger,
-        options:
-          ::Kitchen::Terraform::Client::Options
-            .new
-            .enable_lock
-            .lock_timeout(duration: config_lock_timeout)
-            .disable_input
-            .enable_auto_approve
-            .maybe_no_color(toggle: !config_color)
-            .parallelism(concurrent_operations: config_parallelism)
-            .enable_refresh
-            .state(path: config_state)
-            .state_out(path: config_state)
-            .vars(keys_and_values: config_variables)
-            .var_files(paths: config_variable_files),
-        timeout: config_command_timeout,
-        working_directory: instance_directory
-      )
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command
+          .apply(
+            options:
+              ::Kitchen::Terraform::Client::Options
+                .new
+                .enable_lock
+                .lock_timeout(duration: config_lock_timeout)
+                .disable_input
+                .enable_auto_approve
+                .maybe_no_color(toggle: !config_color)
+                .parallelism(concurrent_operations: config_parallelism)
+                .enable_refresh
+                .state(path: config_state)
+                .state_out(path: config_state)
+                .vars(keys_and_values: config_variables)
+                .var_files(paths: config_variable_files),
+            working_directory: instance_directory
+          )
+    )
   end
 
   # Runs the Terraform Client destroy subcommand.
@@ -402,26 +410,27 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [::Dry::Monads::Either] the result of the destroy subcommand.
   # @see ::Kitchen::Terraform::Client::Command.destroy
   def run_destroy
-    ::Kitchen::Terraform::Client::Command
-      .destroy(
-        logger: logger,
-        options:
-          ::Kitchen::Terraform::Client::Options
-            .new
-            .enable_lock
-            .lock_timeout(duration: config_lock_timeout)
-            .disable_input
-            .maybe_no_color(toggle: !config_color)
-            .parallelism(concurrent_operations: config_parallelism)
-            .enable_refresh
-            .state(path: config_state)
-            .state_out(path: config_state)
-            .vars(keys_and_values: config_variables)
-            .var_files(paths: config_variable_files)
-            .force,
-        timeout: config_command_timeout,
-        working_directory: instance_directory
-      )
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command
+          .destroy(
+            options:
+              ::Kitchen::Terraform::Client::Options
+                .new
+                .enable_lock
+                .lock_timeout(duration: config_lock_timeout)
+                .disable_input
+                .maybe_no_color(toggle: !config_color)
+                .parallelism(concurrent_operations: config_parallelism)
+                .enable_refresh
+                .state(path: config_state)
+                .state_out(path: config_state)
+                .vars(keys_and_values: config_variables)
+                .var_files(paths: config_variable_files)
+                .force,
+            working_directory: instance_directory
+          )
+    )
   end
 
   # Runs the Terraform Client init subcommand.
@@ -430,26 +439,46 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [::Dry::Monads::Either] the result of the init subcommand.
   # @see ::Kitchen::Terraform::Client::Command.init
   def run_init
-    ::Kitchen::Terraform::Client::Command
-      .init(
-        logger: logger,
-        options:
-          ::Kitchen::Terraform::Client::Options
-            .new
-            .disable_input
-            .enable_lock
-            .lock_timeout(duration: config_lock_timeout)
-            .maybe_no_color(toggle: !config_color)
-            .upgrade
-            .from_module(source: config_directory)
-            .enable_backend
-            .force_copy
-            .backend_configs(keys_and_values: config_backend_configurations)
-            .enable_get
-            .maybe_plugin_dir(path: config_plugin_directory),
-        timeout: config_command_timeout,
-        working_directory: instance_directory
-      )
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command
+          .init(
+            options:
+              ::Kitchen::Terraform::Client::Options
+                .new
+                .disable_input
+                .enable_lock
+                .lock_timeout(duration: config_lock_timeout)
+                .maybe_no_color(toggle: !config_color)
+                .upgrade
+                .from_module(source: config_directory)
+                .enable_backend
+                .force_copy
+                .backend_configs(keys_and_values: config_backend_configurations)
+                .enable_get
+                .maybe_plugin_dir(path: config_plugin_directory),
+            working_directory: instance_directory
+          )
+    )
+  end
+
+  # Runs the Terraform Client output subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the init subcommand.
+  # @see ::Kitchen::Terraform::Client::Command.output
+  def run_output
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command.output(
+          options:
+            ::Kitchen::Terraform::Client::Options
+              .new
+              .json
+              .state(path: config_state),
+          working_directory: instance_directory
+        )
+    )
   end
 
   # Runs the Terraform Client validate subcommand.
@@ -458,19 +487,29 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [::Dry::Monads::Either] the result of the validate subcommand.
   # @see ::Kitchen::Terraform::Client::Command.validate
   def run_validate
-    ::Kitchen::Terraform::Client::Command
-      .validate(
-        logger: logger,
-        options:
-          ::Kitchen::Terraform::Client::Options
-            .new
-            .enable_check_variables
-            .maybe_no_color(toggle: !config_color)
-            .vars(keys_and_values: config_variables)
-            .var_files(paths: config_variable_files),
-        timeout: config_command_timeout,
-        working_directory: instance_directory
-      )
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command
+          .validate(
+            options:
+              ::Kitchen::Terraform::Client::Options
+                .new
+                .enable_check_variables
+                .maybe_no_color(toggle: !config_color)
+                .vars(keys_and_values: config_variables)
+                .var_files(paths: config_variable_files),
+            working_directory: instance_directory
+          )
+    )
+  end
+
+  # Runs the Terraform Client version subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the version subcommand.
+  # @see ::Kitchen::Terraform::Client::Command.version
+  def run_version
+    run result: ::Kitchen::Terraform::Client::Command.version(working_directory: config.fetch(:kitchen_root))
   end
 
   # Memoizes the path to the Test Kitchen suite instance directory at `.kitchen/kitchen-terraform/<suite>-<platform>`.

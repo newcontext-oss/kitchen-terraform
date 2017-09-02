@@ -99,7 +99,7 @@ require "support/kitchen/driver/terraform_context"
     context "when the group associates :hostnames with an invalid Terraform output name" do
       include_context(
         "Kitchen::Driver::Terraform#output success",
-        output_contents:
+        output:
           ::JSON
             .generate(
               "hostnames" => {
@@ -139,7 +139,7 @@ require "support/kitchen/driver/terraform_context"
     context "when the group associates :hostnames with a valid Terraform output name" do
       include_context(
         "Kitchen::Driver::Terraform#output success",
-        output_contents:
+        output:
           ::JSON
             .generate(
               "hostnames" => {
@@ -171,7 +171,7 @@ require "support/kitchen/driver/terraform_context"
         end
 
         it do
-          is_expected.to result_in_failure.with_the_value "finished enumeration of groups and hostnames"
+          is_expected.to result_in_success.with_the_value "finished enumeration of groups and hostnames"
         end
       end
     end

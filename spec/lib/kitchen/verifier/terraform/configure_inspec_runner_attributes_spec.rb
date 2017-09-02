@@ -45,7 +45,7 @@ require "support/kitchen/driver/terraform_context"
     context "when the value of the Terraform output command result is unexpected" do
       include_context(
         "Kitchen::Driver::Terraform#output success",
-        output_contents: ::JSON.generate("name" => {"unexpected" => "value"})
+        output: ::JSON.generate("name" => {"unexpected" => "value"})
       )
 
       it do
@@ -56,7 +56,7 @@ require "support/kitchen/driver/terraform_context"
     context "when the group attribute output names do not match the value of the Terraform output command result" do
       include_context(
         "Kitchen::Driver::Terraform#output success",
-        output_contents: ::JSON.generate("output_name" => {"value" => "output_name value"})
+        output: ::JSON.generate("output_name" => {"value" => "output_name value"})
       )
 
       let :group do
@@ -76,7 +76,7 @@ require "support/kitchen/driver/terraform_context"
     context "when the group attribute output names match the value of the Terraform output command result" do
       include_context(
         "Kitchen::Driver::Terraform#output success",
-        output_contents: ::JSON.generate("output_name" => {"value" => "output_name value"})
+        output: ::JSON.generate("output_name" => {"value" => "output_name value"})
       )
 
       let :group do

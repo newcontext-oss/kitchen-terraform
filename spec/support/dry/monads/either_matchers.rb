@@ -20,7 +20,14 @@
 ].each do |status|
   ::RSpec::Matchers.define "result_in_#{status}" do
     match do |result|
-      result.send "#{status}?" and value.nil? or values_match? value, result.value
+      result.send "#{status}?" and
+        if not value.nil?
+          values_match? value, result.value
+        elsif not block_arg.nil?
+          block_arg.call result.value
+        else
+          true
+        end
     end
 
     chain :with_the_value, :value
