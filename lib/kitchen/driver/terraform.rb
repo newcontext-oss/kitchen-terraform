@@ -54,6 +54,7 @@ require "terraform/configurable"
 #       - "/second/terraform/variable/file"
 #     variables:
 #       variable_name: "variable_value"
+#     verify_plugins: false
 #
 # ==== Attributes
 #
@@ -159,6 +160,16 @@ require "terraform/configurable"
 #
 # Default:: +{}+
 #
+# ===== verify_plugins
+#
+# Description:: Toggle to enable or disable verification of Terraform plugins.
+#
+# Type:: Boolean
+#
+# Status:: Optional
+#
+# Default:: +true+
+#
 # @see https://en.wikipedia.org/wiki/Working_directory Working directory
 # @see https://www.terraform.io/docs/commands/init.html#plugin-installation Terraform plugin installation
 # @see https://www.terraform.io/docs/configuration/variables.html Terraform variables
@@ -228,6 +239,17 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   ::Kitchen::Terraform::DefineHashOfSymbolsAndStringsConfigAttribute.call(
     attribute: :variables,
     plugin_class: self
+  )
+
+  ::Kitchen::Terraform::DefineConfigAttribute.call(
+    attribute: :verify_plugins,
+    initialize_default_value: lambda do |_plugin|
+      true
+    end,
+    plugin_class: self,
+    schema: lambda do
+      required(:value).filled :bool?
+    end
   )
 
   include ::Dry::Monads::Either::Mixin
@@ -457,7 +479,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
                 .force_copy
                 .backend_configs(keys_and_values: config_backend_configurations)
                 .enable_get
-                .maybe_plugin_dir(path: config_plugin_directory),
+                .maybe_plugin_dir(path: config_plugin_directory)
+                .verify_plugins(toggle: config_verify_plugins),
             working_directory: instance_directory
           )
     )

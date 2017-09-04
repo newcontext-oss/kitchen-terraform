@@ -28,6 +28,7 @@ require "support/kitchen/driver/terraform/config_attribute_plugin_directory_exam
 require "support/kitchen/driver/terraform/config_attribute_state_examples"
 require "support/kitchen/driver/terraform/config_attribute_variable_files_examples"
 require "support/kitchen/driver/terraform/config_attribute_variables_examples"
+require "support/kitchen/driver/terraform/config_attribute_verify_plugins_examples"
 require "support/kitchen/terraform/clear_directory_context"
 require "support/kitchen/terraform/client/command_context"
 require "support/kitchen/terraform/create_directories_context"
@@ -154,6 +155,8 @@ require "support/terraform/configurable_examples"
   it_behaves_like "config attribute :variable_files"
 
   it_behaves_like "config attribute :variables"
+
+  it_behaves_like "config attribute :verify_plugins"
 
   describe ".serial_actions" do
     subject do
