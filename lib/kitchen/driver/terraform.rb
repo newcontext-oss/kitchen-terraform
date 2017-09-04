@@ -47,6 +47,7 @@ require "terraform/configurable"
 #     directory: "/directory/containing/terraform/configuration"
 #     lock_timeout: 2000
 #     parallelism: 2
+#     plugin_directory: "/plugin/directory"
 #     state: "/terraform/state"
 #     variable_files:
 #       - "/first/terraform/variable/file"
