@@ -355,7 +355,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     Try do
       ::FileUtils.remove_dir instance_directory
     end
-    .to_either
+      .to_either
   end
 
   # Runs a Terraform Client command shell out with the default logger and the configured timeout.
@@ -372,7 +372,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             shell_out: shell_out,
             timeout: config_command_timeout
           )
-    end
+      end
   end
 
   # Runs the Terraform Client apply subcommand.
