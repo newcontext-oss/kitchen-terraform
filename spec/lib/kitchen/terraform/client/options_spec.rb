@@ -56,17 +56,6 @@ require "kitchen/terraform/client/options"
     )
   end
 
-  describe "#backup" do
-    it do
-      expect(
-        subject
-          .backup(path: "/path")
-          .to_s
-      )
-        .to eq "-backup=/path"
-    end
-  end
-
   describe "#disable_input" do
     it do
       expect(

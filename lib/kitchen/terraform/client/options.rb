@@ -32,10 +32,6 @@ class ::Kitchen::Terraform::Client::Options
       end
   end
 
-  def backup(path:)
-    add option: "-backup=#{path}"
-  end
-
   def disable_input
     add option: "-input=false"
   end
