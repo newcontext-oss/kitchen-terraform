@@ -40,10 +40,6 @@ class ::Kitchen::Terraform::Client::Options
     add option: "-input=false"
   end
 
-  def disable_verify_plugins
-    add option: "-verify-plugins=false"
-  end
-
   def enable_auto_approve
     add option: "-auto-approve=true"
   end
@@ -144,6 +140,14 @@ class ::Kitchen::Terraform::Client::Options
       .inject self do |additional_options, path|
         additional_options.var_file path: path
       end
+  end
+
+  # Adds -verify-plugins with an argument to the options.
+  #
+  # @param toggle [#to_s] toggle to enable or disable
+  # @return [::Kitchen::Terraform::Client::Options] the expanded options
+  def verify_plugins(toggle:)
+    add option: "-verify-plugins=#{toggle}"
   end
 
   def to_s

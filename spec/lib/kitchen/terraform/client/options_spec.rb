@@ -78,17 +78,6 @@ require "kitchen/terraform/client/options"
     end
   end
 
-  describe "#disable_verify_plugins" do
-    it do
-      expect(
-        subject
-          .disable_verify_plugins
-          .to_s
-      )
-        .to eq "-verify-plugins=false"
-    end
-  end
-
   describe "#enable_auto_approve" do
     it do
       expect(
@@ -370,6 +359,17 @@ require "kitchen/terraform/client/options"
           .to_s
       )
         .to eq "-var-file=/path_1 -var-file=/path_2"
+    end
+  end
+
+  describe "#verify_plugins" do
+    it do
+      expect(
+        subject
+          .verify_plugins(toggle: false)
+          .to_s
+      )
+        .to eq "-verify-plugins=false"
     end
   end
 end
