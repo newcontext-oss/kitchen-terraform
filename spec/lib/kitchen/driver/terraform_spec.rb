@@ -41,7 +41,7 @@ require "support/terraform/configurable_examples"
     driver
   end
 
-  shared_examples "workflow" do
+  shared_examples "workflow" do |subcommand:|
     context "when the create directories function results in failure" do
       include_context "Kitchen::Terraform::CreateDirectories.call failure"
 
@@ -56,7 +56,7 @@ require "support/terraform/configurable_examples"
       end
     end
 
-    context "when the init command results in a failure" do
+    context "when the init subcommand results in a failure" do
       include_context "Kitchen::Terraform::CreateDirectories.call success"
 
       include_context "Kitchen::Terraform::ClearDirectory"
@@ -74,7 +74,7 @@ require "support/terraform/configurable_examples"
       end
     end
 
-    context "when the validate command results in failure" do
+    context "when the validate subcommand results in failure" do
       include_context "Kitchen::Terraform::CreateDirectories.call success"
 
       include_context "Kitchen::Terraform::ClearDirectory"
@@ -91,6 +91,44 @@ require "support/terraform/configurable_examples"
               /terraform validate/
             )
           )
+      end
+    end
+
+    context "when the #{subcommand} subcommand results in failure" do
+      include_context "Kitchen::Terraform::CreateDirectories.call success"
+
+      include_context "Kitchen::Terraform::ClearDirectory"
+
+      include_context "Kitchen::Terraform::Client::Command.init success"
+
+      include_context "Kitchen::Terraform::Client::Command.validate success"
+
+      include_context "Kitchen::Terraform::Client::Command.#{subcommand} failure"
+
+      it "raises an action failed error" do
+        is_expected
+          .to(
+            raise_error(
+              ::Kitchen::ActionFailed,
+              /terraform #{subcommand}/
+            )
+          )
+      end
+    end
+
+    context "when each subcommand results in success" do
+      include_context "Kitchen::Terraform::CreateDirectories.call success"
+
+      include_context "Kitchen::Terraform::ClearDirectory"
+
+      include_context "Kitchen::Terraform::Client::Command.init success"
+
+      include_context "Kitchen::Terraform::Client::Command.validate success"
+
+      include_context "Kitchen::Terraform::Client::Command.#{subcommand} success"
+
+      it "raises no error" do
+        is_expected.to_not raise_error
       end
     end
   end
@@ -134,37 +172,10 @@ require "support/terraform/configurable_examples"
       end
     end
 
-    it_behaves_like "workflow"
-
-    context "when the apply command results in failure" do
-      include_context "Kitchen::Terraform::CreateDirectories.call success"
-
-      include_context "Kitchen::Terraform::ClearDirectory"
-
-      include_context "Kitchen::Terraform::Client::Command.init success"
-
-      include_context "Kitchen::Terraform::Client::Command.validate success"
-
-      include_context "Kitchen::Terraform::Client::Command.apply failure"
-
-      it "raises an action failed error" do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::ActionFailed,
-              /terraform apply/
-            )
-          )
-      end
-    end
-
-    context "when each command results in success" do
-      include_context "Kitchen::Driver::Terraform#create success"
-
-      it "raises no error" do
-        is_expected.to_not raise_error
-      end
-    end
+    it_behaves_like(
+      "workflow",
+      subcommand: "apply"
+    )
   end
 
   describe "#destroy" do
@@ -174,71 +185,37 @@ require "support/terraform/configurable_examples"
       end
     end
 
-    it_behaves_like "workflow"
-
-    context "when the destroy command results in failure" do
-      include_context "Kitchen::Terraform::CreateDirectories.call success"
-
-      include_context "Kitchen::Terraform::ClearDirectory"
-
-      include_context "Kitchen::Terraform::Client::Command.init success"
-
-      include_context "Kitchen::Terraform::Client::Command.validate success"
-
-      include_context "Kitchen::Terraform::Client::Command.destroy failure"
-
-      it "raises an action failed error" do
-        is_expected.to(
-          raise_error(
-            ::Kitchen::ActionFailed,
-            /terraform destroy/
-          )
-        )
-      end
-    end
-
-    context "when the function to remove the instance directory results in failure" do
-      include_context "Kitchen::Terraform::CreateDirectories.call success"
-
-      include_context "Kitchen::Terraform::ClearDirectory"
-
-      include_context "Kitchen::Terraform::Client::Command.init success"
-
-      include_context "Kitchen::Terraform::Client::Command.validate success"
-
-      include_context "Kitchen::Terraform::Client::Command.destroy success"
-
+    it_behaves_like(
+      "workflow",
+      subcommand: "destroy"
+    ) do
       before do
-        allow(::FileUtils).to receive(:remove_dir).and_raise "failed to remove directory"
+        allow(file_utils).to receive :remove_dir
       end
 
-      it "raises an action failed error" do
-        is_expected.to(
-          raise_error(
-            ::Kitchen::ActionFailed,
-            "failed to remove directory"
+      context "when the function to remove the instance directory results in failure" do
+        include_context "Kitchen::Terraform::CreateDirectories.call success"
+
+        include_context "Kitchen::Terraform::ClearDirectory"
+
+        include_context "Kitchen::Terraform::Client::Command.init success"
+
+        include_context "Kitchen::Terraform::Client::Command.validate success"
+
+        include_context "Kitchen::Terraform::Client::Command.destroy success"
+
+        before do
+          allow(file_utils).to receive(:remove_dir).and_raise "failed to remove directory"
+        end
+
+        it "raises an action failed error" do
+          is_expected.to(
+            raise_error(
+              ::Kitchen::ActionFailed,
+              "failed to remove directory"
+            )
           )
-        )
-      end
-    end
-
-    context "when all steps result in success" do
-      include_context "Kitchen::Terraform::CreateDirectories.call success"
-
-      include_context "Kitchen::Terraform::ClearDirectory"
-
-      include_context "Kitchen::Terraform::Client::Command.init success"
-
-      include_context "Kitchen::Terraform::Client::Command.validate success"
-
-      include_context "Kitchen::Terraform::Client::Command.destroy success"
-
-      before do
-        allow(::FileUtils).to receive :remove_dir
-      end
-
-      it "raises no error" do
-        is_expected.to_not raise_error
+        end
       end
     end
   end
