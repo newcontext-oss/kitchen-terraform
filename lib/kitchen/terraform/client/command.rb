@@ -135,9 +135,9 @@ module ::Kitchen::Terraform::Client::Command
   private_class_method
 
   # @api private
-  # @param command [::String] the command to run through shell out.
   # @param options [::Kitchen::Terraform::Client::Options] options for the command.
-  # @param working_directory[::String] the path to the directory in which to run the shell out.
+  # @param subcommand [::String] the subcommand to run through shell out.
+  # @param working_directory [::String] the path to the directory in which to run the shell out.
   def self.create(options:, subcommand:, working_directory:)
     Try ::Mixlib::ShellOut::InvalidCommandOption do
       ::Mixlib::ShellOut.new(
