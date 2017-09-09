@@ -14,6 +14,8 @@ Layout/IndentHeredoc:
   Enabled: false
 Layout/MultilineBlockLayout:
   Enabled: false
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 Lint/AmbiguousOperator:
