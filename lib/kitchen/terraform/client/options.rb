@@ -138,7 +138,7 @@ class ::Kitchen::Terraform::Client::Options
 
   # Conditionally adds -plugin-dir to the options.
   #
-  # @param toggle [::TrueClass, ::FalseClass] the path to the plugin directory
+  # @param path [::TrueClass, ::FalseClass] the path to the plugin directory
   # @return [::Kitchen::Terraform::Client::Options] the expanded options
   def maybe_plugin_dir(path:)
     path and plugin_dir path: path or self
