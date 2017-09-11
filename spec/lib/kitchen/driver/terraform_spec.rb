@@ -18,19 +18,19 @@ require "json"
 require "kitchen/driver/terraform"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/driver/terraform_context"
-require "support/kitchen/driver/terraform/config_attribute_backend_configurations_examples"
-require "support/kitchen/driver/terraform/config_attribute_color_examples"
-require "support/kitchen/driver/terraform/config_attribute_command_timeout_examples"
-require "support/kitchen/driver/terraform/config_attribute_directory_examples"
-require "support/kitchen/driver/terraform/config_attribute_lock_timeout_examples"
-require "support/kitchen/driver/terraform/config_attribute_parallelism_examples"
-require "support/kitchen/driver/terraform/config_attribute_plugin_directory_examples"
-require "support/kitchen/driver/terraform/config_attribute_state_examples"
-require "support/kitchen/driver/terraform/config_attribute_variable_files_examples"
-require "support/kitchen/driver/terraform/config_attribute_variables_examples"
-require "support/kitchen/driver/terraform/config_attribute_verify_plugins_examples"
 require "support/kitchen/terraform/clear_directory_context"
 require "support/kitchen/terraform/client/command_context"
+require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
+require "support/kitchen/terraform/config_attribute/color_examples"
+require "support/kitchen/terraform/config_attribute/command_timeout_examples"
+require "support/kitchen/terraform/config_attribute/directory_examples"
+require "support/kitchen/terraform/config_attribute/lock_timeout_examples"
+require "support/kitchen/terraform/config_attribute/parallelism_examples"
+require "support/kitchen/terraform/config_attribute/plugin_directory_examples"
+require "support/kitchen/terraform/config_attribute/state_examples"
+require "support/kitchen/terraform/config_attribute/variable_files_examples"
+require "support/kitchen/terraform/config_attribute/variables_examples"
+require "support/kitchen/terraform/config_attribute/verify_plugins_examples"
 require "support/kitchen/terraform/create_directories_context"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
@@ -136,27 +136,27 @@ require "support/terraform/configurable_examples"
 
   it_behaves_like ::Terraform::Configurable
 
-  it_behaves_like "config attribute :backend_configurations"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
 
-  it_behaves_like "config attribute :command_timeout"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
 
-  it_behaves_like "config attribute :color"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
-  it_behaves_like "config attribute :directory"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Directory"
 
-  it_behaves_like "config attribute :lock_timeout"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::LockTimeout"
 
-  it_behaves_like "config attribute :parallelism"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Parallelism"
 
-  it_behaves_like "config attribute :plugin_directory"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::PluginDirectory"
 
-  it_behaves_like "config attribute :state"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::State"
 
-  it_behaves_like "config attribute :variable_files"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::VariableFiles"
 
-  it_behaves_like "config attribute :variables"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Variables"
 
-  it_behaves_like "config attribute :verify_plugins"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::VerifyPlugins"
 
   describe ".serial_actions" do
     subject do

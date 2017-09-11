@@ -16,9 +16,9 @@
 
 require "inspec"
 require "kitchen/verifier/terraform"
+require "support/kitchen/terraform/config_attribute/groups_examples"
 require "support/kitchen/driver/terraform_context"
 require "support/kitchen/instance_context"
-require "support/kitchen/verifier/terraform/config_attribute_groups_examples"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
 
@@ -29,7 +29,7 @@ require "support/terraform/configurable_examples"
     let :described_instance do verifier end
   end
 
-  it_behaves_like "config attribute :groups"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Groups"
 
   describe "#call(state)" do
     include_context ::Kitchen::Instance

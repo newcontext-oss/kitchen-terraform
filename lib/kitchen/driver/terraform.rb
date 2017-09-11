@@ -22,24 +22,38 @@ require "kitchen/terraform/clear_directory"
 require "kitchen/terraform/client/command"
 require "kitchen/terraform/client/options"
 require "kitchen/terraform/client_version_verifier"
+require "kitchen/terraform/config_attribute/backend_configurations"
+require "kitchen/terraform/config_attribute/color"
+require "kitchen/terraform/config_attribute/command_timeout"
+require "kitchen/terraform/config_attribute/directory"
+require "kitchen/terraform/config_attribute/lock_timeout"
+require "kitchen/terraform/config_attribute/parallelism"
+require "kitchen/terraform/config_attribute/plugin_directory"
+require "kitchen/terraform/config_attribute/state"
+require "kitchen/terraform/config_attribute/variable_files"
+require "kitchen/terraform/config_attribute/variables"
+require "kitchen/terraform/config_attribute/verify_plugins"
+require "kitchen/terraform/config_attribute_verifier"
 require "kitchen/terraform/create_directories"
-require "kitchen/terraform/define_array_of_strings_config_attribute"
-require "kitchen/terraform/define_config_attribute"
-require "kitchen/terraform/define_hash_of_symbols_and_strings_config_attribute"
-require "kitchen/terraform/define_integer_config_attribute"
-require "kitchen/terraform/define_optional_file_path_config_attribute"
-require "kitchen/terraform/define_string_config_attribute"
 require "terraform/configurable"
 
-# The kitchen-terraform driver is the bridge between Test Kitchen and Terraform. It manages the state of the configured
-# root Terraform module by invoking its workflow in a constructive or destructive manner.
+# The kitchen-terraform driver is the bridge between Test Kitchen and Terraform.
 #
-# === Configuration
+# It manages the state of the configured root Terraform module by invoking its workflow in a constructive or destructive
+# manner.
 #
-# ==== Example .kitchen.yml snippet
+# === Test Kitchen Configuration
+#
+# The configuration of the driver is used to control the behaviour of the Terraform Client commands.
+#
+# More information about the available configuration attributes is located with the respective modules.
+#
+# Test Kitchen configuration is defined in +.kitchen.yml+ and optionally overridden in +.kitchen.local.yml+.
+#
+# ==== Example
 #
 #   driver:
-#     name: terraform
+#     name: "terraform"
 #     backend_configurations:
 #       argument_name: "argument_value"
 #     command_timeout: 1000
@@ -56,205 +70,52 @@ require "terraform/configurable"
 #       variable_name: "variable_value"
 #     verify_plugins: false
 #
-# ==== Attributes
-#
-# ===== backend_configurations
-#
-# Description:: A mapping of Terraform backend configuration arguments to complete a partial backend configuration.
-#
-# Type:: Hash
-#
-# Status:: Optional
-#
-# Default:: +{}+
-#
-# ===== color
-#
-# Description:: Toggle to enable or disable colored output from the Terraform CLI commands.
-#
-# Type:: Boolean
-#
-# Status:: Optional
-#
-# Default:: +true+ if the Test Kitchen process is associated with a terminal device (tty); +false+ if it is not.
-#
-# ===== command_timeout
-#
-# Description:: The number of seconds to wait for the Terraform CLI commands to finish.
-#
-# Type:: Integer
-#
-# Status:: Optional
-#
-# Default:: +600+
-#
-# ===== directory
-#
-# Description:: The path of the directory containing the root Terraform module to be tested.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: The working directory of the Test Kitchen process.
-#
-# ===== lock_timeout
-#
-# Description:: The duration to wait to obtain a lock on the Terraform state.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: +"0s"+
-#
-# ===== parallelism
-#
-# Description:: The maximum number of concurrent operations to allow while walking the resource graph for the Terraform
-#               CLI apply commands.
-# Type:: Integer
-#
-# Status:: Optional
-#
-# Default:: +10+
-#
-# ===== plugin_directory
-#
-# Description:: The path of the directory containing customized Terraform provider plugins to install in place of the
-#               official Terraform provider plugins.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# ===== state
-#
-# Description:: The path of the Terraform state that will be generated and managed.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: A descendant of the working directory of the Test Kitchen process:
-#           +".kitchen/kitchen-terraform/<suite_name>/terraform.tfstate"+.
-#
-# ===== variable_files
-#
-# Description:: A collection of paths of Terraform variable files to be evaluated during the application of Terraform
-#               state changes.
-#
-# Type:: Array
-#
-# Status:: Optional
-#
-# Default:: +[]+
-#
-# ===== variables
-#
-# Description:: A mapping of Terraform variable names and values to be overridden during the application of Terraform
-#               state changes.
-#
-# Type:: Hash
-#
-# Status:: Optional
-#
-# Default:: +{}+
-#
-# ===== verify_plugins
-#
-# Description:: Toggle to enable or disable verification of Terraform plugins.
-#
-# Type:: Boolean
-#
-# Status:: Optional
-#
-# Default:: +true+
-#
-# @see https://en.wikipedia.org/wiki/Working_directory Working directory
-# @see https://www.terraform.io/docs/commands/init.html#plugin-installation Terraform plugin installation
-# @see https://www.terraform.io/docs/configuration/variables.html Terraform variables
-# @see https://www.terraform.io/docs/internals/graph.html Terraform resource graph
-# @see https://www.terraform.io/docs/state/index.html Terraform state
-# @see https://www.terraform.io/docs/backends/config.html#partial-configuration Terraform Backend Partial Configuration
+# @see ::Kitchen::Terraform::Client::Command
+# @see ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
+# @see ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
+# @see ::Kitchen::Terraform::ConfigAttribute::Color
+# @see ::Kitchen::Terraform::ConfigAttribute::Directory
+# @see ::Kitchen::Terraform::ConfigAttribute::LockTimeout
+# @see ::Kitchen::Terraform::ConfigAttribute::Parallelism
+# @see ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
+# @see ::Kitchen::Terraform::ConfigAttribute::State
+# @see ::Kitchen::Terraform::ConfigAttribute::VariableFiles
+# @see ::Kitchen::Terraform::ConfigAttribute::Variables
+# @see ::Kitchen::Terraform::ConfigAttribute::VerifyPlugins
+# @see http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen: .kitchen.yml
 # @version 2
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
+  extend ::Kitchen::Terraform::ConfigAttributeVerifier
+
   kitchen_driver_api_version 2
 
   no_parallel_for
 
-  ::Kitchen::Terraform::DefineHashOfSymbolsAndStringsConfigAttribute.call(
-    attribute: :backend_configurations,
-    plugin_class: self
-  )
-
-  ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :command_timeout,
-                                                          plugin_class: self do
-    600
-  end
-
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :color,
-    initialize_default_value: lambda do |_plugin|
-      ::Kitchen.tty?
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :bool?
-    end
-  )
-
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :directory,
-                                                         expand_path: true,
-                                                         plugin_class: self do
-    "."
-  end
-
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :lock_timeout,
-                                                         plugin_class: self do
-    "0s"
-  end
-
-  ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :parallelism,
-                                                          plugin_class: self do
-    10
-  end
-
-  ::Kitchen::Terraform::DefineOptionalFilePathConfigAttribute.call(
-    attribute: :plugin_directory,
-    plugin_class: self
-  )
-
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :state,
-                                                         expand_path: true,
-                                                         plugin_class: self do |plugin|
-    plugin.instance_pathname filename: "terraform.tfstate"
-  end
-
-  ::Kitchen::Terraform::DefineArrayOfStringsConfigAttribute.call attribute: :variable_files,
-                                                                 expand_path: true,
-                                                                 plugin_class: self do
-    []
-  end
-
-  ::Kitchen::Terraform::DefineHashOfSymbolsAndStringsConfigAttribute.call(
-    attribute: :variables,
-    plugin_class: self
-  )
-
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :verify_plugins,
-    initialize_default_value: lambda do |_plugin|
-      true
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :bool?
-    end
-  )
-
   include ::Dry::Monads::Either::Mixin
 
   include ::Dry::Monads::Try::Mixin
+
+  include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
+
+  include ::Kitchen::Terraform::ConfigAttribute::Color
+
+  include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
+
+  include ::Kitchen::Terraform::ConfigAttribute::Directory
+
+  include ::Kitchen::Terraform::ConfigAttribute::LockTimeout
+
+  include ::Kitchen::Terraform::ConfigAttribute::Parallelism
+
+  include ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
+
+  include ::Kitchen::Terraform::ConfigAttribute::State
+
+  include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
+
+  include ::Kitchen::Terraform::ConfigAttribute::Variables
+
+  include ::Kitchen::Terraform::ConfigAttribute::VerifyPlugins
 
   include ::Terraform::Configurable
 
