@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-::File.expand_path("../lib", __FILE__)
-      .tap do |directory| $LOAD_PATH.unshift directory unless $LOAD_PATH.include? directory end
+::File
+  .expand_path("../lib", __FILE__)
+  .tap do |directory|
+    $LOAD_PATH.include? directory or $LOAD_PATH.unshift directory
+  end
 
 require "kitchen/terraform/version.rb"
 
