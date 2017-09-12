@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/configurable"
 require "terraform/configurable"
 
 # The design of the provisioner is unconventional compared to other Test Kitchen provisioner plugins. Since Terraform
@@ -34,6 +35,8 @@ require "terraform/configurable"
 # @version 2
 class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   kitchen_provisioner_api_version 2
+
+  include ::Kitchen::Terraform::Configurable
 
   include ::Terraform::Configurable
 

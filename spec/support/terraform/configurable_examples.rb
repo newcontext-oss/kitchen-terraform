@@ -51,30 +51,12 @@ require "terraform/configurable"
   end
 
   describe "#instance_pathname" do
-    context "when the instance is not defined" do
-      before do
-        allow(described_instance).to receive(:instance).and_return nil
-      end
-
-      subject do
-        lambda do
-          described_instance.instance_pathname filename: "filename"
-        end
-      end
-
-      it "raises a client error" do
-        is_expected.to raise_error ::Kitchen::ClientError, "Instance must be provided to #{described_instance}"
-      end
+    subject do
+      described_instance.instance_pathname filename: "filename"
     end
 
-    context "when the instance is defined" do
-      subject do
-        described_instance.instance_pathname filename: "filename"
-      end
-
-      it "returns a pathname under the hidden instance directory" do
-        is_expected.to eq "/kitchen/root/.kitchen/kitchen-terraform/suite-platform/filename"
-      end
+    it "returns a pathname under the hidden instance directory" do
+      is_expected.to eq "/kitchen/root/.kitchen/kitchen-terraform/suite-platform/filename"
     end
   end
 

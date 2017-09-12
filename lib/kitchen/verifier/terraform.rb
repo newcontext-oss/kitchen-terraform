@@ -17,6 +17,7 @@
 require "dry/monads"
 require "kitchen"
 require "kitchen/terraform/config_attribute/groups"
+require "kitchen/terraform/configurable"
 require "kitchen/verifier/inspec"
 require "terraform/configurable"
 
@@ -68,6 +69,8 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   include ::Dry::Monads::Either::Mixin
 
   include ::Kitchen::Terraform::ConfigAttribute::Groups
+
+  include ::Kitchen::Terraform::Configurable
 
   include ::Terraform::Configurable
 
