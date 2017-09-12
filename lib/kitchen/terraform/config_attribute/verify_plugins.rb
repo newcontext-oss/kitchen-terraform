@@ -25,11 +25,6 @@ require "kitchen/terraform/config_schemas/boolean"
 # @see https://www.terraform.io/docs/commands/init.html#plugin-installation Terraform: Command: init: Plugin
 #   Installation
 module ::Kitchen::Terraform::ConfigAttribute::VerifyPlugins
-  # @return [true]
-  def self.default_value(**_keyword_arguments)
-    true
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -49,4 +44,9 @@ module ::Kitchen::Terraform::ConfigAttribute::VerifyPlugins
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [true]
+  def config_verify_plugins_default_value
+    true
+  end
 end

@@ -26,11 +26,6 @@ require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 # @see https://www.terraform.io/docs/backends/config.html#partial-configuration Terraform: Backend Configuration:
 #   Partial Configuration
 module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
-  # @return [::Hash] an empty hash.
-  def self.default_value(**_keyword_arguments)
-    {}
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -50,4 +45,9 @@ module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [::Hash] an empty hash.
+  def config_backend_configurations_default_value
+    {}
+  end
 end

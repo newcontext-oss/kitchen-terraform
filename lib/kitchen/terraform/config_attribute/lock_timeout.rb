@@ -25,11 +25,6 @@ require "kitchen/terraform/config_schemas/string"
 # @abstract It must be included by a plugin class in order to be used.
 # @see https://www.terraform.io/docs/commands/apply.html#lock-timeout-0s Terraform: Command: apply: -lock-timeout
 module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
-  # @return [::String] 0 seconds.
-  def self.default_value(**_keyword_arguments)
-    "0s"
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -49,4 +44,9 @@ module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [::String] 0 seconds.
+  def config_lock_timeout_default_value
+    "0s"
+  end
 end

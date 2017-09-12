@@ -24,11 +24,6 @@ require "kitchen/terraform/file_path_config_attribute_definer"
 # @abstract It must be included by a plugin class in order to be used.
 # @see https://www.terraform.io/docs/commands/apply.html#var-file-foo Terraform: Command: apply: -var-file
 module ::Kitchen::Terraform::ConfigAttribute::VariableFiles
-  # @return [::Array] an empty array.
-  def self.default_value(**_keyword_arguments)
-    []
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -48,4 +43,9 @@ module ::Kitchen::Terraform::ConfigAttribute::VariableFiles
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [::Array] an empty array.
+  def config_variable_files_default_value
+    []
+  end
 end

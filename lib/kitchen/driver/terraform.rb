@@ -33,7 +33,6 @@ require "kitchen/terraform/config_attribute/state"
 require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/config_attribute/verify_plugins"
-require "kitchen/terraform/config_attribute_verifier"
 require "kitchen/terraform/create_directories"
 require "terraform/configurable"
 
@@ -85,8 +84,6 @@ require "terraform/configurable"
 # @see http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen: .kitchen.yml
 # @version 2
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
-  extend ::Kitchen::Terraform::ConfigAttributeVerifier
-
   kitchen_driver_api_version 2
 
   no_parallel_for

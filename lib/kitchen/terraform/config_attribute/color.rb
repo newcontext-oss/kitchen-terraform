@@ -26,14 +26,6 @@ require "kitchen/terraform/config_schemas/boolean"
 # @abstract It must be included by plugin class in order to be used.
 # @see ::Kitchen::Terraform::Client::Command
 module ::Kitchen::Terraform::ConfigAttribute::Color
-  # The default value depends on the presence of a terminal device associated with the Test Kitchen process.
-  #
-  # @return [Boolean] if a terminal device is associated then +true+; else +false+.
-  # @see https://en.wikipedia.org/wiki/Terminal_emulator Terminal emulator
-  def self.default_value(**_keyword_arguments)
-    ::Kitchen.tty?
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -53,4 +45,12 @@ module ::Kitchen::Terraform::ConfigAttribute::Color
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # The default value depends on the presence of a terminal device associated with the Test Kitchen process.
+  #
+  # @return [Boolean] if a terminal device is associated then +true+; else +false+.
+  # @see https://en.wikipedia.org/wiki/Terminal_emulator Terminal emulator
+  def config_color_default_value
+    ::Kitchen.tty?
+  end
 end

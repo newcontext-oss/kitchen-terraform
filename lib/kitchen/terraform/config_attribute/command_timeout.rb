@@ -25,11 +25,6 @@ require "kitchen/terraform/config_schemas/integer"
 # @abstract It must be included by a plugin class in order to be used.
 # @see ::Kitchen::Terraform::Client::Command
 module ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
-  # @return [::Integer] 600 seconds.
-  def self.default_value(**_keyword_arguments)
-    600
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -49,4 +44,9 @@ module ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [::Integer] 600 seconds.
+  def config_command_timeout_default_value
+    600
+  end
 end

@@ -26,13 +26,6 @@ require "kitchen/terraform/file_path_config_attribute_definer"
 # @see https://www.terraform.io/docs/commands/init.html#plugin-installation Terraform: Command: init: Plugin
 #   Installation
 module ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
-  # There is no default value because any value will disable the normal Terraform plugin retrieval process.
-  #
-  # @return [nil]
-  def self.default_value(**_keyword_arguments)
-    nil
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -52,4 +45,11 @@ module ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # There is no default value because any value will disable the normal Terraform plugin retrieval process.
+  #
+  # @return [nil]
+  def config_plugin_directory_default_value
+    nil
+  end
 end

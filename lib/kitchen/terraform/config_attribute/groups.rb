@@ -69,11 +69,6 @@ require "kitchen/terraform/config_schemas/array_of_hashes_of_symbols_and_strings
 # @see https://www.terraform.io/docs/configuration/outputs.html Terraform: Output Variables
 # @see https://www.terraform.io/docs/state/index.html Terraform: State
 module ::Kitchen::Terraform::ConfigAttribute::Groups
-  # @return [::Array] an empty array.
-  def self.default_value(**_keyword_arguments)
-    []
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -93,4 +88,9 @@ module ::Kitchen::Terraform::ConfigAttribute::Groups
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [::Array] an empty array.
+  def config_groups_default_value
+    []
+  end
 end

@@ -26,11 +26,6 @@ require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 # @see https://www.terraform.io/docs/commands/apply.html#var-39-foo-bar-39- Terraform: Command: apply: -var
 # @see https://www.terraform.io/docs/configuration/variables.html Terraform: Variables
 module ::Kitchen::Terraform::ConfigAttribute::Variables
-  # @return [::Hash] an empty hash.
-  def self.default_value(**_keyword_arguments)
-    {}
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -50,4 +45,9 @@ module ::Kitchen::Terraform::ConfigAttribute::Variables
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [::Hash] an empty hash.
+  def config_variables_default_value
+    {}
+  end
 end

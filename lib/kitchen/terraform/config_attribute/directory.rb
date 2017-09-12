@@ -27,11 +27,6 @@ require "kitchen/terraform/file_path_config_attribute_definer"
 #   Module
 # @see https://en.wikipedia.org/wiki/Working_directory Working directory
 module ::Kitchen::Terraform::ConfigAttribute::Directory
-  # @return [::String] the working directory of the Test Kitchen process.
-  def self.default_value(**_keyword_arguments)
-    "."
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -51,4 +46,9 @@ module ::Kitchen::Terraform::ConfigAttribute::Directory
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [::String] the working directory of the Test Kitchen process.
+  def config_directory_default_value
+    "."
+  end
 end

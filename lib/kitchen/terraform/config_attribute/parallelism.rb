@@ -26,11 +26,6 @@ require "kitchen/terraform/config_schemas/integer"
 # @see https://www.terraform.io/docs/commands/apply.html#parallelism-n Terraform: Command: apply: -parallelism
 # @see https://www.terraform.io/docs/internals/graph.html Terraform: Resource Graph
 module ::Kitchen::Terraform::ConfigAttribute::Parallelism
-  # @return [::Integer] a maximum of 10 concurrent operations.
-  def self.default_value(**_keyword_arguments)
-    10
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -50,4 +45,9 @@ module ::Kitchen::Terraform::ConfigAttribute::Parallelism
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # @return [::Integer] a maximum of 10 concurrent operations.
+  def config_parallelism_default_value
+    10
+  end
 end

@@ -26,13 +26,6 @@ require "kitchen/terraform/file_path_config_attribute_definer"
 # @see https://www.terraform.io/docs/commands/apply.html#state-path Terraform: Command: apply: -state-path
 # @see https://www.terraform.io/docs/state/index.html Terraform: State
 module ::Kitchen::Terraform::ConfigAttribute::State
-  # The path to a file under the kitchen-terraform suite directory.
-  #
-  # @return [::String] +".kitchen/kitchen-terraform/<suite_name>/terraform.tfstate"+.
-  def self.default_value(plugin:)
-    plugin.instance_pathname filename: "terraform.tfstate"
-  end
-
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -52,4 +45,11 @@ module ::Kitchen::Terraform::ConfigAttribute::State
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+  # The path to a file under the kitchen-terraform suite directory.
+  #
+  # @return [::String] +".kitchen/kitchen-terraform/<suite_name>/terraform.tfstate"+.
+  def config_state_default_value
+    instance_pathname filename: "terraform.tfstate"
+  end
 end
