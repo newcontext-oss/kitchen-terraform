@@ -16,6 +16,7 @@
 
 require "dry/monads"
 require "kitchen"
+require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
 require "kitchen/verifier/inspec"
@@ -38,6 +39,7 @@ require "terraform/configurable"
 #
 #   verifier:
 #     name: "terraform"
+#     color: false
 #     groups:
 #       -
 #         name: "group_one"
@@ -55,6 +57,7 @@ require "terraform/configurable"
 #
 # The InSpec profile for a Test Kitchen suite exists under +./test/integration/<Test Kitchen suite name>/+.
 #
+# @see ::Kitchen::Terraform::ConfigAttribute::Color
 # @see ::Kitchen::Terraform::ConfigAttribute::Groups
 # @see https://en.wikipedia.org/wiki/Secure_Shell Secure Shell
 # @see https://github.com/chef/kitchen-inspec/ kitchen-inspec
@@ -67,6 +70,8 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   kitchen_verifier_api_version 2
 
   include ::Dry::Monads::Either::Mixin
+
+  include ::Kitchen::Terraform::ConfigAttribute::Color
 
   include ::Kitchen::Terraform::ConfigAttribute::Groups
 
