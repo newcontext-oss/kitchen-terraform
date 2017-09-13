@@ -16,6 +16,7 @@
 
 require "inspec"
 require "kitchen/verifier/terraform"
+require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/groups_examples"
 require "support/kitchen/terraform/configurable_examples"
 require "support/kitchen/driver/terraform_context"
@@ -31,6 +32,8 @@ require "support/terraform/configurable_examples"
   it_behaves_like ::Terraform::Configurable do
     include_context "instance"
   end
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Groups"
 
