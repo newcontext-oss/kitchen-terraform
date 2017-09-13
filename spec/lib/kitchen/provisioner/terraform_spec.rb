@@ -16,21 +16,18 @@
 
 require "kitchen/provisioner/terraform"
 require "support/kitchen/driver/terraform_context"
+require "support/kitchen/instance_context"
 require "support/kitchen/terraform/configurable_examples"
-require "support/terraform/configurable_context"
-require "support/terraform/configurable_examples"
 
 ::RSpec
   .describe ::Kitchen::Provisioner::Terraform do
-    include_context "instance"
+    include_context "Kitchen::Instance initialized"
 
     let :described_instance do
       provisioner
     end
 
     it_behaves_like "Kitchen::Terraform::Configurable"
-
-    it_behaves_like ::Terraform::Configurable
 
     describe "#call" do
       subject do

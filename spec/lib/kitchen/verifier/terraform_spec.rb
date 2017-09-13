@@ -21,29 +21,21 @@ require "support/kitchen/terraform/config_attribute/groups_examples"
 require "support/kitchen/terraform/configurable_examples"
 require "support/kitchen/driver/terraform_context"
 require "support/kitchen/instance_context"
-require "support/terraform/configurable_context"
-require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
+  include_context "Kitchen::Instance initialized"
+
   let :described_instance do
     verifier
-  end
-
-  it_behaves_like ::Terraform::Configurable do
-    include_context "instance"
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Groups"
 
-  it_behaves_like "Kitchen::Terraform::Configurable" do
-    include_context "instance"
-  end
+  it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call(state)" do
-    include_context ::Kitchen::Instance
-
     let :group do
       {
         attributes: {},

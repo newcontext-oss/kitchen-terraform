@@ -16,10 +16,29 @@
 
 require "kitchen"
 require "kitchen/driver/terraform"
-require "terraform/configurable"
 
 ::RSpec
   .shared_examples "Kitchen::Terraform::Configurable" do
+    describe "@api_version" do
+      subject do
+        described_class.instance_variable_get :@api_version
+      end
+
+      it do
+        is_expected.to eq 2
+      end
+    end
+
+    describe "@plugin_version" do
+      subject do
+        described_class.instance_variable_get :@plugin_version
+      end
+
+      it "equals the gem version" do
+        is_expected.to eq ::Kitchen::Terraform::VERSION
+      end
+    end
+
     describe "#driver" do
       subject do
         described_instance.driver
@@ -63,6 +82,16 @@ require "terraform/configurable"
           is_expected.to receive(:expand_paths!).ordered
           is_expected.to receive(:load_needed_dependencies!).ordered
         end
+      end
+    end
+
+    describe "#instance_pathname" do
+      subject do
+        described_instance.instance_pathname filename: "filename"
+      end
+
+      it "returns a pathname under the Test Kitchen instance directory" do
+        is_expected.to eq "/kitchen/root/.kitchen/kitchen-terraform/suite-platform/filename"
       end
     end
   end

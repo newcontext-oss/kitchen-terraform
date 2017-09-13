@@ -21,7 +21,7 @@ require "support/kitchen/terraform/create_directories_context"
 require "support/kitchen/terraform/client/command_context"
 
 ::RSpec.shared_context "Kitchen::Driver::Terraform finalized instance" do
-  include_context ::Kitchen::Instance
+  include_context "Kitchen::Instance"
 
   let :config do
     default_config

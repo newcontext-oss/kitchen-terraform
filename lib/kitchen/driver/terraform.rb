@@ -35,7 +35,6 @@ require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/config_attribute/verify_plugins"
 require "kitchen/terraform/create_directories"
 require "kitchen/terraform/configurable"
-require "terraform/configurable"
 
 # The kitchen-terraform driver is the bridge between Test Kitchen and Terraform.
 #
@@ -116,8 +115,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   include ::Kitchen::Terraform::ConfigAttribute::VerifyPlugins
 
   include ::Kitchen::Terraform::Configurable
-
-  include ::Terraform::Configurable
 
   # The driver invokes its workflow in a constructive manner by applying changes to the Terraform state.
   #

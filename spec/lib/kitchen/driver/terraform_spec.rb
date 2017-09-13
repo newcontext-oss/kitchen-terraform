@@ -18,6 +18,7 @@ require "json"
 require "kitchen/driver/terraform"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/driver/terraform_context"
+require "support/kitchen/instance_context"
 require "support/kitchen/terraform/clear_directory_context"
 require "support/kitchen/terraform/client/command_context"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
@@ -33,11 +34,9 @@ require "support/kitchen/terraform/config_attribute/variables_examples"
 require "support/kitchen/terraform/config_attribute/verify_plugins_examples"
 require "support/kitchen/terraform/configurable_examples"
 require "support/kitchen/terraform/create_directories_context"
-require "support/terraform/configurable_context"
-require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
-  include_context "instance"
+  include_context "Kitchen::Instance initialized"
 
   let :described_instance do
     driver
@@ -134,8 +133,6 @@ require "support/terraform/configurable_examples"
       end
     end
   end
-
-  it_behaves_like ::Terraform::Configurable
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
 

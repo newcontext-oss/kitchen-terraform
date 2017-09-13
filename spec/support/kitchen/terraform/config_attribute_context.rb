@@ -18,7 +18,7 @@ require "support/kitchen/instance_context"
 
 ::RSpec
   .shared_context "Kitchen::Terraform::ConfigAttribute" do |attribute:|
-    include_context ::Kitchen::Instance
+    include_context "Kitchen::Instance"
 
     shared_context "value validation" do |value:|
       let :plugin do

@@ -16,7 +16,6 @@
 
 require "kitchen"
 require "kitchen/terraform/configurable"
-require "terraform/configurable"
 
 # The design of the provisioner is unconventional compared to other Test Kitchen provisioner plugins. Since Terraform
 # creates and provisions resources when applying an execution plan, managed by the driver, the provisioner simply
@@ -37,8 +36,6 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   kitchen_provisioner_api_version 2
 
   include ::Kitchen::Terraform::Configurable
-
-  include ::Terraform::Configurable
 
   # Proxies the driver's create action.
   #

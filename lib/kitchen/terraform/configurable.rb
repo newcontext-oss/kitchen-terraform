@@ -16,11 +16,19 @@
 
 require "kitchen"
 require "kitchen/terraform"
+require "kitchen/terraform/version"
 
 # Refinements to Kitchen::Configurable.
 #
 # @see https://github.com/test-kitchen/test-kitchen/blob/v1.16.0/lib/kitchen/configurable.rb Kitchen::Configurable
 module ::Kitchen::Terraform::Configurable
+  # A callback to define the plugin version which is invoked when this module is included in a plugin class.
+  #
+  # @return [void]
+  def self.included(configurable_class)
+    configurable_class.plugin_version ::Kitchen::Terraform::VERSION
+  end
+
   # @return [::Kitchen::Driver::Terraform] the driver which will manage the lifecycle actions of the instance.
   def driver
     instance.driver
@@ -49,5 +57,19 @@ module ::Kitchen::Terraform::Configurable
     load_needed_dependencies!
 
     self
+  end
+
+  # Constructs a pathname under the Test Kitchen instance directory.
+  #
+  # @return [::String] +"<kitchen-root>/.kitchen/kitchen-terraform/<suite-platform>/<filename>"+.
+  def instance_pathname(filename:)
+    ::File
+      .join(
+        config.fetch(:kitchen_root),
+        ".kitchen",
+        "kitchen-terraform",
+        instance.name,
+        filename
+      )
   end
 end

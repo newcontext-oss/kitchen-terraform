@@ -20,7 +20,6 @@ require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
 require "kitchen/verifier/inspec"
-require "terraform/configurable"
 
 # The kitchen-terraform verifier utilizes the InSpec infrastructure testing framework to verify the behaviour and state
 # of resources in the Terraform state.
@@ -76,8 +75,6 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   include ::Kitchen::Terraform::ConfigAttribute::Groups
 
   include ::Kitchen::Terraform::Configurable
-
-  include ::Terraform::Configurable
 
   # The verifier enumerates through each hostname of each group and verifies the associated InSpec controls.
   #
