@@ -14,17 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "forwardable"
 require "kitchen"
 require "kitchen/terraform/version"
 require "terraform"
 
 # Miscellaneous behaviour for objects that extend ::Kitchen::Configurable.
 module ::Terraform::Configurable
-  extend ::Forwardable
-
-  def_delegator :config, :[]=
-
   def self.included(configurable_class)
     configurable_class.plugin_version ::Kitchen::Terraform::VERSION
   end
