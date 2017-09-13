@@ -38,12 +38,6 @@ require "terraform/configurable"
     end
   end
 
-  describe "#driver" do
-    subject do described_instance.driver end
-
-    it "returns the driver of the instance" do is_expected.to be instance.driver end
-  end
-
   describe "#instance_pathname" do
     subject do
       described_instance.instance_pathname filename: "filename"
@@ -52,17 +46,5 @@ require "terraform/configurable"
     it "returns a pathname under the hidden instance directory" do
       is_expected.to eq "/kitchen/root/.kitchen/kitchen-terraform/suite-platform/filename"
     end
-  end
-
-  describe "#provisioner" do
-    subject do described_instance.provisioner end
-
-    it "returns the provisioner of the instance" do is_expected.to be instance.provisioner end
-  end
-
-  describe "#transport" do
-    subject do described_instance.transport end
-
-    it "returns the transport of the instance" do is_expected.to be instance.transport end
   end
 end

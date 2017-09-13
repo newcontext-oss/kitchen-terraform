@@ -25,8 +25,6 @@ module ::Terraform::Configurable
 
   def_delegator :config, :[]=
 
-  def_delegators :instance, :driver, :provisioner, :transport
-
   def self.included(configurable_class)
     configurable_class.plugin_version ::Kitchen::Terraform::VERSION
   end

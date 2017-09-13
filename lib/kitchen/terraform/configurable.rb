@@ -21,6 +21,11 @@ require "kitchen/terraform"
 #
 # @see https://github.com/test-kitchen/test-kitchen/blob/v1.16.0/lib/kitchen/configurable.rb Kitchen::Configurable
 module ::Kitchen::Terraform::Configurable
+  # @return [::Kitchen::Driver::Terraform] the driver which will manage the lifecycle actions of the instance.
+  def driver
+    instance.driver
+  end
+
   # Alternative implementation of Kitchen::Configurable#finalize_config! which validates the configuration before
   # attempting to expand paths.
   #
