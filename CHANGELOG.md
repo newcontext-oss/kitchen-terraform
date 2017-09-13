@@ -3,8 +3,7 @@
 All notable changes to this project will be documented in this file; the
 format is based on [Keep a CHANGELOG].
 
-This project adheres to [Semantic Versioning] with the exception that
-major version 0.y.z will maintain a stable public interface.
+This project adheres to [Semantic Versioning].
 
 ## [2.0.0] - 2017-09-13
 
