@@ -31,6 +31,7 @@ require "support/kitchen/terraform/config_attribute/state_examples"
 require "support/kitchen/terraform/config_attribute/variable_files_examples"
 require "support/kitchen/terraform/config_attribute/variables_examples"
 require "support/kitchen/terraform/config_attribute/verify_plugins_examples"
+require "support/kitchen/terraform/configurable_examples"
 require "support/kitchen/terraform/create_directories_context"
 require "support/terraform/configurable_context"
 require "support/terraform/configurable_examples"
@@ -157,6 +158,8 @@ require "support/terraform/configurable_examples"
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Variables"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::VerifyPlugins"
+
+  it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe ".serial_actions" do
     subject do
