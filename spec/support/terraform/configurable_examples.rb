@@ -38,12 +38,6 @@ require "terraform/configurable"
     end
   end
 
-  describe "#debug_logger" do
-    subject do described_instance.debug_logger end
-
-    it "is a debug logger" do is_expected.to be_instance_of ::Terraform::DebugLogger end
-  end
-
   describe "#driver" do
     subject do described_instance.driver end
 

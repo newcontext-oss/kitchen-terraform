@@ -18,7 +18,6 @@ require "forwardable"
 require "kitchen"
 require "kitchen/terraform/version"
 require "terraform"
-require "terraform/debug_logger"
 
 # Miscellaneous behaviour for objects that extend ::Kitchen::Configurable.
 module ::Terraform::Configurable
@@ -30,10 +29,6 @@ module ::Terraform::Configurable
 
   def self.included(configurable_class)
     configurable_class.plugin_version ::Kitchen::Terraform::VERSION
-  end
-
-  def debug_logger
-    @debug_logger ||= ::Terraform::DebugLogger.new logger: logger
   end
 
   def instance_pathname(filename:)
