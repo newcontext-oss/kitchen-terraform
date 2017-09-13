@@ -6,11 +6,38 @@ format is based on [Keep a CHANGELOG].
 This project adheres to [Semantic Versioning] with the exception that
 major version 0.y.z will maintain a stable public interface.
 
-## [2.0.0] - xxxx-yy-zz
+## [2.0.0] - 2017-09-13
 
 ### Added
 
 * Added a description to the gem specification
+
+* Added support for Terraform version ~> 0.10.2 and the init command
+
+* Added configuration attributes to the driver
+
+  * backend_configurations
+
+  * lock_timeout
+
+  * plugin_directory
+
+  * verify_plugins
+
+* Added the color configuration attribute to the verifier
+
+### Changed
+
+* Dropped support for Terraform versions < 0.10.2
+
+* The driver's variables configuration attribute must be a hash of
+  symbols and strings
+
+* Removed configuration attributes from the driver
+
+  * cli
+
+  * plan
 
 ### Fixed
 
