@@ -22,6 +22,7 @@ module ::Kitchen::Terraform::ConfigAttributeCacher
   # configuration attribute.
   #
   # @param configuration_attribute [::Kitchen::Terraform::ConfigAttribute] a configuration attribute.
+  # @return [void]
   def self.extended(configuration_attribute)
     configuration_attribute.define_cache
   end
