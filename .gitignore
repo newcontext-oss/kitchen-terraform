@@ -7,7 +7,7 @@ examples/*/Gemfile.lock
 **/inspec.lock
 *.gem
 .yardoc/
-certs/private_key.pem
+certs/gem-private_key.pem
 coverage/
 doc/
 examples/openstack_provider/.kitchen/

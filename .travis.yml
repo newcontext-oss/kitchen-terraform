@@ -38,8 +38,8 @@ jobs:
       script: skip
       rvm: 2.4.0
       before_deploy:
-        - openssl aes-256-cbc -K $encrypted_8cfc0ec71995_key -iv $encrypted_8cfc0ec71995_iv -in certs/private_key.pem.enc -out certs/private_key.pem -d
-        - gem cert --add certs/public_cert.pem
+        - openssl aes-256-cbc -K $encrypted_d73b39cf4bfa_key -iv $encrypted_d73b39cf4bfa_iv -in certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
+        - gem cert --add certs/gem-public_cert.pem
       deploy:
         provider: rubygems
         api_key:
