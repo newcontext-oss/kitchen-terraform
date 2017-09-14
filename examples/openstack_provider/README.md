@@ -1,61 +1,76 @@
-# OpenStack example
+# OpenStack Provider Example
 
-This example shows how to use kitchen-terraform with OpenStack Terraform provider.
+This is an example of how to utilize kitchen-terraform to test OpenStack
+resources configured with the [Terraform OpenStack provider].
 
-## Prerequisites
+## Requirements
 
-### OpenStack
-In order to keep this example short: we assume there are already 2 networks
- created. You have to set their names. The network set by the variable:
- `openstack_floatingip_pool` will be used to obtain the floating IP from,
- for each VM. You have to be able to access that network from your workstation.
+Two OpenStack networks that are accessible from localhost.
 
-In order to keep this example easy to use without many customizations: we
- import a keypair into OpenStack. The private and public keys are in `dummy_keypair`
- directory and they are used to ssh login into OpenStack VMs.
+## Terraform Configuration File
 
-Still some customizations are needed and you can apply them:
-  * either in a Terraform variables file
-  * or in `.kitchen.yml` file.
+The Terraform configuration exists in (main.tf).
 
-If you choose a Terraform variables file, you have to create that file:
- `my-variables.tfvars` with contents similar to:
+### Variables
+
+Some networking and provider attributes are required.
+
+### Resources
+
+The key pair in the `dummy_keypair` directory is imported in to
+OpenStack and used for SSH authentication with VMs.
+
+A cluster of one master VM and two worker VMs is created.
+
+## Test Kitchen Configuration File
+
+The Test Kitchen configuration exists in (.kitchen.yml).
+
+### Driver
+
+The kitchen-terraform driver is configured with a command timeout of
+1000 seconds and the path to a Terraform variables file.
+
+### Provisioner
+
+The kitchen-terraform provisioner is enabled.
+
+### Transport
+
+The Test Kitchen SSH transport is configured to use the `dummy_keypair`
+and a static username for SSH authentication with the VMs.
+
+### Verifier
+
+The kitchen-terraform verifier is configured with two groups.
+
+The `master` group is configured to run a control against the master VM
+by using the `master_address` output for the value of hostnames.
+
+The `workers` group is configured to run a control against all of the
+worker VMs by using the `workers_addresses` output for the value of
+hostnames.
+
+## Terraform Variables File
+
+The Terraform variables file must be defined at `./my-variables.tfvars`
+with variables required by the Terraform configuration.
+
+```hcl
+compute_instances_network_name = "<VALUE>"
+networking_floatingips_pool    = "<VALUE>"
+provider_auth_url              = "<VALUE>"
+provider_passowrd              = "<VALUE>"
+provider_region                = "<VALUE>"
+provider_tenant_name           = "<VALUE>"
+provider_user_name             = "<VALUE>"
 ```
-openstack_image  = "ubuntu-16.04-modified"
 
-openstack_tenant_name = "TODO"
-openstack_region = "TODO"
-openstack_auth_url = "TODO"
-openstack_user_name = "TODO"
-openstack_password = "TODO"
+## Test Kitchen Execution
 
-openstack_vm_network = "TODO"
-openstack_floatingip_pool = "TODO"
-
-masters_count = 1
-workers_count = 0
+```
+bundle install
+bundle exec kitchen test
 ```
 
-Otherwise, you can set the variables in `.kitchen.yml`:
-```yaml
-provisioner:
-  name: terraform
-  variables:
-    openstack_image: ubuntu-16.04-modified
-    # ...
-```
-
-### Dependencies
-This was tested with:
- * kitchen-terraform 0.4.0
- * Test Kitchen 1.14.2
- * Terraform 0.7.13
- * Ruby 2.3.1
-
-## Running tests
-The Terraform files create a cluster of OpenStack VMs. Each VM is either:
- a master or a worker. You can change the number of master or worker VMs anytime.
-
-In this example, by default, tests are run on 1 master VM and all worker VMs.
-This is set in `.kitchen.yml` by `master_0_public_ip` and `workers_public_ips`. Values of
- `master_0_public_ip` and `workers_public_ips` are taken from `outputs.tf`.
+[Terraform OpenStack provider]: https://www.terraform.io/docs/providers/openstack/index.html

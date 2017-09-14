@@ -1,4 +1,0 @@
-output "localhost" {
-  value = "localhost"
-}
-

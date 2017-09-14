@@ -16,39 +16,40 @@
 
 require "kitchen/provisioner/terraform"
 require "support/kitchen/driver/terraform_context"
-require "support/terraform/configurable_context"
-require "support/terraform/configurable_examples"
+require "support/kitchen/instance_context"
+require "support/kitchen/terraform/configurable_examples"
 
-::RSpec.describe ::Kitchen::Provisioner::Terraform do
-  include_context "instance"
+::RSpec
+  .describe ::Kitchen::Provisioner::Terraform do
+    include_context "Kitchen::Instance initialized"
 
-  let :described_instance do
-    provisioner
+    let :described_instance do
+      provisioner
+    end
+
+    it_behaves_like "Kitchen::Terraform::Configurable"
+
+    describe "#call" do
+      subject do
+        lambda do
+          described_instance.call instance_double ::Object
+        end
+      end
+
+      context "when the driver create action is a failure" do
+        include_context "Kitchen::Driver::Terraform#create failure"
+
+        it "raises an action failed error" do
+          is_expected.to raise_error ::Kitchen::ActionFailed
+        end
+      end
+
+      context "when the driver create action is a success" do
+        include_context "Kitchen::Driver::Terraform#create success"
+
+        it "does not raise an error" do
+          is_expected.to_not raise_error
+        end
+      end
+    end
   end
-
-  it_behaves_like ::Terraform::Configurable
-
-  describe "#call" do
-    subject do
-      lambda do
-        described_instance.call instance_double ::Object
-      end
-    end
-
-    context "when the driver create action is a failure" do
-      include_context "Kitchen::Driver::Terraform"
-
-      it "raises an action failed error" do
-        is_expected.to raise_error ::Kitchen::ActionFailed, /driver workflow/
-      end
-    end
-
-    context "when the driver create action is a success" do
-      include_context "Kitchen::Driver::Terraform", failure: false
-
-      it "does not raise an error" do
-        is_expected.to_not raise_error
-      end
-    end
-  end
-end

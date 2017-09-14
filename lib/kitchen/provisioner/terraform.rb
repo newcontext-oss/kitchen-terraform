@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "terraform/configurable"
+require "kitchen/terraform/configurable"
 
 # The design of the provisioner is unconventional compared to other Test Kitchen provisioner plugins. Since Terraform
 # creates and provisions resources when applying an execution plan, managed by the driver, the provisioner simply
@@ -35,7 +35,7 @@ require "terraform/configurable"
 class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   kitchen_provisioner_api_version 2
 
-  include ::Terraform::Configurable
+  include ::Kitchen::Terraform::Configurable
 
   # Proxies the driver's create action.
   #
@@ -43,7 +43,6 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   #   `kitchen converge suite-name`
   # @param state [::Hash] the mutable instance and provisioner state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [::Dry::Monads::Either] the result of the action.
   def call(state)
     instance.driver.create state
   end

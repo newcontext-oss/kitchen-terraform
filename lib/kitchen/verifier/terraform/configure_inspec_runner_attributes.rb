@@ -69,8 +69,11 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
   # @return [::Dry::Monads::Either] the result of the function
   def self.call(driver:, group:, terraform_state:)
     Right("terraform_state" => terraform_state).bind do |attributes|
-      driver.output.fmap do |output|
-        [attributes, output]
+      driver.output.bind do |output|
+        Right [
+          attributes,
+          output
+        ]
       end
     end.bind do |attributes, output|
       Try ::KeyError do
@@ -79,13 +82,13 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
         end
         [attributes, output]
       end
-    end.fmap do |attributes, output|
+    end.bind do |attributes, output|
       Maybe(group[:attributes]).bind do |group_attributes|
         group_attributes.each_pair do |attribute_name, output_name|
           attributes.store attribute_name.to_s, output.fetch(output_name.to_s).fetch("value")
         end
       end
-      attributes
+      Right attributes
     end.to_either.or do |error|
       Left "configuring Inspec::Runner attributes failed\n#{error}"
     end

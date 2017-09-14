@@ -1,10 +1,6 @@
 ---
 driver:
   name: terraform
-  variables:
-    docker_host: "unix:///var/run/docker.sock"
-    docker_container: "terraform"
-    docker_image: "rastasheep/ubuntu-sshd:latest"
 
 provisioner:
   name: terraform
@@ -15,16 +11,18 @@ transport:
 
 verifier:
   name: terraform
-  format: doc
   groups:
-    - name: default
+    - name: container
       controls:
         - operating_system
       port: 2222
-      hostnames: localhost
+      hostnames: hostnames
+    - name: localhost
+      controls:
+        - state_files
 
 platforms:
-  - name: terraform
+  - name: ubuntu
 
 suites:
-  - name: default
+  - name: example

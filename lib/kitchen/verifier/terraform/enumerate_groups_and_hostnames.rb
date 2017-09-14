@@ -60,8 +60,8 @@ module ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
           Right block.call group: group, hostname: "localhost"
         end
       end
-    end.fmap do
-      "finished enumeration of groups and hostnames"
+    end.bind do
+      Right "finished enumeration of groups and hostnames"
     end
   end
 end

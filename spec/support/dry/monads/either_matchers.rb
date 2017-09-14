@@ -20,14 +20,21 @@
 ].each do |status|
   ::RSpec::Matchers.define "result_in_#{status}" do
     match do |result|
-      result.send "#{status}?" and value.nil? or values_match? value, result.value
+      result.send "#{status}?" and
+        if not value.nil?
+          values_match? value, result.value
+        elsif not block_arg.nil?
+          block_arg.call result.value
+        else
+          true
+        end
     end
 
     chain :with_the_value, :value
 
     failure_message do |result|
       ::String.new("expected result\n  #{result}\nto be a #{status}").tap do |message|
-        value.nil? or message.concat " with the value\n  #{value}"
+        value.nil? or message.concat " with the value\n  #{value.inspect}"
       end
     end
   end

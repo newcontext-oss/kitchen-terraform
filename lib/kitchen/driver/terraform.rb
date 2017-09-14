@@ -15,278 +15,420 @@
 # limitations under the License.
 
 require "dry/monads"
+require "fileutils"
+require "json"
 require "kitchen"
-require "kitchen/terraform/client/output"
-require "kitchen/terraform/client/plan"
-require "kitchen/terraform/client/version"
-require "kitchen/terraform/define_config_attribute"
-require "kitchen/terraform/define_integer_config_attribute"
-require "kitchen/terraform/define_string_config_attribute"
-require "terraform/configurable"
+require "kitchen/terraform/clear_directory"
+require "kitchen/terraform/client/command"
+require "kitchen/terraform/client/options"
+require "kitchen/terraform/client_version_verifier"
+require "kitchen/terraform/config_attribute/backend_configurations"
+require "kitchen/terraform/config_attribute/color"
+require "kitchen/terraform/config_attribute/command_timeout"
+require "kitchen/terraform/config_attribute/directory"
+require "kitchen/terraform/config_attribute/lock_timeout"
+require "kitchen/terraform/config_attribute/parallelism"
+require "kitchen/terraform/config_attribute/plugin_directory"
+require "kitchen/terraform/config_attribute/state"
+require "kitchen/terraform/config_attribute/variable_files"
+require "kitchen/terraform/config_attribute/variables"
+require "kitchen/terraform/config_attribute/verify_plugins"
+require "kitchen/terraform/create_directories"
+require "kitchen/terraform/configurable"
 
-# The kitchen-terraform driver is the bridge between Test Kitchen and Terraform. It manages the state of the configured
-# root Terraform module by invoking its workflow in a constructive or destructive manner.
+# The kitchen-terraform driver is the bridge between Test Kitchen and Terraform.
 #
-# === Configuration
+# It manages the state of the configured root Terraform module by invoking its workflow in a constructive or destructive
+# manner.
 #
-# ==== Example .kitchen.yml snippet
+# === Test Kitchen Configuration
+#
+# The configuration of the driver is used to control the behaviour of the Terraform Client commands.
+#
+# More information about the available configuration attributes is located with the respective modules.
+#
+# Test Kitchen configuration is defined in +.kitchen.yml+ and optionally overridden in +.kitchen.local.yml+.
+#
+# ==== Example
 #
 #   driver:
-#     name: terraform
+#     name: "terraform"
+#     backend_configurations:
+#       argument_name: "argument_value"
 #     command_timeout: 1000
-#     cli: /usr/local/bin/terraform
 #     color: false
-#     directory: /directory/containing/terraform/configuration
+#     directory: "/directory/containing/terraform/configuration"
+#     lock_timeout: 2000
 #     parallelism: 2
-#     plan: /terraform/plan
-#     state: /terraform/state
+#     plugin_directory: "/plugin/directory"
+#     state: "/terraform/state"
 #     variable_files:
-#       - /first/terraform/variable/file
-#       - /second/terraform/variable/file
+#       - "/first/terraform/variable/file"
+#       - "/second/terraform/variable/file"
 #     variables:
-#       variable_name: variable_value
+#       variable_name: "variable_value"
+#     verify_plugins: false
 #
-# ==== Attributes
-#
-# ===== cli
-#
-# Description:: The path of the Terraform CLI to use for command execution.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: +"terraform"+
-#
-# ===== color
-#
-# Description:: Toggle to enable or disable colored output from the Terraform CLI commands.
-#
-# Type:: Boolean
-#
-# Status:: Optional
-#
-# Default:: +true+ if the Test Kitchen process is associated with a terminal device (tty); +false+ if it is not.
-#
-# ===== command_timeout
-#
-# Description:: The number of seconds to wait for the Terraform CLI commands to finish.
-#
-# Type:: Integer
-#
-# Status:: Optional
-#
-# Default:: +600+
-#
-# ===== directory
-#
-# Description:: The path of the directory containing the root Terraform module to be tested.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: The working directory of the Test Kitchen process.
-#
-# ===== parallelism
-#
-# Description:: The maximum number of concurrent operations to allow while walking the resource graph for the Terraform
-#               CLI apply and plan commands.
-# Type:: Integer
-#
-# Status:: Optional
-#
-# Default:: +10+
-#
-# ===== plan
-#
-# Description:: The path of the Terraform execution plan that will be generated and applied.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: A descendant of the working directory of the Test Kitchen process:
-#           +".kitchen/kitchen-terraform/<suite_name>/terraform.tfplan"+
-#
-# ===== state
-#
-# Description:: The path of the Terraform state that will be generated and managed.
-#
-# Type:: String
-#
-# Status:: Optional
-#
-# Default:: A descendant of the working directory of the Test Kitchen process:i
-#           +".kitchen/kitchen-terraform/<suite_name>/terraform.tfstate"+.
-#
-# ===== variable_files
-#
-# Description:: A collection of paths of Terraform variable files to be evaluated during the creation of the Terraform
-#               execution plan.
-#
-# Type:: Array
-#
-# Status:: Optional
-#
-# Default:: +[]+
-#
-# ===== variables
-#
-# Description:: A mapping of Terraform variable names and values to be overridden during the creation of the Terraform
-#               execution plan.
-#
-# Type:: Hash
-#
-# Status:: Optional
-#
-# Default:: +{}+
-#
-# @see ::Kitchen::Driver::Terraform::Workflow
-# @see https://en.wikipedia.org/wiki/Working_directory Working directory
-# @see https://www.terraform.io/docs/commands/plan.html Terraform execution plan
-# @see https://www.terraform.io/docs/configuration/variables.html Terraform variables
-# @see https://www.terraform.io/docs/internals/graph.html Terraform resource graph
-# @see https://www.terraform.io/docs/state/index.html Terraform state
+# @see ::Kitchen::Terraform::Client::Command
+# @see ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
+# @see ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
+# @see ::Kitchen::Terraform::ConfigAttribute::Color
+# @see ::Kitchen::Terraform::ConfigAttribute::Directory
+# @see ::Kitchen::Terraform::ConfigAttribute::LockTimeout
+# @see ::Kitchen::Terraform::ConfigAttribute::Parallelism
+# @see ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
+# @see ::Kitchen::Terraform::ConfigAttribute::State
+# @see ::Kitchen::Terraform::ConfigAttribute::VariableFiles
+# @see ::Kitchen::Terraform::ConfigAttribute::Variables
+# @see ::Kitchen::Terraform::ConfigAttribute::VerifyPlugins
+# @see http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen: .kitchen.yml
 # @version 2
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   kitchen_driver_api_version 2
 
   no_parallel_for
 
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :cli,
-                                                         plugin_class: self do
-    "terraform"
-  end
+  include ::Dry::Monads::Either::Mixin
 
-  ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :command_timeout,
-                                                          plugin_class: self do
-    600
-  end
+  include ::Dry::Monads::Try::Mixin
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :color,
-    initialize_default_value: lambda do |_plugin|
-      ::Kitchen.tty?
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).filled :bool?
-    end
-  )
+  include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :directory,
-                                                         plugin_class: self do |plugin|
-    plugin[:kitchen_root]
-  end
+  include ::Kitchen::Terraform::ConfigAttribute::Color
 
-  ::Kitchen::Terraform::DefineIntegerConfigAttribute.call attribute: :parallelism,
-                                                          plugin_class: self do
-    10
-  end
+  include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
 
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :plan,
-                                                         plugin_class: self do |plugin|
-    plugin.instance_pathname filename: "terraform.tfplan"
-  end
+  include ::Kitchen::Terraform::ConfigAttribute::Directory
 
-  ::Kitchen::Terraform::DefineStringConfigAttribute.call attribute: :state,
-                                                         plugin_class: self do |plugin|
-    plugin.instance_pathname filename: "terraform.tfstate"
-  end
+  include ::Kitchen::Terraform::ConfigAttribute::LockTimeout
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :variable_files,
-    initialize_default_value: lambda do |_plugin|
-      []
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).each :filled?, :str?
-    end
-  )
+  include ::Kitchen::Terraform::ConfigAttribute::Parallelism
 
-  ::Kitchen::Terraform::DefineConfigAttribute.call(
-    attribute: :variables,
-    initialize_default_value: lambda do |_plugin|
-      {}
-    end,
-    plugin_class: self,
-    schema: lambda do
-      required(:value).value :hash?
-    end
-  )
+  include ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
 
-  include ::Terraform::Configurable
+  include ::Kitchen::Terraform::ConfigAttribute::State
 
-  # The driver invokes its workflow in a constructive manner.
+  include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
+
+  include ::Kitchen::Terraform::ConfigAttribute::Variables
+
+  include ::Kitchen::Terraform::ConfigAttribute::VerifyPlugins
+
+  include ::Kitchen::Terraform::Configurable
+
+  # The driver invokes its workflow in a constructive manner by applying changes to the Terraform state.
   #
+  # @example
+  #   `kitchen help create`
   # @example
   #   `kitchen create suite-name`
-  # @note The user must ensure that different suites utilize separate Terraform plan and state files if they are to run
+  # @note The user must ensure that different suites utilize separate Terraform state files if they are to run
   #       the create action concurrently.
-  # @param _state [::Hash] the mutable instance and driver state; this parameter is ignored.
+  # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [::Dry::Monads::Either] the result of the workflow function.
-  # @see ::Kitchen::Driver::Terraform::Workflow
+  # @see ::Kitchen::Driver::Terraform#run_apply
+  # @see ::Kitchen::Driver::Terraform#workflow
   def create(_state)
-    self.class::Workflow.call(
-      config: config,
-      logger: logger
-    ).or do |failure|
-      raise ::Kitchen::ActionFailed, failure
+    workflow do
+      run_apply
     end
   end
 
-  # The driver invokes its workflow in a destructive manner.
+  # The driver invokes its workflow in a destructive manner by destroying the Terraform state and removing the instance
+  # directory.
   #
   # @example
+  #   `kitchen help destroy`
+  # @example
   #   `kitchen destroy suite-name`
-  # @note The user must ensure that different suites utilize separate Terraform plan and state files if they are to run
+  # @note The user must ensure that different suites utilize separate Terraform state files if they are to run
   #       the destroy action concurrently.
-  # @param _state [::Hash] the mutable instance and driver state; this parameter is ignored.
+  # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [::Dry::Monads::Either] the result of the action.
-  # @see ::Kitchen::Driver::Terraform::Workflow
+  # @see ::Kitchen::Driver::Terraform#remove_instance_directory
+  # @see ::Kitchen::Driver::Terraform#run_destroy
+  # @see ::Kitchen::Driver::Terraform#workflow
   def destroy(_state)
-    self.class::Workflow.call(
-      config: config,
-      destroy: true,
-      logger: logger
-    ).or do |failure|
-      raise ::Kitchen::ActionFailed, failure
+    workflow do
+      run_destroy.bind do
+        remove_instance_directory
+      end
     end
   end
 
-  # The driver proxies the client output function.
+  # The driver parses the Terraform Client output subcomannd output as JSON.
   #
-  # @return [::Dry::Monads::Either] the result of the Terraform Client Output function.
-  # @see ::Kitchen::Terraform::Client::Output
+  # @return [::Dry::Monads::Either] the result of parsing the output.
+  # @see ::Kitchen::Terraform::Client::Command.Output
+  # @see ::JSON.parse
   def output
-    ::Kitchen::Terraform::Client::Output.call cli: config.fetch(:cli), logger: debug_logger,
-                                              options: {color: config.fetch(:color), state: config.fetch(:state)},
-                                              timeout: config.fetch(:command_timeout)
+    run_output
+      .bind do |output|
+        Try ::JSON::ParserError do
+          ::JSON.parse output
+        end
+          .to_either
+      end
+      .or do |error|
+        Left "parsing Terraform client output as JSON failed\n#{error}"
+      end
   end
 
   # The driver verifies that the client version is supported.
   #
   # @raise [::Kitchen::UserError] if the version is not supported.
-  # @return [::Dry::Monads::Either] the result of the client version verification function.
-  # @see ::Kitchen::Driver::Terraform::VerifyClientVersion
-  # @see ::Kitchen::Terraform::Client::Version
+  # @see ::Kitchen::Terraform::Client::Command.version
+  # @see ::Kitchen::Terraform::ClientVersionVerifier#verify
   def verify_dependencies
-    ::Kitchen::Terraform::Client::Version.call(
-      cli: config.fetch(:cli), logger: debug_logger, timeout: config.fetch(:command_timeout)
-    ).bind do |version|
-      self.class::VerifyClientVersion.call version: version
-    end.fmap do |verified_client_version|
-      logger.warn verified_client_version
-      verified_client_version
-    end.or do |failure|
-      raise ::Kitchen::UserError, failure
+    run_version
+      .bind do |output|
+        ::Kitchen::Terraform::ClientVersionVerifier
+          .new
+          .verify version_output: output
+      end
+      .bind do |verified_client_version|
+        Right logger.warn verified_client_version
+      end
+      .or do |failure|
+        raise(
+          ::Kitchen::UserError,
+          failure
+        )
+      end
+  end
+
+  private
+
+  # The driver creates the instance directory or clears it of Terraform configuration if it already exists.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of creating or clearing the instance directory.
+  # @see ::KItchen::Terraform::ClearDirectory.call
+  # @see ::Kitchen::Driver::Terraform#instance_directory
+  # @see ::Kitchen::Terraform::CreateDirectories.call
+  def prepare_instance_directory
+    ::Kitchen::Terraform::CreateDirectories
+      .call(
+        directories: [instance_directory]
+      )
+      .bind do |created_directories|
+        logger.debug created_directories
+        ::Kitchen::Terraform::ClearDirectory
+          .call(
+            directory: instance_directory,
+            files: [
+              "*.tf",
+              "*.tf.json"
+            ]
+          )
+      end
+      .bind do |cleared_directory|
+        Right logger.debug cleared_directory
+      end
+  end
+
+  # The driver removes the instance directory.
+  #
+  # @api private
+  # @see ::FileUtils.remove_dir
+  # @see ::Kitchen::Driver::Terraform#instance_directory
+  def remove_instance_directory
+    Try do
+      ::FileUtils.remove_dir instance_directory
     end
+      .to_either
+  end
+
+  # Runs a Terraform Client command shell out with the default logger and the configured timeout.
+  #
+  # @api private
+  # @param result [::Dry::Monads::Either] the result of a shell out creation
+  # @return [::Dry::Monads::Either] the result of running the shell out
+  def run(result:)
+    result
+      .bind do |shell_out|
+        ::Kitchen::Terraform::Client::Command
+          .run(
+            logger: logger,
+            shell_out: shell_out,
+            timeout: config_command_timeout
+          )
+      end
+  end
+
+  # Runs the Terraform Client apply subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the apply subcommand.
+  # @see ::Kitchen::Terraform::Client::Command.apply
+  def run_apply
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command
+          .apply(
+            options:
+              ::Kitchen::Terraform::Client::Options
+                .new
+                .enable_lock
+                .lock_timeout(duration: config_lock_timeout)
+                .disable_input
+                .enable_auto_approve
+                .maybe_no_color(toggle: !config_color)
+                .parallelism(concurrent_operations: config_parallelism)
+                .enable_refresh
+                .state(path: config_state)
+                .state_out(path: config_state)
+                .vars(keys_and_values: config_variables)
+                .var_files(paths: config_variable_files),
+            working_directory: instance_directory
+          )
+    )
+  end
+
+  # Runs the Terraform Client destroy subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the destroy subcommand.
+  # @see ::Kitchen::Terraform::Client::Command.destroy
+  def run_destroy
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command
+          .destroy(
+            options:
+              ::Kitchen::Terraform::Client::Options
+                .new
+                .enable_lock
+                .lock_timeout(duration: config_lock_timeout)
+                .disable_input
+                .maybe_no_color(toggle: !config_color)
+                .parallelism(concurrent_operations: config_parallelism)
+                .enable_refresh
+                .state(path: config_state)
+                .state_out(path: config_state)
+                .vars(keys_and_values: config_variables)
+                .var_files(paths: config_variable_files)
+                .force,
+            working_directory: instance_directory
+          )
+    )
+  end
+
+  # Runs the Terraform Client init subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the init subcommand.
+  # @see ::Kitchen::Terraform::Client::Command.init
+  def run_init
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command
+          .init(
+            options:
+              ::Kitchen::Terraform::Client::Options
+                .new
+                .disable_input
+                .enable_lock
+                .lock_timeout(duration: config_lock_timeout)
+                .maybe_no_color(toggle: !config_color)
+                .upgrade
+                .from_module(source: config_directory)
+                .enable_backend
+                .force_copy
+                .backend_configs(keys_and_values: config_backend_configurations)
+                .enable_get
+                .maybe_plugin_dir(path: config_plugin_directory)
+                .verify_plugins(toggle: config_verify_plugins),
+            working_directory: instance_directory
+          )
+    )
+  end
+
+  # Runs the Terraform Client output subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the init subcommand.
+  # @see ::Kitchen::Terraform::Client::Command.output
+  def run_output
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command.output(
+          options:
+            ::Kitchen::Terraform::Client::Options
+              .new
+              .json
+              .state(path: config_state),
+          working_directory: instance_directory
+        )
+    )
+  end
+
+  # Runs the Terraform Client validate subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the validate subcommand.
+  # @see ::Kitchen::Terraform::Client::Command.validate
+  def run_validate
+    run(
+      result:
+        ::Kitchen::Terraform::Client::Command
+          .validate(
+            options:
+              ::Kitchen::Terraform::Client::Options
+                .new
+                .enable_check_variables
+                .maybe_no_color(toggle: !config_color)
+                .vars(keys_and_values: config_variables)
+                .var_files(paths: config_variable_files),
+            working_directory: instance_directory
+          )
+    )
+  end
+
+  # Runs the Terraform Client version subcommand.
+  #
+  # @api private
+  # @return [::Dry::Monads::Either] the result of the version subcommand.
+  # @see ::Kitchen::Terraform::Client::Command.version
+  def run_version
+    run result: ::Kitchen::Terraform::Client::Command.version(working_directory: config.fetch(:kitchen_root))
+  end
+
+  # Memoizes the path to the Test Kitchen suite instance directory at `.kitchen/kitchen-terraform/<suite>-<platform>`.
+  #
+  # @api private
+  # @return [::String] the path to the Test Kitchen suite instance directory.
+  def instance_directory
+    @instance_directory ||= instance_pathname filename: "/"
+  end
+
+  # 1. Prepares the instance directory
+  # 2. Executes `terraform init` in the instance directory
+  # 3. Executes `terraform validate` in the instance directory
+  # 4. Executes a provided subcommand in the instance directory
+  #
+  # @api private
+  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+  # @see ::Kitchen::Driver::Terraform#prepare_instance_directory
+  # @see ::Kitchen::Driver::Terraform#run_init
+  # @see ::Kitchen::Driver::Terraform#run_validate
+  # @yieldreturn [::Dry::Monads::Either] the result of a Terraform Client subcommand.
+  def workflow
+    prepare_instance_directory
+      .bind do
+        run_init
+      end
+      .bind do
+        run_validate
+      end
+      .bind do
+        yield
+      end
+      .or do |failure|
+        raise(
+          ::Kitchen::ActionFailed,
+          failure
+        )
+      end
   end
 end
-
-require "kitchen/driver/terraform/workflow"
-require "kitchen/driver/terraform/verify_client_version"

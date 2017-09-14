@@ -14,12 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-other_host_address = attribute "other_host_address", {}
+reachable_other_host_public_ip =
+  attribute(
+    "reachable_other_host_public_ip",
+    {}
+  )
 
 control "reachable_other_host" do
   describe "the other host" do
-    subject do host other_host_address end
+    subject do
+      host reachable_other_host_public_ip
+    end
 
-    it "is reachable" do is_expected.to be_reachable end
+    it do
+      is_expected.to be_reachable
+    end
   end
 end

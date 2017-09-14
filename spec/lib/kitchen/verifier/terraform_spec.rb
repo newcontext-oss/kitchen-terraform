@@ -16,28 +16,26 @@
 
 require "inspec"
 require "kitchen/verifier/terraform"
+require "support/kitchen/terraform/config_attribute/color_examples"
+require "support/kitchen/terraform/config_attribute/groups_examples"
+require "support/kitchen/terraform/configurable_examples"
+require "support/kitchen/driver/terraform_context"
 require "support/kitchen/instance_context"
-require "support/kitchen/terraform/client/execute_command_context"
-require "support/kitchen/verifier/terraform/config_attribute_groups_examples"
-require "support/terraform/configurable_context"
-require "support/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
-  it_behaves_like ::Terraform::Configurable do
-    include_context "instance"
+  include_context "Kitchen::Instance initialized"
 
-    let :described_instance do verifier end
+  let :described_instance do
+    verifier
   end
 
-  it_behaves_like "config attribute :groups"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Groups"
+
+  it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call(state)" do
-    include_context ::Kitchen::Instance
-
-    let :described_instance do
-      verifier
-    end
-
     let :group do
       {
         attributes: {},
@@ -62,14 +60,10 @@ require "support/terraform/configurable_examples"
     end
 
     shared_context "Kitchen::Verifier::Inspec" do |exit_code:|
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output",
-                      exit_code: 0,
-                      output: ::JSON.generate(
-                        "output_name" => {
-                          "value" => "output_name value"
-                        }
-                      )
+      include_context(
+        "Kitchen::Driver::Terraform#output success",
+        output: ::JSON.generate("output_name" => {"value" => "output_name value"})
+      )
 
       let :runner do
         instance_double ::Inspec::Runner
@@ -107,8 +101,7 @@ require "support/terraform/configurable_examples"
     end
 
     context "when the result of enumerating group hosts is a failure" do
-      include_context "Kitchen::Terraform::Client::ExecuteCommand",
-                      command: "output"
+      include_context "Kitchen::Driver::Terraform#output failure"
 
       before do
         group.store :hostnames,

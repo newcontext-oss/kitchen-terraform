@@ -3,8 +3,46 @@
 All notable changes to this project will be documented in this file; the
 format is based on [Keep a CHANGELOG].
 
-This project adheres to [Semantic Versioning] with the exception that
-major version 0.y.z will maintain a stable public interface.
+This project adheres to [Semantic Versioning].
+
+## [2.0.0] - 2017-09-13
+
+### Added
+
+* Added a description to the gem specification
+
+* Added support for Terraform version ~> 0.10.2 and the init command
+
+* Added configuration attributes to the driver
+
+  * backend_configurations
+
+  * lock_timeout
+
+  * plugin_directory
+
+  * verify_plugins
+
+* Added the color configuration attribute to the verifier
+
+### Changed
+
+* Dropped support for Terraform versions < 0.10.2
+
+* The driver's variables configuration attribute must be a hash of
+  symbols and strings
+
+* Removed configuration attributes from the driver
+
+  * cli
+
+  * plan
+
+### Fixed
+
+* Moved the project version constant to the gem namespace
+
+* Corrected obsolote information in the aws_provider example
 
 ## [1.0.2] - 2017-07-16
 
@@ -318,6 +356,7 @@ major version 0.y.z will maintain a stable public interface.
 [1.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.7.0...v1.0.0
 [1.0.1]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.0...v1.0.1
 [1.0.2]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.1...v1.0.2
+[2.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.2...v2.0.0
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott

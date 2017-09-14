@@ -14,6 +14,8 @@ Layout/IndentHeredoc:
   Enabled: false
 Layout/MultilineBlockLayout:
   Enabled: false
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented_relative_to_receiver
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
 Lint/AmbiguousOperator:
@@ -40,6 +42,8 @@ Style/BlockDelimiters:
   Enabled: false
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
+Style/ClassCheck:
+  EnforcedStyle: kind_of?
 Style/Lambda:
   EnforcedStyle: lambda
 Style/MultilineBlockChain:

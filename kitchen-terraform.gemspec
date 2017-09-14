@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
-::File.expand_path("../lib", __FILE__)
-      .tap do |directory| $LOAD_PATH.unshift directory unless $LOAD_PATH.include? directory end
+::File
+  .expand_path("../lib", __FILE__)
+  .tap do |directory|
+    $LOAD_PATH.include? directory or $LOAD_PATH.unshift directory
+  end
 
-require "terraform/project_version.rb"
+require "kitchen/terraform/version.rb"
 
 ::Gem::Specification.new do |specification|
   specification.authors = [
@@ -23,13 +26,15 @@ require "terraform/project_version.rb"
     "Walter Dolce"
   ]
 
+  specification.description = "kitchen-terraform is a set of Test Kitchen plugins for testing Terraform configuration"
+
   specification.files = ::Dir.glob "{lib/**/*.rb,LICENSE,README.md}"
 
   specification.name = "kitchen-terraform"
 
-  specification.summary = "Test Kitchen plugins for testing Terraform projects"
+  specification.summary = "Test Kitchen plugins for testing Terraform configuration"
 
-  specification.version = ::Terraform::PROJECT_VERSION
+  specification.version = ::Kitchen::Terraform::VERSION
 
   specification.email = "kitchen-terraform@newcontext.com"
 
@@ -67,13 +72,17 @@ require "terraform/project_version.rb"
 
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
 
-  specification.add_runtime_dependency "test-kitchen", "~> 1.10"
+  specification
+    .add_runtime_dependency(
+      "test-kitchen",
+      "~> 1.16.0"
+    )
 
   specification.cert_chain = ["certs/public_cert.pem"]
 
   specification.required_ruby_version = [">= 2.2", "< 2.5"]
 
-  specification.requirements = ["Terraform >= 0.7, < 0.10"]
+  specification.requirements = ["Terraform ~> 0.10.2"]
 
   specification.signing_key = "certs/private_key.pem"
 end

@@ -16,14 +16,33 @@
 
 require "fileutils"
 
-::RSpec.shared_context "Kitchen::Terraform::CreateDirectories" do |failure: true|
+::RSpec.shared_context "Kitchen::Terraform::CreateDirectories.call" do
   let :file_utils do
     class_double(::FileUtils).as_stubbed_const
   end
+end
+
+::RSpec.shared_context "Kitchen::Terraform::CreateDirectories.call failure" do
+  include_context "Kitchen::Terraform::CreateDirectories.call"
 
   before do
-    allow(file_utils).to receive(:makedirs).with including kind_of ::String do
-      failure and raise ::SystemCallError, "mocked error"
+    allow(file_utils)
+      .to(
+        receive(:makedirs)
+          .and_raise(
+            ::SystemCallError,
+            "mocked error"
+          )
+      )
+  end
+end
+
+::RSpec.shared_context "Kitchen::Terraform::CreateDirectories.call success" do
+  include_context "Kitchen::Terraform::CreateDirectories.call"
+
+  before do
+    allow(file_utils).to receive :makedirs do |list|
+      list
     end
   end
 end
