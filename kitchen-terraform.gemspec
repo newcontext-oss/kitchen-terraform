@@ -78,11 +78,11 @@ require "kitchen/terraform/version.rb"
       "~> 1.16.0"
     )
 
-  specification.cert_chain = ["certs/public_cert.pem"]
+  specification.cert_chain = ["certs/gem-public_cert.pem"]
 
   specification.required_ruby_version = [">= 2.2", "< 2.5"]
 
   specification.requirements = ["Terraform ~> 0.10.2"]
 
-  specification.signing_key = "certs/private_key.pem"
+  specification.signing_key = "certs/gem-private_key.pem"
 end
