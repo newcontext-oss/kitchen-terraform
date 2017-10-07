@@ -17,7 +17,7 @@
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
-require "kitchen/terraform/config_schemas/array_of_hashes_of_symbols_and_strings"
+require "kitchen/terraform/config_schemas/groups"
 
 # The +:groups+ configuration attribute is an optional array including hashes comprising properties to manage the
 # execution of InSpec profiles against different resources in the Terraform state.
@@ -77,7 +77,7 @@ module ::Kitchen::Terraform::ConfigAttribute::Groups
     ::Kitchen::Terraform::ConfigAttributeDefiner
       .new(
         attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::ArrayOfHashesOfSymbolsAndStrings
+        schema: ::Kitchen::Terraform::ConfigSchemas::Groups
       )
       .define plugin_class: plugin_class
   end
