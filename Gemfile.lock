@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kitchen-terraform (2.0.0)
+    kitchen-terraform (2.1.0)
       dry-monads (~> 0.3)
       dry-types (~> 0.9)
       dry-validation (~> 0.10)
@@ -14,7 +14,7 @@ GEM
   specs:
     addressable (2.4.0)
     artifactory (2.8.2)
-    backports (3.9.1)
+    backports (3.10.0)
     blankslate (2.1.2.4)
     builder (3.2.3)
     codeclimate-test-reporter (1.0.8)
@@ -43,7 +43,7 @@ GEM
     dry-monads (0.3.1)
       dry-core
       dry-equalizer
-    dry-types (0.12.0)
+    dry-types (0.12.1)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.1)
       dry-container (~> 0.3)
