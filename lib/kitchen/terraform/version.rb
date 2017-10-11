@@ -16,4 +16,5 @@
 
 require "kitchen/terraform"
 
-::Kitchen::Terraform::VERSION = "2.0.0".freeze
+# The version of the kitchen-terraform gem.
+::Kitchen::Terraform::VERSION = "2.1.0".freeze
