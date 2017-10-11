@@ -51,8 +51,8 @@ require "kitchen/terraform/config_schemas/groups"
 #
 # ==== port
 #
-# An optional integer which represents the port to use when connecting to the hosts of the group with Secure Shell
-# (SSH).
+# An optional integer which represents the port to use when connecting with Secure Shell (SSH) to the hosts of the
+# group.
 #
 # If this key is omitted then the port of the Test Kitchen SSH Transport will be used.
 #
@@ -65,7 +65,7 @@ require "kitchen/terraform/config_schemas/groups"
 #
 # ==== username
 #
-# An optional string which contains the username to use when connecting to the hosts of the group with SSH.
+# An optional string which contains the username to use when connecting with SSH to the hosts of the group.
 #
 # If this key is omitted then the username of the Test Kitcen SSH Transport will be used.
 #
