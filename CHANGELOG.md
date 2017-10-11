@@ -5,6 +5,13 @@ format is based on [Keep a CHANGELOG].
 
 This project adheres to [Semantic Versioning].
 
+## [2.1.0] - 2017-10-11
+
+### Added
+
+* Verifier `:groups` have an optional `:ssh_key` attribute that overides
+  the Test Kitchen SSH Transport `:ssh_key`
+
 ## [2.0.0] - 2017-09-13
 
 ### Added
@@ -357,6 +364,7 @@ This project adheres to [Semantic Versioning].
 [1.0.1]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.0...v1.0.1
 [1.0.2]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.1...v1.0.2
 [2.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.2...v2.0.0
+[2.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.0.0...v2.1.0
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott

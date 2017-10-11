@@ -109,6 +109,12 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
       self.class::ConfigureInspecRunnerBackend.call hostname: state.fetch(:hostname), options: options
       self.class::ConfigureInspecRunnerHost.call hostname: state.fetch(:hostname), options: options
       self.class::ConfigureInspecRunnerPort.call group: state.fetch(:group), options: options
+      self
+        .class::ConfigureInspecRunnerSSHKey
+        .call(
+          group: state.fetch(:group),
+          options: options
+        )
       self.class::ConfigureInspecRunnerUser.call group: state.fetch(:group), options: options
       self.class::ConfigureInspecRunnerAttributes
         .call(driver: driver, group: state.fetch(:group), terraform_state: driver[:state]).bind do |attributes|
@@ -124,5 +130,6 @@ require "kitchen/verifier/terraform/configure_inspec_runner_backend"
 require "kitchen/verifier/terraform/configure_inspec_runner_controls"
 require "kitchen/verifier/terraform/configure_inspec_runner_host"
 require "kitchen/verifier/terraform/configure_inspec_runner_port"
+require "kitchen/verifier/terraform/configure_inspec_runner_ssh_key"
 require "kitchen/verifier/terraform/configure_inspec_runner_user"
 require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"

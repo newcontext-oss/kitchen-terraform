@@ -17,7 +17,7 @@
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
-require "kitchen/terraform/config_schemas/array_of_hashes_of_symbols_and_strings"
+require "kitchen/terraform/config_schemas/groups"
 
 # The +:groups+ configuration attribute is an optional array including hashes comprising properties to manage the
 # execution of InSpec profiles against different resources in the Terraform state.
@@ -51,14 +51,21 @@ require "kitchen/terraform/config_schemas/array_of_hashes_of_symbols_and_strings
 #
 # ==== port
 #
-# An optional integer which represents the port to use when connecting to the hosts of the group with Secure Shell
-# (SSH).
+# An optional integer which represents the port to use when connecting with Secure Shell (SSH) to the hosts of the
+# group.
 #
 # If this key is omitted then the port of the Test Kitchen SSH Transport will be used.
 #
+# ==== ssh_key
+#
+# An optional string which contains the path to the private SSH key to use when connecting with SSH to the hosts of the
+# group.
+#
+# If this key is omitted then the private SSH key of the Test Kitchen SSH Transport will be used.
+#
 # ==== username
 #
-# An optional string which contains the username to use when connecting to the hosts of the group with SSH.
+# An optional string which contains the username to use when connecting with SSH to the hosts of the group.
 #
 # If this key is omitted then the username of the Test Kitcen SSH Transport will be used.
 #
@@ -77,7 +84,7 @@ module ::Kitchen::Terraform::ConfigAttribute::Groups
     ::Kitchen::Terraform::ConfigAttributeDefiner
       .new(
         attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::ArrayOfHashesOfSymbolsAndStrings
+        schema: ::Kitchen::Terraform::ConfigSchemas::Groups
       )
       .define plugin_class: plugin_class
   end

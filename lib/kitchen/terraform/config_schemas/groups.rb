@@ -18,11 +18,11 @@ require "dry-validation"
 require "kitchen/terraform/config_predicates/hash_of_symbols_and_strings"
 require "kitchen/terraform/config_schemas"
 
-# A validation schema for a configuration attribute which is an array of hashes including only symbol keys and string
-# values.
+# A validation schema for the groups configuration attribute which is an array of hashes including only symbol keys and
+# string values.
 #
 # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
-::Kitchen::Terraform::ConfigSchemas::ArrayOfHashesOfSymbolsAndStrings =
+::Kitchen::Terraform::ConfigSchemas::Groups =
   ::Dry::Validation
     .Schema do
       configure do
@@ -41,6 +41,11 @@ require "kitchen/terraform/config_schemas"
               )
             optional(:hostnames).value :str?
             optional(:port).value :int?
+            optional(:ssh_key)
+              .maybe(
+                :str?,
+                :filled?
+              )
             optional(:username).value :str?
           end
         end

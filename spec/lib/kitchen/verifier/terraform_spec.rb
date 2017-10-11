@@ -44,6 +44,7 @@ require "support/kitchen/instance_context"
         ],
         name: "name",
         port: 1234,
+        ssh_key: "ssh_key",
         username: "username"
       }
     end
@@ -85,6 +86,7 @@ require "support/kitchen/instance_context"
               "control"
             ],
             "host" => "localhost",
+            "key_files" => ["ssh_key"],
             "port" => 1234,
             "user" => "username"
           )
