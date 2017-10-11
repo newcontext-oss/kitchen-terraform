@@ -9,14 +9,14 @@ cache:
 jobs:
   include:
     - stage: "unit"
-      rvm: 2.4.0
+      rvm: "2.4"
       script: "bundle exec rspec --backtrace"
       after_success: "bundle exec codeclimate-test-reporter"
     - stage: "unit"
-      rvm: 2.3.3
+      rvm: "2.3"
       script: "bundle exec rspec --backtrace"
     - stage: "unit"
-      rvm: 2.2.6
+      rvm: "2.2"
       script: "bundle exec rspec --backtrace"
     - stage: integration
       sudo: required
@@ -24,7 +24,7 @@ jobs:
         - docker
       env:
         - "PATH=\"$PATH:$PWD/terraform\""
-      rvm: 2.4.0
+      rvm: "2.4"
       before_install:
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.10.2/terraform_0.10.2_linux_amd64.zip
         - "sha256sum terraform.zip | grep \"6c1b5ce1a78bc7bb895055052d9074e519f51293770871acfe2dbd289e2f2aaa\""
@@ -36,7 +36,7 @@ jobs:
     - stage: deploy
       install: skip
       script: skip
-      rvm: 2.4.0
+      rvm: "2.4"
       before_deploy:
         - openssl aes-256-cbc -K $encrypted_d73b39cf4bfa_key -iv $encrypted_d73b39cf4bfa_iv -in certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
         - gem cert --add certs/gem-public_cert.pem
