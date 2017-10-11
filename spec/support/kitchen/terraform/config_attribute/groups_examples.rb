@@ -314,6 +314,53 @@ require "support/kitchen/terraform/config_attribute_context"
 
       context(
         "when the config associates :groups with an array which includes a hash which associates :name with a " \
+          "nonempty string and :ssh_key with a nonstring"
+      ) do
+        it_behaves_like(
+          "the value is invalid",
+          error_message: /groups.*0.*ssh_key.*must be a string/,
+          value: [
+            {
+              name: "abc",
+              ssh_key: 123
+            }
+          ]
+        )
+      end
+
+      context(
+        "when the config associates :groups with an array which includes a hash which associates :name with a " \
+          "nonempty string and associates :ssh_key with an empty string"
+      ) do
+        it_behaves_like(
+          "the value is invalid",
+          error_message: /groups.*0.*ssh_key.*must be filled/,
+          value: [
+            {
+              name: "abc",
+              ssh_key: ""
+            }
+          ]
+        )
+      end
+
+      context(
+        "when the config associates :groups with an array which includes a hash which associates :name with a " \
+          "nonempty string and associates :ssh_key with a nonempty string"
+      ) do
+        it_behaves_like(
+          "the value is valid",
+          value: [
+            {
+              name: "abc",
+              ssh_key: "abc"
+            }
+          ]
+        )
+      end
+
+      context(
+        "when the config associates :groups with an array which includes a hash which associates :name with a " \
           "nonempty string and :username with a nonstring"
       ) do
         it_behaves_like(

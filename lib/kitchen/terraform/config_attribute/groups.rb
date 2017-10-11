@@ -56,6 +56,13 @@ require "kitchen/terraform/config_schemas/groups"
 #
 # If this key is omitted then the port of the Test Kitchen SSH Transport will be used.
 #
+# ==== ssh_key
+#
+# An optional string which contains the path to the private SSH key to use when connecting with SSH to the hosts of the
+# group.
+#
+# If this key is omitted then the private SSH key of the Test Kitchen SSH Transport will be used.
+#
 # ==== username
 #
 # An optional string which contains the username to use when connecting to the hosts of the group with SSH.

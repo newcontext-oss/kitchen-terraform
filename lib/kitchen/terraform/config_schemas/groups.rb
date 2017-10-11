@@ -41,6 +41,11 @@ require "kitchen/terraform/config_schemas"
               )
             optional(:hostnames).value :str?
             optional(:port).value :int?
+            optional(:ssh_key)
+              .maybe(
+                :str?,
+                :filled?
+              )
             optional(:username).value :str?
           end
         end
