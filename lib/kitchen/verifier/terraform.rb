@@ -16,6 +16,7 @@
 
 require "kitchen/verifier"
 require "kitchen/terraform/config_attribute/color"
+require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
@@ -63,6 +64,10 @@ require "kitchen/verifier/inspec"
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Color}
 #
+# ==== fail_fast
+#
+# {include:Kitchen::Terraform::ConfigAttribute::FailFast}
+#
 # ==== groups
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Groups}
@@ -72,6 +77,8 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   kitchen_verifier_api_version 2
 
   include ::Kitchen::Terraform::ConfigAttribute::Color
+
+  include ::Kitchen::Terraform::ConfigAttribute::FailFast
 
   include ::Kitchen::Terraform::ConfigAttribute::Groups
 
