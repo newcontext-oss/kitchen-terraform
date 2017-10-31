@@ -95,61 +95,75 @@ require "support/kitchen/terraform/client/command_context"
         ).value
     end
 
-    subject do
-      described_class
-        .run(
-          logger: ::Kitchen::Logger.new,
-          shell_out: shell_out,
-          timeout: 1234
+    describe "the shell out environment" do
+      subject do
+        shell_out.environment
+      end
+
+      it(
+        "associates TF_IN_AUTOMATION with a nonempty value as per https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation"
+      ) do
+        is_expected.to include "TF_IN_AUTOMATION" => true
+      end
+    end
+
+    describe "running the shell out" do
+      subject do
+        described_class
+          .run(
+            logger: ::Kitchen::Logger.new,
+            shell_out: shell_out,
+            timeout: 1234
+          )
+      end
+
+      context "when a permissions error occurs" do
+        include_context(
+          "Kitchen::Terraform::Client::Command.run error failure",
+          error: ::Errno::EACCES
         )
-    end
 
-    context "when a permissions error occurs" do
-      include_context(
-        "Kitchen::Terraform::Client::Command.run error failure",
-        error: ::Errno::EACCES
-      )
-
-      it do
-        is_expected.to result_in_failure.with_the_value "Permission denied - mocked error"
+        it do
+          is_expected.to result_in_failure.with_the_value "Permission denied - mocked error"
+        end
       end
-    end
 
-    context "when an entry error occurs" do
-      include_context(
-        "Kitchen::Terraform::Client::Command.run error failure",
-        error: ::Errno::ENOENT
-      )
+      context "when an entry error occurs" do
+        include_context(
+          "Kitchen::Terraform::Client::Command.run error failure",
+          error: ::Errno::ENOENT
+        )
 
-      it do
-        is_expected.to result_in_failure.with_the_value "No such file or directory - mocked error"
+        it do
+          is_expected.to result_in_failure.with_the_value "No such file or directory - mocked error"
+        end
       end
-    end
 
-    context "when a timeout error occurs" do
-      include_context(
-        "Kitchen::Terraform::Client::Command.run error failure",
-        error: ::Mixlib::ShellOut::CommandTimeout
-      )
+      context "when a timeout error occurs" do
+        include_context(
+          "Kitchen::Terraform::Client::Command.run error failure",
+          error: ::Mixlib::ShellOut::CommandTimeout
+        )
 
-      it do
-        is_expected.to result_in_failure.with_the_value "mocked error"
+        it do
+          is_expected.to result_in_failure.with_the_value "mocked error"
+        end
       end
-    end
 
-    context "when the command exits with a nonzero value" do
-      include_context "Kitchen::Terraform::Client::Command.run status failure"
+      context "when the command exits with a nonzero value" do
+        include_context "Kitchen::Terraform::Client::Command.run status failure"
 
-      it do
-        is_expected.to result_in_failure.with_the_value matching "Expected process to exit with \\[0\\]"
+        it do
+          is_expected.to result_in_failure.with_the_value matching "Expected process to exit with \\[0\\]"
+        end
       end
-    end
 
-    context "when the command exits with a zero value" do
-      include_context "Kitchen::Terraform::Client::Command.run success"
+      context "when the command exits with a zero value" do
+        include_context "Kitchen::Terraform::Client::Command.run success"
 
-      it do
-        is_expected.to result_in_success.with_the_value "output"
+        it do
+          is_expected.to result_in_success.with_the_value "output"
+        end
       end
     end
   end

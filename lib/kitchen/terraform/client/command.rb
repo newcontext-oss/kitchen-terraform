@@ -140,10 +140,12 @@ module ::Kitchen::Terraform::Client::Command
   # @param working_directory [::String] the path to the directory in which to run the shell out.
   def self.create(options:, subcommand:, working_directory:)
     Try ::Mixlib::ShellOut::InvalidCommandOption do
-      ::Mixlib::ShellOut.new(
-        "terraform #{subcommand} #{options}".strip,
-        cwd: working_directory
-      )
+      ::Mixlib::ShellOut
+        .new(
+          "terraform #{subcommand} #{options}".strip,
+          cwd: working_directory,
+          environment: {"TF_IN_AUTOMATION" => true}
+        )
     end
       .to_either
       .or do |error|
