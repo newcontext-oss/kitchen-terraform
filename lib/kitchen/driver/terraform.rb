@@ -116,7 +116,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   include ::Kitchen::Terraform::Configurable
 
-  # The driver invokes its workflow in a constructive manner by applying changes to the Terraform state.
+  # The driver applies changes to the Terraform state through the following steps:
+  #
+  # 1. Prepares the instance directory
+  # 2. Executes `terraform init` in the instance directory
+  # 3. Executes `terraform validate` in the instance directory
+  # 4. Executes `terraform apply` in the instance directory
   #
   # @example
   #   `kitchen help create`
@@ -126,16 +131,35 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #       the create action concurrently.
   # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+  # @see ::Kitchen::Driver::Terraform#prepare_instance_directory
   # @see ::Kitchen::Driver::Terraform#run_apply
-  # @see ::Kitchen::Driver::Terraform#workflow
+  # @see ::Kitchen::Driver::Terraform#run_init
+  # @see ::Kitchen::Driver::Terraform#run_validate
   def create(_state)
-    workflow do
-      run_apply
-    end
+    prepare_instance_directory
+      .bind do
+        run_init
+      end
+      .bind do
+        run_validate
+      end
+      .bind do
+        run_apply
+      end
+      .or do |failure|
+        raise(
+          ::Kitchen::ActionFailed,
+          failure
+        )
+      end
   end
 
-  # The driver invokes its workflow in a destructive manner by destroying the Terraform state and removing the instance
-  # directory.
+  # The driver destroys the Terraform state through the following steps:
+  #
+  # 1. Prepares the instance directory
+  # 2. Executes `terraform init` in the instance directory
+  # 3. Executes `terraform validate` in the instance directory
+  # 4. Executes `terraform destroy` in the instance directory
   #
   # @example
   #   `kitchen help destroy`
@@ -145,15 +169,31 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #       the destroy action concurrently.
   # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+  # @see ::Kitchen::Driver::Terraform#prepare_instance_directory
   # @see ::Kitchen::Driver::Terraform#remove_instance_directory
   # @see ::Kitchen::Driver::Terraform#run_destroy
-  # @see ::Kitchen::Driver::Terraform#workflow
+  # @see ::Kitchen::Driver::Terraform#run_init
+  # @see ::Kitchen::Driver::Terraform#run_validate
   def destroy(_state)
-    workflow do
-      run_destroy.bind do
+    prepare_instance_directory
+      .bind do
+        run_init
+      end
+      .bind do
+        run_validate
+      end
+      .bind do
+        run_destroy
+      end
+      .bind do
         remove_instance_directory
       end
-    end
+      .or do |failure|
+        raise(
+          ::Kitchen::ActionFailed,
+          failure
+        )
+      end
   end
 
   # The driver parses the Terraform Client output subcomannd output as JSON.
@@ -400,35 +440,5 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [::String] the path to the Test Kitchen suite instance directory.
   def instance_directory
     @instance_directory ||= instance_pathname filename: "/"
-  end
-
-  # 1. Prepares the instance directory
-  # 2. Executes `terraform init` in the instance directory
-  # 3. Executes `terraform validate` in the instance directory
-  # 4. Executes a provided subcommand in the instance directory
-  #
-  # @api private
-  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @see ::Kitchen::Driver::Terraform#prepare_instance_directory
-  # @see ::Kitchen::Driver::Terraform#run_init
-  # @see ::Kitchen::Driver::Terraform#run_validate
-  # @yieldreturn [::Dry::Monads::Either] the result of a Terraform Client subcommand.
-  def workflow
-    prepare_instance_directory
-      .bind do
-        run_init
-      end
-      .bind do
-        run_validate
-      end
-      .bind do
-        yield
-      end
-      .or do |failure|
-        raise(
-          ::Kitchen::ActionFailed,
-          failure
-        )
-      end
   end
 end
