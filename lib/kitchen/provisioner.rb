@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2016-2017 New Context Services, Inc.
+# Copyright 2016 New Context Services, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,13 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/integer_examples"
+require "kitchen"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::LockTimeout" do
-    include_context(
-      "Kitchen::Terraform::ConfigSchemas::Integer",
-      attribute: :lock_timeout,
-      default_value: 0
-    )
-  end
+# This is the namespace for Test Kitchen provisioner plugins. This namespace is already defined in Test Kitchen but YARD
+# requires it to be redefined here in order to include documenation from the Kitchen::Terraform namespace.
+module Kitchen::Provisioner
+end

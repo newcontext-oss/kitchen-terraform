@@ -20,11 +20,18 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/boolean"
 
-# The +:color+ configuration attribute is an optional boolean which toggles colored output from the Terraform Client
-# commands.
+# This attribute toggles colored output from systems invoked by the plugin.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
+# Required:: False
+# Default:: If a {https://en.wikipedia.org/wiki/Terminal_emulator terminal emulator} is associated with the Test Kitchen
+#           process then +true+; else +false+.
+# Example:: <code>color: false</code>
+# Caveat:: This attribute does not toggle colored output from the Test Kitchen core, though it does use the same default
+#          logic. To toggle colored output from the core, the +--color+ and +--no-color+ command-line flags must be
+#          used.
 #
 # @abstract It must be included by plugin class in order to be used.
-# @see ::Kitchen::Terraform::Client::Command
 module ::Kitchen::Terraform::ConfigAttribute::Color
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
@@ -49,8 +56,12 @@ module ::Kitchen::Terraform::ConfigAttribute::Color
   # The default value depends on the presence of a terminal device associated with the Test Kitchen process.
   #
   # @return [Boolean] if a terminal device is associated then +true+; else +false+.
-  # @see https://en.wikipedia.org/wiki/Terminal_emulator Terminal emulator
   def config_color_default_value
     ::Kitchen.tty?
+  end
+
+  # @return [::String] the toggle converted to a flag.
+  def config_color_flag
+    config_color and "" or "-no-color"
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright 2016-2017 New Context Services, Inc.
+# Copyright 2016 New Context Services, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,13 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/string_examples"
+require "kitchen"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::State" do
-    include_context(
-      "Kitchen::Terraform::ConfigSchemas::String",
-      attribute: :state,
-      default_value: "kitchen_root/.kitchen/kitchen-terraform/suite-platform/terraform.tfstate"
-    )
-  end
+# This is the namespace for Test Kitchen driver plugins. This namespace is already defined in Test Kitchen but YARD
+# requires it to be redefined here in order to include documenation from the Kitchen::Terraform namespace.
+module Kitchen::Driver
+end

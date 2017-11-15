@@ -19,16 +19,23 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 
-# The +:backend_configurations+ configuration attribute is an optional hash of symobls and strings comprising Terraform
-# backend configuration arguments to complete a partial backend.
+# This attribute comprises {https://www.terraform.io/docs/backends/config.html Terraform backend configuration}
+# arguments to complete a
+# {https://www.terraform.io/docs/backends/config.html#partial-configuration partial backend configuration}.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760142 Mapping of scalars to scalars}
+# Required:: False
+# Example::
+#   _
+#     backend_configurations:
+#       address: demo.consul.io
+#       path: example_app/terraform_state
 #
 # @abstract It must be included by a plugin class in order to be used.
-# @see https://www.terraform.io/docs/backends/config.html#partial-configuration Terraform: Backend Configuration:
-#   Partial Configuration
 module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
-  # @param plugin_class [::Kitchen::Configurable] A plugin class.
+  # @param plugin_class [::Kitchen::Configurable] a plugin class.
   # @return [void]
   def self.included(plugin_class)
     ::Kitchen::Terraform::ConfigAttributeDefiner
@@ -49,5 +56,14 @@ module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
   # @return [::Hash] an empty hash.
   def config_backend_configurations_default_value
     {}
+  end
+
+  # @return [::String] the elements of the value converted to flags, joined by white space.
+  def config_backend_configurations_flags
+    config_backend_configurations
+      .map do |key, value|
+        "-backend-config='#{key}=#{value}'"
+      end
+      .join " "
   end
 end

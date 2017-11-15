@@ -19,9 +19,11 @@ require "kitchen/terraform"
 require "kitchen/terraform"
 require "mixlib/shellout"
 
-# This module comprises behaviour to run a Terraform command using the command line interface.
-#
-# @see https://www.terraform.io/docs/commands/index.html Terraform Commands (CLI)
+# Terraform commands are run by shelling out and using the
+# {https://www.terraform.io/docs/commands/index.html command-line interface}, which is assumed to be present in the
+# {https://en.wikipedia.org/wiki/PATH_(variable) PATH} of the user. The shell out environment includes the
+# TF_IN_AUTOMATION environment variable as specified by the
+# {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
 module ::Kitchen::Terraform::ShellOut
   extend ::Dry::Monads::Either::Mixin
   extend ::Dry::Monads::Try::Mixin

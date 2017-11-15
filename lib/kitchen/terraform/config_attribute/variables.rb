@@ -19,12 +19,17 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 
-# The +:variables+ configuration attribute is an optional hash of symbols and strings comprising Terraform variables to
-# be overridden during the application of Terraform state changes.
+# This attribute comprises {https://www.terraform.io/docs/configuration/variables.html Terraform variables}.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760142 Mapping of scalars to scalars}
+# Required:: False
+# Example::
+#   _
+#     variables:
+#       image: image-1234
+#       zone: zone-5
 #
 # @abstract It must be included by a plugin class in order to be used.
-# @see https://www.terraform.io/docs/commands/apply.html#var-39-foo-bar-39- Terraform: Command: apply: -var
-# @see https://www.terraform.io/docs/configuration/variables.html Terraform: Variables
 module ::Kitchen::Terraform::ConfigAttribute::Variables
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
@@ -49,5 +54,14 @@ module ::Kitchen::Terraform::ConfigAttribute::Variables
   # @return [::Hash] an empty hash.
   def config_variables_default_value
     {}
+  end
+
+  # @return [::String] the elements of the value converted to flags, joined by whitespace.
+  def config_variables_flags
+    config_variables
+      .map do |key, value|
+        "-var='#{key}=#{value}'"
+      end
+      .join " "
   end
 end
