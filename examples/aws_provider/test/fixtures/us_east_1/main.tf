@@ -25,6 +25,11 @@ output "security_group" {
   value       = "${module.example.security_group}"
 }
 
+output "terraform_state" {
+  description = "The path to the backend state file"
+  value       = "${module.example.terraform_state}"
+}
+
 output "test_target_public_dns" {
   description = "The list of public DNS names assigned to the test_target instances"
   value       = ["${module.example.test_target_public_dns}"]

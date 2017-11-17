@@ -137,6 +137,11 @@ output "security_group" {
   value       = "${aws_security_group.example.name}"
 }
 
+output "terraform_state" {
+  description = "The path to the backend state file"
+  value       = "${path.module}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate"
+}
+
 output "test_target_public_dns" {
   description = "The list of public DNS names assigned to the test_target instances"
   value       = ["${aws_instance.test_target.*.public_dns}"]
