@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.10.2, < 0.12.0"
+}
+
 variable "instances_ami" {
   description = "The AMI of the instances"
   type        = "string"

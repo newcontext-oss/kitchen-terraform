@@ -1,7 +1,3 @@
-terraform {
-  required_version = "~> 0.10.2"
-}
-
 variable "public_key_material" {
   description = "The public key material to use for SSH authentication with the instances"
   type        = "string"
