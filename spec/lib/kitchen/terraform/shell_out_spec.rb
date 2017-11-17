@@ -31,7 +31,7 @@ require "support/dry/monads/either_matchers"
       end
 
       let :logger do
-        ::Kitchen::Logger.new level: :fatal
+        ::Kitchen::Logger.new
       end
 
       subject do
