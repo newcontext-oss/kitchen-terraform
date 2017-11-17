@@ -18,6 +18,7 @@ require "dry/monads"
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/shell_out"
 require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
@@ -785,6 +786,10 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       context "when `terraform version` results in success" do
+        let :client_version_verifier do
+          instance_double ::Kitchen::Terraform::ClientVersionVerifier
+        end
+
         before do
           allow(shell_out)
             .to(
@@ -792,13 +797,18 @@ require "support/kitchen/terraform/configurable_examples"
                 .with(
                   command: "version",
                   logger: kitchen_logger
-                ).and_return(::Dry::Monads.Right(terraform_version_value))
+          ).and_return(::Dry::Monads.Right("Terraform v1.2.3"))
             )
+
+          allow(::Kitchen::Terraform::ClientVersionVerifier).to receive(:new).and_return client_version_verifier
+
+          allow(client_version_verifier)
+            .to receive(:verify).with(version_output: "Terraform v1.2.3").and_return verify_result
         end
 
-        context "when the value of the `terraform version` result is less than v0.10.2" do
-          let :terraform_version_value do
-            "terraform v0.10.1"
+        context "when the value of the `terraform version` result is not supported" do
+          let :verify_result do
+            ::Dry::Monads.Left "mocked verification failure"
           end
 
           it do
@@ -806,33 +816,15 @@ require "support/kitchen/terraform/configurable_examples"
               .to(
                 raise_error(
                   ::Kitchen::UserError,
-                  "Terraform v0.10.1 is not supported; install Terraform ~> v0.10.2"
+                  "mocked verification failure"
                 )
               )
           end
         end
 
-        context "when the value of the `terraform version` result is greater than or equal to v0.11.0" do
-          let :terraform_version_value do
-            "terraform v0.11.0"
-          end
-
-          it do
-            is_expected
-              .to(
-                raise_error(
-                  ::Kitchen::UserError,
-                  "Terraform v0.11.0 is not supported; install Terraform ~> v0.10.2"
-                )
-              )
-          end
-        end
-
-        context(
-          "when the value of the `terraform version` result is greater than or equal to v0.10.2 and less than v0.11.0"
-        ) do
-          let :terraform_version_value do
-            "terraform v0.10.3"
+        context "when the value of the `terraform version` result is supported" do
+          let :verify_result do
+            ::Dry::Monads.Right "mocked verification success"
           end
 
           it do

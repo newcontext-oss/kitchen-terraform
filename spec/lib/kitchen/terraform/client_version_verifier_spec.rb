@@ -31,7 +31,7 @@ require "support/dry/monads/either_matchers"
           is_expected
             .to(
               result_in_failure
-                .with_the_value("Terraform v#{version} is not supported; install Terraform ~> v0.10.2")
+                .with_the_value("Terraform v#{version} is not supported; install Terraform ~> v0.11.0")
             )
         end
       end
@@ -39,22 +39,6 @@ require "support/dry/monads/either_matchers"
       shared_examples "the version is supported" do
         it do
           is_expected.to result_in_success.with_the_value "Terraform v#{version} is supported"
-        end
-      end
-
-      context "when the version is 0.10.2" do
-        it_behaves_like "the version is supported" do
-          let :version do
-            "0.10.2"
-          end
-        end
-      end
-
-      context "when the version is 0.10.3" do
-        it_behaves_like "the version is supported" do
-          let :version do
-            "0.10.3"
-          end
         end
       end
 
@@ -66,10 +50,34 @@ require "support/dry/monads/either_matchers"
         end
       end
 
+      context "when the version is 0.10.2" do
+        it_behaves_like "the version is supported" do
+          let :version do
+            "0.10.2"
+          end
+        end
+      end
+
+      context "when the version is 0.10.8" do
+        it_behaves_like "the version is supported" do
+          let :version do
+            "0.10.8"
+          end
+        end
+      end
+
       context "when the version is 0.11.0" do
-        it_behaves_like "the version is unsupported" do
+        it_behaves_like "the version is supported" do
           let :version do
             "0.11.0"
+          end
+        end
+      end
+
+      context "when the version is 0.12.0" do
+        it_behaves_like "the version is unsupported" do
+          let :version do
+            "0.12.0"
           end
         end
       end
