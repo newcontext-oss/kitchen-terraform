@@ -806,7 +806,7 @@ require "support/kitchen/terraform/configurable_examples"
               .to(
                 raise_error(
                   ::Kitchen::UserError,
-                  "Terraform version 0.10.1 is not supported; upgrade to Terraform version ~> 0.10.2"
+                  "Terraform v0.10.1 is not supported; install Terraform ~> v0.10.2"
                 )
               )
           end
@@ -822,7 +822,7 @@ require "support/kitchen/terraform/configurable_examples"
               .to(
                 raise_error(
                   ::Kitchen::UserError,
-                  "Terraform version 0.11.0 is not supported; upgrade to Terraform version ~> 0.10.2"
+                  "Terraform v0.11.0 is not supported; install Terraform ~> v0.10.2"
                 )
               )
           end

@@ -31,14 +31,14 @@ require "support/dry/monads/either_matchers"
           is_expected
             .to(
               result_in_failure
-                .with_the_value("Terraform version #{version} is not supported; upgrade to Terraform version ~> 0.10.2")
+                .with_the_value("Terraform v#{version} is not supported; install Terraform ~> v0.10.2")
             )
         end
       end
 
       shared_examples "the version is supported" do
         it do
-          is_expected.to result_in_success.with_the_value "Terraform version #{version} is supported"
+          is_expected.to result_in_success.with_the_value "Terraform v#{version} is supported"
         end
       end
 
