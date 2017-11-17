@@ -89,7 +89,7 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [::Dry::Monads::Either] the result of the action.
   def call(state)
-    Maybe(state.dig(:kitchen_terraform_output))
+    Maybe(state[:kitchen_terraform_output])
       .or do
         Left(
           "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \

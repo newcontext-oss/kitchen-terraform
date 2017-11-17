@@ -50,7 +50,7 @@ module ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
         member
           .bind do |group|
             Try ::KeyError do
-              Maybe(group.dig(:hostnames))
+              Maybe(group[:hostnames])
                 .fmap do |hostnames_output_name|
                   output
                     .fetch(hostnames_output_name)
