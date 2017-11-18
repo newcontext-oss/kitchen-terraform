@@ -20,9 +20,4 @@ require "kitchen/terraform"
 #
 # @abstract It defines the interface for configuration attributes to implement.
 module ::Kitchen::Terraform::ConfigAttribute
-  def self.default_value(_plugin:)
-  end
-
-  def self.to_sym
-  end
 end

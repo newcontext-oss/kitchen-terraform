@@ -17,13 +17,17 @@
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
-require "kitchen/terraform/config_schemas/string"
+require "kitchen/terraform/config_schemas/integer"
 
-# The +:lock_timeout+ configuration attribute is an optional string which contains the duration to wait for a lock on
-# the Terraform state to be obtained.
+# This attribute controls the number of seconds that Terraform will wait for a lock on the state to be obtained during
+# {https://www.terraform.io/docs/state/locking.html operations related to state}.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803828 Integer}
+# Required:: False
+# Default:: +0+
+# Example:: <code>lock_timeout: 10</code>
 #
 # @abstract It must be included by a plugin class in order to be used.
-# @see https://www.terraform.io/docs/commands/apply.html#lock-timeout-0s Terraform: Command: apply: -lock-timeout
 module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
@@ -33,7 +37,7 @@ module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
     ::Kitchen::Terraform::ConfigAttributeDefiner
       .new(
         attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::String
+        schema: ::Kitchen::Terraform::ConfigSchemas::Integer
       )
       .define plugin_class: plugin_class
   end
@@ -45,8 +49,13 @@ module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
 
-  # @return [::String] 0 seconds.
+  # @return [::Integer] 0.
   def config_lock_timeout_default_value
-    "0s"
+    0
+  end
+
+  # @return [::String] the value converted to a flag.
+  def config_lock_timeout_flag
+    "-lock-timeout=#{config_lock_timeout}s"
   end
 end

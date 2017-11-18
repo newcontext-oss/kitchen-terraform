@@ -14,36 +14,93 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
+require "kitchen/provisioner"
 require "kitchen/terraform/configurable"
 
-# The design of the provisioner is unconventional compared to other Test Kitchen provisioner plugins. Since Terraform
-# creates and provisions resources when applying an execution plan, managed by the driver, the provisioner simply
-# proxies the driver's create action to apply any changes to the existing Terraform state.
+# The provisioner utilizes the driver to apply changes to the Terraform state in order to reach the desired
+# configuration of the root module.
 #
-# === Configuration
+# === Commands
 #
-# ==== Example .kitchen.yml snippet
+# The following command-line actions are provided by the provisioner.
+#
+# ==== kitchen converge
+#
+# A Test Kitchen instance is converged through the following steps.
+#
+# ===== Selecting the Test Terraform Workspace
+#
+#   terraform workspace select kitchen-terraform-<instance>
+#
+# ===== Updating the Terraform Dependency Modules
+#
+#   terraform get -update <directory>
+#
+# ===== Validating the Terraform Root Module
+#
+#   terraform validate \
+#     -check-variables=true \
+#     [-no-color] \
+#     [-var=<variables.first>...] \
+#     [-var-file=<variable_files.first>...] \
+#     <directory>
+#
+# ===== Applying the Terraform State Changes
+#
+#   terraform apply\
+#     -lock=true \
+#     -lock-timeout=<lock_timeout>s \
+#     -input=false \
+#     -auto-approve=true \
+#     [-no-color] \
+#     -parallelism=<parallelism> \
+#     -refresh=true \
+#     [-var=<variables.first>...] \
+#     [-var-file=<variable_files.first>...] \
+#     <directory>
+#
+# ===== Retrieving the Terraform Output
+#
+#   terraform output -json
+#
+# === Configuration Attributes
+#
+# The provisioner has no configuration attributes, but the +provisioner+ mapping must be declared with the plugin name
+# within the {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}.
 #
 #   provisioner:
 #     name: terraform
 #
-# @see ::Kitchen::Driver::Terraform
-# @see https://www.terraform.io/docs/commands/plan.html Terraform execution plan
-# @see https://www.terraform.io/docs/state/index.html Terraform state
+# @example Describe the converge command
+#   kitchen help converge
+# @example Converge a Test Kitchen instance
+#   kitchen converge default-ubuntu
 # @version 2
 class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   kitchen_provisioner_api_version 2
 
   include ::Kitchen::Terraform::Configurable
 
-  # Proxies the driver's create action.
+  # Converges a Test Kitchen instance.
   #
-  # @example
-  #   `kitchen converge suite-name`
   # @param state [::Hash] the mutable instance and provisioner state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   def call(state)
-    instance.driver.create state
+    instance
+      .driver
+      .apply
+      .fmap do |output|
+        state
+          .store(
+            :kitchen_terraform_output,
+            output
+          )
+      end
+      .or do |failure|
+        raise(
+          ::Kitchen::ActionFailed,
+          failure
+        )
+      end
   end
 end

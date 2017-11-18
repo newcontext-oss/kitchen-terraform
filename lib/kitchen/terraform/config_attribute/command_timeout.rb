@@ -19,11 +19,14 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/integer"
 
-# The +:command_timeout+ configuration attribute is an optional integer which represents the number of seconds to wait
-# for the Terraform Client commands to finish.
+# This attribute controls the number of seconds that the plugin will wait for Terraform commands to finish running.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803828 Integer}
+# Required:: False
+# Default:: +600+
+# Example:: <code>command_timeout: 1200</code>
 #
 # @abstract It must be included by a plugin class in order to be used.
-# @see ::Kitchen::Terraform::Client::Command
 module ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
@@ -45,7 +48,7 @@ module ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
 
-  # @return [::Integer] 600 seconds.
+  # @return [::Integer] 600.
   def config_command_timeout_default_value
     600
   end

@@ -68,6 +68,12 @@ require "kitchen/terraform/version.rb"
 
   specification.add_runtime_dependency "dry-validation", "~> 0.10"
 
+  specification
+    .add_runtime_dependency(
+      "inspec",
+      "= 1.44.8"
+    )
+
   specification.add_runtime_dependency "kitchen-inspec", "~> 0.18"
 
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"

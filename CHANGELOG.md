@@ -7,6 +7,33 @@ This project adheres to [Semantic Versioning].
 
 ## [3.0.0] - 2017-??-??
 
+### Added
+
+* Support for Terraform versions >= 0.10.2, < 0.12.0
+
+### Changed
+
+* Update `kitchen create` and `kitchen converge` to initialize and
+  apply, respectively
+
+* Driver and provisioner commands use Terraform workspaces
+
+* Execute Terraform commands in an environment including
+  the TF_IN_AUTOMATION variable
+
+* Change the lock_timeout configuration attribute of the driver to an
+  integer representing seconds
+
+* Remove the state configuration attribute from the driver
+
+* Remove the verify_plugins configuration attribute from the driver
+
+* Lock InSpec to 1.44.8 to maintain support for Ruby 2.2
+
+### Fixed
+
+* Issues resolving relative paths in Terraform configuration files
+
 ## [2.1.0] - 2017-10-11
 
 ### Added

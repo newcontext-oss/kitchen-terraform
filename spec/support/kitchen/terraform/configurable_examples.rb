@@ -39,16 +39,6 @@ require "kitchen/driver/terraform"
       end
     end
 
-    describe "#driver" do
-      subject do
-        described_instance.driver
-      end
-
-      it "returns the driver of the instance" do
-        is_expected.to be_kind_of ::Kitchen::Driver::Terraform
-      end
-    end
-
     describe "#finalize_config" do
       context "when the instance is undefined" do
         subject do
@@ -82,16 +72,6 @@ require "kitchen/driver/terraform"
           is_expected.to receive(:expand_paths!).ordered
           is_expected.to receive(:load_needed_dependencies!).ordered
         end
-      end
-    end
-
-    describe "#instance_pathname" do
-      subject do
-        described_instance.instance_pathname filename: "filename"
-      end
-
-      it "returns a pathname under the Test Kitchen instance directory" do
-        is_expected.to eq "/kitchen/root/.kitchen/kitchen-terraform/suite-platform/filename"
       end
     end
   end

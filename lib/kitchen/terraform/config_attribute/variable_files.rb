@@ -19,10 +19,18 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_schemas/array_of_strings"
 require "kitchen/terraform/file_path_config_attribute_definer"
 
-# The +:variable_files+ configuration attribute is an optional array of string which represent file paths.
+# This attribute comprises paths to
+# {https://www.terraform.io/docs/configuration/variables.html#variable-files Terraform variable files}.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequince of scalars}
+# Required:: False
+# Example::
+#   _
+#     variable_files:
+#       - /path/to/first/variable/file
+#       - /path/to/second/variable/file
 #
 # @abstract It must be included by a plugin class in order to be used.
-# @see https://www.terraform.io/docs/commands/apply.html#var-file-foo Terraform: Command: apply: -var-file
 module ::Kitchen::Terraform::ConfigAttribute::VariableFiles
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
@@ -47,5 +55,14 @@ module ::Kitchen::Terraform::ConfigAttribute::VariableFiles
   # @return [::Array] an empty array.
   def config_variable_files_default_value
     []
+  end
+
+  # @return [::String] the elements of the value converted to flags, joined by white space.
+  def config_variable_files_flags
+    config_variable_files
+      .map do |path|
+        "-var-file=#{path}"
+      end
+      .join " "
   end
 end

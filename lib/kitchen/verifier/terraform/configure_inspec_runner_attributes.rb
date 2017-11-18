@@ -63,34 +63,47 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
 
   # Invokes the function
   #
-  # @param driver [::Kitchen::Driver::Terraform] a kitchen-terraform driver
-  # @param group [::Hash] a kitchen-terraform verifier group
-  # @param terraform_state [::String] the path of a Terraform state file
-  # @return [::Dry::Monads::Either] the result of the function
-  def self.call(driver:, group:, terraform_state:)
-    Right("terraform_state" => terraform_state).bind do |attributes|
-      driver.output.bind do |output|
-        Right [
-          attributes,
+  # @param group [::Hash] a kitchen-terraform verifier group.
+  # @param output [::String] the output of the Terraform state.
+  # @return [::Dry::Monads::Either] the result of the function.
+  def self.call(group:, output:)
+    Right(
+      group
+        .fetch(
+          :attributes,
+          {}
+        )
+    )
+      .bind do |group_attributes|
+        Right(
           output
-        ]
+            .keys
+            .+(group_attributes.keys)
+            .zip(
+              output
+                .keys
+                .+(group_attributes.values)
+            )
+        )
       end
-    end.bind do |attributes, output|
-      Try ::KeyError do
-        output.each_pair do |output_name, output_body|
-          attributes.store output_name, output_body.fetch("value")
+      .bind do |unresolved_attributes|
+        Try ::KeyError do
+          unresolved_attributes
+            .reduce ::Hash.new do |resolved_attributes, (attribute_name, output_name)|
+              resolved_attributes
+                .merge(
+                  attribute_name
+                    .to_s =>
+                      output
+                        .fetch(output_name.to_s)
+                        .fetch("value")
+                )
+            end
         end
-        [attributes, output]
       end
-    end.bind do |attributes, output|
-      Maybe(group[:attributes]).bind do |group_attributes|
-        group_attributes.each_pair do |attribute_name, output_name|
-          attributes.store attribute_name.to_s, output.fetch(output_name.to_s).fetch("value")
-        end
+      .to_either
+      .or do |error|
+        Left "Configuring InSpec runner attributes resulted in failure: #{error}"
       end
-      Right attributes
-    end.to_either.or do |error|
-      Left "configuring Inspec::Runner attributes failed\n#{error}"
-    end
   end
 end

@@ -29,11 +29,6 @@ module ::Kitchen::Terraform::Configurable
     configurable_class.plugin_version ::Kitchen::Terraform::VERSION
   end
 
-  # @return [::Kitchen::Driver::Terraform] the driver which will manage the lifecycle actions of the instance.
-  def driver
-    instance.driver
-  end
-
   # Alternative implementation of Kitchen::Configurable#finalize_config! which validates the configuration before
   # attempting to expand paths.
   #
@@ -57,19 +52,5 @@ module ::Kitchen::Terraform::Configurable
     load_needed_dependencies!
 
     self
-  end
-
-  # Constructs a pathname under the Test Kitchen instance directory.
-  #
-  # @return [::String] +"<kitchen-root>/.kitchen/kitchen-terraform/<suite-platform>/<filename>"+.
-  def instance_pathname(filename:)
-    ::File
-      .join(
-        config.fetch(:kitchen_root),
-        ".kitchen",
-        "kitchen-terraform",
-        instance.name,
-        filename
-      )
   end
 end

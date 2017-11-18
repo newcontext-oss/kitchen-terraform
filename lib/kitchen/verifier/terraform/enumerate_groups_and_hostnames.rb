@@ -38,30 +38,48 @@ module ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
 
   # Invokes the function.
   #
-  # @param driver [::Kitchen::Driver::Terraform] a kitchen-terraform driver.
   # @param groups [::Array] a collection of groups.
   # @return [::Dry::Monads::Either] the result of the function.
   # @yieldparam group [::Hash] the group from which hostnamess are being enumerated.
   # @yieldparam hostname [::String] a hostname from the group.
-  def self.call(driver:, groups:, &block)
-    List(groups).fmap(&method(:Right)).typed(::Dry::Monads::Either).traverse do |member|
-      member.bind do |group|
-        if group.key? :hostnames
-          driver.output.bind do |output|
+  def self.call(groups:, output:)
+    List(groups)
+      .fmap(&method(:Right))
+      .typed(::Dry::Monads::Either)
+      .traverse do |member|
+        member
+          .bind do |group|
             Try ::KeyError do
-              Array(output.fetch(group.fetch(:hostnames)).fetch("value")).each do |hostname|
-                block.call group: group, hostname: hostname
-              end
-            end.to_either.or do |error|
-              Left error.to_s
+              Maybe(group[:hostnames])
+                .fmap do |hostnames_output_name|
+                  output
+                    .fetch(hostnames_output_name)
+                    .fetch("value")
+                end
+                .or do
+                  Right "localhost"
+                end
+                .fmap do |hostnames|
+                  Array(hostnames)
+                    .each do |hostname|
+                      yield(
+                        group: group,
+                        hostname: hostname
+                      )
+                    end
+                end
             end
+              .to_either
           end
-        else
-          Right block.call group: group, hostname: "localhost"
-        end
       end
-    end.bind do
-      Right "finished enumeration of groups and hostnames"
-    end
+      .bind do
+        Right "Enumeration of groups and hostnames resulted in success"
+      end
+      .or do |error|
+        Left(
+          "Enumeration of groups and hostnames resulted in failure due to the omission of the configured :hostnames " \
+            "output or an unexpected output structure: #{error}"
+        )
+      end
   end
 end

@@ -14,14 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "fileutils"
+require "kitchen"
 
-::RSpec.shared_context "Kitchen::Terraform::ClearDirectory" do
-  let :file_utils do
-    class_double(::FileUtils).as_stubbed_const
-  end
-
-  before do
-    allow(file_utils).to receive(:safe_unlink).with kind_of ::Array
-  end
+# This is the namespace for Test Kitchen driver plugins. This namespace is already defined in Test Kitchen but YARD
+# requires it to be redefined here in order to include documenation from the Kitchen::Terraform namespace.
+module Kitchen::Driver
 end

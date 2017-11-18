@@ -14,34 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
+require "support/kitchen/terraform/config_schemas/integer_examples"
 
 ::RSpec
   .shared_examples "Kitchen::Terraform::ConfigAttribute::LockTimeout" do
     include_context(
-      "Kitchen::Terraform::ConfigAttribute",
-      attribute: :lock_timeout
-    ) do
-      context "when the config omits :lock_timeout" do
-        it_behaves_like(
-          "a default value is used",
-          default_value: "0s"
-        )
-      end
-
-      context "when the config associates :lock_timeout with a nonstring" do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /lock_timeout.*must be a string/,
-          value: 123
-        )
-      end
-
-      context "when the config associates :command_timeout with a string" do
-        it_behaves_like(
-          "the value is valid",
-          value: "abc"
-        )
-      end
-    end
+      "Kitchen::Terraform::ConfigSchemas::Integer",
+      attribute: :lock_timeout,
+      default_value: 0
+    )
   end

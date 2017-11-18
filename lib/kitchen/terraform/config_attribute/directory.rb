@@ -19,13 +19,14 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_schemas/string"
 require "kitchen/terraform/file_path_config_attribute_definer"
 
-# The +:directory+ configuration attribute is an optional string which contains the path to the directory containing the
-# root Terraform module to be tested.
+# This attribute contains the path to the directory which contains the root Terraform module to be tested.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: False
+# Default:: The {https://en.wikipedia.org/wiki/Working_directory working directory} of the Test Kitchen process.
+# Example:: <code>directory: /path/to/terraform/module</code>
 #
 # @abstract It must be included by a plugin class in order to be used.
-# @see https://www.terraform.io/docs/commands/init.html#copy-a-source-module Terraform: Command: init: Copy a Source
-#   Module
-# @see https://en.wikipedia.org/wiki/Working_directory Working directory
 module ::Kitchen::Terraform::ConfigAttribute::Directory
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #

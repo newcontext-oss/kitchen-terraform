@@ -40,9 +40,9 @@ class ::Kitchen::Terraform::ClientVersionVerifier
         )
     ).bind do |version|
       if requirement.satisfied_by? version
-        Right "Terraform version #{version} is supported"
+        Right "Terraform v#{version} is supported"
       else
-        Left "Terraform version #{version} is not supported; upgrade to Terraform version ~> 0.10.2"
+        Left "Terraform v#{version} is not supported; install Terraform ~> v0.11.0"
       end
     end
   end
@@ -52,6 +52,11 @@ class ::Kitchen::Terraform::ClientVersionVerifier
   attr_reader :requirement
 
   def initialize
-    @requirement = ::Gem::Requirement.new "~> 0.10.2"
+    @requirement =
+      ::Gem::Requirement
+        .new(
+          ">= 0.10.2",
+          "< 0.12.0"
+        )
   end
 end
