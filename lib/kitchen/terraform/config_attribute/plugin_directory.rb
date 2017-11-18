@@ -19,12 +19,16 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_schemas/optional_string"
 require "kitchen/terraform/file_path_config_attribute_definer"
 
-# The +:plugin_directory+ configuration attribute is an optional string which contains the path to the directory
-# containing customized Terraform provider plugins to install in place of the official Terraform provider plugins.
+# This attribute contains the path to the directory which contains
+# {https://www.terraform.io/docs/commands/init.html#plugin-installation customized Terraform provider plugins} to
+# install in place of the official Terraform provider plugins.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: False
+# Default:: There is no default value because any value will disable the normal Terraform plugin retrieval process.
+# Example:: <code>plugin_directory: /path/to/terraform/plugins</code>
 #
 # @abstract It must be included by a plugin class in order to be used.
-# @see https://www.terraform.io/docs/commands/init.html#plugin-installation Terraform: Command: init: Plugin
-#   Installation
 module ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
@@ -46,10 +50,13 @@ module ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
 
-  # There is no default value because any value will disable the normal Terraform plugin retrieval process.
-  #
   # @return [nil]
   def config_plugin_directory_default_value
     nil
+  end
+
+  # @return [::String] the value converted to a flag.
+  def config_plugin_directory_flag
+    config_plugin_directory.nil? and "" or "-plugin-dir=#{config_plugin_directory}"
   end
 end

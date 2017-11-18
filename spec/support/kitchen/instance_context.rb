@@ -71,12 +71,3 @@ require "kitchen/verifier/terraform"
       ::Kitchen::Verifier::Terraform.new default_config
     end
   end
-
-::RSpec
-  .shared_context "Kitchen::Instance initialized" do
-    include_context "Kitchen::Instance" do
-      before do
-        instance
-      end
-    end
-  end

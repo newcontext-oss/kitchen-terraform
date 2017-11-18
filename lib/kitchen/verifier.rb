@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
+require "kitchen"
 
-# The namespace for functions that wrap the Terraform command-line interface (CLI) commands.
-#
-# @see https://www.terraform.io/docs/commands/index.html Terraform CLI
-module ::Kitchen::Terraform::Client
+# This is the namespace for Test Kitchen verifier plugins. This namespace is already defined in Test Kitchen but YARD
+# requires it to be redefined here in order to include documenation from the Kitchen::Terraform namespace.
+module Kitchen::Verifier
 end

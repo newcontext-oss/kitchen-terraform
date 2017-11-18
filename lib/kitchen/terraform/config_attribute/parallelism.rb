@@ -19,12 +19,15 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/integer"
 
-# The +:parallelism+ configuration attribute is an optional integer which represents the maximum number of concurrent
-# operations to allow while walking the resource graph for the Terraform Client apply command.
+# This attribute controls the number of concurrent operations to use while Terraform
+# {https://www.terraform.io/docs/internals/graph.html#walking-the-graph walks the resource graph}.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803828 Integer}
+# Required:: False
+# Default:: +10+
+# Example:: <code>parallelism: 50</code>
 #
 # @abstract It must be included by a plugin class in order to be used.
-# @see https://www.terraform.io/docs/commands/apply.html#parallelism-n Terraform: Command: apply: -parallelism
-# @see https://www.terraform.io/docs/internals/graph.html Terraform: Resource Graph
 module ::Kitchen::Terraform::ConfigAttribute::Parallelism
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
@@ -49,5 +52,10 @@ module ::Kitchen::Terraform::ConfigAttribute::Parallelism
   # @return [::Integer] a maximum of 10 concurrent operations.
   def config_parallelism_default_value
     10
+  end
+
+  # @return [::String] the value converted to a flag.
+  def config_parallelism_flag
+    "-parallelism=#{config_parallelism}"
   end
 end

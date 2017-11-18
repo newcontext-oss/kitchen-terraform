@@ -15,60 +15,65 @@
 # limitations under the License.
 
 require "dry/monads"
-require "kitchen"
+require "kitchen/verifier"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
 require "kitchen/verifier/inspec"
 
-# The kitchen-terraform verifier utilizes the InSpec infrastructure testing framework to verify the behaviour and state
-# of resources in the Terraform state.
+# The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the behaviour and
+# state of resources in the Terraform state.
 #
-# It is a subclass of the kitchen-inspec verifier.
+# === Commands
 #
-# === Test Kitchen Configuration
+# The following command-line commands are provided by the verifier.
 #
-# The configuration of the verifier is used to control the behaviour of the InSpec runner.
+# ==== kitchen verify
 #
-# More information about the available configuration attributes is located with the respective modules.
+# A Test Kitchen instance is verified by iterating through the groups and executing the associated InSpec controls in a
+# manner similar to the following command-line command.
 #
-# Test Kitchen configuration is defined in +.kitchen.yml+ and optionally overridden in +.kitchen.local.yml+.
-#
-# ==== Example
-#
-#   verifier:
-#     name: "terraform"
-#     color: false
-#     groups:
-#       -
-#         name: "group_one"
-#         attributes:
-#           foo: "bar"
-#         controls:
-#           - "biz"
-#         hostnames: "hostnames_output"
-#         port: "123"
-#         username: "test-user"
-#       -
-#         name: "group_two"
+#   inspec exec \
+#     [--attrs=<terraform_outputs>] \
+#     --backend=<ssh|local> \
+#     [--no-color] \
+#     [--controls=<group.controls>] \
+#     --host=<group.hostnames.current|localhost> \
+#     [--password=<group.password>] \
+#     [--port=<group.port>] \
+#     --profiles-path=test/integration/<suite> \
+#     [--user=<group.username>] \
 #
 # === InSpec Profiles
 #
-# The InSpec profile for a Test Kitchen suite exists under +./test/integration/<Test Kitchen suite name>/+.
+# The {https://www.inspec.io/docs/reference/profiles/ InSpec profile} for a Test Kitchen suite must be defined under
+# +./test/integration/<suite>/+.
 #
-# @see ::Kitchen::Terraform::ConfigAttribute::Color
-# @see ::Kitchen::Terraform::ConfigAttribute::Groups
-# @see https://en.wikipedia.org/wiki/Secure_Shell Secure Shell
-# @see https://github.com/chef/kitchen-inspec/ kitchen-inspec
-# @see https://github.com/chef/kitchen-inspec/blob/master/lib/kitchen/verifier/inspec.rb kitchen-inspec: Verifier
-# @see https://www.inspec.io/ InSpec
-# @see https://www.inspec.io/docs/reference/profiles/ InSpec: Profiles
-# @see https://www.terraform.io/docs/state/index.html Terraform: State
+# === Configuration Attributes
+#
+# The configuration attributes of the verifier control the behaviour of the InSpec runner. Within the
+# {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}, these attributes must be
+# declared in the +verifier+ mapping along with the plugin name.
+#
+#   verifier:
+#     name: terraform
+#     a_configuration_attribute: some value
+#
+# ==== color
+#
+# {include:Kitchen::Terraform::ConfigAttribute::Color}
+#
+# ==== groups
+#
+# {include:Kitchen::Terraform::ConfigAttribute::Groups}
+#
 # @version 2
 class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   kitchen_verifier_api_version 2
 
   include ::Dry::Monads::Either::Mixin
+
+  include ::Dry::Monads::Maybe::Mixin
 
   include ::Kitchen::Terraform::ConfigAttribute::Color
 
@@ -84,16 +89,39 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [::Dry::Monads::Either] the result of the action.
   def call(state)
-    self.class::EnumerateGroupsAndHostnames.call driver: driver, groups: config_groups do |group:, hostname:|
-      state.store :group, group
-      state.store :hostname, hostname
-      info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"
-      super state
-    end.bind do |success|
-      Right logger.debug success
-    end.or do |failure|
-      raise ::Kitchen::ActionFailed, failure
-    end
+    Maybe(state[:kitchen_terraform_output])
+      .or do
+        Left(
+          "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \
+            "kitchen-terraform provisioner has not successfully converged"
+        )
+      end
+      .bind do |output|
+        ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
+          .call(
+            groups: config_groups,
+            output: ::Kitchen::Util.stringified_hash(output)
+          ) do |group:, hostname:|
+            state
+              .store(
+                :kitchen_terraform_group,
+                group
+              )
+            state
+              .store(
+                :kitchen_terraform_hostname,
+                hostname
+              )
+            info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"
+            super state
+          end
+      end
+      .or do |failure|
+        raise(
+          ::Kitchen::ActionFailed,
+          failure
+        )
+      end
   end
 
   private
@@ -105,23 +133,51 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   # @return [::Hash] Inspec Runner options.
   # @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb ::Inspec::Runner
   def runner_options(transport, state = {}, platform = nil, suite = nil)
-    super(transport, state, platform, suite).tap do |options|
-      self.class::ConfigureInspecRunnerBackend.call hostname: state.fetch(:hostname), options: options
-      self.class::ConfigureInspecRunnerHost.call hostname: state.fetch(:hostname), options: options
-      self.class::ConfigureInspecRunnerPort.call group: state.fetch(:group), options: options
-      self
-        .class::ConfigureInspecRunnerSSHKey
-        .call(
-          group: state.fetch(:group),
-          options: options
-        )
-      self.class::ConfigureInspecRunnerUser.call group: state.fetch(:group), options: options
-      self.class::ConfigureInspecRunnerAttributes
-        .call(driver: driver, group: state.fetch(:group), terraform_state: driver[:state]).bind do |attributes|
-          config.store :attributes, attributes
-        end
-      self.class::ConfigureInspecRunnerControls.call group: state.fetch(:group), options: options
-    end
+    super(transport, state, platform, suite)
+      .tap do |options|
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend
+          .call(
+            hostname: state.fetch(:kitchen_terraform_hostname),
+            options: options
+          )
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
+          .call(
+            hostname: state.fetch(:kitchen_terraform_hostname),
+            options: options
+          )
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
+          .call(
+            group: state.fetch(:kitchen_terraform_group),
+            options: options
+          )
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerSSHKey
+          .call(
+            group: state.fetch(:kitchen_terraform_group),
+            options: options
+          )
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
+          .call(
+            group: state.fetch(:kitchen_terraform_group),
+            options: options
+          )
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
+          .call(
+            group: state.fetch(:kitchen_terraform_group),
+            output: ::Kitchen::Util.stringified_hash(state.fetch(:kitchen_terraform_output))
+          )
+          .bind do |attributes|
+            options
+              .store(
+                :attributes,
+                attributes
+              )
+          end
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
+          .call(
+            group: state.fetch(:kitchen_terraform_group),
+            options: options
+          )
+      end
   end
 end
 

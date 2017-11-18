@@ -1,3 +1,7 @@
+terraform {
+  required_version = ">= 0.10.2, < 0.12.0"
+}
+
 variable "instances_ami" {
   description = "The AMI of the instances"
   type        = "string"
@@ -135,6 +139,11 @@ output "reachable_other_host_public_ip" {
 output "security_group" {
   description = "The name of the security group"
   value       = "${aws_security_group.example.name}"
+}
+
+output "terraform_state" {
+  description = "The path to the backend state file"
+  value       = "${path.module}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate"
 }
 
 output "test_target_public_dns" {

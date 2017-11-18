@@ -23,13 +23,43 @@ jobs:
       services:
         - docker
       env:
-        - "PATH=\"$PATH:$PWD/terraform\""
+        - "PATH=\"$PATH:$PWD/terraform_0.11.0\""
+      rvm: "2.4"
+      before_install:
+        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.11.0/terraform_0.11.0_linux_amd64.zip
+        - "sha256sum terraform.zip | grep \"402b4333792967986383670134bb52a8948115f83ab6bda35f57fa2c3c9e9279\""
+        - mkdir terraform_0.11.0
+        - unzip terraform.zip -d terraform_0.11.0
+        - cd examples/docker_provider
+      script:
+        - bundle exec kitchen test --log-level debug
+    - stage: integration
+      sudo: required
+      services:
+        - docker
+      env:
+        - "PATH=\"$PATH:$PWD/terraform_0.10.8\""
+      rvm: "2.4"
+      before_install:
+        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.10.8/terraform_0.10.8_linux_amd64.zip
+        - "sha256sum terraform.zip | grep \"b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db\""
+        - mkdir terraform_0.10.8
+        - unzip terraform.zip -d terraform_0.10.8
+        - cd examples/docker_provider
+      script:
+        - bundle exec kitchen test --log-level debug
+    - stage: integration
+      sudo: required
+      services:
+        - docker
+      env:
+        - "PATH=\"$PATH:$PWD/terraform_0.10.2\""
       rvm: "2.4"
       before_install:
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.10.2/terraform_0.10.2_linux_amd64.zip
         - "sha256sum terraform.zip | grep \"6c1b5ce1a78bc7bb895055052d9074e519f51293770871acfe2dbd289e2f2aaa\""
-        - mkdir terraform
-        - unzip terraform.zip -d terraform
+        - mkdir terraform_0.10.2
+        - unzip terraform.zip -d terraform_0.10.2
         - cd examples/docker_provider
       script:
         - bundle exec kitchen test --log-level debug
