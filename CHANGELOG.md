@@ -34,6 +34,8 @@ This project adheres to [Semantic Versioning].
 
 * Issues resolving relative paths in Terraform configuration files
 
+* Links to broken documentation on http://rubydoc.info
+
 ## [2.1.0] - 2017-10-11
 
 ### Added
