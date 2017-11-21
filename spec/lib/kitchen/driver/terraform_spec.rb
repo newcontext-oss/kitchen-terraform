@@ -797,7 +797,8 @@ require "support/kitchen/terraform/configurable_examples"
                 .with(
                   command: "version",
                   logger: kitchen_logger
-          ).and_return(::Dry::Monads.Right("Terraform v1.2.3"))
+                )
+                .and_return(::Dry::Monads.Right("Terraform v1.2.3"))
             )
 
           allow(::Kitchen::Terraform::ClientVersionVerifier).to receive(:new).and_return client_version_verifier
