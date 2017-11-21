@@ -71,7 +71,8 @@ require "kitchen/terraform/version.rb"
   specification
     .add_runtime_dependency(
       "inspec",
-      "= 1.44.8"
+      ">= 0.34.0",
+      "<= 1.44.8"
     )
 
   specification.add_runtime_dependency "kitchen-inspec", "~> 0.18"
