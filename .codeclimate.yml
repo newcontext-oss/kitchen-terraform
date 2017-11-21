@@ -1,5 +1,13 @@
 # https://codeclimate.com/github/newcontext-oss/kitchen-terraform
-engines:
+exclude_patterns:
+  - assets/
+  - bin/
+  - certs/
+  - coverage/
+  - doc/
+  - examples/
+  - tmp/
+plugins:
   bundler-audit:
     enabled: true
   duplication:
@@ -9,16 +17,16 @@ engines:
         - "ruby"
   fixme:
     enabled: true
+  flog:
+    enabled: true
+  git-legal:
+    enabled: true
   markdownlint:
     enabled: true
   reek:
     enabled: true
   rubocop:
     enabled: true
-exclude_paths:
-  - "examples/"
-ratings:
-  paths:
-    - "**.md"
-    - "**.rb"
-    - "Gemfile.lock"
+  structure:
+    enabled: true
+version: 2
