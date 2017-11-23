@@ -24,10 +24,10 @@ require "kitchen/terraform/file_path_config_attribute_definer"
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
 # Default:: The {https://en.wikipedia.org/wiki/Working_directory working directory} of the Test Kitchen process.
-# Example:: <code>directory: /path/to/terraform/module</code>
+# Example:: <code>root_module_directory: /path/to/terraform/root/module/directory</code>
 #
 # @abstract It must be included by a plugin class in order to be used.
-module ::Kitchen::Terraform::ConfigAttribute::Directory
+module ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
   # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
   #
   # @param plugin_class [::Kitchen::Configurable] A plugin class.
@@ -43,13 +43,13 @@ module ::Kitchen::Terraform::ConfigAttribute::Directory
 
   # @return [::Symbol] the symbol corresponding to the attribute.
   def self.to_sym
-    :directory
+    :root_module_directory
   end
 
   extend ::Kitchen::Terraform::ConfigAttributeCacher
 
   # @return [::String] the working directory of the Test Kitchen process.
-  def config_directory_default_value
+  def config_root_module_directory_default_value
     "."
   end
 end

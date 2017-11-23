@@ -28,6 +28,9 @@ This project adheres to [Semantic Versioning].
 
 * Remove the verify_plugins configuration attribute from the driver
 
+* Rename the directory configuration attribute of the driver to
+  root_module_directory
+
 * Lock InSpec to 1.44.8 to maintain support for Ruby 2.2
 
 ### Fixed

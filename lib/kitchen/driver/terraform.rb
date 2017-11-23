@@ -22,10 +22,10 @@ require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
-require "kitchen/terraform/config_attribute/directory"
 require "kitchen/terraform/config_attribute/lock_timeout"
 require "kitchen/terraform/config_attribute/parallelism"
 require "kitchen/terraform/config_attribute/plugin_directory"
+require "kitchen/terraform/config_attribute/root_module_directory"
 require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/configurable"
@@ -58,7 +58,7 @@ require "kitchen/terraform/shell_out"
 #     -get-plugins=true \
 #     [-plugin-dir=<plugin_directory>] \
 #     -verify-plugins=true \
-#     <directory>
+#     <root_module_directory>
 #
 # ===== Creating a Test Terraform Workspace
 #
@@ -82,7 +82,7 @@ require "kitchen/terraform/shell_out"
 #     -get-plugins=true \
 #     [-plugin-dir=<plugin_directory>] \
 #     -verify-plugins=true \
-#     <directory>
+#     <root_module_directory>
 #
 # ===== Selecting the Test Terraform Workspace
 #
@@ -100,7 +100,7 @@ require "kitchen/terraform/shell_out"
 #     -refresh=true \
 #     [-var=<variables.first>...] \
 #     [-var-file=<variable_files.first>...] \
-#     <directory>
+#     <root_module_directory>
 #
 # ===== Selecting the Default Terraform Workspace
 #
@@ -136,9 +136,9 @@ require "kitchen/terraform/shell_out"
 #
 # {include:Kitchen::Terraform::ConfigAttribute::CommandTimeout}
 #
-# ==== directory
+# ==== root_module_directory
 #
-# {include:Kitchen::Terraform::ConfigAttribute::Directory}
+# {include:Kitchen::Terraform::ConfigAttribute::RootModuleDirectory}
 #
 # ==== lock_timeout
 #
@@ -184,13 +184,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
 
-  include ::Kitchen::Terraform::ConfigAttribute::Directory
-
   include ::Kitchen::Terraform::ConfigAttribute::LockTimeout
 
   include ::Kitchen::Terraform::ConfigAttribute::Parallelism
 
   include ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
+
+  include ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
 
   include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
 
@@ -310,7 +310,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-refresh=true " \
             "#{config_variables_flags} " \
             "#{config_variable_files_flags} " \
-            "#{config_directory}",
+            "#{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -320,7 +320,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def apply_run_get
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "get -update #{config_directory}",
+        command: "get -update #{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -365,7 +365,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_color_flag} " \
             "#{config_variables_flags} " \
             "#{config_variable_files_flags} " \
-            "#{config_directory}",
+            "#{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -389,7 +389,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-get-plugins=true " \
             "#{config_plugin_directory_flag} " \
             "-verify-plugins=true " \
-            "#{config_directory}",
+            "#{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -430,7 +430,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-refresh=true " \
             "#{config_variables_flags} " \
             "#{config_variable_files_flags} " \
-            "#{config_directory}",
+            "#{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -453,7 +453,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-get-plugins=true " \
             "#{config_plugin_directory_flag} " \
             "-verify-plugins=true " \
-            "#{config_directory}",
+            "#{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
