@@ -1,0 +1,62 @@
+body {
+  background-color: #E5E3E3;
+  font-family: -apple-system, BlinkMacSystemFont, "Avenir Next", "Avenir",
+    "Segoe UI", "Lucida Grande", "Helvetica Neue", "Helvetica", "Fira Sans",
+    "Roboto", "Noto", "Droid Sans", "Cantarell", "Oxygen", "Ubuntu",
+    "Franklin Gothic Medium", "Century Gothic", "Liberation Sans", sans-serif;
+  text-align: center;
+}
+
+h1 {
+  font-size: 45em;
+}
+
+.header {
+  background-color: #F0F4ED;
+}
+
+.footer {
+  padding: 0px;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  background-color: #F0F4ED;
+}
+
+.syntax-highlight {
+  padding: 10px;
+}
+
+.content {
+  padding: 10vh 1rem;
+}
+
+hr {
+  height: 2px;
+  background-color:#92af8f;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.jumbotron {
+  background-color: #FCFDFB;
+}
+
+.list-group-item.active {
+  border-color: #9BD591;
+  background-color: #9BD591;
+}
+
+#blur{
+	filter: blur(7px);
+}
+
+.navbar {
+  padding: 0px;
+}
+
+.btn.btn-primary, .navbar .navbar-nav > li > a.btn.btn-primary, .btn.btn-primary:hover, .navbar .navbar-nav > li > a.btn.btn-primary:hover, .btn.btn-primary:focus, .navbar .navbar-nav > li > a.btn.btn-primary:focus, .btn.btn-primary:active, .navbar .navbar-nav > li > a.btn.btn-primary:active, .btn.btn-primary.active, .navbar .navbar-nav > li > a.btn.btn-primary.active, .btn.btn-primary:active:focus, .navbar .navbar-nav > li > a.btn.btn-primary:active:focus, .btn.btn-primary:active:hover, .navbar .navbar-nav > li > a.btn.btn-primary:active:hover, .btn.btn-primary.active:focus, .navbar .navbar-nav > li > a.btn.btn-primary.active:focus, .btn.btn-primary.active:hover, .navbar .navbar-nav > li > a.btn.btn-primary.active:hover, .open > .btn.btn-primary.dropdown-toggle, .open > .navbar .navbar-nav > li > a.btn.btn-primary.dropdown-toggle, .open > .btn.btn-primary.dropdown-toggle:focus, .open > .navbar .navbar-nav > li > a.btn.btn-primary.dropdown-toggle:focus, .open > .btn.btn-primary.dropdown-toggle:hover, .open > .navbar .navbar-nav > li > a.btn.btn-primary.dropdown-toggle:hover {
+  background-color: #9BD591;
+}

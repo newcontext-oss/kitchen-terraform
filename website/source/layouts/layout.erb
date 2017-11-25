@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title><%= current_page.data.title || "Kitchen-Terraform" %></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <%= stylesheet_link_tag 'highlighting' %>
+    <%= stylesheet_link_tag 'material' %>
+    <%= stylesheet_link_tag 'site' %>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <%= javascript_include_tag 'site' %>
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
+      <%= link_to 'Kitchen-Terraform', '/index.html', :class => 'navbar-brand' %>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <%= link_to 'Getting Started', '/docs/start.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'Docs', '/docs/index.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'Examples', '/examples/index.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'About', '/about.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'Community', '/community/index.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
+              Contribute
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="content text-left">
+      <%= yield %>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">Community driven, created and maintained by
+          <a href="http://newcontext.com" style="color: #32c850;">
+            <%= image_tag "newcontext_logo.png", :class => "d-inline-block", :style => "vertical-align: sub;", :width => "30", :height => "24", :alt => "newcontext logo" %>
+            New Context Services, Inc.
+          </a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

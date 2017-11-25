@@ -1,0 +1,65 @@
+---
+title: Kitchen-Terraform example code
+---
+
+<div class="container" style="padding-top: 0px;">
+  <div class="jumbotron">
+    <div class="row">
+      <div class="col">
+        <h1 class="display-3">
+          Examples
+        </h1>
+        <p class="lead">
+          Terraform Provider examples, walk-throughs.
+          <br><br>
+          Example testing with Inspec and other frameworks.
+        </p>
+      </div>
+      <div id="blur" class="col">
+        <% code("ruby") do %>
+---
+driver:
+  name: "terraform"
+verifier:
+  name: "terraform"
+  groups:
+    - name: "example"
+      controls:
+        - "example"
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card" style="width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">AWS Provider (EC2)</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Walk-Through</h6>
+          <p class="card-text">Start to finish tutorial whichs shows you how to build EC2 server in Terraform and test the results with Inspec.</p>
+          <a href="#" class="btn btn-primary card-link">Let's Learn!</a>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">AWS Provider (Deep Dive)</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Detailed Guide</h6>
+          <p class="card-text">Learn the more advanced features of kitchen-terraform, test a larger set of Terraform code and use Inspec controls and profiles.</p>
+          <a href="#" class="btn btn-primary card-link">Dive In!</a>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">Docker Provider</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Tested & Immutable!</h6>
+          <p class="card-text">Provides an example on how to utilize kitchen-terraform to test a Docker container running on localhost.</p>
+          <a href="#" class="btn btn-primary card-link">Go!</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
