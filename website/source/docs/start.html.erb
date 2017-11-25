@@ -1,0 +1,172 @@
+---
+title: Getting Started with Kitchen-Terraform
+---
+
+<div class="container" style="padding-top: 0px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-3">
+          Getting Started
+        </h1>
+        <p class="lead">
+          A quick guide to get started with Kitchen-Terraform.
+          <br><br>
+          Provides instructions to install dependencies, start a brand new Terraform <a href="https://www.terraform.io/docs/configuration/modules.html"  style="color: #32c850;">module</a> and write Inspec tests for the module.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">
+          1. Gather Dependencies
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">
+          2. Create Project
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">
+          3. Create/Run Terraform code
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">
+          4. Create/Run Inspec Tests
+        </a>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+          Install Terraform: <a href="https://www.terraform.io/downloads.html" style="color: #32c850;">
+            https://www.terraform.io/downloads.html
+          </a>
+          <br>
+          Install Ruby: <a href="https://www.ruby-lang.org/en/documentation/installation/" style="color: #32c850;">
+            https://www.ruby-lang.org/en/documentation/installation/
+          </a>
+          <br><br>
+          Additional installation methods:
+          <br><br>
+          <div class="row">
+            <div class="col-sm">
+              Mac OS (homebrew):
+              <% code("bash") do %>
+  brew install terraform
+  brew install ruby
+              <% end %>
+            </div>
+            <div class="col-sm">
+              Version managers:<br>
+              <a href="https://github.com/kamatama41/tfenv" style="color: #32c850;">tfenv</a>
+              <br>
+              <a href="https://github.com/rbenv/rbenv" style="color: #32c850;">rbenv</a>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+          <% code("bash") do %>
+# Create module and folder structure
+mkdir -p my_terraform_module && cd my_terraform_module
+
+mkdir -p test/integration/example/controls \
+         test/fixtures/example/
+
+# Create GEM file
+(
+cat << EOP
+source "https://rubygems.org/" do
+  gem "kitchen-terraform", "~> 2.0"
+end
+EOP
+) > Gemfile
+
+# Install kitchen-terraform and other rubygems
+# If needed run `gem install bundler`
+bundle install
+
+# Create .kitchen.yml
+(
+cat << EOP
+---
+driver:
+  name: "terraform"
+  directory: "test/fixtures/example"
+  parallelism: 4
+provisioner:
+  name: "terraform"
+transport:
+  name: "ssh"
+verifier:
+  name: "terraform"
+  groups:
+    - name: "example"
+      controls:
+        - "example"
+platforms:
+  - name: "terraform"
+suites:
+  - name: "example"
+EOP
+) > .kitchen.yml
+          <% end %>
+        </div>
+        <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+          <% code("bash") do %>
+# Create Terraform module code
+(
+cat << EOP
+resource "null_resource" "example" {
+  provisioner "local-exec" {
+    command = "echo 'this is my first test' > foobar"
+  }
+}
+EOP
+) > main.tf
+
+# Create Terraform fixture code
+# that calls the module's Terraform code
+# to help simulate the module's code
+(
+cat << EOP
+module "example" {
+  source = "../../.."
+}
+EOP
+) > test/fixtures/example/main.tf
+
+# Run the Terraform code
+bundle exec kitchen converge
+          <% end %>
+        </div>
+        <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+          <% code("bash") do %>
+# Create inspec.yml
+(
+cat << EOP
+---
+name: example
+EOP
+) > test/integration/example/inspec.yml
+
+# Create Inspec control test file
+(
+cat << EOP
+# frozen_string_literal: true
+
+control "example" do
+  describe file('.kitchen/kitchen-terraform/example-terraform/foobar') do
+    it { should exist }
+  end
+end
+EOP
+) > test/integration/example/controls/example.rb
+
+# Run the Inspec code
+bundle exec kitchen verify
+          <% end %>
+          And that's it, you wrote your first kitchen-terraform test suite! Please take a peek at our <a href="/docs/index.html" style="color: #32c850;">docs</a> and <a href="/examples/index.html" style="color: #32c850;">examples</a> for additional information.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
