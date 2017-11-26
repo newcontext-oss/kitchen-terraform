@@ -20,23 +20,23 @@ title: Getting Started with Kitchen-Terraform
   <div class="row">
     <div class="col-4">
       <div class="list-group" id="list-tab" role="tablist">
-        <a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">
+        <a class="list-group-item list-group-item-action active" id="list-one-list" data-toggle="list" href="#list-one" role="tab" aria-controls="one">
           1. Gather Dependencies
         </a>
-        <a class="list-group-item list-group-item-action" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">
+        <a class="list-group-item list-group-item-action" id="list-two-list" data-toggle="list" href="#list-two" role="tab" aria-controls="two">
           2. Create Project
         </a>
-        <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab" aria-controls="messages">
+        <a class="list-group-item list-group-item-action" id="list-three-list" data-toggle="list" href="#list-three" role="tab" aria-controls="three">
           3. Create/Run Terraform code
         </a>
-        <a class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab" aria-controls="settings">
+        <a class="list-group-item list-group-item-action" id="list-four-list" data-toggle="list" href="#list-four" role="tab" aria-controls="four">
           4. Create/Run Inspec Tests
         </a>
       </div>
     </div>
     <div class="col-8">
       <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+        <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
           Install Terraform: <a href="https://www.terraform.io/downloads.html" style="color: #32c850;">
             https://www.terraform.io/downloads.html
           </a>
@@ -63,7 +63,7 @@ brew install ruby
             </div>
           </div>
         </div>
-        <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+        <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
           <% code("bash") do %>
 # Create module and folder structure
 mkdir -p my_terraform_module && cd my_terraform_module
@@ -110,7 +110,7 @@ EOP
 ) > .kitchen.yml
           <% end %>
         </div>
-        <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+        <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           <% code("ruby") do %>
 # Create Terraform module code
 (
@@ -138,7 +138,7 @@ EOP
 bundle exec kitchen converge
           <% end %>
         </div>
-        <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+        <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
           <% code("ruby") do %>
 # Create inspec.yml
 (

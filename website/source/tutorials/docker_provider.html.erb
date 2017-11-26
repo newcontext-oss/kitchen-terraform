@@ -31,7 +31,7 @@ title: Using the Terraform Docker Provider
           4. Create tests
         </a>
         <a class="list-group-item list-group-item-action" id="list-five-list" data-toggle="list" href="#list-five" role="tab" aria-controls="five">
-          4. Run tests
+          5. Run tests
         </a>
       </div>
     </div>
@@ -123,7 +123,7 @@ suites:
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
           Example Terraform code using the Docker provider is below. The resources created by this code is what we'll be testing later on.
           <br><br>
-          Create a main.tf and add each block of code into it.
+          Create a main.tf file and add each block of code into it.
           <br><br>
           The configuration is restricted to Terraform versions equal to or greater than 0.10.2 and less than 0.11.0. The local backend is configured to demonstrate support for backends.
           <br><br>
@@ -178,7 +178,7 @@ resource "docker_container" "ubuntu" {
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           To assist in testing, Terraform outputs will provide the path of the backend state file and the localhost hostname. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
-          Create an output.tf and add each block of code into it.
+          Create an output.tf file and add each block of code into it.
           <br><br>
           <% code("ruby") do %>
 output "backend_state" {
@@ -269,8 +269,10 @@ end
 bundle exec kitchen converge
 
 # Run the Inspec controls from the .kitchen.yml verifier section
-bundle exec kitchen test
+bundle exec kitchen verify
           <% end %>
+          Below is example output of kitchen-terraform running.
+          <br><br>
           <% code("bash") do %>
 -----> Starting Kitchen (v<x.x.x.>)
        Terraform v<x.x.x.>
