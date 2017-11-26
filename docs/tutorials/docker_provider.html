@@ -73,7 +73,7 @@
           4. Create tests
         </a>
         <a class="list-group-item list-group-item-action" id="list-five-list" data-toggle="list" href="#list-five" role="tab" aria-controls="five">
-          4. Run tests
+          5. Run tests
         </a>
       </div>
     </div>
@@ -159,7 +159,7 @@ bundle install
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
           Example Terraform code using the Docker provider is below. The resources created by this code is what we'll be testing later on.
           <br><br>
-          Create a main.tf and add each block of code into it.
+          Create a main.tf file and add each block of code into it.
           <br><br>
           The configuration is restricted to Terraform versions equal to or greater than 0.10.2 and less than 0.11.0. The local backend is configured to demonstrate support for backends.
           <br><br>
@@ -204,7 +204,7 @@ bundle install
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           To assist in testing, Terraform outputs will provide the path of the backend state file and the localhost hostname. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
-          Create an output.tf and add each block of code into it.
+          Create an output.tf file and add each block of code into it.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">output</span> <span class="s2">"backend_state"</span> <span class="p">{</span>
   <span class="n">description</span> <span class="o">=</span> <span class="s2">"The path to the backend state file"</span>
@@ -286,8 +286,10 @@ bundle install
 <span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
 
 <span class="c1"># Run the Inspec controls from the .kitchen.yml verifier section</span>
-<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="nb">test</span>
-</code></pre></div><div class="highlight"><pre class="syntax-highlight shell"><code><span class="nt">-----</span><span class="o">&gt;</span> Starting Kitchen <span class="o">(</span>v&lt;x.x.x.&gt;<span class="o">)</span>
+<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
+</code></pre></div>          Below is example output of kitchen-terraform running.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nt">-----</span><span class="o">&gt;</span> Starting Kitchen <span class="o">(</span>v&lt;x.x.x.&gt;<span class="o">)</span>
        Terraform v&lt;x.x.x.&gt;
 
 <span class="nv">$$$$$$</span> Terraform version &lt;x.x.x.&gt; is supported
