@@ -51,8 +51,8 @@ title: Getting Started with Kitchen-Terraform
             <div class="col-sm">
               Mac OS (homebrew):
               <% code("bash") do %>
-  brew install terraform
-  brew install ruby
+brew install terraform
+brew install ruby
               <% end %>
             </div>
             <div class="col-sm">
@@ -75,7 +75,7 @@ mkdir -p test/integration/example/controls \
 (
 cat << EOP
 source "https://rubygems.org/" do
-  gem "kitchen-terraform", "~> 2.0"
+  gem "kitchen-terraform"
 end
 EOP
 ) > Gemfile
@@ -111,7 +111,7 @@ EOP
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
-          <% code("bash") do %>
+          <% code("ruby") do %>
 # Create Terraform module code
 (
 cat << EOP
@@ -139,7 +139,7 @@ bundle exec kitchen converge
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
-          <% code("bash") do %>
+          <% code("ruby") do %>
 # Create inspec.yml
 (
 cat << EOP
@@ -164,7 +164,7 @@ EOP
 # Run the Inspec code
 bundle exec kitchen verify
           <% end %>
-          And that's it, you wrote your first kitchen-terraform test suite! Please take a peek at our <a href="/docs/index.html" style="color: #32c850;">docs</a> and <a href="/examples/index.html" style="color: #32c850;">examples</a> for additional information.
+          And that's it, you wrote your first kitchen-terraform test suite! Please take a peek at our <a href="/docs/index.html" style="color: #32c850;">docs</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
         </div>
       </div>
     </div>
