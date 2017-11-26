@@ -24,10 +24,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <%= link_to 'Getting Started', '/docs/start.html', :class => 'nav-link' %>
-          </li>
-          <li class="nav-item">
-            <%= link_to 'Docs', '/docs/index.html', :class => 'nav-link' %>
+            <%= link_to 'Getting Started', '/getting_started.html', :class => 'nav-link' %>
           </li>
           <li class="nav-item">
             <%= link_to 'Tutorials', '/tutorials/index.html', :class => 'nav-link' %>
@@ -40,7 +37,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
-              Contribute
+              <%= image_tag "github.png", :class => "d-inline-block", :style => "vertical-align: sub;", :width => "18", :height => "18", :alt => "github logo" %> Contribute
             </a>
           </li>
         </ul>
