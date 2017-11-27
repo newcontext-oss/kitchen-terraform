@@ -24,10 +24,10 @@ require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
-require "support/kitchen/terraform/config_attribute/directory_examples"
 require "support/kitchen/terraform/config_attribute/lock_timeout_examples"
 require "support/kitchen/terraform/config_attribute/parallelism_examples"
 require "support/kitchen/terraform/config_attribute/plugin_directory_examples"
+require "support/kitchen/terraform/config_attribute/root_module_directory_examples"
 require "support/kitchen/terraform/config_attribute/variable_files_examples"
 require "support/kitchen/terraform/config_attribute/variables_examples"
 require "support/kitchen/terraform/configurable_examples"
@@ -86,13 +86,13 @@ require "support/kitchen/terraform/configurable_examples"
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
-    it_behaves_like "Kitchen::Terraform::ConfigAttribute::Directory"
-
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::LockTimeout"
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::Parallelism"
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::PluginDirectory"
+
+    it_behaves_like "Kitchen::Terraform::ConfigAttribute::RootModuleDirectory"
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::VariableFiles"
 
