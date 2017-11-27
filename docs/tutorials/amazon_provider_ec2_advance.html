@@ -1,0 +1,581 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Using the Terraform Amazon Provider with fixtures</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="/kitchen-terraform/stylesheets/highlighting.css" rel="stylesheet" />
+    <link href="/kitchen-terraform/stylesheets/material.css" rel="stylesheet" />
+    <link href="/kitchen-terraform/stylesheets/site.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="/kitchen-terraform/javascripts/site.js"></script>
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
+      <a href="/kitchen-terraform/" class="navbar-brand">Kitchen-Terraform</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a href="/kitchen-terraform/getting_started.html" class="nav-link">Getting Started</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/tutorials/" class="nav-link">Tutorials</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/about.html" class="nav-link">About</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/community/" class="nav-link">Community</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
+              <img src="/kitchen-terraform/images/github.png" class="d-inline-block" style="vertical-align: sub;" width="18" height="18" alt="github logo" /> Contribute
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="content text-left">
+      <div class="container" style="padding-top: 0px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-3">
+          Terraform Amazon Provider
+        </h1>
+        <p class="lead">
+          This is an example of how to utilize kitchen-terraform to test Amazon resources configured with the <a href="https://www.terraform.io/docs/providers/aws/index.html" style="color: #32c850;">Terraform Amazon Provider</a>.
+        </p>
+        <p class="lead">
+          We'll walk through how to use fixtures to reference your Terraform code as a module, use local kitchen.yml files and custom libraries with your Inspec control tests.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action active" id="list-one-list" data-toggle="list" href="#list-one" role="tab" aria-controls="one">
+          1. Requirements & Setup
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-two-list" data-toggle="list" href="#list-two" role="tab" aria-controls="two">
+          2. Create Terraform code
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-three-list" data-toggle="list" href="#list-three" role="tab" aria-controls="three">
+          3. Create Terraform variables
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-four-list" data-toggle="list" href="#list-four" role="tab" aria-controls="four">
+          4. Create Terraform outputs
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-five-list" data-toggle="list" href="#list-five" role="tab" aria-controls="five">
+          5. Setup local kitchen config
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-six-list" data-toggle="list" href="#list-six" role="tab" aria-controls="six">
+          6. Create test fixture
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-seven-list" data-toggle="list" href="#list-seven" role="tab" aria-controls="seven">
+          7. Create custom test library
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-eight-list" data-toggle="list" href="#list-eight" role="tab" aria-controls="eight">
+          8. Create tests
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-nine-list" data-toggle="list" href="#list-nine" role="tab" aria-controls="nine">
+          9. Run tests
+        </a>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
+          AWS credentials must be provided according to the <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#config-settings-and-precedence" style="color: #32c850;">credentials provider chain rules</a>. These credentials must be authorized to manage all of the resources in the Terraform <a href="https://github.com/newcontext-oss/kitchen-terraform/blob/master/examples/aws_provider/module.tf" style="color: #32c850">module</a>.
+          <br><br>
+          The use of an isolated user as described below is recommended.
+          <br><br>
+          1. <a href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html" style="color: #32c850;">Signup</a> for an account or <a href="https://console.aws.amazon.com/" style="color: #32c850;">Signin</a> to the account
+          <br>
+          2. Create an <a href="https://console.aws.amazon.com/iam/home?region=us-east-1#users" style="color: #32c850">IAM user</a> in the us-east-1 region with API keys and save the Access Key ID and Secret Access Key for use in the example configuration.
+          <br>
+          3. Add an inline custom policy to the IAM user (example below)
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Stmt1469773655000"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"ec2:*"</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="s2">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"*"</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>          <hr>
+          To setup the repository, run these commands:
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code>mkdir <span class="nt">-p</span> amazon_advance_provider_example/test/integration/example/controls
+mkdir <span class="nt">-p</span> amazon_advance_provider_example/test/integration/example/libraries
+mkdir <span class="nt">-p</span> amazon_advance_provider_example/fixtures/us_east_1
+
+<span class="nb">cd </span>amazon_advance_provider_example
+</code></pre></div>          Then install the necessary rubygems.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="o">(</span>
+<span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOP</span><span class="sh">
+source "https://rubygems.org/" do
+  gem "kitchen-terraform"
+  gem "awspec", "~&gt; 0.6"
+end
+</span><span class="no">EOP
+</span><span class="o">)</span> <span class="o">&gt;</span> Gemfile
+
+<span class="c"># Install kitchen-terraform and other rubygems</span>
+<span class="c"># If needed run `gem install bundler`</span>
+bundle install
+</code></pre></div>          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p>  which brings together the Terraform module code and Inspec controls.
+          <br><br>
+          <div class="row">
+            <div class="col">
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">driver</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">directory</span><span class="pi">:</span> <span class="s">test/fixtures/us_east_1</span>
+  <span class="na">parallelism</span><span class="pi">:</span> <span class="s">4</span>
+
+<span class="na">provisioner</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">transport</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
+
+<span class="na">verifier</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">groups</span><span class="pi">:</span>
+    <span class="pi">-</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">remote</span>
+      <span class="na">attributes</span><span class="pi">:</span>
+        <span class="na">overridden_security_group</span><span class="pi">:</span> <span class="s">security_group</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">reachable_other_host</span>
+        <span class="pi">-</span> <span class="s">remote_security_group</span>
+        <span class="pi">-</span> <span class="s">running_service</span>
+      <span class="na">hostnames</span><span class="pi">:</span> <span class="s">test_target_public_dns</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="s">22</span>
+      <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
+    <span class="pi">-</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">local</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">local_security_group</span>
+        <span class="pi">-</span> <span class="s">state_file</span>
+
+
+
+
+
+
+
+<span class="na">platforms</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
+
+<span class="na">suites</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">example</span>
+
+
+
+</code></pre></div>            </div>
+            <div class="col">
+              The kitchen-terraform driver is configured to use the us-east-1 test fixture configuration and to use 4 concurrent operations in its actions.
+              <br><br>
+              The kitchen-terraform provisioner is enabled.
+              <br><br>
+              The Test Kitchen SSH transport is enabled.
+              <br><br>
+              The kitchen-terraform verifier is configured with two groups, remote and local.
+              <br><br>
+              The remote group uses the value of the security_group output to define an Inspec control attribute named overridden_security_group and includes some of the controls of the profile of the suite.
+              <br><br>
+              The group uses the value of the test_target_public_dns output to obtain the hostnames to execute the controls on and provides a static port and username based on the AMI used in the example module.
+              <br><br>
+              The local group omits the hostnames setting, which means that its specified controls will be executed locally rather than remotely on a server in the Terraform state.
+              <br><br><br>
+              The platforms provide arbitrary grouping for the test suite matrix.
+              <br><br>
+              The suite name corresponds to the directory containing the Inspec profile: <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">test</span>/integration/example/</code></pre></div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
+          Example Terraform code using the Amazon provider is below. The resources created by this code is what we'll be testing later on.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add each block of code into it.
+          <br><br>
+          The configuration is restricted to Terraform versions equal to or greater than 0.10.2 and less than 0.11.0.
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">terraform</span> <span class="p">{</span>
+  <span class="n">required_version</span> <span class="o">=</span> <span class="s2">"~&gt; 0.10.2"</span>
+<span class="p">}</span>
+</code></pre></div>          The module configures the AWS Provider to manage resources in a variable region.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
+  <span class="n">region</span>  <span class="o">=</span> <span class="s2">"${var.provider_region}"</span>
+  <span class="n">version</span> <span class="o">=</span> <span class="s2">"~&gt; 0.1"</span>
+<span class="p">}</span>
+</code></pre></div>          The module configures a virtual private cloud with two instances and adequate network egress and ingress to allow internal communication as well communication with localhost.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">resource</span> <span class="s2">"aws_vpc"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">cidr_block</span>           <span class="o">=</span> <span class="s2">"192.168.0.0/16"</span>
+  <span class="n">enable_dns_hostnames</span> <span class="o">=</span> <span class="s2">"true"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span> <span class="o">=</span> <span class="s2">"kitchen_terraform_example"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_subnet"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">availability_zone</span>       <span class="o">=</span> <span class="s2">"${var.subnet_availability_zone}"</span>
+  <span class="n">cidr_block</span>              <span class="o">=</span> <span class="s2">"192.168.1.0/24"</span>
+  <span class="n">map_public_ip_on_launch</span> <span class="o">=</span> <span class="s2">"true"</span>
+  <span class="n">vpc_id</span>                  <span class="o">=</span> <span class="s2">"${aws_vpc.example.id}"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span> <span class="o">=</span> <span class="s2">"kitchen_terraform_example"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_internet_gateway"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">vpc_id</span> <span class="o">=</span> <span class="s2">"${aws_vpc.example.id}"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span> <span class="o">=</span> <span class="s2">"kitchen_terraform_example"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_route_table"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">vpc_id</span> <span class="o">=</span> <span class="s2">"${aws_vpc.example.id}"</span>
+
+  <span class="n">route</span> <span class="p">{</span>
+    <span class="n">cidr_block</span> <span class="o">=</span> <span class="s2">"0.0.0.0/0"</span>
+    <span class="n">gateway_id</span> <span class="o">=</span> <span class="s2">"${aws_internet_gateway.example.id}"</span>
+  <span class="p">}</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span> <span class="o">=</span> <span class="s2">"kitchen_terraform_example"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_route_table_association"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">subnet_id</span>      <span class="o">=</span> <span class="s2">"${aws_subnet.example.id}"</span>
+  <span class="n">route_table_id</span> <span class="o">=</span> <span class="s2">"${aws_route_table.example.id}"</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_security_group"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"Allow all inbound traffic"</span>
+  <span class="nb">name</span>        <span class="o">=</span> <span class="s2">"kitchen-terraform-example"</span>
+  <span class="n">vpc_id</span>      <span class="o">=</span> <span class="s2">"${aws_vpc.example.id}"</span>
+
+  <span class="n">egress</span> <span class="p">{</span>
+    <span class="n">cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+    <span class="n">from_port</span>   <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">protocol</span>    <span class="o">=</span> <span class="s2">"-1"</span>
+    <span class="n">to_port</span>     <span class="o">=</span> <span class="mi">0</span>
+  <span class="p">}</span>
+
+  <span class="n">ingress</span> <span class="p">{</span>
+    <span class="n">cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+    <span class="n">from_port</span>   <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">protocol</span>    <span class="o">=</span> <span class="s2">"-1"</span>
+    <span class="n">to_port</span>     <span class="o">=</span> <span class="mi">0</span>
+  <span class="p">}</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span>      <span class="o">=</span> <span class="s2">"kitchen-terraform-example"</span>
+    <span class="no">Terraform</span> <span class="o">=</span> <span class="s2">"true"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_key_pair"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">key_name</span>   <span class="o">=</span> <span class="s2">"kitchen-terraform-example"</span>
+  <span class="n">public_key</span> <span class="o">=</span> <span class="s2">"${var.key_pair_public_key}"</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"reachable_other_host"</span> <span class="p">{</span>
+  <span class="n">ami</span>                         <span class="o">=</span> <span class="s2">"${var.instances_ami}"</span>
+  <span class="n">associate_public_ip_address</span> <span class="o">=</span> <span class="kp">true</span>
+  <span class="n">instance_type</span>               <span class="o">=</span> <span class="s2">"t2.micro"</span>
+  <span class="n">key_name</span>                    <span class="o">=</span> <span class="s2">"${aws_key_pair.example.key_name}"</span>
+  <span class="n">vpc_security_group_ids</span>      <span class="o">=</span> <span class="p">[</span><span class="s2">"${aws_security_group.example.id}"</span><span class="p">]</span>
+  <span class="n">subnet_id</span>                   <span class="o">=</span> <span class="s2">"${aws_subnet.example.id}"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span>      <span class="o">=</span> <span class="s2">"kitchen-terraform-reachable-other-host"</span>
+    <span class="no">Terraform</span> <span class="o">=</span> <span class="s2">"true"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"test_target"</span> <span class="p">{</span>
+  <span class="n">ami</span>                    <span class="o">=</span> <span class="s2">"${var.instances_ami}"</span>
+  <span class="n">count</span>                  <span class="o">=</span> <span class="mi">2</span>
+  <span class="n">instance_type</span>          <span class="o">=</span> <span class="s2">"t2.micro"</span>
+  <span class="n">key_name</span>               <span class="o">=</span> <span class="s2">"${aws_key_pair.example.key_name}"</span>
+  <span class="n">subnet_id</span>              <span class="o">=</span> <span class="s2">"${aws_subnet.example.id}"</span>
+  <span class="n">vpc_security_group_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"${aws_security_group.example.id}"</span><span class="p">]</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span>      <span class="o">=</span> <span class="s2">"kitchen-terraform-test-target-${count.index}"</span>
+    <span class="no">Terraform</span> <span class="o">=</span> <span class="s2">"true"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>        </div>
+        <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
+          The module requires an instances AMI, a key pair public key, a provider region, and a subnet availability zone to be provided as inputs.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">variable.tf</p> and add the below block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">variable</span> <span class="s2">"instances_ami"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The AMI of the instances"</span>
+  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="n">variable</span> <span class="s2">"key_pair_public_key"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The public key of the key pair"</span>
+  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="n">variable</span> <span class="s2">"provider_region"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The geographic area in which the provider will place resources"</span>
+  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="n">variable</span> <span class="s2">"subnet_availability_zone"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The isolated, regional location in which to place the subnet"</span>
+  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+</code></pre></div>        </div>
+        <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
+          To assist in testing, Terraform outputs will provide information about both servers and what security group they are associated with. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">output</span> <span class="s2">"reachable_other_host_public_ip"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The public IP address of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_instance.reachable_other_host.public_ip}"</span>
+<span class="p">}</span>
+
+<span class="n">output</span> <span class="s2">"security_group"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The name of the security group"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_security_group.example.name}"</span>
+<span class="p">}</span>
+
+<span class="n">output</span> <span class="s2">"test_target_public_dns"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The list of public DNS names assigned to the test_target instances"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="p">[</span><span class="s2">"${aws_instance.test_target.*.public_dns}"</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>          Refer back to the .kitchen.yml and in the verifier section you will see a reference to the above outputs.
+        </div>
+        <div class="tab-pane fade" id="list-five" role="tabpanel" aria-labelledby="list-five-list">
+          Public and private key configuration attributes must be provided in a local Test Kitchen configuration. This demonstrates how <a href="http://www.stuartellis.name/articles/erb/" style="color: #32c850">embedded Ruby</a> can be used in Test Kitchen configuration.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.local.yml</p> and add the block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">driver</span><span class="pi">:</span>
+  <span class="na">variables</span><span class="pi">:</span>
+    <span class="na">key_pair_public_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">&lt;%=</span><span class="nv"> </span><span class="s">::File.read</span><span class="nv"> </span><span class="s">'/path/to/public/key'</span><span class="nv"> </span><span class="s">%&gt;"</span>
+<span class="na">transport</span><span class="pi">:</span>
+  <span class="na">ssh_key</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/path/to/private/key"</span>
+</code></pre></div>          Be sure to create your own SSH key pair!
+        </div>
+        <div class="tab-pane fade" id="list-six" role="tabpanel" aria-labelledby="list-six-list">
+          To more closely mimic Terraform code that will call your Terraform module, we'll call the code that is in the root directory as a module.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/fixtures/us_east_1/main.tf</p> and add the block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">terraform</span> <span class="p">{</span>
+  <span class="n">required_version</span> <span class="o">=</span> <span class="s2">"~&gt; 0.10.2"</span>
+<span class="p">}</span>
+</code></pre></div>          The configuration requires a key pair public key to be provided as an input.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">variable</span> <span class="s2">"public_key_material"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The public key material to use for SSH authentication with the instances"</span>
+  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+</code></pre></div>          The configuration includes the module and provides values specific to the us-east-1 region for the variable inputs. Pay close attention to the module block, where it references the module source three directories up.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">module</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">instances_ami</span>            <span class="o">=</span> <span class="s2">"ami-1d4e7a66"</span>
+  <span class="n">key_pair_public_key</span>      <span class="o">=</span> <span class="s2">"${var.public_key_material}"</span>
+  <span class="n">provider_region</span>          <span class="o">=</span> <span class="s2">"us-east-1"</span>
+  <span class="n">source</span>                   <span class="o">=</span> <span class="s2">"../../../"</span>
+  <span class="n">subnet_availability_zone</span> <span class="o">=</span> <span class="s2">"us-east-1b"</span>
+<span class="p">}</span>
+</code></pre></div>          The configuration forwards the outputs of the module.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">output</span> <span class="s2">"reachable_other_host_public_ip"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The public IP address of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${module.example.reachable_other_host_public_ip}"</span>
+<span class="p">}</span>
+
+<span class="n">output</span> <span class="s2">"security_group"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The name of the security group"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${module.example.security_group}"</span>
+<span class="p">}</span>
+
+<span class="n">output</span> <span class="s2">"test_target_public_dns"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The list of public DNS names assigned to the test_target instances"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="p">[</span><span class="s2">"${module.example.test_target_public_dns}"</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>        </div>
+        <div class="tab-pane fade" id="list-seven" role="tabpanel" aria-labelledby="list-seven-list">
+          With Ruby & Inspec you can have custom libraries to reference within your control tests.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/libraries/ec2_instance.rb</p> and add the block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="c1"># Resource representing an EC2 instance</span>
+<span class="k">class</span> <span class="nc">EC2Instance</span> <span class="o">&lt;</span> <span class="no">Inspec</span><span class="p">.</span><span class="nf">resource</span> <span class="mi">1</span>
+  <span class="nb">name</span> <span class="s2">"ec2_instance"</span>
+
+  <span class="k">def</span> <span class="nf">security_groups</span>
+    <span class="n">inspec</span><span class="p">.</span><span class="nf">command</span><span class="p">(</span><span class="s2">"curl http://169.254.169.254/latest/meta-data/security-groups"</span><span class="p">).</span><span class="nf">stdout</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>        </div>
+        <div class="tab-pane fade" id="list-eight" role="tabpanel" aria-labelledby="list-eight-list">
+          We've created the Terraform code, now it's time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
+          <br><br>
+          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
+</code></pre></div>          Referring back to the .kitchen.yml file and inside the verifier section there is a reachable_other_host control which we need to create.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/reachable_other_host_spec.rb</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">reachable_other_host_public_ip</span> <span class="o">=</span>
+  <span class="n">attribute</span><span class="p">(</span>
+    <span class="s2">"reachable_other_host_public_ip"</span><span class="p">,</span>
+    <span class="p">{}</span>
+  <span class="p">)</span>
+
+<span class="n">control</span> <span class="s2">"reachable_other_host"</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">"the other host"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span>
+      <span class="n">host</span> <span class="n">reachable_other_host_public_ip</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="k">do</span>
+      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">be_reachable</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>          Let's create the remote_security_group control, which will validate the security group.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/remote_security_group.rb</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">security_group</span> <span class="o">=</span> <span class="n">attribute</span> <span class="s2">"security_group"</span><span class="p">,</span> <span class="p">{}</span>
+<span class="n">overridden_security_group</span> <span class="o">=</span> <span class="n">attribute</span> <span class="s2">"overridden_security_group"</span><span class="p">,</span> <span class="p">{}</span>
+
+<span class="n">control</span> <span class="s2">"remote_security_group"</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">"the `security_group` output"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span> <span class="n">ec2_instance</span><span class="p">.</span><span class="nf">security_groups</span> <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"is mapped to the `security_group` attribute"</span> <span class="k">do</span> <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">eq</span> <span class="n">security_group</span> <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"equals the `overridden_security_group` attribute"</span> <span class="k">do</span> <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">eq</span> <span class="n">overridden_security_group</span> <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>          Let's create the running_service control, which will validate the security group.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/ integration/example/controls/running_service_spec.rb</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">control</span> <span class="s2">"running_service"</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">"the cron service"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span> <span class="n">service</span> <span class="s2">"cron"</span> <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"is running"</span> <span class="k">do</span> <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">be_running</span> <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>          Let's create the local_security_group control, which will validate the security group's egress and ingress with the <a href="https://rubygems.org/gems/awspec" style="color: #32c850;">awspec gem</a>
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/local_security_group.rb</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="nb">require</span> <span class="s2">"awspec"</span>
+
+<span class="n">control</span> <span class="s2">"local_security_group"</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">"the security group"</span> <span class="k">do</span>
+    <span class="n">let</span> <span class="ss">:example_security_group</span> <span class="k">do</span> <span class="n">security_group</span> <span class="s2">"kitchen-terraform-example"</span> <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">"ingress"</span> <span class="k">do</span>
+      <span class="n">subject</span> <span class="k">do</span> <span class="n">example_security_group</span><span class="p">.</span><span class="nf">inbound</span> <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"is open to the world"</span> <span class="k">do</span> <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">be_opened</span><span class="p">.</span><span class="nf">for</span> <span class="s2">"0.0.0.0/0"</span> <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">describe</span> <span class="s2">"egress"</span> <span class="k">do</span>
+      <span class="n">subject</span> <span class="k">do</span> <span class="n">example_security_group</span><span class="p">.</span><span class="nf">outbound</span> <span class="k">end</span>
+
+      <span class="n">it</span> <span class="s2">"is open to the world"</span> <span class="k">do</span> <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">be_opened</span><span class="p">.</span><span class="nf">for</span> <span class="s2">"0.0.0.0/0"</span> <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>          Let's create the state_files control, which will validate the local Terraform state file is created and has the proper content.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/state_file.rb</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">terraform_state</span> <span class="o">=</span> <span class="n">attribute</span> <span class="s2">"terraform_state"</span><span class="p">,</span> <span class="p">{}</span>
+
+<span class="n">control</span> <span class="s2">"state_file"</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">"the Terraform state file"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span> <span class="n">json</span><span class="p">(</span><span class="n">terraform_state</span><span class="p">).</span><span class="nf">terraform_version</span> <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"is accessible"</span> <span class="k">do</span> <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">match</span> <span class="sr">/\d+\.\d+\.\d+/</span> <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>        </div>
+        <div class="tab-pane fade" id="list-nine" role="tabpanel" aria-labelledby="list-nine-list">
+          Execute kitchen-terraform by running these commands
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Create resources from the Terraform fixture code that references main.tf</span>
+<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
+
+<span class="c1"># Run the Inspec controls from the .kitchen.yml verifier section</span>
+<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
+</code></pre></div>        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">Community driven, created and maintained by
+          <a href="http://newcontext.com" style="color: #32c850;">
+            <img src="/kitchen-terraform/images/newcontext_logo.png" class="d-inline-block" style="vertical-align: sub;" width="30" height="24" alt="newcontext logo" />
+            New Context Services, Inc.
+          </a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

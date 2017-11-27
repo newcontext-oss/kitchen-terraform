@@ -16,7 +16,7 @@ title: Kitchen-Terraform example code
         </p>
       </div>
       <div id="blur" class="col">
-        <% code("ruby") do %>
+        <% code("yml") do %>
 ---
 driver:
   name: "terraform"
@@ -44,7 +44,7 @@ verifier:
     <div class="col">
       <div class="card" style="width: 20rem;">
         <div class="card-body">
-          <h4 class="card-title">AWS Provider (Deep Dive)</h4>
+          <h4 class="card-title">AWS Provider with fixtures</h4>
           <h6 class="card-subtitle mb-2 text-muted">Detailed Guide</h6>
           <p class="card-text">Learn the more advanced features of kitchen-terraform, test a larger set of Terraform code and use Inspec controls and profiles.</p>
           <%= link_to 'Dive In', '/tutorials/amazon_provider_ec2_advance.html', :class => 'btn btn-primary card-link' %>
@@ -55,7 +55,7 @@ verifier:
       <div class="card" style="width: 20rem;">
         <div class="card-body">
           <h4 class="card-title">Docker Provider</h4>
-          <h6 class="card-subtitle mb-2 text-muted">Tested & Immutable!</h6>
+          <h6 class="card-subtitle mb-2 text-muted">Immutable & Tested!</h6>
           <p class="card-text">Provides an example on how to utilize kitchen-terraform to test a Docker container running on localhost.</p><%= link_to 'Go!', '/tutorials/docker_provider.html', :class => 'btn btn-primary card-link' %>
         </div>
       </div>

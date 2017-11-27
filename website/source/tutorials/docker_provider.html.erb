@@ -63,11 +63,11 @@ EOP
 # If needed run `gem install bundler`
 bundle install
           <% end %>
-          Create the .kitchen.yml file which brings together the Terraform module code and Inspec controls.
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> which brings together the Terraform module code and Inspec controls.
           <br><br>
           <div class="row">
             <div class="col">
-              <% code("ruby") do %>
+              <% code("yml") do %>
 ---
 driver:
   name: terraform
@@ -123,7 +123,7 @@ suites:
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
           Example Terraform code using the Docker provider is below. The resources created by this code is what we'll be testing later on.
           <br><br>
-          Create a main.tf file and add each block of code into it.
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add each block of code into it.
           <br><br>
           The configuration is restricted to Terraform versions equal to or greater than 0.10.2 and less than 0.11.0. The local backend is configured to demonstrate support for backends.
           <br><br>
@@ -178,7 +178,7 @@ resource "docker_container" "ubuntu" {
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           To assist in testing, Terraform outputs will provide the path of the backend state file and the localhost hostname. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
-          Create an output.tf file and add each block of code into it.
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
           <br><br>
           <% code("ruby") do %>
 output "backend_state" {
@@ -196,19 +196,15 @@ output "hostnames" {
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
           We've created the Terraform code, now it's time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
           <br><br>
-          Create a default profile inspec.yml file.
+          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p>
           <br><br>
-          <% code("ruby") do %>
-(
-cat << EOP
+          <% code("yml") do %>
 ---
 name: default
-EOP
-) > test/integration/example/inspec.yml
           <% end %>
           Referring back to the .kitchen.yml file and inside the verifier section there is an operating_system control which we need to create.
           <br><br>
-          Create the file at this location: <% code("bash") do %>test/integration/example/controls/operating_system.rb<% end %>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/operating_system.rb</p>
           <% code("ruby") do %>
 # frozen_string_literal: true
 
@@ -222,7 +218,7 @@ end
           <% end %>
           Let's create the state_files control, which will validate the local Terraform state file is created and has the proper content.
           <br><br>
-          Create the file at this location: <% code("bash") do %>test/integration/example/controls/state_file.rb<% end %>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/state_file.rb</p>
           <% code("ruby") do %>
 # frozen_string_literal: true
 
