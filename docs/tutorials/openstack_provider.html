@@ -109,44 +109,42 @@ end
 <span class="c"># Install kitchen-terraform and other rubygems</span>
 <span class="c"># If needed run `gem install bundler`</span>
 bundle install
-</code></pre></div>          Create the .kitchen.yml file which brings together the Terraform module code and Inspec controls.
+</code></pre></div>          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> which brings together the Terraform module code and Inspec controls.
           <br><br>
           <div class="row">
             <div class="col">
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="o">---</span>
-<span class="ss">driver:
-  name: </span><span class="n">terraform</span>
-  <span class="ss">command_timeout: </span><span class="mi">1000</span>
-  <span class="ss">variable_files:
-    </span><span class="o">-</span> <span class="p">.</span><span class="nf">/</span><span class="n">my</span><span class="o">-</span><span class="n">variables</span><span class="p">.</span><span class="nf">tfvars</span>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">driver</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">command_timeout</span><span class="pi">:</span> <span class="s">1000</span>
+  <span class="na">variable_files</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="s">./my-variables.tfvars</span>
 
-<span class="ss">provisioner:
-  name: </span><span class="n">terraform</span>
+<span class="na">provisioner</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
 
-<span class="ss">transport:
-  name: </span><span class="n">ssh</span>
-  <span class="ss">ssh_key: </span><span class="p">.</span><span class="nf">/</span><span class="n">dummy_keypair</span><span class="o">/</span><span class="n">cloud</span><span class="p">.</span><span class="nf">key</span>
-  <span class="ss">username: </span><span class="n">ubuntu</span>
+<span class="na">transport</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
+  <span class="na">ssh_key</span><span class="pi">:</span> <span class="s">./dummy_keypair/cloud.key</span>
+  <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
 
-<span class="ss">verifier:
-  name: </span><span class="n">terraform</span>
-  <span class="ss">groups:
-    </span><span class="o">-</span>
-      <span class="ss">name: </span><span class="n">master</span>
-      <span class="ss">controls:
-        </span><span class="o">-</span> <span class="n">nano_installed</span>
-      <span class="ss">hostnames: </span><span class="n">master_address</span>
-    <span class="o">-</span>
-      <span class="ss">name: </span><span class="n">workers</span>
-      <span class="ss">controls:
-        </span><span class="o">-</span> <span class="n">curl_installed</span>
-      <span class="ss">hostnames: </span><span class="n">workers_addresses</span>
+<span class="na">verifier</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">groups</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">master</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">nano_installed</span>
+      <span class="na">hostnames</span><span class="pi">:</span> <span class="s">master_address</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">workers</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">curl_installed</span>
+      <span class="na">hostnames</span><span class="pi">:</span> <span class="s">workers_addresses</span>
 
-<span class="ss">platforms:
-  </span><span class="o">-</span> <span class="ss">name: </span><span class="n">ubuntu</span>
+<span class="na">platforms</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
 
-<span class="ss">suites:
-  </span><span class="o">-</span> <span class="ss">name: </span><span class="n">example</span>
+<span class="na">suites</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">example</span>
 
 
 </code></pre></div>            </div>
@@ -157,13 +155,13 @@ bundle install
               The kitchen-terraform provisioner is enabled.
               <br><br><br>
               The Test Kitchen SSH transport is configured to use the dummy_keypair and a static username for SSH authentication with the VMs.
-              <br><br><br>
+              <br><br>
               The kitchen-terraform verifier is configured with two groups.
               <br><br>
               The master group is configured to run a control against the master VM by using the master_address output for the value of hostnames.
               <br><br>
               The workers group is configured to run a control against all of the worker VMs by using the workers_addresses output for the value of hostnames.
-              <br><br><br>
+              <br><br>
               The platforms provide arbitrary grouping for the test suite matrix.
               <br><br>
               The suite name corresponds to the directory containing the Inspec profile: <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">test</span>/integration/example/</code></pre></div>
@@ -173,7 +171,7 @@ bundle install
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
           Example Terraform code using the OpenStack provider is below. The resources created by this code is what we'll be testing later on.
           <br><br>
-          Create a main.tf file and add each block of code into it.
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add each block of code into it.
           <br><br>
           The configuration is restricted to Terraform versions equal to or greater than 0.10.2 and less than 0.11.0.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">terraform</span> <span class="p">{</span>
@@ -263,7 +261,7 @@ bundle install
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           We also need to setup variables as some networking and provider attributes are required to make the Terraform code work successfully.
           <br><br>
-          Create a variable.tf file and add the below block of code into it.
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">variable.tf</p> and add the below block of code into it.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">variable</span> <span class="s2">"compute_instances_network_name"</span> <span class="p">{</span>
   <span class="n">description</span> <span class="o">=</span> <span class="s2">"The human-readable name of the network of the compute instances"</span>
@@ -303,7 +301,7 @@ bundle install
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
           To assist in testing, Terraform outputs will provide the master and worker server addresses. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
-          Create an output.tf file and add each block of code into it.
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">output</span> <span class="s2">"master_address"</span> <span class="p">{</span>
   <span class="n">value</span> <span class="o">=</span> <span class="s2">"${openstack_networking_floatingip_v2.master.address}"</span>
@@ -317,7 +315,7 @@ bundle install
         <div class="tab-pane fade" id="list-five" role="tabpanel" aria-labelledby="list-five-list">
           Before creating the tests, let's setup our OpenStack provider information. This helps get the URL, user authentication and a couple other provider specific items setup.
           <br><br>
-          Create a my-variables.tfvars file and add the block of code into it.
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">my-variables.tfvars</p> and add the block of code into it.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">compute_instances_network_name</span> <span class="o">=</span> <span class="s2">"&lt;VALUE&gt;"</span>
 <span class="n">networking_floatingips_pool</span>    <span class="o">=</span> <span class="s2">"&lt;VALUE&gt;"</span>
@@ -331,17 +329,13 @@ bundle install
         <div class="tab-pane fade" id="list-six" role="tabpanel" aria-labelledby="list-six-list">
           We've created the Terraform code, now it's time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
           <br><br>
-          Create a default profile inspec.yml file.
+          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p>
           <br><br>
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="p">(</span>
-<span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOP</span>
-<span class="o">---</span>
-<span class="ss">name: </span><span class="n">default</span>
-<span class="no">EOP</span>
-<span class="p">)</span> <span class="o">&gt;</span> <span class="nb">test</span><span class="o">/</span><span class="n">integration</span><span class="o">/</span><span class="n">example</span><span class="o">/</span><span class="n">inspec</span><span class="p">.</span><span class="nf">yml</span>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
 </code></pre></div>          Referring back to the .kitchen.yml file and inside the verifier section there is a nano_installed control which we need to create.
           <br><br>
-          Create the file at this location: <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">test</span>/integration/example/controls/nano_installed_spec.rb</code></pre></div>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/nano_installed_spec.rb</p>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">control</span> <span class="s2">"nano_installed"</span> <span class="k">do</span>
@@ -353,7 +347,7 @@ bundle install
 <span class="k">end</span>
 </code></pre></div>          Let's create the curl_installed control, which will validate curl is installed.
           <br><br>
-          Create the file at this location: <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">test</span>/integration/example/controls/curl_installed_spec.rb</code></pre></div>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/curl_installed_spec.rb</p>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">control</span> <span class="s2">"curl_installed"</span> <span class="k">do</span>

@@ -58,15 +58,15 @@
         </p>
       </div>
       <div id="blur" class="col">
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="o">---</span>
-<span class="ss">driver:
-  name: </span><span class="s2">"terraform"</span>
-<span class="ss">verifier:
-  name: </span><span class="s2">"terraform"</span>
-  <span class="ss">groups:
-    </span><span class="o">-</span> <span class="ss">name: </span><span class="s2">"example"</span>
-      <span class="ss">controls:
-        </span><span class="o">-</span> <span class="s2">"example"</span>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">driver</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">terraform"</span>
+<span class="na">verifier</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">terraform"</span>
+  <span class="na">groups</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">example"</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s2">"</span><span class="s">example"</span>
 </code></pre></div>      </div>
     </div>
   </div>
@@ -84,10 +84,10 @@
     <div class="col">
       <div class="card" style="width: 20rem;">
         <div class="card-body">
-          <h4 class="card-title">AWS Provider (Deep Dive)</h4>
+          <h4 class="card-title">AWS Provider with fixtures</h4>
           <h6 class="card-subtitle mb-2 text-muted">Detailed Guide</h6>
           <p class="card-text">Learn the more advanced features of kitchen-terraform, test a larger set of Terraform code and use Inspec controls and profiles.</p>
-          <a href="/tutorials/amazon_provider_ec2_advance.html" class="btn btn-primary card-link">Dive In</a>
+          <a href="/kitchen-terraform/tutorials/amazon_provider_ec2_advance.html" class="btn btn-primary card-link">Dive In</a>
         </div>
       </div>
     </div>
@@ -95,7 +95,7 @@
       <div class="card" style="width: 20rem;">
         <div class="card-body">
           <h4 class="card-title">Docker Provider</h4>
-          <h6 class="card-subtitle mb-2 text-muted">Tested & Immutable!</h6>
+          <h6 class="card-subtitle mb-2 text-muted">Immutable & Tested!</h6>
           <p class="card-text">Provides an example on how to utilize kitchen-terraform to test a Docker container running on localhost.</p><a href="/kitchen-terraform/tutorials/docker_provider.html" class="btn btn-primary card-link">Go!</a>
         </div>
       </div>
