@@ -33,3 +33,7 @@ bundle exec middleman build --build-dir ../docs
 # adding additional files makes sure to do a git add
 git commit -a -v
 ```
+
+## Contributing
+
+To contribute documentation, tutorials or anything else, please follow the Contributing guide for the gem.  The content is the most important part, feel free to contribute plaintext documentation and tutorials. We can help with the HTML/CSS styling.
