@@ -1,0 +1,28 @@
+---
+driver:
+  name: terraform
+
+provisioner:
+  name: terraform
+
+transport:
+  name: ssh
+  password: root
+
+verifier:
+  name: terraform
+  groups:
+    - name: container
+      controls:
+        - operating_system
+      port: 2222
+      hostnames: hostnames
+    - name: localhost
+      controls:
+        - state_files
+
+platforms:
+  - name: ubuntu
+
+suites:
+  - name: example
