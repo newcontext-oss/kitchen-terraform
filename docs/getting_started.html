@@ -104,14 +104,15 @@ brew install ruby
           </div>
         </div>
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
-<div class="highlight"><pre class="syntax-highlight shell"><code><span class="c"># Create module and folder structure</span>
-mkdir <span class="nt">-p</span> my_terraform_module <span class="o">&amp;&amp;</span> <span class="nb">cd </span>my_terraform_module
+          Create module and folder structure by running these commands:
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code>mkdir <span class="nt">-p</span> my_terraform_module <span class="o">&amp;&amp;</span> <span class="nb">cd </span>my_terraform_module
 
 mkdir <span class="nt">-p</span> <span class="nb">test</span>/integration/example/controls <span class="se">\</span>
          <span class="nb">test</span>/fixtures/example/
-
-<span class="c"># Create GEM file</span>
-<span class="o">(</span>
+</code></pre></div>         Then install the necessary rubygems.
+         <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="o">(</span>
 <span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOP</span><span class="sh">
 source "https://rubygems.org/" do
   gem "kitchen-terraform"
@@ -122,83 +123,74 @@ end
 <span class="c"># Install kitchen-terraform and other rubygems</span>
 <span class="c"># If needed run `gem install bundler`</span>
 bundle install
+</code></pre></div>          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> which brings together the Terraform module code and Inspec controls.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">driver</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">directory</span><span class="pi">:</span> <span class="s">test/fixtures/example</span>
+  <span class="na">parallelism</span><span class="pi">:</span> <span class="s">4</span>
 
-<span class="c"># Create .kitchen.yml</span>
-<span class="o">(</span>
-<span class="nb">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOP</span><span class="sh">
----
-driver:
-  name: "terraform"
-  directory: "test/fixtures/example"
-  parallelism: 4
-provisioner:
-  name: "terraform"
-transport:
-  name: "ssh"
-verifier:
-  name: "terraform"
-  groups:
-    - name: "example"
-      controls:
-        - "example"
-platforms:
-  - name: "terraform"
-suites:
-  - name: "example"
-</span><span class="no">EOP
-</span><span class="o">)</span> <span class="o">&gt;</span> .kitchen.yml
+<span class="na">provisioner</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">transport</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
+
+<span class="na">verifier</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">groups</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">example</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">example</span>
+
+<span class="na">platforms</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">suites</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">example</span>
 </code></pre></div>        </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Create Terraform module code</span>
-<span class="p">(</span>
-<span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOP</span>
-<span class="n">resource</span> <span class="s2">"null_resource"</span> <span class="s2">"example"</span> <span class="p">{</span>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add the block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">resource</span> <span class="s2">"null_resource"</span> <span class="s2">"example"</span> <span class="p">{</span>
   <span class="n">provisioner</span> <span class="s2">"local-exec"</span> <span class="p">{</span>
     <span class="n">command</span> <span class="o">=</span> <span class="s2">"echo 'this is my first test' &gt; foobar"</span>
   <span class="p">}</span>
 <span class="p">}</span>
-<span class="no">EOP</span>
-<span class="p">)</span> <span class="o">&gt;</span> <span class="n">main</span><span class="p">.</span><span class="nf">tf</span>
-
-<span class="c1"># Create Terraform fixture code</span>
-<span class="c1"># that calls the module's Terraform code</span>
-<span class="c1"># to help simulate the module's code</span>
-<span class="p">(</span>
-<span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOP</span>
-<span class="n">module</span> <span class="s2">"example"</span> <span class="p">{</span>
+</code></pre></div>          Create Terraform fixture code that calls the module's Terraform code to help simulate the module's code.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/fixtures/example/main.tf</p> and add the block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">module</span> <span class="s2">"example"</span> <span class="p">{</span>
   <span class="n">source</span> <span class="o">=</span> <span class="s2">"../../.."</span>
 <span class="p">}</span>
-<span class="no">EOP</span>
-<span class="p">)</span> <span class="o">&gt;</span> <span class="nb">test</span><span class="o">/</span><span class="n">fixtures</span><span class="o">/</span><span class="n">example</span><span class="o">/</span><span class="n">main</span><span class="p">.</span><span class="nf">tf</span>
-
-<span class="c1"># Run the Terraform code</span>
-<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
+</code></pre></div>          Run the Terraform module code with kitchen converge
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
 </code></pre></div>        </div>
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Create inspec.yml</span>
-<span class="p">(</span>
-<span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOP</span>
-<span class="o">---</span>
-<span class="ss">name: </span><span class="n">example</span>
-<span class="no">EOP</span>
-<span class="p">)</span> <span class="o">&gt;</span> <span class="nb">test</span><span class="o">/</span><span class="n">integration</span><span class="o">/</span><span class="n">example</span><span class="o">/</span><span class="n">inspec</span><span class="p">.</span><span class="nf">yml</span>
-
-<span class="c1"># Create Inspec control test file</span>
-<span class="p">(</span>
-<span class="n">cat</span> <span class="o">&lt;&lt;</span> <span class="no">EOP</span>
-<span class="c1"># frozen_string_literal: true</span>
+          We've created the Terraform code, now it's time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
+          <br><br>
+          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
+</code></pre></div>          Create Inspec control test file
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/example.rb</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">control</span> <span class="s2">"example"</span> <span class="k">do</span>
   <span class="n">describe</span> <span class="n">file</span><span class="p">(</span><span class="s1">'.kitchen/kitchen-terraform/example-terraform/foobar'</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">exist</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
-<span class="no">EOP</span>
-<span class="p">)</span> <span class="o">&gt;</span> <span class="nb">test</span><span class="o">/</span><span class="n">integration</span><span class="o">/</span><span class="n">example</span><span class="o">/</span><span class="n">controls</span><span class="o">/</span><span class="n">example</span><span class="p">.</span><span class="nf">rb</span>
-
-<span class="c1"># Run the Inspec code</span>
-<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
-</code></pre></div>          And that's it, you wrote your first kitchen-terraform test suite! Please take a peek at our <a href="/docs/index.html" style="color: #32c850;">docs</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
+</code></pre></div>          Run Inspec control tests with kitchen verify
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
+</code></pre></div>          And that's it, you wrote your first kitchen-terraform test suite! Please take a peek at our <a href="http://www.rubydoc.info/gems/kitchen-terraform" style="color: #32c850;">docs</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
         </div>
       </div>
     </div>
