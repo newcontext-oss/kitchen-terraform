@@ -64,14 +64,17 @@ brew install ruby
           </div>
         </div>
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
+          Create module and folder structure by running these commands:
+          <br><br>
           <% code("bash") do %>
-# Create module and folder structure
 mkdir -p my_terraform_module && cd my_terraform_module
 
 mkdir -p test/integration/example/controls \
          test/fixtures/example/
-
-# Create GEM file
+         <% end %>
+         Then install the necessary rubygems.
+         <br><br>
+         <% code("bash") do %>
 (
 cat << EOP
 source "https://rubygems.org/" do
@@ -83,74 +86,75 @@ EOP
 # Install kitchen-terraform and other rubygems
 # If needed run `gem install bundler`
 bundle install
-
-# Create .kitchen.yml
-(
-cat << EOP
+          <% end %>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> which brings together the Terraform module code and Inspec controls.
+          <br><br>
+          <% code("yml") do %>
 ---
 driver:
-  name: "terraform"
-  directory: "test/fixtures/example"
+  name: terraform
+  directory: test/fixtures/example
   parallelism: 4
+
 provisioner:
-  name: "terraform"
+  name: terraform
+
 transport:
-  name: "ssh"
+  name: ssh
+
 verifier:
-  name: "terraform"
+  name: terraform
   groups:
-    - name: "example"
+    - name: example
       controls:
-        - "example"
+        - example
+
 platforms:
-  - name: "terraform"
+  - name: terraform
+
 suites:
-  - name: "example"
-EOP
-) > .kitchen.yml
+  - name: example
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add the block of code into it.
+          <br><br>
           <% code("ruby") do %>
-# Create Terraform module code
-(
-cat << EOP
 resource "null_resource" "example" {
   provisioner "local-exec" {
     command = "echo 'this is my first test' > foobar"
   }
 }
-EOP
-) > main.tf
-
-# Create Terraform fixture code
-# that calls the module's Terraform code
-# to help simulate the module's code
-(
-cat << EOP
+          <% end %>
+          Create Terraform fixture code that calls the module's Terraform code to help simulate the module's code.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/fixtures/example/main.tf</p> and add the block of code into it.
+          <br><br>
+          <% code("ruby") do %>
 module "example" {
   source = "../../.."
 }
-EOP
-) > test/fixtures/example/main.tf
-
-# Run the Terraform code
+          <% end %>
+          Run the Terraform module code with kitchen converge
+          <br><br>
+          <% code("ruby") do %>
 bundle exec kitchen converge
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
-          <% code("ruby") do %>
-# Create inspec.yml
-(
-cat << EOP
+          We've created the Terraform code, now it's time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
+          <br><br>
+          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p>
+          <br><br>
+          <% code("yml") do %>
 ---
-name: example
-EOP
-) > test/integration/example/inspec.yml
-
-# Create Inspec control test file
-(
-cat << EOP
+name: default
+          <% end %>
+          Create Inspec control test file
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/example.rb</p>
+          <br><br>
+          <% code("ruby") do %>
 # frozen_string_literal: true
 
 control "example" do
@@ -158,13 +162,13 @@ control "example" do
     it { should exist }
   end
 end
-EOP
-) > test/integration/example/controls/example.rb
-
-# Run the Inspec code
+          <% end %>
+          Run Inspec control tests with kitchen verify
+          <br><br>
+          <% code("ruby") do %>
 bundle exec kitchen verify
           <% end %>
-          And that's it, you wrote your first kitchen-terraform test suite! Please take a peek at our <a href="/docs/index.html" style="color: #32c850;">docs</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
+          And that's it, you wrote your first kitchen-terraform test suite! Please take a peek at our <a href="http://www.rubydoc.info/gems/kitchen-terraform" style="color: #32c850;">docs</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
         </div>
       </div>
     </div>
