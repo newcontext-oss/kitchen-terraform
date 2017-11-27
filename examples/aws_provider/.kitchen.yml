@@ -1,8 +1,8 @@
 ---
 driver:
   name: "terraform"
-  directory: "test/fixtures/us_east_1"
   parallelism: 4
+  root_module_directory: "test/fixtures/us_east_1"
 provisioner:
   name: "terraform"
 transport:
