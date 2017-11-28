@@ -89,7 +89,7 @@ require "kitchen/terraform/version.rb"
 
   specification.required_ruby_version = [">= 2.2", "< 2.5"]
 
-  specification.requirements = ["Terraform ~> 0.10.2"]
+  specification.requirements = ["Terraform >= 0.10.2, < 0.12.0"]
 
   specification.signing_key = "certs/gem-private_key.pem"
 end
