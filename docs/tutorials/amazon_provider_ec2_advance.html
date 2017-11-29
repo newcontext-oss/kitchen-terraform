@@ -6,6 +6,14 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Using the Terraform Amazon Provider with fixtures</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180-precomposed.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152-precomposed.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon-precomposed.png">
+    <link rel="shortcut icon" href="favicon.png">
+    <link rel="icon" type="image/ico" href="favicon.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link href="/kitchen-terraform/stylesheets/highlighting.css" rel="stylesheet" />
     <link href="/kitchen-terraform/stylesheets/material.css" rel="stylesheet" />
@@ -17,7 +25,8 @@
   </head>
   <body>
     <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
-      <a href="/kitchen-terraform/" class="navbar-brand">Kitchen-Terraform</a>
+      <img src="/kitchen-terraform/images/kitchen_terraform_logo.png" class="d-inline-block" style="vertical-align: sub; margin-left: 10px;" width="18" height="18" alt="Kitchen-Terraform logo" />
+      <a href="/kitchen-terraform/" class="navbar-brand" style="padding-left: 5px;">Kitchen-Terraform</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -37,7 +46,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
-              <img src="/kitchen-terraform/images/github.png" class="d-inline-block" style="vertical-align: sub;" width="18" height="18" alt="github logo" /> Contribute
+              <img src="/kitchen-terraform/images/github.png" class="d-inline-block" style="vertical-align: sub;" width="18" height="18" alt="GitHub logo" /> Contribute
             </a>
           </li>
         </ul>
@@ -52,7 +61,7 @@
           Terraform Amazon Provider
         </h1>
         <p class="lead">
-          This is an example of how to utilize kitchen-terraform to test Amazon resources configured with the <a href="https://www.terraform.io/docs/providers/aws/index.html" style="color: #32c850;">Terraform Amazon Provider</a>.
+          This is an example of how to utilize Kitchen-Terraform to test Amazon resources configured with the <a href="https://www.terraform.io/docs/providers/aws/index.html" style="color: #32c850;">Terraform Amazon Provider</a>.
         </p>
         <p class="lead">
           We'll walk through how to use fixtures to reference your Terraform code as a module, use local kitchen.yml files and custom libraries with your Inspec control tests.
@@ -195,13 +204,13 @@ bundle install
 
 </code></pre></div>            </div>
             <div class="col">
-              The kitchen-terraform driver is configured to use the us-east-1 test fixture configuration and to use 4 concurrent operations in its actions.
+              The Kitchen-Terraform driver is configured to use the us-east-1 test fixture configuration and to use 4 concurrent operations in its actions.
               <br><br>
-              The kitchen-terraform provisioner is enabled.
+              The Kitchen-Terraform provisioner is enabled.
               <br><br>
               The Test Kitchen SSH transport is enabled.
               <br><br>
-              The kitchen-terraform verifier is configured with two groups, remote and local.
+              The Kitchen-Terraform verifier is configured with two groups, remote and local.
               <br><br>
               The remote group uses the value of the security_group output to define an Inspec control attribute named overridden_security_group and includes some of the controls of the profile of the suite.
               <br><br>
@@ -362,7 +371,7 @@ bundle install
 <span class="p">}</span>
 </code></pre></div>        </div>
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
-          To assist in testing, Terraform outputs will provide information about both servers and what security group they are associated with. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
+          To assist in testing, Terraform outputs will provide information about both servers and what security group they are associated with. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
           <br><br>
@@ -554,7 +563,7 @@ bundle install
 <span class="k">end</span>
 </code></pre></div>        </div>
         <div class="tab-pane fade" id="list-nine" role="tabpanel" aria-labelledby="list-nine-list">
-          Execute kitchen-terraform by running these commands
+          Execute Kitchen-Terraform by running these commands
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Create resources from the Terraform fixture code that references main.tf</span>
 <span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
@@ -572,7 +581,7 @@ bundle install
       <div class="container">
         <span class="text-muted">Community driven, created and maintained by
           <a href="http://newcontext.com" style="color: #32c850;">
-            <img src="/kitchen-terraform/images/newcontext_logo.png" class="d-inline-block" style="vertical-align: sub;" width="30" height="24" alt="newcontext logo" />
+            <img src="/kitchen-terraform/images/newcontext_logo.png" class="d-inline-block" style="vertical-align: sub;" width="30" height="24" alt="New Context Services, Inc. logo" />
             New Context Services, Inc.
           </a>
         </span>

@@ -1,11 +1,11 @@
-# kitchen-terraform documentation
+# Kitchen-Terraform documentation
 
-[kitchen-terraform] is a set of [Test Kitchen] plugins for testing
+[Kitchen-Terraform] is a set of [Test Kitchen] plugins for testing
 [Terraform configuration].
 
-This has tutorials, examples and documentation for [kitchen-terraform]
+This has tutorials, examples and documentation for [Kitchen-Terraform]
 
-[kitchen-terraform]: https://github.com/newcontext-oss/kitchen-terraform
+[Kitchen-Terraform]: https://github.com/newcontext-oss/kitchen-terraform
 [Terraform configuration]: https://www.terraform.io/docs/configuration/index.html
 [Test Kitchen]: http://kitchen.ci/index.html
 

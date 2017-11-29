@@ -6,6 +6,14 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Using the Terraform Docker Provider</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180-precomposed.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152-precomposed.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon-precomposed.png">
+    <link rel="shortcut icon" href="favicon.png">
+    <link rel="icon" type="image/ico" href="favicon.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link href="/kitchen-terraform/stylesheets/highlighting.css" rel="stylesheet" />
     <link href="/kitchen-terraform/stylesheets/material.css" rel="stylesheet" />
@@ -17,7 +25,8 @@
   </head>
   <body>
     <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
-      <a href="/kitchen-terraform/" class="navbar-brand">Kitchen-Terraform</a>
+      <img src="/kitchen-terraform/images/kitchen_terraform_logo.png" class="d-inline-block" style="vertical-align: sub; margin-left: 10px;" width="18" height="18" alt="Kitchen-Terraform logo" />
+      <a href="/kitchen-terraform/" class="navbar-brand" style="padding-left: 5px;">Kitchen-Terraform</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -37,7 +46,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
-              <img src="/kitchen-terraform/images/github.png" class="d-inline-block" style="vertical-align: sub;" width="18" height="18" alt="github logo" /> Contribute
+              <img src="/kitchen-terraform/images/github.png" class="d-inline-block" style="vertical-align: sub;" width="18" height="18" alt="GitHub logo" /> Contribute
             </a>
           </li>
         </ul>
@@ -52,7 +61,7 @@
           Terraform Docker Provider
         </h1>
         <p class="lead">
-          This is an example of how to utilize kitchen-terraform to test a Docker container running on localhost configured with the <a href="https://www.terraform.io/docs/providers/docker/index.html" style="color: #32c850;">Terraform Docker Provider</a>.
+          This is an example of how to utilize Kitchen-Terraform to test a Docker container running on localhost configured with the <a href="https://www.terraform.io/docs/providers/docker/index.html" style="color: #32c850;">Terraform Docker Provider</a>.
         </p>
         <div class="float-right">Author: Erik R. Rygg</div>
       </div>
@@ -83,7 +92,7 @@
         <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
           Requirements are a Docker host listening on the Unix socket located at: unix://localhost/var/run/docker.sock.
           <br><br>
-          The Docker container to be tested must be running an SSH daemon in the foreground to enable the kitchen-terraform verifier to remotely execute tests.
+          The Docker container to be tested must be running an SSH daemon in the foreground to enable the Kitchen-Terraform verifier to remotely execute tests.
           <br><hr>
           To setup the repository, run these commands:
           <br><br>
@@ -139,13 +148,13 @@ bundle install
 </code></pre></div>            </div>
             <div class="col">
               <br><br>
-              The kitchen-terraform driver is enabled.
+              The Kitchen-Terraform driver is enabled.
               <br><br><br>
-              The kitchen-terraform provisioner is enabled.
+              The Kitchen-Terraform provisioner is enabled.
               <br><br><br>
               The Test Kitchen SSH transport is configured to use password authentication.
               <br><br><br>
-              The kitchen-terraform verifier is configured with two groups.
+              The Kitchen-Terraform verifier is configured with two groups.
               <br><br>
               The container group includes a control for the operating system of the Docker container.
               <br><br>
@@ -203,7 +212,7 @@ bundle install
 <span class="p">}</span>
 </code></pre></div>        </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
-          To assist in testing, Terraform outputs will provide the path of the backend state file and the localhost hostname. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
+          To assist in testing, Terraform outputs will provide the path of the backend state file and the localhost hostname. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
           <br><br>
@@ -277,14 +286,14 @@ bundle install
 <span class="k">end</span>
 </code></pre></div>        </div>
         <div class="tab-pane fade" id="list-five" role="tabpanel" aria-labelledby="list-five-list">
-          Execute kitchen-terraform by running these commands
+          Execute Kitchen-Terraform by running these commands
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Create resources from the Terraform code in main.tf</span>
 <span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
 
 <span class="c1"># Run the Inspec controls from the .kitchen.yml verifier section</span>
 <span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
-</code></pre></div>          Below is example output of kitchen-terraform running.
+</code></pre></div>          Below is example output of Kitchen-Terraform running.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nt">-----</span><span class="o">&gt;</span> Starting Kitchen <span class="o">(</span>v&lt;x.x.x.&gt;<span class="o">)</span>
        Terraform v&lt;x.x.x.&gt;
@@ -496,7 +505,7 @@ Test Summary: 2 successful, 0 failures, 0 skipped
       <div class="container">
         <span class="text-muted">Community driven, created and maintained by
           <a href="http://newcontext.com" style="color: #32c850;">
-            <img src="/kitchen-terraform/images/newcontext_logo.png" class="d-inline-block" style="vertical-align: sub;" width="30" height="24" alt="newcontext logo" />
+            <img src="/kitchen-terraform/images/newcontext_logo.png" class="d-inline-block" style="vertical-align: sub;" width="30" height="24" alt="New Context Services, Inc. logo" />
             New Context Services, Inc.
           </a>
         </span>

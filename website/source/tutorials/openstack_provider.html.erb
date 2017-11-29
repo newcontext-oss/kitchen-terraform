@@ -10,7 +10,7 @@ title: Using the Terraform OpenStack Provider
           Terraform OpenStack Provider
         </h1>
         <p class="lead">
-          This is an example of how to utilize kitchen-terraform to test OpenStack resources configured with the <a href="https://www.terraform.io/docs/providers/openstack/index.html" style="color: #32c850;">Terraform OpenStack Provider</a>.
+          This is an example of how to utilize Kitchen-Terraform to test OpenStack resources configured with the <a href="https://www.terraform.io/docs/providers/openstack/index.html" style="color: #32c850;">Terraform OpenStack Provider</a>.
         </p>
         <div class="float-right">Author: Ewa Czechowska</div>
       </div>
@@ -57,19 +57,17 @@ ssh-keygen -f openstack_provider_example/dummy_keypair/cloud.key
 
 cd openstack_provider_example
           <% end %>
-          Then install the necessary rubygems.
+          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> to install our dependencies.
           <br><br>
-          <% code("bash") do %>
-(
-cat << EOP
+          <% code("ruby") do %>
 source "https://rubygems.org/" do
   gem "kitchen-terraform"
 end
-EOP
-) > Gemfile
-
-# Install kitchen-terraform and other rubygems
-# If needed run `gem install bundler`
+          <% end %>
+          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+          <br><br>
+          <% code("bash") do %>
+gem install bundler
 bundle install
           <% end %>
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> which brings together the Terraform module code and Inspec controls.
@@ -115,13 +113,13 @@ suites:
             </div>
             <div class="col">
               <br><br>
-              The kitchen-terraform driver is configured with a command timeout of 1000 seconds and the path to a Terraform variables file.
+              The Kitchen-Terraform driver is configured with a command timeout of 1000 seconds and the path to a Terraform variables file.
               <br><br><br>
-              The kitchen-terraform provisioner is enabled.
+              The Kitchen-Terraform provisioner is enabled.
               <br><br><br>
               The Test Kitchen SSH transport is configured to use the dummy_keypair and a static username for SSH authentication with the VMs.
               <br><br>
-              The kitchen-terraform verifier is configured with two groups.
+              The Kitchen-Terraform verifier is configured with two groups.
               <br><br>
               The master group is configured to run a control against the master VM by using the master_address output for the value of hostnames.
               <br><br>
@@ -274,7 +272,7 @@ variable "provider_user_name" {
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
-          To assist in testing, Terraform outputs will provide the master and worker server addresses. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
+          To assist in testing, Terraform outputs will provide the master and worker server addresses. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
           <br><br>
@@ -344,7 +342,7 @@ end
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-seven" role="tabpanel" aria-labelledby="list-seven-list">
-          Execute kitchen-terraform by running these commands
+          Execute Kitchen-Terraform by running these commands
           <br><br>
           <% code("ruby") do %>
 # Create resources from the Terraform code in main.tf
