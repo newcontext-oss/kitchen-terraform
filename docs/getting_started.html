@@ -5,6 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="msapplication-config" content="browserconfig.xml" />
     <title>Getting Started with Kitchen-Terraform</title>
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180-precomposed.png">
     <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152-precomposed.png">
@@ -12,6 +13,11 @@
     <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114-precomposed.png">
     <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png">
     <link rel="apple-touch-icon" href="apple-touch-icon-precomposed.png">
+    <link rel="icon" type="image/png" sizes="196x196" href="favicon-196x196.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="favicon-160x160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="shortcut icon" href="favicon.png">
     <link rel="icon" type="image/ico" href="favicon.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
@@ -129,8 +135,8 @@ mkdir <span class="nt">-p</span> <span class="nb">test</span>/integration/kt_sui
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
   <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span>
 <span class="k">end</span>
-</code></pre></div>          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
-          <br><br>
+</code></pre></div>         Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+         <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code>gem install bundler
 bundle install
 </code></pre></div>          Create the Test Kitchen configuration file, <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> and configure the kitchen-terraform plugins to associate the fixture Terraform module with the InSpec profile.
@@ -193,14 +199,14 @@ bundle install
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">control</span> <span class="s2">"file_check"</span> <span class="k">do</span>
-  <span class="n">describe</span> <span class="n">file</span><span class="p">(</span><span class="s1">'.kitchen/kitchen-terraform/kt_suite-terraform/foobar'</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="n">file</span><span class="p">(</span><span class="s1">'.kitchen/kitchen-terraform/kt-suite-terraform/foobar'</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">exist</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div>          Run Inspec control tests with Test-Kitchen.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
-</code></pre></div>          Kitchen-Terraform with the help of Test-Kitchen and Inspec have validated the Terraform apply results! Please take a peek at our <a href="http://www.rubydoc.info/gems/kitchen-terraform" style="color: #32c850;">documentation</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
+</code></pre></div>          Kitchen-Terraform with the help of Test-Kitchen and Inspec have validated the results of running the Terraform code! Please take a peek at our <a href="http://www.rubydoc.info/gems/kitchen-terraform" style="color: #32c850;">documentation</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
         </div>
       </div>
     </div>
