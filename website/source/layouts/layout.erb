@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="msapplication-config" content="browserconfig.xml" />
+    <title><%= current_page.data.title || "Kitchen-Terraform" %></title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/kitchen-terraform/apple-touch-icon-180x180-precomposed.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/kitchen-terraform/apple-touch-icon-152x152-precomposed.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/kitchen-terraform/apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/kitchen-terraform/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/kitchen-terraform/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" href="/kitchen-terraform/apple-touch-icon-precomposed.png">
+    <link rel="icon" type="image/png" sizes="196x196" href="/kitchen-terraform/favicon-196x196.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="/kitchen-terraform/favicon-160x160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/kitchen-terraform/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/kitchen-terraform/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/kitchen-terraform/favicon-16x16.png">
+    <link rel="shortcut icon" href="/kitchen-terraform/favicon.png">
+    <link rel="icon" type="image/ico" href="/kitchen-terraform/favicon.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <%= stylesheet_link_tag 'highlighting' %>
+    <%= stylesheet_link_tag 'material' %>
+    <%= stylesheet_link_tag 'site' %>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <%= javascript_include_tag 'site' %>
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
+      <%= image_tag "kitchen_terraform_logo.png", :class => "d-inline-block", :style => "vertical-align: sub; margin-left: 10px;", :width => "18", :height => "18", :alt => "Kitchen-Terraform logo" %>
+      <%= link_to 'Kitchen-Terraform', '/index.html', :class => 'navbar-brand', :style => 'padding-left: 5px;' %>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <%= link_to 'Getting Started', '/getting_started.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'Tutorials', '/tutorials/index.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'About', '/about.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to 'Community', '/community/index.html', :class => 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
+              <%= image_tag "github.png", :class => "d-inline-block", :style => "vertical-align: sub;", :width => "18", :height => "18", :alt => "GitHub logo" %> Contribute
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="content text-left">
+      <%= yield %>
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">Community driven, created and maintained by
+          <a href="http://newcontext.com" style="color: #32c850;">
+            <%= image_tag "newcontext_logo.png", :class => "d-inline-block", :style => "vertical-align: sub;", :width => "30", :height => "24", :alt => "New Context Services, Inc. logo" %>
+            New Context Services, Inc.
+          </a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

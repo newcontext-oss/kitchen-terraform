@@ -1,0 +1,179 @@
+---
+title: Getting Started with Kitchen-Terraform
+---
+
+<div class="container" style="padding-top: 0px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-3">
+          Getting Started
+        </h1>
+        <p class="lead">
+          This is a quick guide to getting started with Kitchen-Terraform. It provides instructions for installing dependencies, creating a new Terraform <a href="https://www.terraform.io/docs/configuration/modules.html"  style="color: #32c850;">module</a>, and writing <a href="https://inspec.io" style="color: #32c850;">InSpec</a> tests.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action active" id="list-one-list" data-toggle="list" href="#list-one" role="tab" aria-controls="one">
+          1. Install Dependencies
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-two-list" data-toggle="list" href="#list-two" role="tab" aria-controls="two">
+          2. Create Project
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-three-list" data-toggle="list" href="#list-three" role="tab" aria-controls="three">
+          3. Create & Apply Terraform code
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-four-list" data-toggle="list" href="#list-four" role="tab" aria-controls="four">
+          4. Create & Run Inspec Tests
+        </a>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
+          <h4 class="display-6" style="font-weight: bolder;">
+            General Methods:
+          </h4>
+          Install Terraform: <a href="https://www.terraform.io/downloads.html" style="color: #32c850;">
+            https://www.terraform.io/downloads.html
+          </a>
+          <br>
+          Install Ruby: <a href="https://www.ruby-lang.org/en/documentation/installation/" style="color: #32c850;">
+            https://www.ruby-lang.org/en/documentation/installation/
+          </a>
+          <br><br>
+          <div class="row">
+            <div class="col-sm">
+              <h4 class="display-6" style="font-weight: bolder;">
+                Platform Methods
+              </h4>
+              Mac OS (homebrew):
+              <% code("bash") do %>
+brew install terraform
+brew install ruby
+              <% end %>
+            </div>
+            <div class="col-sm">
+              <h4 class="display-6" style="font-weight: bolder;">
+                Useful Dependency Managers
+              </h4>
+              <a href="https://github.com/kamatama41/tfenv" style="color: #32c850;">tfenv</a>
+              <br>
+              <a href="https://github.com/rbenv/rbenv" style="color: #32c850;">rbenv</a>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
+          Create module and folder structure by running these commands:
+          <br><br>
+          <% code("bash") do %>
+mkdir -p my_terraform_module
+cd my_terraform_module
+
+mkdir -p test/integration/kt_suite/controls \
+         test/fixtures/tf_module/
+         <% end %>
+         Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> to install our dependencies.
+         <br><br>
+         <% code("ruby") do %>
+source "https://rubygems.org/" do
+  gem "kitchen-terraform"
+end
+         <% end %>
+         Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+         <br><br>
+         <% code("bash") do %>
+gem install bundler
+bundle install
+         <% end %>
+          Create the Test Kitchen configuration file, <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> and configure the kitchen-terraform plugins to associate the fixture Terraform module with the InSpec profile.
+          <br><br>
+          <% code("yml") do %>
+---
+driver:
+  name: terraform
+  root_module_directory: test/fixtures/tf_module
+  parallelism: 4
+
+provisioner:
+  name: terraform
+
+transport:
+  name: ssh
+
+verifier:
+  name: terraform
+  groups:
+    - name: basic
+      controls:
+        - file_check
+
+platforms:
+  - name: terraform
+
+suites:
+  - name: kt_suite
+          <% end %>
+          Please refer back to this file as we continue to move on, take special note of the root_module_directory, group and control names under verifier and the suite name. Each of these coorespond to a folder structure and Inspec control test.
+        </div>
+        <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add the block of code into it.
+          <br><br>
+          <% code("ruby") do %>
+resource "null_resource" "create_file" {
+  provisioner "local-exec" {
+    command = "echo 'this is my first test' > foobar"
+  }
+}
+          <% end %>
+          <br>
+          Create Terraform fixture code that will call the null_resource from above. This helps simulate calling the Terraform code as a module.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/fixtures/tf_module/main.tf</p> and add the block of code into it.
+          <br><br>
+          <% code("ruby") do %>
+module "kt_test" {
+  source = "../../.."
+}
+          <% end %>
+          Apply the fixutre Terraform module configuration with Test Kitchen.
+          <br><br>
+          <% code("ruby") do %>
+bundle exec kitchen converge
+          <% end %>
+        </div>
+        <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
+          With the Terraform code created, it's now time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
+          <br><br>
+          Create a default profile <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/kt_suite/inspec.yml</p>
+          <br><br>
+          <% code("yml") do %>
+---
+name: default
+          <% end %>
+          Create Inspec control test file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/kt_suite/controls/basic.rb</p>
+          <br><br>
+          <% code("ruby") do %>
+# frozen_string_literal: true
+
+control "file_check" do
+  describe file('.kitchen/kitchen-terraform/kt-suite-terraform/foobar') do
+    it { should exist }
+  end
+end
+          <% end %>
+          Run Inspec control tests with Test-Kitchen.
+          <br><br>
+          <% code("ruby") do %>
+bundle exec kitchen verify
+          <% end %>
+          Kitchen-Terraform with the help of Test-Kitchen and Inspec have validated the results of running the Terraform code! Please take a peek at our <a href="http://www.rubydoc.info/gems/kitchen-terraform" style="color: #32c850;">documentation</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

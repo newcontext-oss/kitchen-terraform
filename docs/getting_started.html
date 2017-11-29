@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="msapplication-config" content="browserconfig.xml" />
+    <title>Getting Started with Kitchen-Terraform</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/kitchen-terraform/apple-touch-icon-180x180-precomposed.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/kitchen-terraform/apple-touch-icon-152x152-precomposed.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/kitchen-terraform/apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/kitchen-terraform/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/kitchen-terraform/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" href="/kitchen-terraform/apple-touch-icon-precomposed.png">
+    <link rel="icon" type="image/png" sizes="196x196" href="/kitchen-terraform/favicon-196x196.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="/kitchen-terraform/favicon-160x160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/kitchen-terraform/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/kitchen-terraform/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/kitchen-terraform/favicon-16x16.png">
+    <link rel="shortcut icon" href="/kitchen-terraform/favicon.png">
+    <link rel="icon" type="image/ico" href="/kitchen-terraform/favicon.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="/kitchen-terraform/stylesheets/highlighting.css" rel="stylesheet" />
+    <link href="/kitchen-terraform/stylesheets/material.css" rel="stylesheet" />
+    <link href="/kitchen-terraform/stylesheets/site.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="/kitchen-terraform/javascripts/site.js"></script>
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
+      <img src="/kitchen-terraform/images/kitchen_terraform_logo.png" class="d-inline-block" style="vertical-align: sub; margin-left: 10px;" width="18" height="18" alt="Kitchen-Terraform logo" />
+      <a href="/kitchen-terraform/" class="navbar-brand" style="padding-left: 5px;">Kitchen-Terraform</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a href="/kitchen-terraform/getting_started.html" class="nav-link">Getting Started</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/tutorials/" class="nav-link">Tutorials</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/about.html" class="nav-link">About</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/community/" class="nav-link">Community</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
+              <img src="/kitchen-terraform/images/github.png" class="d-inline-block" style="vertical-align: sub;" width="18" height="18" alt="GitHub logo" /> Contribute
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="content text-left">
+      <div class="container" style="padding-top: 0px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-3">
+          Getting Started
+        </h1>
+        <p class="lead">
+          This is a quick guide to getting started with Kitchen-Terraform. It provides instructions for installing dependencies, creating a new Terraform <a href="https://www.terraform.io/docs/configuration/modules.html"  style="color: #32c850;">module</a>, and writing <a href="https://inspec.io" style="color: #32c850;">InSpec</a> tests.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action active" id="list-one-list" data-toggle="list" href="#list-one" role="tab" aria-controls="one">
+          1. Install Dependencies
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-two-list" data-toggle="list" href="#list-two" role="tab" aria-controls="two">
+          2. Create Project
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-three-list" data-toggle="list" href="#list-three" role="tab" aria-controls="three">
+          3. Create & Apply Terraform code
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-four-list" data-toggle="list" href="#list-four" role="tab" aria-controls="four">
+          4. Create & Run Inspec Tests
+        </a>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
+          <h4 class="display-6" style="font-weight: bolder;">
+            General Methods:
+          </h4>
+          Install Terraform: <a href="https://www.terraform.io/downloads.html" style="color: #32c850;">
+            https://www.terraform.io/downloads.html
+          </a>
+          <br>
+          Install Ruby: <a href="https://www.ruby-lang.org/en/documentation/installation/" style="color: #32c850;">
+            https://www.ruby-lang.org/en/documentation/installation/
+          </a>
+          <br><br>
+          <div class="row">
+            <div class="col-sm">
+              <h4 class="display-6" style="font-weight: bolder;">
+                Platform Methods
+              </h4>
+              Mac OS (homebrew):
+<div class="highlight"><pre class="syntax-highlight shell"><code>brew install terraform
+brew install ruby
+</code></pre></div>            </div>
+            <div class="col-sm">
+              <h4 class="display-6" style="font-weight: bolder;">
+                Useful Dependency Managers
+              </h4>
+              <a href="https://github.com/kamatama41/tfenv" style="color: #32c850;">tfenv</a>
+              <br>
+              <a href="https://github.com/rbenv/rbenv" style="color: #32c850;">rbenv</a>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
+          Create module and folder structure by running these commands:
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code>mkdir <span class="nt">-p</span> my_terraform_module
+<span class="nb">cd </span>my_terraform_module
+
+mkdir <span class="nt">-p</span> <span class="nb">test</span>/integration/kt_suite/controls <span class="se">\</span>
+         <span class="nb">test</span>/fixtures/tf_module/
+</code></pre></div>         Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> to install our dependencies.
+         <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span>
+<span class="k">end</span>
+</code></pre></div>         Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+         <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code>gem install bundler
+bundle install
+</code></pre></div>          Create the Test Kitchen configuration file, <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> and configure the kitchen-terraform plugins to associate the fixture Terraform module with the InSpec profile.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">driver</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">root_module_directory</span><span class="pi">:</span> <span class="s">test/fixtures/tf_module</span>
+  <span class="na">parallelism</span><span class="pi">:</span> <span class="s">4</span>
+
+<span class="na">provisioner</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">transport</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
+
+<span class="na">verifier</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">groups</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">basic</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">file_check</span>
+
+<span class="na">platforms</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">suites</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">kt_suite</span>
+</code></pre></div>          Please refer back to this file as we continue to move on, take special note of the root_module_directory, group and control names under verifier and the suite name. Each of these coorespond to a folder structure and Inspec control test.
+        </div>
+        <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add the block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">resource</span> <span class="s2">"null_resource"</span> <span class="s2">"create_file"</span> <span class="p">{</span>
+  <span class="n">provisioner</span> <span class="s2">"local-exec"</span> <span class="p">{</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="s2">"echo 'this is my first test' &gt; foobar"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>          <br>
+          Create Terraform fixture code that will call the null_resource from above. This helps simulate calling the Terraform code as a module.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/fixtures/tf_module/main.tf</p> and add the block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">module</span> <span class="s2">"kt_test"</span> <span class="p">{</span>
+  <span class="n">source</span> <span class="o">=</span> <span class="s2">"../../.."</span>
+<span class="p">}</span>
+</code></pre></div>          Apply the fixutre Terraform module configuration with Test Kitchen.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
+</code></pre></div>        </div>
+        <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
+          With the Terraform code created, it's now time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
+          <br><br>
+          Create a default profile <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/kt_suite/inspec.yml</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
+</code></pre></div>          Create Inspec control test file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/kt_suite/controls/basic.rb</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">control</span> <span class="s2">"file_check"</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="n">file</span><span class="p">(</span><span class="s1">'.kitchen/kitchen-terraform/kt-suite-terraform/foobar'</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">exist</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>          Run Inspec control tests with Test-Kitchen.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
+</code></pre></div>          Kitchen-Terraform with the help of Test-Kitchen and Inspec have validated the results of running the Terraform code! Please take a peek at our <a href="http://www.rubydoc.info/gems/kitchen-terraform" style="color: #32c850;">documentation</a> and <a href="/tutorials/index.html" style="color: #32c850;">tutorials</a> for additional information.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">Community driven, created and maintained by
+          <a href="http://newcontext.com" style="color: #32c850;">
+            <img src="/kitchen-terraform/images/newcontext_logo.png" class="d-inline-block" style="vertical-align: sub;" width="30" height="24" alt="New Context Services, Inc. logo" />
+            New Context Services, Inc.
+          </a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

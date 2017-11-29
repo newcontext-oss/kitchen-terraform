@@ -1,0 +1,535 @@
+---
+title: Walk-through with Terraform Amazon Provider
+---
+
+<div class="container" style="padding-top: 0px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-3">
+          Terraform Amazon Provider
+        </h1>
+        <p class="lead">
+          Hello! This tutorial will walk you through setting up a Terraform config to spin up an Amazon Web Services (AWS) EC2 instance using Inspec and Kitchen-Terraform from scratch.
+          <br><br>
+          (Note: these instructions are for Unix based systems only)
+        </p>
+        <div class="float-right">Author: Nell Shamrell-Harrington</div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action active" id="list-one-list" data-toggle="list" href="#list-one" role="tab" aria-controls="one">
+          1. Prerequisites
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-two-list" data-toggle="list" href="#list-two" role="tab" aria-controls="two">
+          2. Setup development environment
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-three-list" data-toggle="list" href="#list-three" role="tab" aria-controls="three">
+          3. Setup Test Kitchen
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-four-list" data-toggle="list" href="#list-four" role="tab" aria-controls="four">
+          4. Writing a test
+        </a>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
+          Make sure you have the following prerequisites for this tutorial
+          <br><br>
+          An AWS Account<br>
+          An AWS Access Key ID<br>
+          An AWS Secret Key<br>
+          An AWS Keypair<br>
+          Terraform installed<br>
+          Bundler installed<br>
+          Ruby 2.3.1<br>
+          The default security group on your account must allow SSH access from your IP address.
+          <br><br>
+          So let's start building this config from scratch!
+        </div>
+        <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
+          First, let's create a new directory for our config:
+          <br><br>
+          <% code("bash") do %>
+mkdir tf_aws_cluster
+cd tf_aws_cluster
+          <% end %>
+          Now, create some skeleton terraform files:
+          <br><br>
+          <% code("bash") do %>
+touch main.tf variables.tf output.tf testing.tfvars
+          <% end %>
+          Edit the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p>
+          <br><br>
+          <% code("bash") do %>
+vim Gemfile
+          <% end %>
+          Add in the Kitchen-Terraform gem like so:
+          <br><br>
+          <% code("ruby") do %>
+ruby '2.3.1'
+
+source 'https://rubygems.org/' do
+  gem 'test-kitchen'
+  gem 'kitchen-terraform'
+end
+          <% end %>
+          Close and save the file then run bundler to install these gems:
+          <br><br>
+          <% code("bash") do %>
+bundle install
+          <% end %>
+        </div>
+        <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
+          Now let's set up Test Kitchen.
+          <br><br>
+          Go ahead and open your <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file:
+          <br><br>
+          <% code("bash") do %>
+vim .kitchen.yml
+          <% end %>
+          Let's go ahead and add in configuration for for both Test-Kitchen and Kitchen-Terraform in the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> config file.
+          <br><br>
+          Kitchen-Terraform provides three plugins for use with Test-Kitchen - a driver, a provisioner, and a verifier. We will go through each of these plugins in this tutorial.
+          <br><br>
+          First the driver - the driver we are using is called terraform.
+          <br><br>
+          Edit the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file:
+          <br><br>
+          <% code("yml") do %>
+---
+driver:
+  name: terraform
+  variable_files:
+    - testing.tfvars
+          <% end %>
+          Now let's add the provisioner. The provisioner we will use is also called terraform.
+          <br><br>
+          <% code("yml") do %>
+---
+driver:
+  name: terraform
+  variable_files:
+    - testing.tfvars
+
+provisioner:
+  name: terraform
+          <% end %>
+          Now, we need to add in a platform. Although our terraform config will determine what OS we use, we need to include at least one value here.
+          <br><br>
+          <% code("yml") do %>
+---
+driver:
+  name: terraform
+  variable_files:
+    - testing.tfvars
+
+provisioner:
+  name: terraform
+
+platforms:
+  - name: ubuntu
+          <% end %>
+          Next, let's add the transport section. This is what will allow Kitchen-Terraform to ssh into your terraform'd instances and run your inspec tests. You will need to include the path to the private key half of your AWS keypair - wherever you keep it on your workstation.
+          <br><br>
+          <% code("yml") do %>
+---
+driver:
+  name: terraform
+  variable_files:
+    - testing.tfvars
+
+provisioner:
+  name: terraform
+
+platforms:
+  - name: ubuntu
+
+transport:
+  name: ssh
+  ssh_key: ~/path/to/your/private/aws/key.pem
+          <% end %>
+          And now let's add another section, the verifier section. The verifier is what will verify whether your Test Kitchen instances match what is laid out in your inspec files.
+          <br><br>
+          <% code("yml") do %>
+---
+driver:
+  name: terraform
+  variable_files:
+    - testing.tfvars
+
+provisioner:
+  name: terraform
+
+platforms:
+  - name: ubuntu
+
+transport:
+  name: ssh
+  ssh_key: ~/path/to/your/private/aws/key.pem
+
+verifier:
+  name: terraform
+  format: doc
+  groups:
+    - name: default
+      controls:
+        - operating_system
+      hostnames: public_dns
+      username: ubuntu
+          <% end %>
+          And let's stop and talk about what we did here - as this is where you will see some of the uniqueness of Kitchen-Terraform.
+          <br><br>
+          With these lines:
+          <br><br>
+          <% code("yml") do %>
+verifier:
+  name: terraform
+  format: doc
+          <% end %>
+          We have specified that we are using the terraform verifier. We are also using the format type of doc for our controls' output.
+          <br><br>
+          And we have also specified a group of controls.
+          <br><br>
+          <% code("yml") do %>
+groups:
+  - name: default
+    controls:
+      - operating_system
+    hostnames: public_dns
+    username: ubuntu
+          <% end %>
+          Our group's name is default, and we expect to find a control file called <p class="font-weight-bold" style="color: #32c850; display: inline;">operating_system_spec.rb</p> within that group.
+          <br><br>
+          Additionally, Kitchen-Terraform also needs to know what hostnames it needs to ssh into to run our specs. We have specified public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit.
+          <br><br>
+          Finally, there is the username - this is the name kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu.
+          <br><br>
+          And, last, let's add a test suite to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file:
+          <br><br>
+          <% code("yml") do %>
+---
+driver:
+  name: terraform
+  variable_files:
+    - testing.tfvars
+
+provisioner:
+  name: terraform
+
+platforms:
+  - name: ubuntu
+
+transport:
+  name: ssh
+  ssh_key: ~/path/to/your/private/aws/key.pem
+
+verifier:
+  name: terraform
+  format: doc
+  groups:
+    - name: default
+      controls:
+        - operating_system
+      hostnames: public_dns
+      username: ubuntu
+
+suites:
+  - name: default
+          <% end %>
+          Save and close the file.
+        </div>
+        <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
+          Now, we have some work to do on our workstation. First, let's set up an inspec directory within our test directories
+          <br><br>
+          <% code("bash") do %>
+mkdir -p test/integration/default/controls
+          <% end %>
+          This will be our default group of tests. Now we need to provide a yml file with the name of that group within the group directory. Go ahead and create this:
+          <br><br>
+          <% code("bash") do %>
+vim test/integration/default/inspec.yml
+          <% end %>
+          And add this content:
+          <br><br>
+          <% code("yml") do %>
+---
+name: default
+          <% end %>
+          Save and close the file.
+          <br><br>
+          Now, just one more bit of housekeeping. Our <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> is expecting an output of our test kitchen instances' hostnames within the output variable, public_dns. In order to have a hostname within that public_dns variable, we need to create an EC2 instance.
+          <br><br>
+          First, open up the main config file:
+          <br><br>
+          <% code("bash") do %>
+vim main.tf
+          <% end %>
+          And add this content:
+          <br><br>
+          <% code("ruby") do %>
+provider "aws" {
+  access_key = "${var.access_key}"
+  secret_key = "${var.secret_key}"
+  region = "${var.region}"
+}
+
+resource "aws_instance" "example" {
+  ami = "${var.ami}"
+  instance_type = "${var.instance_type}"
+  key_name = "${var.key_name}"
+}
+          <% end %>
+          Save and close the file. Notice that we used some variable values there? We need to add these into our <p class="font-weight-bold" style="color: #32c850; display: inline;">variables.tf</p> file.
+          <br><br>
+          Go ahead and create it.
+          <br><br>
+          <% code("bash") do %>
+vim variables.tf
+          <% end %>
+          And add this content:
+          <br><br>
+          <% code("ruby") do %>
+variable "access_key" {}
+variable "secret_key" {}
+variable "key_name" {}
+variable "region" {}
+variable "ami" {}
+variable "instance_type" {}
+          <% end %>
+          And, finally, we need to add in some values for these variables.
+          <br><br>
+          Open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">testing.tfvars</p> file:
+          <br><br>
+          <% code("bash") do %>
+vim testing.tfvars
+          <% end %>
+          And add in this content (substitute in the appropriate values for your AWS account, region, etc.)
+          <br><br>
+          <% code("ruby") do %>
+access_key = "my_aws_access_key"
+secret_key = "my_aws_secret_key"
+key_name = "my_aws_key_pair_name"
+region = "us-east-1"
+ami = "ami-fce3c696"
+instance_type = "m3.medium"
+          <% end %>
+          Save and close the file.
+          <br><br>
+          Finally, let's define that output that will be expected by our <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p>
+          <br><br>
+          Go ahead and open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> file.
+          <br><br>
+          <% code("bash") do %>
+vim output.tf
+          <% end %>
+          And add this content:
+          <br><br>
+          <% code("ruby") do %>
+output "public_dns" {
+  value = "${aws_instance.example.public_dns}"
+}
+          <% end %>
+          Ok! Now we're ready to finally create some Test Kitchen instances!
+          <br><br>
+          Go ahead and run:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen converge
+          <% end %>
+          NOTE: If you receive the error "Error launching source instance: VPCResourceNotSpecified: The specified instance type can only be used in a VPC", check out the EC2 t2 Instance Type Requirement document.
+          <br><br>
+          And it should converge successfully and you should see output that includes:
+          <br><br>
+          <% code("bash") do %>
+Outputs:
+
+public_dns = your_aws_instance_public_ip
+          <% end %>
+          Let's first try running the tests as is - even though we haven't written any yet.
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen verify
+          <% end %>
+          And if it runs successfully, you should see output that includes:
+          <br><br>
+          <% code("bash") do %>
+0 examples, 0 failures
+          <% end %>
+          Let's add some tests!
+          <br><br>
+          Open up the file
+          <br><br>
+          <% code("bash") do %>
+vim test/integration/default/controls/operating_system_spec.rb
+          <% end %>
+          And let's add in a very basic test to make sure we are running on an Ubuntu system.
+          <br><br>
+          <% code("bash") do %>
+control 'operating_system' do
+  describe command('lsb_release -a') do
+    its('stdout') { should match (/Ubuntu/) }
+  end
+end
+          <% end %>
+          Now save and close the file and run the test.
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen verify
+          <% end %>
+          And hey, it passed! You should see output that includes:
+          <br><br>
+          <% code("bash") do %>
+Command lsb_release -a
+  stdout
+    should match /Ubuntu/
+          <% end %>
+          It's nice that it passed...but we still need to make sure that it fails to be certain it tests what we think it tests. Let's try changing our Terraform config to spin up an Amazon Linux System, rather than an Ubuntu system, and make sure that this test fails.
+          <br><br>
+          Go ahead and destroy your current test kitchen instances with:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen destroy
+          <% end %>
+          Open up your variables file
+          <br><br>
+          <% code("bash") do %>
+vim testing.tfvars
+          <% end %>
+          And change this content:
+          <br><br>
+          <% code("ruby") do %>
+region = "us-east-1"
+instance_type = "m3.medium"
+ami = "ami-fce3c696"
+          <% end %>
+          To this content (we are changing our AMI type to be an Amazon Linux AMI within the us-east-1 AWS region.
+          <br><br>
+          <% code("bash") do %>
+region = "us-east-1"
+instance_type = "m3.medium"
+ami = "ami-6869aa05"
+          <% end %>
+          Now create your test kitchen instance:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen converge
+          <% end %>
+          Now run the tests:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen verify
+          <% end %>
+          Whoops! Looks like we got an error this run!
+          <br><br>
+          <% code("bash") do %>
+>>>>>> ------Exception-------
+>>>>>> Class: Kitchen::ActionFailed
+>>>>>> Message: 1 actions failed.
+>>>>>>     Verify failed on instance <default-ubuntu>.  Please see
+.kitchen/logs/default-ubuntu.log for more details
+          <% end %>
+          So let's take a look at the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen/log/default-ubuntu.log</p> Parsing through the output, we see this:
+          <br><br>
+          <% code("bash") do %>
+ERROR -- default-ubuntu: Message: Transport error, can't connect to
+'ssh' backend: SSH session could not be established
+          <% end %>
+          This is because of the verifier in our <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p>
+          <br><br>
+          <% code("yml") do %>
+verifier:
+  name: terraform
+  format: doc
+  groups:
+    - name: default
+      controls:
+        - operating_system
+      hostnames: public_dns
+      username: ubuntu
+          <% end %>
+          Notice that the username we have specified for our test is ubuntu - this is fine for an ubuntu instance, but for an Amazon Linux instance, we need to use the ec2-user username
+          <br><br>
+          So let's go ahead and change that, the verifier section of your <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> should now look like this:
+          <br><br>
+          <% code("yml") do %>
+verifier:
+  name: terraform
+  format: doc
+  groups:
+    - name: default
+      controls:
+        - operating_system
+      hostnames: public_dns
+      username: ec2-user
+          <% end %>
+          Now try running the tests again:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen verify
+          <% end %>
+          And now we see a test failure:
+          <br><br>
+          <% code("bash") do %>
+1) Command lsb_release -a stdout should match /Ubuntu/
+   Failure/Error: DEFAULT_FAILURE_NOTIFIER =
+   lambda { |failure, _opts| raise failure }\
+   expected "" to match /Ubuntu/
+    Diff:
+    @@ -1,2 +1,2 @@
+    -/Ubuntu/
+    +""
+          <% end %>
+          Alright, that means our test is failing when it is supposed to be failing, and passing when it is supposed to pass.
+          <br><br>
+          Open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file and change the username back to ubuntu
+          <br><br>
+          <% code("yml") do %>
+verifier:
+  name: terraform
+  format: doc
+  groups:
+    - name: default
+      controls:
+        - operating_system
+      hostnames: public_dns
+      username: ubuntu
+          <% end %>
+          And open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">testing.tfvars</p> file and switch back to an Ubuntu AMI
+          <br><br>
+          <% code("ruby") do %>
+region = "us-east-1"
+instance_type = "m3.medium"
+ami = "ami-fce3c696"
+          <% end %>
+          Then destroy your current kitchen instances:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen destroy
+          <% end %>
+          Then converge again:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen converge
+          <% end %>
+          And then run verify one more time, now you should see everything pass:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen verify
+          <% end %>
+          Huzzah! This concludes our Terraform AWS Provider walk-through tutorial.
+          <br><br>
+          Now, make sure to destroy your test instances
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen destroy
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,517 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="msapplication-config" content="browserconfig.xml" />
+    <title>Using the Terraform Docker Provider</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/kitchen-terraform/apple-touch-icon-180x180-precomposed.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/kitchen-terraform/apple-touch-icon-152x152-precomposed.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/kitchen-terraform/apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/kitchen-terraform/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/kitchen-terraform/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" href="/kitchen-terraform/apple-touch-icon-precomposed.png">
+    <link rel="icon" type="image/png" sizes="196x196" href="/kitchen-terraform/favicon-196x196.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="/kitchen-terraform/favicon-160x160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/kitchen-terraform/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/kitchen-terraform/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/kitchen-terraform/favicon-16x16.png">
+    <link rel="shortcut icon" href="/kitchen-terraform/favicon.png">
+    <link rel="icon" type="image/ico" href="/kitchen-terraform/favicon.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="/kitchen-terraform/stylesheets/highlighting.css" rel="stylesheet" />
+    <link href="/kitchen-terraform/stylesheets/material.css" rel="stylesheet" />
+    <link href="/kitchen-terraform/stylesheets/site.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="/kitchen-terraform/javascripts/site.js"></script>
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
+      <img src="/kitchen-terraform/images/kitchen_terraform_logo.png" class="d-inline-block" style="vertical-align: sub; margin-left: 10px;" width="18" height="18" alt="Kitchen-Terraform logo" />
+      <a href="/kitchen-terraform/" class="navbar-brand" style="padding-left: 5px;">Kitchen-Terraform</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a href="/kitchen-terraform/getting_started.html" class="nav-link">Getting Started</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/tutorials/" class="nav-link">Tutorials</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/about.html" class="nav-link">About</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/community/" class="nav-link">Community</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
+              <img src="/kitchen-terraform/images/github.png" class="d-inline-block" style="vertical-align: sub;" width="18" height="18" alt="GitHub logo" /> Contribute
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="content text-left">
+      <div class="container" style="padding-top: 0px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-3">
+          Terraform Docker Provider
+        </h1>
+        <p class="lead">
+          This is an example of how to utilize Kitchen-Terraform to test a Docker container running on localhost configured with the <a href="https://www.terraform.io/docs/providers/docker/index.html" style="color: #32c850;">Terraform Docker Provider</a>.
+        </p>
+        <div class="float-right">Author: Erik R. Rygg</div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group" id="list-tab" role="tablist">
+        <a class="list-group-item list-group-item-action active" id="list-one-list" data-toggle="list" href="#list-one" role="tab" aria-controls="one">
+          1. Requirements & Setup
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-two-list" data-toggle="list" href="#list-two" role="tab" aria-controls="two">
+          2. Create Terraform code
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-three-list" data-toggle="list" href="#list-three" role="tab" aria-controls="three">
+          3. Create Terraform outputs
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-four-list" data-toggle="list" href="#list-four" role="tab" aria-controls="four">
+          4. Create tests
+        </a>
+        <a class="list-group-item list-group-item-action" id="list-five-list" data-toggle="list" href="#list-five" role="tab" aria-controls="five">
+          5. Run tests
+        </a>
+      </div>
+    </div>
+    <div class="col-8">
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
+          Requirements are a Docker host listening on the Unix socket located at: unix://localhost/var/run/docker.sock.
+          <br><br>
+          The Docker container to be tested must be running an SSH daemon in the foreground to enable the Kitchen-Terraform verifier to remotely execute tests.
+          <br><hr>
+          To setup the repository, run these commands:
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code>mkdir <span class="nt">-p</span> docker_provider_example/test/integration/example/controls
+<span class="nb">cd </span>docker_provider_example
+</code></pre></div>          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> to install our dependencies.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span>
+<span class="k">end</span>
+</code></pre></div>          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code>gem install bundler
+bundle install
+</code></pre></div>          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> which brings together the Terraform module code and Inspec controls.
+          <br><br>
+          <div class="row">
+            <div class="col">
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">driver</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">provisioner</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">transport</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
+  <span class="na">password</span><span class="pi">:</span> <span class="s">root</span>
+
+<span class="na">verifier</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">groups</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">container</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">operating_system</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="s">2222</span>
+      <span class="na">hostnames</span><span class="pi">:</span> <span class="s">hostnames</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">localhost</span>
+      <span class="na">controls</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">state_files</span>
+
+<span class="na">platforms</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
+
+<span class="na">suites</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">example</span>
+
+
+</code></pre></div>            </div>
+            <div class="col">
+              <br><br>
+              The Kitchen-Terraform driver is enabled.
+              <br><br><br>
+              The Kitchen-Terraform provisioner is enabled.
+              <br><br><br>
+              The Test Kitchen SSH transport is configured to use password authentication.
+              <br><br><br>
+              The Kitchen-Terraform verifier is configured with two groups.
+              <br><br>
+              The container group includes a control for the operating system of the Docker container.
+              <br><br>
+              Iterating over the elements of the Terraform hostnames output (see creating outputs step), the verifier will run the control against localhost over SSH on port 2222.
+              <br><br><br>
+              The platforms provide arbitrary grouping for the test suite matrix.
+              <br><br>
+              The suite name corresponds to the directory containing the Inspec profile: <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">test</span>/integration/example/</code></pre></div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
+          Example Terraform code using the Docker provider is below. The resources created by this code is what we'll be testing later on.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add each block of code into it.
+          <br><br>
+          The configuration is restricted to Terraform versions equal to or greater than 0.10.2 and less than 0.11.0. The local backend is configured to demonstrate support for backends.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">terraform</span> <span class="p">{</span>
+  <span class="n">required_version</span> <span class="o">=</span> <span class="s2">"~&gt; 0.10.2"</span>
+
+  <span class="n">backend</span> <span class="s2">"local"</span> <span class="p">{</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s2">"local.tfstate"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>          The Docker provider is configured to communicate with a Docker host listening on a Unix socket on localhost.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">provider</span> <span class="s2">"docker"</span> <span class="p">{</span>
+  <span class="n">host</span>    <span class="o">=</span> <span class="s2">"unix://localhost/var/run/docker.sock"</span>
+  <span class="n">version</span> <span class="o">=</span> <span class="s2">"~&gt; 0.1"</span>
+<span class="p">}</span>
+</code></pre></div>          A SSH daemon Docker image from the public registry is configured as a data source.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">data</span> <span class="s2">"docker_registry_image"</span> <span class="s2">"ubuntu"</span> <span class="p">{</span>
+  <span class="nb">name</span> <span class="o">=</span> <span class="s2">"rastasheep/ubuntu-sshd:latest"</span>
+<span class="p">}</span>
+</code></pre></div>          A Docker image is configured on the Docker host using the data source.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">resource</span> <span class="s2">"docker_image"</span> <span class="s2">"ubuntu"</span> <span class="p">{</span>
+  <span class="n">keep_locally</span>  <span class="o">=</span> <span class="kp">true</span>
+  <span class="nb">name</span>          <span class="o">=</span> <span class="s2">"${data.docker_registry_image.ubuntu.name}"</span>
+  <span class="n">pull_triggers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"${data.docker_registry_image.ubuntu.sha256_digest}"</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>          A Docker container based on the Docker image is configured to be running on the Docker host. The container forwards localhost:2222 to its internal SSH daemon.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">resource</span> <span class="s2">"docker_container"</span> <span class="s2">"ubuntu"</span> <span class="p">{</span>
+  <span class="n">image</span>    <span class="o">=</span> <span class="s2">"${docker_image.ubuntu.name}"</span>
+  <span class="n">must_run</span> <span class="o">=</span> <span class="kp">true</span>
+  <span class="nb">name</span>     <span class="o">=</span> <span class="s2">"ubuntu_container"</span>
+
+  <span class="n">ports</span> <span class="p">{</span>
+    <span class="n">external</span> <span class="o">=</span> <span class="mi">2222</span>
+    <span class="n">internal</span> <span class="o">=</span> <span class="mi">22</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>        </div>
+        <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
+          To assist in testing, Terraform outputs will provide the path of the backend state file and the localhost hostname. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">output</span> <span class="s2">"backend_state"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The path to the backend state file"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${path.module}/local.tfstate"</span>
+<span class="p">}</span>
+
+<span class="n">output</span> <span class="s2">"hostnames"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The hostnames to test"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="p">[</span><span class="s2">"localhost"</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>          Refer back to the .kitchen.yml and in the verifier section you will see a reference to the above hostnames output.
+        </div>
+        <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
+          We've created the Terraform code, now it's time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
+          <br><br>
+          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
+<span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
+</code></pre></div>          Referring back to the .kitchen.yml file and inside the verifier section there is an operating_system control which we need to create.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/operating_system.rb</p>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">control</span> <span class="s2">"operating_system"</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s2">"the operating system"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span> <span class="n">command</span><span class="p">(</span><span class="s2">"lsb_release -a"</span><span class="p">).</span><span class="nf">stdout</span> <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"is Ubuntu"</span> <span class="k">do</span> <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">match</span> <span class="sr">/.*Ubuntu.*/</span> <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>          Let's create the state_files control, which will validate the local Terraform state file is created and has the proper content.
+          <br><br>
+          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/state_file.rb</p>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">backend_state</span> <span class="o">=</span>
+<span class="n">attribute</span><span class="p">(</span>
+<span class="s2">"backend_state"</span><span class="p">,</span>
+<span class="p">{}</span>
+<span class="p">)</span>
+
+<span class="n">configured_state</span> <span class="o">=</span>
+<span class="n">attribute</span><span class="p">(</span>
+<span class="s2">"terraform_state"</span><span class="p">,</span>
+<span class="p">{}</span>
+<span class="p">)</span>
+
+<span class="n">control</span> <span class="s2">"state_files"</span> <span class="k">do</span>
+<span class="n">describe</span> <span class="s2">"the backend state file"</span> <span class="k">do</span>
+<span class="n">subject</span> <span class="k">do</span>
+<span class="n">file</span> <span class="n">backend_state</span>
+<span class="k">end</span>
+
+<span class="n">it</span> <span class="k">do</span>
+<span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">exist</span>
+<span class="k">end</span>
+<span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">"the configured state file"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span>
+      <span class="n">file</span> <span class="n">configured_state</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="k">do</span>
+      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to_not</span> <span class="n">exist</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>        </div>
+        <div class="tab-pane fade" id="list-five" role="tabpanel" aria-labelledby="list-five-list">
+          Execute Kitchen-Terraform by running these commands
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Create resources from the Terraform code in main.tf</span>
+<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
+
+<span class="c1"># Run the Inspec controls from the .kitchen.yml verifier section</span>
+<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
+</code></pre></div>          Below is example output of Kitchen-Terraform running.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nt">-----</span><span class="o">&gt;</span> Starting Kitchen <span class="o">(</span>v&lt;x.x.x.&gt;<span class="o">)</span>
+       Terraform v&lt;x.x.x.&gt;
+
+<span class="nv">$$$$$$</span> Terraform version &lt;x.x.x.&gt; is supported
+<span class="nt">-----</span><span class="o">&gt;</span> Testing &lt;example-ubuntu&gt;
+<span class="nt">-----</span><span class="o">&gt;</span> Creating &lt;example-ubuntu&gt;...
+       Copying configuration from <span class="s2">"docker_provider"</span>...
+
+       Initializing the backend...
+
+       Successfully configured the backend <span class="s2">"local"</span><span class="o">!</span> Terraform will automatically
+       use this backend unless the backend configuration changes.
+
+       Initializing provider plugins...
+       - Checking <span class="k">for </span>available provider plugins on https://releases.hashicorp.com...
+       - Downloading plugin <span class="k">for </span>provider <span class="s2">"docker"</span> <span class="o">(</span>&lt;x.x.x.&gt;<span class="o">)</span>...
+
+       Terraform has been successfully initialized!
+
+       You may now begin working with Terraform. Try running <span class="s2">"terraform plan"</span> to see
+       any changes that are required <span class="k">for </span>your infrastructure. All Terraform commands
+       should now work.
+
+       If you ever <span class="nb">set </span>or change modules or backend configuration <span class="k">for </span>Terraform,
+       rerun this <span class="nb">command </span>to reinitialize your working directory. If you forget, other
+       commands will detect it and remind you to <span class="k">do </span>so <span class="k">if </span>necessary.
+       data.docker_registry_image.ubuntu: Refreshing state...
+       docker_image.ubuntu: Creating...
+         keep_locally:             <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"true"</span>
+         latest:                   <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"&lt;computed&gt;"</span>
+         name:                     <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"rastasheep/ubuntu-sshd:latest"</span>
+         pull_triggers.#:          <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"1"</span>
+         pull_triggers.2359657619: <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"sha256:552227a92aefad9981f3e284a652cc22b54eda63f7a4ddd4db628b3cd12784f5"</span>
+       docker_image.ubuntu: Creation <span class="nb">complete </span>after 1s <span class="o">(</span>ID: sha256:ae51c8f5e14e6fc277fa6fce44bf7178...3a13eb5b4rastasheep/ubuntu-sshd:latest<span class="o">)</span>
+       docker_container.ubuntu: Creating...
+         bridge:                   <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"&lt;computed&gt;"</span>
+         gateway:                  <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"&lt;computed&gt;"</span>
+         image:                    <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"rastasheep/ubuntu-sshd:latest"</span>
+         ip_address:               <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"&lt;computed&gt;"</span>
+         ip_prefix_length:         <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"&lt;computed&gt;"</span>
+         log_driver:               <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"json-file"</span>
+         must_run:                 <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"true"</span>
+         name:                     <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"ubuntu_container"</span>
+         ports.#:                  <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"1"</span>
+         ports.265401579.external: <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"2222"</span>
+         ports.265401579.internal: <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"22"</span>
+         ports.265401579.ip:       <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">""</span>
+         ports.265401579.protocol: <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"tcp"</span>
+         restart:                  <span class="s2">""</span> <span class="o">=&gt;</span> <span class="s2">"no"</span>
+       docker_container.ubuntu: Creation <span class="nb">complete </span>after 1s <span class="o">(</span>ID: 0801b683b3f63cc1acc895ac900071448c1efb9e0bc4b160564d00c761ba56e9<span class="o">)</span>
+
+       Apply <span class="nb">complete</span><span class="o">!</span> Resources: 2 added, 0 changed, 0 destroyed.
+
+       The state of your infrastructure has been saved to the path
+       below. This state is required to modify and destroy your
+       infrastructure, so keep it safe. To inspect the <span class="nb">complete </span>state
+       use the <span class="sb">`</span>terraform show<span class="sb">`</span> command.
+
+       State path: local.tfstate
+
+       Outputs:
+
+       backend_state <span class="o">=</span> docker_provider/.kitchen/kitchen-terraform/example-ubuntu/local.tfstate
+       hostnames <span class="o">=</span> <span class="o">[</span>
+           localhost
+       <span class="o">]</span>
+       Finished creating &lt;example-ubuntu&gt; <span class="o">(</span>0m46.74s<span class="o">)</span><span class="nb">.</span>
+<span class="nt">-----</span><span class="o">&gt;</span> Converging &lt;example-ubuntu&gt;...
+       Copying configuration from <span class="s2">"docker_provider"</span>...
+
+       Initializing the backend...
+
+       Initializing provider plugins...
+       - Checking <span class="k">for </span>available provider plugins on https://releases.hashicorp.com...
+       - Downloading plugin <span class="k">for </span>provider <span class="s2">"docker"</span> <span class="o">(</span>&lt;x.x.x.&gt;<span class="o">)</span>...
+
+       Terraform has been successfully initialized!
+
+       You may now begin working with Terraform. Try running <span class="s2">"terraform plan"</span> to see
+       any changes that are required <span class="k">for </span>your infrastructure. All Terraform commands
+       should now work.
+
+       If you ever <span class="nb">set </span>or change modules or backend configuration <span class="k">for </span>Terraform,
+       rerun this <span class="nb">command </span>to reinitialize your working directory. If you forget, other
+       commands will detect it and remind you to <span class="k">do </span>so <span class="k">if </span>necessary.
+       data.docker_registry_image.ubuntu: Refreshing state...
+       docker_image.ubuntu: Refreshing state... <span class="o">(</span>ID: sha256:ae51c8f5e14e6fc277fa6fce44bf7178...3a13eb5b4rastasheep/ubuntu-sshd:latest<span class="o">)</span>
+       docker_container.ubuntu: Refreshing state... <span class="o">(</span>ID: 0801b683b3f63cc1acc895ac900071448c1efb9e0bc4b160564d00c761ba56e9<span class="o">)</span>
+
+       Apply <span class="nb">complete</span><span class="o">!</span> Resources: 0 added, 0 changed, 0 destroyed.
+
+       Outputs:
+
+       backend_state <span class="o">=</span> docker_provider/.kitchen/kitchen-terraform/example-ubuntu/local.tfstate
+       hostnames <span class="o">=</span> <span class="o">[</span>
+           localhost
+       <span class="o">]</span>
+       Finished converging &lt;example-ubuntu&gt; <span class="o">(</span>0m44.77s<span class="o">)</span><span class="nb">.</span>
+<span class="nt">-----</span><span class="o">&gt;</span> Setting up &lt;example-ubuntu&gt;...
+       Finished setting up &lt;example-ubuntu&gt; <span class="o">(</span>0m0.00s<span class="o">)</span><span class="nb">.</span>
+<span class="nt">-----</span><span class="o">&gt;</span> Verifying &lt;example-ubuntu&gt;...
+       <span class="o">{</span>
+           <span class="s2">"backend_state"</span>: <span class="o">{</span>
+              <span class="s2">"sensitive"</span>: <span class="nb">false</span>,
+              <span class="s2">"type"</span>: <span class="s2">"string"</span>,
+              <span class="s2">"value"</span>: <span class="s2">"docker_provider/.kitchen/kitchen-terraform/example-ubuntu/local.tfstate"</span>
+           <span class="o">}</span>,
+           <span class="s2">"hostnames"</span>: <span class="o">{</span>
+              <span class="s2">"sensitive"</span>: <span class="nb">false</span>,
+              <span class="s2">"type"</span>: <span class="s2">"list"</span>,
+              <span class="s2">"value"</span>: <span class="o">[</span>
+                  <span class="s2">"localhost"</span>
+              <span class="o">]</span>
+           <span class="o">}</span>
+       <span class="o">}</span>
+       Verifying host <span class="s1">'localhost'</span> of group <span class="s1">'container'</span>
+       <span class="o">{</span>
+           <span class="s2">"backend_state"</span>: <span class="o">{</span>
+              <span class="s2">"sensitive"</span>: <span class="nb">false</span>,
+              <span class="s2">"type"</span>: <span class="s2">"string"</span>,
+              <span class="s2">"value"</span>: <span class="s2">"docker_provider/.kitchen/kitchen-terraform/example-ubuntu/local.tfstate"</span>
+           <span class="o">}</span>,
+           <span class="s2">"hostnames"</span>: <span class="o">{</span>
+              <span class="s2">"sensitive"</span>: <span class="nb">false</span>,
+              <span class="s2">"type"</span>: <span class="s2">"list"</span>,
+              <span class="s2">"value"</span>: <span class="o">[</span>
+                  <span class="s2">"localhost"</span>
+              <span class="o">]</span>
+           <span class="o">}</span>
+       <span class="o">}</span>
+       Loaded default
+
+Profile: default
+Version: <span class="o">(</span>not specified<span class="o">)</span>
+Target:  <span class="nb">local</span>://
+
+  ✔  operating_system: the operating system is Ubuntu
+     ✔  the operating system is Ubuntu
+
+Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
+Test Summary: 1 successful, 0 failures, 0 skipped
+       Verifying host <span class="s1">'localhost'</span> of group <span class="s1">'localhost'</span>
+       <span class="o">{</span>
+           <span class="s2">"backend_state"</span>: <span class="o">{</span>
+              <span class="s2">"sensitive"</span>: <span class="nb">false</span>,
+              <span class="s2">"type"</span>: <span class="s2">"string"</span>,
+              <span class="s2">"value"</span>: <span class="s2">"docker_provider/.kitchen/kitchen-terraform/example-ubuntu/local.tfstate"</span>
+           <span class="o">}</span>,
+           <span class="s2">"hostnames"</span>: <span class="o">{</span>
+              <span class="s2">"sensitive"</span>: <span class="nb">false</span>,
+              <span class="s2">"type"</span>: <span class="s2">"list"</span>,
+              <span class="s2">"value"</span>: <span class="o">[</span>
+                  <span class="s2">"localhost"</span>
+              <span class="o">]</span>
+           <span class="o">}</span>
+       <span class="o">}</span>
+       Loaded default
+
+Profile: default
+Version: <span class="o">(</span>not specified<span class="o">)</span>
+Target:  <span class="nb">local</span>://
+
+  ✔  state_files: the backend state file should exist<span class="p">;</span> the configured state <span class="k">fi</span>...
+     ✔  the backend state file should exist
+     ✔  the configured state file should not exist
+
+Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
+Test Summary: 2 successful, 0 failures, 0 skipped
+       Finished verifying &lt;example-ubuntu&gt; <span class="o">(</span>0m0.53s<span class="o">)</span><span class="nb">.</span>
+<span class="nt">-----</span><span class="o">&gt;</span> Destroying &lt;example-ubuntu&gt;...
+       Copying configuration from <span class="s2">"docker_provider"</span>...
+
+       Initializing the backend...
+
+       Initializing provider plugins...
+       - Checking <span class="k">for </span>available provider plugins on https://releases.hashicorp.com...
+       - Downloading plugin <span class="k">for </span>provider <span class="s2">"docker"</span> <span class="o">(</span>&lt;x.x.x.&gt;<span class="o">)</span>...
+
+       Terraform has been successfully initialized!
+
+       You may now begin working with Terraform. Try running <span class="s2">"terraform plan"</span> to see
+       any changes that are required <span class="k">for </span>your infrastructure. All Terraform commands
+       should now work.
+
+       If you ever <span class="nb">set </span>or change modules or backend configuration <span class="k">for </span>Terraform,
+       rerun this <span class="nb">command </span>to reinitialize your working directory. If you forget, other
+       commands will detect it and remind you to <span class="k">do </span>so <span class="k">if </span>necessary.
+       data.docker_registry_image.ubuntu: Refreshing state...
+       docker_image.ubuntu: Refreshing state... <span class="o">(</span>ID: sha256:ae51c8f5e14e6fc277fa6fce44bf7178...3a13eb5b4rastasheep/ubuntu-sshd:latest<span class="o">)</span>
+       docker_container.ubuntu: Refreshing state... <span class="o">(</span>ID: 0801b683b3f63cc1acc895ac900071448c1efb9e0bc4b160564d00c761ba56e9<span class="o">)</span>
+       docker_container.ubuntu: Destroying... <span class="o">(</span>ID: 0801b683b3f63cc1acc895ac900071448c1efb9e0bc4b160564d00c761ba56e9<span class="o">)</span>
+       docker_container.ubuntu: Destruction <span class="nb">complete </span>after 0s
+       docker_image.ubuntu: Destroying... <span class="o">(</span>ID: sha256:ae51c8f5e14e6fc277fa6fce44bf7178...3a13eb5b4rastasheep/ubuntu-sshd:latest<span class="o">)</span>
+       docker_image.ubuntu: Destruction <span class="nb">complete </span>after 0s
+
+       Destroy <span class="nb">complete</span><span class="o">!</span> Resources: 2 destroyed.
+       Finished destroying &lt;example-ubuntu&gt; <span class="o">(</span>0m45.17s<span class="o">)</span><span class="nb">.</span>
+       Finished testing &lt;example-ubuntu&gt; <span class="o">(</span>3m3.38s<span class="o">)</span><span class="nb">.</span>
+<span class="nt">-----</span><span class="o">&gt;</span> Kitchen is finished. <span class="o">(</span>3m8.81s<span class="o">)</span>
+</code></pre></div>        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">Community driven, created and maintained by
+          <a href="http://newcontext.com" style="color: #32c850;">
+            <img src="/kitchen-terraform/images/newcontext_logo.png" class="d-inline-block" style="vertical-align: sub;" width="30" height="24" alt="New Context Services, Inc. logo" />
+            New Context Services, Inc.
+          </a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>
