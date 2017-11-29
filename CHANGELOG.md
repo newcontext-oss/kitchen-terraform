@@ -5,7 +5,7 @@ format is based on [Keep a CHANGELOG].
 
 This project adheres to [Semantic Versioning].
 
-## [3.0.0] - 2017-??-??
+## [3.0.0] - 2017-11-28
 
 ### Added
 
@@ -32,6 +32,9 @@ This project adheres to [Semantic Versioning].
   root_module_directory
 
 * Lock InSpec to 1.44.8 to maintain support for Ruby 2.2
+
+* Moved examples and tutorials to a
+  [GitHub site](https://newcontext-oss.github.io/kitchen-terraform/)
 
 ### Fixed
 
