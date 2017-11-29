@@ -6,6 +6,14 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title><%= current_page.data.title || "Kitchen-Terraform" %></title>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180-precomposed.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152-precomposed.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon-precomposed.png">
+    <link rel="shortcut icon" href="favicon.png">
+    <link rel="icon" type="image/ico" href="favicon.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <%= stylesheet_link_tag 'highlighting' %>
     <%= stylesheet_link_tag 'material' %>
@@ -17,7 +25,8 @@
   </head>
   <body>
     <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
-      <%= link_to 'Kitchen-Terraform', '/index.html', :class => 'navbar-brand' %>
+      <%= image_tag "kitchen_terraform_logo.png", :class => "d-inline-block", :style => "vertical-align: sub; margin-left: 10px;", :width => "18", :height => "18", :alt => "Kitchen-Terraform logo" %>
+      <%= link_to 'Kitchen-Terraform', '/index.html', :class => 'navbar-brand', :style => 'padding-left: 5px;' %>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -37,7 +46,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
-              <%= image_tag "github.png", :class => "d-inline-block", :style => "vertical-align: sub;", :width => "18", :height => "18", :alt => "github logo" %> Contribute
+              <%= image_tag "github.png", :class => "d-inline-block", :style => "vertical-align: sub;", :width => "18", :height => "18", :alt => "GitHub logo" %> Contribute
             </a>
           </li>
         </ul>
@@ -50,7 +59,7 @@
       <div class="container">
         <span class="text-muted">Community driven, created and maintained by
           <a href="http://newcontext.com" style="color: #32c850;">
-            <%= image_tag "newcontext_logo.png", :class => "d-inline-block", :style => "vertical-align: sub;", :width => "30", :height => "24", :alt => "newcontext logo" %>
+            <%= image_tag "newcontext_logo.png", :class => "d-inline-block", :style => "vertical-align: sub;", :width => "30", :height => "24", :alt => "New Context Services, Inc. logo" %>
             New Context Services, Inc.
           </a>
         </span>

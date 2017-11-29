@@ -10,7 +10,7 @@ title: Using the Terraform Docker Provider
           Terraform Docker Provider
         </h1>
         <p class="lead">
-          This is an example of how to utilize kitchen-terraform to test a Docker container running on localhost configured with the <a href="https://www.terraform.io/docs/providers/docker/index.html" style="color: #32c850;">Terraform Docker Provider</a>.
+          This is an example of how to utilize Kitchen-Terraform to test a Docker container running on localhost configured with the <a href="https://www.terraform.io/docs/providers/docker/index.html" style="color: #32c850;">Terraform Docker Provider</a>.
         </p>
         <div class="float-right">Author: Erik R. Rygg</div>
       </div>
@@ -41,7 +41,7 @@ title: Using the Terraform Docker Provider
         <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
           Requirements are a Docker host listening on the Unix socket located at: unix://localhost/var/run/docker.sock.
           <br><br>
-          The Docker container to be tested must be running an SSH daemon in the foreground to enable the kitchen-terraform verifier to remotely execute tests.
+          The Docker container to be tested must be running an SSH daemon in the foreground to enable the Kitchen-Terraform verifier to remotely execute tests.
           <br><hr>
           To setup the repository, run these commands:
           <br><br>
@@ -49,19 +49,17 @@ title: Using the Terraform Docker Provider
 mkdir -p docker_provider_example/test/integration/example/controls
 cd docker_provider_example
           <% end %>
-          Then install the necessary rubygems.
+          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> to install our dependencies.
           <br><br>
-          <% code("bash") do %>
-(
-cat << EOP
+          <% code("ruby") do %>
 source "https://rubygems.org/" do
   gem "kitchen-terraform"
 end
-EOP
-) > Gemfile
-
-# Install kitchen-terraform and other rubygems
-# If needed run `gem install bundler`
+          <% end %>
+          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+          <br><br>
+          <% code("bash") do %>
+gem install bundler
 bundle install
           <% end %>
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> which brings together the Terraform module code and Inspec controls.
@@ -103,13 +101,13 @@ suites:
             </div>
             <div class="col">
               <br><br>
-              The kitchen-terraform driver is enabled.
+              The Kitchen-Terraform driver is enabled.
               <br><br><br>
-              The kitchen-terraform provisioner is enabled.
+              The Kitchen-Terraform provisioner is enabled.
               <br><br><br>
               The Test Kitchen SSH transport is configured to use password authentication.
               <br><br><br>
-              The kitchen-terraform verifier is configured with two groups.
+              The Kitchen-Terraform verifier is configured with two groups.
               <br><br>
               The container group includes a control for the operating system of the Docker container.
               <br><br>
@@ -177,7 +175,7 @@ resource "docker_container" "ubuntu" {
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
-          To assist in testing, Terraform outputs will provide the path of the backend state file and the localhost hostname. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
+          To assist in testing, Terraform outputs will provide the path of the backend state file and the localhost hostname. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
           <br><br>
@@ -259,7 +257,7 @@ end
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-five" role="tabpanel" aria-labelledby="list-five-list">
-          Execute kitchen-terraform by running these commands
+          Execute Kitchen-Terraform by running these commands
           <br><br>
           <% code("ruby") do %>
 # Create resources from the Terraform code in main.tf
@@ -268,7 +266,7 @@ bundle exec kitchen converge
 # Run the Inspec controls from the .kitchen.yml verifier section
 bundle exec kitchen verify
           <% end %>
-          Below is example output of kitchen-terraform running.
+          Below is example output of Kitchen-Terraform running.
           <br><br>
           <% code("bash") do %>
 -----> Starting Kitchen (v<x.x.x.>)

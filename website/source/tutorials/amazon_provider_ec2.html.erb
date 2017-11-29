@@ -10,7 +10,7 @@ title: Walk-through with Terraform Amazon Provider
           Terraform Amazon Provider
         </h1>
         <p class="lead">
-          Hello! This tutorial will walk you through setting up a Terraform config to spin up an Amazon Web Services (AWS) EC2 instance using Inspec and kitchen-terraform from scratch.
+          Hello! This tutorial will walk you through setting up a Terraform config to spin up an Amazon Web Services (AWS) EC2 instance using Inspec and Kitchen-Terraform from scratch.
           <br><br>
           (Note: these instructions are for Unix based systems only)
         </p>
@@ -68,7 +68,7 @@ touch main.tf variables.tf output.tf testing.tfvars
           <% code("bash") do %>
 vim Gemfile
           <% end %>
-          Add in the kitchen-terraform gem like so:
+          Add in the Kitchen-Terraform gem like so:
           <br><br>
           <% code("ruby") do %>
 ruby '2.3.1'
@@ -92,9 +92,9 @@ bundle install
           <% code("bash") do %>
 vim .kitchen.yml
           <% end %>
-          Let's go ahead and add in configuration for for both Test Kitchen and kitchen-terraform in the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> config file.
+          Let's go ahead and add in configuration for for both Test-Kitchen and Kitchen-Terraform in the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> config file.
           <br><br>
-          kitchen-terraform provides three plugins for use with Test Kitchen - a driver, a provisioner, and a verifier. We will go through each of these plugins in this tutorial.
+          Kitchen-Terraform provides three plugins for use with Test-Kitchen - a driver, a provisioner, and a verifier. We will go through each of these plugins in this tutorial.
           <br><br>
           First the driver - the driver we are using is called terraform.
           <br><br>
@@ -134,7 +134,7 @@ provisioner:
 platforms:
   - name: ubuntu
           <% end %>
-          Next, let's add the transport section. This is what will allow kitchen-terraform to ssh into your terraform'd instances and run your inspec tests. You will need to include the path to the private key half of your AWS keypair - wherever you keep it on your workstation.
+          Next, let's add the transport section. This is what will allow Kitchen-Terraform to ssh into your terraform'd instances and run your inspec tests. You will need to include the path to the private key half of your AWS keypair - wherever you keep it on your workstation.
           <br><br>
           <% code("yml") do %>
 ---
@@ -182,7 +182,7 @@ verifier:
       hostnames: public_dns
       username: ubuntu
           <% end %>
-          And let's stop and talk about what we did here - as this is where you will see some of the uniqueness of kitchen-terraform.
+          And let's stop and talk about what we did here - as this is where you will see some of the uniqueness of Kitchen-Terraform.
           <br><br>
           With these lines:
           <br><br>
@@ -205,7 +205,7 @@ groups:
           <% end %>
           Our group's name is default, and we expect to find a control file called <p class="font-weight-bold" style="color: #32c850; display: inline;">operating_system_spec.rb</p> within that group.
           <br><br>
-          Additionally, kitchen-terraform also needs to know what hostnames it needs to ssh into to run our specs. We have specified public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit.
+          Additionally, Kitchen-Terraform also needs to know what hostnames it needs to ssh into to run our specs. We have specified public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit.
           <br><br>
           Finally, there is the username - this is the name kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu.
           <br><br>

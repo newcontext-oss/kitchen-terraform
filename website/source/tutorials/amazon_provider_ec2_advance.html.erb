@@ -10,7 +10,7 @@ title: Using the Terraform Amazon Provider with fixtures
           Terraform Amazon Provider
         </h1>
         <p class="lead">
-          This is an example of how to utilize kitchen-terraform to test Amazon resources configured with the <a href="https://www.terraform.io/docs/providers/aws/index.html" style="color: #32c850;">Terraform Amazon Provider</a>.
+          This is an example of how to utilize Kitchen-Terraform to test Amazon resources configured with the <a href="https://www.terraform.io/docs/providers/aws/index.html" style="color: #32c850;">Terraform Amazon Provider</a>.
         </p>
         <p class="lead">
           We'll walk through how to use fixtures to reference your Terraform code as a module, use local kitchen.yml files and custom libraries with your Inspec control tests.
@@ -85,26 +85,23 @@ title: Using the Terraform Amazon Provider with fixtures
           To setup the repository, run these commands:
           <br><br>
           <% code("bash") do %>
-mkdir -p amazon_advance_provider_example/test/integration/example/controls
-mkdir -p amazon_advance_provider_example/test/integration/example/libraries
-mkdir -p amazon_advance_provider_example/fixtures/us_east_1
+mkdir -p amazon_advance_provider_example/test/integration/example/controls \
+         amazon_advance_provider_example/test/integration/example/libraries \
+         amazon_advance_provider_example/fixtures/us_east_1
 
 cd amazon_advance_provider_example
           <% end %>
-          Then install the necessary rubygems.
+          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> to install our dependencies.
           <br><br>
-          <% code("bash") do %>
-(
-cat << EOP
+          <% code("ruby") do %>
 source "https://rubygems.org/" do
   gem "kitchen-terraform"
-  gem "awspec", "~> 0.6"
 end
-EOP
-) > Gemfile
-
-# Install kitchen-terraform and other rubygems
-# If needed run `gem install bundler`
+          <% end %>
+          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+          <br><br>
+          <% code("bash") do %>
+gem install bundler
 bundle install
           <% end %>
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p>  which brings together the Terraform module code and Inspec controls.
@@ -161,13 +158,13 @@ suites:
               <% end %>
             </div>
             <div class="col">
-              The kitchen-terraform driver is configured to use the us-east-1 test fixture configuration and to use 4 concurrent operations in its actions.
+              The Kitchen-Terraform driver is configured to use the us-east-1 test fixture configuration and to use 4 concurrent operations in its actions.
               <br><br>
-              The kitchen-terraform provisioner is enabled.
+              The Kitchen-Terraform provisioner is enabled.
               <br><br>
               The Test Kitchen SSH transport is enabled.
               <br><br>
-              The kitchen-terraform verifier is configured with two groups, remote and local.
+              The Kitchen-Terraform verifier is configured with two groups, remote and local.
               <br><br>
               The remote group uses the value of the security_group output to define an Inspec control attribute named overridden_security_group and includes some of the controls of the profile of the suite.
               <br><br>
@@ -336,7 +333,7 @@ variable "subnet_availability_zone" {
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
-          To assist in testing, Terraform outputs will provide information about both servers and what security group they are associated with. The kitchen-terraform verifier can use these artifacts to validate the Terraform code.
+          To assist in testing, Terraform outputs will provide information about both servers and what security group they are associated with. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
           <br><br>
@@ -554,7 +551,7 @@ end
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-nine" role="tabpanel" aria-labelledby="list-nine-list">
-          Execute kitchen-terraform by running these commands
+          Execute Kitchen-Terraform by running these commands
           <br><br>
           <% code("ruby") do %>
 # Create resources from the Terraform fixture code that references main.tf
