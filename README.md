@@ -66,11 +66,11 @@ Refer to the [gem documentation](http://www.rubydoc.info/github/newcontext-oss/k
 for more information about kitchen-terraform's design and behaviour.
 
 Refer to the
-[Getting Started README](https://github.com/newcontext-oss/kitchen-terraform/blob/master/examples/aws_provider/getting_started.md)
+[Getting Started Tutorial](https://newcontext-oss.github.io/kitchen-terraform/tutorials/amazon_provider_ec2.html)
 for a detailed walkthrough of setting up and using kitchen-terraform.
 
 Refer to the
-[examples directory](https://github.com/newcontext-oss/kitchen-terraform/blob/master/examples)
+[tutorials](https://newcontext-oss.github.io/kitchen-terraform/tutorials)
 for example Terraform projects using various
 [Terraform providers](https://www.terraform.io/docs/configuration/providers.html)
 .

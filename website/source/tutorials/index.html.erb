@@ -1,0 +1,89 @@
+---
+title: Kitchen-Terraform example code
+---
+
+<div class="container" style="padding-top: 0px;">
+  <div class="jumbotron">
+    <div class="row">
+      <div class="col">
+        <h1 class="display-3">
+          Tutorials
+        </h1>
+        <p class="lead">
+          Terraform Provider tutorials, examples, & walk-throughs.
+          <br><br>
+          Example testing with Inspec and other frameworks.
+        </p>
+      </div>
+      <div id="blur" class="col">
+        <% code("yml") do %>
+---
+driver:
+  name: "terraform"
+verifier:
+  name: "terraform"
+  groups:
+    - name: "example"
+      controls:
+        - "example"
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card" style="width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">AWS Provider (EC2)</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Walk-Through</h6>
+          <p class="card-text">Start to finish tutorial whichs shows you how to build EC2 server in Terraform and test the results with Inspec.</p>
+          <%= link_to "Let's Learn", '/tutorials/amazon_provider_ec2.html', :class => 'btn btn-primary card-link' %>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">AWS Provider with fixtures</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Detailed Guide</h6>
+          <p class="card-text">Learn the more advanced features of Kitchen-Terraform, test a larger set of Terraform code and use Inspec controls and profiles.</p>
+          <%= link_to 'Dive In', '/tutorials/amazon_provider_ec2_advance.html', :class => 'btn btn-primary card-link' %>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">Docker Provider</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Immutable & Tested!</h6>
+          <p class="card-text">Provides an example on how to utilize Kitchen-Terraform to test a Docker container running on localhost.</p><%= link_to 'Go!', '/tutorials/docker_provider.html', :class => 'btn btn-primary card-link' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card" style="width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">OpenStack Provider</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Local Cloud Servers Tested!</h6>
+          <p class="card-text">Provides an example on how to utilize Kitchen-Terraform to test OpenStack resources created by Terraform.</p>
+          <%= link_to "Find out more", '/tutorials/openstack_provider.html', :class => 'btn btn-primary card-link' %>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card" style="width: 20rem;">
+        <div class="card-body">
+          <h4 class="card-title">Your tutorial here!</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Please contribute</h6>
+          <p class="card-text">We always need more tutorials, if you have time, please consider contributing!</p>
+          <%= link_to 'Contribute', 'https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md', :class => 'btn btn-primary card-link' %>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+
+    </div>
+  </div>
+</div>

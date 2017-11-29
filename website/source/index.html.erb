@@ -1,0 +1,61 @@
+---
+title: Kitchen-Terraform
+---
+
+<div class="container-fluid" style="padding-top: 0px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-3">
+          Kitchen-Terraform
+        </h1>
+        <p class="lead">
+          An open source set of <a href="http://kitchen.ci" style="color: #32c850;">Test Kitchen</a> plugins for testing <a href="http://terraform.io" style="color: #32c850;">Terraform</a> configuration.
+        </p>
+        <p>
+          <a href="https://badge.fury.io/rb/kitchen-terraform">
+            <img src="https://badge.fury.io/rb/kitchen-terraform.svg" alt="Gem Version" height="18">
+          </a>
+          <a href="https://codeclimate.com/github/newcontext-oss/kitchen-terraform">
+            <img src="https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/gpa.svg" alt="Gem Version" height="18">
+          </a>
+          <a href="https://codeclimate.com/github/newcontext-oss/kitchen-terraform">
+            <img src="https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/issue_count.svg" alt="Gem Version" height="18">
+          </a>
+          <a href="https://travis-ci.org/newcontext-oss/kitchen-terraform">
+            <img src="https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master" alt="Gem Version" height="18">
+          </a>
+          <a href="https://codeclimate.com/github/newcontext-oss/kitchen-terraform/coverage">
+            <img src="https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/coverage.svg" alt="Gem Version" height="18">
+          </a>
+        </p>
+        <p class="lead">
+          <%= link_to 'Getting Started', '/getting_started.html', :class => 'btn btn-primary btn-lg', :role => 'button' %>
+          <%= link_to 'Tutorials', '/tutorials/index.html', :class => 'btn btn-primary btn-lg', :role => 'button' %>
+          <%= link_to 'About', '/about.html', :class => 'btn btn-primary btn-lg', :role => 'button' %>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <% code("ruby") do %>
+-----> Starting Kitchen (v1.16.0)
+     Terraform v0.10.8
+
+$$$$$$ Terraform version 0.10.8 is supported
+-----> Verifying <example-server>...
+
+....
+
+Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
+Test Summary: 1 successful, 0 failures, 0 skipped
+     Finished verifying <example-server> (0m0.53s).
+-----> Kitchen is finished. (0m0.97s)
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+</div>
