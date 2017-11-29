@@ -20,4 +20,6 @@ plugins:
     enabled: true
 exclude_patterns:
   - "doc/"
+  - "docs/"
   - "examples/"
+  - "website/"
