@@ -14,13 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/shell_out"
-require "support/dry/monads/either_matchers"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
@@ -31,6 +29,8 @@ require "support/kitchen/terraform/config_attribute/root_module_directory_exampl
 require "support/kitchen/terraform/config_attribute/variable_files_examples"
 require "support/kitchen/terraform/config_attribute/variables_examples"
 require "support/kitchen/terraform/configurable_examples"
+require "support/kitchen/terraform/result_in_failure_matcher"
+require "support/kitchen/terraform/result_in_success_matcher"
 
 ::RSpec
   .describe ::Kitchen::Driver::Terraform do
@@ -111,31 +111,36 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     describe "#apply" do
-      before do
-        described_instance.finalize_config! kitchen_instance
+      subject do
+        lambda do
+          described_instance.apply
+        end
       end
 
-      subject do
-        described_instance.apply
+      before do
+        described_instance.finalize_config! kitchen_instance
       end
 
       context "when `terraform workspace select <kitchen-instance>` results in failure" do
         before do
           allow(shell_out)
             .to(
-              receive(:run)
-                .with(
-                  command: "workspace select kitchen-terraform-test-suite-test-platform",
-                  duration: 600,
-                  logger: kitchen_logger
-                )
-                .and_return(::Dry::Monads.Left("mocked `terraform workspace select <kitchen-instance>` failure"))
+              fail_after(
+                action:
+                  receive(:run)
+                    .with(
+                      command: "workspace select kitchen-terraform-test-suite-test-platform",
+                      duration: 600,
+                      logger: kitchen_logger
+                    ),
+                message: "mocked `terraform workspace select <kitchen-instance>` failure"
+              )
             )
         end
 
         it do
           is_expected
-            .to result_in_failure.with_the_value "mocked `terraform workspace select <kitchen-instance>` failure"
+            .to result_in_failure.with_message "mocked `terraform workspace select <kitchen-instance>` failure"
         end
       end
 
@@ -149,7 +154,7 @@ require "support/kitchen/terraform/configurable_examples"
                   duration: 600,
                   logger: kitchen_logger
                 )
-                .and_return(::Dry::Monads.Right("mocked `terraform workspace select <kitchen-instance>` success"))
+                .and_return("mocked `terraform workspace select <kitchen-instance>` success")
             )
         end
 
@@ -157,18 +162,21 @@ require "support/kitchen/terraform/configurable_examples"
           before do
             allow(shell_out)
               .to(
-                receive(:run)
-                  .with(
-                    command: /get/,
-                    duration: 600,
-                    logger: kitchen_logger
-                  )
-                  .and_return(::Dry::Monads.Left("mocked `terraform get` failure"))
+                fail_after(
+                  action:
+                    receive(:run)
+                      .with(
+                        command: /get/,
+                        duration: 600,
+                        logger: kitchen_logger
+                      ),
+                  message: "mocked `terraform get` failure"
+                )
               )
           end
 
           it do
-            is_expected.to result_in_failure.with_the_value "mocked `terraform get` failure"
+            is_expected.to result_in_failure.with_message "mocked `terraform get` failure"
           end
         end
 
@@ -185,7 +193,7 @@ require "support/kitchen/terraform/configurable_examples"
                     duration: 600,
                     logger: kitchen_logger
                   )
-                  .and_return(::Dry::Monads.Right("mocked `terraform get` success"))
+                  .and_return("mocked `terraform get` success")
               )
           end
 
@@ -193,18 +201,21 @@ require "support/kitchen/terraform/configurable_examples"
             before do
               allow(shell_out)
                 .to(
-                  receive(:run)
-                    .with(
-                      command: /validate/,
-                      duration: 600,
-                      logger: kitchen_logger
-                    )
-                    .and_return(::Dry::Monads.Left("mocked `terraform validate` failure"))
+                  fail_after(
+                    action:
+                      receive(:run)
+                        .with(
+                          command: /validate/,
+                          duration: 600,
+                          logger: kitchen_logger
+                        ),
+                    message: "mocked `terraform validate` failure"
+                  )
                 )
             end
 
             it do
-              is_expected.to result_in_failure.with_the_value "mocked `terraform validate` failure"
+              is_expected.to result_in_failure.with_message "mocked `terraform validate` failure"
             end
           end
 
@@ -224,7 +235,7 @@ require "support/kitchen/terraform/configurable_examples"
                       duration: 600,
                       logger: kitchen_logger
                     )
-                    .and_return(::Dry::Monads.Right("mocked `terraform validate` success"))
+                    .and_return("mocked `terraform validate` success")
                 )
             end
 
@@ -232,18 +243,21 @@ require "support/kitchen/terraform/configurable_examples"
               before do
                 allow(shell_out)
                   .to(
-                    receive(:run)
-                      .with(
-                        command: /apply/,
-                        duration: 600,
-                        logger: kitchen_logger
-                      )
-                      .and_return(::Dry::Monads.Left("mocked `terraform apply` failure"))
+                    fail_after(
+                      action:
+                        receive(:run)
+                          .with(
+                            command: /apply/,
+                            duration: 600,
+                            logger: kitchen_logger
+                          ),
+                      message: "mocked `terraform apply` failure"
+                    )
                   )
               end
 
               it do
-                is_expected.to result_in_failure.with_the_value "mocked `terraform apply` failure"
+                is_expected.to result_in_failure.with_message "mocked `terraform apply` failure"
               end
             end
 
@@ -268,7 +282,7 @@ require "support/kitchen/terraform/configurable_examples"
                         duration: 600,
                         logger: kitchen_logger
                       )
-                      .and_return(::Dry::Monads.Right("mocked `terraform apply` success"))
+                      .and_return("mocked `terraform apply` success")
                   )
               end
 
@@ -276,18 +290,21 @@ require "support/kitchen/terraform/configurable_examples"
                 before do
                   allow(shell_out)
                     .to(
-                      receive(:run)
-                        .with(
-                          command: "output -json",
-                          duration: 600,
-                          logger: kitchen_logger
-                        )
-                        .and_return(::Dry::Monads.Left("mocked `terraform output` failure"))
+                      fail_after(
+                        action:
+                          receive(:run)
+                            .with(
+                              command: "output -json",
+                              duration: 600,
+                              logger: kitchen_logger
+                            ),
+                        message: "mocked `terraform output` failure"
+                      )
                     )
                 end
 
                 it do
-                  is_expected.to result_in_failure.with_the_value "mocked `terraform output` failure"
+                  is_expected.to result_in_failure.with_message "mocked `terraform output` failure"
                 end
               end
 
@@ -301,7 +318,7 @@ require "support/kitchen/terraform/configurable_examples"
                           duration: 600,
                           logger: kitchen_logger
                         )
-                        .and_return(::Dry::Monads.Right(terraform_output_value))
+                        .and_return(terraform_output_value)
                     )
                 end
 
@@ -311,7 +328,7 @@ require "support/kitchen/terraform/configurable_examples"
                   end
 
                   it do
-                    is_expected.to result_in_failure.with_the_value /Parsing Terraform output as JSON failed:/
+                    is_expected.to result_in_failure.with_message /Parsing Terraform output as JSON failed:/
                   end
                 end
 
@@ -334,7 +351,7 @@ require "support/kitchen/terraform/configurable_examples"
                     is_expected
                       .to(
                         result_in_success
-                          .with_the_value(
+                          .with_message(
                             "output_name" =>
                               {
                                 "sensitive" => false,
@@ -353,27 +370,30 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     describe "#create" do
-      before do
-        described_instance.finalize_config! kitchen_instance
-      end
-
       subject do
         lambda do
           described_instance.create({})
         end
       end
 
+      before do
+        described_instance.finalize_config! kitchen_instance
+      end
+
       context "when `terraform init` results in failure" do
         before do
           allow(shell_out)
             .to(
-              receive(:run)
-                .with(
-                  command: /init/,
-                  duration: 600,
-                  logger: kitchen_logger
-                )
-                .and_return(::Dry::Monads.Left("mocked `terraform init` failure"))
+              fail_after(
+                action:
+                  receive(:run)
+                    .with(
+                      command: /init/,
+                      duration: 600,
+                      logger: kitchen_logger
+                    ),
+                message: "mocked `terraform init` failure"
+              )
             )
         end
 
@@ -412,7 +432,7 @@ require "support/kitchen/terraform/configurable_examples"
                   duration: 600,
                   logger: kitchen_logger
                 )
-                .and_return(::Dry::Monads.Right("mocked `terraform init` success"))
+                .and_return("mocked `terraform init` success")
             )
         end
 
@@ -420,13 +440,16 @@ require "support/kitchen/terraform/configurable_examples"
           before do
             allow(shell_out)
               .to(
-                receive(:run)
-                  .with(
-                    command: "workspace new kitchen-terraform-test-suite-test-platform",
-                    duration: 600,
-                    logger: kitchen_logger
-                  )
-                  .and_return(::Dry::Monads.Left("mocked `terraform workspace new <kitchen-instance>` failure"))
+                fail_after(
+                  action:
+                    receive(:run)
+                      .with(
+                        command: "workspace new kitchen-terraform-test-suite-test-platform",
+                        duration: 600,
+                        logger: kitchen_logger
+                      ),
+                  message: "mocked `terraform workspace new <kitchen-instance>` failure"
+                )
               )
           end
 
@@ -434,13 +457,16 @@ require "support/kitchen/terraform/configurable_examples"
             before do
               allow(shell_out)
                 .to(
-                  receive(:run)
-                    .with(
-                      command: "workspace select kitchen-terraform-test-suite-test-platform",
-                      duration: 600,
-                      logger: kitchen_logger
-                    )
-                    .and_return(::Dry::Monads.Left("mocked `terraform workspace select <kitchen-instance>` failure"))
+                  fail_after(
+                    action:
+                      receive(:run)
+                        .with(
+                          command: "workspace select kitchen-terraform-test-suite-test-platform",
+                          duration: 600,
+                          logger: kitchen_logger
+                        ),
+                    message: "mocked `terraform workspace select <kitchen-instance>` failure"
+                  )
                 )
             end
 
@@ -465,7 +491,7 @@ require "support/kitchen/terraform/configurable_examples"
                       duration: 600,
                       logger: kitchen_logger
                     )
-                    .and_return(::Dry::Monads.Right("mocked `terraform workspace select <kitchen-instance>` success"))
+                    .and_return("mocked `terraform workspace select <kitchen-instance>` success")
                 )
             end
 
@@ -485,7 +511,7 @@ require "support/kitchen/terraform/configurable_examples"
                     duration: 600,
                     logger: kitchen_logger
                   )
-                  .and_return(::Dry::Monads.Right("mocked `terraform workspace new <kitchen-instance>` success"))
+                  .and_return("mocked `terraform workspace new <kitchen-instance>` success")
               )
           end
 
@@ -497,27 +523,30 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     describe "#destroy" do
-      before do
-        described_instance.finalize_config! kitchen_instance
-      end
-
       subject do
         lambda do
           described_instance.destroy({})
         end
       end
 
+      before do
+        described_instance.finalize_config! kitchen_instance
+      end
+
       context "when `terraform init` results in failure" do
         before do
           allow(shell_out)
             .to(
-              receive(:run)
-                .with(
-                  command: /init/,
-                  duration: 600,
-                  logger: kitchen_logger
-                )
-                .and_return(::Dry::Monads.Left("mocked `terraform init` failure"))
+              fail_after(
+                action:
+                  receive(:run)
+                    .with(
+                      command: /init/,
+                      duration: 600,
+                      logger: kitchen_logger
+                    ),
+                message: "mocked `terraform init` failure"
+              )
             )
         end
 
@@ -555,7 +584,7 @@ require "support/kitchen/terraform/configurable_examples"
                   duration: 600,
                   logger: kitchen_logger
                 )
-                .and_return(::Dry::Monads.Right("mocked `terraform init` success"))
+                .and_return("mocked `terraform init` success")
             )
         end
 
@@ -563,13 +592,16 @@ require "support/kitchen/terraform/configurable_examples"
           before do
             allow(shell_out)
               .to(
-                receive(:run)
-                  .with(
-                    command: "workspace select kitchen-terraform-test-suite-test-platform",
-                    duration: 600,
-                    logger: kitchen_logger
-                  )
-                  .and_return(::Dry::Monads.Left("mocked `terraform workspace select <kitchen-instance>` failure"))
+                fail_after(
+                  action:
+                    receive(:run)
+                      .with(
+                        command: "workspace select kitchen-terraform-test-suite-test-platform",
+                        duration: 600,
+                        logger: kitchen_logger
+                      ),
+                  message: "mocked `terraform workspace select <kitchen-instance>` failure"
+                )
               )
           end
 
@@ -577,13 +609,16 @@ require "support/kitchen/terraform/configurable_examples"
             before do
               allow(shell_out)
                 .to(
-                  receive(:run)
-                    .with(
-                      command: "workspace new kitchen-terraform-test-suite-test-platform",
-                      duration: 600,
-                      logger: kitchen_logger
-                    )
-                    .and_return(::Dry::Monads.Left("mocked `terraform workspace new <kitchen-instance>` failure"))
+                  fail_after(
+                    action:
+                      receive(:run)
+                        .with(
+                          command: "workspace new kitchen-terraform-test-suite-test-platform",
+                          duration: 600,
+                          logger: kitchen_logger
+                        ),
+                    message: "mocked `terraform workspace new <kitchen-instance>` failure"
+                  )
                 )
             end
 
@@ -609,7 +644,7 @@ require "support/kitchen/terraform/configurable_examples"
                     duration: 600,
                     logger: kitchen_logger
                   )
-                  .and_return(::Dry::Monads.Right("mocked `terraform workspace select <kitchen-instance>` success"))
+                  .and_return("mocked `terraform workspace select <kitchen-instance>` success")
               )
           end
 
@@ -617,13 +652,16 @@ require "support/kitchen/terraform/configurable_examples"
             before do
               allow(shell_out)
                 .to(
-                  receive(:run)
-                    .with(
-                      command: /destroy/,
-                      duration: 600,
-                      logger: kitchen_logger
-                    )
-                    .and_return(::Dry::Monads.Left("mocked `terraform destroy` failure"))
+                  fail_after(
+                    action:
+                      receive(:run)
+                        .with(
+                          command: /destroy/,
+                          duration: 600,
+                          logger: kitchen_logger
+                        ),
+                    message: "mocked `terraform destroy` failure"
+                  )
                 )
             end
 
@@ -659,7 +697,7 @@ require "support/kitchen/terraform/configurable_examples"
                       duration: 600,
                       logger: kitchen_logger
                     )
-                    .and_return(::Dry::Monads.Right("mocked `terraform destroy` success"))
+                    .and_return("mocked `terraform destroy` success")
                 )
             end
 
@@ -667,13 +705,16 @@ require "support/kitchen/terraform/configurable_examples"
               before do
                 allow(shell_out)
                   .to(
-                    receive(:run)
-                      .with(
-                        command: "workspace select default",
-                        duration: 600,
-                        logger: kitchen_logger
-                      )
-                      .and_return(::Dry::Monads.Left("mocked `terraform workspace select default` failure"))
+                    fail_after(
+                      action:
+                        receive(:run)
+                          .with(
+                            command: "workspace select default",
+                            duration: 600,
+                            logger: kitchen_logger
+                          ),
+                      message: "mocked `terraform workspace select default` failure"
+                    )
                   )
               end
 
@@ -698,7 +739,7 @@ require "support/kitchen/terraform/configurable_examples"
                         duration: 600,
                         logger: kitchen_logger
                       )
-                      .and_return(::Dry::Monads.Right("mocked `terraform workspace select default` success"))
+                      .and_return("mocked `terraform workspace select default` success")
                   )
               end
 
@@ -706,15 +747,16 @@ require "support/kitchen/terraform/configurable_examples"
                 before do
                   allow(shell_out)
                     .to(
-                      receive(:run)
-                        .with(
-                          command: "workspace delete kitchen-terraform-test-suite-test-platform",
-                          duration: 600,
-                          logger: kitchen_logger
-                        )
-                        .and_return(
-                          ::Dry::Monads.Left("mocked `terraform workspace delete <kitchen-instance>` failure")
-                        )
+                      fail_after(
+                        action:
+                          receive(:run)
+                            .with(
+                              command: "workspace delete kitchen-terraform-test-suite-test-platform",
+                              duration: 600,
+                              logger: kitchen_logger
+                            ),
+                        message: "mocked `terraform workspace delete <kitchen-instance>` failure"
+                      )
                     )
                 end
 
@@ -739,9 +781,7 @@ require "support/kitchen/terraform/configurable_examples"
                           duration: 600,
                           logger: kitchen_logger
                         )
-                        .and_return(
-                          ::Dry::Monads.Right("mocked `terraform workspace delete <kitchen-instance>` success")
-                        )
+                        .and_return("mocked `terraform workspace delete <kitchen-instance>` success")
                     )
                 end
 
@@ -766,11 +806,15 @@ require "support/kitchen/terraform/configurable_examples"
         before do
           allow(shell_out)
             .to(
-              receive(:run)
-                .with(
-                  command: "version",
-                  logger: kitchen_logger
-                ).and_return(::Dry::Monads.Left("mocked `terraform version` failure"))
+              fail_after(
+                action:
+                  receive(:run)
+                    .with(
+                      command: "version",
+                      logger: kitchen_logger
+                    ),
+                message: "mocked `terraform version` failure"
+              )
             )
         end
 
@@ -798,18 +842,23 @@ require "support/kitchen/terraform/configurable_examples"
                   command: "version",
                   logger: kitchen_logger
                 )
-                .and_return(::Dry::Monads.Right("Terraform v1.2.3"))
+                .and_return("Terraform v1.2.3")
             )
 
           allow(::Kitchen::Terraform::ClientVersionVerifier).to receive(:new).and_return client_version_verifier
-
-          allow(client_version_verifier)
-            .to receive(:verify).with(version_output: "Terraform v1.2.3").and_return verify_result
         end
 
         context "when the value of the `terraform version` result is not supported" do
-          let :verify_result do
-            ::Dry::Monads.Left "mocked verification failure"
+          before do
+            allow(client_version_verifier)
+              .to(
+                fail_after(
+                  action:
+                    receive(:verify)
+                      .with(version_output: "Terraform v1.2.3"),
+                  message: "mocked verification failure"
+                )
+              )
           end
 
           it do
@@ -824,8 +873,13 @@ require "support/kitchen/terraform/configurable_examples"
         end
 
         context "when the value of the `terraform version` result is supported" do
-          let :verify_result do
-            ::Dry::Monads.Right "mocked verification success"
+          before do
+            allow(client_version_verifier)
+              .to(
+                receive(:verify)
+                  .with(version_output: "Terraform v1.2.3")
+                  .and_return("mocked verification success")
+              )
           end
 
           it do

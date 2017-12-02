@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "kitchen/verifier"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
+require "kitchen/terraform/error"
 require "kitchen/verifier/inspec"
 
 # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the behaviour and
@@ -71,10 +71,6 @@ require "kitchen/verifier/inspec"
 class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   kitchen_verifier_api_version 2
 
-  include ::Dry::Monads::Either::Mixin
-
-  include ::Dry::Monads::Maybe::Mixin
-
   include ::Kitchen::Terraform::ConfigAttribute::Color
 
   include ::Kitchen::Terraform::ConfigAttribute::Groups
@@ -87,16 +83,17 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   #   `kitchen verify suite-name`
   # @param state [::Hash] the mutable instance and verifier state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [::Dry::Monads::Either] the result of the action.
+  # @return [void]
   def call(state)
-    Maybe(state[:kitchen_terraform_output])
-      .or do
-        Left(
+    state
+      .fetch :kitchen_terraform_output do
+        raise(
+          ::Kitchen::Terraform::Error,
           "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \
             "kitchen-terraform provisioner has not successfully converged"
         )
       end
-      .bind do |output|
+      .tap do |output|
         ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
           .call(
             groups: config_groups,
@@ -116,12 +113,11 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
             super state
           end
       end
-      .or do |failure|
-        raise(
-          ::Kitchen::ActionFailed,
-          failure
-        )
-      end
+  rescue ::Kitchen::Terraform::Error => error
+    raise(
+      ::Kitchen::ActionFailed,
+      error.message
+    )
   end
 
   private
@@ -160,18 +156,15 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
             group: state.fetch(:kitchen_terraform_group),
             options: options
           )
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
-          .call(
-            group: state.fetch(:kitchen_terraform_group),
-            output: ::Kitchen::Util.stringified_hash(state.fetch(:kitchen_terraform_output))
-          )
-          .bind do |attributes|
-            options
-              .store(
-                :attributes,
-                attributes
+        options
+          .store(
+            :attributes,
+            ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
+              .call(
+                group: state.fetch(:kitchen_terraform_group),
+                output: ::Kitchen::Util.stringified_hash(state.fetch(:kitchen_terraform_output))
               )
-          end
+          )
         ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
           .call(
             group: state.fetch(:kitchen_terraform_group),

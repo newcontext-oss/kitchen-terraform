@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "kitchen/verifier/terraform"
 
 # Configures the user for the Inspec::Runner used by the verifier to verify a group.
@@ -23,15 +22,19 @@ require "kitchen/verifier/terraform"
 #
 # @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb Inspec::Runner
 module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
-  extend ::Dry::Monads::Maybe::Mixin
-
   # Invoke the function.
   #
   # @param group [::Hash] the group being verified.
   # @param options [::Hash] the Inspec::Runner's options.
   def self.call(group:, options:)
-    Maybe(group[:username]).bind do |username|
-      options.store "user", username
-    end
+    group[:username]
+      .tap do |username|
+        username and
+          options
+            .store(
+              "user",
+              username
+            )
+      end
   end
 end

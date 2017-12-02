@@ -14,44 +14,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/terraform/error"
+
 ::RSpec::Matchers
-  .define "result_in_failure" do
-    match do |result|
-      result
-        .failure? and
-        values_match?(
-          value,
-          result.value
+  .define :result_in_failure do
+    supports_block_expectations
+
+    chain(
+      :with_message,
+      :message
+    )
+
+    match notify_expectation_failures: true do |actual|
+      expect(actual)
+        .to(
+          raise_error(
+            ::Kitchen::Terraform::Error,
+            message
+          )
         )
     end
 
-    chain(
-      :with_the_value,
-      :value
-    )
-
-    failure_message do |result|
-      "expected result\n  #{result}\nto be a failure with the value\n  #{value.inspect}"
-    end
-  end
-
-::RSpec::Matchers
-  .define "result_in_success" do
-    match do |result|
-      result
-        .success? and
-        values_match?(
-          value,
-          result.value
-        )
-    end
-
-    chain(
-      :with_the_value,
-      :value
-    )
-
-    failure_message do |result|
-      "expected result\n  #{result}\nto be a success with the value\n  #{value.inspect}"
+    failure_message do |actual|
+      "expected #{actual} to result in a failure with the message #{message.inspect}"
     end
   end

@@ -62,8 +62,6 @@ require "kitchen/terraform/version.rb"
 
   specification.add_development_dependency "yard", "~> 0.9"
 
-  specification.add_runtime_dependency "dry-monads", "~> 0.3"
-
   specification.add_runtime_dependency "dry-types", "~> 0.9"
 
   specification.add_runtime_dependency "dry-validation", "~> 0.10"

@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "json"
 require "kitchen/driver/base"
 require "kitchen/errors"
@@ -174,10 +173,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   no_parallel_for
 
-  include ::Dry::Monads::Either::Mixin
-
-  include ::Dry::Monads::Try::Mixin
-
   include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
   include ::Kitchen::Terraform::ConfigAttribute::Color
@@ -201,41 +196,29 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # Applies changes to the state by selecting the test workspace, updating the dependency modules, validating the root
   # module, applying the state changes, and retrieving the state output.
   #
-  # @return [::Dry::Monads::Either] the result of the action.
+  # @raise [::Kitchen::Terraform::Error] if one of the steps fails.
+  # @return [::String] the state output.
   def apply
     apply_run_workspace_select_instance
-      .bind do
-        apply_run_get
-      end
-      .bind do
-        apply_run_validate
-      end
-      .bind do
-        apply_run_apply
-      end
-      .bind do
-        apply_run_output
-      end
+    apply_run_get
+    apply_run_validate
+    apply_run_apply
+    apply_run_output
   end
 
   # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
   #
   # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+  # @return [void]
   def create(_state)
     create_run_init
-      .bind do
-        create_run_workspace_new_instance
-          .or do
-            create_run_workspace_select_instance
-          end
-      end
-      .or do |failure|
-        raise(
-          ::Kitchen::ActionFailed,
-          failure
-        )
-      end
+    create_run_workspace_new_instance
+  rescue ::Kitchen::Terraform::Error => error
+    raise(
+      ::Kitchen::ActionFailed,
+      error.message
+    )
   end
 
   # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
@@ -243,54 +226,43 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #
   # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+  # @return [void]
   def destroy(_state)
     destroy_run_init
-      .bind do
-        destroy_run_workspace_select_instance
-          .or do
-            destroy_run_workspace_new_instance
-          end
-      end
-      .bind do
-        destroy_run_destroy
-      end
-      .bind do
-        destroy_run_workspace_select_default
-      end
-      .bind do
-        destroy_run_workspace_delete_instance
-      end
-      .or do |failure|
-        raise(
-          ::Kitchen::ActionFailed,
-          failure
-        )
-      end
+    destroy_run_workspace_select_instance
+    destroy_run_destroy
+    destroy_run_workspace_select_default
+    destroy_run_workspace_delete_instance
+  rescue ::Kitchen::Terraform::Error => error
+    raise(
+      ::Kitchen::ActionFailed,
+      error.message
+    )
   end
 
   # Verifies that the Terraform version available to the driver is supported.
   #
   # @raise [::Kitchen::UserError] if the version is not supported.
+  # @return [void]
   def verify_dependencies
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "version",
-        logger: logger
-      )
-      .bind do |output|
+    logger
+      .warn(
         ::Kitchen::Terraform::ClientVersionVerifier
           .new
-          .verify version_output: output
-      end
-      .or do |failure|
-        raise(
-          ::Kitchen::UserError,
-          failure
-        )
-      end
-      .bind do |verified_client_version|
-        logger.warn verified_client_version
-      end
+          .verify(
+            version_output:
+              ::Kitchen::Terraform::ShellOut
+                .run(
+                  command: "version",
+                  logger: logger
+                )
+          )
+      )
+  rescue ::Kitchen::Terraform::Error => error
+    raise(
+      ::Kitchen::UserError,
+      error.message
+    )
   end
 
   private
@@ -328,21 +300,20 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def apply_run_output
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "output -json",
-        duration: config_command_timeout,
-        logger: logger
+    ::JSON
+      .parse(
+        ::Kitchen::Terraform::ShellOut
+          .run(
+            command: "output -json",
+            duration: config_command_timeout,
+            logger: logger
+          )
       )
-      .bind do |output|
-        Try ::JSON::ParserError do
-          ::JSON.parse output
-        end
-          .to_either
-          .or do |error|
-            Left "Parsing Terraform output as JSON failed: #{error}"
-          end
-      end
+  rescue ::JSON::ParserError => error
+    raise(
+      ::Kitchen::Terraform::Error,
+      "Parsing Terraform output as JSON failed: #{error.message}"
+    )
   end
 
   # @api private
@@ -403,6 +374,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         duration: config_command_timeout,
         logger: logger
       )
+  rescue ::Kitchen::Terraform::Error
+    create_run_workspace_select_instance
   end
 
   # @api private
@@ -497,5 +470,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         duration: config_command_timeout,
         logger: logger
       )
+  rescue ::Kitchen::Terraform::Error
+    destroy_run_workspace_new_instance
   end
 end

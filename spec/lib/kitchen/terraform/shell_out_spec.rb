@@ -17,11 +17,21 @@
 require "kitchen"
 require "kitchen/terraform/shell_out"
 require "mixlib/shellout"
-require "support/dry/monads/either_matchers"
 
 ::RSpec
   .describe ::Kitchen::Terraform::ShellOut do
     describe ".run" do
+      subject do
+        proc do
+          described_class
+            .run(
+              command: "command",
+              duration: duration,
+              logger: logger
+            )
+        end
+      end
+
       let :duration do
         1234
       end
@@ -32,15 +42,6 @@ require "support/dry/monads/either_matchers"
 
       let :logger do
         ::Kitchen::Logger.new
-      end
-
-      subject do
-        described_class
-          .run(
-            command: "command",
-            duration: duration,
-            logger: logger
-          )
       end
 
       context "when an invalid command option is sent to the shell out constructor" do
@@ -62,7 +63,7 @@ require "support/dry/monads/either_matchers"
         end
 
         it do
-          is_expected.to result_in_failure.with_the_value matching "invalid command option"
+          is_expected.to result_in_failure.with_message matching "invalid command option"
         end
       end
 
@@ -96,7 +97,7 @@ require "support/dry/monads/either_matchers"
 
         it do
           is_expected
-            .to result_in_failure.with_the_value "Running command resulted in failure: Permission denied - mocked error"
+            .to result_in_failure.with_message "Running command resulted in failure: Permission denied - mocked error"
         end
       end
 
@@ -132,7 +133,7 @@ require "support/dry/monads/either_matchers"
           is_expected
             .to(
               result_in_failure
-                .with_the_value("Running command resulted in failure: No such file or directory - mocked error")
+                .with_message("Running command resulted in failure: No such file or directory - mocked error")
             )
         end
       end
@@ -166,7 +167,7 @@ require "support/dry/monads/either_matchers"
         end
 
         it do
-          is_expected.to result_in_failure.with_the_value "Running command resulted in failure: mocked error"
+          is_expected.to result_in_failure.with_message "Running command resulted in failure: mocked error"
         end
       end
 
@@ -201,7 +202,7 @@ require "support/dry/monads/either_matchers"
           is_expected
             .to(
               result_in_failure
-                .with_the_value(
+                .with_message(
                   matching(
                     "Running command resulted in failure: Expected process to exit with \\[0\\], but received '1'"
                   )
@@ -210,11 +211,11 @@ require "support/dry/monads/either_matchers"
         end
 
         it do
-          is_expected.to result_in_failure.with_the_value matching "stdout"
+          is_expected.to result_in_failure.with_message matching "stdout"
         end
 
         it do
-          is_expected.to result_in_failure.with_the_value matching "stderr"
+          is_expected.to result_in_failure.with_message matching "stderr"
         end
       end
 
@@ -244,7 +245,7 @@ require "support/dry/monads/either_matchers"
         end
 
         it do
-          is_expected.to result_in_success.with_the_value "stdout"
+          is_expected.to result_in_success.with_message "stdout"
         end
       end
     end

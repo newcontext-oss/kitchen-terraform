@@ -14,37 +14,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "kitchen/terraform"
+require "kitchen/terraform/error"
 require "rubygems"
 
-# Verifies that the output of the Terraform Client version subcommand indicates a supported version of Terraform.
+# Verifies that the output of the Terraform version command indicates a supported version of Terraform.
+#
+# Supported:: Terraform version ~> 0.10.2.
 class ::Kitchen::Terraform::ClientVersionVerifier
-  include ::Dry::Monads::Either::Mixin
-
-  # Verifies output from the Terraform Client version subcommand against the support version.
-  #
-  # Supported:: Terraform version ~> 0.10.2.
+  # Verifies output from the Terraform version command against the support version.
   #
   # @param version_output [::String] the Terraform Client version subcommand output.
-  # @return [::Dry::Monads::Either] the result of the function.
+  # @raise [::Kitchen::Terraform::Error] if the version is not supported.
+  # @return [::String] a confirmation that the version is supported.
   def verify(version_output:)
-    Right(
-      ::Gem::Version
-        .new(
-          version_output
-            .slice(
-              /v(\d+\.\d+\.\d+)/,
-              1
+    ::Gem::Version
+      .new(
+        version_output
+          .slice(
+            /v(\d+\.\d+\.\d+)/,
+            1
+          )
+      )
+      .tap do |version|
+        requirement
+          .satisfied_by? version or
+            fail(
+              ::Kitchen::Terraform::Error,
+              "Terraform v#{version} is not supported; install Terraform ~> v0.11.0"
             )
-        )
-    ).bind do |version|
-      if requirement.satisfied_by? version
-        Right "Terraform v#{version} is supported"
-      else
-        Left "Terraform v#{version} is not supported; install Terraform ~> v0.11.0"
+
+        return "Terraform v#{version} is supported"
       end
-    end
   end
 
   private

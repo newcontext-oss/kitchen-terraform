@@ -16,6 +16,7 @@
 
 require "kitchen/provisioner"
 require "kitchen/terraform/configurable"
+require "kitchen/terraform/error"
 
 # The provisioner utilizes the driver to apply changes to the Terraform state in order to reach the desired
 # configuration of the root module.
@@ -86,21 +87,17 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   # @param state [::Hash] the mutable instance and provisioner state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   def call(state)
-    instance
-      .driver
-      .apply
-      .fmap do |output|
-        state
-          .store(
-            :kitchen_terraform_output,
-            output
-          )
-      end
-      .or do |failure|
-        raise(
-          ::Kitchen::ActionFailed,
-          failure
-        )
-      end
+    state
+      .store(
+        :kitchen_terraform_output,
+        instance
+          .driver
+          .apply
+      )
+  rescue ::Kitchen::Terraform::Error => error
+    raise(
+      ::Kitchen::ActionFailed,
+      error.message
+    )
   end
 end

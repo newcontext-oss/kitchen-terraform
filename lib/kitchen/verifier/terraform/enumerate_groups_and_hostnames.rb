@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
+require "kitchen/terraform/error"
 require "kitchen/verifier/terraform"
 
 # Enumerates each group and the hostnames of each group.
@@ -31,55 +31,36 @@ require "kitchen/verifier/terraform"
 # @see https://www.terraform.io/docs/configuration/outputs.html Terraform output variables
 # @see https://www.terraform.io/docs/state/index.html Terraform state
 module ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
-  extend ::Dry::Monads::Either::Mixin
-  extend ::Dry::Monads::List::Mixin
-  extend ::Dry::Monads::Maybe::Mixin
-  extend ::Dry::Monads::Try::Mixin
-
   # Invokes the function.
   #
   # @param groups [::Array] a collection of groups.
-  # @return [::Dry::Monads::Either] the result of the function.
+  # @raise [::Kitchen::Terraform::Error] if the enumeration fails.
+  # @return [void]
   # @yieldparam group [::Hash] the group from which hostnamess are being enumerated.
   # @yieldparam hostname [::String] a hostname from the group.
   def self.call(groups:, output:)
-    List(groups)
-      .fmap(&method(:Right))
-      .typed(::Dry::Monads::Either)
-      .traverse do |member|
-        member
-          .bind do |group|
-            Try ::KeyError do
-              Maybe(group[:hostnames])
-                .fmap do |hostnames_output_name|
-                  output
-                    .fetch(hostnames_output_name)
-                    .fetch("value")
-                end
-                .or do
-                  Right "localhost"
-                end
-                .fmap do |hostnames|
-                  Array(hostnames)
-                    .each do |hostname|
-                      yield(
-                        group: group,
-                        hostname: hostname
-                      )
-                    end
-                end
-            end
-              .to_either
-          end
+    groups
+      .each do |group|
+        (
+          group[:hostnames] and
+            Array(
+              output
+                .fetch(group[:hostnames])
+                .fetch("value")
+            ) or
+            ["localhost"]
+        ).each do |hostname|
+          yield(
+            group: group,
+            hostname: hostname
+          )
+        end
       end
-      .bind do
-        Right "Enumeration of groups and hostnames resulted in success"
-      end
-      .or do |error|
-        Left(
-          "Enumeration of groups and hostnames resulted in failure due to the omission of the configured :hostnames " \
-            "output or an unexpected output structure: #{error}"
-        )
-      end
+  rescue ::KeyError => error
+    raise(
+      ::Kitchen::Terraform::Error,
+      "Enumeration of groups and hostnames resulted in failure due to the omission of the configured :hostnames " \
+        "output or an unexpected output structure: #{error.message}"
+    )
   end
 end
