@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/provisioner/terraform"
@@ -29,6 +28,12 @@ require "support/kitchen/terraform/configurable_examples"
     it_behaves_like "Kitchen::Terraform::Configurable"
 
     describe "#call" do
+      subject do
+        lambda do
+          described_instance.call kitchen_state
+        end
+      end
+
       let :driver do
         ::Kitchen::Driver::Terraform.new
       end
@@ -60,16 +65,16 @@ require "support/kitchen/terraform/configurable_examples"
         described_instance.finalize_config! kitchen_instance
       end
 
-      subject do
-        lambda do
-          described_instance.call kitchen_state
-        end
-      end
-
       describe "error handling" do
         context "when the driver create action is a failure" do
           before do
-            allow(driver).to receive(:apply).and_return ::Dry::Monads.Left "mocked Driver#create failure"
+            allow(driver)
+              .to(
+                fail_after(
+                  action: receive(:apply),
+                  message: "mocked Driver#create failure"
+                )
+              )
           end
 
           it do
@@ -85,7 +90,7 @@ require "support/kitchen/terraform/configurable_examples"
 
         context "when the driver create action is a success" do
           before do
-            allow(driver).to receive(:apply).and_return ::Dry::Monads.Right "mocked Driver#create output"
+            allow(driver).to receive(:apply).and_return "mocked Driver#create output"
           end
 
           it do
@@ -95,14 +100,14 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       describe "Test Kitchen state manipulation" do
-        before do
-          allow(driver).to receive(:apply).and_return ::Dry::Monads.Right "mocked Driver#create output"
-
-          described_instance.call kitchen_state
-        end
-
         subject do
           kitchen_state
+        end
+
+        before do
+          allow(driver).to receive(:apply).and_return "mocked Driver#create output"
+
+          described_instance.call kitchen_state
         end
 
         it do

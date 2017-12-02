@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "kitchen/verifier/terraform"
 
 # Configures the private SSH key to be used by the verifier's InSpec Runner to verify a group.
@@ -24,20 +23,19 @@ require "kitchen/verifier/terraform"
 # @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb InSpec Runner
 # @see https://github.com/test-kitchen/test-kitchen/blob/v1.16.0/lib/kitchen/transport/ssh.rb Test Kitchen SSH Transport
 module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerSSHKey
-  extend ::Dry::Monads::Maybe::Mixin
-
   # Invoke the function.
   #
   # @param group [::Hash] the group being verified.
   # @param options [::Hash] the Inspec::Runner's options.
   def self.call(group:, options:)
-    Maybe(group[:ssh_key])
-      .bind do |ssh_key|
-        options
-          .store(
-            "key_files",
-            [ssh_key]
-          )
+    group[:ssh_key]
+      .tap do |ssh_key|
+        ssh_key and
+          options
+            .store(
+              "key_files",
+              [ssh_key]
+            )
       end
   end
 end

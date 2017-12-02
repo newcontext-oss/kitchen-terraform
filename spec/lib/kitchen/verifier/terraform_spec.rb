@@ -49,6 +49,12 @@ require "support/kitchen/terraform/configurable_examples"
     it_behaves_like "Kitchen::Terraform::Configurable"
 
     describe "#call" do
+      subject do
+        lambda do
+          described_instance.call kitchen_state
+        end
+      end
+
       let :kitchen_instance do
         ::Kitchen::Instance
           .new(
@@ -70,12 +76,6 @@ require "support/kitchen/terraform/configurable_examples"
 
       before do
         described_instance.finalize_config! kitchen_instance
-      end
-
-      subject do
-        lambda do
-          described_instance.call kitchen_state
-        end
       end
 
       context "when the Test Kitchen state omits :kitchen_terraform_output" do

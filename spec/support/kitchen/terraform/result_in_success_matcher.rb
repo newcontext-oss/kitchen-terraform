@@ -14,18 +14,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/error"
+::RSpec::Matchers
+  .define :result_in_success do
+    supports_block_expectations
 
-module Helpers
-  def fail_after(action:, message:)
-    action
-      .and_raise(
-        ::Kitchen::Terraform::Error,
-        message
+    chain(
+      :with_message,
+      :message
+    )
+
+    match notify_expectation_failures: true do |actual|
+      actual_message = nil
+      call_actual =
+        proc do
+          actual_message = actual.call
+        end
+
+      expect(call_actual).to_not raise_error
+      values_match?(
+        message,
+        actual_message
       )
-  end
+    end
 
-  def object
-    instance_double ::Object
+    failure_message do |actual|
+      "expected #{actual} to result in a success with the message #{message.inspect}"
+    end
   end
-end

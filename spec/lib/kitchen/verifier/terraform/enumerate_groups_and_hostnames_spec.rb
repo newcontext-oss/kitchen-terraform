@@ -15,37 +15,28 @@
 # limitations under the License.
 
 require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"
-require "support/dry/monads/either_matchers"
 
-::RSpec.describe ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames do
-  describe ".call" do
-    let :passed_block do
-      lambda do |block|
-        described_class
-          .call(
-            groups: [group],
-            output: output,
-            &block
-          )
-      end
-    end
-
-    let :result do
-      described_class
-        .call(
-          groups: [group],
-          output: output
-        ) do |group:, hostname:| end
-    end
-
-    context "when a group omits :hostnames" do
-      let :group do
-        {name: "name"}
+::RSpec
+  .describe ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames do
+    describe ".call" do
+      let :passed_block do
+        lambda do |block|
+          described_class
+            .call(
+              groups: [group],
+              output: output,
+              &block
+            )
+        end
       end
 
-      describe "the passed block" do
+      context "when a group omits :hostnames" do
         subject do
           passed_block
+        end
+
+        let :group do
+          {name: "name"}
         end
 
         it "is called with the group and 'localhost'" do
@@ -59,76 +50,58 @@ require "support/dry/monads/either_matchers"
         end
       end
 
-      describe "the function" do
+      context "when the group associates :hostnames with an invalid Terraform output name" do
         subject do
-          result
+          lambda do
+            described_class
+              .call(
+                groups: [group],
+                output: output
+              ) do |group:, hostname:| end
+          end
         end
 
-        it do
-          is_expected.to result_in_success.with_the_value "Enumeration of groups and hostnames resulted in success"
-        end
-      end
-    end
-
-    context "when the group associates :hostnames with an invalid Terraform output name" do
-      let :output do
-        {
-          "hostnames" => {
-            "type" => "string",
-            "value" => "hostname"
+        let :output do
+          {
+            "hostnames" => {
+              "type" => "string",
+              "value" => "hostname"
+            }
           }
-        }
-      end
-
-      let :group do
-        {hostnames: "invalid"}
-      end
-
-      describe "the passed block" do
-        subject do
-          passed_block
         end
 
-        it "is not called" do
-          is_expected.to_not yield_control
-        end
-      end
-
-      describe "the function" do
-        subject do
-          result
+        let :group do
+          {hostnames: "invalid"}
         end
 
         it do
           is_expected
             .to(
               result_in_failure
-                .with_the_value(
+                .with_message(
                   "Enumeration of groups and hostnames resulted in failure due to the omission of the configured " \
                     ":hostnames output or an unexpected output structure: key not found: \"invalid\""
                 )
             )
         end
       end
-    end
 
-    context "when the group associates :hostnames with a valid Terraform output name" do
-      let :output do
-        {
-          "hostnames" => {
-            "type" => "string",
-            "value" => "hostname"
-          }
-        }
-      end
-
-      let :group do
-        {hostnames: "hostnames"}
-      end
-
-      describe "the passed block" do
+      context "when the group associates :hostnames with a valid Terraform output name" do
         subject do
           passed_block
+        end
+
+        let :output do
+          {
+            "hostnames" => {
+              "type" => "string",
+              "value" => "hostname"
+            }
+          }
+        end
+
+        let :group do
+          {hostnames: "hostnames"}
         end
 
         it "is called with the group and each resolved hostname" do
@@ -141,16 +114,5 @@ require "support/dry/monads/either_matchers"
             )
         end
       end
-
-      describe "the function" do
-        subject do
-          result
-        end
-
-        it do
-          is_expected.to result_in_success.with_the_value "Enumeration of groups and hostnames resulted in success"
-        end
-      end
     end
   end
-end

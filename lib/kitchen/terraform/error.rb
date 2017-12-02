@@ -14,18 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/error"
+require "kitchen/terraform"
 
-module Helpers
-  def fail_after(action:, message:)
-    action
-      .and_raise(
-        ::Kitchen::Terraform::Error,
-        message
-      )
-  end
-
-  def object
-    instance_double ::Object
-  end
+# This class represents errors that occur while Kitchen-Terraform is executing.
+class ::Kitchen::Terraform::Error < ::StandardError
 end

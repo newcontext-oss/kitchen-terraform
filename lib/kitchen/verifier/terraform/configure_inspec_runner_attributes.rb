@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
+require "kitchen/terraform/error"
 require "kitchen/verifier/terraform"
 
 # Configures the InSpec profile attributes for the Inspec::Runner used by the verifier to verify a group.
@@ -55,27 +55,20 @@ require "kitchen/verifier/terraform"
 # @see https://www.terraform.io/docs/configuration/outputs.html Terraform output variables
 # @see https://www.terraform.io/docs/state/index.html Terraform state
 module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
-  extend ::Dry::Monads::Either::Mixin
-
-  extend ::Dry::Monads::Maybe::Mixin
-
-  extend ::Dry::Monads::Try::Mixin
-
   # Invokes the function
   #
   # @param group [::Hash] a kitchen-terraform verifier group.
   # @param output [::String] the output of the Terraform state.
-  # @return [::Dry::Monads::Either] the result of the function.
+  # @raise [::Kitchen::Terraform::Error] if the configuration fails.
+  # @return [::Hash] the configured attributes.
   def self.call(group:, output:)
-    Right(
-      group
-        .fetch(
-          :attributes,
-          {}
-        )
-    )
-      .bind do |group_attributes|
-        Right(
+    group
+      .fetch(
+        :attributes,
+        {}
+      )
+      .tap do |group_attributes|
+        return(
           output
             .keys
             .+(group_attributes.keys)
@@ -84,11 +77,6 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
                 .keys
                 .+(group_attributes.values)
             )
-        )
-      end
-      .bind do |unresolved_attributes|
-        Try ::KeyError do
-          unresolved_attributes
             .reduce ::Hash.new do |resolved_attributes, (attribute_name, output_name)|
               resolved_attributes
                 .merge(
@@ -99,11 +87,12 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
                         .fetch("value")
                 )
             end
-        end
+        )
       end
-      .to_either
-      .or do |error|
-        Left "Configuring InSpec runner attributes resulted in failure: #{error}"
-      end
+  rescue ::KeyError => error
+    raise(
+      ::Kitchen::Terraform::Error,
+      "Configuring InSpec runner attributes resulted in failure: #{error.message}"
+    )
   end
 end

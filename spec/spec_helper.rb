@@ -16,6 +16,8 @@
 
 require "support/coverage"
 require "support/helpers"
+require "support/kitchen/terraform/result_in_failure_matcher"
+require "support/kitchen/terraform/result_in_success_matcher"
 
 ::RSpec.configure do |configuration|
   configuration.color = true

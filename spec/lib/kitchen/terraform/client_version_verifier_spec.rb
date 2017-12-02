@@ -15,30 +15,28 @@
 # limitations under the License.
 
 require "kitchen/terraform/client_version_verifier"
-require "support/dry/monads/either_matchers"
 
 ::RSpec
   .describe ::Kitchen::Terraform::ClientVersionVerifier do
     describe "#verify" do
       subject do
-        described_class
-          .new
-          .verify(version_output: "Terraform v#{version}")
+        lambda do
+          described_class
+            .new
+            .verify(version_output: "Terraform v#{version}")
+        end
       end
 
       shared_examples "the version is unsupported" do
         it do
           is_expected
-            .to(
-              result_in_failure
-                .with_the_value("Terraform v#{version} is not supported; install Terraform ~> v0.11.0")
-            )
+            .to result_in_failure.with_message "Terraform v#{version} is not supported; install Terraform ~> v0.11.0"
         end
       end
 
       shared_examples "the version is supported" do
         it do
-          is_expected.to result_in_success.with_the_value "Terraform v#{version} is supported"
+          is_expected.to result_in_success.with_message "Terraform v#{version} is supported"
         end
       end
 

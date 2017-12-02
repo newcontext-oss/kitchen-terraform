@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/monads"
 require "kitchen/verifier/terraform"
 
 # Configures a group's InSpec profile controls to be inclued by the Inspec::Runner used by the verifier.
@@ -24,16 +23,19 @@ require "kitchen/verifier/terraform"
 # @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb ::Inspec::Runner
 # @see https://www.inspec.io/docs/reference/profiles/ InSpec profiles
 module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
-  extend ::Dry::Monads::Either::Mixin
-  extend ::Dry::Monads::Maybe::Mixin
-
   # Invokes the function
   #
   # @param group [::Hash] the group being verified.
   # @param options [:Hash] the verifier's Inspec::Runner's options.
   def self.call(group:, options:)
-    Maybe(group[:controls]).bind do |controls|
-      options.store :controls, controls
-    end
+    group[:controls]
+      .tap do |controls|
+        controls and
+          options
+            .store(
+              :controls,
+              controls
+            )
+      end
   end
 end

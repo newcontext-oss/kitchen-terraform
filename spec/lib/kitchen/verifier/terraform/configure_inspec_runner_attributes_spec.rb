@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
-require "support/dry/monads/either_matchers"
 
 ::RSpec
   .describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes do
@@ -25,11 +24,13 @@ require "support/dry/monads/either_matchers"
       end
 
       subject do
-        described_class
-          .call(
-            group: group,
-            output: output
-          )
+        lambda do
+          described_class
+            .call(
+              group: group,
+              output: output
+            )
+        end
       end
 
       context "when the value of the Terraform output command result is unexpected" do
@@ -39,7 +40,7 @@ require "support/dry/monads/either_matchers"
 
         it do
           is_expected
-            .to result_in_failure.with_the_value /Configuring InSpec runner attributes resulted in failure: .*\"value\"/
+            .to result_in_failure.with_message /Configuring InSpec runner attributes resulted in failure: .*\"value\"/
         end
       end
 
@@ -56,7 +57,7 @@ require "support/dry/monads/either_matchers"
           is_expected
             .to(
               result_in_failure
-                .with_the_value(/Configuring InSpec runner attributes resulted in failure: .*\"not_output_name\"/)
+                .with_message(/Configuring InSpec runner attributes resulted in failure: .*\"not_output_name\"/)
             )
         end
       end
@@ -74,7 +75,7 @@ require "support/dry/monads/either_matchers"
           is_expected
             .to(
               result_in_success
-                .with_the_value(
+                .with_message(
                   "attribute_name" => "output_name value",
                   "output_name" => "output_name value"
                 )
