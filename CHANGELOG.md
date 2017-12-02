@@ -5,6 +5,8 @@ format is based on [Keep a CHANGELOG].
 
 This project adheres to [Semantic Versioning].
 
+## [3.1.0] - xxxx-yy-zz
+
 ## [3.0.0] - 2017-11-28
 
 ### Added
@@ -403,6 +405,7 @@ This project adheres to [Semantic Versioning].
 [2.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.2...v2.0.0
 [2.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.0.0...v2.1.0
 [3.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.1.0...v3.0.0
+[3.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.0.0...v3.1.0
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott
