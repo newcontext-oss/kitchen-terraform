@@ -1,9 +1,16 @@
-# Change Log
+# Changelog
 
-All notable changes to this project will be documented in this file; the
-format is based on [Keep a CHANGELOG].
+All notable changes to this project will be documented in this file.
 
-This project adheres to [Semantic Versioning].
+The format is based on
+[Keep a Changelog](http://keepachangelog.com/en/1.0.0) and this project
+adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Changed
+
+* Format of changelog to adhere to Keep a Changelog 1.0.0
 
 ## [3.0.0] - 2017-11-28
 
@@ -387,22 +394,24 @@ This project adheres to [Semantic Versioning].
 
 * Initial release
 
-[0.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.0...v0.1.1
-[0.1.2]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.1...v0.1.2
-[0.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.2...v0.2.0
-[0.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.2.0...v0.3.0
-[0.4.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.3.0...v0.4.0
-[0.5.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.4.0...v0.5.0
-[0.5.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.0...v0.5.1
-[0.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.1...v0.6.0
-[0.6.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.6.0...v0.6.1
-[0.7.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.6.1...v0.7.0
-[1.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.7.0...v1.0.0
-[1.0.1]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.0...v1.0.1
-[1.0.2]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.1...v1.0.2
-[2.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.2...v2.0.0
-[2.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.0.0...v2.1.0
+[Unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.0.0...HEAD
 [3.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.1.0...v3.0.0
+[2.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.2...v2.0.0
+[1.0.2]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.1...v1.0.2
+[1.0.1]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.7.0...v1.0.0
+[0.7.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.6.1...v0.7.0
+[0.6.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.1...v0.6.0
+[0.5.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.2...v0.2.0
+[0.1.2]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.0...v0.1.1
+
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott
@@ -425,6 +434,4 @@ This project adheres to [Semantic Versioning].
 [@walterdolce]: https://github.com/walterdolce
 [@xmik]: https://github.com/xmik
 [Code Climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
-[Keep a CHANGELOG]: http://keepachangelog.com/
-[Semantic Versioning]: http://semver.org/
 [Travis CI build plan]: https://travis-ci.org/newcontext-oss/kitchen-terraform
