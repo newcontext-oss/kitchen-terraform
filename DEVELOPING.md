@@ -1,6 +1,6 @@
 # Developing
 
-## Significant Project Technologies
+## Reviewing Significant Project Technologies
 
 Familiarity with the following technologies is important in
 understanding the design and behaviour of Kitchen-Terraform.
