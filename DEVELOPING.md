@@ -1,4 +1,13 @@
-# Developing on kitchen-terraform
+# Developing
+
+# Unit Testing
+
+Kitchen-Terraform uses [RSpec](http://rspec.info/) as a unit testing framework.
+The files under [spec/lib](spec/lib) contain the executable descriptions of the units.
+The files under [spec/support](spec/support) contain supporting logic like shared examples and 
+shared contexts.
+The unit tests can be executed by running [`bin/rspec`](bin/rspec).
+[.rspec](.rspec) contains command line options to be automatically applied. 
 
 ## Get familiar with the technologies this project uses
 
