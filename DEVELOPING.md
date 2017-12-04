@@ -42,8 +42,4 @@ features of Kitchen-Terraform.
 
 
 
-### Notes
 
-Tests can be run manually by doing: `bundle exec rspec`
-Style checks can be run manually by doing:
-`bundle exec rubocop --format clang`
