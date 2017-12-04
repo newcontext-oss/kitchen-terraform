@@ -64,6 +64,12 @@ The Terraform module under
 Kitchen-Terraform configuration and an InSpec profile used to verify
 features of Kitchen-Terraform.
 
+## Analyzing Code Quality
 
+[Code Climate](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/)
+is used to analyze the quality of the source code of the Ruby gem.
 
+[.codeclimate.yml](.codeclimate.yml) contains analysis configuration.
 
+A [command line interface](https://github.com/codeclimate/codeclimate)
+is available to run the analysis locally.
