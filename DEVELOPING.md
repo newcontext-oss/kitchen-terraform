@@ -89,3 +89,10 @@ If a commit to the master branch has a
 [tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) then the job
 will attempt to build the Ruby gem and deploy it to
 [RubyGems](https://rubygems.org/gems/kitchen-terraform).
+
+## Releasing
+
+Changes will be committed to the master branch as they are completed.
+When the goals of the next project milestone have been achieved, the
+master branch will be tagged with a new version number which will
+trigger a release of the Ruby gem.
