@@ -1,6 +1,15 @@
 # Developing
 
-# Unit Testing
+## Significant Project Technologies
+
+Familiarity with the following technologies is important in
+understanding the design and behaviour of Kitchen-Terraform.
+
+- [Test Kitchen](http://kitchen.ci/)
+- [Terraform](https://www.terraform.io/)
+- [Inspec](https://www.inspec.io/)
+
+## Unit Testing
 
 [RSpec](http://rspec.info/) is used as the unit testing framework.
 The unit tests can be executed by running [`bin/rspec`](bin/rspec).
@@ -13,15 +22,15 @@ of the units.
 The files under [spec/support](spec/support) contain supporting logic
 like shared examples and shared contexts.
 
-## Get familiar with the technologies this project uses
+## Integration Testing
 
-- [Test Kitchen]
-- [Terraform]
-- [Inspec]
-
-[Test Kitchen]: http://kitchen.ci
-[Terraform]: https://www.terraform.io
-[Inspec]: https://github.com/chef/inspec
+The
+[Terraform Docker provider](https://www.terraform.io/docs/providers/docker/index.html)
+is used to run integration tests against a real Terraform state.
+The Terraform module under
+[integration/docker_provider](integration/docker_provider) includes
+Kitchen-Terraform configuration and an InSpec profile used to verify
+features of Kitchen-Terraform.
 
 ## Download, Install and run tests
 
