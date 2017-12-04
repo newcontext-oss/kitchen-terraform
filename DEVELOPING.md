@@ -73,3 +73,19 @@ is used to analyze the quality of the source code of the Ruby gem.
 
 A [command line interface](https://github.com/codeclimate/codeclimate)
 is available to run the analysis locally.
+
+## Continuously Integrating and Continuously Deploying
+
+[Travis CI](https://travis-ci.org/newcontext-oss/kitchen-terraform) is
+used to provide continuous integration and continuous deployment for the
+Ruby gem.
+
+[.travis.yml](.travis.yml) contains job configuration.
+
+Unit tests and integration tests will be executed for each commit to the
+master branch and each commit to a branch with an open pull request.
+
+If a commit to the master branch has a
+[tag](https://git-scm.com/book/en/v2/Git-Basics-Tagging) then the job
+will attempt to build the Ruby gem and deploy it to
+[RubyGems](https://rubygems.org/gems/kitchen-terraform).
