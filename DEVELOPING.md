@@ -1,5 +1,16 @@
 # Developing
 
+## Summary
+
+The basic steps for developing changes are equivalent for the Ruby gem
+and the web site.
+
+1. [Create a fork of the repository](https://help.github.com/articles/fork-a-repo/)
+1. Commit changes to the fork
+1. [Create a pull request from the fork](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)
+1. Work with the Kitchen-Terraform maintainers to ensure that the pull
+   request can be merged in to the master branch
+
 ## Reviewing Significant Project Technologies
 
 Familiarity with the following technologies is important in
