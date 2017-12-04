@@ -29,6 +29,10 @@ The files under [spec/lib](spec/lib) contain the executable descriptions
 of the units.
 The files under [spec/support](spec/support) contain supporting logic
 like shared examples and shared contexts.
+[Guard](http://guardgem.org/) can be used to automate the execution of
+unit tests during the development process.
+Running [`bin/guard`](bin/guard) will start the process to detect file
+changes and run appropriate unit tests.
 
 ## Integration Testing
 
