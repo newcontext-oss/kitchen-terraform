@@ -5,6 +5,7 @@
 [![Issue Count](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/issue_count.svg)](https://codeclimate.com/github/newcontext-oss/kitchen-terraform)
 [![Build Status Master](https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master)](https://travis-ci.org/newcontext-oss/kitchen-terraform)
 [![Test Coverage](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/badges/coverage.svg)](https://codeclimate.com/github/newcontext-oss/kitchen-terraform/coverage)
+[![Join the chat at https://gitter.im/kitchen-terraform](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitchen-terraform)
 
 kitchen-terraform is a set of
 [Test Kitchen](http://kitchen.ci/index.html) plugins for testing
