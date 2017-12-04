@@ -27,7 +27,7 @@ The unit tests can be executed by running [`bin/rspec`](bin/rspec).
 [.rspec](.rspec) contains command line options which will be
 automatically applied.
 
-[spec/spec_helper.rb](spec/spec_helper.rb) cotains framework
+[spec/spec_helper.rb](spec/spec_helper.rb) contains framework
 configuration.
 
 The files under [spec/lib](spec/lib) contain the executable descriptions
