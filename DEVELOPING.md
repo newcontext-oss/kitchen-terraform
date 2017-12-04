@@ -5,6 +5,7 @@
 Familiarity with the following technologies is important in
 understanding the design and behaviour of Kitchen-Terraform.
 
+- [Ruby](https://www.ruby-lang.org/en/)
 - [Test Kitchen](http://kitchen.ci/)
 - [Terraform](https://www.terraform.io/)
 - [Inspec](https://www.inspec.io/)
