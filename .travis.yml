@@ -80,3 +80,7 @@ jobs:
           repo: newcontext-oss/kitchen-terraform
           tags: true
         skip_cleanup: true
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
