@@ -2,12 +2,16 @@
 
 # Unit Testing
 
-Kitchen-Terraform uses [RSpec](http://rspec.info/) as a unit testing framework.
-The files under [spec/lib](spec/lib) contain the executable descriptions of the units.
-The files under [spec/support](spec/support) contain supporting logic like shared examples and 
-shared contexts.
+[RSpec](http://rspec.info/) is used as the unit testing framework.
 The unit tests can be executed by running [`bin/rspec`](bin/rspec).
-[.rspec](.rspec) contains command line options to be automatically applied. 
+[.rspec](.rspec) contains command line options which will be
+automatically applied.
+[spec/spec_helper.rb](spec/spec_helper.rb) cotains framework
+configuration.
+The files under [spec/lib](spec/lib) contain the executable descriptions
+of the units.
+The files under [spec/support](spec/support) contain supporting logic
+like shared examples and shared contexts.
 
 ## Get familiar with the technologies this project uses
 
