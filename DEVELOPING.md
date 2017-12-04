@@ -31,7 +31,7 @@ automatically applied.
 configuration.
 
 The files under [spec/lib](spec/lib) contain the executable descriptions
-of the units.
+of the different units of the Ruby gem.
 
 The files under [spec/support](spec/support) contain supporting logic
 like shared examples and shared contexts.
