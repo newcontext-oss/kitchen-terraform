@@ -12,6 +12,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Format of changelog to adhere to Keep a Changelog 1.0.0
 
+* Internal success and failure to be modeled without monads
+
 ## [3.0.0] - 2017-11-28
 
 ### Added
