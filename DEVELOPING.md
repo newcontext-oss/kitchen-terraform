@@ -10,6 +10,13 @@ understanding the design and behaviour of Kitchen-Terraform.
 - [Terraform](https://www.terraform.io/)
 - [Inspec](https://www.inspec.io/)
 
+## Obtaining Source Code
+
+[Git](https://git-scm.com/) is used to manage the source code.
+Running
+`git clone https://github.com/newcontext-oss/kitchen-terraform.git` will
+clone this repository to the current working directory.
+
 ## Unit Testing
 
 [RSpec](http://rspec.info/) is used as the unit testing framework.
@@ -33,18 +40,7 @@ The Terraform module under
 Kitchen-Terraform configuration and an InSpec profile used to verify
 features of Kitchen-Terraform.
 
-## Download, Install and run tests
 
-1. Clone the kitchen-terraform repository:
-   `git clone git@github.com:newcontext-oss/kitchen-terraform.git`
-1. Download and install the [required dependencies]
-1. Run `bundle install`
-1. In a separate terminal you can run `bundle exec guard`
-1. Please get familiar with [the tests] and features
-1. Begin coding!
-
-[the tests]: spec/lib
-[required depedencies]: README.md#requirements
 
 ### Notes
 
