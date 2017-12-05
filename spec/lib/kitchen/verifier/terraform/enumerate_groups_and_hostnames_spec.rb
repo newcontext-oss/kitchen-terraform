@@ -57,7 +57,7 @@ require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"
               .call(
                 groups: [group],
                 output: output
-              ) do |group:, hostname:| end
+              )
           end
         end
 
