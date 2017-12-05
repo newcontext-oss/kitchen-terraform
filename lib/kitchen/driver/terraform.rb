@@ -254,6 +254,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
               ::Kitchen::Terraform::ShellOut
                 .run(
                   command: "version",
+                  duration: 600,
                   logger: logger
                 )
           )
