@@ -17,6 +17,7 @@
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/provisioner/terraform"
+require "kitchen/terraform/error"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec
@@ -70,10 +71,11 @@ require "support/kitchen/terraform/configurable_examples"
           before do
             allow(driver)
               .to(
-                fail_after(
-                  action: receive(:apply),
-                  message: "mocked Driver#create failure"
-                )
+                receive(:apply)
+                  .and_raise(
+                    ::Kitchen::Terraform::Error,
+                    "mocked Driver#create failure"
+                  )
               )
           end
 

@@ -18,14 +18,6 @@ require "kitchen/terraform/error"
 
 # This module comprises miscellaneous helper methods to be used by examples.
 module Helpers
-  def fail_after(action:, message:)
-    action
-      .and_raise(
-        ::Kitchen::Terraform::Error,
-        message
-      )
-  end
-
   def object
     instance_double ::Object
   end

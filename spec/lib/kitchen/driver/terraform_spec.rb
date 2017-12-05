@@ -18,6 +18,7 @@ require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/client_version_verifier"
+require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
@@ -83,16 +84,16 @@ require "support/kitchen/terraform/result_in_success_matcher"
     def shell_out_run_failure(command:, message: "mocked `terraform` failure")
       allow(shell_out)
         .to(
-          fail_after(
-            action:
-              receive(:run)
-                .with(
-                  command: command,
-                  duration: 600,
-                  logger: kitchen_logger
-                ),
-            message: message
-          )
+          receive(:run)
+            .with(
+              command: command,
+              duration: 600,
+              logger: kitchen_logger
+            )
+            .and_raise(
+              ::Kitchen::Terraform::Error,
+              message
+            )
         )
     end
 
