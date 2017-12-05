@@ -19,7 +19,7 @@ require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"
 ::RSpec
   .describe ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames do
     describe ".call" do
-      let :passed_block do
+      let :calling_the_method do
         lambda do |block|
           described_class
             .call(
@@ -32,14 +32,18 @@ require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"
 
       context "when a group omits :hostnames" do
         subject do
-          passed_block
+          calling_the_method
         end
 
         let :group do
           {name: "name"}
         end
 
-        it "is called with the group and 'localhost'" do
+        let :output do
+          {}
+        end
+
+        it "yields the group and 'localhost'" do
           is_expected
             .to(
               yield_with_args(
@@ -88,7 +92,7 @@ require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"
 
       context "when the group associates :hostnames with a valid Terraform output name" do
         subject do
-          passed_block
+          calling_the_method
         end
 
         let :output do
@@ -104,7 +108,7 @@ require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"
           {hostnames: "hostnames"}
         end
 
-        it "is called with the group and each resolved hostname" do
+        it "yields the group and each resolved hostname" do
           is_expected
             .to(
               yield_with_args(
