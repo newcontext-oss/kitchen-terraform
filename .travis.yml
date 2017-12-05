@@ -23,13 +23,13 @@ jobs:
       services:
         - docker
       env:
-        - "PATH=\"$PATH:$PWD/terraform_0.11.0\""
+        - "PATH=\"$PATH:$PWD/terraform_0.11.1\""
       rvm: "2.4"
       before_install:
-        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.11.0/terraform_0.11.0_linux_amd64.zip
-        - "sha256sum terraform.zip | grep \"402b4333792967986383670134bb52a8948115f83ab6bda35f57fa2c3c9e9279\""
-        - mkdir terraform_0.11.0
-        - unzip terraform.zip -d terraform_0.11.0
+        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip
+        - "sha256sum terraform.zip | grep \"4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35\""
+        - mkdir terraform_0.11.1
+        - unzip terraform.zip -d terraform_0.11.1
         - cd integration/docker_provider
       script:
         - bundle exec kitchen test --log-level debug
