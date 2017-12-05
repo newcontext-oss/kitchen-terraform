@@ -39,10 +39,10 @@ class ::Kitchen::Terraform::ClientVersionVerifier
       .tap do |version|
         requirement
           .satisfied_by? version or
-            fail(
-              ::Kitchen::Terraform::Error,
-              "Terraform v#{version} is not supported; install Terraform ~> v0.11.0"
-            )
+          raise(
+            ::Kitchen::Terraform::Error,
+            "Terraform v#{version} is not supported; install Terraform ~> v0.11.0"
+          )
 
         return "Terraform v#{version} is supported"
       end
