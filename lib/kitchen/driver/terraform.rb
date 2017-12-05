@@ -199,7 +199,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::Terraform::Error] if one of the steps fails.
   # @return [::String] the state output.
   def apply
-    apply_run_workspace_select_instance
+    run_workspace_select_instance
     apply_run_get
     apply_run_validate
     apply_run_apply
@@ -213,7 +213,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [void]
   def create(_state)
     create_run_init
-    create_run_workspace_new_instance
+    run_workspace_select_instance
   rescue ::Kitchen::Terraform::Error => error
     raise(
       ::Kitchen::ActionFailed,
@@ -229,7 +229,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [void]
   def destroy(_state)
     destroy_run_init
-    destroy_run_workspace_select_instance
+    run_workspace_select_instance
     destroy_run_destroy
     destroy_run_workspace_select_default
     destroy_run_workspace_delete_instance
@@ -318,16 +318,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   # @api private
-  def apply_run_workspace_select_instance
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace select kitchen-terraform-#{instance.name}",
-        duration: config_command_timeout,
-        logger: logger
-      )
-  end
-
-  # @api private
   def apply_run_validate
     ::Kitchen::Terraform::ShellOut
       .run(
@@ -362,28 +352,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_plugin_directory_flag} " \
             "-verify-plugins=true " \
             "#{config_root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
-      )
-  end
-
-  # @api private
-  def create_run_workspace_new_instance
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace new kitchen-terraform-#{instance.name}",
-        duration: config_command_timeout,
-        logger: logger
-      )
-  rescue ::Kitchen::Terraform::Error
-    create_run_workspace_select_instance
-  end
-
-  # @api private
-  def create_run_workspace_select_instance
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace select kitchen-terraform-#{instance.name}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -437,17 +405,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def destroy_run_workspace_delete_instance
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "workspace delete kitchen-terraform-#{instance.name}",
-        duration: config_command_timeout,
-        logger: logger
-      )
-  end
-
-  # @api private
-  def destroy_run_workspace_new_instance
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace new kitchen-terraform-#{instance.name}",
+        command: "workspace delete kitchen-terraform-#{instance_name}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -464,14 +422,24 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   # @api private
-  def destroy_run_workspace_select_instance
+  def instance_name
+    @instance_name ||= instance.name
+  end
+
+  # @api private
+  def run_workspace_select_instance
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "workspace select kitchen-terraform-#{instance.name}",
+        command: "workspace select kitchen-terraform-#{instance_name}",
         duration: config_command_timeout,
         logger: logger
       )
   rescue ::Kitchen::Terraform::Error
-    destroy_run_workspace_new_instance
+    ::Kitchen::Terraform::ShellOut
+      .run(
+        command: "workspace new kitchen-terraform-#{instance_name}",
+        duration: config_command_timeout,
+        logger: logger
+      )
   end
 end

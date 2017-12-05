@@ -14,6 +14,9 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Internal success and failure to be modeled without monads
 
+* All driver and provisioner actions to attempt to select or create a
+  Terraform workspace
+
 ## [3.0.0] - 2017-11-28
 
 ### Added
