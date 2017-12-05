@@ -38,23 +38,15 @@ module ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
   # @return [void]
   # @yieldparam group [::Hash] the group from which hostnamess are being enumerated.
   # @yieldparam hostname [::String] a hostname from the group.
-  def self.call(groups:, output:)
+  def self.call(groups:, output:, &block)
     groups
       .each do |group|
-        (
-          group[:hostnames] and
-            Array(
-              output
-                .fetch(group[:hostnames])
-                .fetch("value")
-            ) or
-            ["localhost"]
-        ).each do |hostname|
-          yield(
-            group: group,
-            hostname: hostname
-          )
-        end
+        each_resolved_hostname_and_group(
+          group: group,
+          hostnames: group[:hostnames],
+          output: output,
+          &block
+        )
       end
   rescue ::KeyError => error
     raise(
@@ -62,5 +54,29 @@ module ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
       "Enumeration of groups and hostnames resulted in failure due to the omission of the configured :hostnames " \
         "output or an unexpected output structure: #{error.message}"
     )
+  end
+
+  private_class_method
+
+  # @api private
+  def self.each_resolved_hostname_and_group(group:, hostnames:, output:)
+    if hostnames
+      Array(
+        output
+          .fetch(hostnames)
+          .fetch("value")
+      )
+        .each do |hostname|
+          yield(
+            group: group,
+            hostname: hostname
+          )
+        end
+    else
+      yield(
+        group: group,
+        hostname: "localhost"
+      )
+    end
   end
 end
