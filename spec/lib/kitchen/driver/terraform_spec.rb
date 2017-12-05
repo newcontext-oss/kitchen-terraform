@@ -80,6 +80,33 @@ require "support/kitchen/terraform/result_in_success_matcher"
       class_double(::Kitchen::Terraform::ShellOut).as_stubbed_const
     end
 
+    shared_examples "the `terraform workspace` subcommand results in success" do
+      let :workspace do
+        "kitchen-terraform-test-suite-test-platform"
+      end
+
+      let :subcommand do
+        "select"
+      end
+
+      before do
+        allow(shell_out)
+          .to(
+            receive(:run)
+              .with(
+                command: "workspace #{subcommand} #{workspace}",
+                duration: 600,
+                logger: kitchen_logger
+              )
+              .and_return("mocked `terraform workspace #{subcommand} #{workspace}` success")
+          )
+      end
+
+      it do
+        is_expected.to_not raise_error
+      end
+    end
+
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
@@ -482,41 +509,15 @@ require "support/kitchen/terraform/result_in_success_matcher"
           end
 
           context "when `terraform workspace select <kitchen-instance>` results in success" do
-            before do
-              allow(shell_out)
-                .to(
-                  receive(:run)
-                    .with(
-                      command: "workspace select kitchen-terraform-test-suite-test-platform",
-                      duration: 600,
-                      logger: kitchen_logger
-                    )
-                    .and_return("mocked `terraform workspace select <kitchen-instance>` success")
-                )
-            end
-
-            it do
-              is_expected.to_not raise_error
-            end
+            it_behaves_like "the `terraform workspace` subcommand results in success"
           end
         end
 
         context "when `terraform workspace new <kitchen-instance>` results in success" do
-          before do
-            allow(shell_out)
-              .to(
-                receive(:run)
-                  .with(
-                    command: "workspace new kitchen-terraform-test-suite-test-platform",
-                    duration: 600,
-                    logger: kitchen_logger
-                  )
-                  .and_return("mocked `terraform workspace new <kitchen-instance>` success")
-              )
-          end
-
-          it do
-            is_expected.to_not raise_error
+          it_behaves_like "the `terraform workspace` subcommand results in success" do
+            let :subcommand do
+              "new"
+            end
           end
         end
       end
@@ -772,21 +773,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
               end
 
               context "when `terraform workspace delete <kitchen-instance>` results in success" do
-                before do
-                  allow(shell_out)
-                    .to(
-                      receive(:run)
-                        .with(
-                          command: "workspace delete kitchen-terraform-test-suite-test-platform",
-                          duration: 600,
-                          logger: kitchen_logger
-                        )
-                        .and_return("mocked `terraform workspace delete <kitchen-instance>` success")
-                    )
-                end
-
-                it do
-                  is_expected.to_not raise_error
+                it_behaves_like "the `terraform workspace` subcommand results in success" do
+                  let :subcommand do
+                    "delete"
+                  end
                 end
               end
             end
