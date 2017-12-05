@@ -20,7 +20,7 @@ require "rubygems"
 
 # Verifies that the output of the Terraform version command indicates a supported version of Terraform.
 #
-# Supported:: Terraform version ~> 0.10.2.
+# Supported:: Terraform version >= 0.10.2, < 0.12.0.
 class ::Kitchen::Terraform::ClientVersionVerifier
   # Verifies output from the Terraform version command against the support version.
   #
@@ -52,6 +52,7 @@ class ::Kitchen::Terraform::ClientVersionVerifier
 
   attr_reader :requirement
 
+  # @api private
   def initialize
     @requirement =
       ::Gem::Requirement
