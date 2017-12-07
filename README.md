@@ -258,12 +258,24 @@ Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
 More information can be found on the
 [Kitchen-Terraform Tutorials][kitchen-terraform-tutorials] page.
 
+## Contributing
+
+Kitchen-Terraform thrives on community contributions.
+
+Information about contributing to Kitchen-Terraform can be found in the
+[Contributing document][contributing-document].
+
 ## Developing
+
+Pull requests to Kitchen-Terraform are always welcome!
 
 Information about developing Kitchen-Terraform can be found in the
 [Developing document][developing-document].
 
 ## Changelog
+
+Kitchen-Terraform adheres to semantic versioning and documents all
+significant changes accordingly.
 
 Information about changes to Kitchen-Terraform can be found in the
 [Changelog][changelog].
@@ -279,10 +291,9 @@ Kitchen-Terraform is maintained by New Context.
 :email: kitchen-terraform@newcontext.com
 :email: info@newcontext.com
 
-## Contributing
+## License
 
-Information about contributing to Kitchen-Terraform can be found in the
-[Contributing document][contributing-document].
+Kitchen-Terraform is distributed under the [Apache License][license].
 
 <!-- Markdown links and image definitions -->
 [build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg?style=plastic
