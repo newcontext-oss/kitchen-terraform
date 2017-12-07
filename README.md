@@ -283,7 +283,7 @@ Information about contributing to Kitchen-Terraform can be found in the
 [Contributing document][contributing-document].
 
 <!-- Markdown links and image definitions -->
-[build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg?style=for-the-badge
+[build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg?style=plastic
 [build-status]: https://travis-ci.org/newcontext-oss/kitchen-terraform
 [bundler-getting-started]: https://bundler.io/#getting-started
 [bundler-in-depth]: https://bundler.io/gemfile.html
@@ -292,19 +292,19 @@ Information about contributing to Kitchen-Terraform can be found in the
 [contributing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md
 [developing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/DEVELOPING.md
 [docker]: https://www.docker.com/
-[gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg?style=for-the-badge
-[gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg?style=for-the-badge
-[gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=for-the-badge
-[gemnasium-shield]: https://img.shields.io/gemnasium/newcontext-oss/kitchen-terraform.svg?style=for-the-badge
+[gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg?style=plastic
+[gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg?style=plastic
+[gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=plastic
+[gemnasium-shield]: https://img.shields.io/gemnasium/newcontext-oss/kitchen-terraform.svg?style=plastic
 [gemnasium]: https://beta.gemnasium.com/projects/github.com/newcontext-oss/kitchen-terraform
-[gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg?style=for-the-badge
+[gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg?style=plastic
 [gitter]: https://gitter.im/kitchen-terraform/Lobby
 [inspec]: https://www.inspec.io/
 [kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
-[maintainability-shield]: https://img.shields.io/codeclimate/maintainability/newcontext-oss/kitchen-terraform.svg?style=for-the-badge
+[maintainability-shield]: https://img.shields.io/codeclimate/maintainability/newcontext-oss/kitchen-terraform.svg?style=plastic
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/maintainability
 [new-context]: https://github.com/newcontext
 [rbenv]: https://github.com/rbenv/rbenv
@@ -320,7 +320,7 @@ Information about contributing to Kitchen-Terraform can be found in the
 [terraform-provisioner]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Provisioner/Terraform
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
-[test-coverage-shield]: https://img.shields.io/codeclimate/c/newcontext-oss/kitchen-terraform.svg?style=for-the-badge
+[test-coverage-shield]: https://img.shields.io/codeclimate/c/newcontext-oss/kitchen-terraform.svg?style=plastic
 [test-coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/test_coverage
 [test-kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [test-kitchen]: http://kitchen.ci/index.html
