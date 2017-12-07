@@ -292,9 +292,9 @@ Kitchen-Terraform is maintained by New Context.
 
 <img alt="GitHub logo" height="40" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/github_logo.png" width="40"> [@NewContext][new-context-github]
 
-:email: :mailbox_with_no_mail:  kitchen-terraform@newcontext.com
+<img alt="Email logo" height="25" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/email_logo.png" width="40"> kitchen-terraform@newcontext.com
 
-:email: :mailbox_with_no_mail:  info@newcontext.com
+<img alt="Email logo" height="25" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/email_logo.png" width="40"> info@newcontext.com
 
 ## License
 
