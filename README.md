@@ -6,12 +6,12 @@
 [![Gem downloads version][gem-downloads-version-shield]][kitchen-terraform-gem]
 [![Gem downloads total][gem-downloads-total-shield]][kitchen-terraform-gem]
 
-[![Build Status][build-status-shield]][build-status]
-[![Test Coverage][test-coverage-shield]][test-coverage]
+[![Build status][build-status-shield]][build-status]
+[![Test coverage][test-coverage-shield]][test-coverage]
 [![Maintainability][maintainability-shield]][maintainability]
 [![Dependencies][gemnasium-shield]][gemnasium]
 
-[![Gitter Chat][gitter-shield]][gitter]
+[![Gitter chat][gitter-shield]][gitter]
 
 Kitchen-Terraform provides a set of [Test Kitchen][test-kitchen] plugins
 which enable a system to use Test Kitchen to converge a
