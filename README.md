@@ -344,4 +344,4 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [test-kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [test-kitchen]: http://kitchen.ci/index.html
 [tfenv]: https://github.com/kamatama41/tfenv
-[twitter-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/twitter_logo.svg
+[twitter-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/twitter_logo.png
