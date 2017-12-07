@@ -268,14 +268,16 @@ Information about developing Kitchen-Terraform can be found in the
 Information about changes to Kitchen-Terraform can be found in the
 [Changelog][changelog].
 
-## Meta
+## Maintainers
 
-Kitchen-Terraform is maintained by [@NewContext][new-context].
+Kitchen-Terraform is maintained by New Context.
 
-Inquires about this project can be sent to
-kitchen-terraform@newcontext.com.
-
-This work is distributed under the [Apache License][license].
+![New Context logo][new-context-logo] [NewContext.com][new-context]
+![Twitter logo][twitter-logo] [@NewContext][new-context-twitter]
+![LinkedIn logo][linkedin-logo] [New Context][new-context-linkedin]
+![GitHub logo][github-logo] [@NewContext][new-context-github]
+:email: kitchen-terraform@newcontext.com
+:email: info@newcontext.com
 
 ## Contributing
 
@@ -297,6 +299,7 @@ Information about contributing to Kitchen-Terraform can be found in the
 [gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=plastic
 [gemnasium-shield]: https://img.shields.io/gemnasium/newcontext-oss/kitchen-terraform.svg?style=plastic
 [gemnasium]: https://beta.gemnasium.com/projects/github.com/newcontext-oss/kitchen-terraform
+[github-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/github_logo.png
 [gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg?style=plastic
 [gitter]: https://gitter.im/kitchen-terraform/Lobby
 [inspec]: https://www.inspec.io/
@@ -304,9 +307,14 @@ Information about contributing to Kitchen-Terraform can be found in the
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
+[linkedin-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/linkedin_logo.png
 [maintainability-shield]: https://img.shields.io/codeclimate/maintainability/newcontext-oss/kitchen-terraform.svg?style=plastic
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/maintainability
-[new-context]: https://github.com/newcontext
+[new-context-github]: https://github.com/newcontext
+[new-context-linkedin]: https://www.linkedin.com/company/-new-context-
+[new-context-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/new_context_logo.png
+[new-context-twitter]: https://twitter.com/newcontext
+[new-context]: https://newcontext.com/
 [rbenv]: https://github.com/rbenv/rbenv
 [ruby-branches]: https://www.ruby-lang.org/en/downloads/branches/
 [ruby-gem-documentation]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/
@@ -325,3 +333,4 @@ Information about contributing to Kitchen-Terraform can be found in the
 [test-kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [test-kitchen]: http://kitchen.ci/index.html
 [tfenv]: https://github.com/kamatama41/tfenv
+[twitter-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/twitter_logo.svg
