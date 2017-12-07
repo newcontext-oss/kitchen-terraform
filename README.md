@@ -2,11 +2,16 @@
 
 > Kitchen-Terraform enables verification of Terraform state.
 
-[![Gem Version][gem-version-badge]][gem-version]
-[![Build Status][build-status-badge]][build-status]
-[![Test Coverage][test-coverage-badge]][test-coverage]
-[![Maintainability][maintainability-badge]][maintainability]
-[![Gitter Chat][gitter-chat-badge]][gitter-chat]
+[![Gem version][gem-version-shield]][kitchen-terraform-gem]
+[![Gem downloads version][gem-downloads-version-shield]][kitchen-terraform-gem]
+[![Gem downloads total][gem-downloads-total-shield]][kitchen-terraform-gem]
+
+[![Build Status][build-status-shield]][build-status]
+[![Test Coverage][test-coverage-shield]][test-coverage]
+[![Maintainability][maintainability-shield]][maintainability]
+[![Dependencies][gemnasium-shield]][gemnasium]
+
+[![Gitter Chat][gitter-shield]][gitter]
 
 Kitchen-Terraform provides a set of [Test Kitchen][test-kitchen] plugins
 which enable a system to use Test Kitchen to converge a
@@ -50,8 +55,8 @@ the interval of `>= 2.2, < 2.5`.
 ### Kitchen-Terraform Ruby Gem
 
 Each version of Kitchen-Terraform is published as a
-[Ruby gem][ruby-gems-what-is] to [RubyGems.org][ruby-gems] which makes
-them readily available for installation on a system.
+[Ruby gem][ruby-gems-what-is] to [RubyGems.org][kitchen-terraform-gem]
+which makes them readily available for installation on a system.
 
 #### RubyGems
 
@@ -278,7 +283,7 @@ Information about contributing to Kitchen-Terraform can be found in the
 [Contributing document][contributing-document].
 
 <!-- Markdown links and image definitions -->
-[build-status-badge]: https://travis-ci.org/newcontext-oss/kitchen-terraform.svg?branch=master
+[build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg?style=for-the-badge
 [build-status]: https://travis-ci.org/newcontext-oss/kitchen-terraform
 [bundler-getting-started]: https://bundler.io/#getting-started
 [bundler-in-depth]: https://bundler.io/gemfile.html
@@ -287,22 +292,25 @@ Information about contributing to Kitchen-Terraform can be found in the
 [contributing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md
 [developing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/DEVELOPING.md
 [docker]: https://www.docker.com/
-[gem-version-badge]: https://badge.fury.io/rb/kitchen-terraform.svg
-[gem-version]: https://badge.fury.io/rb/kitchen-terraform
-[gitter-chat-badge]: https://badges.gitter.im/Join%20Chat.svg
-[gitter-chat]: https://gitter.im/kitchen-terraform
+[gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg?style=for-the-badge
+[gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg?style=for-the-badge
+[gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=for-the-badge
+[gemnasium-shield]: https://img.shields.io/gemnasium/newcontext-oss/kitchen-terraform.svg?style=for-the-badge
+[gemnasium]: https://beta.gemnasium.com/projects/github.com/newcontext-oss/kitchen-terraform
+[gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg?style=for-the-badge
+[gitter]: https://gitter.im/kitchen-terraform/Lobby
 [inspec]: https://www.inspec.io/
+[kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
-[maintainability-badge]: https://api.codeclimate.com/v1/badges/73d4a2280a30e680bac4/maintainability
+[maintainability-shield]: https://img.shields.io/codeclimate/maintainability/newcontext-oss/kitchen-terraform.svg?style=for-the-badge
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/maintainability
 [new-context]: https://github.com/newcontext
 [rbenv]: https://github.com/rbenv/rbenv
 [ruby-branches]: https://www.ruby-lang.org/en/downloads/branches/
 [ruby-gem-documentation]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/
 [ruby-gems-what-is]: http://guides.rubygems.org/ruby-gems-what-is/index.html
-[ruby-gems]: http://rubygems.org/gems/kitchen-terraform
 [ruby-installation]: https://www.ruby-lang.org/en/documentation/installation/
 [ruby]: https://www.ruby-lang.org/en/
 [rubygems-installing-gems]: http://guides.rubygems.org/rubygems-basics/#rubygems-installing-gems
@@ -312,7 +320,7 @@ Information about contributing to Kitchen-Terraform can be found in the
 [terraform-provisioner]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Provisioner/Terraform
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
-[test-coverage-badge]: https://api.codeclimate.com/v1/badges/73d4a2280a30e680bac4/test_coverage
+[test-coverage-shield]: https://img.shields.io/codeclimate/c/newcontext-oss/kitchen-terraform.svg?style=for-the-badge
 [test-coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/test_coverage
 [test-kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [test-kitchen]: http://kitchen.ci/index.html
