@@ -284,12 +284,17 @@ Information about changes to Kitchen-Terraform can be found in the
 
 Kitchen-Terraform is maintained by New Context.
 
-![New Context logo][new-context-logo] [NewContext.com][new-context]
-![Twitter logo][twitter-logo] [@NewContext][new-context-twitter]
-![LinkedIn logo][linkedin-logo] [New Context][new-context-linkedin]
-![GitHub logo][github-logo] [@NewContext][new-context-github]
-:email: kitchen-terraform@newcontext.com
-:email: info@newcontext.com
+<img alt="New Context logo" height="32" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/new_context_logo.png" width="40"> [NewContext.com][new-context]
+
+<img alt="Twitter logo" height="40" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/twitter_logo.png" width="40"> [@NewContext][new-context-twitter]
+
+<img alt="LinkedIn logo" height="37" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/linkedin_logo.png" width="40"> [New Context][new-context-linkedin]
+
+<img alt="GitHub logo" height="33" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/github_logo.png" width="40"> [@NewContext][new-context-github]
+
+:email: :mailbox_with_no_mail:  kitchen-terraform@newcontext.com
+
+:email: :mailbox_with_no_mail:  info@newcontext.com
 
 ## License
 
@@ -310,7 +315,6 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=plastic
 [gemnasium-shield]: https://img.shields.io/gemnasium/newcontext-oss/kitchen-terraform.svg?style=plastic
 [gemnasium]: https://beta.gemnasium.com/projects/github.com/newcontext-oss/kitchen-terraform
-[github-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/github_logo.png
 [gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg?style=plastic
 [gitter]: https://gitter.im/kitchen-terraform/Lobby
 [inspec]: https://www.inspec.io/
@@ -323,7 +327,6 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/maintainability
 [new-context-github]: https://github.com/newcontext
 [new-context-linkedin]: https://www.linkedin.com/company/-new-context-
-[new-context-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/new_context_logo.png
 [new-context-twitter]: https://twitter.com/newcontext
 [new-context]: https://newcontext.com/
 [rbenv]: https://github.com/rbenv/rbenv
