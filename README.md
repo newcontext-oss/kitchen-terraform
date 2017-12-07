@@ -70,7 +70,7 @@ $ gem install kitchen-terraform --version 3.0.0
 ```
 
 More information can be found in the
-[RubyGems: Installing Gems article][rubygems-installing-gems].
+[RubyGems: Installing Gems][rubygems-installing-gems] article.
 
 #### Bundler
 
@@ -102,7 +102,7 @@ $ bundle install
 ```
 
 More information can be found in the
-[Bundler: In Depth article][bundler-in-depth].
+[Bundler: In Depth][bundler-in-depth] article.
 
 ## Usage
 
