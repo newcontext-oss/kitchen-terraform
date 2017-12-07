@@ -33,10 +33,6 @@ Kitchen-Terraform supports versions of Terraform in the interval of
 
 [tfenv] can be used to manage versions of Terraform on the system.
 
-A future version of Kitchen-Terraform will provide optional management
-of Terraform installations to simplify the installation process and
-to provide support for test matrices based on versions of Terraform.
-
 ### Ruby
 
 Kitchen-Terraform is written in [Ruby][ruby] which requires an
