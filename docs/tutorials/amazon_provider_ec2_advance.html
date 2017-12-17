@@ -387,6 +387,11 @@ bundle install
   <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_security_group.example.name}"</span>
 <span class="p">}</span>
 
+<span class="n">output</span> <span class="s2">"terraform_state"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The path to the Terraform state file"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${path.module}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate"</span>
+<span class="p">}</span>
+
 <span class="n">output</span> <span class="s2">"test_target_public_dns"</span> <span class="p">{</span>
   <span class="n">description</span> <span class="o">=</span> <span class="s2">"The list of public DNS names assigned to the test_target instances"</span>
   <span class="n">value</span>       <span class="o">=</span> <span class="p">[</span><span class="s2">"${aws_instance.test_target.*.public_dns}"</span><span class="p">]</span>
