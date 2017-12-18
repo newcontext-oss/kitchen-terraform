@@ -152,6 +152,12 @@ the content can be reviewed at http://localhost:4567/.
 env NO_CONTRACTS=true bin/middleman server --build-dir docs
 ```
 
+[config.rb](config.rb) contains Middleman configuration.
+
+[source](source) contains the source files for the web site.
+
+[docs](docs) contains the compiled web site.
+
 #### Building Site
 
 The following command will build an HTML site based on the Middleman
