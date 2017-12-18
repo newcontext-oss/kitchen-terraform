@@ -5,8 +5,12 @@
 **/.terraform/
 **/inspec.lock
 *.gem
+.DS_Store/
+.cache/
+.sass-cache/
 .yardoc/
 bin/
+build/
 certs/gem-private_key.pem
 coverage/
 doc/

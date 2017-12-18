@@ -1,5 +1,11 @@
+# frozen_string_literal: true
+
 # Activate and configure extensions
 # https://middlemanapp.com/advanced/configuration/#configuring-extensions
+
+require "middleman-autoprefixer"
+require "middleman-livereload"
+require "middleman-syntax"
 
 activate :livereload
 

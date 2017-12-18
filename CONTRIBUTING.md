@@ -149,11 +149,7 @@ the content can be reviewed at http://localhost:4567/.
 > Running Middleman server to review content changes
 
 ```sh
-cd website
-env NO_CONTRACTS=true \
-  ../bin/middleman server \
-    --build-dir docs \
-    --source website
+env NO_CONTRACTS=true bin/middleman server --build-dir docs
 ```
 
 #### Building Site
@@ -164,8 +160,7 @@ project.
 > Building HTML site based on Middleman project
 
 ```sh
-cd website
-../bin/middleman build --build-dir ../docs
+bin/middleman build --build-dir docs
 ```
 
 <!-- Markdown links and image definitions -->
