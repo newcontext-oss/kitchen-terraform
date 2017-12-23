@@ -74,7 +74,9 @@ require "kitchen/terraform/version.rb"
     )
 
   specification.add_runtime_dependency "kitchen-inspec", "~> 0.18"
-
+  
+  specification.add_runtime_dependency "kitchen-verifier-awspec", "~>0.1"
+  
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
 
   specification
