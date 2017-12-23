@@ -75,3 +75,8 @@ Refer to the
 for example Terraform projects using various
 [Terraform providers](https://www.terraform.io/docs/configuration/providers.html)
 .
+
+
+### With docker
+Please note that when running in docker, some tests that themselves use docker
+Can have issues connecting if you use the `-v /var/run/docker.sock:/var/run/docker.sock` way to have the image start docker images
