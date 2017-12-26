@@ -75,3 +75,31 @@ Refer to the
 for example Terraform projects using various
 [Terraform providers](https://www.terraform.io/docs/configuration/providers.html)
 .
+
+
+### With docker
+Please note that when running in docker, some tests that themselves use docker
+Can have issues connecting if you use the `-v /var/run/docker.sock:/var/run/docker.sock` way to have the image start docker images.
+
+You'll need to mount in your credentials with either environment
+variables or your credentials file.  The default working directory is workspace, and you'll want to mount that in.  
+
+The command is passed into  the `kitchen` command, so you can
+give a command of `converge`, `verify`, `test` etc. 
+
+You can build it yourself with a 
+`docker build . -t kitchen-terraform`
+
+
+e.g. 
+`docker run --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+   -e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION \
+   -v $(pwd):/workspace kitchen-terraform test` or
+
+or if you're using credentials files and have a aws profile
+called personal, you could do:
+`docker run --rm -v $(pwd):/workspace \
+   -v ~/.aws/:/root/.aws:ro  \
+   -e AWS_PROFILE=$AWS_PROFILE \
+  kitchen-terraform test`

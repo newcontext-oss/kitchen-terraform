@@ -1,0 +1,6 @@
+.git/
+certs/*
+assets/*
+docs/*
+website/
+Dockerfile
