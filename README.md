@@ -317,7 +317,7 @@ Kitchen-Terraform is maintained by New Context.
 <img
   alt="Email logo"
   height="16"
-  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/email_logo.png" 
+  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/email_logo.png"
   width="25"> info@newcontext.com
 
 ## License
