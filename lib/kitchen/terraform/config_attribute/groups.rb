@@ -20,16 +20,12 @@ require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/groups"
 
 # This attribute configures the execution of {https://www.inspec.io/docs/reference/profiles/ InSpec profiles} against
-# different groups of resources in the Terraform state.
+# different groups of resources in the Terraform state. Each group may be configured by using the proceeding attributes.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760193 Sequence of mappings}
 # Required:: False
 #
-# ===== Mapping Keys
-#
-# These keys may be declared in each of the mappings in the sequence.
-#
-# ====== name
+# ===== name
 #
 # This key contains the name of the group to be used for logging purposes.
 #
@@ -41,7 +37,7 @@ require "kitchen/terraform/config_schemas/groups"
 #       -
 #         name: a_group
 #
-# ====== attributes
+# ===== attributes
 #
 # This key comprises associations of the names of
 # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes} with the names of
@@ -60,7 +56,7 @@ require "kitchen/terraform/config_schemas/groups"
 # Caveat:: As all Terraform outputs are associated with equivalently named InSpec profile attributes by default, this
 #          key is only necessary to provide alternative attribute names.
 #
-# ====== controls
+# ===== controls
 #
 # This key comprises the names of {https://www.inspec.io/docs/reference/dsl_inspec/ InSpec controls} to exclusively
 # include from the InSpec profile of the associated Test Kitchen instance.
@@ -81,7 +77,7 @@ require "kitchen/terraform/config_schemas/groups"
 #           - control_two
 #           - control_four
 #
-# ====== hostnames
+# ===== hostnames
 #
 # This key contains the name of a Terraform output which provides one or more hostnames to be targeted by the InSpec
 # profile of the associated Test Kitchen instance.
@@ -97,7 +93,7 @@ require "kitchen/terraform/config_schemas/groups"
 # Caveat:: The output must be of type String or Array and . If this key is omitted then +"localhost"+ will be the target
 #          of the profile.
 #
-# ====== port
+# ===== port
 #
 # This key contains the port to use when connecting with {https://en.wikipedia.org/wiki/Secure_Shell Secure Shell (SSH)}
 # to the hosts of the group.
@@ -112,7 +108,7 @@ require "kitchen/terraform/config_schemas/groups"
 #         port: 1234
 # Caveat:: If this key is omitted then the port of the Test Kitchen SSH transport will be used.
 #
-# ====== ssh_key
+# ===== ssh_key
 #
 # This key contains the path to a private SSH key to use when connecting with SSH to the hosts of the group.
 #
@@ -126,7 +122,7 @@ require "kitchen/terraform/config_schemas/groups"
 #         ssh_key: /path/to/an/ssh/key</
 # Caveat:: If this key is omitted then the private SSH key of the Test Kitchen SSH Transport will be used.
 #
-# ====== username
+# ===== username
 #
 # This key contains the username to use when connecting with SSH to the hosts of the group.
 #
