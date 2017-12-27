@@ -137,14 +137,14 @@ The web site comprises documentation, examples, and tutorials for
 working with Kitchen-Terraform.
 
 The web site published on the master branch is hosted at
-https://newcontext-oss.github.io/kitchen-terraform/.
+<https://newcontext-oss.github.io/kitchen-terraform/>.
 
 #### Writing Content
 
 The web site uses the [Middleman][middleman] framework.
 
 The following command will run the Middleman server so that changes to
-the content can be reviewed at http://localhost:4567/.
+the content can be reviewed at <http://localhost:4567/>.
 
 > Running Middleman server to review content changes
 
