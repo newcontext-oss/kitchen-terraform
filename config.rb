@@ -17,22 +17,36 @@ activate :syntax do |syntax|
   syntax.css_class = "syntax-highlight"
 end
 
-page '/*.xml', layout: false
-page '/*.json', layout: false
-page '/*.txt', layout: false
+page(
+  "/*.xml",
+  layout: false
+)
+
+page(
+  "/*.json",
+  layout: false
+)
+
+page(
+  "/*.txt",
+  layout: false
+)
 
 # Build-specific configuration
 # https://middlemanapp.com/advanced/configuration/#environment-specific-settings
 
 configure :build do
-  set :http_prefix, '/kitchen-terraform/'
+  set(
+    :http_prefix,
+    "/kitchen-terraform/"
+  )
 
   activate :minify_css
   activate :minify_javascript
 
   # See favicon_maker README for additional details
   activate :favicon_maker do |f|
-    f.template_dir = 'source/images'
+    f.template_dir = "source/images"
     f.icons = {
       "kitchen_terraform_logo.png" => [
         {icon: "apple-touch-icon-180x180-precomposed.png"},
