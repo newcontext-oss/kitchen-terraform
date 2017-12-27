@@ -32,7 +32,7 @@ configure :build do
 
   # See favicon_maker README for additional details
   activate :favicon_maker do |f|
-    f.template_dir  = 'source/images'
+    f.template_dir = 'source/images'
     f.icons = {
       "kitchen_terraform_logo.png" => [
         { icon: "apple-touch-icon-180x180-precomposed.png" },
