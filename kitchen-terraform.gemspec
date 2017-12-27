@@ -52,6 +52,42 @@ require "kitchen/terraform/version.rb"
 
   specification.add_development_dependency "guard-yard", "~> 2.2"
 
+  specification
+    .add_development_dependency(
+      "middleman",
+      "~> 4.2"
+    )
+
+  specification
+    .add_development_dependency(
+      "middleman-autoprefixer",
+      "~> 2.7"
+    )
+
+  specification
+    .add_development_dependency(
+      "middleman-favicon-maker",
+      "~> 4.1"
+    )
+
+  specification
+    .add_development_dependency(
+      "middleman-livereload",
+      "~> 3.4"
+    )
+
+  specification
+    .add_development_dependency(
+      "middleman-syntax",
+      "~> 3.0"
+    )
+
+  specification
+    .add_development_dependency(
+      "mini_racer",
+      "~> 0.1.0"
+    )
+
   specification.add_development_dependency "pry", "~> 0.10"
 
   specification.add_development_dependency "pry-coolline", "~> 0.2"

@@ -14,8 +14,13 @@ group :red_green_refactor, halt_on_fail: true do
       watch /lib\/.+\.rb/
     end
 
-    guard :rspec, all_after_pass: true, all_on_start: true, bundler_env: :inherit, cmd: "bundle exec rspec",
-                  failure_mode: :focus do
+    guard(
+      :rspec,
+      all_after_pass: true,
+      all_on_start: true,
+      cmd: "bin/rspec",
+      failure_mode: :focus
+    ) do
       watch dsl.rspec.spec_files
 
       watch dsl.rspec.spec_helper do dsl.rspec.spec_dir end
