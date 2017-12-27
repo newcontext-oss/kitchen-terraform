@@ -66,7 +66,7 @@ manager, RubyGems, run a command like the following example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-$ gem install kitchen-terraform --version 3.0.0
+gem install kitchen-terraform --version 3.0.0
 ```
 
 More information can be found in the
@@ -98,7 +98,7 @@ Second, run the following command.
 > Installing Kitchen-Terraform with Bundler
 
 ```sh
-$ bundle install
+bundle install
 ```
 
 More information can be found in the
