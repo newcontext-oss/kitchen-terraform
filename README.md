@@ -284,17 +284,41 @@ Information about changes to Kitchen-Terraform can be found in the
 
 Kitchen-Terraform is maintained by New Context.
 
-<img alt="New Context logo" height="25" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/new_context_logo.png" width="25"> [NewContext.com][new-context]
+<img
+  alt="New Context logo"
+  height="25"
+  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/new_context_logo.png"
+  width="25"> [NewContext.com][new-context]
 
-<img alt="Twitter logo" height="25" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/twitter_logo.png" width="25"> [@NewContext][new-context-twitter]
+<img
+  alt="Twitter logo"
+  height="25"
+  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/twitter_logo.png"
+  width="25"> [@NewContext][new-context-twitter]
 
-<img alt="LinkedIn logo" height="23" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/linkedin_logo.png" width="25"> [New Context][new-context-linkedin]
+<img
+  alt="LinkedIn logo"
+  height="23"
+  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/linkedin_logo.png"
+  width="25"> [New Context][new-context-linkedin]
 
-<img alt="GitHub logo" height="25" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/github_logo.png" width="25"> [@NewContext][new-context-github]
+<img
+  alt="GitHub logo"
+  height="25"
+  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/github_logo.png"
+  width="25"> [@NewContext][new-context-github]
 
-<img alt="Email logo" height="16" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/email_logo.png" width="25"> kitchen-terraform@newcontext.com
+<img
+  alt="Email logo"
+  height="16"
+  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/email_logo.png"
+  width="25"> kitchen-terraform@newcontext.com
 
-<img alt="Email logo" height="16" src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/email_logo.png" width="25"> info@newcontext.com
+<img
+  alt="Email logo"
+  height="16"
+  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/ncs-alane-update-developing/assets/email_logo.png" 
+  width="25"> info@newcontext.com
 
 ## License
 
