@@ -227,7 +227,7 @@ end
 ```
 
 Running the following command would initialize the working directory for
-Terraform, create a Docker container by applying the configuration file, 
+Terraform, create a Docker container by applying the configuration file,
 and verify that the container is running Ubuntu.
 
 > Verifying with Kitchen-Terraform
