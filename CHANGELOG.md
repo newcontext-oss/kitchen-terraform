@@ -17,6 +17,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 * All driver and provisioner actions to attempt to select or create a
   Terraform workspace
 
+* Format and wording of the verifier `groups` attribute documentation
+
 ### Fixed
 
 * Documented supported Terraform version for ClientVersionVerifier
