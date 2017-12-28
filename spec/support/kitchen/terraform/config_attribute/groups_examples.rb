@@ -237,6 +237,37 @@ require "support/kitchen/terraform/config_attribute_context"
 
       context(
         "when the config associates :groups with an array which includes a hash which associates :name with a " \
+          "nonempty string and associates :fail_fast with a nonboolean"
+      ) do
+        it_behaves_like(
+          "the value is invalid",
+          error_message: /groups.*0.*fail_fast.*must be boolean/,
+          value: [
+            {
+              name: "abc",
+              fail_fast: "abc"
+            }
+          ]
+        )
+      end
+
+      context(
+        "when the config associates :groups with an array which includes a hash which associates :name with a " \
+          "nonempty string and associates :fail_fast with a boolean"
+      ) do
+        it_behaves_like(
+          "the value is valid",
+          value: [
+            {
+              name: "abc",
+              fail_fast: true
+            }
+          ]
+        )
+      end
+
+      context(
+        "when the config associates :groups with an array which includes a hash which associates :name with a " \
           "nonempty string and :hostnames with a nonstring"
       ) do
         it_behaves_like(

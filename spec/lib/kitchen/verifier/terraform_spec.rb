@@ -18,7 +18,6 @@ require "inspec"
 require "kitchen"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
-require "support/kitchen/terraform/config_attribute/fail_fast_examples"
 require "support/kitchen/terraform/config_attribute/groups_examples"
 require "support/kitchen/terraform/configurable_examples"
 
@@ -44,8 +43,6 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
-
-    it_behaves_like "Kitchen::Terraform::ConfigAttribute::FailFast"
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::Groups"
 
