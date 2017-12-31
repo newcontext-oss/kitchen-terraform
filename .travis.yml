@@ -11,6 +11,7 @@ jobs:
     -
       stage: unit
       rvm: 2.5
+      before_install: gem update --system
       bundler_args: --binstubs
       script: bin/rspec --backtrace
       after_success: bin/codeclimate-test-reporter
