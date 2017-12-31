@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+* Support for Ruby 2.5
+
 ### Changed
 
 * Format of changelog to adhere to Keep a Changelog 1.0.0
