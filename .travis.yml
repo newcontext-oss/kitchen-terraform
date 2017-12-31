@@ -60,6 +60,7 @@ jobs:
     -
       stage: spec
       sudo: false
+      services: []
 
       before_install:
         - gem update --system
@@ -71,6 +72,7 @@ jobs:
     -
       stage: deploy
       sudo: false
+      services: []
 
       before_install:
         - gem update --system
