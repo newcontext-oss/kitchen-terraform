@@ -33,7 +33,7 @@ before_install:
   - gem update --system
   - gem --version
 
-  - >-
+  -
     curl
       --output terraform.zip
       https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_$TERRAFORM_VERSION_linux_amd64.zip
@@ -43,7 +43,7 @@ before_install:
   - unzip terraform.zip -d terraform
   - cd integration/docker_provider
 
-install: >-
+install:
   bin/bundle
     install
     --binstubs
@@ -82,7 +82,7 @@ jobs:
       script: skip
 
       before_deploy:
-        - >-
+        -
           openssl
             aes-256-cbc
             -K $encrypted_d73b39cf4bfa_key
