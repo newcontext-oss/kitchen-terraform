@@ -85,33 +85,25 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def call(state)
-    state
-      .fetch :kitchen_terraform_output do
-        raise(
-          ::Kitchen::Terraform::Error,
-          "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \
-            "kitchen-terraform provisioner has not successfully converged"
-        )
-      end
-      .tap do |output|
-        ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
-          .call(
-            groups: config_groups,
-            output: ::Kitchen::Util.stringified_hash(output)
-          ) do |group:, hostname:|
-            state
-              .store(
-                :kitchen_terraform_group,
-                group
-              )
-            state
-              .store(
-                :kitchen_terraform_hostname,
-                hostname
-              )
-            info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"
-            super state
-          end
+    ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
+      .call(
+        groups: config_groups,
+        output: ::Kitchen::Util.stringified_hash(kitchen_terraform_output(state: state))
+      ) do |group:, hostname:|
+        state
+          .store(
+            :kitchen_terraform_group,
+            group
+          )
+
+        state
+          .store(
+            :kitchen_terraform_hostname,
+            hostname
+          )
+
+        info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"
+        super state
       end
   rescue ::Kitchen::Terraform::Error => error
     raise(
@@ -170,6 +162,17 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
             group: state.fetch(:kitchen_terraform_group),
             options: options
           )
+      end
+  end
+
+  def kitchen_terraform_output(state:)
+    state
+      .fetch :kitchen_terraform_output do
+        raise(
+          ::Kitchen::Terraform::Error,
+          "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \
+            "kitchen-terraform provisioner has not successfully converged"
+        )
       end
   end
 end
