@@ -11,7 +11,9 @@ jobs:
     -
       stage: unit
       rvm: 2.5
-      before_install: gem update --system
+      before_install:
+        - gem update --system
+        - gem --version
       bundler_args: --binstubs
       script: bin/rspec --backtrace
       after_success: bin/codeclimate-test-reporter
@@ -31,7 +33,7 @@ jobs:
       bundler_args: --binstubs
       script: bin/rspec --backtrace
     -
-      stage: integration
+      stage: Integration
       sudo: required
       services:
         - docker
@@ -40,6 +42,7 @@ jobs:
       rvm: 2.5
       before_install:
         - gem update --system
+        - gem --version
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip
         - 'sha256sum terraform.zip | grep "4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35"'
         - mkdir terraform_0.11.1
@@ -58,6 +61,7 @@ jobs:
       rvm: 2.5
       before_install:
         - gem update --system
+        - gem --version
         - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.10.2/terraform_0.10.2_linux_amd64.zip
         - 'sha256sum terraform.zip | grep "6c1b5ce1a78bc7bb895055052d9074e519f51293770871acfe2dbd289e2f2aaa"'
         - mkdir terraform_0.10.2
@@ -71,7 +75,9 @@ jobs:
       install: skip
       script: skip
       rvm: 2.5
-      before_install: gem update --system
+      before_install:
+        - gem update --system
+        - gem --version
       before_deploy:
         - openssl aes-256-cbc -K $encrypted_d73b39cf4bfa_key -iv $encrypted_d73b39cf4bfa_iv -in certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
         - gem cert --add certs/gem-public_cert.pem
