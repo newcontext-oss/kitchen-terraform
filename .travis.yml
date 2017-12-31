@@ -1,96 +1,111 @@
-dist: trusty
-sudo: false
 language: ruby
+
+rvm:
+  - 2.5
+  - 2.4
+  - 2.3
+  - 2.2
+
+dist: trusty
+sudo: required
+
+services:
+  - docker
+
 env:
   global:
-    secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
-cache:
-  - bundler
+    - BUNDLER_JOBS=$(nproc --ignore=1)
+    - PATH=$PATH:$PWD/terraform
+
+    -
+      secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
+
+  matrix:
+    - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
+    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+
+stages:
+  - spec
+  - test
+  - deploy
+
+before_install:
+  - gem update --system
+  - gem --version
+
+  - >-
+    curl
+      --output terraform.zip
+      https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_$TERRAFORM_VERSION_linux_amd64.zip
+
+  - sha256sum terraform.zip | grep $TERRAFORM_SHA256SUM
+  - mkdir terraform
+  - unzip terraform.zip -d terraform
+  - cd integration/docker_provider
+
+install: >-
+  bin/bundle
+    install
+    --binstubs
+    --clean
+    --deployment
+    --frozen
+    --jobs=$BUNDLER_JOBS
+    --retry=3
+
+script: ../../bin/kitchen test --log-level=debug
+
 jobs:
   include:
     -
-      stage: unit
-      rvm: 2.5
+      stage: spec
+      sudo: false
+
       before_install:
         - gem update --system
         - gem --version
-      bundler_args: --binstubs
+
       script: bin/rspec --backtrace
       after_success: bin/codeclimate-test-reporter
-    -
-      stage: unit
-      rvm: 2.4
-      bundler_args: --binstubs
-      script: bin/rspec --backtrace
-    -
-      stage: unit
-      rvm: 2.3
-      bundler_args: --binstubs
-      script: bin/rspec --backtrace
-    -
-      stage: unit
-      rvm: 2.2
-      bundler_args: --binstubs
-      script: bin/rspec --backtrace
-    -
-      stage: Integration
-      sudo: required
-      services:
-        - docker
-      env:
-        - 'PATH="$PATH:$PWD/terraform_0.11.1"'
-      rvm: 2.5
-      before_install:
-        - gem update --system
-        - gem --version
-        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.11.1/terraform_0.11.1_linux_amd64.zip
-        - 'sha256sum terraform.zip | grep "4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35"'
-        - mkdir terraform_0.11.1
-        - unzip terraform.zip -d terraform_0.11.1
-        - cd integration/docker_provider
-      bundler_args: --binstubs
-      script:
-        - ../../bin/kitchen test --log-level debug
-    -
-      stage: integration
-      sudo: required
-      services:
-        - docker
-      env:
-        - 'PATH="$PATH:$PWD/terraform_0.10.2"'
-      rvm: 2.5
-      before_install:
-        - gem update --system
-        - gem --version
-        - curl --output terraform.zip https://releases.hashicorp.com/terraform/0.10.2/terraform_0.10.2_linux_amd64.zip
-        - 'sha256sum terraform.zip | grep "6c1b5ce1a78bc7bb895055052d9074e519f51293770871acfe2dbd289e2f2aaa"'
-        - mkdir terraform_0.10.2
-        - unzip terraform.zip -d terraform_0.10.2
-        - cd integration/docker_provider
-      bundler_args: --binstubs
-      script:
-        - ../../bin/kitchen test --log-level debug
+
     -
       stage: deploy
-      install: skip
-      script: skip
-      rvm: 2.5
+      sudo: false
+
       before_install:
         - gem update --system
         - gem --version
+
+      install: skip
+      script: skip
+
       before_deploy:
-        - openssl aes-256-cbc -K $encrypted_d73b39cf4bfa_key -iv $encrypted_d73b39cf4bfa_iv -in certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
+        - >-
+          openssl
+            aes-256-cbc
+            -K $encrypted_d73b39cf4bfa_key
+            -iv $encrypted_d73b39cf4bfa_iv
+            -in certs/gem-private_key.pem.enc
+            -out certs/gem-private_key.pem
+            -d
+
         - gem cert --add certs/gem-public_cert.pem
+
       deploy:
         provider: rubygems
+
         api_key:
           secure: Y52epwcQvGsZ4c7LbHBZCGbgUzh0ujUMp0rEWrwr0o+7Ty86PsGkdLgfRi5V2/BXjw5l8pU8QHCCPyLAcjOhDwLtr87dVfw0FOtY7q22eqNfMdfIqc0AfwdmgcrLF6fr7LZHS678YKMzXepoi6FSnIV0BfG7ZEV3/iM9CIl0YzU7l04MGB0QGinE5frAt2g/LPWwtdky1CHOqUc08/wSHjn0ytSUImV4dqV8iaQwtS6WorRgohrgikY1/Ae2rpssMPiRQxHCL8RT5RtVf0Ph7CmYER/DmaPUwzPoFTwD1+tCcXqZCMdeLnhc9hDT09+myvG6XYFI8NWvvhiBqIi+gihvqrKbOvPBIZUZuHjwCQAcXhf3C7VtPo6wkHVdUzCCUqpXIcvKgLDzrh5UcAgZf2H77+MgH9JP4kre3NxIWFiIZ/mhmu5yrCz753TzIUPRAxqIppVIP73fJ2nuUPuCv8+hGKrdVq4ekwHi7y0B4gYakw82+hBG/p1jG+KtyChrjXP/2xppRrCNkHfNuwo1NAOtmOpDVCofdjuWeR0/rhFDNY/zzdZdE19lzSqPGkSKGYnguA5FICjy1kxD5VMICj2S2zbK5cg+y2wn1/0JF31paSjX+y8t1vl7ziWMaO+zX62zED6hxWtOELt0W2mlQ6RJLpdUjb6h9cQzop0ubrY=
+
         gem: kitchen-terraform
+
         on:
-          branch: master
           repo: newcontext-oss/kitchen-terraform
+          branch: master
           tags: true
+
         skip_cleanup: true
+
 notifications:
   webhooks:
     urls:
