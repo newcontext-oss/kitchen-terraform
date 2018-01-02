@@ -24,14 +24,9 @@ jobs:
   include:
     -
       stage: Unit Tests and Code Coverage with Newest Supported Version of Ruby
-      rvm: 2.5
-      script: bin/rake test:unit
-      after_success: bin/codeclimate-test-reporter
-
-    -
-      stage: Unit Tests with Legacy Supported Versions of Ruby
       rvm: 2.4
       script: bin/rake test:unit
+      after_success: bin/codeclimate-test-reporter
 
     -
       rvm: 2.3
@@ -48,16 +43,6 @@ jobs:
       services:
         - docker
 
-      rvm: 2.5
-
-      env:
-        - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
-
-      after_install: bin/rake install
-
-      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
-
-    -
       rvm: 2.4
 
       env:
@@ -94,16 +79,6 @@ jobs:
       services:
         - docker
 
-      rvm: 2.5
-
-      env:
-        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
-
-      after_install: bin/rake install
-
-      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
-
-    -
       rvm: 2.4
 
       env:
@@ -135,6 +110,7 @@ jobs:
 
     -
       stage: Deploy to RubyGems.org
+      rvm: 2.4
       install: skip
       script: skip
 
