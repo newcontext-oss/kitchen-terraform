@@ -114,13 +114,6 @@ require "kitchen/terraform/version.rb"
 
   specification.add_runtime_dependency "dry-validation", "~> 0.10"
 
-  specification
-    .add_runtime_dependency(
-      "inspec",
-      ">= 0.34.0",
-      "<= 1.44.8"
-    )
-
   specification.add_runtime_dependency "kitchen-inspec", "~> 0.18"
 
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
@@ -128,7 +121,7 @@ require "kitchen/terraform/version.rb"
   specification
     .add_runtime_dependency(
       "test-kitchen",
-      "~> 1.16.0"
+      "~> 1.16"
     )
 
   specification.cert_chain = ["certs/gem-public_cert.pem"]
