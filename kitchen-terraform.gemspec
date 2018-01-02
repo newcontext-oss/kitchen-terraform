@@ -42,11 +42,23 @@ require "kitchen/terraform/version.rb"
 
   specification.license = "Apache-2.0"
 
+  specification
+    .add_development_dependency(
+      "bundler-audit",
+      "~> 0.6.0"
+    )
+
   specification.add_development_dependency "codeclimate-test-reporter", "~> 1.0"
 
   specification.add_development_dependency "guard", "~> 2.14"
 
   specification.add_development_dependency "guard-bundler", "~> 2.1"
+
+  specification
+    .add_development_dependency(
+      "guard-bundler-audit",
+      "~> 0.1.4"
+    )
 
   specification.add_development_dependency "guard-rspec", "~> 4.7"
 
