@@ -3,6 +3,7 @@
 require "bundler/gem_tasks"
 require "digest"
 require "open-uri"
+require "pathname"
 require "uri"
 require "zip"
 
@@ -15,7 +16,10 @@ def binstub(name:)
 end
 
 def download_terraform(sha256_sum:, version:)
-  executable = ::Tempfile.new "terraform"
+  executable =
+    ::Pathname
+      .new("terraform")
+      .expand_path
 
   uri =
     ::URI
@@ -23,8 +27,7 @@ def download_terraform(sha256_sum:, version:)
         "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_linux_amd64.zip"
       )
 
-  executable.close
-  puts "Downloading #{uri}"
+  puts "Downloading Terraform archive from #{uri}"
 
   uri
     .open do |archive|
@@ -34,30 +37,20 @@ def download_terraform(sha256_sum:, version:)
         .==(sha256_sum) or
         raise "Downloaded Terraform archive has an unexpected SHA256 sum"
 
+      puts "Extracting executable to #{executable}"
+
       ::Zip::File
         .open archive.path do |zip_file|
           zip_file
             .glob("terraform")
             .first
-            .extract executable.path do
-              true
-            end
-
-          ::File
-            .symlink(
-              executable.path,
-              ::File
-                .join(
-                  ::File.dirname(executable.path),
-                  "terraform"
-                )
-            )
-
-          yield directory: ::File.dirname(executable.path)
+            .extract executable
         end
+
+      executable.chmod 0544
+      yield directory: executable.dirname
     end
 ensure
-  executable.close
   executable.unlink
 end
 
