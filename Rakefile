@@ -16,12 +16,17 @@ end
 
 def download_terraform(sha256_sum:, version:)
   executable = ::Tempfile.new "terraform"
-  executable.close
 
-  ::URI
-    .parse(
-      "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_linux_amd64.zip"
-    )
+  uri =
+    ::URI
+      .parse(
+        "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_linux_amd64.zip"
+      )
+
+  executable.close
+  puts "Downloading #{uri}"
+
+  uri
     .open do |archive|
       if(
         ::Digest::SHA256
