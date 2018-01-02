@@ -32,17 +32,16 @@ def download_terraform(sha256_sum:, version:)
         .file(archive.path)
         .hexdigest
         .==(sha256_sum) or
-          raise "Downloaded Terraform archive has an unexpected SHA256 sum"
+        raise "Downloaded Terraform archive has an unexpected SHA256 sum"
 
       ::Zip::File
         .open archive.path do |zip_file|
           zip_file
             .glob("terraform")
             .first
-            .extract(
-              executable.path,
-              &:itself
-            )
+            .extract executable.path do
+              true
+            end
 
           yield path: executable.path
         end
