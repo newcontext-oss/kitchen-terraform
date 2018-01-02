@@ -54,6 +54,11 @@ jobs:
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
+      sudo: required
+
+      services:
+        - docker
+
       rvm: 2.3
 
       env:
@@ -64,6 +69,11 @@ jobs:
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
+      sudo: required
+
+      services:
+        - docker
+
       rvm: 2.2
 
       env:
@@ -90,6 +100,11 @@ jobs:
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
+      sudo: required
+
+      services:
+        - docker
+
       rvm: 2.3
 
       env:
@@ -100,6 +115,11 @@ jobs:
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
+      sudo: required
+
+      services:
+        - docker
+
       rvm: 2.2
 
       env:
