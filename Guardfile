@@ -10,6 +10,10 @@ group :red_green_refactor, halt_on_fail: true do
       watch "kitchen-terraform.gemspec"
     end
 
+    guard :bundler_audit do
+      watch "Gemfile.lock"
+    end
+
     guard :yard, cli: "--reload" do
       watch /lib\/.+\.rb/
     end
