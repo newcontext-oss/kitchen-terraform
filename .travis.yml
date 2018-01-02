@@ -29,6 +29,7 @@ jobs:
       after_success: bin/codeclimate-test-reporter
 
     -
+      stage: Unit Tests with Legacy Supported Versions of Rub
       rvm: 2.3
       script: bin/rake test:unit
 
