@@ -23,13 +23,13 @@ install:
 jobs:
   include:
     -
-      stage: Unit Tests and Code Coverage with Newest Supported Version of Ruby
+      stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.4
       script: bin/rake test:unit
       after_success: bin/codeclimate-test-reporter
 
     -
-      stage: Unit Tests with Legacy Supported Versions of Rub
+      stage: unit tests with legacy supported versions of ruby
       rvm: 2.3
       script: bin/rake test:unit
 
@@ -38,7 +38,7 @@ jobs:
       script: bin/rake test:unit
 
     -
-      stage: Integration Tests with Newest Supported Version of Terraform
+      stage: integration tests with newest supported version of terraform
       sudo: required
 
       services:
@@ -74,7 +74,7 @@ jobs:
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
-      stage: Integration Tests with Legacy Supported Versions of Terraform
+      stage: integration tests with legacy supported versions of terraform
       sudo: required
 
       services:
@@ -110,7 +110,7 @@ jobs:
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
-      stage: Deploy to RubyGems.org
+      stage: deploy to rubygems.org
       rvm: 2.4
       install: skip
       script: skip
