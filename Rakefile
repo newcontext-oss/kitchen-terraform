@@ -76,7 +76,7 @@ namespace :test do
       version: arguments.terraform_version
     ) do |path:|
       ::Dir.chdir "integration/docker_provider"
-      sh "PATH=\"$PATH:#{path}\" #{binstub name: "kitchen"} --log-level=debug"
+      sh "KITCHEN_LOG=debug PATH=$PATH:#{path} #{binstub name: "kitchen"} test"
     end
   end
 end
