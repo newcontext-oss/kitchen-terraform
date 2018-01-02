@@ -35,7 +35,6 @@ install:
     bin/bundle
       install
       --binstubs
-      --clean
       --no-deployment
       --frozen
       --jobs=$(nproc --ignore=1)
