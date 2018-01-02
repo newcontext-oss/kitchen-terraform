@@ -1,61 +1,165 @@
 language: ruby
-
-rvm:
-  - 2.5
-  - 2.4
-  - 2.3
-  - 2.2
-
 dist: trusty
-sudo: required
-
-services:
-  - docker
+sudo: false
 
 env:
   global:
     -
       secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
 
-  matrix:
-    - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
-    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
-
-stages:
-  - spec
-  - test
-  - deploy
-
 before_install:
   - gem update --system
   - gem --version
 
-install:
-  -
-    bin/bundle
-      install
-      --binstubs
-      --frozen
-      --jobs=$(nproc --ignore=1)
-      --retry=3
-
-  - bin/bundle update
-
-script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
-
 jobs:
   include:
     -
-      stage: spec
-      sudo: false
-      services: []
+      stage: Unit Tests and Code Coverage with Newest Supported Version of Ruby
+      rvm: 2.5
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --deployment
+            --frozen
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
       script: bin/rake test:unit
       after_success: bin/codeclimate-test-reporter
 
     -
-      stage: deploy
-      sudo: false
-      services: []
+      stage: Unit Tests with Legacy Supported Versions of Ruby
+      rvm: 2.4
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
+        - bin/bundle update
+
+      script: bin/rake test:unit
+
+    -
+      rvm: 2.3
+
+    -
+      rvm: 2.2
+
+    -
+      stage: Integration Tests with Newest Supported Version of Terraform
+      sudo: required
+
+      services:
+        - docker
+
+      rvm: 2.5
+
+      env:
+        - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
+
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+
+    -
+      rvm: 2.4
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
+        - bin/bundle update
+
+    -
+      rvm: 2.3
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
+        - bin/bundle update
+
+    -
+      rvm: 2.2
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
+        - bin/bundle update
+
+    -
+      stage: Integration Tests with Legacy Supported Versions of Terraform
+      sudo: required
+
+      services:
+        - docker
+
+      rvm: 2.5
+
+      env:
+        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+
+    -
+      rvm: 2.4
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
+        - bin/bundle update
+
+    -
+      rvm: 2.3
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
+        - bin/bundle update
+
+    -
+      rvm: 2.2
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
+        - bin/bundle update
+
+    -
+      stage: Deploy to RubyGems.org
       install: skip
       script: skip
 
