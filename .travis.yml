@@ -31,17 +31,7 @@ before_install:
   - gem --version
 
 install:
-  -
-    bin/bundle
-      install
-      --binstubs
-      --clean
-      --deployment
-      --frozen
-      --jobs=$(nproc --ignore=1)
-      --retry=3
-
-  - bin/bundle update
+  - bin/rake install
 
 script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
@@ -51,6 +41,16 @@ jobs:
       stage: spec
       sudo: false
       services: []
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --clean
+            --deployment
+            --frozen
+            --jobs=$(nproc --ignore=1)
+            --retry=3
       script: bin/rake test:unit
       after_success: bin/codeclimate-test-reporter
 
