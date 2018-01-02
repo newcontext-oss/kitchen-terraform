@@ -31,14 +31,17 @@ before_install:
   - gem --version
 
 install:
-  bin/bundle
-    install
-    --binstubs
-    --clean
-    --deployment
-    --frozen
-    --jobs=$(nproc --ignore=1)
-    --retry=3
+  -
+    bin/bundle
+      install
+      --binstubs
+      --clean
+      --deployment
+      --frozen
+      --jobs=$(nproc --ignore=1)
+      --retry=3
+
+  - bin/bundle update
 
 script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
