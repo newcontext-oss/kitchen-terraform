@@ -43,7 +43,17 @@ def download_terraform(sha256_sum:, version:)
               true
             end
 
-          yield path: executable.path
+          ::File
+            .symlink(
+              executable.path,
+              ::File
+                .join(
+                  ::File.dirname(executable.path),
+                  "terraform"
+                )
+            )
+
+          yield directory: ::File.dirname(executable.path)
         end
     end
 ensure
@@ -79,9 +89,9 @@ namespace :test do
     download_terraform(
       sha256_sum: arguments.terraform_sha256_sum,
       version: arguments.terraform_version
-    ) do |path:|
+    ) do |directory:|
       ::Dir.chdir "integration/docker_provider"
-      sh "KITCHEN_LOG=debug PATH=$PATH:#{path} #{kitchen_binstub} test"
+      sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
     end
   end
 end
