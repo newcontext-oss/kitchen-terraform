@@ -14,15 +14,12 @@ services:
 
 env:
   global:
-    - BUNDLER_JOBS=$(nproc --ignore=1)
-    - PATH=$PATH:$PWD/terraform
-
     -
       secure: qq/9kGdMj8cDjH0cNxw9azwse/8oBduDxubAw1I22mUn8qqgQT1svndISfhfv9J8VPycLUaDdbHdUHD8l4tBlfZchAZvRSRIGJkMFSlt4wcEg0af9pqD502TUyLdYIyR+QGN0UAW7DznmcsjSn/3Ka2QB/aXjoBZKJYUXcGLYWIdDzsQQysI0bULHL5ztsL41DflXKj0MD+IKm3FhGpVfR931a3nG2A67pIPBTjtvUCAxcGDYB5VTPpTru9Z5CHM7zadSFD8uArV0s3OyAOuwM5bvVdtU6AlWR/PjoUjv6QZywJ+eMYowfpvmUeMehq5wpqtf0doTFMOvbveXVQ/2euwGxxuo5Q0awbzUtCBjV1ysqgy0SBfAfdOzNE8XaU2qiBFaDGITgEFU2TyEiLcxoEFjVRvHVLn0uijDoMZ8Go615tdiYZ/G9L5ltemov5D4W1Klhux49yEiYFD914XerX5y6d8oU6KsdJhun1WKETM7uweZz30MFZ9ixIUbeDbzvWwplIskR7PJWpCmfm59CQiOlZlHsvpDYygzQTGgY8yM9VgHH7LLDctAPpFi0A3uif6cC2KcTeJIuh+g7QRk7un5ycp86T9PnB+n4Yt6ahqHJMnztU3NyCAnY3elxCw5PkgL4a/7UwVIFYRgIkaEJl4JVqb4WhTNf9s7Vm52ek=
 
   matrix:
-    - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
-    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+    - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
+    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
 
 stages:
   - spec
@@ -33,16 +30,6 @@ before_install:
   - gem update --system
   - gem --version
 
-  -
-    curl
-      --output terraform.zip
-      https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_$TERRAFORM_VERSION_linux_amd64.zip
-
-  - sha256sum terraform.zip | grep $TERRAFORM_SHA256SUM
-  - mkdir terraform
-  - unzip terraform.zip -d terraform
-  - cd integration/docker_provider
-
 install:
   bin/bundle
     install
@@ -50,10 +37,10 @@ install:
     --clean
     --deployment
     --frozen
-    --jobs=$BUNDLER_JOBS
+    --jobs=$(nproc --ignore=1)
     --retry=3
 
-script: ../../bin/kitchen test --log-level=debug
+script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
 jobs:
   include:
@@ -61,23 +48,13 @@ jobs:
       stage: spec
       sudo: false
       services: []
-
-      before_install:
-        - gem update --system
-        - gem --version
-
-      script: bin/rspec --backtrace
+      script: bin/rake test:unit
       after_success: bin/codeclimate-test-reporter
 
     -
       stage: deploy
       sudo: false
       services: []
-
-      before_install:
-        - gem update --system
-        - gem --version
-
       install: skip
       script: skip
 

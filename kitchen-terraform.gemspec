@@ -92,7 +92,19 @@ require "kitchen/terraform/version.rb"
 
   specification.add_development_dependency "pry-coolline", "~> 0.2"
 
+  specification
+    .add_development_dependency(
+      "rake",
+      "~> 12.3"
+    )
+
   specification.add_development_dependency "rspec", "~> 3.4"
+
+  specification
+    .add_development_dependency(
+      "rubyzip",
+      "~> 1.2"
+    )
 
   specification.add_development_dependency "travis", "~> 1.8"
 

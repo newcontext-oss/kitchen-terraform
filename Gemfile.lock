@@ -219,7 +219,7 @@ GEM
       rouge (~> 2.0)
     mini_racer (0.1.15)
       libv8 (~> 6.3)
-    minitest (5.10.3)
+    minitest (5.11.0)
     mixlib-install (2.1.12)
       artifactory
       mixlib-shellout
@@ -369,7 +369,9 @@ DEPENDENCIES
   mini_racer (~> 0.1.0)!
   pry (~> 0.10)!
   pry-coolline (~> 0.2)!
+  rake (~> 12.3)!
   rspec (~> 3.4)!
+  rubyzip (~> 1.2)!
   travis (~> 1.8)!
   yard (~> 0.9)!
 
