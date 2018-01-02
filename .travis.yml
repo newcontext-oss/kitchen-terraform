@@ -11,6 +11,16 @@ before_install:
   - gem update --system
   - gem --version
 
+install:
+  -
+    bin/bundle
+      install
+      --binstubs
+      --jobs=$(nproc --ignore=1)
+      --retry=3
+
+  - bin/bundle update
+
 jobs:
   include:
     -
@@ -33,24 +43,15 @@ jobs:
     -
       stage: Unit Tests with Legacy Supported Versions of Ruby
       rvm: 2.4
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --retry=3
-
-        - bin/bundle update
-
       script: bin/rake test:unit
 
     -
       rvm: 2.3
+      script: bin/rake test:unit
 
     -
       rvm: 2.2
+      script: bin/rake test:unit
 
     -
       stage: Integration Tests with Newest Supported Version of Terraform
@@ -64,46 +65,41 @@ jobs:
       env:
         - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
 
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --deployment
+            --frozen
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       rvm: 2.4
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --retry=3
+      env:
+        - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
 
-        - bin/bundle update
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       rvm: 2.3
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --retry=3
+      env:
+        - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
 
-        - bin/bundle update
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       rvm: 2.2
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --retry=3
+      env:
+        - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
 
-        - bin/bundle update
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       stage: Integration Tests with Legacy Supported Versions of Terraform
@@ -117,46 +113,41 @@ jobs:
       env:
         - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
 
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --deployment
+            --frozen
+            --jobs=$(nproc --ignore=1)
+            --retry=3
+
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       rvm: 2.4
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --retry=3
+      env:
+        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
 
-        - bin/bundle update
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       rvm: 2.3
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --retry=3
+      env:
+        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
 
-        - bin/bundle update
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       rvm: 2.2
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --retry=3
+      env:
+        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
 
-        - bin/bundle update
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       stage: Deploy to RubyGems.org
