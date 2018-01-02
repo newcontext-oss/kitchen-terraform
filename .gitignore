@@ -9,6 +9,7 @@
 .cache/
 .sass-cache/
 .yardoc/
+Gemfile.lock
 bin/
 build/
 certs/gem-private_key.pem
