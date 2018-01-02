@@ -28,37 +28,43 @@ def download_terraform(sha256_sum:, version:)
 
   uri
     .open do |archive|
-      if(
-        ::Digest::SHA256
-          .file(archive.path)
-          .hexdigest
-          .==(sha256_sum)
-      )
-        ::Zip::File
-          .open archive.path do |zip_file|
-            zip_file
-              .glob("terraform")
-              .first
-              .extract executable.path do
-                true
-              end
+      ::Digest::SHA256
+        .file(archive.path)
+        .hexdigest
+        .==(sha256_sum) or
+          raise "Downloaded Terraform archive has an unexpected SHA256 sum"
 
-            yield path: executable.path
-          end
-      else
-        raise "Downloaded Terraform archive has an unexpected SHA256 sum"
-      end
+      ::Zip::File
+        .open archive.path do |zip_file|
+          zip_file
+            .glob("terraform")
+            .first
+            .extract(
+              executable.path,
+              &:itself
+            )
+
+          yield path: executable.path
+        end
     end
 ensure
   executable.close
   executable.unlink
 end
 
+def rspec_binstub
+  binstub name: "rspec"
+end
+
+def kitchen_binstub
+  binstub name: "kitchen"
+end
+
 namespace :test do
   desc "Run unit tests"
 
   task :unit do
-    sh "#{binstub name: "rspec"} --backtrace"
+    sh "#{rspec_binstub} --backtrace"
   end
 
   desc "Run integration tests"
@@ -76,7 +82,7 @@ namespace :test do
       version: arguments.terraform_version
     ) do |path:|
       ::Dir.chdir "integration/docker_provider"
-      sh "KITCHEN_LOG=debug PATH=$PATH:#{path} #{binstub name: "kitchen"} test"
+      sh "KITCHEN_LOG=debug PATH=$PATH:#{path} #{kitchen_binstub} test"
     end
   end
 end
