@@ -47,7 +47,7 @@ def download_terraform(sha256_sum:, version:)
             .extract executable
         end
 
-      executable.chmod 0544
+      executable.chmod 0o0544
       yield directory: executable.dirname
     end
 ensure
@@ -73,7 +73,6 @@ namespace :test do
 
   task(
     :integration,
-
     [
       :terraform_version,
       :terraform_sha256_sum
