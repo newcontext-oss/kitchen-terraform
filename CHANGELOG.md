@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+* Caveat describing how to use a bastion host with the verifier groups
+
 ### Changed
 
 * Format of changelog to adhere to Keep a Changelog 1.0.0
