@@ -62,7 +62,7 @@ module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
   def config_backend_configurations_flags
     config_backend_configurations
       .map do |key, value|
-        "-backend-config='#{key}=#{value}'"
+        "-backend-config=\"#{key}=#{value}\""
       end
       .join " "
   end
