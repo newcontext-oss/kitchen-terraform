@@ -91,8 +91,8 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_hostnames
 #         hostnames: an_output
 # Caveat:: The output must be a string or an array of strings. If this key is omitted then +"localhost"+ will be the
-#          target of the profile. To connect to the hosts through a bastion host, the +ProxyCommand+ of the
-#          {https://linux.die.net/man/5/ssh_config SSH configuration file} must be configured on the system.
+#          target of the profile. To connect to the hosts through a bastion host, a +ProxyCommand+ in the
+#          appropriate {https://linux.die.net/man/5/ssh_config SSH configuration file} must be configured on the system.
 #
 # ===== port
 #
