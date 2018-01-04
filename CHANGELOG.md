@@ -27,6 +27,9 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Documented supported Terraform version for ClientVersionVerifier
 
+* Failure on Windows due to use of single quoted arguments for
+  `-backend-config` and `-var`
+
 ## [3.0.0] - 2017-11-28
 
 ### Added
