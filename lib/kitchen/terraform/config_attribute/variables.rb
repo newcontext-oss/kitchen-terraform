@@ -60,7 +60,7 @@ module ::Kitchen::Terraform::ConfigAttribute::Variables
   def config_variables_flags
     config_variables
       .map do |key, value|
-        "-var='#{key}=#{value}'"
+        "-var=\"#{key}=#{value}\""
       end
       .join " "
   end

@@ -204,7 +204,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                   /validate\s
                     -check-variables=true\s
                     -no-color\s
-                    -var='key=value'\s
+                    -var="key=value"\s
                     -var-file=\/variable\/file\s
                     #{kitchen_root}/x
               )
@@ -235,7 +235,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                       -no-color\s
                       -parallelism=10\s
                       -refresh=true\s
-                      -var='key=value'\s
+                      -var="key=value"\s
                       -var-file=\/variable\/file\s
                       #{kitchen_root}/x
                 )
@@ -555,7 +555,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                     -no-color\s
                     -parallelism=10\s
                     -refresh=true\s
-                    -var='key=value'\s
+                    -var="key=value"\s
                     -var-file=\/variable\/file\s
                     #{kitchen_root}/x
               )
