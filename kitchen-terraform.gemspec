@@ -9,22 +9,25 @@
 require "kitchen/terraform/version.rb"
 
 ::Gem::Specification.new do |specification|
-  specification.authors = [
-    "Aaron Lane",
-    "Clay Thomas",
-    "David Begin",
-    "Erik R. Rygg",
-    "Ewa Czechowska",
-    "John Engelman",
-    "Kevin Dickerson",
-    "Kyle Sexton",
-    "Matt Long",
-    "Michael Glenney",
-    "Nell Shamrell-Harrington",
-    "Nick Willever",
-    "Steven A. Burns",
-    "Walter Dolce"
-  ]
+  specification
+    .authors =
+      [
+        "Aaron Lane",
+        "Clay Thomas",
+        "David Begin",
+        "Erik R. Rygg",
+        "Ewa Czechowska",
+        "John Engelman",
+        "Kevin Dickerson",
+        "Kyle Sexton",
+        "Matt Long",
+        "Michael Glenney",
+        "Nell Shamrell-Harrington",
+        "Nick Willever",
+        "Steven A. Burns",
+        "Walter Dolce",
+        "curleighbraces"
+      ]
 
   specification.description = "kitchen-terraform is a set of Test Kitchen plugins for testing Terraform configuration"
 
