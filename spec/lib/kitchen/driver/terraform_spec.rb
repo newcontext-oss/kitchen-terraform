@@ -390,7 +390,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 -upgrade\s
                 -force-copy\s
                 -backend=true\s
-                -backend-config='key=value'\s
+                -backend-config="key=value"\s
                 -get=true\s
                 -get-plugins=true\s
                 -plugin-dir=\/plugin\/directory\s
@@ -482,7 +482,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 -no-color\s
                 -force-copy\s
                 -backend=true\s
-                -backend-config='key=value'\s
+                -backend-config="key=value"\s
                 -get=true\s
                 -get-plugins=true\s
                 -plugin-dir=\/plugin\/directory\s
