@@ -110,6 +110,19 @@ require "support/kitchen/terraform/result_in_success_matcher"
         )
     end
 
+    def shell_out_run_yield(command:, standard_output: "mocked `terraform` success")
+      allow(shell_out)
+        .to(
+          receive(:run)
+            .with(
+              command: command,
+              duration: 600,
+              logger: kitchen_logger
+            )
+            .and_yield(standard_output: standard_output)
+        )
+    end
+
     shared_examples "the `terraform workspace <kitchen-instance>` subcommand results in success" do
       let :subcommand do
         "select"
@@ -156,8 +169,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     describe "#apply" do
       subject do
-        lambda do
-          described_instance.apply
+        lambda do |block = lambda do end|
+          described_instance.apply &block
         end
       end
 
@@ -250,7 +263,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 end
 
                 it do
-                  is_expected.to result_in_success.with_message({})
+                  is_expected.to yield_with_args output: {}
                 end
               end
 
@@ -269,9 +282,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
               context "when `terraform output` results in success" do
                 before do
-                  shell_out_run_success(
+                  shell_out_run_yield(
                     command: "output -json",
-                    return_value: terraform_output_value
+                    standard_output: terraform_output_value
                   )
                 end
 
@@ -303,15 +316,17 @@ require "support/kitchen/terraform/result_in_success_matcher"
                   it do
                     is_expected
                       .to(
-                        result_in_success
-                          .with_message(
-                            "output_name" =>
-                              {
-                                "sensitive" => false,
-                                "type" => "list",
-                                "value" => ["output_value_1"]
-                              }
-                          )
+                        yield_with_args(
+                          output:
+                            {
+                              "output_name" =>
+                                {
+                                  "sensitive" => false,
+                                  "type" => "list",
+                                  "value" => ["output_value_1"]
+                                }
+                            }
+                        )
                       )
                   end
                 end

@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "json"
 require "kitchen/driver/base"
 require "kitchen/errors"
 require "kitchen/terraform/client_version_verifier"
+require "kitchen/terraform/command/output"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
@@ -197,13 +197,19 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # module, applying the state changes, and retrieving the state output.
   #
   # @raise [::Kitchen::Terraform::Error] if one of the steps fails.
-  # @return [::String] the state output.
-  def apply
+  # @return [void]
+  # @yieldparam output [::String] the state output.
+  def apply(&block)
     run_workspace_select_instance
     apply_run_get
     apply_run_validate
     apply_run_apply
-    apply_run_output
+    ::Kitchen::Terraform::Command::Output
+      .run(
+        duration: config_command_timeout,
+        logger: logger,
+        &block
+      )
   end
 
   # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
@@ -297,27 +303,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         duration: config_command_timeout,
         logger: logger
       )
-  end
-
-  # @api private
-  def apply_run_output
-    ::JSON
-      .parse(
-        ::Kitchen::Terraform::ShellOut
-          .run(
-            command: "output -json",
-            duration: config_command_timeout,
-            logger: logger
-          )
-      )
-  rescue ::JSON::ParserError => error
-    raise(
-      ::Kitchen::Terraform::Error,
-      "Parsing Terraform output as JSON failed: #{error.message}"
-    )
-  rescue ::Kitchen::Terraform::Error => error
-    raise error if not "no outputs defined".match error.message
-    {}
   end
 
   # @api private
