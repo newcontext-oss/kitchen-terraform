@@ -315,6 +315,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       ::Kitchen::Terraform::Error,
       "Parsing Terraform output as JSON failed: #{error.message}"
     )
+  rescue ::Kitchen::Terraform::Error => error
+    raise error if not "no outputs defined".match error.message
+    {}
   end
 
   # @api private

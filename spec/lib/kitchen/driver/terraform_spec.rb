@@ -241,6 +241,19 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 )
               end
 
+              context "when `terraform output` results in failure due to no outputs defined" do
+                before do
+                  shell_out_run_failure(
+                    command: "output -json",
+                    message: "no outputs defined"
+                  )
+                end
+
+                it do
+                  is_expected.to result_in_success.with_message({})
+                end
+              end
+
               context "when `terraform output` results in failure" do
                 before do
                   shell_out_run_failure(
