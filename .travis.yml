@@ -13,51 +13,30 @@ before_install:
   - gem --version
   - gem update bundler
 
+install:
+  -
+    bin/bundle
+      install
+      --binstubs
+      --jobs=$(nproc --ignore=1)
+      --path=vendor/bundle
+      --retry=3
+
 jobs:
   include:
     -
       stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.4
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-
       script: bin/rake test:unit
       after_success: bin/codeclimate-test-reporter
 
     -
       stage: unit tests with legacy supported versions of ruby
       rvm: 2.3
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-
       script: bin/rake test:unit
 
     -
       rvm: 2.2
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-
       script: bin/rake test:unit
 
     -
@@ -72,16 +51,6 @@ jobs:
       env:
         - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
       after_install: bin/rake install
 
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
@@ -97,16 +66,6 @@ jobs:
       env:
         - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
       after_install: bin/rake install
 
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
@@ -121,16 +80,6 @@ jobs:
 
       env:
         - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
 
       after_install: bin/rake install
 
@@ -148,16 +97,6 @@ jobs:
       env:
         - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
       after_install: bin/rake install
 
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
@@ -173,16 +112,6 @@ jobs:
       env:
         - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
 
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
       after_install: bin/rake install
 
       script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
@@ -197,16 +126,6 @@ jobs:
 
       env:
         - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
 
       after_install: bin/rake install
 
