@@ -14,6 +14,10 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Caveat describing how to use a bastion host with the verifier groups
 
+* Support for InSpec to include > 1.44.8, < 2.0.0
+
+* Support for Test Kitchen to include > 1.16.0, < 2.0.0
+
 ### Changed
 
 * Format of changelog to adhere to Keep a Changelog 1.0.0
@@ -24,10 +28,6 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   Terraform workspace
 
 * Format and wording of the verifier `groups` attribute documentation
-
-* Support for InSpec to include > 1.44.8, < 2.0.0
-
-* Support for Test Kitchen to include > 1.16.0, < 2.0.0
 
 ### Fixed
 
