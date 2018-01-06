@@ -1,0 +1,17 @@
+---
+driver:
+  name: terraform
+
+provisioner:
+  name: terraform
+
+verifier:
+  name: terraform
+  groups:
+    - name: no_outputs_defined
+
+platforms:
+  - name: localhost
+
+suites:
+  - name: no_outputs_defined
