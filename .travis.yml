@@ -1,6 +1,7 @@
-language: ruby
 dist: trusty
 sudo: false
+language: ruby
+cache: bundler
 
 env:
   global:
@@ -18,6 +19,7 @@ install:
       install
       --binstubs
       --jobs=$(nproc --ignore=1)
+      --path=vendor/bundle
       --retry=3
 
 jobs:
