@@ -26,6 +26,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 * Documented supported Terraform version for ClientVersionVerifier
+* Failure during `kitchen converge` when no Terraform outputs are
+  defined
 
 * Failure on Windows due to use of single quoted arguments for
   `-backend-config` and `-var`

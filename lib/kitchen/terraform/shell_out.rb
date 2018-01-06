@@ -32,28 +32,54 @@ module ::Kitchen::Terraform::ShellOut
   # @raise [::Kitchen::Terraform::Error] if running the command fails.
   # @return [::String] the standard output from running the command.
   # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
-  def self.run(command:, duration: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT, logger:)
-    ::Mixlib::ShellOut
-      .new(
-        "terraform #{command}",
-        environment: {"TF_IN_AUTOMATION" => "true"},
-        live_stream: logger,
-        timeout: duration
-      )
-      .tap do |shell_out|
-        logger.warn "Running command `#{shell_out.command}`"
-        shell_out.run_command
-        shell_out.error!
+  # @yieldparam standard_output [::String] the standard output from running the command.
+  def self.run(command:, duration: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT, logger:, &block)
+    block ||=
+      lambda do |standard_output:|
+        standard_output
       end
-      .stdout
+
+    run_shell_out(
+      command: command,
+      duration: duration,
+      logger: logger,
+      &block
+    )
   rescue ::Errno::EACCES,
          ::Errno::ENOENT,
          ::Mixlib::ShellOut::InvalidCommandOption,
          ::Mixlib::ShellOut::CommandTimeout,
          ::Mixlib::ShellOut::ShellCommandFailed => error
+    handle error: error
+  end
+
+  private_class_method
+
+  # @api private
+  def self.handle(error:)
     raise(
       ::Kitchen::Terraform::Error,
       "Running command resulted in failure: #{error.message}"
+    )
+  end
+
+  # @api private
+  def self.run_shell_out(command:, duration:, logger:)
+    yield(
+      standard_output:
+        ::Mixlib::ShellOut
+          .new(
+            "terraform #{command}",
+            environment: {"TF_IN_AUTOMATION" => "true"},
+            live_stream: logger,
+            timeout: duration
+          )
+          .tap do |shell_out|
+            logger.warn "Running command `#{shell_out.command}`"
+            shell_out.run_command
+            shell_out.error!
+          end
+          .stdout
     )
   end
 end

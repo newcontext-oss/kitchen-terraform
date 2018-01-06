@@ -82,8 +82,15 @@ namespace :test do
       sha256_sum: arguments.terraform_sha256_sum,
       version: arguments.terraform_version
     ) do |directory:|
-      ::Dir.chdir "integration/docker_provider"
-      sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+      ::Dir
+        .chdir "integration/no_outputs_defined" do
+          sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+        end
+
+      ::Dir
+        .chdir "integration/docker_provider" do
+          sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+        end
     end
   end
 end

@@ -92,7 +92,7 @@ require "support/kitchen/terraform/configurable_examples"
 
         context "when the driver create action is a success" do
           before do
-            allow(driver).to receive(:apply).and_return "mocked Driver#create output"
+            allow(driver).to receive(:apply).and_yield output: "mocked Driver#create output"
           end
 
           it do
@@ -107,8 +107,7 @@ require "support/kitchen/terraform/configurable_examples"
         end
 
         before do
-          allow(driver).to receive(:apply).and_return "mocked Driver#create output"
-
+          allow(driver).to receive(:apply).and_yield output: "mocked Driver#create output"
           described_instance.call kitchen_state
         end
 
