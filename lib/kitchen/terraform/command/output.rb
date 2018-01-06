@@ -53,7 +53,7 @@ module ::Kitchen::Terraform::Command::Output
 
   # @api private
   def self.handle_kitchen_terraform(error:)
-    "no outputs defined".match error.to_s or raise error
+    /no\\ outputs\\ defined/.match ::Regexp.escape error.to_s or raise error
     yield output: {}
   end
 
