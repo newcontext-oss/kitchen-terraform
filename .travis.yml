@@ -1,7 +1,10 @@
 dist: trusty
 sudo: false
 language: ruby
-cache: bundler
+cache:
+  directories:
+    - vendor/bundle
+    - vendor/cache
 
 env:
   global:
