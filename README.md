@@ -66,7 +66,7 @@ manager, RubyGems, run a command like the following example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 3.0.0
+gem install kitchen-terraform --version 3.1.0
 ```
 
 More information can be found in the
@@ -88,7 +88,7 @@ the semantic versioning of the Ruby gem.
 source "https://rubygems.org/" do
   gem(
     "kitchen-terraform",
-    "~> 3.0"
+    "~> 3.1"
   )
 end
 ```
