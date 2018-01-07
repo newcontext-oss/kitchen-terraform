@@ -139,6 +139,11 @@ jobs:
     -
       stage: deploy to rubygems.org
       rvm: 2.4
+
+      before_install:
+        - gem update --system
+        - gem --version
+
       install: skip
       script: skip
 
