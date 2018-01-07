@@ -25,7 +25,7 @@ install:
       --path=vendor/bundle
       --retry=3
 
-after_script: bin/bundle clean
+before_cache: bin/bundle clean
 
 jobs:
   include:
@@ -194,7 +194,7 @@ jobs:
 
       install: skip
       script: skip
-      after_script: skip
+      before_cache: skip
 
       before_deploy:
         -
