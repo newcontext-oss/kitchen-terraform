@@ -20,3 +20,4 @@ examples/openstack_provider/.kitchen/
 examples/openstack_provider/.terraform/
 examples/openstack_provider/my-variables.tfvars
 tmp/
+vendor/
