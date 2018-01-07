@@ -25,7 +25,7 @@ install:
       --path=vendor/bundle
       --retry=3
 
-after_install: bin/bundle clean
+after_script: bin/bundle clean
 
 jobs:
   include:
@@ -193,8 +193,8 @@ jobs:
         - gem --version
 
       install: skip
-      after_install: skip
       script: skip
+      after_script: skip
 
       before_deploy:
         -
