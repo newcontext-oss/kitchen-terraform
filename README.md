@@ -69,7 +69,7 @@ First, create a `Gemfile` with contents like the following example. The
 pessimistic pinning of the version is recommended to benefit from
 the semantic versioning of the Ruby gem.
 
-> Defining Kitchen-Terraform as a dependency for Bundler
+> Defining Kitchen-Terraform as a dependency for Bundler in a Gemfile
 
 ```ruby
 source "https://rubygems.org/" do
@@ -87,6 +87,9 @@ Second, run the following command.
 ```sh
 bundle install
 ```
+
+The preceding command will create a `Gemfile.lock` comprising a list
+of the resolved Ruby gem dependencies.
 
 More information can be found in the
 [Bundler: In Depth][bundler-in-depth] article.
@@ -133,11 +136,20 @@ More information can be found in the
 
 ### Example
 
-Assume there is a system which has Kitchen-Terraform and
-[Docker][docker] installed.
+This example demonstrates how to test a simple Terraform configuration
+which utilizes the [Docker provider][docker-provider].
 
-Assume the working directory on said system a hierarchy like the
-following examples.
+The test system is assumed to be running Ubuntu 17.04.
+
+Kitchen-Terraform and its dependencies are assumed to have been
+installed on the test system as described in the
+[Installation][#installation] section.
+
+The [Docker Community Editiion][docker-community-edition] is assumed to
+have been installed on the test system.
+
+The working directory on the test system is assumed to contain a
+hierarchy of files comprising the following blocks.
 
 > Directory hierarchy
 
@@ -145,6 +157,7 @@ following examples.
 .
 ├── .kitchen.yml
 ├── Gemfile
+├── Gemfile.lock
 ├── main.tf
 └── test
     └── integration
@@ -154,7 +167,7 @@ following examples.
             └── inspec.yml
 ```
 
-> ./.kitchen.yml
+> ./.kitchen.yml (Test Kitchen configuration)
 
 ```yaml
 driver:
@@ -179,17 +192,6 @@ platforms:
 
 suites:
   - name: example
-```
-
-> Gemfile
-
-```ruby
-source "https://rubygems.org/" do
-  gem(
-    "kitchen-terraform",
-    "~> 3.1"
-  )
-end
 ```
 
 > ./main.tf
@@ -244,18 +246,13 @@ control "operating_system" do
 end
 ```
 
-Running the following commands would install Kitchen-Terraform,
-initialize the working directory for Terraform, create a Docker
-container by applying the configuration file, and verify that the
-container is running Ubuntu.
+Running the following command would initialize the working directory for
+Terraform, create a Docker container by applying the configuration file,
+and verify that the container is running Ubuntu.
 
 > Verifying with Kitchen-Terraform
 
 ```sh
-$ bundle install
-...
-Bundle complete...
-
 $ bundle exec kitchen test
 -----> Starting Kitchen...
 ...
@@ -357,6 +354,8 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [contributing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md
 [developing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/DEVELOPING.md
 [docker]: https://www.docker.com/
+[docker-community-edition]: https://store.docker.com/editions/community/docker-ce-server-ubuntu
+[docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
 [gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg?style=plastic
 [gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg?style=plastic
 [gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=plastic
