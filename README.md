@@ -58,31 +58,18 @@ Each version of Kitchen-Terraform is published as a
 [Ruby gem][ruby-gems-what-is] to [RubyGems.org][kitchen-terraform-gem]
 which makes them readily available for installation on a system.
 
-#### RubyGems
-
-To install a version of Kitchen-Terraform using the default Ruby package
-manager, RubyGems, run a command like the following example.
-
-> Installing Kitchen-Terraform with RubyGems
-
-```sh
-gem install kitchen-terraform --version 3.1.0
-```
-
-More information can be found in the
-[RubyGems: Installing Gems][rubygems-installing-gems] article.
-
 #### Bundler
 
-[Bundler][bundler] can also be used to manage versions of
-Kitchen-Terraform on the system in a manner that is easily reproducible
-on other systems.
+[Bundler][bundler] should be used to manage versions of
+Kitchen-Terraform on the system. Using Bundler provides easily
+reproducible Ruby gem installations that can be shared with other
+systems.
 
 First, create a `Gemfile` with contents like the following example. The
 pessimistic pinning of the version is recommended to benefit from
 the semantic versioning of the Ruby gem.
 
-> Defining Kitchen-Terraform as a dependency for Bundler
+> Defining Kitchen-Terraform as a dependency for Bundler in a Gemfile
 
 ```ruby
 source "https://rubygems.org/" do
@@ -101,8 +88,30 @@ Second, run the following command.
 bundle install
 ```
 
+The preceding command will create a `Gemfile.lock` comprising a list
+of the resolved Ruby gem dependencies.
+
 More information can be found in the
 [Bundler: In Depth][bundler-in-depth] article.
+
+#### RubyGems
+
+RubyGems, the default Ruby package manager, can also be used to install
+a version of Kitchen-Terraform by running a command like the following
+example.
+
+> Installing Kitchen-Terraform with RubyGems
+
+```sh
+gem install kitchen-terraform --version 3.1.0
+```
+
+This approach is not recommended as it requires more effort to install
+the gem in a manner that is reproducible and free of dependency
+conflicts.
+
+More information can be found in the
+[RubyGems: Installing Gems][rubygems-installing-gems] article.
 
 ## Usage
 
@@ -127,17 +136,28 @@ More information can be found in the
 
 ### Example
 
-Assume there is a system which has Kitchen-Terraform and
-[Docker][docker] installed.
+This example demonstrates how to test a simple Terraform configuration
+which utilizes the [Docker provider][docker-provider].
 
-Assume the working directory on said system a hierarchy like the
-following examples.
+The test system is assumed to be running Ubuntu 17.04.
+
+Kitchen-Terraform and its dependencies are assumed to have been
+installed on the test system as described in the
+[Installation][#installation] section.
+
+The [Docker Community Editiion][docker-community-edition] is assumed to
+have been installed on the test system.
+
+The working directory on the test system is assumed to contain a
+hierarchy of files comprising the following blocks.
 
 > Directory hierarchy
 
 ```
 .
 ├── .kitchen.yml
+├── Gemfile
+├── Gemfile.lock
 ├── main.tf
 └── test
     └── integration
@@ -147,7 +167,7 @@ following examples.
             └── inspec.yml
 ```
 
-> ./.kitchen.yml
+> ./.kitchen.yml (Test Kitchen configuration)
 
 ```yaml
 driver:
@@ -233,7 +253,7 @@ and verify that the container is running Ubuntu.
 > Verifying with Kitchen-Terraform
 
 ```sh
-$ kitchen test
+$ bundle exec kitchen test
 -----> Starting Kitchen...
 ...
 $$$$$$ Running command `terraform init...`
@@ -334,6 +354,8 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [contributing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md
 [developing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/DEVELOPING.md
 [docker]: https://www.docker.com/
+[docker-community-edition]: https://store.docker.com/editions/community/docker-ce-server-ubuntu
+[docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
 [gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg?style=plastic
 [gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg?style=plastic
 [gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=plastic
