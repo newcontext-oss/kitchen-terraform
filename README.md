@@ -58,25 +58,12 @@ Each version of Kitchen-Terraform is published as a
 [Ruby gem][ruby-gems-what-is] to [RubyGems.org][kitchen-terraform-gem]
 which makes them readily available for installation on a system.
 
-#### RubyGems
-
-To install a version of Kitchen-Terraform using the default Ruby package
-manager, RubyGems, run a command like the following example.
-
-> Installing Kitchen-Terraform with RubyGems
-
-```sh
-gem install kitchen-terraform --version 3.1.0
-```
-
-More information can be found in the
-[RubyGems: Installing Gems][rubygems-installing-gems] article.
-
 #### Bundler
 
-[Bundler][bundler] can also be used to manage versions of
-Kitchen-Terraform on the system in a manner that is easily reproducible
-on other systems.
+[Bundler][bundler] should be used to manage versions of
+Kitchen-Terraform on the system. Using Bundler provides easily
+reproducible Ruby gem installations that can be shared with other
+systems.
 
 First, create a `Gemfile` with contents like the following example. The
 pessimistic pinning of the version is recommended to benefit from
@@ -103,6 +90,25 @@ bundle install
 
 More information can be found in the
 [Bundler: In Depth][bundler-in-depth] article.
+
+#### RubyGems
+
+RubyGems, the default Ruby package manager, can also be used to install
+a version of Kitchen-Terraform by running a command like the following
+example.
+
+> Installing Kitchen-Terraform with RubyGems
+
+```sh
+gem install kitchen-terraform --version 3.1.0
+```
+
+This approach is not recommended as it requires more effort to install
+the gem in a manner that is reproducible and free of dependency
+conflicts.
+
+More information can be found in the
+[RubyGems: Installing Gems][rubygems-installing-gems] article.
 
 ## Usage
 
@@ -138,6 +144,7 @@ following examples.
 ```
 .
 ├── .kitchen.yml
+├── Gemfile
 ├── main.tf
 └── test
     └── integration
@@ -172,6 +179,17 @@ platforms:
 
 suites:
   - name: example
+```
+
+> Gemfile
+
+```ruby
+source "https://rubygems.org/" do
+  gem(
+    "kitchen-terraform",
+    "~> 3.1"
+  )
+end
 ```
 
 > ./main.tf
@@ -226,14 +244,19 @@ control "operating_system" do
 end
 ```
 
-Running the following command would initialize the working directory for
-Terraform, create a Docker container by applying the configuration file,
-and verify that the container is running Ubuntu.
+Running the following commands would install Kitchen-Terraform,
+initialize the working directory for Terraform, create a Docker
+container by applying the configuration file, and verify that the
+container is running Ubuntu.
 
 > Verifying with Kitchen-Terraform
 
 ```sh
-$ kitchen test
+$ bundle install
+...
+Bundle complete...
+
+$ bundle exec kitchen test
 -----> Starting Kitchen...
 ...
 $$$$$$ Running command `terraform init...`
