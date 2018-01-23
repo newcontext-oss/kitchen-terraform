@@ -6,6 +6,7 @@
 require "middleman-autoprefixer"
 require "middleman-livereload"
 require "middleman-syntax"
+require "pathname"
 
 activate :livereload
 
@@ -15,6 +16,28 @@ end
 
 activate :syntax do |syntax|
   syntax.css_class = "syntax-highlight"
+end
+
+helpers do
+  def read_example_file(language: "plaintext", path:, &block)
+    ::Pathname
+      .new(__FILE__)
+      .join(
+        "..",
+        "examples",
+        path
+      )
+      .open do |file|
+        define_singleton_method :lines do
+          file.read
+        end
+
+        code(
+          language,
+          &block
+        )
+      end
+  end
 end
 
 page(
