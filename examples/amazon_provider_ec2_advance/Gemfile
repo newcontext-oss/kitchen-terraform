@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org/" do
+  # aws-sdk is required to leverage the InSpec AWS plugin while it is in initial development
+  gem(
+    "aws-sdk",
+    "~> 2.0"
+  )
+
+  gem(
+    "kitchen-terraform",
+    "~> 3.1"
+  )
+end
