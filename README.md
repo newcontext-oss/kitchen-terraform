@@ -143,7 +143,7 @@ The test system is assumed to be running Ubuntu 17.04.
 
 Kitchen-Terraform and its dependencies are assumed to have been
 installed on the test system as described in the
-[Installation][#installation] section.
+[Installation](#installation) section.
 
 The [Docker Community Editiion][docker-community-edition] is assumed to
 have been installed on the test system.
