@@ -4,6 +4,7 @@
 # https://middlemanapp.com/advanced/configuration/#configuring-extensions
 
 require "middleman-autoprefixer"
+require "middleman-favicon-maker"
 require "middleman-livereload"
 require "middleman-syntax"
 require "pathname"
