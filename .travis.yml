@@ -31,12 +31,16 @@ jobs:
   include:
     -
       stage: unit tests and code coverage with newest supported version of ruby
-      rvm: 2.4
+      rvm: 2.5
       script: bin/rake test:unit
       after_success: bin/codeclimate-test-reporter
 
     -
       stage: unit tests with legacy supported versions of ruby
+      rvm: 2.4
+      script: bin/rake test:unit
+
+    -
       rvm: 2.3
       script: bin/rake test:unit
 
@@ -51,10 +55,33 @@ jobs:
       services:
         - docker
 
+      rvm: 2.5
+
+      env:
+        - TERRAFORM_VERSION=0.11.2 TERRAFORM_SHA256_SUM=f728fa73ff2a4c4235a28de4019802531758c7c090b6ca4c024d48063ab8537b
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --path=vendor/bundle
+            --retry=3
+            --without=development
+
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+
+    -
+      sudo: required
+
+      services:
+        - docker
+
       rvm: 2.4
 
       env:
-        - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
+        - TERRAFORM_VERSION=0.11.2 TERRAFORM_SHA256_SUM=f728fa73ff2a4c4235a28de4019802531758c7c090b6ca4c024d48063ab8537b
 
       install:
         -
@@ -77,7 +104,7 @@ jobs:
       rvm: 2.3
 
       env:
-        - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
+        - TERRAFORM_VERSION=0.11.2 TERRAFORM_SHA256_SUM=f728fa73ff2a4c4235a28de4019802531758c7c090b6ca4c024d48063ab8537b
 
       install:
         -
@@ -100,7 +127,7 @@ jobs:
       rvm: 2.2
 
       env:
-        - TERRAFORM_VERSION=0.11.1 TERRAFORM_SHA256_SUM=4e3d5e4c6a267e31e9f95d4c1b00f5a7be5a319698f0370825b459cb786e2f35
+        - TERRAFORM_VERSION=0.11.2 TERRAFORM_SHA256_SUM=f728fa73ff2a4c4235a28de4019802531758c7c090b6ca4c024d48063ab8537b
 
       install:
         -
@@ -116,6 +143,29 @@ jobs:
 
     -
       stage: integration tests with legacy supported versions of terraform
+      sudo: required
+
+      services:
+        - docker
+
+      rvm: 2.5
+
+      env:
+        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+
+      install:
+        -
+          bin/bundle
+            install
+            --binstubs
+            --jobs=$(nproc --ignore=1)
+            --path=vendor/bundle
+            --retry=3
+            --without=development
+
+      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+
+    -
       sudo: required
 
       services:
@@ -186,7 +236,7 @@ jobs:
 
     -
       stage: deploy to rubygems.org
-      rvm: 2.4
+      rvm: 2.5
 
       before_install:
         - gem update --system
