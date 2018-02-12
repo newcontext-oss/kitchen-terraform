@@ -375,11 +375,13 @@ title: Extensive Kitchen-Terraform
           id="list-five"
           role="tabpanel"
         >
-          Generate a key pair to use for SSH authentication during testing by mimicing the following Bash script.
+          Mimic the following Bash script to generate an authentication key for SSH to be used by InSpec when
+          authenticating with the AWS EC2 instances under test.
+          <br><br>
           <%
             read_example_file(
               language: "bash",
-              path: "amazon_provider_ec2_advance/generate_key_pair.bash"
+              path: "amazon_provider_ec2_advance/generate_ssh_key.bash"
             ) do
           %>
 <%= lines %>
