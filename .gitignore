@@ -4,6 +4,7 @@
 **/.kitchen/
 **/.terraform/
 **/inspec.lock
+**/terraform.tfstate
 *.gem
 .DS_Store/
 .cache/
