@@ -11,16 +11,7 @@ title: Extensive Kitchen-Terraform
       <div class="jumbotron">
         <h1 class="display-3">Extensive Kitchen-Terraform</h1>
         <p class="lead">
-          This tutorial comprises an extensive review of the features of Kitchen-Terraform.
-          <br><br>
-          A functional implementation of the content discussed in this tutorial exists in the
-          <%=
-            link_to(
-              "project repository",
-              "https://github.com/newcontext-oss/kitchen-terraform/tree/master/examples/amazon_provider_ec2_advance"
-            )
-          %>
-          .
+          A detailed review of the features of Kitchen-Terraform.
         </p>
         <div class="float-right">Author: Aaron Lane</div>
       </div>
@@ -51,7 +42,7 @@ title: Extensive Kitchen-Terraform
           id="list-two-list"
           role="tab"
         >
-          2. Setup Amazon Web Services Account
+          2. Configure Amazon Web Services
         </a>
         <a
           aria-controls="list-three"
@@ -61,7 +52,7 @@ title: Extensive Kitchen-Terraform
           id="list-three-list"
           role="tab"
         >
-          3. Install Dependencies
+          3. Create InSpec Profile
         </a>
         <a
           aria-controls="list-four"
@@ -71,7 +62,7 @@ title: Extensive Kitchen-Terraform
           id="list-four-list"
           role="tab"
         >
-          4. Create InSpec Profile
+          4. Generate SSH Key
         </a>
         <a
           aria-controls="list-five"
@@ -81,7 +72,7 @@ title: Extensive Kitchen-Terraform
           id="list-five-list"
           role="tab"
         >
-          5.Generate a Key Pair
+          5. Create Test Fixture Terraform Configuration
         </a>
         <a
           aria-controls="list-six"
@@ -91,7 +82,7 @@ title: Extensive Kitchen-Terraform
           id="list-six-list"
           role="tab"
         >
-          6. Create Test Fixture Terraform Configuration
+          6. Create Terraform Module
         </a>
         <a
           aria-controls="list-seven"
@@ -101,7 +92,7 @@ title: Extensive Kitchen-Terraform
           id="list-seven-list"
           role="tab"
         >
-          7. Create Terraform Module
+          7. Create Test Kitchen Configuration
         </a>
         <a
           aria-controls="list-eight"
@@ -111,17 +102,7 @@ title: Extensive Kitchen-Terraform
           id="list-eight-list"
           role="tab"
         >
-          8. Create Test Kitchen Configuration
-        </a>
-        <a
-          aria-controls="list-nine"
-          class="list-group-item list-group-item-action"
-          data-toggle="list"
-          href="#list-nine"
-          id="list-nine-list"
-          role="tab"
-        >
-          9. Test Terraform Module
+          8. Test Terraform Module
         </a>
       </div>
     </div>
@@ -136,12 +117,41 @@ title: Extensive Kitchen-Terraform
           id="list-one"
           role="tabpanel"
         >
-          The topics discussed in this tutorial include:
-          <ul>
-            <li>Creating an InSpec profile which utilizes an InSpec plugin to verify controls remotely and locally</li>
-            <li>Creating a test fixture Terraform configuration</li>
-            <li>Configuring Test Kitchen platforms and suites</li>
-          </ul>
+          This tutorial provides a detailed review of the features of Kitchen-Terraform by developing a Terraform module
+          which configures resources on the
+          <%=
+            link_to(
+              "Amazon Web Services (AWS)",
+              "https://aws.amazon.com/"
+            )
+          %>
+          platform.
+          <br><br>
+          Kitchen-Terraform is assumed to be installed on the development system according to the instructions in the
+          <%=
+            link_to(
+              "Kitchen-Terraform ReadMe",
+              "https://github.com/newcontext-oss/kitchen-terraform/blob/master/README.md#installation"
+            )
+          %>.
+          <br><br>
+          The files and scripts shown in this tutorial are sourced from
+          a functional
+          <%=
+            link_to(
+              "example project",
+              "https://github.com/newcontext-oss/kitchen-terraform/tree/master/examples/amazon_provider_ec2_advance"
+            )
+          %>
+          in the Kitchen-Terraform repository.
+          <br><br>
+          Any issues with this tutorial should be reported in the Kitchen-Terraform
+          <%=
+            link_to(
+              "issue tracker",
+              "https://github.com/newcontext-oss/kitchen-terraform/issues"
+            )
+          %>.
         </div>
         <div
           aria-labelledby="list-two-list"
@@ -149,14 +159,7 @@ title: Extensive Kitchen-Terraform
           id="list-two"
           role="tabpanel"
         >
-          This tutorial creates resources on the
-          <%=
-            link_to(
-              "Amazon Web Services (AWS)",
-              "https://aws.amazon.com/"
-            )
-          %>
-          platform using the
+          This tutorial creates AWS resources using the
           <%=
             link_to(
               "Terraform AWS Provider",
@@ -172,15 +175,41 @@ title: Extensive Kitchen-Terraform
           %>
           is required.
           <br><br>
+          The
+          <%=
+            link_to(
+              "AWS Command Line Interface (CLI)",
+              "https://aws.amazon.com/documentation/cli/"
+            )
+          %>
+          must be installed and configured with the credentials of the AWS account by following the
+          <%=
+            link_to(
+              "AWS CLI Quick Configuration",
+              "https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration"
+            )
+          %>
+          instructions.
+          <br><br>
+          The JSON filtering tool
+          <%=
+            link_to(
+              "jq",
+              "https://stedolan.github.io/jq/"
+            )
+          %>
+          must be installed to enable the parsing of output from the AWS CLI in Bash scripts.
+          <br><br>
           <%=
             link_to(
               "IAM users",
               "https://console.aws.amazon.com/iam/home#users"
             )
           %>
-          with API keys must be created in the us-east-1 region and the us-west-2 region. The IAM users must be
-          authorized to manage all of the resources used in the Create Terraform Module section. Adding an inline custom
-          policy like the following example to the IAM users will provide adequate authorization.
+          with API keys must be created in the us-east-1 region and the us-west-2 region. Those IAM users must be
+          authorized to manage a variety of AWS resources, which can be accomplished by adding an inline custom
+          policy like the following example to the IAM users.
+          <br></br>
           <%
             read_example_file(
               language: "json",
@@ -196,84 +225,14 @@ title: Extensive Kitchen-Terraform
           id="list-three"
           role="tabpanel"
         >
-          This tutorial assumes that Kitchen-Terraform is installed according to the instructions in the
-          <%=
-            link_to(
-              "Kitchen-Terraform ReadMe",
-              "https://github.com/newcontext-oss/kitchen-terraform/blob/master/README.md#installation"
-            )
-          %>
-          .
-          <br><br>
-          Populate the Bundler dependency file,
-          <p
-            class="font-weight-bold"
-            style="color: #32c850; display: inline;"
-          >
-            Gemfile
-          </p>
-          , to match the following example.
-          <br><br>
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "amazon_provider_ec2_advance/Gemfile"
-            ) do
-          %>
-<%= lines %>
-          <% end %>
-          Install the declared Ruby gem dependencies by mimicing the following Bash script.
-          <br><br>
-          <%
-            read_example_file(
-              language: "bash",
-              path: "amazon_provider_ec2_advance/install_ruby_gem_dependencies.bash"
-            ) do
-          %>
-<%= lines %>
-          <% end %>
-          <br><br>
-          The
-          <%=
-            link_to(
-              "AWS Command Line Interface (CLI)",
-              "https://aws.amazon.com/documentation/cli/"
-            )
-          %>
-          must be installed. The AWS CLI must be configured with the account credentials from the Setup Amazon Web
-          Services Account section by following the
-          <%=
-            link_to(
-              "AWS CLI Quick Configuration",
-              "https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration"
-            )
-          %>
-          instructions.
-          <br><br>
-          <%=
-            link_to(
-              "jq",
-              "https://stedolan.github.io/jq/"
-            )
-          %>
-          must be installed to parse output from the AWS CLI.
-        </div>
-        <div
-          aria-labelledby="list-four-list"
-          class="tab-pane fade show"
-          id="list-four"
-          role="tabpanel"
-        >
-          This section discusses the creation of an
+          Prepare the
           <%=
             link_to(
               "InSpec profile",
               "https://www.inspec.io/docs/reference/profiles/"
             )
           %>
-          .
-          <br><br>
-          Prepare the InSpec profile by mimicing the following Bash script.
+          by mimicing the following Bash script.
           <%
             read_example_file(
               language: "bash",
@@ -289,8 +248,7 @@ title: Extensive Kitchen-Terraform
             style="color: #32c850; display: inline;"
           >
             test/integration/extensive_suite/inspec.yml
-          </p>
-          , to match the following example.
+          </p>, to match the following example.
           <%
             read_example_file(
               language: "yml",
@@ -370,9 +328,9 @@ title: Extensive Kitchen-Terraform
           <% end %>
         </div>
         <div
-          aria-labelledby="list-five-list"
+          aria-labelledby="list-four-list"
           class="tab-pane fade"
-          id="list-five"
+          id="list-four"
           role="tabpanel"
         >
           Mimic the following Bash script to generate an authentication key for SSH to be used by InSpec when
@@ -388,9 +346,9 @@ title: Extensive Kitchen-Terraform
           <% end %>
         </div>
         <div
-          aria-labelledby="list-six-list"
+          aria-labelledby="list-five-list"
           class="tab-pane fade"
-          id="list-six"
+          id="list-five"
           role="tabpanel"
         >
           Using a test fixture Terraform configuration to invoke the Terraform module under test provides two
@@ -427,9 +385,9 @@ title: Extensive Kitchen-Terraform
           <% end %>
         </div>
         <div
-          aria-labelledby="list-seven-list"
+          aria-labelledby="list-six-list"
           class="tab-pane fade"
-          id="list-seven"
+          id="list-six"
           role="tabpanel"
         >
           The Terraform module is the actual artefact under test. The design of the module is informed by the InSpec
@@ -464,9 +422,9 @@ title: Extensive Kitchen-Terraform
           <% end %>
         </div>
         <div
-          aria-labelledby="list-eight-list"
+          aria-labelledby="list-seven-list"
           class="tab-pane fade"
-          id="list-eight"
+          id="list-seven"
           role="tabpanel"
         >
           Populate the Test Kitchen configuration file,
@@ -488,11 +446,38 @@ title: Extensive Kitchen-Terraform
           <% end %>
         </div>
         <div
-          aria-labelledby="list-nine-list"
+          aria-labelledby="list-eight-list"
           class="tab-pane fade"
-          id="list-nine"
+          id="list-eight"
           role="tabpanel"
         >
+          Populate the Bundler dependency file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            Gemfile
+          </p>,
+          to match the following example.
+          <br><br>
+          <%
+            read_example_file(
+              language: "ruby",
+              path: "amazon_provider_ec2_advance/Gemfile"
+            ) do
+          %>
+<%= lines %>
+          <% end %>
+          Install the declared Ruby gem dependencies by mimicing the following Bash script.
+          <br><br>
+          <%
+            read_example_file(
+              language: "bash",
+              path: "amazon_provider_ec2_advance/install_ruby_gem_dependencies.bash"
+            ) do
+          %>
+<%= lines %>
+          <% end %>
           Test the Terraform module using multiple platforms by mimicing the following Bash script.
           <br><br>
           <%
