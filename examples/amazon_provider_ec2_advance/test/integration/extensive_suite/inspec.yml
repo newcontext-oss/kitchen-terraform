@@ -4,6 +4,7 @@ version: 0.1.0
 
 depends:
   -
-    # Depending on the inspec-aws project adds additional InSpec resources specific to AWS
+    # Depending on the inspec-aws project adds additional InSpec resources
+    # specific to AWS
     name: aws
     url: https://github.com/chef/inspec-aws/archive/master.tar.gz

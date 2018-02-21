@@ -1,32 +1,41 @@
 # frozen_string_literal: true
 
 static_terraform_output =
+  # The Terraform configuration under test must define the equivalently named
+  # output
   attribute(
     "static_terraform_output",
-    description:
-      "static_terraform_output is expected to be the name of an output of the Terraform configuration under test"
+    description: "An arbitrary, static output"
   )
 
 customized_inspec_attribute =
+  # The Test Kitchen configuration must map this attribute to the
+  # 'static_terraform_output' output
   attribute(
     "customized_inspec_attribute",
-    description: "customized_inspec_attribute is expected to be an alias for static_terraform_output"
+    description: "A configured alias for static_terraform_output"
   )
 
 control "inspec_attributes" do
-  desc "This control demonstrates how InSpec attributes are mapped to Terraform outputs"
+  desc "A demonstration of how InSpec attributes are mapped to Terraform outputs"
 
-  describe "the value of the 'static_terraform_output' Terraform output" do
+  describe "The 'static_terraform_output' attribute" do
     subject do
-      'static terraform output'
+      static_terraform_output
     end
 
-    it "is mapped to the 'static_terraform_output' InSpec attribute by default" do
-      is_expected.to eq static_terraform_output
+    it "is mapped to the 'static_terraform_output' output by default" do
+      is_expected.to eq "static terraform output"
+    end
+  end
+
+  describe "The 'customized_inspec_attribute' attribute" do
+    subject do
+      customized_inspec_attribute
     end
 
-    it "is mapped to the 'customized_inspec_attribute' attribute by configuration" do
-      is_expected.to eq customized_inspec_attribute
+    it "is mapped to the 'static_terraform_output' output by configuration" do
+      is_expected.to eq "static terraform output"
     end
   end
 end

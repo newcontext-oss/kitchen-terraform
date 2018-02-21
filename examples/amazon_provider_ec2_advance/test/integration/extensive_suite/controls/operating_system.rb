@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
-operating_system_name =
+instances_ami_operating_system_name =
+  # The Terraform configuration under test must define the equivalently named
+  # output
   attribute(
     "instances_ami_operating_system_name",
-    description:
-      "instances_ami_operating_system_name is expected to be the name of an output of the Terraform configuration " \
-        "under test"
+    description: "The name of the operating system on the AWS EC2 instances AMI"
   )
 
 control "operating_system" do
-  desc "This control verifies the name of the operating system of the targeted host"
+  desc "Verifies the name of the operating system on the targeted host"
 
-  describe "the operating system name" do
+  describe "The operating system name" do
     subject do
       os[:name]
     end
 
-    it do
+    it "is equal to the 'instances_ami_operating_system_name' output" do
       is_expected.to eq instances_ami_operating_system_name
     end
   end

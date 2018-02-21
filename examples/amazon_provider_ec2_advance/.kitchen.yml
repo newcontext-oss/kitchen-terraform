@@ -1,7 +1,8 @@
 driver:
   name: terraform
 
-  # The test fixture Terraform configuration is configured to be the Terraform root module.
+  # The test fixture Terraform configuration is configured to be the Terraform
+  # root module
   root_module_directory: test/fixtures/wrapper
 
 provisioner:
@@ -9,15 +10,19 @@ provisioner:
 
 transport:
   name: ssh
+  connection_retry_sleep: 5
   port: 22
 
-  # The generated key pair is configured to be used for the SSH authentication performed by InSpec.
+  # The generated key pair is configured to be used for the SSH authentication
+  # performed by InSpec
   ssh_key: test/assets/key_pair
 
 verifier:
   name: terraform
+  sudo: false
 
-# Platforms provide hooks for overriding the global Test Kitchen plugin configuration to provide platform-specific values.
+# Platforms provide hooks for overriding the global Test Kitchen plugin
+# configuration to provide platform-specific values
 platforms:
   -
     name: centos
@@ -25,7 +30,7 @@ platforms:
     driver:
       variables:
         instances_ami: ami-ae7bfdb8
-        instances_operating_system_name: centos
+        instances_ami_operating_system_name: centos
         subnet_availability_zone: us-east-1a
 
     transport:
@@ -43,12 +48,12 @@ platforms:
     transport:
       username: ubuntu
 
-# Suites include tests and provide additional hooks for overriding the global Test Kitchen plugin configuration.
-# Test Kitchen creates a matrix of testable instances by combining the platforms and the suites.
+# Suites include tests and provide additional hooks for overriding the global Test
+# Kitchen plugin configuration
 suites:
   -
-    # Kitchen-Terraform will assume that the InSpec profile for this suite is located at
-    # test/integration/extensive_suite.
+    # Kitchen-Terraform will assume that the InSpec profile for this suite is
+    # located at test/integration/extensive_suite
     name: extensive_suite
 
     verifier:
@@ -56,17 +61,19 @@ suites:
         -
           name: local
 
-          # The customized_inspec_attribute InSpec attribute is configured to satisfy the inspec_attributes control.
+          # The customized_inspec_attribute InSpec attribute is configured to
+          # satisfy the inspec_attributes control
           attributes:
             customized_inspec_attribute: static_terraform_output
 
-          # A subset of the controls included in the extensive_suite InSpec profile will be executed.
+          # A subset of the controls included in the extensive_suite InSpec
+          # profile will be executed
           controls:
             - inspec_attributes
             - state_file
 
           # The hostnames attribute is omitted which means that the configured
-          # controls will be executed on localhost.
+          # controls will be executed on localhost
 
         -
           name: remote
@@ -75,6 +82,6 @@ suites:
             - operating_system
             - reachable_other_host
 
-          # The value of the Terraform output named remote_group_public_dns will be
-          # used to obtain the hostnames to target with InSpec.
+          # The value of the Terraform output named remote_group_public_dns will
+          # be used to obtain the hostnames to target with InSpec
           hostnames: remote_group_public_dns

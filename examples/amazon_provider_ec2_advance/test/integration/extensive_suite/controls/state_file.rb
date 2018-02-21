@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 
 terraform_state =
+  # The Terraform configuration under test must define the equivalently named
+  # output
   attribute(
     "terraform_state",
-    description: "terraform_state is expected to be the name of an output of the Terraform configuration under test"
+    description: "The path to the Terraform state file"
   )
+    .chomp
 
 control "state_file" do
-  desc "This control verifies that the Terraform state file can be used in InSpec controls"
+  desc "Verifies that the Terraform state file can be used in InSpec controls"
 
-  describe "the Terraform version in the Terraform state file" do
+  describe "The Terraform version in the Terraform state file" do
     subject do
       json(terraform_state).terraform_version
     end
 
-    it do
+    it "matches the MAJOR.MINOR.PATCH format" do
       is_expected.to match /\d+\.\d+\.\d+/
     end
   end
