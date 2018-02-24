@@ -89,320 +89,285 @@ require "support/kitchen/terraform/config_attribute_context"
           "the value is valid",
           value: [{name: "abc"}]
         )
-      end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :attributes with a nonhash"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*attributes.*must be a hash/,
-          value: [
-            {
-              name: "abc",
-              attributes: 123
-            }
-          ]
-        )
-      end
-
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :attributes with an empty hash"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              attributes: {}
-            }
-          ]
-        )
-      end
-
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :attributes with a hash which has nonstring or nonsymbol keys"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*attributes.*must be a hash which includes only symbol keys and string values/,
-          value: [
-            {
-              name: "abc",
-              attributes: {
-                123 => "abc"
+        context "when the hash associates :attributes with a nonhash" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*attributes.*must be a hash/,
+            value: [
+              {
+                name: "abc",
+                attributes: 123
               }
-            }
-          ]
-        )
-      end
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :attributes with a hash which has nonstring values"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*attributes.*must be a hash which includes only symbol keys and string values/,
-          value: [
-            {
-              name: "abc",
-              attributes: {
-                "abc" => 123
+        context "when the hash associates :attributes with an empty hash" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                attributes: {}
               }
-            }
-          ]
-        )
-      end
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :attributes with a hash which has symobl keys and string values"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              attributes: {key: "value"}
-            }
-          ]
-        )
-      end
+        context "when the hash associates :attributes with a hash which has nonstring or nonsymbol keys" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*attributes.*must be a hash which includes only symbol keys and string values/,
+            value: [
+              {
+                name: "abc",
+                attributes: {
+                  123 => "abc"
+                }
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :controls with a nonarray"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*controls.*must be an array/,
-          value: [
-            {
-              name: "abc",
-              controls: 123
-            }
-          ]
-        )
-      end
+        context "when the hash associates :attributes with a hash which has nonstring values" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*attributes.*must be a hash which includes only symbol keys and string values/,
+            value: [
+              {
+                name: "abc",
+                attributes: {
+                  "abc" => 123
+                }
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :controls with an empty array"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              controls: []
-            }
-          ]
-        )
-      end
+        context "when the hash associates :attributes with a hash which has symobl keys and string values" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                attributes: {key: "value"}
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :controls with an array which includes a nonstring"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*controls.*0.*must be a string/,
-          value: [
-            {
-              name: "abc",
-              controls: [123]
-            }
-          ]
-        )
-      end
+        context "when the hash associates :controls with a nonarray" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*controls.*must be an array/,
+            value: [
+              {
+                name: "abc",
+                controls: 123
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :controls with an array which includes a nonempty string"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              controls: ["abc"]
-            }
-          ]
-        )
-      end
+        context "when the hash associates :controls with an empty array" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                controls: []
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and :hostnames with a nonstring"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*hostnames.*must be a string/,
-          value: [
-            {
-              name: "abc",
-              hostnames: 123
-            }
-          ]
-        )
-      end
+        context "when the hash associates :controls with an array which includes a nonstring" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*controls.*0.*must be a string/,
+            value: [
+              {
+                name: "abc",
+                controls: [123]
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :hostnames with an empty string"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              hostnames: ""
-            }
-          ]
-        )
-      end
+        context "when the hash associates :controls with an array which includes a nonempty string" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                controls: ["abc"]
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :hostnames with a nonempty string"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              hostnames: "abc"
-            }
-          ]
-        )
-      end
+        context "when the hash associates :fail_fast with a nonboolean" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*fail_fast.*must be boolean/,
+            value: [
+              {
+                name: "abc",
+                fail_fast: "abc"
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and :port with a noninteger"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*port.*must be an integer/,
-          value: [
-            {
-              name: "abc",
-              port: "abc"
-            }
-          ]
-        )
-      end
+        context "when the hash associates :fail_fast with a boolean" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                fail_fast: true
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :port with an integer"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              port: 123
-            }
-          ]
-        )
-      end
+        context "when the hash associates :hostnames with a nonstring" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*hostnames.*must be a string/,
+            value: [
+              {
+                name: "abc",
+                hostnames: 123
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and :ssh_key with a nonstring"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*ssh_key.*must be a string/,
-          value: [
-            {
-              name: "abc",
-              ssh_key: 123
-            }
-          ]
-        )
-      end
+        context "when the hash associates :hostnames with an empty string" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                hostnames: ""
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :ssh_key with an empty string"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*ssh_key.*must be filled/,
-          value: [
-            {
-              name: "abc",
-              ssh_key: ""
-            }
-          ]
-        )
-      end
+        context "when the hash associates :hostnames with a nonempty string" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                hostnames: "abc"
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :ssh_key with a nonempty string"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              ssh_key: "abc"
-            }
-          ]
-        )
-      end
+        context "when the hash associates :port with a noninteger" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*port.*must be an integer/,
+            value: [
+              {
+                name: "abc",
+                port: "abc"
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and :username with a nonstring"
-      ) do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /groups.*0.*username.*must be a string/,
-          value: [
-            {
-              name: "abc",
-              username: 123
-            }
-          ]
-        )
-      end
+        context "when the hash associates :port with an integer" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                port: 123
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :username with an empty string"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              username: ""
-            }
-          ]
-        )
-      end
+        context "when the hash associates :ssh_key with a nonstring" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*ssh_key.*must be a string/,
+            value: [
+              {
+                name: "abc",
+                ssh_key: 123
+              }
+            ]
+          )
+        end
 
-      context(
-        "when the config associates :groups with an array which includes a hash which associates :name with a " \
-          "nonempty string and associates :username with a nonempty string"
-      ) do
-        it_behaves_like(
-          "the value is valid",
-          value: [
-            {
-              name: "abc",
-              username: "abc"
-            }
-          ]
-        )
+        context "when the hash associates :ssh_key with an empty string" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*ssh_key.*must be filled/,
+            value: [
+              {
+                name: "abc",
+                ssh_key: ""
+              }
+            ]
+          )
+        end
+
+        context "when the hash associates :ssh_key with a nonempty string" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                ssh_key: "abc"
+              }
+            ]
+          )
+        end
+
+        context "when the hash associates :username with a nonstring" do
+          it_behaves_like(
+            "the value is invalid",
+            error_message: /groups.*0.*username.*must be a string/,
+            value: [
+              {
+                name: "abc",
+                username: 123
+              }
+            ]
+          )
+        end
+
+        context "when the hash associates :username with an empty string" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                username: ""
+              }
+            ]
+          )
+        end
+
+        context "when the hash associates :username with a nonempty string" do
+          it_behaves_like(
+            "the value is valid",
+            value: [
+              {
+                name: "abc",
+                username: "abc"
+              }
+            ]
+          )
+        end
       end
     end
   end
