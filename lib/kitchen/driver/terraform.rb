@@ -61,7 +61,7 @@ require "kitchen/terraform/shell_out"
 #
 # ===== Creating a Test Terraform Workspace
 #
-#   terraform workspace <new|select> kitchen-terraform-<instance>
+#   terraform workspace <new|select> kitchen-terraform-<instance> <root_module_directory>
 #
 # ==== kitchen destroy
 #
@@ -85,7 +85,7 @@ require "kitchen/terraform/shell_out"
 #
 # ===== Selecting the Test Terraform Workspace
 #
-#   terraform workspace <select|new> kitchen-terraform-<instance>
+#   terraform workspace <select|new> kitchen-terraform-<instance> <root_module_directory>
 #
 # ===== Destroying the Terraform State
 #
@@ -103,11 +103,11 @@ require "kitchen/terraform/shell_out"
 #
 # ===== Selecting the Default Terraform Workspace
 #
-#   terraform workspace select default
+#   terraform workspace select default <root_module_directory>
 #
 # ===== Deleting the Test Terraform Workspace
 #
-#   terraform workspace delete kitchen-terraform-<instance>
+#   terraform workspace delete kitchen-terraform-<instance> <root_module_directory>
 #
 # === Shelling Out
 #
@@ -393,7 +393,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def destroy_run_workspace_delete_instance
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "workspace delete kitchen-terraform-#{instance_name}",
+        command: "workspace delete kitchen-terraform-#{instance_name} #{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -403,7 +403,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def destroy_run_workspace_select_default
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "workspace select default",
+        command: "workspace select default #{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -418,14 +418,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def run_workspace_select_instance
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "workspace select kitchen-terraform-#{instance_name}",
+        command: "workspace select kitchen-terraform-#{instance_name} #{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
   rescue ::Kitchen::Terraform::Error
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "workspace new kitchen-terraform-#{instance_name}",
+        command: "workspace new kitchen-terraform-#{instance_name} #{config_root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
