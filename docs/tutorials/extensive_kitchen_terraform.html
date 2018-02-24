@@ -1,0 +1,962 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="msapplication-config" content="browserconfig.xml" />
+    <title>Extensive Kitchen-Terraform</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/kitchen-terraform/apple-touch-icon-180x180-precomposed.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/kitchen-terraform/apple-touch-icon-152x152-precomposed.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/kitchen-terraform/apple-touch-icon-144x144-precomposed.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/kitchen-terraform/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/kitchen-terraform/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" href="/kitchen-terraform/apple-touch-icon-precomposed.png">
+    <link rel="icon" type="image/png" sizes="196x196" href="/kitchen-terraform/favicon-196x196.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="/kitchen-terraform/favicon-160x160.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/kitchen-terraform/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/kitchen-terraform/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/kitchen-terraform/favicon-16x16.png">
+    <link rel="shortcut icon" href="/kitchen-terraform/favicon.png">
+    <link rel="icon" type="image/ico" href="/kitchen-terraform/favicon.ico">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href="/kitchen-terraform/stylesheets/highlighting.css" rel="stylesheet" />
+    <link href="/kitchen-terraform/stylesheets/material.css" rel="stylesheet" />
+    <link href="/kitchen-terraform/stylesheets/site.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="/kitchen-terraform/javascripts/site.js"></script>
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light header">
+      <img src="/kitchen-terraform/images/kitchen_terraform_logo.png" class="d-inline-block" style="vertical-align: sub; margin-left: 10px;" width="18" height="18" alt="Kitchen-Terraform logo" />
+      <a href="/kitchen-terraform/" class="navbar-brand" style="padding-left: 5px;">Kitchen-Terraform</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a href="/kitchen-terraform/getting_started.html" class="nav-link">Getting Started</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/tutorials/" class="nav-link">Tutorials</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/about.html" class="nav-link">About</a>
+          </li>
+          <li class="nav-item">
+            <a href="/kitchen-terraform/community/" class="nav-link">Community</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://github.com/newcontext-oss/kitchen-terraform">
+              <img src="/kitchen-terraform/images/github.png" class="d-inline-block" style="vertical-align: sub;" width="18" height="18" alt="GitHub logo" /> Contribute
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="content text-left">
+      <div
+  class="container"
+  style="padding-top: 0px;"
+>
+  <div class="row">
+    <div class="col-12">
+      <div class="jumbotron">
+        <h1 class="display-3">Extensive Kitchen-Terraform</h1>
+        <p class="lead">
+          A detailed review of the features of Kitchen-Terraform.
+        </p>
+        <div class="float-right">Author: Aaron Lane</div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div
+         class="list-group"
+         id="list-tab"
+         role="tablist"
+      >
+        <a
+          aria-controls="list-one"
+          class="list-group-item list-group-item-action active"
+          data-toggle="list"
+          href="#list-one"
+          id="list-one-list"
+          role="tab"
+        >
+          1. Introduction
+        </a>
+        <a
+          aria-controls="list-two"
+          class="list-group-item list-group-item-action"
+          data-toggle="list"
+          href="#list-two"
+          id="list-two-list"
+          role="tab"
+        >
+          2. Configure Amazon Web Services
+        </a>
+        <a
+          aria-controls="list-three"
+          class="list-group-item list-group-item-action"
+          data-toggle="list"
+          href="#list-three"
+          id="list-three-list"
+          role="tab"
+        >
+          3. Create InSpec Profile
+        </a>
+        <a
+          aria-controls="list-four"
+          class="list-group-item list-group-item-action"
+          data-toggle="list"
+          href="#list-four"
+          id="list-four-list"
+          role="tab"
+        >
+          4. Generate SSH Key
+        </a>
+        <a
+          aria-controls="list-five"
+          class="list-group-item list-group-item-action"
+          data-toggle="list"
+          href="#list-five"
+          id="list-five-list"
+          role="tab"
+        >
+          5. Create Test Fixture Terraform Configuration
+        </a>
+        <a
+          aria-controls="list-six"
+          class="list-group-item list-group-item-action"
+          data-toggle="list"
+          href="#list-six"
+          id="list-six-list"
+          role="tab"
+        >
+          6. Create Terraform Module
+        </a>
+        <a
+          aria-controls="list-seven"
+          class="list-group-item list-group-item-action"
+          data-toggle="list"
+          href="#list-seven"
+          id="list-seven-list"
+          role="tab"
+        >
+          7. Create Test Kitchen Configuration
+        </a>
+        <a
+          aria-controls="list-eight"
+          class="list-group-item list-group-item-action"
+          data-toggle="list"
+          href="#list-eight"
+          id="list-eight-list"
+          role="tab"
+        >
+          8. Test Terraform Module
+        </a>
+      </div>
+    </div>
+    <div class="col-8">
+      <div
+        class="tab-content"
+        id="nav-tabContent"
+      >
+        <div
+          aria-labelledby="list-one-list"
+          class="tab-pane fade show active"
+          id="list-one"
+          role="tabpanel"
+        >
+          This tutorial provides a detailed review of the features of Kitchen-Terraform by developing a Terraform module
+          which configures resources on the
+          <a href="https://aws.amazon.com/">Amazon Web Services (AWS)</a>
+          platform.
+          <br><br>
+          Kitchen-Terraform is assumed to be installed on the development system according to the instructions in the
+          <a href="https://github.com/newcontext-oss/kitchen-terraform/blob/master/README.md#installation">Kitchen-Terraform ReadMe</a>.
+          <br><br>
+          The files and scripts shown in this tutorial are sourced from
+          a functional
+          <a href="https://github.com/newcontext-oss/kitchen-terraform/tree/master/examples/extensive_kitchen_terraform">example project</a>
+          in the Kitchen-Terraform repository.
+          <br><br>
+          Any issues with this tutorial should be reported in the Kitchen-Terraform
+          <a href="https://github.com/newcontext-oss/kitchen-terraform/issues">issue tracker</a>.
+        </div>
+        <div
+          aria-labelledby="list-two-list"
+          class="tab-pane fade show"
+          id="list-two"
+          role="tabpanel"
+        >
+          This tutorial creates AWS resources using the
+          <a href="https://www.terraform.io/docs/providers/aws/index.html">Terraform AWS Provider</a>
+          so
+          <a href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html">registration of an AWS account</a>
+          is required.
+          <br><br>
+          The
+          <a href="https://aws.amazon.com/documentation/cli/">AWS Command Line Interface (CLI)</a>
+          must be installed and configured with the credentials of the AWS account by following the
+          <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration">AWS CLI Quick Configuration</a>
+          instructions.
+          <br><br>
+          The JSON filtering tool
+          <a href="https://stedolan.github.io/jq/">jq</a>
+          must be installed to enable the parsing of output from the AWS CLI in Bash scripts.
+          <br><br>
+          <a href="https://console.aws.amazon.com/iam/home#users">IAM users</a>
+          with API keys must be created in the us-east-1 region and the us-west-2 region. Those IAM users must be
+          authorized to manage a variety of AWS resources, which can be accomplished by adding an inline custom
+          policy like the following example to the IAM users.
+          <br></br>
+<div class="highlight"><pre class="syntax-highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"Statement"</span><span class="p">:</span><span class="w">
+    </span><span class="p">[</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Stmt1469773655000"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"ec2:*"</span><span class="p">],</span><span class="w">
+        </span><span class="s2">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"*"</span><span class="p">]</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div>        </div>
+        <div
+          aria-labelledby="list-three-list"
+          class="tab-pane fade show"
+          id="list-three"
+          role="tabpanel"
+        >
+          Prepare the
+          <a href="https://www.inspec.io/docs/reference/profiles/">InSpec profile</a>
+          by mimicing the following Bash script.
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
+
+mkdir <span class="nt">-p</span> <span class="nb">test</span>/integration/extensive_suite/controls
+touch <span class="nb">test</span>/integration/extensive_suite/inspec.yml
+touch <span class="nb">test</span>/integration/extensive_suite/controls/inspec_attributes.rb
+touch <span class="nb">test</span>/integration/extensive_suite/controls/operating_system.rb
+touch <span class="nb">test</span>/integration/extensive_suite/controls/reachable_other_host.rb
+touch <span class="nb">test</span>/integration/extensive_suite/controls/state_file.rb
+
+</code></pre></div>          <br><br>
+          Populate the InSpec profile description file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/inspec.yml
+          </p>, to match the following example.
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">name</span><span class="pi">:</span> <span class="s">extensive_suite</span>
+<span class="na">title</span><span class="pi">:</span> <span class="s">Extensive Kitchen-Terraform</span>
+<span class="na">version</span><span class="pi">:</span> <span class="s">0.1.0</span>
+
+<span class="na">depends</span><span class="pi">:</span>
+  <span class="pi">-</span>
+    <span class="c1"># Depending on the inspec-aws project adds additional InSpec resources</span>
+    <span class="c1"># specific to AWS</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">aws</span>
+    <span class="na">url</span><span class="pi">:</span> <span class="s">https://github.com/chef/inspec-aws/archive/master.tar.gz</span>
+
+</code></pre></div>          <br><br>
+          Populate the InSpec attributes control,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/controls/inspec_attributes.rb
+          </p>
+          , to match the following example.
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">static_terraform_output</span> <span class="o">=</span>
+  <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
+  <span class="c1"># output</span>
+  <span class="n">attribute</span><span class="p">(</span>
+    <span class="s2">"static_terraform_output"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"An arbitrary, static output"</span>
+  <span class="p">)</span>
+
+<span class="n">customized_inspec_attribute</span> <span class="o">=</span>
+  <span class="c1"># The Test Kitchen configuration must map this attribute to the</span>
+  <span class="c1"># 'static_terraform_output' output</span>
+  <span class="n">attribute</span><span class="p">(</span>
+    <span class="s2">"customized_inspec_attribute"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"A configured alias for static_terraform_output"</span>
+  <span class="p">)</span>
+
+<span class="n">control</span> <span class="s2">"inspec_attributes"</span> <span class="k">do</span>
+  <span class="n">desc</span> <span class="s2">"A demonstration of how InSpec attributes are mapped to Terraform outputs"</span>
+
+  <span class="n">describe</span> <span class="s2">"The 'static_terraform_output' attribute"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span>
+      <span class="n">static_terraform_output</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"is mapped to the 'static_terraform_output' output by default"</span> <span class="k">do</span>
+      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"static terraform output"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">describe</span> <span class="s2">"The 'customized_inspec_attribute' attribute"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span>
+      <span class="n">customized_inspec_attribute</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"is mapped to the 'static_terraform_output' output by configuration"</span> <span class="k">do</span>
+      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"static terraform output"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</code></pre></div>          <br><br>
+          Populate the operating system control,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/controls/operating_system.rb
+          </p>
+          , to match the following example.
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">instances_ami_operating_system_name</span> <span class="o">=</span>
+  <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
+  <span class="c1"># output</span>
+  <span class="n">attribute</span><span class="p">(</span>
+    <span class="s2">"instances_ami_operating_system_name"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"The name of the operating system on the AWS EC2 instances AMI"</span>
+  <span class="p">)</span>
+
+<span class="n">control</span> <span class="s2">"operating_system"</span> <span class="k">do</span>
+  <span class="n">desc</span> <span class="s2">"Verifies the name of the operating system on the targeted host"</span>
+
+  <span class="n">describe</span> <span class="s2">"The operating system name"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span>
+      <span class="n">os</span><span class="p">[</span><span class="ss">:name</span><span class="p">]</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"is equal to the 'instances_ami_operating_system_name' output"</span> <span class="k">do</span>
+      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">eq</span> <span class="n">instances_ami_operating_system_name</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</code></pre></div>          <br><br>
+          Populate the reachable other host control,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/controls/reachable_other_host.rb
+          </p>
+          , to match the following example.
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">reachable_other_host_id</span> <span class="o">=</span>
+  <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
+  <span class="c1"># output</span>
+  <span class="n">attribute</span><span class="p">(</span>
+    <span class="s2">"reachable_other_host_id"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"The ID of the AWS EC2 instance which should be reachable"</span>
+  <span class="p">)</span>
+
+<span class="n">control</span> <span class="s2">"reachable_other_host"</span> <span class="k">do</span>
+  <span class="n">desc</span> <span class="s2">"Verifies that the other host is reachable from the current host"</span>
+
+  <span class="n">describe</span> <span class="s2">"The other host"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span>
+      <span class="n">host</span> <span class="n">aws_ec2_instance</span><span class="p">(</span><span class="n">reachable_other_host_id</span><span class="p">).</span><span class="nf">public_ip_address</span>
+    <span class="k">end</span>
+
+    <span class="n">before</span> <span class="k">do</span>
+      <span class="nb">sleep</span> <span class="mi">5</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"is reachable"</span> <span class="k">do</span>
+      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">be_reachable</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</code></pre></div>          <br><br>
+          Populate the state file control,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/controls/state_file.rb
+          </p>
+          , to match the following example.
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">terraform_state</span> <span class="o">=</span>
+  <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
+  <span class="c1"># output</span>
+  <span class="n">attribute</span><span class="p">(</span>
+    <span class="s2">"terraform_state"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"The path to the Terraform state file"</span>
+  <span class="p">)</span>
+    <span class="p">.</span><span class="nf">chomp</span>
+
+<span class="n">control</span> <span class="s2">"state_file"</span> <span class="k">do</span>
+  <span class="n">desc</span> <span class="s2">"Verifies that the Terraform state file can be used in InSpec controls"</span>
+
+  <span class="n">describe</span> <span class="s2">"The Terraform version in the Terraform state file"</span> <span class="k">do</span>
+    <span class="n">subject</span> <span class="k">do</span>
+      <span class="n">json</span><span class="p">(</span><span class="n">terraform_state</span><span class="p">).</span><span class="nf">terraform_version</span>
+    <span class="k">end</span>
+
+    <span class="n">it</span> <span class="s2">"matches the MAJOR.MINOR.PATCH format"</span> <span class="k">do</span>
+      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">match</span> <span class="sr">/\d+\.\d+\.\d+/</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+</code></pre></div>        </div>
+        <div
+          aria-labelledby="list-four-list"
+          class="tab-pane fade"
+          id="list-four"
+          role="tabpanel"
+        >
+          Mimic the following Bash script to generate an authentication key for SSH to be used by InSpec when
+          authenticating with the AWS EC2 instances under test.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#!/bin/bash</span>
+
+<span class="c"># Make a directory to contain the key</span>
+mkdir <span class="nt">-p</span> <span class="nb">test</span>/assets
+
+<span class="c"># Generate a 4096 bit RSA key with a blank passphrase in the directory</span>
+ssh-keygen <span class="se">\</span>
+  <span class="nt">-b</span> 4096 <span class="se">\</span>
+  <span class="nt">-C</span> <span class="s2">"Kitchen-Terraform AWS provider tutorial"</span> <span class="se">\</span>
+  <span class="nt">-f</span> <span class="nb">test</span>/assets/key_pair <span class="se">\</span>
+  <span class="nt">-N</span> <span class="s2">""</span> <span class="se">\</span>
+  <span class="nt">-t</span> rsa
+
+</code></pre></div>        </div>
+        <div
+          aria-labelledby="list-five-list"
+          class="tab-pane fade"
+          id="list-five"
+          role="tabpanel"
+        >
+          Using a test fixture Terraform configuration to invoke the Terraform module under test provides two
+          advantages. First, it enables the expansion of the variable interface and the output interface
+          of the module to better support testing without polluting the core logic. Second, it provides an opportunity
+          to test the user experience of the module and identify areas of the design that can be improved or simplified.
+          <br><br>
+          Prepare the configuration by mimicing the following Bash script.
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
+
+mkdir <span class="nt">-p</span> <span class="nb">test</span>/fixtures/wrapper
+touch <span class="nb">test</span>/fixtures/wrapper/configuration.tf
+
+</code></pre></div>          <br><br>
+          Populate the configuration file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/fixtures/wrapper/configuration.tf
+          </p>
+          , to match the following example.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Input Variable Configuration</span>
+
+<span class="n">variable</span> <span class="s2">"instances_ami"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOD</span><span class="sh">
+The Amazon Machine Image (AMI) to use for the AWS EC2 instances of the module
+</span><span class="no">EOD</span>
+
+  <span class="n">type</span> <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="n">variable</span> <span class="s2">"instances_ami_operating_system_name"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The name of the operating system within the AMI"</span>
+  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="n">variable</span> <span class="s2">"subnet_availability_zone"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOD</span><span class="sh">
+The isolated, regional location in which to place the subnet of the module
+</span><span class="no">EOD</span>
+
+  <span class="n">type</span> <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="c1"># Module Configuration</span>
+
+<span class="n">module</span> <span class="s2">"extensive_kitchen_terraform"</span> <span class="p">{</span>
+  <span class="n">instances_ami</span> <span class="o">=</span> <span class="s2">"${var.instances_ami}"</span>
+
+  <span class="c1"># The generated key pair will be used to configure SSH authentication</span>
+  <span class="n">key_pair_public_key</span> <span class="o">=</span> <span class="s2">"${file("</span><span class="err">$</span><span class="p">{</span><span class="n">path</span><span class="p">.</span><span class="nf">module</span><span class="p">}</span><span class="o">/..</span><span class="sr">/../</span><span class="n">assets</span><span class="o">/</span><span class="n">key_pair</span><span class="p">.</span><span class="nf">pub</span><span class="s2">")}"</span>
+
+  <span class="c1"># The source of the module is the root directory of the Terraform project</span>
+  <span class="n">source</span>                   <span class="o">=</span> <span class="s2">"../../../"</span>
+  <span class="n">subnet_availability_zone</span> <span class="o">=</span> <span class="s2">"${var.subnet_availability_zone}"</span>
+<span class="p">}</span>
+
+<span class="c1"># Output Configuration</span>
+
+<span class="c1"># This output is used as an attribute in the operating_system control</span>
+<span class="n">output</span> <span class="s2">"instances_ami_operating_system_name"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The name of the operating system within the AMI"</span>
+
+  <span class="n">value</span> <span class="o">=</span> <span class="s2">"${var.instances_ami_operating_system_name}"</span>
+<span class="p">}</span>
+
+<span class="c1"># This output is used as an attribute in the reachable_other_host control</span>
+<span class="n">output</span> <span class="s2">"reachable_other_host_id"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The ID of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${module.extensive_kitchen_terraform.reachable_other_host_id}"</span>
+<span class="p">}</span>
+
+<span class="c1"># This output is used as an attribute in the inspec_attributes control</span>
+<span class="n">output</span> <span class="s2">"static_terraform_output"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"A static value"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"static terraform output"</span>
+<span class="p">}</span>
+
+<span class="c1"># This output is used as an attribute in the state_file control</span>
+<span class="n">output</span> <span class="s2">"terraform_state"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The path to the Terraform state file"</span>
+
+  <span class="n">value</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOV</span><span class="sh">
+${path.cwd}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate
+</span><span class="no">EOV</span>
+<span class="p">}</span>
+
+<span class="c1"># This output is used to obtain targets for InSpec</span>
+<span class="n">output</span> <span class="s2">"remote_group_public_dns"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The list of public DNS names of the remote_group instances"</span>
+
+  <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"${module.extensive_kitchen_terraform.remote_group_public_dns}"</span><span class="p">]</span>
+<span class="p">}</span>
+
+</code></pre></div>        </div>
+        <div
+          aria-labelledby="list-six-list"
+          class="tab-pane fade"
+          id="list-six"
+          role="tabpanel"
+        >
+          The Terraform module is the actual artefact under test. The design of the module is informed by the InSpec
+          profile and the fixture configuration.
+          <br><br>
+          Prepare the module by mimicing the following Bash script.
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
+
+touch module.tf
+
+</code></pre></div>          <br><br>
+          Populate the module file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            module.tf
+          </p>
+          , to match the following example.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Terraform Configuration</span>
+
+<span class="n">terraform</span> <span class="p">{</span>
+  <span class="c1"># The configuration is restricted to Terraform versions supported by</span>
+  <span class="c1"># Kitchen-Terraform</span>
+  <span class="n">required_version</span> <span class="o">=</span> <span class="s2">"&gt;= 0.10.2, &lt; 0.12.0"</span>
+<span class="p">}</span>
+
+<span class="c1"># Input Variable Configuration</span>
+
+<span class="n">variable</span> <span class="s2">"instances_ami"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The Amazon Machine Image (AMI) to use for the AWS EC2 instances"</span>
+  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="n">variable</span> <span class="s2">"key_pair_public_key"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOD</span><span class="sh">
+The public key material to use for SSH authentication with the instances
+</span><span class="no">EOD</span>
+
+  <span class="n">type</span> <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="n">variable</span> <span class="s2">"subnet_availability_zone"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The isolated, regional location in which to place the subnet"</span>
+  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
+<span class="p">}</span>
+
+<span class="c1"># Provider Configuration</span>
+
+<span class="n">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
+  <span class="n">version</span> <span class="o">=</span> <span class="s2">"~&gt; 0.1"</span>
+<span class="p">}</span>
+
+<span class="n">provider</span> <span class="s2">"random"</span> <span class="p">{</span>
+  <span class="n">version</span> <span class="o">=</span> <span class="s2">"~&gt; 1.0"</span>
+<span class="p">}</span>
+
+<span class="c1"># Resource Configuration</span>
+
+<span class="c1"># These aws_instances will be targeted with the operating_system control and the</span>
+<span class="c1"># reachable_other_host control</span>
+<span class="n">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"remote_group"</span> <span class="p">{</span>
+  <span class="n">ami</span>           <span class="o">=</span> <span class="s2">"${var.instances_ami}"</span>
+  <span class="n">count</span>         <span class="o">=</span> <span class="mi">2</span>
+  <span class="n">instance_type</span> <span class="o">=</span> <span class="s2">"t2.micro"</span>
+  <span class="n">key_name</span>      <span class="o">=</span> <span class="s2">"${aws_key_pair.extensive_tutorial.key_name}"</span>
+  <span class="n">subnet_id</span>     <span class="o">=</span> <span class="s2">"${aws_subnet.extensive_tutorial.id}"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span>      <span class="o">=</span> <span class="s2">"kitchen-terraform-test-target-${count.index}"</span>
+    <span class="no">Terraform</span> <span class="o">=</span> <span class="s2">"true"</span>
+  <span class="p">}</span>
+
+  <span class="n">vpc_security_group_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"${aws_security_group.extensive_tutorial.id}"</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># The reachable_other_host control will attempt to connect to this aws_instance</span>
+<span class="c1"># from each of the remote_group aws_instances which will verify the configuration</span>
+<span class="c1"># of the associated aws_security_group</span>
+<span class="n">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"reachable_other_host"</span> <span class="p">{</span>
+  <span class="n">ami</span>                         <span class="o">=</span> <span class="s2">"${var.instances_ami}"</span>
+  <span class="n">associate_public_ip_address</span> <span class="o">=</span> <span class="kp">true</span>
+  <span class="n">instance_type</span>               <span class="o">=</span> <span class="s2">"t2.micro"</span>
+  <span class="n">key_name</span>                    <span class="o">=</span> <span class="s2">"${aws_key_pair.extensive_tutorial.key_name}"</span>
+  <span class="n">subnet_id</span>                   <span class="o">=</span> <span class="s2">"${aws_subnet.extensive_tutorial.id}"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span>      <span class="o">=</span> <span class="s2">"kitchen-terraform-reachable-other-host"</span>
+    <span class="no">Terraform</span> <span class="o">=</span> <span class="s2">"true"</span>
+  <span class="p">}</span>
+
+  <span class="n">vpc_security_group_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"${aws_security_group.extensive_tutorial.id}"</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_key_pair"</span> <span class="s2">"extensive_tutorial"</span> <span class="p">{</span>
+  <span class="n">key_name</span> <span class="o">=</span> <span class="s2">"kitchen-terraform-${random_string.key_name.result}"</span>
+
+  <span class="n">public_key</span> <span class="o">=</span> <span class="s2">"${var.key_pair_public_key}"</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"random_string"</span> <span class="s2">"key_name"</span> <span class="p">{</span>
+  <span class="n">length</span>  <span class="o">=</span> <span class="mi">9</span>
+  <span class="n">special</span> <span class="o">=</span> <span class="kp">false</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_security_group"</span> <span class="s2">"extensive_tutorial"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"Allow all inbound traffic"</span>
+
+  <span class="n">egress</span> <span class="p">{</span>
+    <span class="n">cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+    <span class="n">from_port</span>   <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">protocol</span>    <span class="o">=</span> <span class="s2">"-1"</span>
+    <span class="n">to_port</span>     <span class="o">=</span> <span class="mi">0</span>
+  <span class="p">}</span>
+
+  <span class="n">ingress</span> <span class="p">{</span>
+    <span class="n">cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+    <span class="n">from_port</span>   <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">protocol</span>    <span class="o">=</span> <span class="s2">"-1"</span>
+    <span class="n">to_port</span>     <span class="o">=</span> <span class="mi">0</span>
+  <span class="p">}</span>
+
+  <span class="nb">name</span> <span class="o">=</span> <span class="s2">"kitchen-terraform-extensive_tutorial"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span>      <span class="o">=</span> <span class="s2">"kitchen-terraform-extensive_tutorial"</span>
+    <span class="no">Terraform</span> <span class="o">=</span> <span class="s2">"true"</span>
+  <span class="p">}</span>
+
+  <span class="n">vpc_id</span> <span class="o">=</span> <span class="s2">"${aws_vpc.extensive_tutorial.id}"</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_route_table_association"</span> <span class="s2">"extensive_tutorial"</span> <span class="p">{</span>
+  <span class="n">route_table_id</span> <span class="o">=</span> <span class="s2">"${aws_route_table.extensive_tutorial.id}"</span>
+  <span class="n">subnet_id</span>      <span class="o">=</span> <span class="s2">"${aws_subnet.extensive_tutorial.id}"</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_route_table"</span> <span class="s2">"extensive_tutorial"</span> <span class="p">{</span>
+  <span class="n">route</span> <span class="p">{</span>
+    <span class="n">cidr_block</span> <span class="o">=</span> <span class="s2">"0.0.0.0/0"</span>
+    <span class="n">gateway_id</span> <span class="o">=</span> <span class="s2">"${aws_internet_gateway.extensive_tutorial.id}"</span>
+  <span class="p">}</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span> <span class="o">=</span> <span class="s2">"kitchen_terraform_extensive_tutorial"</span>
+  <span class="p">}</span>
+
+  <span class="n">vpc_id</span> <span class="o">=</span> <span class="s2">"${aws_vpc.extensive_tutorial.id}"</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_internet_gateway"</span> <span class="s2">"extensive_tutorial"</span> <span class="p">{</span>
+  <span class="n">tags</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="no">Name</span> <span class="o">=</span> <span class="s2">"kitchen_terraform_extensive_tutorial"</span>
+  <span class="p">}</span>
+
+  <span class="n">vpc_id</span> <span class="o">=</span> <span class="s2">"${aws_vpc.extensive_tutorial.id}"</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_subnet"</span> <span class="s2">"extensive_tutorial"</span> <span class="p">{</span>
+  <span class="n">availability_zone</span>       <span class="o">=</span> <span class="s2">"${var.subnet_availability_zone}"</span>
+  <span class="n">cidr_block</span>              <span class="o">=</span> <span class="s2">"192.168.1.0/24"</span>
+  <span class="n">map_public_ip_on_launch</span> <span class="o">=</span> <span class="s2">"true"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span> <span class="o">=</span> <span class="s2">"kitchen_terraform_extensive_tutorial"</span>
+  <span class="p">}</span>
+
+  <span class="n">vpc_id</span> <span class="o">=</span> <span class="s2">"${aws_vpc.extensive_tutorial.id}"</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_vpc"</span> <span class="s2">"extensive_tutorial"</span> <span class="p">{</span>
+  <span class="n">cidr_block</span>           <span class="o">=</span> <span class="s2">"192.168.0.0/16"</span>
+  <span class="n">enable_dns_hostnames</span> <span class="o">=</span> <span class="s2">"true"</span>
+
+  <span class="n">tags</span> <span class="p">{</span>
+    <span class="no">Name</span> <span class="o">=</span> <span class="s2">"kitchen_terraform_extensive_tutorial"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Output Configuration</span>
+
+<span class="c1"># This output is used as an attribute in the reachable_other_host control</span>
+<span class="n">output</span> <span class="s2">"reachable_other_host_id"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The ID of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_instance.reachable_other_host.id}"</span>
+<span class="p">}</span>
+
+<span class="c1"># This output is used to obtain targets for InSpec</span>
+<span class="n">output</span> <span class="s2">"remote_group_public_dns"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The list of public DNS names of the remote_group instances"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="p">[</span><span class="s2">"${aws_instance.remote_group.*.public_dns}"</span><span class="p">]</span>
+<span class="p">}</span>
+
+</code></pre></div>        </div>
+        <div
+          aria-labelledby="list-seven-list"
+          class="tab-pane fade"
+          id="list-seven"
+          role="tabpanel"
+        >
+          Populate the Test Kitchen configuration file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            .kitchen.yml
+          </p>
+          , to match the following example.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">driver</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+  <span class="c1"># The test fixture Terraform configuration is configured to be the Terraform</span>
+  <span class="c1"># root module</span>
+  <span class="na">root_module_directory</span><span class="pi">:</span> <span class="s">test/fixtures/wrapper</span>
+
+<span class="na">provisioner</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">transport</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
+  <span class="na">connection_retry_sleep</span><span class="pi">:</span> <span class="s">5</span>
+  <span class="na">port</span><span class="pi">:</span> <span class="s">22</span>
+
+  <span class="c1"># The generated key pair is configured to be used for the SSH authentication</span>
+  <span class="c1"># performed by InSpec</span>
+  <span class="na">ssh_key</span><span class="pi">:</span> <span class="s">test/assets/key_pair</span>
+
+<span class="na">verifier</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">sudo</span><span class="pi">:</span> <span class="no">false</span>
+
+<span class="c1"># Platforms provide hooks for overriding the global Test Kitchen plugin</span>
+<span class="c1"># configuration to provide platform-specific values</span>
+<span class="na">platforms</span><span class="pi">:</span>
+  <span class="pi">-</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">centos</span>
+
+    <span class="na">driver</span><span class="pi">:</span>
+      <span class="na">variables</span><span class="pi">:</span>
+        <span class="na">instances_ami</span><span class="pi">:</span> <span class="s">ami-ae7bfdb8</span>
+        <span class="na">instances_ami_operating_system_name</span><span class="pi">:</span> <span class="s">centos</span>
+        <span class="na">subnet_availability_zone</span><span class="pi">:</span> <span class="s">us-east-1a</span>
+
+    <span class="na">transport</span><span class="pi">:</span>
+      <span class="na">username</span><span class="pi">:</span> <span class="s">centos</span>
+
+  <span class="pi">-</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
+
+    <span class="na">driver</span><span class="pi">:</span>
+      <span class="na">variables</span><span class="pi">:</span>
+        <span class="na">instances_ami</span><span class="pi">:</span> <span class="s">ami-1ee65166</span>
+        <span class="na">instances_ami_operating_system_name</span><span class="pi">:</span> <span class="s">ubuntu</span>
+        <span class="na">subnet_availability_zone</span><span class="pi">:</span> <span class="s">us-west-2b</span>
+
+    <span class="na">transport</span><span class="pi">:</span>
+      <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
+
+<span class="c1"># Suites include tests and provide additional hooks for overriding the global Test</span>
+<span class="c1"># Kitchen plugin configuration</span>
+<span class="na">suites</span><span class="pi">:</span>
+  <span class="pi">-</span>
+    <span class="c1"># Kitchen-Terraform will assume that the InSpec profile for this suite is</span>
+    <span class="c1"># located at test/integration/extensive_suite</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">extensive_suite</span>
+
+    <span class="na">verifier</span><span class="pi">:</span>
+      <span class="na">groups</span><span class="pi">:</span>
+        <span class="pi">-</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">local</span>
+
+          <span class="c1"># The customized_inspec_attribute InSpec attribute is configured to</span>
+          <span class="c1"># satisfy the inspec_attributes control</span>
+          <span class="na">attributes</span><span class="pi">:</span>
+            <span class="na">customized_inspec_attribute</span><span class="pi">:</span> <span class="s">static_terraform_output</span>
+
+          <span class="c1"># A subset of the controls included in the extensive_suite InSpec</span>
+          <span class="c1"># profile will be executed</span>
+          <span class="na">controls</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s">inspec_attributes</span>
+            <span class="pi">-</span> <span class="s">state_file</span>
+
+          <span class="c1"># The hostnames attribute is omitted which means that the configured</span>
+          <span class="c1"># controls will be executed on localhost</span>
+
+        <span class="pi">-</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">remote</span>
+
+          <span class="na">controls</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s">operating_system</span>
+            <span class="pi">-</span> <span class="s">reachable_other_host</span>
+
+          <span class="c1"># The value of the Terraform output named remote_group_public_dns will</span>
+          <span class="c1"># be used to obtain the hostnames to target with InSpec</span>
+          <span class="na">hostnames</span><span class="pi">:</span> <span class="s">remote_group_public_dns</span>
+
+</code></pre></div>        </div>
+        <div
+          aria-labelledby="list-eight-list"
+          class="tab-pane fade"
+          id="list-eight"
+          role="tabpanel"
+        >
+          Populate the Bundler dependency file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            Gemfile
+          </p>,
+          to match the following example.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
+
+<span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
+  <span class="c1"># aws-sdk is required to leverage the InSpec AWS plugin while it is in initial</span>
+  <span class="c1"># development</span>
+  <span class="n">gem</span><span class="p">(</span>
+    <span class="s2">"aws-sdk"</span><span class="p">,</span>
+    <span class="s2">"~&gt; 2.0"</span>
+  <span class="p">)</span>
+
+  <span class="n">gem</span><span class="p">(</span>
+    <span class="s2">"kitchen-terraform"</span><span class="p">,</span>
+    <span class="s2">"~&gt; 3.1"</span>
+  <span class="p">)</span>
+<span class="k">end</span>
+
+</code></pre></div>          Install the declared Ruby gem dependencies by mimicing the following Bash script.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
+
+gem install bundler
+bundle install
+
+</code></pre></div>          Test the Terraform module using multiple platforms by mimicing the following Bash script.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
+
+<span class="c"># Unset AWS STS session environment variables</span>
+<span class="k">function </span>drop_aws_sts_session <span class="o">{</span>
+  <span class="nb">unset </span>AWS_ACCESS_KEY_ID
+  <span class="nb">unset </span>AWS_DEFAULT_REGION
+  <span class="nb">unset </span>AWS_SECRET_ACCESS_KEY
+  <span class="nb">unset </span>AWS_SESSION_TOKEN
+<span class="o">}</span>
+
+<span class="c"># Export AWS STS session environment variables</span>
+<span class="k">function </span>export_aws_sts_session <span class="o">{</span>
+  drop_aws_sts_session
+  <span class="nv">session</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>aws sts get-session-token <span class="nt">--output</span><span class="o">=</span>json<span class="k">)</span><span class="s2">"</span>
+  <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.AccessKeyId<span class="k">)</span><span class="s2">"</span>
+  <span class="nv">AWS_DEFAULT_REGION</span><span class="o">=</span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span>
+  <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.SecretAccessKey<span class="k">)</span><span class="s2">"</span>
+  <span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.SessionToken<span class="k">)</span><span class="s2">"</span>
+  <span class="nb">export </span>AWS_ACCESS_KEY_ID
+  <span class="nb">export </span>AWS_DEFAULT_REGION
+  <span class="nb">export </span>AWS_SECRET_ACCESS_KEY
+  <span class="nb">export </span>AWS_SESSION_TOKEN
+<span class="o">}</span>
+
+export_aws_sts_session <span class="s2">"us-east-1"</span>
+
+<span class="c"># Destroy any existing Terraform state</span>
+bundle <span class="nb">exec </span>kitchen destroy
+
+<span class="c"># Initialize the Terraform working directory and select a new Terraform workspace</span>
+<span class="c"># to test CentOS in us-east-1</span>
+bundle <span class="nb">exec </span>kitchen create centos
+
+<span class="c"># Apply the Terraform root module to the Terraform state using the Terraform</span>
+<span class="c"># fixture configuration</span>
+bundle <span class="nb">exec </span>kitchen converge centos
+
+<span class="c"># Test the Terraform state using the InSpec controls</span>
+bundle <span class="nb">exec </span>kitchen verify centos
+
+<span class="c"># Destroy the Terraform state using the Terraform fixture configuration</span>
+bundle <span class="nb">exec </span>kitchen destroy centos
+
+export_aws_sts_session <span class="s2">"us-west-2"</span>
+
+<span class="c"># Perform the same steps for Ubuntu in us-west-2</span>
+bundle <span class="nb">exec </span>kitchen <span class="nb">test </span>ubuntu
+
+drop_aws_sts_session
+
+</code></pre></div>        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+    <footer class="footer">
+      <div class="container">
+        <span class="text-muted">Community driven, created and maintained by
+          <a href="http://newcontext.com" style="color: #32c850;">
+            <img src="/kitchen-terraform/images/newcontext_logo.png" class="d-inline-block" style="vertical-align: sub;" width="30" height="24" alt="New Context Services, Inc. logo" />
+            New Context Services, Inc.
+          </a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

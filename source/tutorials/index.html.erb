@@ -44,10 +44,19 @@ verifier:
     <div class="col">
       <div class="card" style="width: 20rem;">
         <div class="card-body">
-          <h4 class="card-title">AWS Provider with fixtures</h4>
-          <h6 class="card-subtitle mb-2 text-muted">Detailed Guide</h6>
-          <p class="card-text">Learn the more advanced features of Kitchen-Terraform, test a larger set of Terraform code and use Inspec controls and profiles.</p>
-          <%= link_to 'Dive In', '/tutorials/amazon_provider_ec2_advance.html', :class => 'btn btn-primary card-link' %>
+          <h4 class="card-title">Extensive Kitchen-Terraform</h4>
+          <h6 class="card-subtitle mb-2 text-muted">Detailed Review</h6>
+          <p class="card-text">
+            Learn the more advanced features of Kitchen-Terraform by testing a Terraform module using multiple operating
+            systems and InSpec controls executed both remotely and locally.
+          </p>
+          <%=
+            link_to(
+              'Engage',
+              '/tutorials/extensive_kitchen_terraform.html',
+              class: 'btn btn-primary card-link'
+            )
+          %>
         </div>
       </div>
     </div>

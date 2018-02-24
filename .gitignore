@@ -4,6 +4,7 @@
 **/.kitchen/
 **/.terraform/
 **/inspec.lock
+**/terraform.tfstate
 *.gem
 .DS_Store/
 .cache/
@@ -16,8 +17,6 @@ certs/gem-private_key.pem
 coverage/
 doc/
 examples/*/Gemfile.lock
-examples/openstack_provider/.kitchen/
-examples/openstack_provider/.terraform/
-examples/openstack_provider/my-variables.tfvars
+examples/*/test/assets
 tmp/
 vendor/
