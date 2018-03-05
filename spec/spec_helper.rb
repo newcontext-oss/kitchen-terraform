@@ -30,8 +30,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   configuration.fail_fast = true
 
-  configuration.formatter = :documentation
-
   configuration.include ::Helpers
 
   configuration.mock_with :rspec do |mocks|
