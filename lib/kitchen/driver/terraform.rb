@@ -176,7 +176,13 @@ require "kitchen/terraform/shell_out"
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   kitchen_driver_api_version 2
 
-  no_parallel_for
+  no_parallel_for(
+    :create,
+    :converge,
+    :setup,
+    :verify,
+    :destroy
+  )
 
   include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 

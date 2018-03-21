@@ -165,8 +165,17 @@ require "support/kitchen/terraform/result_in_success_matcher"
         described_class.serial_actions
       end
 
-      it "is empty" do
-        is_expected.to be_empty
+      it do
+        is_expected
+          .to(
+            contain_exactly(
+              :create,
+              :converge,
+              :setup,
+              :verify,
+              :destroy
+            )
+          )
       end
     end
 
