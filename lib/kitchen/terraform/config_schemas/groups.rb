@@ -18,10 +18,8 @@ require "dry-validation"
 require "kitchen/terraform/config_predicates"
 require "kitchen/terraform/config_schemas"
 
-# A validation schema for the groups configuration attribute which is an array of hashes including only symbol keys and
-# string values.
-#
-# @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
+# A {http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation schema} for the groups
+# configuration attribute which is an array of hashes.
 ::Kitchen::Terraform::ConfigSchemas::Groups =
   ::Dry::Validation
     .Schema do
@@ -33,20 +31,60 @@ require "kitchen/terraform/config_schemas"
         .each do
           schema do
             required(:name).filled :str?
+
             optional(:attributes).value :hash_of_symbols_and_strings?
-            optional(:controls)
-              .each(
-                :filled?,
-                :str?
-              )
-            optional(:hostnames).value :str?
-            optional(:port).value :int?
-            optional(:ssh_key)
-              .maybe(
-                :str?,
-                :filled?
-              )
-            optional(:username).value :str?
+            optional(:hostnames).filled :str?
+
+            optional(:inspec_options)
+              .schema do
+                optional(:attrs)
+                  .each(
+                    :filled?,
+                    :str?,
+                    :path_to_existent_file?
+                  )
+
+                optional(:backend).filled :str?
+                optional(:backend_cache).value :bool?
+
+                optional(:controls)
+                  .each(
+                    :filled?,
+                    :str?
+                  )
+
+                optional(:create_lockfile).value :bool?
+
+                optional(:key_files)
+                  .each(
+                    :filled?,
+                    :str?,
+                    :path_to_existent_file?
+                  )
+
+                optional(:password).filled :str?
+                optional(:path).filled :str?
+                optional(:port).value :int?
+
+                optional(:reporter)
+                  .each(
+                    :filled?,
+                    :str?
+                  )
+
+                optional(:self_signed).value :bool?
+                optional(:shell).value :bool?
+                optional(:shell_command).filled :str?
+                optional(:shell_options).filled :str?
+                optional(:show_progress).value :bool?
+                optional(:ssl).value :bool?
+                optional(:sudo).value :bool?
+                optional(:sudo_command).filled :str?
+                optional(:sudo_options).filled :str?
+                optional(:sudo_password).filled :str?
+                optional(:user).filled :str?
+                optional(:vendor_cache).filled :str?
+              end
           end
         end
     end
