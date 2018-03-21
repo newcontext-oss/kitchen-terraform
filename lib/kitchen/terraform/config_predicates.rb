@@ -16,6 +16,7 @@
 
 require "dry/logic"
 require "kitchen/terraform"
+require "pathname"
 
 # {http://dry-rb.org/gems/dry-validation/custom-predicates/ DRY Validation custom predicates}.
 #
@@ -27,6 +28,10 @@ module ::Kitchen::Terraform::ConfigPredicates
     value.kind_of? ::Hash and
       all_symbols? keys: value.keys and
       all_strings? values: value.values
+  end
+
+  predicate :path_to_existent_file? do |value|
+    Pathname(value).exist?
   end
 
   # A callback to define predicates on a configuration schema which is invoked when this module is extended by said
@@ -75,6 +80,7 @@ module ::Kitchen::Terraform::ConfigPredicates
             errors:
               {
                 hash_of_symbols_and_strings?: "must be a hash which includes only symbol keys and string values",
+                path_to_existent_file?: "must be a path to an existent file"
               }
           }
       )
