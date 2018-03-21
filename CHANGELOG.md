@@ -426,9 +426,9 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Initial release
 
-[3.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.0.0...v3.1.0
 [Unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.2.0...HEAD
 [3.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.1.0...v3.2.0
+[3.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.1.0...v3.0.0
 [2.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v1.0.2...v2.0.0
