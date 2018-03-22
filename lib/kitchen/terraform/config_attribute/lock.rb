@@ -20,7 +20,7 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/boolean"
 
-# This attribute toggles locking of the Terraform state file.
+# This attribute toggles {https://www.terraform.io/docs/state/locking.html locking of the Terraform state file}.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
 # Required:: False
