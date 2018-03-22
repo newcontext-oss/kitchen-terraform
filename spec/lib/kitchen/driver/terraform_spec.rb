@@ -23,6 +23,7 @@ require "kitchen/terraform/shell_out"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
+require "support/kitchen/terraform/config_attribute/lock_examples"
 require "support/kitchen/terraform/config_attribute/lock_timeout_examples"
 require "support/kitchen/terraform/config_attribute/parallelism_examples"
 require "support/kitchen/terraform/config_attribute/plugin_directory_examples"
@@ -142,6 +143,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
+
+    it_behaves_like "Kitchen::Terraform::ConfigAttribute::Lock"
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::LockTimeout"
 
