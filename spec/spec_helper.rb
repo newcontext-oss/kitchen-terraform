@@ -29,6 +29,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   configuration.fail_fast = true
+  configuration.filter_run :focus
+  configuration.run_all_when_everything_filtered = true
 
   configuration.include ::Helpers
 
