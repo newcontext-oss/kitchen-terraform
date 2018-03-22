@@ -8,6 +8,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [3.3.0] - 2018-03-22
+
 ## [3.2.0] - 2018-03-21
 
 ### Added
@@ -426,7 +428,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Initial release
 
-[Unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.2.0...HEAD
+[Unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v2.1.0...v3.0.0
