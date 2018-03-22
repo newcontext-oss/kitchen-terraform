@@ -10,6 +10,11 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [3.3.0] - 2018-03-22
 
+### Added
+
+* The `lock` configuration attribute of the driver toggles locking of
+  the Terraform state file
+
 ## [3.2.0] - 2018-03-21
 
 ### Added

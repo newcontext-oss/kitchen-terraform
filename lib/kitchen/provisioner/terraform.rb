@@ -49,7 +49,7 @@ require "kitchen/terraform/error"
 # ===== Applying the Terraform State Changes
 #
 #   terraform apply\
-#     -lock=true \
+#     -lock=<lock> \
 #     -lock-timeout=<lock_timeout>s \
 #     -input=false \
 #     -auto-approve=true \

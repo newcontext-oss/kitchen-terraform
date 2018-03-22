@@ -21,6 +21,7 @@ require "kitchen/terraform/command/output"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
+require "kitchen/terraform/config_attribute/lock"
 require "kitchen/terraform/config_attribute/lock_timeout"
 require "kitchen/terraform/config_attribute/parallelism"
 require "kitchen/terraform/config_attribute/plugin_directory"
@@ -46,7 +47,7 @@ require "kitchen/terraform/shell_out"
 #
 #   terraform init \
 #     -input=false \
-#     -lock=true \
+#     -lock=<lock> \
 #     -lock-timeout=<lock_timeout>s \
 #     [-no-color] \
 #     -upgrade \
@@ -71,7 +72,7 @@ require "kitchen/terraform/shell_out"
 #
 #   terraform init \
 #     -input=false \
-#     -lock=true \
+#     -lock=<lock> \
 #     -lock-timeout=<lock_timeout>s \
 #     [-no-color] \
 #     -force-copy \
@@ -91,7 +92,7 @@ require "kitchen/terraform/shell_out"
 #
 #   terraform destroy \
 #     -force \
-#     -lock=true \
+#     -lock=<lock> \
 #     -lock-timeout=<lock_timeout>s \
 #     -input=false \
 #     [-no-color] \
@@ -135,9 +136,9 @@ require "kitchen/terraform/shell_out"
 #
 # {include:Kitchen::Terraform::ConfigAttribute::CommandTimeout}
 #
-# ==== root_module_directory
+# ==== lock
 #
-# {include:Kitchen::Terraform::ConfigAttribute::RootModuleDirectory}
+# {include:Kitchen::Terraform::ConfigAttribute::Lock}
 #
 # ==== lock_timeout
 #
@@ -150,6 +151,10 @@ require "kitchen/terraform/shell_out"
 # ==== plugin_directory
 #
 # {include:Kitchen::Terraform::ConfigAttribute::PluginDirectory}
+#
+# ==== root_module_directory
+#
+# {include:Kitchen::Terraform::ConfigAttribute::RootModuleDirectory}
 #
 # ==== variable_files
 #
@@ -178,6 +183,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   include ::Kitchen::Terraform::ConfigAttribute::Color
 
   include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
+
+  include ::Kitchen::Terraform::ConfigAttribute::Lock
 
   include ::Kitchen::Terraform::ConfigAttribute::LockTimeout
 
@@ -280,7 +287,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .run(
         command:
           "apply " \
-            "-lock=true " \
+            "#{config_lock_flag} " \
             "#{config_lock_timeout_flag} " \
             "-input=false " \
             "-auto-approve=true " \
@@ -328,7 +335,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "init " \
             "-input=false " \
-            "-lock=true " \
+            "#{config_lock_flag} " \
             "#{config_lock_timeout_flag} " \
             "#{config_color_flag} " \
             "-upgrade " \
@@ -352,7 +359,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "destroy " \
             "-force " \
-            "-lock=true " \
+            "#{config_lock_flag} " \
             "#{config_lock_timeout_flag} " \
             "-input=false " \
             "#{config_color_flag} " \
@@ -373,7 +380,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "init " \
             "-input=false " \
-            "-lock=true " \
+            "#{config_lock_flag} " \
             "#{config_lock_timeout_flag} " \
             "#{config_color_flag} " \
             "-force-copy " \
