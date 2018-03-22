@@ -16,7 +16,6 @@
 
 require "kitchen"
 require "kitchen/terraform/client_version_verifier"
-require "kitchen/terraform/command/output"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
@@ -28,7 +27,7 @@ require "kitchen/terraform/config_attribute/root_module_directory"
 require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/configurable"
-require "kitchen/terraform/shell_out"
+require "kitchen/terraform/output_parser"
 require "shellwords"
 
 # This namespace is defined by Kitchen.
@@ -118,7 +117,11 @@ end
 #
 # === Shelling Out
 #
-# {include:Kitchen::Terraform::ShellOut}
+# Terraform commands are run by shelling out and using the
+# {https://www.terraform.io/docs/commands/index.html command-line interface}, which is assumed to be present in the
+# {https://en.wikipedia.org/wiki/PATH_(variable) PATH} of the user. The shell out environment includes the
+# TF_IN_AUTOMATION environment variable as specified by the
+# {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
 #
 # === Configuration Attributes
 #
@@ -239,17 +242,38 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::Terraform::Error] if one of the steps fails.
   # @return [void]
   # @yieldparam output [::String] the state output.
-  def apply(&block)
+  def apply
     run_workspace_select_instance
     apply_run_get
     apply_run_validate
     apply_run_apply
-    ::Kitchen::Terraform::Command::Output
-      .run(
-        duration: config_command_timeout,
-        logger: logger,
-        &block
+
+    @output_parser
+      .output=(
+        run_command(
+          "terraform output -json",
+          environment:
+            {
+              "LC_ALL" => nil,
+              "TF_IN_AUTOMATION" => true
+            },
+          timeout: config_command_timeout
+        )
       )
+
+    @output_parser
+      .parse do |parsed_output:|
+        yield output: parsed_output
+      end
+  rescue ::Kitchen::ShellOut::ShellCommandFailed => shell_command_failed
+    if /no\\ outputs\\ defined/.match(::Regexp.escape(shell_command_failed.message))
+      yield output: {}
+    else
+      raise(
+        ::Kitchen::Terraform::Error,
+        shell_command_failed.message
+      )
+    end
   end
 
   # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
@@ -260,7 +284,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def create(_state)
     create_run_init
     run_workspace_select_instance
-  rescue ::Kitchen::Terraform::Error => error
+  rescue ::Kitchen::ShellOut::ShellCommandFailed => error
     raise(
       ::Kitchen::ActionFailed,
       error.message
@@ -279,7 +303,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     destroy_run_destroy
     destroy_run_workspace_select_default
     destroy_run_workspace_delete_instance
-  rescue ::Kitchen::Terraform::Error => error
+  rescue ::Kitchen::ShellOut::ShellCommandFailed => error
     raise(
       ::Kitchen::ActionFailed,
       error.message
@@ -288,6 +312,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # Verifies that the Terraform version available to the driver is supported.
   #
+  # @note This method is invoked before the configuration is validated so it must not depend on any configuration
+  #       attributes.
   # @raise [::Kitchen::UserError] if the version is not supported.
   # @return [void]
   def verify_dependencies
@@ -297,15 +323,18 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           .new
           .verify(
             version_output:
-              ::Kitchen::Terraform::ShellOut
-                .run(
-                  command: "version",
-                  duration: 600,
-                  logger: logger
-                )
+              run_command(
+                "terraform version",
+                environment:
+                  {
+                    "LC_ALL" => nil,
+                    "TF_IN_AUTOMATION" => true
+                  },
+                timeout: 600
+              )
           )
       )
-  rescue ::Kitchen::Terraform::Error => error
+  rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Terraform::Error => error
     raise(
       ::Kitchen::UserError,
       error.message
@@ -316,49 +345,56 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def apply_run_apply
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "apply " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "-input=false " \
-            "-auto-approve=true " \
-            "#{color_flag} " \
-            "#{parallelism_flag} " \
-            "-refresh=true " \
-            "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform apply " \
+        "#{lock_flag} " \
+        "#{lock_timeout_flag} " \
+        "-input=false " \
+        "-auto-approve=true " \
+        "#{color_flag} " \
+        "#{parallelism_flag} " \
+        "-refresh=true " \
+        "#{variables_flags} " \
+        "#{variable_files_flags} " \
+        "#{root_module_directory}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
   end
 
   # @api private
   def apply_run_get
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "get -update #{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform get -update #{root_module_directory}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
   end
 
   # @api private
   def apply_run_validate
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "validate " \
-            "-check-variables=true " \
-            "#{color_flag} " \
-            "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform validate " \
+        "-check-variables=true " \
+        "#{color_flag} " \
+        "#{variables_flags} " \
+        "#{variable_files_flags} " \
+        "#{root_module_directory}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
   end
 
   # @api private
@@ -377,90 +413,108 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def create_run_init
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "init " \
-            "-input=false " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "#{color_flag} " \
-            "-upgrade " \
-            "-force-copy " \
-            "-backend=true " \
-            "#{backend_configurations_flags} " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "#{plugin_directory_flag} " \
-            "-verify-plugins=true " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform init " \
+        "-input=false " \
+        "#{lock_flag} " \
+        "#{lock_timeout_flag} " \
+        "#{color_flag} " \
+        "-upgrade " \
+        "-force-copy " \
+        "-backend=true " \
+        "#{backend_configurations_flags} " \
+        "-get=true " \
+        "-get-plugins=true " \
+        "#{plugin_directory_flag} " \
+        "-verify-plugins=true " \
+        "#{root_module_directory}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
   end
 
   # @api private
   def destroy_run_destroy
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "destroy " \
-            "-force " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "-input=false " \
-            "#{color_flag} " \
-            "#{parallelism_flag} " \
-            "-refresh=true " \
-            "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform destroy " \
+        "-force " \
+        "#{lock_flag} " \
+        "#{lock_timeout_flag} " \
+        "-input=false " \
+        "#{color_flag} " \
+        "#{parallelism_flag} " \
+        "-refresh=true " \
+        "#{variables_flags} " \
+        "#{variable_files_flags} " \
+        "#{root_module_directory}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
   end
 
   # @api private
   def destroy_run_init
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "init " \
-            "-input=false " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "#{color_flag} " \
-            "-force-copy " \
-            "-backend=true " \
-            "#{backend_configurations_flags} " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "#{plugin_directory_flag} " \
-            "-verify-plugins=true " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform init " \
+        "-input=false " \
+        "#{lock_flag} " \
+        "#{lock_timeout_flag} " \
+        "#{color_flag} " \
+        "-force-copy " \
+        "-backend=true " \
+        "#{backend_configurations_flags} " \
+        "-get=true " \
+        "-get-plugins=true " \
+        "#{plugin_directory_flag} " \
+        "-verify-plugins=true " \
+        "#{root_module_directory}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
   end
 
   # @api private
   def destroy_run_workspace_delete_instance
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace delete kitchen-terraform-#{instance_name}",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform workspace delete kitchen-terraform-#{instance_name}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
   end
 
   # @api private
   def destroy_run_workspace_select_default
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace select default",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform workspace select default",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
+  end
+
+  # @api private
+  def initialize(config = {})
+    super config
+    @output_parser = ::Kitchen::Terraform::OutputParser.new
   end
 
   # @api private
@@ -497,19 +551,25 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def run_workspace_select_instance
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace select kitchen-terraform-#{instance_name}",
-        duration: config_command_timeout,
-        logger: logger
-      )
-  rescue ::Kitchen::Terraform::Error
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace new kitchen-terraform-#{instance_name}",
-        duration: config_command_timeout,
-        logger: logger
-      )
+    run_command(
+      "terraform workspace select kitchen-terraform-#{instance_name}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
+  rescue ::Kitchen::ShellOut::ShellCommandFailed
+    run_command(
+      "terraform workspace new kitchen-terraform-#{instance_name}",
+      environment:
+        {
+          "LC_ALL" => nil,
+          "TF_IN_AUTOMATION" => true
+        },
+      timeout: config_command_timeout
+    )
   end
 
   # @api private
