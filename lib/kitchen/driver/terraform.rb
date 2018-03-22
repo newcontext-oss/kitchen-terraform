@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/driver/base"
-require "kitchen/errors"
+require "kitchen"
 require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
