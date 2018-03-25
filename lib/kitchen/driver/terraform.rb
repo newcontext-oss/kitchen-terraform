@@ -180,7 +180,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     :create,
     :converge,
     :setup,
-    :verify,
     :destroy
   )
 

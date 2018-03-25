@@ -36,7 +36,9 @@ require "kitchen/terraform/version.rb"
 
   specification.summary = "Test Kitchen plugins for testing Terraform configuration"
 
-  specification.version = ::Kitchen::Terraform::VERSION
+  ::Kitchen::Terraform::Version
+    .new
+    .assign_specification_version specification: specification
 
   specification.email = "kitchen-terraform@newcontext.com"
 

@@ -14,29 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "rubygems"
 require "kitchen/terraform"
+require "kitchen/terraform/breaking/kitchen_instance"
+require "kitchen/terraform/deprecating/kitchen_instance"
+require "kitchen/terraform/version"
 
-# The version of the kitchen-terraform gem.
-class ::Kitchen::Terraform::Version
-  def assign_specification_version(specification:)
-    specification.version = @version.to_s
-    self
-  end
-
-  def assign_plugin_version(configurable_class:)
-    configurable_class.plugin_version @version.to_s
-    self
-  end
-
-  def if_satisfies(requirement:)
-    yield if requirement.satisfied_by? @version
-    self
-  end
-
-  private
-
-  def initialize(version: "3.3.0")
-    @version = ::Gem::Version.new version
+module ::Kitchen::Terraform::KitchenInstance
+  def self.new(kitchen_instance:, version: ::Kitchen::Terraform::Version.new)
+    case version
+    when ::Kitchen::Terraform::Breaking::KitchenInstance
+      ::Kitchen::Terraform::Breaking::KitchenInstance.new kitchen_instance
+    when ::Kitchen::Terraform::Deprecating::KitchenInstance
+      ::Kitchen::Terraform::Deprecating::KitchenInstance.new kitchen_instance
+    end
   end
 end

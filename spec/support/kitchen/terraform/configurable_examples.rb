@@ -35,7 +35,7 @@ require "kitchen/driver/terraform"
       end
 
       it "equals the gem version" do
-        is_expected.to eq ::Kitchen::Terraform::VERSION
+        is_expected.to eq "3.3.0"
       end
     end
 

@@ -161,18 +161,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
     it_behaves_like "Kitchen::Terraform::Configurable"
 
     describe ".serial_actions" do
-      subject do
-        described_class.serial_actions
-      end
-
-      it do
-        is_expected
+      specify do
+        expect(described_class.serial_actions)
           .to(
             contain_exactly(
               :create,
               :converge,
               :setup,
-              :verify,
               :destroy
             )
           )
