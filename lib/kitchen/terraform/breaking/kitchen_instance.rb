@@ -18,5 +18,6 @@ require "delegate"
 require "kitchen"
 require "kitchen/terraform/breaking"
 
+# This class provides the breaking change to the KitchenInstance.
 class ::Kitchen::Terraform::Breaking::KitchenInstance < DelegateClass ::Kitchen::Instance
 end

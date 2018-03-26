@@ -19,18 +19,19 @@ require "kitchen"
 require "kitchen/terraform/deprecating"
 require "thread"
 
+# This class provides the deprecating change to the KitchenInstance.
 class ::Kitchen::Terraform::Deprecating::KitchenInstance < DelegateClass ::Kitchen::Instance
 
-  # Runs a given action block through a common driver mutex if required or
-  # runs it directly otherwise. If a driver class' `.serial_actions` array
-  # includes the desired action, then the action must be run with a muxtex
-  # lock. Otherwise, it is assumed that the action can happen concurrently,
-  # or fully in parallel.
+  # Runs a given action block directly.
   #
-  # @param action [Symbol] the action to be performed
-  # @param state [Hash] a mutable state hash for this instance
-  # @yieldparam state [::Hash] a mutable state hash for this instance
+  # If the desired action is one of +:create+, +:converge+, +:setup+, or +:destroy+, and there is more than one thread
+  # active, then a warning is issued about deprecating support for concurrency with the desired action.
+  #
   # @api private
+  # @param action [::Symbol] the action to be performed
+  # @param state [::Hash] a mutable state hash for this instance
+  # @see ::Kitchen::Instance
+  # @yieldparam state [::Hash] a mutable state hash for this instance
   def synchronize_or_call(action, state)
     Array(
       driver

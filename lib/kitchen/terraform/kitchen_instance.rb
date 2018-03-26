@@ -20,7 +20,21 @@ require "kitchen/terraform/deprecating/kitchen_instance"
 require "kitchen/terraform/version"
 require "rubygems"
 
+# This module is a factory for KitchenInstances.
+#
+# KitchenInstances wrap ::Kitchen::Instance in order to provide a contextual deprecation warning for actions which will
+# no longer support concurrency.
 module ::Kitchen::Terraform::KitchenInstance
+  # Creates a new KitchenInstance.
+  #
+  # If the version satisfies the requirement of +~> 3.3+ then a breaking KitchenInstance is created.
+  #
+  # If the version satisfies the requirement of +>= 4+ then a breaking KitchenInstance is created.
+  #
+  # @param kitchen_instance [::Kitchen::Instance] the ::Kitchen::Instance which will act as the delegate.
+  # @param version [::Kitchen::Terraform::Version] the version to compare against the requirement.
+  # @return [::Kitchen::Terraform::Breaking::KitchenInstance, ::Kitchen::Terraform::Deprecating::KitchenInstance] the
+  #   new KitchenInstance.
   def self.new(kitchen_instance:, version: ::Kitchen::Terraform::Version.new)
     version
       .if_satisfies requirement: ::Gem::Requirement.new("~> 3.3") do
