@@ -17,7 +17,6 @@
 require "delegate"
 require "kitchen"
 require "kitchen/terraform/deprecating"
-require "thread"
 
 # This class provides the deprecating change to the KitchenInstance.
 class ::Kitchen::Terraform::Deprecating::KitchenInstance < DelegateClass ::Kitchen::Instance

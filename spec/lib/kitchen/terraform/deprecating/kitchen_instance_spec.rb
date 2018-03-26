@@ -17,7 +17,6 @@
 require "kitchen/terraform/deprecating/kitchen_instance"
 require "kitchen/terraform/version"
 require "support/kitchen/instance_context"
-require "thread"
 
 ::RSpec
   .describe ::Kitchen::Terraform::Deprecating::KitchenInstance do
