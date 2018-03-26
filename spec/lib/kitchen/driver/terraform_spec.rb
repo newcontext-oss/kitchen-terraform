@@ -161,16 +161,39 @@ require "support/kitchen/terraform/result_in_success_matcher"
     it_behaves_like "Kitchen::Terraform::Configurable"
 
     describe ".serial_actions" do
-      specify do
-        expect(described_class.serial_actions)
-          .to(
-            contain_exactly(
-              :create,
-              :converge,
-              :setup,
-              :destroy
+      context "when the version is less than 4.0.0" do
+        specify do
+          expect(described_class.serial_actions(version: (::Kitchen::Terraform::Version.new(version: "3.3.0"))))
+            .to be_empty
+        end
+      end
+
+      context "when the version is equal to 4.0.0" do
+        specify do
+          expect(described_class.serial_actions(version: (::Kitchen::Terraform::Version.new(version: "4.0.0"))))
+            .to(
+              contain_exactly(
+                :create,
+                :converge,
+                :setup,
+                :destroy
+              )
             )
-          )
+        end
+      end
+
+      context "when the version is greater than 4.0.0" do
+        specify do
+          expect(described_class.serial_actions(version: (::Kitchen::Terraform::Version.new(version: "5.6.7"))))
+            .to(
+              contain_exactly(
+                :create,
+                :converge,
+                :setup,
+                :destroy
+              )
+            )
+        end
       end
     end
 

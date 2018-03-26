@@ -7,6 +7,8 @@
   end
 
 require "kitchen/terraform/version.rb"
+require "rubygems"
+version = ::Kitchen::Terraform::Version.new
 
 ::Gem::Specification.new do |specification|
   specification
@@ -36,9 +38,7 @@ require "kitchen/terraform/version.rb"
 
   specification.summary = "Test Kitchen plugins for testing Terraform configuration"
 
-  ::Kitchen::Terraform::Version
-    .new
-    .assign_specification_version specification: specification
+  version.assign_specification_version specification: specification
 
   specification.email = "kitchen-terraform@newcontext.com"
 
@@ -134,21 +134,49 @@ require "kitchen/terraform/version.rb"
 
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
 
-  specification
-    .add_runtime_dependency(
-      "test-kitchen",
-      "~> 1.16"
-    )
-
   specification.cert_chain = ["certs/gem-public_cert.pem"]
-
-  specification.required_ruby_version =
-    [
-      ">= 2.2",
-      "< 2.6"
-    ]
 
   specification.requirements = ["Terraform >= 0.10.2, < 0.12.0"]
 
   specification.signing_key = "certs/gem-private_key.pem"
+
+  version
+    .if_satisfies requirement: ::Gem::Requirement.new("~> 3.3") do
+      specification
+        .add_runtime_dependency(
+          "test-kitchen",
+          "~> 1.16"
+        )
+
+      ::Kitchen::Terraform::Version
+        .new(version: ::RUBY_VERSION)
+        .if_satisfies requirement: ::Gem::Requirement.new("~> 2.2.0") do
+          specification
+            .post_install_message=(
+              "DEPRECATING: the current version of Ruby is #{::RUBY_VERSION}; this version will not be supported in " \
+                "an upcoming major release of Kitchen-Terraform"
+          )
+        end
+
+      specification.required_ruby_version =
+        [
+          ">= 2.2",
+          "< 2.6"
+        ]
+    end
+
+  version
+    .if_satisfies requirement: ::Gem::Requirement.new(">= 4") do
+      specification
+        .add_runtime_dependency(
+          "test-kitchen",
+          "~> 1.20"
+        )
+
+      specification.required_ruby_version =
+        [
+          ">= 2.3",
+          "< 2.6"
+        ]
+    end
 end
