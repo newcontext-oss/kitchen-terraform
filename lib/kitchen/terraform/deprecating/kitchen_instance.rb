@@ -20,6 +20,7 @@ require "kitchen/terraform/deprecating"
 
 # This class provides the deprecating change to the KitchenInstance.
 class ::Kitchen::Terraform::Deprecating::KitchenInstance < DelegateClass ::Kitchen::Instance
+  private
 
   # Runs a given action block directly.
   #
@@ -32,22 +33,29 @@ class ::Kitchen::Terraform::Deprecating::KitchenInstance < DelegateClass ::Kitch
   # @see ::Kitchen::Instance
   # @yieldparam state [::Hash] a mutable state hash for this instance
   def synchronize_or_call(action, state)
-    Array(
-      driver
-        .class
-        .serial_actions
-    )
-      .grep action do |serial_action|
-        ::Thread
-          .list
-          .length
-          .>(1) and
-            warn(
-              "DEPRECATING: #{to_str} is about to invoke #{driver.class}##{serial_action} with concurrency " \
-                "activated; this action will be forced to run serially as of Kitchen-Terraform v4.0.0"
-            )
-      end
+    ::Thread
+      .list
+      .length
+      .>(1) and
+      issue_warning action: action
 
     yield state
+  end
+
+  # @api private
+  def issue_warning(action:)
+    [
+      :create,
+      :converge,
+      :setup,
+      :destroy
+    ]
+      .grep action do |serial_action|
+        warn(
+          "DEPRECATING: #{to_str} is about to invoke #{driver.class}##{serial_action} with concurrency " \
+            "activated; this action will be forced to run serially in an upcoming major version of " \
+            "Kitchen-Terraform"
+        )
+      end
   end
 end

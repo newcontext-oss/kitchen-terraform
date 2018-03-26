@@ -20,7 +20,7 @@ require "support/kitchen/instance_context"
 
 ::RSpec
   .describe ::Kitchen::Terraform::Deprecating::KitchenInstance do
-    describe "#synchronize_or_call(action, state)" do
+    describe "#synchronize_or_call" do
       subject do
         described_class.new instance
       end
@@ -31,74 +31,88 @@ require "support/kitchen/instance_context"
         {}
       end
 
-      shared_examples "no warning is issued" do
-        after do
-          subject
-            .synchronize_or_call(
-              action,
-              state,
-              &proc do
-              end
-            )
-        end
+      def call_method(&block)
+        block ||=
+          proc do
+          end
 
+        subject
+          .send(
+            :synchronize_or_call,
+            action,
+            state,
+            &block
+          )
+      end
+
+      shared_context "wait for thread to sleep" do
+        before do
+          sleep 0.1 while thread.status != "sleep"
+        end
+      end
+
+      shared_context "wait for thread to finish" do
+        after do
+          call_method
+          thread.run
+          thread.join
+        end
+      end
+
+      shared_context "when concurrency is not activated" do
+        after do
+          call_method
+        end
+      end
+
+      shared_context "when concurrency is activated" do
+        include_context "wait for thread to sleep"
+        include_context "wait for thread to finish"
+
+        let :thread do
+          ::Thread
+            .new do
+              ::Thread.stop
+            end
+        end
+      end
+
+      shared_examples "no warning is issued" do
         specify do
           expect(subject).to_not receive :warn
         end
       end
 
-      shared_examples "a warning is issued about deprecating concurrency when concurrency is activated" do
-        context "when there is one thread" do
-          it_behaves_like "no warning is issued"
-        end
+      shared_examples "no warning is issued when concurrency is not activated" do
+        include_context "when concurrency is not activated"
+        it_behaves_like "no warning is issued"
+      end
 
-        context "when there is more than one thread" do
-          let :thread do
-            ::Thread
-              .new do
-                ::Thread.stop
-              end
-          end
+      shared_examples "no warning is issued when concurrency is activated" do
+        include_context "when concurrency is activated"
+        it_behaves_like "no warning is issued"
+      end
 
-          before do
-            sleep 0.1 while thread.status != "sleep"
-          end
+      shared_examples "a warning is issued when concurrency is activated" do
+        include_context "when concurrency is activated"
 
-          after do
-            subject
-              .synchronize_or_call(
-                action,
-                state,
-                &proc do
-                end
-              )
-
-            thread.run
-            thread.join
-          end
-
-          specify "should warn about deprecating concurrency" do
-            expect(subject)
-              .to(
-                receive(:warn)
-                  .with(
-                    "DEPRECATING: <suite-platform> is about to invoke Kitchen::Driver::Terraform##{action} with " \
-                      "concurrency activated; this action will be forced to run serially as of Kitchen-Terraform v4.0.0"
-                  )
-              )
-          end
+        specify "should warn about deprecating concurrency" do
+          expect(subject)
+            .to(
+              receive(:warn)
+                .with(
+                  "DEPRECATING: <suite-platform> is about to invoke Kitchen::Driver::Terraform##{action} with " \
+                    "concurrency activated; this action will be forced to run serially in an upcoming major version " \
+                    "of Kitchen-Terraform"
+                )
+            )
         end
       end
 
       shared_examples "the action is called" do
         specify do
           expect do |block|
-            subject
-              .synchronize_or_call(
-                :action,
-                state,
-                &block
-              )
+            call_method &block
           end
             .to yield_with_args state
         end
@@ -109,7 +123,8 @@ require "support/kitchen/instance_context"
           :create
         end
 
-        it_behaves_like "a warning is issued about deprecating concurrency when concurrency is activated"
+        it_behaves_like "no warning is issued when concurrency is not activated"
+        it_behaves_like "a warning is issued when concurrency is activated"
         it_behaves_like "the action is called"
       end
 
@@ -118,7 +133,8 @@ require "support/kitchen/instance_context"
           :converge
         end
 
-        it_behaves_like "a warning is issued about deprecating concurrency when concurrency is activated"
+        it_behaves_like "no warning is issued when concurrency is not activated"
+        it_behaves_like "a warning is issued when concurrency is activated"
         it_behaves_like "the action is called"
       end
 
@@ -127,7 +143,8 @@ require "support/kitchen/instance_context"
           :setup
         end
 
-        it_behaves_like "a warning is issued about deprecating concurrency when concurrency is activated"
+        it_behaves_like "no warning is issued when concurrency is not activated"
+        it_behaves_like "a warning is issued when concurrency is activated"
         it_behaves_like "the action is called"
       end
 
@@ -136,7 +153,8 @@ require "support/kitchen/instance_context"
           :verify
         end
 
-        it_behaves_like "no warning is issued"
+        it_behaves_like "no warning is issued when concurrency is not activated"
+        it_behaves_like "no warning is issued when concurrency is activated"
         it_behaves_like "the action is called"
       end
 
@@ -145,7 +163,8 @@ require "support/kitchen/instance_context"
           :destroy
         end
 
-        it_behaves_like "a warning is issued about deprecating concurrency when concurrency is activated"
+        it_behaves_like "no warning is issued when concurrency is not activated"
+        it_behaves_like "a warning is issued when concurrency is activated"
         it_behaves_like "the action is called"
       end
     end
