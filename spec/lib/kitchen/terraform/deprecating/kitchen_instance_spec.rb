@@ -21,26 +21,6 @@ require "thread"
 
 ::RSpec
   .describe ::Kitchen::Terraform::Deprecating::KitchenInstance do
-    describe ".===(version)" do
-      context "when the version is less than 4.0.0" do
-        specify do
-          expect(described_class.===(::Kitchen::Terraform::Version.new(version: "3.4.5"))).to be true
-        end
-      end
-
-      context "when the version is equal to 4.0.0" do
-        specify do
-          expect(described_class.===(::Kitchen::Terraform::Version.new(version: "4.0.0"))).to be false
-        end
-      end
-
-      context "when the version is greater than 4.0.0" do
-        specify do
-          expect(described_class.===(::Kitchen::Terraform::Version.new(version: "5.6.7"))).to be false
-        end
-      end
-    end
-
     describe "#synchronize_or_call(action, state)" do
       subject do
         described_class.new instance

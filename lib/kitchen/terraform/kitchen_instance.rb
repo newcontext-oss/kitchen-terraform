@@ -18,14 +18,18 @@ require "kitchen/terraform"
 require "kitchen/terraform/breaking/kitchen_instance"
 require "kitchen/terraform/deprecating/kitchen_instance"
 require "kitchen/terraform/version"
+require "rubygems"
 
 module ::Kitchen::Terraform::KitchenInstance
   def self.new(kitchen_instance:, version: ::Kitchen::Terraform::Version.new)
-    case version
-    when ::Kitchen::Terraform::Breaking::KitchenInstance
-      ::Kitchen::Terraform::Breaking::KitchenInstance.new kitchen_instance
-    when ::Kitchen::Terraform::Deprecating::KitchenInstance
-      ::Kitchen::Terraform::Deprecating::KitchenInstance.new kitchen_instance
-    end
+    version
+      .if_satisfies requirement: ::Gem::Requirement.new("~> 3.3") do
+        return ::Kitchen::Terraform::Deprecating::KitchenInstance.new kitchen_instance
+      end
+
+    version
+      .if_satisfies requirement: ::Gem::Requirement.new(">= 4") do
+        return ::Kitchen::Terraform::Breaking::KitchenInstance.new kitchen_instance
+      end
   end
 end

@@ -19,12 +19,4 @@ require "kitchen"
 require "kitchen/terraform/breaking"
 
 class ::Kitchen::Terraform::Breaking::KitchenInstance < DelegateClass ::Kitchen::Instance
-  def self.===(version)
-    version
-      .if_satisfies requirement: ::Gem::Requirement.new(">= 4") do
-        return true
-      end
-
-    false
-  end
 end

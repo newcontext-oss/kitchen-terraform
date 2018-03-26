@@ -17,18 +17,9 @@
 require "delegate"
 require "kitchen"
 require "kitchen/terraform/deprecating"
-require "rubygems"
 require "thread"
 
 class ::Kitchen::Terraform::Deprecating::KitchenInstance < DelegateClass ::Kitchen::Instance
-  def self.===(version)
-    version
-      .if_satisfies requirement: ::Gem::Requirement.new("~> 3.3") do
-        return true
-      end
-
-    false
-  end
 
   # Runs a given action block through a common driver mutex if required or
   # runs it directly otherwise. If a driver class' `.serial_actions` array
