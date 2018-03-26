@@ -21,40 +21,42 @@ require "kitchen/terraform/version"
 
 ::RSpec
   .describe ::Kitchen::Terraform::KitchenInstance do
-    describe ".new(kitchen_instance:, version:)" do
+    describe ".new" do
+      subject do
+        described_class
+          .new(
+            kitchen_instance: instance_double(::Object),
+            version: version
+          )
+      end
+
       context "when the version is less than 4.0.0" do
+        let :version do
+          ::Kitchen::Terraform::Version.new version: "3.4.5"
+        end
+
         specify do
-          expect(
-            described_class
-              .new(
-                kitchen_instance: instance_double(::Object),
-                version: ::Kitchen::Terraform::Version.new(version: "3.4.5")
-              )
-          ).to be_kind_of ::Kitchen::Terraform::Deprecating::KitchenInstance
+          is_expected.to be_kind_of ::Kitchen::Terraform::Deprecating::KitchenInstance
         end
       end
 
       context "when the version is equal to 4.0.0" do
+        let :version do
+          ::Kitchen::Terraform::Version.new version: "4.0.0"
+        end
+
         specify do
-          expect(
-            described_class
-              .new(
-                kitchen_instance: instance_double(::Object),
-                version: ::Kitchen::Terraform::Version.new(version: "4.0.0")
-              )
-          ).to be_kind_of ::Kitchen::Terraform::Breaking::KitchenInstance
+          is_expected.to be_kind_of ::Kitchen::Terraform::Breaking::KitchenInstance
         end
       end
 
       context "when the version is greater than 4.0.0" do
+        let :version do
+          ::Kitchen::Terraform::Version.new version: "5.6.7"
+        end
+
         specify do
-          expect(
-            described_class
-              .new(
-                kitchen_instance: instance_double(::Object),
-                version: ::Kitchen::Terraform::Version.new(version: "5.6.7")
-              )
-          ).to be_kind_of ::Kitchen::Terraform::Breaking::KitchenInstance
+          is_expected.to be_kind_of ::Kitchen::Terraform::Breaking::KitchenInstance
         end
       end
     end
