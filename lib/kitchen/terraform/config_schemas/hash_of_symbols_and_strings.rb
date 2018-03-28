@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "dry-validation"
-require "kitchen/terraform/config_predicates/hash_of_symbols_and_strings"
+require "kitchen/terraform/config_predicates"
 require "kitchen/terraform/config_schemas"
 
 # A validation schema for a configuration attribute which is a hash including only symbol keys and string values.
@@ -25,8 +25,8 @@ require "kitchen/terraform/config_schemas"
   ::Dry::Validation
     .Schema do
       configure do
-        predicates ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
-        extend ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
+        extend ::Kitchen::Terraform::ConfigPredicates
       end
+
       required(:value).value :hash_of_symbols_and_strings?
     end
