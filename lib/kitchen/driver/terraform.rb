@@ -176,8 +176,6 @@ require "kitchen/terraform/shell_out"
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   kitchen_driver_api_version 2
 
-  no_parallel_for
-
   include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
   include ::Kitchen::Terraform::ConfigAttribute::Color
@@ -199,6 +197,35 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   include ::Kitchen::Terraform::ConfigAttribute::Variables
 
   include ::Kitchen::Terraform::Configurable
+
+  # This method queries for the names of the action methods which must be run in serial via a shared mutex.
+  #
+  # If the version satisfies the requirement of ~> 3.3 then no names are returned.
+  #
+  # If the version satisfies the requirement of >= 4 then +:create+, +:converge+, +:setup+, and +:destroy+ are returned.
+  #
+  # @param version [::Kitchen::Terraform::Version] the version to compare against the requirements.
+  # @return [::Array<Symbol>] the action method names.
+  def self.serial_actions(version: ::Kitchen::Terraform::Version.new)
+    version
+      .if_satisfies requirement: ::Gem::Requirement.new("~> 3.3") do
+        no_parallel_for
+      end
+
+    version
+      .if_satisfies requirement: ::Gem::Requirement.new(">= 4") do
+        super()
+          .empty? and
+          no_parallel_for(
+            :create,
+            :converge,
+            :setup,
+            :destroy
+          )
+      end
+
+    super()
+  end
 
   # Applies changes to the state by selecting the test workspace, updating the dependency modules, validating the root
   # module, applying the state changes, and retrieving the state output.

@@ -8,6 +8,22 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+* Breaking support for Test-Kitchen >= 1.16.0, < 1.20.0
+
+* Breaking support for Ruby 2.2
+
+* Deprecating support for Ruby 2.2; this version reaches end of life on
+  March 31, 2018
+
+* Breaking support for concurrency with the following commands:
+  `create`, `converge`, `setup`, and `destroy`
+
+* Deprecating support for concurrency with the following commands:
+  `create`, `converge`, `setup`, and `destroy`; these commands invoke
+  Terraform in a manner which is not safe for concurrency
+
 ## [3.3.0] - 2018-03-22
 
 ### Added
