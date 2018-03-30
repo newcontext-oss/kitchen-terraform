@@ -195,9 +195,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     describe "#apply" do
       subject do
-        lambda do |block = lambda do end|
-          described_instance.apply &block
+        lambda do
+          described_instance.apply test_kitchen_state: test_kitchen_state
         end
+      end
+
+      let :test_kitchen_state do
+        {}
       end
 
       before do
@@ -286,10 +290,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
                     command: "terraform output -json",
                     message: "no outputs defined"
                   )
+
+                  described_instance.apply test_kitchen_state: test_kitchen_state
                 end
 
                 it do
-                  is_expected.to yield_with_args output: {}
+                  expect(test_kitchen_state.fetch(:kitchen_terraform_output)).to eq({})
                 end
               end
 
@@ -331,26 +337,28 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
                   let :value_as_hash do
                     {
-                      output_name: {
-                        sensitive: false,
-                        type: "list",
-                        value: ["output_value_1"]
-                      }
+                      output_name:
+                        {
+                          sensitive: false,
+                          type: "list",
+                          value: ["output_value_1"]
+                        }
                     }
                   end
 
+                  before do
+                    described_instance.apply test_kitchen_state: test_kitchen_state
+                  end
+
                   it do
-                    is_expected
+                    expect(test_kitchen_state.fetch(:kitchen_terraform_output))
                       .to(
-                        yield_with_args(
-                          output:
+                        eq(
+                          "output_name" =>
                             {
-                              "output_name" =>
-                                {
-                                  "sensitive" => false,
-                                  "type" => "list",
-                                  "value" => ["output_value_1"]
-                                }
+                              "sensitive" => false,
+                              "type" => "list",
+                              "value" => ["output_value_1"]
                             }
                         )
                       )

@@ -90,18 +90,12 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
 
   # Converges a Test Kitchen instance.
   #
-  # @param state [::Hash] the mutable instance and provisioner state.
+  # @param state [::Hash] the Test Kitchen state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   def call(state)
     instance
       .driver
-      .apply do |output:|
-        state
-          .store(
-            :kitchen_terraform_output,
-            output
-          )
-      end
+      .apply test_kitchen_state: state
   rescue ::Kitchen::Terraform::Error => error
     raise(
       ::Kitchen::ActionFailed,
