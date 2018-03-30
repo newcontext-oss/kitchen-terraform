@@ -8,12 +8,17 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
 * Breaking support for Test-Kitchen >= 1.16.0, < 1.20.0
 
 * Breaking support for Ruby 2.2
 
 * Breaking support for concurrency with the following commands:
   `create`, `converge`, `setup`, and `destroy`
+
+* Replacing custom shell out logic with Test Kitchen's built in shell
+  out logic
 
 ## [3.3.1] - 2018-04-29
 
