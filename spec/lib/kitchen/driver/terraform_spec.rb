@@ -304,7 +304,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                   described_instance.apply test_kitchen_state: test_kitchen_state
                 end
 
-                it do
+                specify "should store in the Test Kitchen state :kitchen_terraform_output and an empty hash" do
                   expect(test_kitchen_state.fetch(:kitchen_terraform_output)).to eq({})
                 end
               end
@@ -359,7 +359,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
                     described_instance.apply test_kitchen_state: test_kitchen_state
                   end
 
-                  it do
+                  specify(
+                    "should store in the Test Kitchen state :kitchen_terraform_output and a hash containing the " \
+                      "parsed output"
+                  ) do
                     expect(test_kitchen_state.fetch(:kitchen_terraform_output))
                       .to(
                         eq(
