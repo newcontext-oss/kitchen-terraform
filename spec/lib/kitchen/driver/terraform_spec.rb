@@ -284,13 +284,23 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 )
               end
 
-              context "when `terraform output` results in failure due to no outputs defined" do
+              shared_context "when `terraform output` results in failure" do
                 before do
                   run_command_failure(
                     command: "terraform output -json",
-                    message: "no outputs defined"
+                    message: message
                   )
+                end
+              end
 
+              context "when `terraform output` results in failure due to no outputs defined" do
+                include_context "when `terraform output` results in failure"
+
+                let :message do
+                  "no outputs defined"
+                end
+
+                before do
                   described_instance.apply test_kitchen_state: test_kitchen_state
                 end
 
@@ -299,12 +309,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 end
               end
 
-              context "when `terraform output` results in failure" do
-                before do
-                  run_command_failure(
-                    command: "terraform output -json",
-                    message: "mocked `terraform output` failure"
-                  )
+              context "when `terraform output` results in failure due to any other reason" do
+                include_context "when `terraform output` results in failure"
+
+                let :message do
+                  "mocked `terraform output` failure"
                 end
 
                 it do
