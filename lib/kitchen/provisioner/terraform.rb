@@ -124,11 +124,8 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
     client.apply flags: apply_flags
     client.output container: kitchen_state
     self
-  rescue => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
+  rescue ::StandardError => error
+    action_failed error: error
   end
 
   # This method extends {::Kitchen::Terraform::Configurable#finalize_config!} to obtain the driver so that the

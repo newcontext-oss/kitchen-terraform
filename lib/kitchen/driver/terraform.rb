@@ -194,11 +194,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def create(_kitchen_state)
     client.init_with_upgrade flags: init_flags
     client.select_or_create_kitchen_instance_workspace
-  rescue => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
+  rescue ::StandardError => error
+    action_failed error: error
   end
 
   # This action destroys the Kitchen Instance by destroying the Terraform state.
@@ -266,11 +263,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     client.destroy flags: destroy_flags
     client.select_default_workspace
     client.delete_kitchen_instance_workspace
-  rescue => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
+  rescue ::StandardError => error
+    action_failed error: error
   end
 
   # This method extends {::Kitchen::Terraform::Configurable#finalize_config!} to configure the
@@ -296,12 +290,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def verify_dependencies
     client
       .if_version_not_supported do |message:|
-        raise(
-          ::Kitchen::UserError,
-          message
-        )
+        raise message
       end
-  rescue => error
+  rescue ::StandardError => error
     raise(
       ::Kitchen::UserError,
       error.message
