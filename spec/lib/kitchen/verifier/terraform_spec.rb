@@ -88,8 +88,8 @@ require "support/kitchen/terraform/configurable_examples"
             .to(
               raise_error(
                 ::Kitchen::ActionFailed,
-                "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \
-                  "kitchen-terraform provisioner has not successfully converged"
+                "The Kitchen state does not include :kitchen_terraform_output; this implies that the " \
+                  "Terraform provisioner has not successfully converged"
               )
             )
         end

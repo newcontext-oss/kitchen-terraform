@@ -34,6 +34,16 @@ module ::Kitchen::Terraform::Configurable
     self
   end
 
+  # This method raises an error due to a failed action.
+  #
+  # @raise [::Kitchen::ActionFailed]
+  def action_failed(error:)
+    raise(
+      ::Kitchen::ActionFailed,
+      error.message
+    )
+  end
+
   # Alternative implementation of Kitchen::Configurable#finalize_config! which validates the configuration before
   # attempting to expand paths.
   #
