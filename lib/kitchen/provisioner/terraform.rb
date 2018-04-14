@@ -120,30 +120,8 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   def call(kitchen_state)
     client.select_or_create_kitchen_instance_workspace
     client.get
-
-    client
-      .validate(
-        flags:
-          [
-            color_flag,
-            variable_files_flags,
-            variables_flags
-          ]
-      )
-
-    client
-      .apply(
-        flags:
-          [
-            lock_timeout_flag,
-            lock_flag,
-            color_flag,
-            parallelism_flag,
-            variable_files_flags,
-            variables_flags
-          ]
-      )
-
+    client.validate flags: validate_flags
+    client.apply flags: apply_flags
     client.output container: kitchen_state
     self
   rescue => error
@@ -168,4 +146,25 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   private
 
   attr_accessor :driver
+
+  # @api private
+  def apply_flags
+    [
+      lock_timeout_flag,
+      lock_flag,
+      color_flag,
+      parallelism_flag,
+      variable_files_flags,
+      variables_flags
+    ]
+  end
+
+  # @api private
+  def validate_flags
+    [
+      color_flag,
+      variable_files_flags,
+      variables_flags
+    ]
+  end
 end
