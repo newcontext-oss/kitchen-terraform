@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/client_version_verifier"
+require "kitchen/terraform/client"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
@@ -27,7 +27,6 @@ require "kitchen/terraform/config_attribute/root_module_directory"
 require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/configurable"
-require "kitchen/terraform/output_parser"
 require "shellwords"
 
 # This namespace is defined by Kitchen.
@@ -36,102 +35,29 @@ require "shellwords"
 module ::Kitchen::Driver
 end
 
-# The driver is the bridge between Test Kitchen and Terraform. It manages the
-# {https://www.terraform.io/docs/state/index.html state} of the Terraform root module by shelling out and running
-# Terraform commands.
+# The driver is the bridge between Kitchen and Terraform. It manages the
+# {https://www.terraform.io/docs/state/index.html Terraform state} of a
+# {https://kitchen.ci/docs/getting-started/instances Kitchen Instance} based on the Terraform configuration of the
+# associated Terraform root module. 
 #
-# === Commands
+# === Command-Line Interface
 #
-# The following command-line commands are provided by the driver.
+# The following actions are implemented by the driver:
 #
-# ==== kitchen create
+# * {#create kitchen create}
 #
-# A Test Kitchen instance is created through the following steps.
+# * {#destroy kitchen destroy}
 #
-# ===== Initializing the Terraform Working Directory
-#
-#   terraform init \
-#     -input=false \
-#     -lock=<lock> \
-#     -lock-timeout=<lock_timeout>s \
-#     [-no-color] \
-#     -upgrade \
-#     -force-copy \
-#     -backend=true \
-#     [-backend-config=<backend_configurations.first> ...] \
-#     -get=true \
-#     -get-plugins=true \
-#     [-plugin-dir=<plugin_directory>] \
-#     -verify-plugins=true \
-#     <root_module_directory>
-#
-# ===== Creating a Test Terraform Workspace
-#
-#   terraform workspace <new|select> kitchen-terraform-<instance>
-#
-# ==== kitchen destroy
-#
-# A Test Kitchen instance is destroyed through the following steps.
-#
-# ===== Initializing the Terraform Working Directory
-#
-#   terraform init \
-#     -input=false \
-#     -lock=<lock> \
-#     -lock-timeout=<lock_timeout>s \
-#     [-no-color] \
-#     -force-copy \
-#     -backend=true \
-#     [-backend-config=<backend_configurations.first>...] \
-#     -get=true \
-#     -get-plugins=true \
-#     [-plugin-dir=<plugin_directory>] \
-#     -verify-plugins=true \
-#     <root_module_directory>
-#
-# ===== Selecting the Test Terraform Workspace
-#
-#   terraform workspace <select|new> kitchen-terraform-<instance>
-#
-# ===== Destroying the Terraform State
-#
-#   terraform destroy \
-#     -force \
-#     -lock=<lock> \
-#     -lock-timeout=<lock_timeout>s \
-#     -input=false \
-#     [-no-color] \
-#     -parallelism=<parallelism> \
-#     -refresh=true \
-#     [-var=<variables.first>...] \
-#     [-var-file=<variable_files.first>...] \
-#     <root_module_directory>
-#
-# ===== Selecting the Default Terraform Workspace
-#
-#   terraform workspace select default
-#
-# ===== Deleting the Test Terraform Workspace
-#
-#   terraform workspace delete kitchen-terraform-<instance>
-#
-# === Shelling Out
-#
-# Terraform commands are run by shelling out and using the
-# {https://www.terraform.io/docs/commands/index.html command-line interface}, which is assumed to be present in the
-# {https://en.wikipedia.org/wiki/PATH_(variable) PATH} of the user. The shell out environment includes the
-# TF_IN_AUTOMATION environment variable as specified by the
-# {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
-#
-# === Configuration Attributes
-#
-# The configuration attributes of the driver control the behaviour of the Terraform commands that are run. Within the
-# {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}, these attributes must be
-# declared in the +driver+ mapping along with the plugin name.
+# === Enable the Plugin
+# The +driver+ mapping must be declared with the plugin name within the
+# {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}.
 #
 #   driver:
 #     name: terraform
-#     a_configuration_attribute: some value
+#
+# === Configuration
+#
+# The configuration of the driver controls the behaviour of the Terraform commands that are executed.
 #
 # ==== backend_configurations
 #
@@ -173,15 +99,9 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Variables}
 #
-# @example Describe the create command
-#   kitchen help create
-# @example Create a Test Kitchen instance
-#   kitchen create default-ubuntu
-# @example Describe the destroy command
-#   kitchen help destroy
-# @example Destroy a Test Kitchen instance
-#   kitchen destroy default-ubuntu
-# @version 2
+# === Running Terraform Commands
+#
+# {include:Kitchen::Terraform::Client}
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   kitchen_driver_api_version 2
 
@@ -206,6 +126,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   include ::Kitchen::Terraform::ConfigAttribute::Variables
 
   include ::Kitchen::Terraform::Configurable
+
+  attr_writer :client
 
   # This method queries for the names of the action methods which must be run in serial via a shared mutex.
   #
@@ -236,88 +158,185 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     super()
   end
 
-  # This method applies changes to the Terraform state.
+  # This action creates the Kitchen Instance by preparing the Terraform working directory .
   #
-  # 1. The test Terraform workspace is selected
-  # 2. The Terraform dependency modules are updated
-  # 3. The Terraform root module is validated
-  # 4. The Terraform state is changed using the Terraform configuration
-  # 5. The Terraform state output is stored in the Test Kitchen state
+  # === Workflow
   #
-  # @param test_kitchen_state [::Hash] the Test Kitchen state.
-  # @raise [::Kitchen::Terraform::Error] if the test Terraform workspace can not be selected; if the Terraform
-  #   dependency modules can not be updated; if the Terraform root module is not valid; if the Terraform state can not
-  #   be changed; if the Terraform state output can not be stored in the Test Kitchen state.
+  # ==== Initializing the Terraform Working Directory
+  #
+  #   terraform init \
+  #     -backend=true \
+  #     -force-copy \
+  #     -get-plugins=true \
+  #     -get=true \
+  #     -input=false \
+  #     -upgrade \
+  #     -verify-plugins=true \
+  #     [-backend-config=<backend_configurations.first> ...] \
+  #     -lock-timeout=<lock_timeout>s \
+  #     -lock=<lock> \
+  #     [-no-color] \
+  #     [-plugin-dir=<plugin_directory>] \
+  #     <root_module_directory>
+  #
+  # ==== Creating a Test Terraform Workspace
+  #
+  #   terraform workspace <select|new> kitchen-terraform-<instance>
+  #
+  # @example Describe the create action
+  #   kitchen help create
+  # @example Create a Kitchen Instance named default-ubuntu
+  #   kitchen create default-ubuntu
+  # @param _kitchen_state [::Hash] the Kitchen state is not manipulated by this action.
+  # @raise [::Kitchen::ActionFailed] if the Terraform working directory can not be initialized; if the test Terraform
+  #   workspace can not be selected or created.
   # @return [self]
-  def apply(test_kitchen_state:)
-    run_workspace_select_or_create_instance
-    apply_run_get
-    apply_run_validate
-    apply_run_apply
-    apply_run_output
-    @output_parser.parse test_kitchen_state: test_kitchen_state
+  def create(_kitchen_state)
+    client
+      .init_with_upgrade(
+        flags:
+          [
+            backend_configurations_flags,
+            lock_timeout_flag,
+            lock_flag,
+            color_flag,
+            plugin_directory_flag
+          ]
+    )
+
+    client.select_or_create_kitchen_instance_workspace
+  rescue => error
+    raise(
+      ::Kitchen::ActionFailed,
+      error.message
+    )
+  end
+
+  # This action destroys the Kitchen Instance by destroying the Terraform state.
+  #
+  # === Worklflow
+  #
+  # ==== Initializing the Terraform Working Directory
+  #
+  # The Terraform working directory is initialized using the Terraform configuration. This behaviour is necessary to
+  # support the +kitchen test+ action being executed against an uninitialized Terraform working directory, as it invokes
+  # this action before +kitchen create+.
+  #
+  #   terraform init \
+  #     -backend=true \
+  #     -force-copy \
+  #     -get-plugins=true \
+  #     -get=true \
+  #     -input=false \
+  #     -verify-plugins=true \
+  #     [-backend-config=<backend_configurations.first>...] \
+  #     -lock-timeout=<lock_timeout>s \
+  #     -lock=<lock> \
+  #     [-no-color] \
+  #     [-plugin-dir=<plugin_directory>] \
+  #     <root_module_directory>
+  #
+  # ==== Selecting the Test Terraform Workspace
+  #
+  #   terraform workspace <select|new> kitchen-terraform-<instance>
+  #
+  # ==== Destroying the Terraform State
+  #
+  #   terraform destroy \
+  #     -force \
+  #     -input=false \
+  #     -refresh=true \
+  #     -lock=<lock> \
+  #     -lock-timeout=<lock_timeout>s \
+  #     [-no-color] \
+  #     -parallelism=<parallelism> \
+  #     [-var-file=<variable_files.first>...] \
+  #     [-var=<variables.first>...] \
+  #     <root_module_directory>
+  #
+  # ==== Selecting the Default Terraform Workspace
+  #
+  #   terraform workspace select default
+  #
+  # ==== Deleting the Test Terraform Workspace
+  #
+  #   terraform workspace delete kitchen-terraform-<instance>
+  #
+  # @example Describe the destroy action
+  #   kitchen help destroy
+  # @example Destroy a Kitchen Instance named default-ubuntu
+  #   kitchen destroy default-ubuntu
+  # @param _kitchen_state [::Hash] the Kitchen state is not manipulated by this action.
+  # @raise [::Kitchen::ActionFailed] if the Terraform working directory can not be initialized; if the test Terraform
+  #   workspace can not be selected or created; if the Terraform state can not be destroyed; if the default Terraform
+  #   workspace can not be selected; if the test Terraform workspace can not be deleted.
+  # @return [void]
+  def destroy(_kitchen_state)
+    client
+      .init(
+        flags:
+          [
+            backend_configurations_flags,
+            lock_timeout_flag,
+            lock_flag,
+            color_flag,
+            plugin_directory_flag
+          ]
+      )
+
+    client.select_or_create_kitchen_instance_workspace
+
+    client
+      .destroy(
+        flags:
+          [
+            lock_timeout_flag,
+            lock_flag,
+            color_flag,
+            parallelism_flag,
+            variable_files_flags,
+            variables_flags
+          ]
+      )
+
+    client.select_default_workspace
+    client.delete_kitchen_instance_workspace
+  rescue => error
+    raise(
+      ::Kitchen::ActionFailed,
+      error.message
+    )
+  end
+
+  # This method extends {::Kitchen::Terraform::Configurable#finalize_config!} to configure the
+  # the Terraform client with a Kitchen instance name and a root module directory.
+  #
+  # @param kitchen_instance [::Kitchen::Instance] 
+  # @return [self]
+  def finalize_config!(kitchen_instance)
+    super kitchen_instance
+    client.workspace_name = kitchen_instance.name
+    client.root_module_directory = root_module_directory
+    client.timeout = config_command_timeout
     self
-  rescue ::Kitchen::ShellOut::ShellCommandFailed => shell_command_failed
-    raise(
-      ::Kitchen::Terraform::Error,
-      shell_command_failed.message
-    )
-  end
-
-  # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
-  #
-  # @param _state [::Hash] the mutable instance and driver state.
-  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [void]
-  def create(_state)
-    create_run_init
-    run_workspace_select_or_create_instance
-  rescue ::Kitchen::ShellOut::ShellCommandFailed => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
-  end
-
-  # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
-  # deleting the state, selecting the default workspace, and deleting the test workspace.
-  #
-  # @param _state [::Hash] the mutable instance and driver state.
-  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [void]
-  def destroy(_state)
-    destroy_run_init
-    run_workspace_select_or_create_instance
-    destroy_run_destroy
-    destroy_run_workspace_select_default
-    destroy_run_workspace_delete_instance
-  rescue ::Kitchen::ShellOut::ShellCommandFailed => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
   end
 
   # Verifies that the Terraform version available to the driver is supported.
   #
   # @note This method is invoked before the configuration is validated so it must not depend on any configuration
-  #       attributes.
+  #   attributes.
+  # @raise [::Kitchen::ShellOut::ShellCommandFailed] if a shell command fails.
   # @raise [::Kitchen::UserError] if the version is not supported.
   # @return [void]
   def verify_dependencies
-    logger
-      .warn(
-        ::Kitchen::Terraform::ClientVersionVerifier
-          .new
-          .verify(
-            version_output:
-              run_terraform(
-                command: "version",
-                timeout: 600
-              )
-          )
-      )
-  rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Terraform::Error => error
+    client
+      .if_version_not_supported do |message:|
+        raise(
+          ::Kitchen::UserError,
+          message
+        )
+      end
+  rescue => error
     raise(
       ::Kitchen::UserError,
       error.message
@@ -325,49 +344,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   private
-
-  # @api private
-  def apply_run_apply
-    run_terraform(
-      command:
-        "apply " \
-          "#{lock_flag} " \
-          "#{lock_timeout_flag} " \
-          "-input=false " \
-          "-auto-approve=true " \
-          "#{color_flag} " \
-          "#{parallelism_flag} " \
-          "-refresh=true " \
-          "#{variables_flags} " \
-          "#{variable_files_flags} " \
-          "#{root_module_directory}"
-    )
-  end
-
-  # @api private
-  def apply_run_get
-    run_terraform command: "get -update #{root_module_directory}"
-  end
-
-  # @api private
-  def apply_run_output
-    @output_parser.output = run_terraform command: "output -json"
-  rescue ::Kitchen::ShellOut::ShellCommandFailed => shell_command_failed
-    raise shell_command_failed if not /no\\ outputs\\ defined/.match ::Regexp.escape shell_command_failed.message
-  end
-
-  # @api private
-  def apply_run_validate
-    run_terraform(
-      command:
-        "validate " \
-          "-check-variables=true " \
-          "#{color_flag} " \
-          "#{variables_flags} " \
-          "#{variable_files_flags} " \
-          "#{root_module_directory}"
-    )
-  end
 
   # @api private
   def backend_configurations_flags
@@ -383,84 +359,18 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     config_color and "" or "-no-color"
   end
 
-  # @api private
-  def create_run_init
-    run_terraform(
-      command:
-        "init " \
-          "-input=false " \
-          "#{lock_flag} " \
-          "#{lock_timeout_flag} " \
-          "#{color_flag} " \
-          "-upgrade " \
-          "-force-copy " \
-          "-backend=true " \
-          "#{backend_configurations_flags} " \
-          "-get=true " \
-          "-get-plugins=true " \
-          "#{plugin_directory_flag} " \
-          "-verify-plugins=true " \
-          "#{root_module_directory}"
-    )
-  end
+  attr_reader :client
 
+  # This method extends
+  # {http://www.rubydoc.info/gems/test-kitchen/1.20.0/Kitchen%2FDriver%2FBase:initialize Kitchen::Driver::Base#initialize}
+  # to instantiate and partially configure a Terraform client.
   # @api private
-  def destroy_run_destroy
-    run_terraform(
-      command:
-      "destroy " \
-        "-force " \
-        "#{lock_flag} " \
-        "#{lock_timeout_flag} " \
-        "-input=false " \
-        "#{color_flag} " \
-        "#{parallelism_flag} " \
-        "-refresh=true " \
-        "#{variables_flags} " \
-        "#{variable_files_flags} " \
-        "#{root_module_directory}"
-    )
-  end
-
-  # @api private
-  def destroy_run_init
-    run_terraform(
-      command:
-        "init " \
-          "-input=false " \
-          "#{lock_flag} " \
-          "#{lock_timeout_flag} " \
-          "#{color_flag} " \
-          "-force-copy " \
-          "-backend=true " \
-          "#{backend_configurations_flags} " \
-          "-get=true " \
-          "-get-plugins=true " \
-          "#{plugin_directory_flag} " \
-          "-verify-plugins=true " \
-          "#{root_module_directory}"
-    )
-  end
-
-  # @api private
-  def destroy_run_workspace_delete_instance
-    run_terraform command: "workspace delete kitchen-terraform-#{instance_name}"
-  end
-
-  # @api private
-  def destroy_run_workspace_select_default
-    run_terraform command: "workspace select default"
-  end
-
-  # @api private
+  # @return [self]
   def initialize(config = {})
     super config
-    @output_parser = ::Kitchen::Terraform::OutputParser.new
-  end
-
-  # @api private
-  def instance_name
-    @instance_name ||= instance.name
+    self.client = ::Kitchen::Terraform::Client.new
+    client.logger = logger
+    self
   end
 
   # @api private
@@ -488,25 +398,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def root_module_directory
     ::Shellwords.escape config_root_module_directory
-  end
-
-  def run_terraform(command:, timeout: config_command_timeout)
-    run_command(
-      "terraform #{command}",
-      environment:
-        {
-          "LC_ALL" => nil,
-          "TF_IN_AUTOMATION" => true
-        },
-      timeout: timeout
-    )
-  end
-
-  # @api private
-  def run_workspace_select_or_create_instance
-    run_terraform command: "workspace select kitchen-terraform-#{instance_name}"
-  rescue ::Kitchen::ShellOut::ShellCommandFailed
-    run_terraform command: "workspace new kitchen-terraform-#{instance_name}"
   end
 
   # @api private

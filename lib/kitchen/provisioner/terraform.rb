@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "forwardable"
 require "kitchen"
 require "kitchen/terraform/configurable"
-require "kitchen/terraform/error"
 
 # This namespace is defined by Kitchen.
 #
@@ -27,79 +27,145 @@ end
 # The provisioner utilizes the driver to apply changes to the Terraform state in order to reach the desired
 # configuration of the root module.
 #
-# === Commands
+# === Command-Line Interface
 #
-# The following command-line actions are provided by the provisioner.
+# The following actions are implemented by the provisioner:
 #
-# ==== kitchen converge
+# * {#converge kitchen converge}
 #
-# A Test Kitchen instance is converged through the following steps.
+# === Enable the Plugin
 #
-# ===== Selecting the Test Terraform Workspace
-#
-#   terraform workspace select kitchen-terraform-<instance>
-#
-# ===== Updating the Terraform Dependency Modules
-#
-#   terraform get -update <directory>
-#
-# ===== Validating the Terraform Root Module
-#
-#   terraform validate \
-#     -check-variables=true \
-#     [-no-color] \
-#     [-var=<variables.first>...] \
-#     [-var-file=<variable_files.first>...] \
-#     <directory>
-#
-# ===== Applying the Terraform State Changes
-#
-#   terraform apply\
-#     -lock=<lock> \
-#     -lock-timeout=<lock_timeout>s \
-#     -input=false \
-#     -auto-approve=true \
-#     [-no-color] \
-#     -parallelism=<parallelism> \
-#     -refresh=true \
-#     [-var=<variables.first>...] \
-#     [-var-file=<variable_files.first>...] \
-#     <directory>
-#
-# ===== Retrieving the Terraform Output
-#
-#   terraform output -json
-#
-# === Configuration Attributes
-#
-# The provisioner has no configuration attributes, but the +provisioner+ mapping must be declared with the plugin name
-# within the {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}.
+# The +provisioner+ mapping must be declared with the plugin name within the
+# {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}.
 #
 #   provisioner:
 #     name: terraform
 #
-# @example Describe the converge command
-#   kitchen help converge
-# @example Converge a Test Kitchen instance
-#   kitchen converge default-ubuntu
-# @version 2
+# === Configuration
+#
+# The provisioner depends on the configuration of the driver. 
+#
+# === Running Terraform Commands
+#
+# {include:Kitchen::Terraform::Client}
 class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
+  extend ::Forwardable
   kitchen_provisioner_api_version 2
-
   include ::Kitchen::Terraform::Configurable
 
-  # Converges a Test Kitchen instance.
+  def_delegators(
+    :driver,
+    :client,
+    :color_flag,
+    :color_flag,
+    :lock_flag,
+    :lock_timeout_flag,
+    :parallelism_flag,
+    :root_module_directory,
+    :variable_files_flags,
+    :variable_files_flags,
+    :variables_flags,
+    :variables_flags
+  )
+
+  # This action converges the Kitchen Instance by applying changes to the Terraform state.
   #
-  # @param state [::Hash] the Test Kitchen state.
-  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  def call(state)
-    instance
-      .driver
-      .apply test_kitchen_state: state
-  rescue ::Kitchen::Terraform::Error => error
+  # === Workflow
+  #
+  # ==== Selecting the Test Terraform Workspace
+  #
+  #   terraform workspace select kitchen-terraform-<instance>
+  #
+  # ==== Updating the Terraform Dependency Modules
+  #
+  #   terraform get -update <directory>
+  #
+  # ==== Validating the Terraform Root Module
+  #
+  #   terraform validate \
+  #     -check-variables=true \
+  #     [-no-color] \
+  #     [-var-file=<variable_files.first>...] \
+  #     [-var=<variables.first>...] \
+  #     <root_module_directory>
+  #
+  # ==== Applying the Terraform State Changes
+  #
+  #   terraform apply\
+  #     -auto-approve=true \
+  #     -input=false \
+  #     -refresh=true \
+  #     -lock-timeout=<lock_timeout>s \
+  #     -lock=<lock> \
+  #     [-no-color] \
+  #     -parallelism=<parallelism> \
+  #     [-var-file=<variable_files.first>...] \
+  #     [-var=<variables.first>...] \
+  #     <root_module_directory>
+  #
+  # ==== Retrieving the Terraform Output
+  #
+  #   terraform output -json
+  #
+  # @example Describe the converge action
+  #   kitchen help converge
+  # @example Converge a Kitchen Instance named default-ubuntu
+  #   kitchen converge default-ubuntu
+  # @param kitchen_state [::Hash] the Kitchen state is manipulated by storing the Terraform output under the key
+  #   +:kitchen_terraform_output+.
+  # @raise [::Kitchen::ActionFailed] if the test Terraform workspace can not be selected; if the Terraform dependency 
+  #   modules can not be updated; if the Terraform root module is not valid; if the Terraform state can not be changed;
+  #   if the Terraform state output can not be stored in the Kitchen state.
+  # @return [self]
+  def call(kitchen_state)
+    client.select_or_create_kitchen_instance_workspace
+    client.get
+
+    client
+      .validate(
+        flags:
+          [
+            color_flag,
+            variable_files_flags,
+            variables_flags
+          ]
+      )
+
+    client
+      .apply(
+        flags:
+          [
+            lock_timeout_flag,
+            lock_flag,
+            color_flag,
+            parallelism_flag,
+            variable_files_flags,
+            variables_flags
+          ]
+      )
+
+    client.output container: kitchen_state
+    self
+  rescue => error
     raise(
       ::Kitchen::ActionFailed,
       error.message
     )
   end
+
+  # This method extends {::Kitchen::Terraform::Configurable#finalize_config!} to obtain the driver so that the
+  # provisioner can forward calls for the Terraform client and configuration attributes.
+  #
+  # @param kitchen_instance [::Kitchen::Instance] the associated Kitchen Instance which is also associated with the
+  #   driver.
+  # @return [self]
+  def finalize_config!(kitchen_instance)
+    super kitchen_instance
+    self.driver = kitchen_instance.driver
+    self
+  end
+
+  private
+
+  attr_accessor :driver
 end

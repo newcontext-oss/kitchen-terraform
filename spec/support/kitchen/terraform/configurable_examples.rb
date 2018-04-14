@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/driver/terraform"
+require "support/kitchen/instance_context"
 
 ::RSpec
   .shared_examples "Kitchen::Terraform::Configurable" do
@@ -59,12 +60,14 @@ require "kitchen/driver/terraform"
       end
 
       context "when the instance is defined" do
-        after do
-          described_instance.finalize_config! instance_double ::Object
-        end
-
         subject do
           described_instance
+        end
+
+        include_context "Kitchen::Instance"
+
+        after do
+          subject.finalize_config! instance
         end
 
         it do
