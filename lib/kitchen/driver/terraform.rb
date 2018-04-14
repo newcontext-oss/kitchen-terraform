@@ -192,18 +192,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #   workspace can not be selected or created.
   # @return [self]
   def create(_kitchen_state)
-    client
-      .init_with_upgrade(
-        flags:
-          [
-            backend_configurations_flags,
-            lock_timeout_flag,
-            lock_flag,
-            color_flag,
-            plugin_directory_flag
-          ]
-    )
-
+    client.init_with_upgrade flags: init_flags
     client.select_or_create_kitchen_instance_workspace
   rescue => error
     raise(
@@ -272,33 +261,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #   workspace can not be selected; if the test Terraform workspace can not be deleted.
   # @return [void]
   def destroy(_kitchen_state)
-    client
-      .init(
-        flags:
-          [
-            backend_configurations_flags,
-            lock_timeout_flag,
-            lock_flag,
-            color_flag,
-            plugin_directory_flag
-          ]
-      )
-
+    client.init flags: init_flags
     client.select_or_create_kitchen_instance_workspace
-
-    client
-      .destroy(
-        flags:
-          [
-            lock_timeout_flag,
-            lock_flag,
-            color_flag,
-            parallelism_flag,
-            variable_files_flags,
-            variables_flags
-          ]
-      )
-
+    client.destroy flags: destroy_flags
     client.select_default_workspace
     client.delete_kitchen_instance_workspace
   rescue => error
@@ -360,6 +325,29 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   attr_reader :client
+
+  # @api private
+  def destroy_flags
+    [
+      lock_timeout_flag,
+      lock_flag,
+      color_flag,
+      parallelism_flag,
+      variable_files_flags,
+      variables_flags
+    ]
+  end
+
+  # @api private
+  def init_flags
+    [
+      backend_configurations_flags,
+      lock_timeout_flag,
+      lock_flag,
+      color_flag,
+      plugin_directory_flag
+    ]
+  end
 
   # This method extends
   # {http://www.rubydoc.info/gems/test-kitchen/1.20.0/Kitchen%2FDriver%2FBase:initialize Kitchen::Driver::Base#initialize}
