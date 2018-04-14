@@ -25,19 +25,19 @@ class ::Kitchen::Terraform::OutputParser
   # @param output [::String] the output.
   # @return [::String] the output.
   def output=(output)
-    @output.replace output
+    @output = String output
   end
 
-  # This method parses the output as JSON and stores the result in the Test Kitchen state.
+  # This method parses the output as JSON and stores the result in a container.
   #
-  # @param test_kitchen_state [::Hash] the Test Kitchen state.
+  # @param container [::Hash] a container for the parsed output.
   # @raise [::Kitchen::Terraform::Error] if the output can not be parsed as JSON.
   # @return [self]
-  def parse(test_kitchen_state:)
-    test_kitchen_state
+  def parse(container:)
+    container
       .store(
         :kitchen_terraform_output,
-        ::JSON.parse(@output)
+        ::JSON.parse(output)
       )
 
     self
@@ -50,8 +50,10 @@ class ::Kitchen::Terraform::OutputParser
 
   private
 
+  attr_reader :output
+
   # @api private
   def initialize
-    @output = ::String.new "{}"
+    self.output = "{}"
   end
 end
