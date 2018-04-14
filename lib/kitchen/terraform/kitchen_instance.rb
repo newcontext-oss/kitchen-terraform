@@ -27,7 +27,7 @@ require "rubygems"
 module ::Kitchen::Terraform::KitchenInstance
   # Creates a new KitchenInstance.
   #
-  # If the version satisfies the requirement of +~> 3.3+ then a breaking KitchenInstance is created.
+  # If the version satisfies the requirement of +~> 3.3+ then a deprecating KitchenInstance is created.
   #
   # If the version satisfies the requirement of +>= 4+ then a breaking KitchenInstance is created.
   #
