@@ -32,7 +32,7 @@ require "kitchen/terraform/client"
               environment:
                 {
                   "LC_ALL" => nil,
-                  "TF_IN_AUTOMATION" => true
+                  "TF_IN_AUTOMATION" => "true"
                 },
               timeout: 600
             )
@@ -52,7 +52,7 @@ require "kitchen/terraform/client"
               environment:
                 {
                   "LC_ALL" => nil,
-                  "TF_IN_AUTOMATION" => true
+                  "TF_IN_AUTOMATION" => "true"
                 },
               timeout: 600
             )

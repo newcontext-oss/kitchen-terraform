@@ -297,7 +297,7 @@ class ::Kitchen::Terraform::Client
             environment:
               {
                 "LC_ALL" => nil,
-                "TF_IN_AUTOMATION" => true
+                "TF_IN_AUTOMATION" => "true"
               },
             timeout: @timeout
           )
