@@ -17,40 +17,47 @@
 require "kitchen"
 require "kitchen/provisioner/terraform"
 require "support/kitchen/instance_context"
+require "support/kitchen/terraform/client_dependency_examples"
 require "support/kitchen/terraform/client_context"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec
   .describe ::Kitchen::Provisioner::Terraform do
-    it_behaves_like "Kitchen::Terraform::Configurable" do
-      let :described_instance do
-        described_class.new
+    include_context "Kitchen::Terraform::Client"
+
+    include_context "Kitchen::Instance" do
+      let :driver do
+        ::Kitchen::Driver::Terraform
+          .new(
+            backend_configurations: {key: "value"},
+            color: false,
+            kitchen_root: kitchen_root,
+            plugin_directory: "/plugin/directory",
+            variable_files: ["/variable/file"],
+            variables: {key: "value"}
+          )
+      end
+
+      let :provisioner do
+        described_instance
       end
     end
 
-    describe "#call" do
-      include_context "Kitchen::Instance" do
-        let :driver do
-          ::Kitchen::Driver::Terraform
-            .new(
-              backend_configurations: {key: "value"},
-              color: false,
-              kitchen_root: kitchen_root,
-              plugin_directory: "/plugin/directory",
-              variable_files: ["/variable/file"],
-              variables: {key: "value"}
-            )
-        end
+    let :described_instance do
+      described_class.new
+    end
 
-        let :provisioner do
-          subject
-        end
+    it_behaves_like "Kitchen::Terraform::ClientDependency" do
+      subject do
+        described_instance
       end
+    end
 
-      include_context "Kitchen::Terraform::Client"
+    it_behaves_like "Kitchen::Terraform::Configurable"
 
-      let :kitchen_root do
-        "/kitchen/root"
+    describe "#call" do
+      subject do
+        described_instance
       end
 
       let :kitchen_state do
@@ -58,7 +65,6 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       before do
-        driver.client = client
         subject.finalize_config! instance
       end
 
@@ -68,11 +74,34 @@ require "support/kitchen/terraform/configurable_examples"
         end
       end
 
-      shared_examples "terraform: get; validate; apply; output" do
+      context "when `terraform workspace select <kitchen-instance>` results in failure" do
+        before do
+          run_general_command_failure(
+            command: :within_kitchen_instance_workspace,
+            message: "mocked `terraform workspace select <kitchen-instance>` failure"
+          )
+        end
+
+        specify do
+          expect_invoking_method
+            .to(
+              raise_error(
+                ::Kitchen::ActionFailed,
+                "mocked `terraform workspace select <kitchen-instance>` failure"
+              )
+            )
+        end
+      end
+
+      context "when `terraform workspace select <kitchen-instance>` results in success" do
+        before do
+          allow(client).to receive(:within_kitchen_instance_workspace).and_yield
+        end
+
         context "when `terraform get` results in failure" do
           before do
-            run_command_failure(
-              command: /terraform get/,
+            run_general_command_failure(
+              command: :get,
               message: "mocked `terraform get` failure"
             )
           end
@@ -90,13 +119,16 @@ require "support/kitchen/terraform/configurable_examples"
 
         context "when `terraform get` results in success" do
           before do
-            run_command_success command: "terraform get -update #{kitchen_root}"
+            run_specific_command_success(
+              command: :get,
+              flags: ["-update"]
+            )
           end
 
           context "when `terraform validate` results in failure" do
             before do
-              run_command_failure(
-                command: /terraform validate/,
+              run_general_command_failure(
+                command: :validate,
                 message: "mocked `terraform validate` failure"
               )
             end
@@ -114,21 +146,22 @@ require "support/kitchen/terraform/configurable_examples"
 
           context "when `terraform validate` results in success" do
             before do
-              run_command_success(
-                command:
-                  "terraform validate " \
-                    "-check-variables=true " \
-                    "-no-color " \
-                    "-var-file=/variable/file " \
-                    "-var=\"key=value\" " \
-                    "#{kitchen_root}"
+              run_specific_command_success(
+                command: :validate,
+                flags:
+                  [
+                    "-check-variables=true",
+                    "-no-color",
+                    "-var-file=/variable/file",
+                    "-var=\"key=value\""
+                  ]
               )
             end
 
             context "when `terraform apply` results in failure" do
               before do
-                run_command_failure(
-                  command: /terraform apply/,
+                run_general_command_failure(
+                  command: :apply,
                   message: "mocked `terraform apply` failure"
                 )
               end
@@ -146,52 +179,29 @@ require "support/kitchen/terraform/configurable_examples"
 
             context "when `terraform apply` results in success" do
               before do
-                run_command_success(
-                  command:
-                    "terraform apply " \
-                      "-auto-approve=true " \
-                      "-input=false " \
-                      "-refresh=true " \
-                      "-lock-timeout=0s " \
-                      "-lock=true " \
-                      "-no-color " \
-                      "-parallelism=10 " \
-                      "-var-file=/variable/file " \
-                      "-var=\"key=value\" " \
-                      "#{kitchen_root}"
+                run_specific_command_success(
+                  command: :apply,
+                  flags:
+                    [
+                      "-auto-approve=true",
+                      "-input=false",
+                      "-refresh=true",
+                      "-lock-timeout=0s",
+                      "-lock=true",
+                      "-no-color",
+                      "-parallelism=10",
+                      "-var-file=/variable/file",
+                      "-var=\"key=value\""
+                    ]
                 )
               end
 
-              shared_context "when `terraform output` results in failure" do
+              context "when `terraform output` results in failure" do
                 before do
-                  run_command_failure(
-                    command: "terraform output -json",
-                    message: message
+                  run_general_command_failure(
+                    command: :output,
+                    message: "mocked `terraform output` failure"
                   )
-                end
-              end
-
-              context "when `terraform output` results in failure due to no outputs defined" do
-                include_context "when `terraform output` results in failure"
-
-                let :message do
-                  "no outputs defined"
-                end
-
-                before do
-                  subject.call kitchen_state
-                end
-
-                specify "should store in the Test Kitchen state :kitchen_terraform_output and an empty hash" do
-                  expect(kitchen_state.fetch(:kitchen_terraform_output)).to eq({})
-                end
-              end
-
-              context "when `terraform output` results in failure due to any other reason" do
-                include_context "when `terraform output` results in failure"
-
-                let :message do
-                  "mocked `terraform output` failure"
                 end
 
                 specify do
@@ -207,97 +217,16 @@ require "support/kitchen/terraform/configurable_examples"
 
               context "when `terraform output` results in success" do
                 before do
-                  run_command_success(
-                    command: "terraform output -json",
-                    return_value: terraform_output_value
-                  )
+                  run_general_command_success command: :output
                 end
 
-                context "when the value of the `terraform output` result is not valid JSON" do
-                  let :terraform_output_value do
-                    "not valid JSON"
-                  end
-
-                  specify do
-                    expect_invoking_method
-                      .to(
-                        raise_error(
-                          ::Kitchen::ActionFailed,
-                          /Parsing Terraform output as JSON failed:/
-                        )
-                      )
-                  end
-                end
-
-                context "when the value of the `terraform output` result is valid JSON" do
-                  let :terraform_output_value do
-                    ::JSON.dump value_as_hash
-                  end
-
-                  let :value_as_hash do
-                    {output_name: {value: ["output_value_1"]}}
-                  end
-
-                  before do
-                    subject.call kitchen_state
-                  end
-
-                  specify(
-                    "should store in the Test Kitchen state :kitchen_terraform_output and a hash containing the " \
-                      "parsed output"
-                  ) do
-                    expect(kitchen_state.fetch(:kitchen_terraform_output))
-                      .to eq "output_name" => {"value" => ["output_value_1"]}
-                  end
+                specify do
+                  expect_invoking_method.to_not raise_error
                 end
               end
             end
           end
         end
-      end
-
-      context "when `terraform workspace select <kitchen-instance>` results in failure" do
-        before do
-          run_command_failure(
-            command: "terraform workspace select kitchen-terraform-suite-platform",
-            message: "mocked `terraform workspace select <kitchen-instance>` failure"
-          )
-        end
-
-        context "when `terraform workspace new <kitchen-instance>` results in failure" do
-          before do
-            run_command_failure(
-              command: "terraform workspace new kitchen-terraform-suite-platform",
-              message: "mocked `terraform workspace new <kitchen-instance>` failure"
-            )
-          end
-
-          specify do
-            expect_invoking_method
-              .to(
-                raise_error(
-                  ::Kitchen::ActionFailed,
-                  "mocked `terraform workspace new <kitchen-instance>` failure"
-                )
-              )
-          end
-        end
-
-        context "when `terraform workspace new <kitchen-instance>` results in success" do
-          before do
-            run_command_success command: "terraform workspace new kitchen-terraform-suite-platform"
-          end
-
-          it_behaves_like "terraform: get; validate; apply; output"
-        end
-      end
-
-      context "when `terraform workspace select <kitchen-instance>` results in success" do
-        before do
-          run_command_success command: "terraform workspace select kitchen-terraform-suite-platform"
-        end
-
-        it_behaves_like "terraform: get; validate; apply; output"
       end
     end
   end
