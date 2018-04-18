@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/client"
+require "kitchen/terraform/client_dependency"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
@@ -38,7 +38,7 @@ end
 # The driver is the bridge between Kitchen and Terraform. It manages the
 # {https://www.terraform.io/docs/state/index.html Terraform state} of a
 # {https://kitchen.ci/docs/getting-started/instances Kitchen Instance} based on the Terraform configuration of the
-# associated Terraform root module. 
+# associated Terraform root module.
 #
 # === Command-Line Interface
 #
@@ -104,30 +104,18 @@ end
 # {include:Kitchen::Terraform::Client}
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   kitchen_driver_api_version 2
-
+  include ::Kitchen::Terraform::ClientDependency
   include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
-
   include ::Kitchen::Terraform::ConfigAttribute::Color
-
   include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
-
   include ::Kitchen::Terraform::ConfigAttribute::Lock
-
   include ::Kitchen::Terraform::ConfigAttribute::LockTimeout
-
   include ::Kitchen::Terraform::ConfigAttribute::Parallelism
-
   include ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
-
   include ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
-
   include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
-
   include ::Kitchen::Terraform::ConfigAttribute::Variables
-
   include ::Kitchen::Terraform::Configurable
-
-  attr_writer :client
 
   # This method queries for the names of the action methods which must be run in serial via a shared mutex.
   #
@@ -192,9 +180,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #   workspace can not be selected or created.
   # @return [self]
   def create(_kitchen_state)
-    client.init_with_upgrade flags: init_flags
-    client.select_or_create_kitchen_instance_workspace
-  rescue ::StandardError => error
+    client_init_with_upgrade
+    client.within_kitchen_instance_workspace
+    self
+  rescue ::Kitchen::StandardError => error
     action_failed error: error
   end
 
@@ -256,50 +245,18 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the Terraform working directory can not be initialized; if the test Terraform
   #   workspace can not be selected or created; if the Terraform state can not be destroyed; if the default Terraform
   #   workspace can not be selected; if the test Terraform workspace can not be deleted.
-  # @return [void]
+  # @return [self]
   def destroy(_kitchen_state)
-    client.init flags: init_flags
-    client.select_or_create_kitchen_instance_workspace
-    client.destroy flags: destroy_flags
-    client.select_default_workspace
-    client.delete_kitchen_instance_workspace
-  rescue ::StandardError => error
+    client_init
+    client_destroy
+    self
+  rescue ::Kitchen::StandardError => error
     action_failed error: error
   end
 
-  # This method extends {::Kitchen::Terraform::Configurable#finalize_config!} to configure the
-  # the Terraform client with a Kitchen instance name and a root module directory.
-  #
-  # @param kitchen_instance [::Kitchen::Instance] 
-  # @return [self]
-  def finalize_config!(kitchen_instance)
-    super kitchen_instance
-    client.workspace_name = kitchen_instance.name
-    client.root_module_directory = root_module_directory
-    client.timeout = config_command_timeout
-    self
-  end
-
-  # Verifies that the Terraform version available to the driver is supported.
-  #
-  # @note This method is invoked before the configuration is validated so it must not depend on any configuration
-  #   attributes.
-  # @raise [::Kitchen::ShellOut::ShellCommandFailed] if a shell command fails.
-  # @raise [::Kitchen::UserError] if the version is not supported.
-  # @return [void]
-  def verify_dependencies
-    client
-      .if_version_not_supported do |message:|
-        raise message
-      end
-  rescue ::StandardError => error
-    raise(
-      ::Kitchen::UserError,
-      error.message
-    )
-  end
-
   private
+
+  attr_reader :client
 
   # @api private
   def backend_configurations_flags
@@ -310,16 +267,37 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .join " "
   end
 
+  # @api private
+  def client_destroy
+    client
+      .within_kitchen_instance_workspace do
+        client.destroy flags: destroy_flags
+      end
+
+    client.delete_kitchen_instance_workspace
+  end
+
+  # @api private
+  def client_init
+    client.init flags: init_flags
+  end
+
+  # @api private
+  def client_init_with_upgrade
+    client.init flags: init_flags_with_upgrade
+  end
+
   # api private
   def color_flag
     config_color and "" or "-no-color"
   end
 
-  attr_reader :client
-
   # @api private
   def destroy_flags
     [
+      "-force",
+      "-input=false",
+      "-refresh=true",
       lock_timeout_flag,
       lock_flag,
       color_flag,
@@ -332,6 +310,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def init_flags
     [
+      "-backend=true",
+      "-force-copy",
+      "-get-plugins=true",
+      "-get=true",
+      "-input=false",
+      "-verify-plugins=true",
       backend_configurations_flags,
       lock_timeout_flag,
       lock_flag,
@@ -340,16 +324,22 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ]
   end
 
-  # This method extends
-  # {http://www.rubydoc.info/gems/test-kitchen/1.20.0/Kitchen%2FDriver%2FBase:initialize Kitchen::Driver::Base#initialize}
-  # to instantiate and partially configure a Terraform client.
   # @api private
-  # @return [self]
-  def initialize(config = {})
-    super config
-    self.client = ::Kitchen::Terraform::Client.new
-    client.logger = logger
-    self
+  def init_flags_with_upgrade
+    [
+      "-backend=true",
+      "-force-copy",
+      "-get-plugins=true",
+      "-get=true",
+      "-input=false",
+      "-upgrade",
+      "-verify-plugins=true",
+      backend_configurations_flags,
+      lock_timeout_flag,
+      lock_flag,
+      color_flag,
+      plugin_directory_flag
+    ]
   end
 
   # @api private
