@@ -20,22 +20,18 @@ require "kitchen/terraform/client"
 ::RSpec
   .shared_context "Kitchen::Terraform::Client" do
     let :client do
-      ::Kitchen::Terraform::Client.new
+      instance_double ::Kitchen::Terraform::Client
     end
 
-    def run_command_failure(command:, message: "mocked `terraform` failure")
+    before do
+      allow(::Kitchen::Terraform::Client).to receive(:new).and_return client
+      allow(client).to receive :if_version_not_supported
+    end
+
+    def run_general_command_failure(command:, message: "mocked `terraform` failure")
       allow(client)
         .to(
-          receive(:run_command)
-            .with(
-              command,
-              environment:
-                {
-                  "LC_ALL" => nil,
-                  "TF_IN_AUTOMATION" => "true"
-                },
-              timeout: 600
-            )
+          receive(command)
             .and_raise(
               ::Kitchen::ShellOut::ShellCommandFailed,
               message
@@ -43,20 +39,23 @@ require "kitchen/terraform/client"
         )
     end
 
-    def run_command_success(command:, return_value: "mocked `terraform` success")
+    def run_specific_command_failure(command:, flags:, message: "mocked `terraform` failure")
       allow(client)
         .to(
-          receive(:run_command)
-            .with(
-              command,
-              environment:
-                {
-                  "LC_ALL" => nil,
-                  "TF_IN_AUTOMATION" => "true"
-                },
-              timeout: 600
+          receive(command)
+            .with(flags: flags)
+            .and_raise(
+              ::Kitchen::ShellOut::ShellCommandFailed,
+              message
             )
-            .and_return(return_value)
         )
+    end
+
+    def run_general_command_success(command:)
+      allow(client).to receive command
+    end
+
+    def run_specific_command_success(command:, flags:)
+      allow(client).to receive(command).with flags: flags
     end
   end

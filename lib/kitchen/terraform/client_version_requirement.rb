@@ -19,26 +19,45 @@ require "rubygems"
 
 class ::Kitchen::Terraform::ClientVersionRequirement
   def if_not_satisfied(client_version:)
-    restrictions
-      .satisfied_by? client_version or
-      yield message: not_satisfied_message
-  end
+    self.version = client_version
 
-  def restrictions=(restrictions)
-    @restrictions = ::Gem::Requirement.create *Array(restrictions)
+    requirement
+      .satisfied_by? version or
+      yield message: not_satisfied_message
   end
 
   private
 
-  attr_reader :restrictions
+  attr_reader(
+    :requirement,
+    :version
+  )
 
   # @api private
-  def initialize
-    self.restrictions = ">= 0"
+  def initialize(requirement:)
+    self.requirement = requirement
   end
 
   # @api private
   def not_satisfied_message
-    "The version of Terraform in use does not satisfy the requirement of #{restrictions}"
+    "The version of Terraform in use does not satisfy the requirement of #{requirement}"
+  end
+
+  # @api private
+  def requirement=(requirement)
+    @requirement = ::Gem::Requirement.create *Array(requirement)
+  end
+
+  # @api private
+  def version=(version)
+    @version =
+      ::Gem::Version
+        .create(
+          version
+            .slice(
+              /(\d+\.\d+\.\d+)/,
+              1
+            )
+        )
   end
 end
