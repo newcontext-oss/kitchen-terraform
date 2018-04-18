@@ -98,7 +98,7 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
     end
 
     self
-  rescue ::StandardError => error
+  rescue ::Kitchen::StandardError => error
     action_failed error: error
   end
 
@@ -107,12 +107,13 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   attr_accessor(
     :group,
     :hostname,
-    :output
+    :inspec_runner_options,
+    :kitchen_state
   )
 
   # @api private
   def enumerate_groups_and_hostnames(kitchen_state:)
-    fetch_output kitchen_state: kitchen_state
+    self.kitchen_state = kitchen_state
 
     ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
       .call(
@@ -129,19 +130,106 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   end
 
   # @api private
-  def fetch_output(kitchen_state:)
-    self
-      .output =
-        ::Kitchen::Util
-          .stringified_hash(
-            kitchen_state
-              .fetch(:kitchen_terraform_output) do
-                raise(
-                  "The Kitchen state does not include :kitchen_terraform_output; this implies that the Terraform " \
-                    "provisioner has not successfully converged"
-                )
-              end
+  def apply_kitchen_terraform_runner_options
+    configure_inspec_runner_profile
+    configure_inspec_runner_transport
+  end
+
+  # @api private
+  def configure_inspec_runner_attributes
+    inspec_runner_options
+      .store(
+        :attributes,
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
+          .call(
+            group: group,
+            output: output
           )
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_backend
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend
+      .call(
+        hostname: hostname,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_controls
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
+      .call(
+        group: group,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_host
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
+      .call(
+        hostname: hostname,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_port
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
+      .call(
+        group: group,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_profile
+    configure_inspec_runner_attributes
+    configure_inspec_runner_controls
+  end
+
+  # @api private
+  def configure_inspec_runner_ssh_key
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerSSHKey
+      .call(
+        group: group,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_transport
+    configure_inspec_runner_backend
+    configure_inspec_runner_host
+    configure_inspec_runner_port
+    configure_inspec_runner_ssh_key
+    configure_inspec_runner_user
+  end
+
+  # @api private
+  def configure_inspec_runner_user
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
+      .call(
+        group: group,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def output
+    ::Kitchen::Util
+      .stringified_hash(
+        kitchen_state
+          .fetch(:kitchen_terraform_output) do
+            raise(
+              ::Kitchen::ActionFailed,
+              "The Kitchen state does not include :kitchen_terraform_output; this implies that the Terraform " \
+                "provisioner has not successfully converged"
+            )
+          end
+      )
   end
 
   # @api private
@@ -159,59 +247,9 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   # @return [::Hash] Inspec Runner options.
   # @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb ::Inspec::Runner
   def runner_options(transport, kitchen_state = {}, platform = nil, suite = nil)
-    super(
-      transport,
-      kitchen_state,
-      platform,
-      suite
-    )
-      .tap do |options|
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend
-          .call(
-            hostname: hostname,
-            options: options
-          )
-
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
-          .call(
-            hostname: hostname,
-            options: options
-          )
-
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
-          .call(
-            group: group,
-            options: options
-          )
-
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerSSHKey
-          .call(
-            group: group,
-            options: options
-          )
-
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
-          .call(
-            group: group,
-            options: options
-          )
-
-        options
-          .store(
-            :attributes,
-            ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
-              .call(
-                group: group,
-                output: output
-              )
-          )
-
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
-          .call(
-            group: group,
-            options: options
-          )
-      end
+    self.inspec_runner_options = super
+    apply_kitchen_terraform_runner_options
+    inspec_runner_options
   end
 end
 
