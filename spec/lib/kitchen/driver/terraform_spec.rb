@@ -17,10 +17,8 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
-require "kitchen/terraform/client"
 require "support/kitchen/instance_context"
 require "support/kitchen/terraform/client_dependency_examples"
-require "support/kitchen/terraform/client_context"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
@@ -35,8 +33,6 @@ require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec
   .describe ::Kitchen::Driver::Terraform do
-    include_context "Kitchen::Terraform::Client"
-
     include_context "Kitchen::Instance" do
       let :driver do
         described_instance

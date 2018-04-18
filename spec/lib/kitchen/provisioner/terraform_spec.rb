@@ -18,13 +18,10 @@ require "kitchen"
 require "kitchen/provisioner/terraform"
 require "support/kitchen/instance_context"
 require "support/kitchen/terraform/client_dependency_examples"
-require "support/kitchen/terraform/client_context"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec
   .describe ::Kitchen::Provisioner::Terraform do
-    include_context "Kitchen::Terraform::Client"
-
     include_context "Kitchen::Instance" do
       let :driver do
         ::Kitchen::Driver::Terraform
