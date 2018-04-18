@@ -22,27 +22,11 @@ require "kitchen/terraform/client"
     subject do
       described_class
         .new(
-          logger: logger,
-          root_module_directory: root_module_directory,
-          timeout: timeout,
-          workspace_name: workspace_name
+          logger: instance_double(::Object),
+          root_module_directory: "/root/module/directory",
+          timeout: 123,
+          workspace_name: "workspace-name"
         )
-    end
-
-    let :logger do
-      instance_double ::Object
-    end
-
-    let :root_module_directory do
-      "/root/module/directory"
-    end
-
-    let :timeout do
-      123
-    end
-
-    let :workspace_name do
-      "workspace-name"
     end
 
     def allow_run_terraform(command:)
@@ -56,7 +40,7 @@ require "kitchen/terraform/client"
                   "LC_ALL" => nil,
                   "TF_IN_AUTOMATION" => "true"
                 },
-              timeout: timeout
+              timeout: 123
             )
         )
     end
@@ -80,45 +64,77 @@ require "kitchen/terraform/client"
       )
     end
 
-    describe "#apply" do
-      context "when `terraform apply` fails" do
-        before do
-          fail_run_terraform command: "apply -flag /root/module/directory"
-        end
+    shared_examples "a command with ignored output" do |command:|
+      let :flags do
+        [
+          "-flag-without-value",
+          "-flag-with-value=\"value\""
+        ]
+      end
 
-        specify do
-          expect do
-            subject.apply flags: ["-flag"]
-          end
-            .to raise_shell_command_failed
+      let :full_command do
+        "#{command} #{flags.first} #{flags.last} /root/module/directory"
+      end
+
+      let :method do
+        command
+      end
+
+      def expect_invoking_method
+        expect do
+          subject
+            .send(
+              method,
+              flags: flags
+            )
         end
       end
 
-      context "when `terraform apply` succeeds" do
-        before do
-          succeed_run_terraform command: "apply -flag /root/module/directory"
-        end
+      it_behaves_like "a command with ignored output when it fails"
+      it_behaves_like "a command with ignored output when it succeeds"
+    end
 
-        specify do
-          expect do
-            subject.apply flags: ["-flag"]
-          end
-            .to_not raise_shell_command_failed
-        end
+    shared_examples "a command with ignored output when it fails" do
+      before do
+        fail_run_terraform command: full_command
+      end
+
+      specify do
+        expect_invoking_method.to raise_shell_command_failed
       end
     end
 
+    shared_examples "a command with ignored output when it succeeds" do
+      before do
+        succeed_run_terraform command: full_command
+      end
+
+      specify do
+        expect_invoking_method.to_not raise_shell_command_failed
+      end
+    end
+
+    describe "#apply" do
+      it_behaves_like(
+        "a command with ignored output",
+        command: :apply
+      )
+    end
+
     describe "#delete_kitchen_instance_workspace" do
+      def expect_invoking_method
+        expect do
+          subject.delete_kitchen_instance_workspace
+        end
+      end
+
       context "when `terraform workspace delete` fails" do
         before do
           fail_run_terraform command: "workspace delete kitchen-terraform-workspace-name"
         end
 
         specify do
-          expect do
-            subject.delete_kitchen_instance_workspace
-          end
-            .to raise_shell_command_failed
+          expect_invoking_method.to raise_shell_command_failed
         end
       end
 
@@ -128,109 +144,46 @@ require "kitchen/terraform/client"
         end
 
         specify do
-          expect do
-            subject.delete_kitchen_instance_workspace
-          end
-            .to_not raise_shell_command_failed
+          expect_invoking_method.to_not raise_shell_command_failed
         end
       end
     end
 
     describe "#destroy" do
-      context "when `terraform destroy` fails" do
-        before do
-          fail_run_terraform command: "destroy -flag /root/module/directory"
-        end
-
-        specify do
-          expect do
-            subject.destroy flags: ["-flag"]
-          end
-            .to raise_shell_command_failed
-        end
-      end
-
-      context "when `terraform destroy` succeeds" do
-        before do
-          succeed_run_terraform command: "destroy -flag /root/module/directory"
-        end
-
-        specify do
-          expect do
-            subject.destroy flags: ["-flag"]
-          end
-            .to_not raise_shell_command_failed
-        end
-      end
+      it_behaves_like(
+        "a command with ignored output",
+        command: :destroy
+      )
     end
 
     describe "#get" do
-      context "when `terraform get` fails" do
-        before do
-          fail_run_terraform command: "get -flag /root/module/directory"
-        end
-
-        specify do
-          expect do
-            subject.get flags: ["-flag"]
-          end
-            .to raise_shell_command_failed
-        end
-      end
-
-      context "when `terraform get` succeeds" do
-        before do
-          succeed_run_terraform command: "get -flag /root/module/directory"
-        end
-
-        specify do
-          expect do
-            subject.get flags: ["-flag"]
-          end
-            .to_not raise_shell_command_failed
-        end
-      end
+      it_behaves_like(
+        "a command with ignored output",
+        command: :get
+      )
     end
 
     describe "#init" do
-      context "when `terraform init` fails" do
-        before do
-          fail_run_terraform command: "init -flag /root/module/directory"
-        end
-
-        specify do
-          expect do
-            subject.init flags: ["-flag"]
-          end
-            .to raise_shell_command_failed
-        end
-      end
-
-      context "when `terraform init` succeeds" do
-        before do
-          succeed_run_terraform command: "init -flag /root/module/directory"
-        end
-
-        specify do
-          expect do
-            subject.init flags: ["-flag"]
-          end
-            .to_not raise_shell_command_failed
-        end
-      end
+      it_behaves_like(
+        "a command with ignored output",
+        command: :init
+      )
     end
 
     describe "#if_version_not_supported" do
+      def expect_invoking_method
+        expect do |block|
+          subject.if_version_not_supported &block
+        end
+      end
+
       context "when `terraform version` fails" do
         before do
           fail_run_terraform command: "version"
         end
 
         specify do
-          expect do
-            subject.if_version_not_supported
-          end
-            .to raise_shell_command_failed
+          expect_invoking_method.to raise_shell_command_failed
         end
       end
 
@@ -247,10 +200,7 @@ require "kitchen/terraform/client"
         end
 
         specify do
-          expect do |block|
-            subject.if_version_not_supported &block
-          end
-            .to yield_with_args message: /< 0.12.0, >= 0.10.2/
+          expect_invoking_method.to yield_with_args message: /< 0.12.0, >= 0.10.2/
         end
       end
 
@@ -260,10 +210,7 @@ require "kitchen/terraform/client"
         end
 
         specify do
-          expect do |block|
-            subject.if_version_not_supported &block
-          end
-            .to_not yield_control
+          expect_invoking_method.to_not yield_control
         end
       end
 
@@ -273,10 +220,7 @@ require "kitchen/terraform/client"
         end
 
         specify do
-          expect do |block|
-            subject.if_version_not_supported &block
-          end
-            .to_not yield_control
+          expect_invoking_method.to_not yield_control
         end
       end
 
@@ -286,43 +230,47 @@ require "kitchen/terraform/client"
         end
 
         specify do
-          expect do |block|
-            subject.if_version_not_supported &block
-          end
-            .to yield_with_args message: /< 0.12.0, >= 0.10.2/
+          expect_invoking_method.to yield_with_args message: /< 0.12.0, >= 0.10.2/
         end
       end
     end
 
     describe "#validate" do
-      context "when `terraform validate` fails" do
-        before do
-          fail_run_terraform command: "validate -flag /root/module/directory"
-        end
-
-        specify do
-          expect do
-            subject.validate flags: ["-flag"]
-          end
-            .to raise_shell_command_failed
-        end
-      end
-
-      context "when `terraform validate` succeeds" do
-        before do
-          succeed_run_terraform command: "validate -flag /root/module/directory"
-        end
-
-        specify do
-          expect do
-            subject.validate flags: ["-flag"]
-          end
-            .to_not raise_shell_command_failed
-        end
-      end
+      it_behaves_like(
+        "a command with ignored output",
+        command: :validate
+      )
     end
 
     describe "#within_kitchen_instance_workspace" do
+      def expect_invoking_method
+        expect do |block|
+          subject.within_kitchen_instance_workspace &block
+        end
+      end
+
+      shared_examples "it yields control and selects the default workspace" do
+        context "when `terraform workspace select default` fails" do
+          before do
+            fail_run_terraform command: "workspace select default"
+          end
+
+          specify do
+            expect_invoking_method.to yield_control.and raise_shell_command_failed
+          end
+        end
+
+        context "when `terraform workspace select default` succeeds" do
+          before do
+            succeed_run_terraform command: "workspace select default"
+          end
+
+          specify do
+            expect_invoking_method.to yield_control
+          end
+        end
+      end
+
       context "when `terraform workspace select kitchen-terraform-workspace-name` fails" do
         before do
           fail_run_terraform command: "workspace select kitchen-terraform-workspace-name"
@@ -334,10 +282,7 @@ require "kitchen/terraform/client"
           end
 
           specify do
-            expect do
-              subject.within_kitchen_instance_workspace
-            end
-              .to raise_shell_command_failed
+            expect_invoking_method.to raise_shell_command_failed
           end
         end
 
@@ -346,52 +291,7 @@ require "kitchen/terraform/client"
             succeed_run_terraform command: "workspace new kitchen-terraform-workspace-name"
           end
 
-          context "when `terraform workspace select default` fails" do
-            before do
-              fail_run_terraform command: "workspace select default"
-            end
-
-            specify do
-              expect do |block|
-                begin
-                  subject.within_kitchen_instance_workspace &block
-                rescue ::Kitchen::ShellOut::ShellCommandFailed
-                end
-              end
-                .to yield_control
-            end
-
-            specify do
-              expect do
-                subject
-                  .within_kitchen_instance_workspace do
-                  end
-              end
-                .to raise_shell_command_failed
-            end
-          end
-
-          context "when `terraform workspace select default` succeeds" do
-            before do
-              succeed_run_terraform command: "workspace select default"
-            end
-
-            specify do
-              expect do |block|
-                subject.within_kitchen_instance_workspace &block
-              end
-                .to yield_control
-            end
-
-            specify do
-              expect do
-                subject
-                  .within_kitchen_instance_workspace do
-                  end
-              end
-                .to_not raise_shell_command_failed
-            end
-          end
+          it_behaves_like "it yields control and selects the default workspace"
         end
       end
 
@@ -400,52 +300,7 @@ require "kitchen/terraform/client"
           succeed_run_terraform command: "workspace select kitchen-terraform-workspace-name"
         end
 
-        context "when `terraform workspace select default` fails" do
-          before do
-            fail_run_terraform command: "workspace select default"
-          end
-
-          specify do
-            expect do |block|
-              begin
-                subject.within_kitchen_instance_workspace &block
-              rescue ::Kitchen::ShellOut::ShellCommandFailed
-              end
-            end
-              .to yield_control
-          end
-
-          specify do
-            expect do
-              subject
-                .within_kitchen_instance_workspace do
-                end
-            end
-              .to raise_shell_command_failed
-          end
-        end
-
-        context "when `terraform workspace select default` succeeds" do
-          before do
-            succeed_run_terraform command: "workspace select default"
-          end
-
-          specify do
-            expect do |block|
-              subject.within_kitchen_instance_workspace &block
-            end
-              .to yield_control
-          end
-
-          specify do
-            expect do
-              subject
-                .within_kitchen_instance_workspace do
-                end
-            end
-              .to_not raise_shell_command_failed
-          end
-        end
+        it_behaves_like "it yields control and selects the default workspace"
       end
     end
   end
