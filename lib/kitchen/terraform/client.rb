@@ -127,9 +127,13 @@ class ::Kitchen::Terraform::Client
   #
   # @raise [::Kitchen::ShellOut::ShellCommandFailed] if the command fails.
   # @return [self]
-  def within_kitchen_instance_workspace
+  def within_kitchen_instance_workspace(&block)
+    block ||=
+      proc do
+      end
+
     select_or_new_kitchen_instance_workspace
-    yield
+    block.call
     select_default_workspace
     self
   end
