@@ -83,12 +83,17 @@ namespace :test do
       version: arguments.terraform_version
     ) do |directory:|
       ::Dir
+        .chdir "integration/docker_provider" do
+          sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+        end
+
+      ::Dir
         .chdir "integration/no_outputs_defined" do
           sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
         end
 
       ::Dir
-        .chdir "integration/docker_provider" do
+        .chdir "integration/Shell Words" do
           sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
         end
     end
