@@ -30,6 +30,7 @@ require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
+require "shellwords"
 
 # The driver is the bridge between Test Kitchen and Terraform. It manages the
 # {https://www.terraform.io/docs/state/index.html state} of the Terraform root module by shelling out and running
@@ -323,7 +324,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-refresh=true " \
             "#{config_variables_flags} " \
             "#{config_variable_files_flags} " \
-            "#{config_root_module_directory}",
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -333,7 +334,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def apply_run_get
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "get -update #{config_root_module_directory}",
+        command: "get -update #{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -349,7 +350,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_color_flag} " \
             "#{config_variables_flags} " \
             "#{config_variable_files_flags} " \
-            "#{config_root_module_directory}",
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -373,7 +374,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-get-plugins=true " \
             "#{config_plugin_directory_flag} " \
             "-verify-plugins=true " \
-            "#{config_root_module_directory}",
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -394,7 +395,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-refresh=true " \
             "#{config_variables_flags} " \
             "#{config_variable_files_flags} " \
-            "#{config_root_module_directory}",
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -417,7 +418,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-get-plugins=true " \
             "#{config_plugin_directory_flag} " \
             "-verify-plugins=true " \
-            "#{config_root_module_directory}",
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -446,6 +447,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def instance_name
     @instance_name ||= instance.name
+  end
+
+  # @api private
+  def root_module_directory
+    ::Shellwords.escape config_root_module_directory
   end
 
   # @api private
