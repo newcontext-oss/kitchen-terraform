@@ -15,7 +15,15 @@ def binstub(name:)
     )
 end
 
-def download_terraform(sha256_sum:, version:)
+def configure_default_integration(arguments:)
+  arguments
+    .with_defaults(
+      terraform_version: "0.11.7",
+      terraform_sha256_sum: "6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418"
+    )
+end
+
+def download_terraform(arguments:)
   executable =
     ::Pathname
       .new("terraform")
@@ -24,34 +32,59 @@ def download_terraform(sha256_sum:, version:)
   uri =
     ::URI
       .parse(
-        "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_linux_amd64.zip"
+        "https://releases.hashicorp.com/terraform/#{arguments.terraform_version}/terraform_#{arguments.terraform_version}_linux_amd64.zip"
       )
 
   puts "Downloading Terraform archive from #{uri}"
 
+  open(
+    expected_sha256_sum: arguments.terraform_sha256_sum,
+    uri: uri
+  ) do |archive:|
+    puts "Extracting executable to #{executable}"
+
+    ::Zip::File
+      .open archive.path do |zip_file|
+        zip_file
+          .glob("terraform")
+          .first
+          .extract executable
+      end
+
+    executable.chmod 0o0544
+    yield directory: executable.dirname
+  end
+ensure
+  executable.exist? and executable.unlink
+end
+
+def execute_terraform(arguments:, path:)
+  configure_default_integration arguments: arguments
+
+  download_terraform arguments: arguments do |directory:|
+    ::Dir
+      .chdir path do
+        sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+      end
+  end
+end
+
+def open(expected_sha256_sum:, uri:)
   uri
     .open do |archive|
-      ::Digest::SHA256
-        .file(archive.path)
-        .hexdigest
-        .==(sha256_sum) or
-        raise "Downloaded Terraform archive has an unexpected SHA256 sum"
+      actual_sha256_sum =
+        ::Digest::SHA256
+          .file(archive.path)
+          .hexdigest
 
-      puts "Extracting executable to #{executable}"
+      expected_sha256_sum == actual_sha256_sum or
+        raise(
+          "Downloaded Terraform archive was expected to have a SHA256 sum of '#{expected_sha256_sum}' but has an " \
+            "actual SHA256 sum of '#{actual_sha256_sum}'"
+        )
 
-      ::Zip::File
-        .open archive.path do |zip_file|
-          zip_file
-            .glob("terraform")
-            .first
-            .extract executable
-        end
-
-      executable.chmod 0o0544
-      yield directory: executable.dirname
-    end
-ensure
-  executable.unlink
+    yield archive: archive
+  end
 end
 
 def rspec_binstub
@@ -64,50 +97,74 @@ end
 
 namespace :tests do
   namespace :unit do
-    desc "Run unit tests"
+    desc "Run all unit tests"
 
-    task :run do
+    task :all do
       sh "#{rspec_binstub} --backtrace"
     end
   end
 
   namespace :integration do
-    desc "Run integration tests"
+    desc "Run integration tests for basic functionality"
 
     task(
-      :run,
+      :basic,
       [
         :terraform_version,
         :terraform_sha256_sum
       ]
     ) do |_, arguments|
-      arguments
-        .with_defaults(
-          terraform_version: "0.11.7",
-          terraform_sha256_sum: "6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418"
-        )
-
-      download_terraform(
-        sha256_sum: arguments.terraform_sha256_sum,
-        version: arguments.terraform_version
-      ) do |directory:|
-        ::Dir
-          .chdir "integration/docker_provider" do
-            sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-          end
-
-        ::Dir
-          .chdir "integration/no_outputs_defined" do
-            sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-          end
-
-        ::Dir
-          .chdir "integration/Shell Words" do
-            sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-          end
-      end
+      execute_terraform(
+        arguments: arguments,
+        path: "integration/basic"
+      )
     end
+
+    desc "Run integration tests for no outputs defined"
+
+    task(
+      :no_outputs_defined,
+      [
+        :terraform_version,
+        :terraform_sha256_sum
+      ]
+    ) do |_, arguments|
+      execute_terraform(
+        arguments: arguments,
+        path: "integration/no_outputs_defined"
+      )
+    end
+
+    desc "Run integration tests shell words"
+
+    task(
+      :shell_words,
+      [
+        :terraform_version,
+        :terraform_sha256_sum
+      ]
+    ) do |_, arguments|
+      execute_terraform(
+        arguments: arguments,
+        path: "integration/Shell Words"
+      )
+    end
+
+    desc "Run all integration tests"
+
+    task(
+      :all,
+      [
+        :terraform_version,
+        :terraform_sha256_sum
+      ] =>
+        [
+          "tests:integration:basic",
+          "tests:integration:no_outputs_defined",
+          "tests:integration:shell_words"
+        ]
+    )
   end
 end
 
-task default: "tests:unit:run"
+task default: "tests:unit:all"
