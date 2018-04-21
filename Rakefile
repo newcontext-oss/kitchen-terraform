@@ -78,6 +78,12 @@ namespace :test do
       :terraform_sha256_sum
     ]
   ) do |_, arguments|
+    arguments
+      .with_defaults(
+        terraform_version: "0.11.7",
+        terraform_sha256_sum: "6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418"
+      )
+
     download_terraform(
       sha256_sum: arguments.terraform_sha256_sum,
       version: arguments.terraform_version
