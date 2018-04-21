@@ -28,21 +28,21 @@ jobs:
     -
       stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.5
-      script: bin/rake test:unit
+      script: bin/rake tests:unit:run
       after_success: bin/codeclimate-test-reporter
 
     -
       stage: unit tests with legacy supported versions of ruby
       rvm: 2.4
-      script: bin/rake test:unit
+      script: bin/rake tests:unit:run
 
     -
       rvm: 2.3
-      script: bin/rake test:unit
+      script: bin/rake tests:unit:run
 
     -
       rvm: 2.2
-      script: bin/rake test:unit
+      script: bin/rake tests:unit:run
 
     -
       stage: integration tests with newest supported version of terraform
@@ -63,7 +63,7 @@ jobs:
             --retry=3
             --without=development
 
-      script: bin/rake test:integration
+      script: bin/rake tests:integration:run
 
     -
       sudo: required
@@ -83,7 +83,7 @@ jobs:
             --retry=3
             --without=development
 
-      script: bin/rake test:integration
+      script: bin/rake tests:integration:run
 
     -
       sudo: required
@@ -103,7 +103,7 @@ jobs:
             --retry=3
             --without=development
 
-      script: bin/rake test:integration
+      script: bin/rake tests:integration:run
 
     -
       sudo: required
@@ -123,7 +123,7 @@ jobs:
             --retry=3
             --without=development
 
-      script: bin/rake test:integration
+      script: bin/rake tests:integration:run
 
     -
       stage: integration tests with legacy supported versions of terraform
@@ -147,7 +147,7 @@ jobs:
             --retry=3
             --without=development
 
-      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+      script: bin/rake tests:integration:run[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       sudo: required
@@ -170,7 +170,7 @@ jobs:
             --retry=3
             --without=development
 
-      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+      script: bin/rake tests:integration:run[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       sudo: required
@@ -193,7 +193,7 @@ jobs:
             --retry=3
             --without=development
 
-      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+      script: bin/rake tests:integration:run[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       sudo: required
@@ -216,7 +216,7 @@ jobs:
             --retry=3
             --without=development
 
-      script: bin/rake test:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+      script: bin/rake tests:integration:run[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
 
     -
       stage: deploy to rubygems.org

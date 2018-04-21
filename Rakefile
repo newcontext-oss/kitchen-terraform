@@ -62,48 +62,52 @@ def kitchen_binstub
   binstub name: "kitchen"
 end
 
-namespace :test do
-  desc "Run unit tests"
+namespace :tests do
+  namespace :unit do
+    desc "Run unit tests"
 
-  task :unit do
-    sh "#{rspec_binstub} --backtrace"
+    task :run do
+      sh "#{rspec_binstub} --backtrace"
+    end
   end
 
-  desc "Run integration tests"
+  namespace :integration do
+    desc "Run integration tests"
 
-  task(
-    :integration,
-    [
-      :terraform_version,
-      :terraform_sha256_sum
-    ]
-  ) do |_, arguments|
-    arguments
-      .with_defaults(
-        terraform_version: "0.11.7",
-        terraform_sha256_sum: "6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418"
-      )
+    task(
+      :run,
+      [
+        :terraform_version,
+        :terraform_sha256_sum
+      ]
+    ) do |_, arguments|
+      arguments
+        .with_defaults(
+          terraform_version: "0.11.7",
+          terraform_sha256_sum: "6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418"
+        )
 
-    download_terraform(
-      sha256_sum: arguments.terraform_sha256_sum,
-      version: arguments.terraform_version
-    ) do |directory:|
-      ::Dir
-        .chdir "integration/docker_provider" do
-          sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-        end
+      download_terraform(
+        sha256_sum: arguments.terraform_sha256_sum,
+        version: arguments.terraform_version
+      ) do |directory:|
+        ::Dir
+          .chdir "integration/docker_provider" do
+            sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+          end
 
-      ::Dir
-        .chdir "integration/no_outputs_defined" do
-          sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-        end
+        ::Dir
+          .chdir "integration/no_outputs_defined" do
+            sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+          end
 
-      ::Dir
-        .chdir "integration/Shell Words" do
-          sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-        end
+        ::Dir
+          .chdir "integration/Shell Words" do
+            sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+          end
+      end
     end
   end
 end
 
-task default: "test:unit"
+task default: "tests:unit:run"
