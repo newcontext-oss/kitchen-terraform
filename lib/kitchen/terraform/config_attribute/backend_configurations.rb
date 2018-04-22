@@ -28,10 +28,12 @@ require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 #     backend_configurations:
 #       address: demo.consul.io
 #       path: example_app/terraform_state
-::Kitchen::Terraform::ConfigAttribute::BackendConfigurations =
+module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
   ::Kitchen::Terraform::ConfigAttribute
-    .create(
+    .new(
       attribute: :backend_configurations,
       default_value: {},
       schema: ::Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings
     )
+    .apply config_attribute: self
+end

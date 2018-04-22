@@ -26,10 +26,12 @@ require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 #     variables:
 #       image: image-1234
 #       zone: zone-5
-::Kitchen::Terraform::ConfigAttribute::Variables =
+module ::Kitchen::Terraform::ConfigAttribute::Variables
   ::Kitchen::Terraform::ConfigAttribute
-    .create(
+    .new(
       attribute: :variables,
       default_value: {},
       schema: ::Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings
     )
+    .apply config_attribute: self
+end

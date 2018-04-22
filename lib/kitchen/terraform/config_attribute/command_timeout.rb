@@ -23,10 +23,12 @@ require "kitchen/terraform/config_schemas/integer"
 # Required:: False
 # Default:: +600+
 # Example:: <code>command_timeout: 1200</code>
-::Kitchen::Terraform::ConfigAttribute::CommandTimeout =
+module ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
   ::Kitchen::Terraform::ConfigAttribute
-    .create(
+    .new(
       attribute: :command_timeout,
       default_value: 600,
       schema: ::Kitchen::Terraform::ConfigSchemas::Integer
     )
+    .apply config_attribute: self
+end

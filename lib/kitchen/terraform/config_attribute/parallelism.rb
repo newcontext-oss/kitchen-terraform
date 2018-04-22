@@ -24,10 +24,12 @@ require "kitchen/terraform/config_schemas/integer"
 # Required:: False
 # Default:: +10+
 # Example:: <code>parallelism: 50</code>
-::Kitchen::Terraform::ConfigAttribute::Parallelism =
+module ::Kitchen::Terraform::ConfigAttribute::Parallelism
   ::Kitchen::Terraform::ConfigAttribute
-    .create(
+    .new(
       attribute: :parallelism,
       default_value: 10,
       schema: ::Kitchen::Terraform::ConfigSchemas::Integer
     )
+    .apply config_attribute: self
+end

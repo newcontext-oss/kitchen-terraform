@@ -134,10 +134,12 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_a_username
 #         username: tester
 # Caveat:: If this key is omitted then the username of the Test Kitcen SSH Transport will be used.
-::Kitchen::Terraform::ConfigAttribute::Groups =
+module ::Kitchen::Terraform::ConfigAttribute::Groups
   ::Kitchen::Terraform::ConfigAttribute
-    .create(
+    .new(
       attribute: :groups,
       default_value: [],
       schema: ::Kitchen::Terraform::ConfigSchemas::Groups
     )
+    .apply config_attribute: self
+end

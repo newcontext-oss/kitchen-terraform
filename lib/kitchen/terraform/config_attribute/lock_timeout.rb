@@ -24,10 +24,12 @@ require "kitchen/terraform/config_schemas/integer"
 # Required:: False
 # Default:: +0+
 # Example:: <code>lock_timeout: 10</code>
-::Kitchen::Terraform::ConfigAttribute::LockTimeout =
+module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
   ::Kitchen::Terraform::ConfigAttribute
-    .create(
+    .new(
       attribute: :lock_timeout,
       default_value: 0,
       schema: ::Kitchen::Terraform::ConfigSchemas::Integer
     )
+    .apply config_attribute: self
+end

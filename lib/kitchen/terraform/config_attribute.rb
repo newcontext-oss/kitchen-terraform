@@ -18,41 +18,77 @@ require "kitchen/terraform"
 require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_attribute_definer"
 
-# This module is a factory for configuration attributes.
-module ::Kitchen::Terraform::ConfigAttribute
-  # This method creates a configuration attribute module to be included by a plugin class.
+# This class applies the behaviour of a configuration attribute to a module which must be included by a plugin class.
+class ::Kitchen::Terraform::ConfigAttribute
+  # This method applies the configuration attribute behaviour to a module.
+  #
+  # @param config_attribute [::Module] a module.
+  # @return [self]
+  def apply(config_attribute:)
+    self.config_attribute = config_attribute
+    define_singleton_included
+    define_singleton_to_sym
+    config_attribute.extend ::Kitchen::Terraform::ConfigAttributeCacher
+    define_config_attribute_default_value
+    self
+  end
+
+  private
+
+  attr_accessor(
+    :attribute,
+    :config_attribute,
+    :default_value,
+    :schema
+  )
+
+  # @api private
+  def define_config_attribute_default_value
+    local_attribute = attribute
+    local_default_value = default_value
+
+    config_attribute
+      .send(
+        :define_method,
+        "config_#{local_attribute}_default_value"
+      ) do
+        local_default_value
+      end
+  end
+
+  # @api private
+  def define_singleton_included
+    local_schema = schema
+
+    config_attribute
+      .define_singleton_method :included do |plugin_class|
+        ::Kitchen::Terraform::ConfigAttributeDefiner
+          .new(
+            attribute: self,
+            schema: local_schema
+          )
+          .define plugin_class: plugin_class
+      end
+  end
+
+  # @api private
+  def define_singleton_to_sym
+    local_attribute = attribute
+
+    config_attribute
+      .define_singleton_method :to_sym do
+        local_attribute
+      end
+  end
+
+  # This method initializes a new instance.
   #
   # @param attribute [::Symbol] the symbol corresponding to the attribute.
   # @param default_value [::Object] the default value of the attribute.
-  # @return [::Module] the configuration attribute module.
-  def self.create(attribute:, default_value:, schema:)
-    ::Module
-      .new
-      .tap do |config_attribute|
-        config_attribute
-          .define_singleton_method :included do |plugin_class|
-            ::Kitchen::Terraform::ConfigAttributeDefiner
-              .new(
-                attribute: self,
-                schema: schema
-              )
-              .define plugin_class: plugin_class
-          end
-
-        config_attribute
-          .define_singleton_method :to_sym do
-            attribute
-          end
-
-        config_attribute.extend ::Kitchen::Terraform::ConfigAttributeCacher
-
-        config_attribute
-          .send(
-            :define_method,
-            "config_#{attribute}_default_value"
-          ) do
-            default_value
-          end
-      end
+  # @api private
+  def initialize(attribute:, default_value:, schema:)
+    self.attribute = attribute
+    self.default_value = default_value
+    self.schema = schema
   end
 end
