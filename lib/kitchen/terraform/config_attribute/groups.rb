@@ -15,8 +15,6 @@
 # limitations under the License.
 
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_attribute_cacher"
-require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/groups"
 
 # This attribute configures the execution of {https://www.inspec.io/docs/reference/profiles/ InSpec profiles} against
@@ -136,31 +134,10 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_a_username
 #         username: tester
 # Caveat:: If this key is omitted then the username of the Test Kitcen SSH Transport will be used.
-#
-# @abstract It must be included by a plugin class in order to be used.
-module ::Kitchen::Terraform::ConfigAttribute::Groups
-  # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
-  #
-  # @param plugin_class [::Kitchen::Configurable] A plugin class.
-  # @return [void]
-  def self.included(plugin_class)
-    ::Kitchen::Terraform::ConfigAttributeDefiner
-      .new(
-        attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::Groups
-      )
-      .define plugin_class: plugin_class
-  end
-
-  # @return [::Symbol] the symbol corresponding to the attribute.
-  def self.to_sym
-    :groups
-  end
-
-  extend ::Kitchen::Terraform::ConfigAttributeCacher
-
-  # @return [::Array] an empty array.
-  def config_groups_default_value
-    []
-  end
-end
+::Kitchen::Terraform::ConfigAttribute::Groups =
+  ::Kitchen::Terraform::ConfigAttribute
+    .create(
+      attribute: :groups,
+      default_value: [],
+      schema: ::Kitchen::Terraform::ConfigSchemas::Groups
+    )

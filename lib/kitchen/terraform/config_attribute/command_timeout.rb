@@ -14,7 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_attribute_type/integer"
+require "kitchen/terraform/config_attribute"
+require "kitchen/terraform/config_schemas/integer"
 
 # This attribute controls the number of seconds that the plugin will wait for Terraform commands to finish running.
 #
@@ -23,8 +24,9 @@ require "kitchen/terraform/config_attribute_type/integer"
 # Default:: +600+
 # Example:: <code>command_timeout: 1200</code>
 ::Kitchen::Terraform::ConfigAttribute::CommandTimeout =
-  ::Kitchen::Terraform::ConfigAttributeType::Integer
+  ::Kitchen::Terraform::ConfigAttribute
     .create(
       attribute: :command_timeout,
-      default_value: 600
+      default_value: 600,
+      schema: ::Kitchen::Terraform::ConfigSchemas::Integer
     )

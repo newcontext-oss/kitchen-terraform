@@ -15,9 +15,44 @@
 # limitations under the License.
 
 require "kitchen/terraform"
+require "kitchen/terraform/config_attribute_cacher"
+require "kitchen/terraform/config_attribute_definer"
 
-# The namespace for configuration attributes.
-#
-# @abstract It defines the interface for configuration attributes to implement.
+# This module is a factory for configuration attributes.
 module ::Kitchen::Terraform::ConfigAttribute
+  # This method creates a configuration attribute module to be included by a plugin class.
+  #
+  # @param attribute [::Symbol] the symbol corresponding to the attribute.
+  # @param default_value [::Object] the default value of the attribute.
+  # @return [::Module] the configuration attribute module.
+  def self.create(attribute:, default_value:, schema:)
+    ::Module
+      .new
+      .tap do |config_attribute|
+        config_attribute
+          .define_singleton_method :included do |plugin_class|
+            ::Kitchen::Terraform::ConfigAttributeDefiner
+              .new(
+                attribute: self,
+                schema: schema
+              )
+              .define plugin_class: plugin_class
+          end
+
+        config_attribute
+          .define_singleton_method :to_sym do
+            attribute
+          end
+
+        config_attribute.extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+        config_attribute
+          .send(
+            :define_method,
+            "config_#{attribute}_default_value"
+          ) do
+            default_value
+          end
+      end
+  end
 end
