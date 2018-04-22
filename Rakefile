@@ -23,58 +23,28 @@ def configure_default_integration(arguments:)
     )
 end
 
-def download_terraform(arguments:)
-  executable =
-    ::Pathname
-      .new("terraform")
-      .expand_path
-
+def download_and_extract_hashicorp_release(destination:, expected_sha256_sum:, product:, version:)
   uri =
-    ::URI
-      .parse(
-        "https://releases.hashicorp.com/terraform/#{arguments.terraform_version}/terraform_#{arguments.terraform_version}_linux_amd64.zip"
+    ::URI::HTTPS
+      .build(
+        host: "releases.hashicorp.com",
+        path:
+          ::File
+            .join(
+              "/",
+              product,
+              version,
+              "#{product}_#{version}_linux_amd64.zip"
+            )
       )
 
-  puts "Downloading Terraform archive from #{uri}"
+  puts "Downloading #{uri}"
 
-  open(
-    expected_sha256_sum: arguments.terraform_sha256_sum,
-    uri: uri
-  ) do |archive:|
-    puts "Extracting executable to #{executable}"
-
-    ::Zip::File
-      .open archive.path do |zip_file|
-        zip_file
-          .glob("terraform")
-          .first
-          .extract executable
-      end
-
-    executable.chmod 0o0544
-    yield directory: executable.dirname
-  end
-ensure
-  executable.exist? and executable.unlink
-end
-
-def execute_terraform(arguments:, path:)
-  configure_default_integration arguments: arguments
-
-  download_terraform arguments: arguments do |directory:|
-    ::Dir
-      .chdir path do
-        sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-      end
-  end
-end
-
-def open(expected_sha256_sum:, uri:)
   uri
-    .open do |archive|
+    .open do |file|
       actual_sha256_sum =
         ::Digest::SHA256
-          .file(archive.path)
+          .file(file.path)
           .hexdigest
 
       expected_sha256_sum == actual_sha256_sum or
@@ -83,8 +53,57 @@ def open(expected_sha256_sum:, uri:)
             "actual SHA256 sum of '#{actual_sha256_sum}'"
         )
 
-    yield archive: archive
-  end
+      extract_archive(
+        destination: destination,
+        source: file
+      )
+    end
+end
+
+def execute_terraform(arguments:, path:)
+  configure_default_integration arguments: arguments
+
+  directory =
+    ::Pathname
+      .new("terraform_#{arguments.terraform_version}")
+      .expand_path
+
+  directory.mkpath
+
+  download_and_extract_hashicorp_release(
+    destination: directory,
+    expected_sha256_sum: arguments.terraform_sha256_sum,
+    product: "terraform",
+    version: arguments.terraform_version
+  )
+
+  ::Dir
+    .chdir path do
+      sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+    end
+end
+
+def extract_archive(destination:, source:)
+  destination_pathname = Pathname destination
+  source_pathname = Pathname source
+  puts "Extracting #{source_pathname} to #{destination_pathname}"
+  destination_pathname.mkpath
+
+  ::Zip::File
+    .open source_pathname do |zip_file|
+      zip_file
+        .each do |entry|
+          extract_archive_entry(
+            destination: destination_pathname.join(entry.name),
+            source: entry
+          )
+        end
+    end
+end
+
+def extract_archive_entry(destination:, source:)
+  destination.exist? or source.extract destination
+  destination.chmod 0o0544
 end
 
 def rspec_binstub
