@@ -14,7 +14,7 @@ provider "local" {
 }
 
 data "docker_registry_image" "ubuntu" {
-  name = "rastasheep/ubuntu-sshd:latest"
+  name = "${var.docker_registry_image_name}"
 }
 
 resource "docker_image" "ubuntu" {

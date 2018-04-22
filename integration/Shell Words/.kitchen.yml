@@ -2,6 +2,8 @@
 driver:
   name: terraform
   plugin_directory: Plugin Directory
+  variable_files:
+    - Variable Files/Variable File.tfvars
 
 provisioner:
   name: terraform

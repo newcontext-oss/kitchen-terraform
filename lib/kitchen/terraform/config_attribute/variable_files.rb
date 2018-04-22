@@ -56,13 +56,4 @@ module ::Kitchen::Terraform::ConfigAttribute::VariableFiles
   def config_variable_files_default_value
     []
   end
-
-  # @return [::String] the elements of the value converted to flags, joined by white space.
-  def config_variable_files_flags
-    config_variable_files
-      .map do |path|
-        "-var-file=#{path}"
-      end
-      .join " "
-  end
 end
