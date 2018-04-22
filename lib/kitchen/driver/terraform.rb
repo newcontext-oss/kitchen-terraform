@@ -316,7 +316,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "apply " \
             "#{config_lock_flag} " \
-            "#{config_lock_timeout_flag} " \
+            "#{lock_timeout_flag} " \
             "-input=false " \
             "-auto-approve=true " \
             "#{color_flag} " \
@@ -369,7 +369,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           "init " \
             "-input=false " \
             "#{config_lock_flag} " \
-            "#{config_lock_timeout_flag} " \
+            "#{lock_timeout_flag} " \
             "#{color_flag} " \
             "-upgrade " \
             "-force-copy " \
@@ -393,7 +393,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           "destroy " \
             "-force " \
             "#{config_lock_flag} " \
-            "#{config_lock_timeout_flag} " \
+            "#{lock_timeout_flag} " \
             "-input=false " \
             "#{color_flag} " \
             "#{parallelism_flag} " \
@@ -414,7 +414,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           "init " \
             "-input=false " \
             "#{config_lock_flag} " \
-            "#{config_lock_timeout_flag} " \
+            "#{lock_timeout_flag} " \
             "#{color_flag} " \
             "-force-copy " \
             "-backend=true " \
@@ -452,6 +452,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def instance_name
     @instance_name ||= instance.name
+  end
+
+  # @api private
+  def lock_timeout_flag
+    "-lock-timeout=#{config_lock_timeout}s"
   end
 
   # @api private

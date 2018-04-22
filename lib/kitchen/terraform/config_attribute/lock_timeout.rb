@@ -53,9 +53,4 @@ module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
   def config_lock_timeout_default_value
     0
   end
-
-  # @return [::String] the value converted to a flag.
-  def config_lock_timeout_flag
-    "-lock-timeout=#{config_lock_timeout}s"
-  end
 end

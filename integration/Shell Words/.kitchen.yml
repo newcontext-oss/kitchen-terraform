@@ -1,6 +1,7 @@
 ---
 driver:
   name: terraform
+  lock_timeout: 5
   plugin_directory: Plugin Directory
   variable_files:
     - Variable Files/Variable File.tfvars
