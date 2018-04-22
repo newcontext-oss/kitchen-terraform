@@ -4,6 +4,8 @@ driver:
   plugin_directory: Plugin Directory
   variable_files:
     - Variable Files/Variable File.tfvars
+  variables:
+    docker_container_name: Ub.nt.-C.nt..n.r
 
 provisioner:
   name: terraform

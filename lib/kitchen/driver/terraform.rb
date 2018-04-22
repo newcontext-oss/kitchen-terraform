@@ -322,7 +322,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_color_flag} " \
             "#{config_parallelism_flag} " \
             "-refresh=true " \
-            "#{config_variables_flags} " \
+            "#{variables_flags} " \
             "#{variable_files_flags} " \
             "#{root_module_directory}",
         duration: config_command_timeout,
@@ -348,7 +348,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
           "validate " \
             "-check-variables=true " \
             "#{config_color_flag} " \
-            "#{config_variables_flags} " \
+            "#{variables_flags} " \
             "#{variable_files_flags} " \
             "#{root_module_directory}",
         duration: config_command_timeout,
@@ -393,7 +393,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_color_flag} " \
             "#{config_parallelism_flag} " \
             "-refresh=true " \
-            "#{config_variables_flags} " \
+            "#{variables_flags} " \
             "#{variable_files_flags} " \
             "#{root_module_directory}",
         duration: config_command_timeout,
@@ -481,6 +481,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     config_variable_files
       .map do |path|
         "-var-file=#{::Shellwords.escape path}"
+      end
+      .join " "
+  end
+
+  # @api private
+  def variables_flags
+    config_variables
+      .map do |key, value|
+        "-var=#{::Shellwords.escape "#{key}=#{value}"}"
       end
       .join " "
   end

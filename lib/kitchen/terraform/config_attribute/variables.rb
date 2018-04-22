@@ -55,13 +55,4 @@ module ::Kitchen::Terraform::ConfigAttribute::Variables
   def config_variables_default_value
     {}
   end
-
-  # @return [::String] the elements of the value converted to flags, joined by whitespace.
-  def config_variables_flags
-    config_variables
-      .map do |key, value|
-        "-var=\"#{key}=#{value}\""
-      end
-      .join " "
-  end
 end
