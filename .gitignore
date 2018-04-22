@@ -18,5 +18,6 @@ coverage/
 doc/
 examples/*/Gemfile.lock
 examples/*/test/assets
+terraform_*/
 tmp/
 vendor/
