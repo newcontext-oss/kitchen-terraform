@@ -320,7 +320,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-input=false " \
             "-auto-approve=true " \
             "#{config_color_flag} " \
-            "#{config_parallelism_flag} " \
+            "#{parallelism_flag} " \
             "-refresh=true " \
             "#{variables_flags} " \
             "#{variable_files_flags} " \
@@ -391,7 +391,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_lock_timeout_flag} " \
             "-input=false " \
             "#{config_color_flag} " \
-            "#{config_parallelism_flag} " \
+            "#{parallelism_flag} " \
             "-refresh=true " \
             "#{variables_flags} " \
             "#{variable_files_flags} " \
@@ -447,6 +447,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def instance_name
     @instance_name ||= instance.name
+  end
+
+  # @api private
+  def parallelism_flag
+    "-parallelism=#{config_parallelism}"
   end
 
   # @api private

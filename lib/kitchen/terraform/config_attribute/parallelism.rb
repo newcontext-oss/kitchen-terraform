@@ -53,9 +53,4 @@ module ::Kitchen::Terraform::ConfigAttribute::Parallelism
   def config_parallelism_default_value
     10
   end
-
-  # @return [::String] the value converted to a flag.
-  def config_parallelism_flag
-    "-parallelism=#{config_parallelism}"
-  end
 end
