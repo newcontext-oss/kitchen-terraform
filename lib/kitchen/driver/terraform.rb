@@ -319,7 +319,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_lock_timeout_flag} " \
             "-input=false " \
             "-auto-approve=true " \
-            "#{config_color_flag} " \
+            "#{color_flag} " \
             "#{parallelism_flag} " \
             "-refresh=true " \
             "#{variables_flags} " \
@@ -347,13 +347,18 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "validate " \
             "-check-variables=true " \
-            "#{config_color_flag} " \
+            "#{color_flag} " \
             "#{variables_flags} " \
             "#{variable_files_flags} " \
             "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
+  end
+
+  # api private
+  def color_flag
+    config_color and "" or "-no-color"
   end
 
   # @api private
@@ -365,7 +370,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-input=false " \
             "#{config_lock_flag} " \
             "#{config_lock_timeout_flag} " \
-            "#{config_color_flag} " \
+            "#{color_flag} " \
             "-upgrade " \
             "-force-copy " \
             "-backend=true " \
@@ -390,7 +395,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_lock_flag} " \
             "#{config_lock_timeout_flag} " \
             "-input=false " \
-            "#{config_color_flag} " \
+            "#{color_flag} " \
             "#{parallelism_flag} " \
             "-refresh=true " \
             "#{variables_flags} " \
@@ -410,7 +415,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-input=false " \
             "#{config_lock_flag} " \
             "#{config_lock_timeout_flag} " \
-            "#{config_color_flag} " \
+            "#{color_flag} " \
             "-force-copy " \
             "-backend=true " \
             "#{config_backend_configurations_flags} " \

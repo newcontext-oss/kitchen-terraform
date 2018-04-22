@@ -59,9 +59,4 @@ module ::Kitchen::Terraform::ConfigAttribute::Color
   def config_color_default_value
     ::Kitchen.tty?
   end
-
-  # @return [::String] the toggle converted to a flag.
-  def config_color_flag
-    config_color and "" or "-no-color"
-  end
 end
