@@ -356,6 +356,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       )
   end
 
+  # @api private
+  def backend_configurations_flags
+    config_backend_configurations
+      .map do |key, value|
+        "-backend-config=#{::Shellwords.escape "#{key}=#{value}"}"
+      end
+      .join " "
+  end
+
   # api private
   def color_flag
     config_color and "" or "-no-color"
@@ -374,7 +383,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-upgrade " \
             "-force-copy " \
             "-backend=true " \
-            "#{config_backend_configurations_flags} " \
+            "#{backend_configurations_flags} " \
             "-get=true " \
             "-get-plugins=true " \
             "#{plugin_directory_flag} " \
@@ -418,7 +427,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{color_flag} " \
             "-force-copy " \
             "-backend=true " \
-            "#{config_backend_configurations_flags} " \
+            "#{backend_configurations_flags} " \
             "-get=true " \
             "-get-plugins=true " \
             "#{plugin_directory_flag} " \

@@ -57,13 +57,4 @@ module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
   def config_backend_configurations_default_value
     {}
   end
-
-  # @return [::String] the elements of the value converted to flags, joined by white space.
-  def config_backend_configurations_flags
-    config_backend_configurations
-      .map do |key, value|
-        "-backend-config=\"#{key}=#{value}\""
-      end
-      .join " "
-  end
 end
