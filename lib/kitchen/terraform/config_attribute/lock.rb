@@ -53,9 +53,4 @@ module ::Kitchen::Terraform::ConfigAttribute::Lock
   def config_lock_default_value
     true
   end
-
-  # @return [::String] the toggle converted to a flag.
-  def config_lock_flag
-    "-lock=#{config_lock}"
-  end
 end
