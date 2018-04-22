@@ -480,7 +480,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def plugin_directory_flag
-    config_plugin_directory.nil? and "" or "-plugin-dir=#{::Shellwords.escape config_plugin_directory}"
+    config_plugin_directory and
+      "-plugin-dir=#{::Shellwords.escape config_plugin_directory}" or
+      ""
   end
 
   # @api private
