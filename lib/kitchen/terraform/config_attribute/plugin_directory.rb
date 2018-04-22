@@ -54,9 +54,4 @@ module ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
   def config_plugin_directory_default_value
     nil
   end
-
-  # @return [::String] the value converted to a flag.
-  def config_plugin_directory_flag
-    config_plugin_directory.nil? and "" or "-plugin-dir=#{config_plugin_directory}"
-  end
 end

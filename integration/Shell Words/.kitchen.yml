@@ -1,6 +1,7 @@
 ---
 driver:
   name: terraform
+  plugin_directory: Plugin Directory
 
 provisioner:
   name: terraform

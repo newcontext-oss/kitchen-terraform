@@ -372,7 +372,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_backend_configurations_flags} " \
             "-get=true " \
             "-get-plugins=true " \
-            "#{config_plugin_directory_flag} " \
+            "#{plugin_directory_flag} " \
             "-verify-plugins=true " \
             "#{root_module_directory}",
         duration: config_command_timeout,
@@ -416,7 +416,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{config_backend_configurations_flags} " \
             "-get=true " \
             "-get-plugins=true " \
-            "#{config_plugin_directory_flag} " \
+            "#{plugin_directory_flag} " \
             "-verify-plugins=true " \
             "#{root_module_directory}",
         duration: config_command_timeout,
@@ -447,6 +447,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def instance_name
     @instance_name ||= instance.name
+  end
+
+  # @api private
+  def plugin_directory_flag
+    config_plugin_directory.nil? and "" or "-plugin-dir=#{::Shellwords.escape config_plugin_directory}"
   end
 
   # @api private

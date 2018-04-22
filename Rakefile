@@ -163,6 +163,20 @@ namespace :tests do
         :terraform_sha256_sum
       ]
     ) do |_, arguments|
+      download_and_extract_hashicorp_release(
+        destination: "integration/Shell Words/Plugin Directory",
+        expected_sha256_sum: "08a1fbd839f39910330bc90fed440b4f72a138ea72408482b0adf63c9fbee99b",
+        product: "terraform-provider-docker",
+        version: "0.1.1"
+      )
+
+      download_and_extract_hashicorp_release(
+        destination: "integration/Shell Words/Plugin Directory",
+        expected_sha256_sum: "b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00",
+        product: "terraform-provider-local",
+        version: "1.1.0"
+      )
+
       execute_terraform(
         arguments: arguments,
         path: "integration/Shell Words"
