@@ -27,7 +27,10 @@ module ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
   ::Kitchen::Terraform::ConfigAttribute
     .new(
       attribute: :command_timeout,
-      default_value: 600,
+      default_value:
+        lambda do
+          600
+        end,
       schema: ::Kitchen::Terraform::ConfigSchemas::Integer
     )
     .apply config_attribute: self

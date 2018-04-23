@@ -28,7 +28,10 @@ module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
   ::Kitchen::Terraform::ConfigAttribute
     .new(
       attribute: :lock_timeout,
-      default_value: 0,
+      default_value:
+        lambda do
+          0
+        end,
       schema: ::Kitchen::Terraform::ConfigSchemas::Integer
     )
     .apply config_attribute: self

@@ -32,7 +32,10 @@ module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
   ::Kitchen::Terraform::ConfigAttribute
     .new(
       attribute: :backend_configurations,
-      default_value: {},
+      default_value:
+        lambda do
+          {}
+        end,
       schema: ::Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings
     )
     .apply config_attribute: self

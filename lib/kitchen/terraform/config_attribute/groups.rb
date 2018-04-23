@@ -138,7 +138,10 @@ module ::Kitchen::Terraform::ConfigAttribute::Groups
   ::Kitchen::Terraform::ConfigAttribute
     .new(
       attribute: :groups,
-      default_value: [],
+      default_value:
+        lambda do
+          []
+        end,
       schema: ::Kitchen::Terraform::ConfigSchemas::Groups
     )
     .apply config_attribute: self

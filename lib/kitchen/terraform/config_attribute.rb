@@ -28,7 +28,6 @@ class ::Kitchen::Terraform::ConfigAttribute
     self.config_attribute = config_attribute
     define_singleton_included
     define_singleton_to_sym
-    config_attribute.extend ::Kitchen::Terraform::ConfigAttributeCacher
     define_config_attribute_default_value
     self
   end
@@ -44,16 +43,12 @@ class ::Kitchen::Terraform::ConfigAttribute
 
   # @api private
   def define_config_attribute_default_value
-    local_attribute = attribute
-    local_default_value = default_value
-
     config_attribute
       .send(
         :define_method,
-        "config_#{local_attribute}_default_value"
-      ) do
-        local_default_value
-      end
+        "config_#{attribute}_default_value",
+        &default_value
+      )
   end
 
   # @api private
@@ -79,6 +74,8 @@ class ::Kitchen::Terraform::ConfigAttribute
       .define_singleton_method :to_sym do
         local_attribute
       end
+
+    config_attribute.extend ::Kitchen::Terraform::ConfigAttributeCacher
   end
 
   # This method initializes a new instance.

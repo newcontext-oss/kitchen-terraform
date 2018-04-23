@@ -30,7 +30,10 @@ module ::Kitchen::Terraform::ConfigAttribute::Variables
   ::Kitchen::Terraform::ConfigAttribute
     .new(
       attribute: :variables,
-      default_value: {},
+      default_value:
+        lambda do
+          {}
+        end,
       schema: ::Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings
     )
     .apply config_attribute: self
