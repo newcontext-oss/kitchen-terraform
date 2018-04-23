@@ -16,8 +16,6 @@
 
 require "kitchen"
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_attribute_cacher"
-require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_schemas/boolean"
 
 # This attribute toggles {https://www.terraform.io/docs/state/locking.html locking of the Terraform state file}.
@@ -26,31 +24,15 @@ require "kitchen/terraform/config_schemas/boolean"
 # Required:: False
 # Default:: +true+
 # Example:: <code>lock: false</code>
-#
-# @abstract It must be included by plugin class in order to be used.
 module ::Kitchen::Terraform::ConfigAttribute::Lock
-  # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
-  #
-  # @param plugin_class [::Kitchen::Configurable] A plugin class.
-  # @return [void]
-  def self.included(plugin_class)
-    ::Kitchen::Terraform::ConfigAttributeDefiner
-      .new(
-        attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::Boolean
-      )
-      .define plugin_class: plugin_class
-  end
-
-  # @return [::Symbol] the symbol corresponding to the attribute.
-  def self.to_sym
-    :lock
-  end
-
-  extend ::Kitchen::Terraform::ConfigAttributeCacher
-
-  # @return [true]
-  def config_lock_default_value
-    true
-  end
+  ::Kitchen::Terraform::ConfigAttribute
+    .new(
+      attribute: :lock,
+      default_value:
+        lambda do
+          true
+        end,
+      schema: ::Kitchen::Terraform::ConfigSchemas::Boolean
+    )
+    .apply config_attribute: self
 end
