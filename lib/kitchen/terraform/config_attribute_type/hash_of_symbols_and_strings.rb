@@ -16,11 +16,11 @@
 
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_type"
-require "kitchen/terraform/config_schemas/integer"
+require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 
-# This module applies the behaviour of a configuration attribute of type integer to a module which must be included by a
-# plugin class.
-module ::Kitchen::Terraform::ConfigAttributeType::Integer
+# This modules applies the behaviour of a configuration attribute of type hash of symbols and strings to a module which
+# must be included by a plugin class.
+module ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings
   # This method applies the configuration attribute behaviour to a module.
   #
   # @param attribute [::Symbol] the symbol corresponding to the configuration attribute.
@@ -32,7 +32,7 @@ module ::Kitchen::Terraform::ConfigAttributeType::Integer
       .new(
         attribute: attribute,
         default_value: default_value,
-        schema: ::Kitchen::Terraform::ConfigSchemas::Integer
+        schema: ::Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings
       )
       .apply config_attribute: config_attribute
 

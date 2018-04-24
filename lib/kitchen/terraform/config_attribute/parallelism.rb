@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_schemas/integer"
+require "kitchen/terraform/config_attribute_type/integer"
 
 # This attribute controls the number of concurrent operations to use while Terraform
 # {https://www.terraform.io/docs/internals/graph.html#walking-the-graph walks the resource graph}.
@@ -25,14 +25,13 @@ require "kitchen/terraform/config_schemas/integer"
 # Default:: +10+
 # Example:: <code>parallelism: 50</code>
 module ::Kitchen::Terraform::ConfigAttribute::Parallelism
-  ::Kitchen::Terraform::ConfigAttribute
-    .new(
+  ::Kitchen::Terraform::ConfigAttributeType::Integer
+    .apply(
       attribute: :parallelism,
+      config_attribute: self,
       default_value:
         lambda do
           10
-        end,
-      schema: ::Kitchen::Terraform::ConfigSchemas::Integer
+        end
     )
-    .apply config_attribute: self
 end

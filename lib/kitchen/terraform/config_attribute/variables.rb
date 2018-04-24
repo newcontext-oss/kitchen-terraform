@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
+require "kitchen/terraform/config_attribute_type/hash_of_symbols_and_strings"
 
 # This attribute comprises {https://www.terraform.io/docs/configuration/variables.html Terraform variables}.
 #
@@ -27,14 +27,13 @@ require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 #       image: image-1234
 #       zone: zone-5
 module ::Kitchen::Terraform::ConfigAttribute::Variables
-  ::Kitchen::Terraform::ConfigAttribute
-    .new(
+  ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings
+    .apply(
       attribute: :variables,
+      config_attribute: self,
       default_value:
         lambda do
           {}
-        end,
-      schema: ::Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings
+        end
     )
-    .apply config_attribute: self
 end

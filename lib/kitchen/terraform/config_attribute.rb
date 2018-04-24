@@ -78,10 +78,6 @@ class ::Kitchen::Terraform::ConfigAttribute
     config_attribute.extend ::Kitchen::Terraform::ConfigAttributeCacher
   end
 
-  # This method initializes a new instance.
-  #
-  # @param attribute [::Symbol] the symbol corresponding to the attribute.
-  # @param default_value [::Object] the default value of the attribute.
   # @api private
   def initialize(attribute:, default_value:, schema:)
     self.attribute = attribute

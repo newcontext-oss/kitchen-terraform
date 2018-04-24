@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_schemas/integer"
+require "kitchen/terraform/config_attribute_type/integer"
 
 # This attribute controls the number of seconds that Terraform will wait for a lock on the state to be obtained during
 # {https://www.terraform.io/docs/state/locking.html operations related to state}.
@@ -25,14 +25,13 @@ require "kitchen/terraform/config_schemas/integer"
 # Default:: +0+
 # Example:: <code>lock_timeout: 10</code>
 module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
-  ::Kitchen::Terraform::ConfigAttribute
-    .new(
+  ::Kitchen::Terraform::ConfigAttributeType::Integer
+    .apply(
       attribute: :lock_timeout,
+      config_attribute: self,
       default_value:
         lambda do
           0
-        end,
-      schema: ::Kitchen::Terraform::ConfigSchemas::Integer
+        end
     )
-    .apply config_attribute: self
 end

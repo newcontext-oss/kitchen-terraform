@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
+require "kitchen/terraform/config_attribute_type/hash_of_symbols_and_strings"
 
 # This attribute comprises {https://www.terraform.io/docs/backends/config.html Terraform backend configuration}
 # arguments to complete a
@@ -29,14 +29,13 @@ require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
 #       address: demo.consul.io
 #       path: example_app/terraform_state
 module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
-  ::Kitchen::Terraform::ConfigAttribute
-    .new(
+  ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings
+    .apply(
       attribute: :backend_configurations,
+      config_attribute: self,
       default_value:
         lambda do
           {}
-        end,
-      schema: ::Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings
+        end
     )
-    .apply config_attribute: self
 end
