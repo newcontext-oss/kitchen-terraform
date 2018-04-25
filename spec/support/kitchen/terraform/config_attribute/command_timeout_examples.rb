@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/integer_examples"
+require "support/kitchen/terraform/config_attribute_type/integer_examples"
 
 ::RSpec
   .shared_examples "Kitchen::Terraform::ConfigAttribute::CommandTimeout" do
     include_context(
-      "Kitchen::Terraform::ConfigSchemas::Integer",
+      "Kitchen::Terraform::ConfigAttributeType::Integer",
       attribute: :command_timeout,
       default_value: 600
     )

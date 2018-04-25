@@ -14,12 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry-validation"
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_type"
-require "kitchen/terraform/config_schemas/integer"
 
 # This module applies the behaviour of a configuration attribute of type integer to a module which must be included by a
 # plugin class.
+#
+# @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
 module ::Kitchen::Terraform::ConfigAttributeType::Integer
   # This method applies the configuration attribute behaviour to a module.
   #
@@ -32,7 +34,11 @@ module ::Kitchen::Terraform::ConfigAttributeType::Integer
       .new(
         attribute: attribute,
         default_value: default_value,
-        schema: ::Kitchen::Terraform::ConfigSchemas::Integer
+        schema:
+          ::Dry::Validation
+            .Schema do
+              required(:value).filled :int?
+            end
       )
       .apply config_attribute: config_attribute
 

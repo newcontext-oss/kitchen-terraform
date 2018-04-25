@@ -17,7 +17,7 @@
 require "support/kitchen/terraform/config_attribute_context"
 
 ::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigSchemas::Integer" do |attribute:, default_value:|
+  .shared_examples "Kitchen::Terraform::ConfigAttributeType::Integer" do |attribute:, default_value:|
     include_context(
       "Kitchen::Terraform::ConfigAttribute",
       attribute: attribute

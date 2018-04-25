@@ -14,12 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry-validation"
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_type"
-require "kitchen/terraform/config_schemas/hash_of_symbols_and_strings"
+require "kitchen/terraform/config_predicates/hash_of_symbols_and_strings"
 
 # This modules applies the behaviour of a configuration attribute of type hash of symbols and strings to a module which
 # must be included by a plugin class.
+#
+# @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
 module ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings
   # This method applies the configuration attribute behaviour to a module.
   #
@@ -32,7 +35,14 @@ module ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings
       .new(
         attribute: attribute,
         default_value: default_value,
-        schema: ::Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings
+        schema:
+          ::Dry::Validation
+            .Schema do
+              configure do
+                extend ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
+              end
+              required(:value).value :hash_of_symbols_and_strings?
+            end
       )
       .apply config_attribute: config_attribute
 
