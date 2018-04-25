@@ -24,6 +24,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   `create`, `converge`, `setup`, and `destroy`; these commands invoke
   Terraform in a manner which is not safe for concurrency
 
+### Fixed
+
 * Escaping the following configuration attributes for safe usage in the
   shell out commands:
   * backend_configurations
