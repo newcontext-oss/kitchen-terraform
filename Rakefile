@@ -15,43 +15,95 @@ def binstub(name:)
     )
 end
 
-def download_terraform(sha256_sum:, version:)
-  executable =
-    ::Pathname
-      .new("terraform")
-      .expand_path
+def configure_default_integration(arguments:)
+  arguments
+    .with_defaults(
+      terraform_version: "0.11.7",
+      terraform_sha256_sum: "6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418"
+    )
+end
 
+def download_and_extract_hashicorp_release(destination:, expected_sha256_sum:, product:, version:)
   uri =
-    ::URI
-      .parse(
-        "https://releases.hashicorp.com/terraform/#{version}/terraform_#{version}_linux_amd64.zip"
+    ::URI::HTTPS
+      .build(
+        host: "releases.hashicorp.com",
+        path:
+          ::File
+            .join(
+              "/",
+              product,
+              version,
+              "#{product}_#{version}_linux_amd64.zip"
+            )
       )
 
-  puts "Downloading Terraform archive from #{uri}"
+  puts "Downloading #{uri}"
 
   uri
-    .open do |archive|
-      ::Digest::SHA256
-        .file(archive.path)
-        .hexdigest
-        .==(sha256_sum) or
-        raise "Downloaded Terraform archive has an unexpected SHA256 sum"
+    .open do |file|
+      actual_sha256_sum =
+        ::Digest::SHA256
+          .file(file.path)
+          .hexdigest
 
-      puts "Extracting executable to #{executable}"
+      expected_sha256_sum == actual_sha256_sum or
+        raise(
+          "Downloaded Terraform archive was expected to have a SHA256 sum of '#{expected_sha256_sum}' but has an " \
+            "actual SHA256 sum of '#{actual_sha256_sum}'"
+        )
 
-      ::Zip::File
-        .open archive.path do |zip_file|
-          zip_file
-            .glob("terraform")
-            .first
-            .extract executable
-        end
-
-      executable.chmod 0o0544
-      yield directory: executable.dirname
+      extract_archive(
+        destination: destination,
+        source: file
+      )
     end
-ensure
-  executable.unlink
+end
+
+def execute_terraform(arguments:, path:)
+  configure_default_integration arguments: arguments
+
+  directory =
+    ::Pathname
+      .new("terraform_#{arguments.terraform_version}")
+      .expand_path
+
+  directory.mkpath
+
+  download_and_extract_hashicorp_release(
+    destination: directory,
+    expected_sha256_sum: arguments.terraform_sha256_sum,
+    product: "terraform",
+    version: arguments.terraform_version
+  )
+
+  ::Dir
+    .chdir path do
+      sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
+    end
+end
+
+def extract_archive(destination:, source:)
+  destination_pathname = Pathname destination
+  source_pathname = Pathname source
+  puts "Extracting #{source_pathname} to #{destination_pathname}"
+  destination_pathname.mkpath
+
+  ::Zip::File
+    .open source_pathname do |zip_file|
+      zip_file
+        .each do |entry|
+          extract_archive_entry(
+            destination: destination_pathname.join(entry.name),
+            source: entry
+          )
+        end
+    end
+end
+
+def extract_archive_entry(destination:, source:)
+  destination.exist? or source.extract destination
+  destination.chmod 0o0544
 end
 
 def rspec_binstub
@@ -62,37 +114,90 @@ def kitchen_binstub
   binstub name: "kitchen"
 end
 
-namespace :test do
-  desc "Run unit tests"
+namespace :tests do
+  namespace :unit do
+    desc "Run all unit tests"
 
-  task :unit do
-    sh "#{rspec_binstub} --backtrace"
+    task :all do
+      sh "#{rspec_binstub} --backtrace"
+    end
   end
 
-  desc "Run integration tests"
+  namespace :integration do
+    desc "Run integration tests for basic functionality"
 
-  task(
-    :integration,
-    [
-      :terraform_version,
-      :terraform_sha256_sum
-    ]
-  ) do |_, arguments|
-    download_terraform(
-      sha256_sum: arguments.terraform_sha256_sum,
-      version: arguments.terraform_version
-    ) do |directory:|
-      ::Dir
-        .chdir "integration/no_outputs_defined" do
-          sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-        end
-
-      ::Dir
-        .chdir "integration/docker_provider" do
-          sh "KITCHEN_LOG=debug PATH=#{directory}:$PATH #{kitchen_binstub} test"
-        end
+    task(
+      :basic,
+      [
+        :terraform_version,
+        :terraform_sha256_sum
+      ]
+    ) do |_, arguments|
+      execute_terraform(
+        arguments: arguments,
+        path: "integration/basic"
+      )
     end
+
+    desc "Run integration tests for no outputs defined"
+
+    task(
+      :no_outputs_defined,
+      [
+        :terraform_version,
+        :terraform_sha256_sum
+      ]
+    ) do |_, arguments|
+      execute_terraform(
+        arguments: arguments,
+        path: "integration/no_outputs_defined"
+      )
+    end
+
+    desc "Run integration tests shell words"
+
+    task(
+      :shell_words,
+      [
+        :terraform_version,
+        :terraform_sha256_sum
+      ]
+    ) do |_, arguments|
+      download_and_extract_hashicorp_release(
+        destination: "integration/Shell Words/Plugin Directory",
+        expected_sha256_sum: "08a1fbd839f39910330bc90fed440b4f72a138ea72408482b0adf63c9fbee99b",
+        product: "terraform-provider-docker",
+        version: "0.1.1"
+      )
+
+      download_and_extract_hashicorp_release(
+        destination: "integration/Shell Words/Plugin Directory",
+        expected_sha256_sum: "b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00",
+        product: "terraform-provider-local",
+        version: "1.1.0"
+      )
+
+      execute_terraform(
+        arguments: arguments,
+        path: "integration/Shell Words"
+      )
+    end
+
+    desc "Run all integration tests"
+
+    task(
+      :all,
+      [
+        :terraform_version,
+        :terraform_sha256_sum
+      ] =>
+        [
+          "tests:integration:basic",
+          "tests:integration:no_outputs_defined",
+          "tests:integration:shell_words"
+        ]
+    )
   end
 end
 
-task default: "test:unit"
+task default: "tests:unit:all"

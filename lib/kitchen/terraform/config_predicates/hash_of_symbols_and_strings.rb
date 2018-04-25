@@ -23,6 +23,15 @@ require "kitchen/terraform/config_predicates"
 #
 # @see http://dry-rb.org/gems/dry-validation/custom-predicates/ DRY Logic Custom Predicates
 module ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
+  # A callback to configure an extending schema with this predicate.
+  #
+  # @param schema [::Dry::Validation::Schema] the schema to be configured.
+  # @return [self]
+  def self.extended(schema)
+    schema.predicates self
+    self
+  end
+
   include ::Dry::Logic::Predicates
 
   predicate :hash_of_symbols_and_strings? do |value|

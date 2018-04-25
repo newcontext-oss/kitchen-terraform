@@ -9,6 +9,6 @@ provider "local" {
 }
 
 resource "local_file" "test" {
-  content = "This is a test"
+  content  = "This is a test"
   filename = "${path.module}/test.txt"
 }

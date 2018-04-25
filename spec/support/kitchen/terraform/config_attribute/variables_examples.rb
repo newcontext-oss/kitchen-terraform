@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/hash_of_symbols_and_strings_examples"
+require "support/kitchen/terraform/config_attribute_type/hash_of_symbols_and_strings_examples"
 
 ::RSpec
   .shared_examples "Kitchen::Terraform::ConfigAttribute::Variables" do
     include_context(
-      "Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings",
+      "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings",
       attribute: :variables
     )
   end

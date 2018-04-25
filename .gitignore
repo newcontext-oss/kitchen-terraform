@@ -18,5 +18,7 @@ coverage/
 doc/
 examples/*/Gemfile.lock
 examples/*/test/assets
+integration/Shell\ Words/Plugin\ Directory/
+terraform_*/
 tmp/
 vendor/

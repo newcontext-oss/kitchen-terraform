@@ -14,14 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry-validation"
-require "kitchen/terraform/config_schemas"
+require "kitchen/terraform"
 
-# A validation schema for a configuration attribute which is an integer.
-#
-# @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
-::Kitchen::Terraform::ConfigSchemas::Integer =
-  ::Dry::Validation
-    .Schema do
-      required(:value).filled :int?
-    end
+# The namespace for configuration attribute types.
+module ::Kitchen::Terraform::ConfigAttributeType
+end

@@ -17,7 +17,7 @@
 require "support/kitchen/terraform/config_attribute_context"
 
 ::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigSchemas::HashOfSymbolsAndStrings" do |attribute:|
+  .shared_examples "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings" do |attribute:|
     include_context(
       "Kitchen::Terraform::ConfigAttribute",
       attribute: attribute

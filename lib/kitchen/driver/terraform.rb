@@ -30,6 +30,7 @@ require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
+require "shellwords"
 
 # The driver is the bridge between Test Kitchen and Terraform. It manages the
 # {https://www.terraform.io/docs/state/index.html state} of the Terraform root module by shelling out and running
@@ -314,16 +315,16 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .run(
         command:
           "apply " \
-            "#{config_lock_flag} " \
-            "#{config_lock_timeout_flag} " \
+            "#{lock_flag} " \
+            "#{lock_timeout_flag} " \
             "-input=false " \
             "-auto-approve=true " \
-            "#{config_color_flag} " \
-            "#{config_parallelism_flag} " \
+            "#{color_flag} " \
+            "#{parallelism_flag} " \
             "-refresh=true " \
-            "#{config_variables_flags} " \
-            "#{config_variable_files_flags} " \
-            "#{config_root_module_directory}",
+            "#{variables_flags} " \
+            "#{variable_files_flags} " \
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -333,7 +334,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def apply_run_get
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "get -update #{config_root_module_directory}",
+        command: "get -update #{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -346,13 +347,27 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "validate " \
             "-check-variables=true " \
-            "#{config_color_flag} " \
-            "#{config_variables_flags} " \
-            "#{config_variable_files_flags} " \
-            "#{config_root_module_directory}",
+            "#{color_flag} " \
+            "#{variables_flags} " \
+            "#{variable_files_flags} " \
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
+  end
+
+  # @api private
+  def backend_configurations_flags
+    config_backend_configurations
+      .map do |key, value|
+        "-backend-config=#{::Shellwords.escape "#{key}=#{value}"}"
+      end
+      .join " "
+  end
+
+  # api private
+  def color_flag
+    config_color and "" or "-no-color"
   end
 
   # @api private
@@ -362,18 +377,18 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "init " \
             "-input=false " \
-            "#{config_lock_flag} " \
-            "#{config_lock_timeout_flag} " \
-            "#{config_color_flag} " \
+            "#{lock_flag} " \
+            "#{lock_timeout_flag} " \
+            "#{color_flag} " \
             "-upgrade " \
             "-force-copy " \
             "-backend=true " \
-            "#{config_backend_configurations_flags} " \
+            "#{backend_configurations_flags} " \
             "-get=true " \
             "-get-plugins=true " \
-            "#{config_plugin_directory_flag} " \
+            "#{plugin_directory_flag} " \
             "-verify-plugins=true " \
-            "#{config_root_module_directory}",
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -386,15 +401,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "destroy " \
             "-force " \
-            "#{config_lock_flag} " \
-            "#{config_lock_timeout_flag} " \
+            "#{lock_flag} " \
+            "#{lock_timeout_flag} " \
             "-input=false " \
-            "#{config_color_flag} " \
-            "#{config_parallelism_flag} " \
+            "#{color_flag} " \
+            "#{parallelism_flag} " \
             "-refresh=true " \
-            "#{config_variables_flags} " \
-            "#{config_variable_files_flags} " \
-            "#{config_root_module_directory}",
+            "#{variables_flags} " \
+            "#{variable_files_flags} " \
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -407,17 +422,17 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         command:
           "init " \
             "-input=false " \
-            "#{config_lock_flag} " \
-            "#{config_lock_timeout_flag} " \
-            "#{config_color_flag} " \
+            "#{lock_flag} " \
+            "#{lock_timeout_flag} " \
+            "#{color_flag} " \
             "-force-copy " \
             "-backend=true " \
-            "#{config_backend_configurations_flags} " \
+            "#{backend_configurations_flags} " \
             "-get=true " \
             "-get-plugins=true " \
-            "#{config_plugin_directory_flag} " \
+            "#{plugin_directory_flag} " \
             "-verify-plugins=true " \
-            "#{config_root_module_directory}",
+            "#{root_module_directory}",
         duration: config_command_timeout,
         logger: logger
       )
@@ -449,6 +464,33 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   # @api private
+  def lock_flag
+    "-lock=#{config_lock}"
+  end
+
+  # @api private
+  def lock_timeout_flag
+    "-lock-timeout=#{config_lock_timeout}s"
+  end
+
+  # @api private
+  def parallelism_flag
+    "-parallelism=#{config_parallelism}"
+  end
+
+  # @api private
+  def plugin_directory_flag
+    config_plugin_directory and
+      "-plugin-dir=#{::Shellwords.escape config_plugin_directory}" or
+      ""
+  end
+
+  # @api private
+  def root_module_directory
+    ::Shellwords.escape config_root_module_directory
+  end
+
+  # @api private
   def run_workspace_select_instance
     ::Kitchen::Terraform::ShellOut
       .run(
@@ -463,5 +505,23 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         duration: config_command_timeout,
         logger: logger
       )
+  end
+
+  # @api private
+  def variable_files_flags
+    config_variable_files
+      .map do |path|
+        "-var-file=#{::Shellwords.escape path}"
+      end
+      .join " "
+  end
+
+  # @api private
+  def variables_flags
+    config_variables
+      .map do |key, value|
+        "-var=#{::Shellwords.escape "#{key}=#{value}"}"
+      end
+      .join " "
   end
 end

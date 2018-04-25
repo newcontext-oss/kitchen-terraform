@@ -93,13 +93,36 @@ bin/guard
 
 #### Integration Testing
 
+[Rake][rake] is used to orchestrate the integration tests.
+
+The following command will execute the integration tests.
+
+> Executing integration tests with Rake
+
+```sh
+bin/rake tests:integration:all
+```
+
+[Rakefile](Rakefile) contains the task definitions.
+
+The following command will display all of the available integration
+tests.
+
+> Displaying the integration tests with Rake
+
+```sh
+bin/rake --tasks tests:integration
+```
+
 The [Terraform Docker provider][terraform-docker-provider] is used to
 run integration tests against a real Terraform state.
 
-The Terraform module under
-[integration/docker_provider](integration/docker_provider) includes
-Kitchen-Terraform configuration and an InSpec profile used to verify
-features of Kitchen-Terraform.
+[integration/basic](integration/basic) includes Kitchen-Terraform
+configuration and an InSpec profile used to verify the basic features of
+Kitchen-Terraform.
+
+Other directories under [integration](integration) are used to test the
+handling of special cases.
 
 #### Analyzing Code Quality
 
@@ -178,6 +201,7 @@ bin/middleman build --build-dir docs
 [guard]: http://guardgem.org/
 [inspec]: https://github.com/chef/inspec/tree/v1.44.8
 [middleman]: https://middlemanapp.com/
+[rake]: https://ruby.github.io/rake/
 [rspec]: http://rspec.info/
 [ruby-gems]: https://rubygems.org/gems/kitchen-terraform
 [ruby]: https://www.ruby-lang.org/en/
