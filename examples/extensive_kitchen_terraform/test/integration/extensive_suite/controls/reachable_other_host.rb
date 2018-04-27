@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-reachable_other_host_id =
+reachable_other_host_public_ip_address =
   # The Terraform configuration under test must define the equivalently named
   # output
   attribute(
-    "reachable_other_host_id",
-    description: "The ID of the AWS EC2 instance which should be reachable"
+    "reachable_other_host_public_ip_address",
+    description: "The public IP address of the AWS EC2 instance which should be reachable"
   )
 
 control "reachable_other_host" do
@@ -13,7 +13,7 @@ control "reachable_other_host" do
 
   describe "The other host" do
     subject do
-      host aws_ec2_instance(reachable_other_host_id).public_ip_address
+      host reachable_other_host_public_ip_address
     end
 
     before do

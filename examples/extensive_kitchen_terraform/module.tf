@@ -161,9 +161,9 @@ resource "aws_vpc" "extensive_tutorial" {
 # Output Configuration
 
 # This output is used as an attribute in the reachable_other_host control
-output "reachable_other_host_id" {
-  description = "The ID of the reachable_other_host instance"
-  value       = "${aws_instance.reachable_other_host.id}"
+output "reachable_other_host_public_ip_address" {
+  description = "The public IP address of the reachable_other_host instance"
+  value       = "${aws_instance.reachable_other_host.public_ip}"
 }
 
 # This output is used to obtain targets for InSpec
