@@ -363,12 +363,12 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">reachable_other_host_id</span> <span class="o">=</span>
+<span class="n">reachable_other_host_public_ip_address</span> <span class="o">=</span>
   <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
   <span class="c1"># output</span>
   <span class="n">attribute</span><span class="p">(</span>
-    <span class="s2">"reachable_other_host_id"</span><span class="p">,</span>
-    <span class="ss">description: </span><span class="s2">"The ID of the AWS EC2 instance which should be reachable"</span>
+    <span class="s2">"reachable_other_host_public_ip_address"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"The public IP address of the AWS EC2 instance which should be reachable"</span>
   <span class="p">)</span>
 
 <span class="n">control</span> <span class="s2">"reachable_other_host"</span> <span class="k">do</span>
@@ -376,7 +376,7 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
 
   <span class="n">describe</span> <span class="s2">"The other host"</span> <span class="k">do</span>
     <span class="n">subject</span> <span class="k">do</span>
-      <span class="n">host</span> <span class="n">aws_ec2_instance</span><span class="p">(</span><span class="n">reachable_other_host_id</span><span class="p">).</span><span class="nf">public_ip_address</span>
+      <span class="n">host</span> <span class="n">reachable_other_host_public_ip_address</span>
     <span class="k">end</span>
 
     <span class="n">before</span> <span class="k">do</span>
@@ -520,9 +520,9 @@ The isolated, regional location in which to place the subnet of the module
 <span class="p">}</span>
 
 <span class="c1"># This output is used as an attribute in the reachable_other_host control</span>
-<span class="n">output</span> <span class="s2">"reachable_other_host_id"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The ID of the reachable_other_host instance"</span>
-  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${module.extensive_kitchen_terraform.reachable_other_host_id}"</span>
+<span class="n">output</span> <span class="s2">"reachable_other_host_public_ip_address"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The public IP address of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${module.extensive_kitchen_terraform.reachable_other_host_public_ip_address}"</span>
 <span class="p">}</span>
 
 <span class="c1"># This output is used as an attribute in the inspec_attributes control</span>
@@ -735,9 +735,9 @@ The public key material to use for SSH authentication with the instances
 <span class="c1"># Output Configuration</span>
 
 <span class="c1"># This output is used as an attribute in the reachable_other_host control</span>
-<span class="n">output</span> <span class="s2">"reachable_other_host_id"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The ID of the reachable_other_host instance"</span>
-  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_instance.reachable_other_host.id}"</span>
+<span class="n">output</span> <span class="s2">"reachable_other_host_public_ip_address"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The public IP address of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_instance.reachable_other_host.public_ip}"</span>
 <span class="p">}</span>
 
 <span class="c1"># This output is used to obtain targets for InSpec</span>
@@ -915,10 +915,13 @@ bundle install
   <span class="nb">export </span>AWS_SESSION_TOKEN
 <span class="o">}</span>
 
+<span class="c"># Workaround for https://github.com/hashicorp/terraform/issues/17655</span>
+<span class="nb">export </span><span class="nv">TF_WARN_OUTPUT_ERRORS</span><span class="o">=</span>1
+
 export_aws_sts_session <span class="s2">"us-east-1"</span>
 
-<span class="c"># Destroy any existing Terraform state</span>
-bundle <span class="nb">exec </span>kitchen destroy
+<span class="c"># Destroy any existing Terraform state in us-east-1</span>
+bundle <span class="nb">exec </span>kitchen destroy centos
 
 <span class="c"># Initialize the Terraform working directory and select a new Terraform workspace</span>
 <span class="c"># to test CentOS in us-east-1</span>
@@ -939,6 +942,7 @@ export_aws_sts_session <span class="s2">"us-west-2"</span>
 <span class="c"># Perform the same steps for Ubuntu in us-west-2</span>
 bundle <span class="nb">exec </span>kitchen <span class="nb">test </span>ubuntu
 
+<span class="nb">unset </span>TF_WARN_OUTPUT_ERRORS
 drop_aws_sts_session
 
 </code></pre></div>        </div>

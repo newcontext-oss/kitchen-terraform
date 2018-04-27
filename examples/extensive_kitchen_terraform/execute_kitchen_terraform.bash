@@ -22,10 +22,13 @@ function export_aws_sts_session {
   export AWS_SESSION_TOKEN
 }
 
+# Workaround for https://github.com/hashicorp/terraform/issues/17655
+export TF_WARN_OUTPUT_ERRORS=1
+
 export_aws_sts_session "us-east-1"
 
-# Destroy any existing Terraform state
-bundle exec kitchen destroy
+# Destroy any existing Terraform state in us-east-1
+bundle exec kitchen destroy centos
 
 # Initialize the Terraform working directory and select a new Terraform workspace
 # to test CentOS in us-east-1
@@ -46,4 +49,5 @@ export_aws_sts_session "us-west-2"
 # Perform the same steps for Ubuntu in us-west-2
 bundle exec kitchen test ubuntu
 
+unset TF_WARN_OUTPUT_ERRORS
 drop_aws_sts_session
