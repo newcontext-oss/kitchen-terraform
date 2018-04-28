@@ -1,0 +1,5 @@
+# frozen_string_literal: true
+
+require "kitchen/rake_tasks"
+
+::Kitchen::RakeTasks.new
