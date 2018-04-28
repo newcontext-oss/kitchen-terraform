@@ -14,9 +14,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/provisioner"
+require "kitchen"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
+
+# This namespace is defined by Kitchen.
+#
+# @see http://www.rubydoc.info/gems/test-kitchen/Kitchen/Provisioner
+module ::Kitchen::Provisioner
+end
 
 # The provisioner utilizes the driver to apply changes to the Terraform state in order to reach the desired
 # configuration of the root module.

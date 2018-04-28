@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/driver/base"
-require "kitchen/errors"
+require "kitchen"
 require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/config_attribute/backend_configurations"
@@ -31,6 +30,12 @@ require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
 require "shellwords"
+
+# This namespace is defined by Kitchen.
+#
+# @see http://www.rubydoc.info/gems/test-kitchen/Kitchen/Driver
+module ::Kitchen::Driver
+end
 
 # The driver is the bridge between Test Kitchen and Terraform. It manages the
 # {https://www.terraform.io/docs/state/index.html state} of the Terraform root module by shelling out and running
