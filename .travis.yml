@@ -28,8 +28,16 @@ jobs:
     -
       stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.5
+      before_script:
+        -
+          curl
+            --location
+            https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+            > ./cc-test-reporter
+        - chmod +x ./cc-test-reporter
+        - ./cc-test-reporter before-build
       script: bin/rake tests:unit:all
-      after_success: bin/codeclimate-test-reporter
+      after_script: ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
     -
       stage: unit tests with legacy supported versions of ruby
