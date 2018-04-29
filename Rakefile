@@ -201,6 +201,7 @@ namespace :tests do
     desc "Run all unit tests"
 
     task :all do
+      puts "Running all unit tests"
       sh "#{rspec_binstub} --backtrace"
     end
   end
@@ -215,6 +216,8 @@ namespace :tests do
         :terraform_sha256_sum
       ] => ["bin/terraform"]
     ) do |current_task, arguments|
+      puts "Running integration tests for basic functionality"
+
       execute_kitchen_terraform(
         terraform_path:
           current_task
@@ -233,6 +236,8 @@ namespace :tests do
         :terraform_sha256_sum
       ] => ["bin/terraform"]
     ) do |current_task, arguments|
+      puts "Running integration tests for no outputs defined"
+
       execute_kitchen_terraform(
         terraform_path:
           current_task
@@ -251,6 +256,8 @@ namespace :tests do
         :terraform_sha256_sum
       ] => ["bin/terraform"]
     ) do |current_task, arguments|
+      puts "Running integration tests for Rake tasks"
+
       execute_kitchen_terraform_via_rake(
         terraform_path:
           current_task
@@ -269,6 +276,8 @@ namespace :tests do
         :terraform_sha256_sum
       ] => ["bin/terraform"]
     ) do |current_task, arguments|
+      puts "Running integration tests for shell words"
+
       ::Rake::Task
         .[]("integration/Shell Words/Plugin Directory/terraform-provider-docker")
         .invoke(
