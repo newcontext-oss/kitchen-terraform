@@ -52,7 +52,7 @@ def download_hashicorp_release(destination:, product:, sha256_sum:, version:)
         file.path,
         destination
       )
-  end
+    end
 end
 
 def execute_kitchen_terraform(terraform_path:, working_directory:)
@@ -216,7 +216,7 @@ namespace :tests do
         :terraform_version,
         :terraform_sha256_sum
       ] => ["bin/terraform"]
-    ) do |current_task, arguments|
+    ) do |current_task|
       puts "Running integration tests for basic functionality"
 
       execute_kitchen_terraform(
@@ -236,7 +236,7 @@ namespace :tests do
         :terraform_version,
         :terraform_sha256_sum
       ] => ["bin/terraform"]
-    ) do |current_task, arguments|
+    ) do |current_task|
       puts "Running integration tests for no outputs defined"
 
       execute_kitchen_terraform(
@@ -256,7 +256,7 @@ namespace :tests do
         :terraform_version,
         :terraform_sha256_sum
       ] => ["bin/terraform"]
-    ) do |current_task, arguments|
+    ) do |current_task|
       puts "Running integration tests for Rake tasks"
 
       execute_kitchen_terraform_via_rake(
@@ -276,7 +276,7 @@ namespace :tests do
         :terraform_version,
         :terraform_sha256_sum
       ] => ["bin/terraform"]
-    ) do |current_task, arguments|
+    ) do |current_task|
       puts "Running integration tests for shell words"
 
       ::Rake::Task
