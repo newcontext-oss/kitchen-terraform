@@ -105,11 +105,12 @@ end
 
 def kitchen_environment(terraform_path:)
   escaped_terraform_path = ::Shellwords.escape ::File.dirname ::File.expand_path terraform_path
+  original_path = ::ENV.fetch "PATH"
   ruby_path = ::File.dirname ::RbConfig.ruby
 
   {
     "KITCHEN_LOG" => "debug",
-    "PATH" => "#{ruby_path}:#{escaped_terraform_path}"
+    "PATH" => "#{ruby_path}:#{escaped_terraform_path}:#{original_path}"
   }
 end
 
