@@ -8,17 +8,19 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Changed
-
 * Breaking support for Test-Kitchen >= 1.16.0, < 1.20.0
 
 * Breaking support for Ruby 2.2
 
-* Deprecating support for Ruby 2.2; this version reaches end of life on
-  March 31, 2018
-
 * Breaking support for concurrency with the following commands:
   `create`, `converge`, `setup`, and `destroy`
+
+## [3.3.1] - 2018-04-29
+
+### Changed
+
+* Deprecating support for Ruby 2.2; this version reaches end of life on
+  March 31, 2018
 
 * Deprecating support for concurrency with the following commands:
   `create`, `converge`, `setup`, and `destroy`; these commands invoke
@@ -461,7 +463,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Initial release
 
-[Unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.0...HEAD
+[Unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.1...HEAD
+[3.3.1]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.0...v3.3.1
 [3.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.0.0...v3.1.0

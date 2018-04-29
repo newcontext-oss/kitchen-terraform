@@ -36,7 +36,7 @@ class ::Kitchen::Terraform::Version
 
   private
 
-  def initialize(version: "3.3.0")
+  def initialize(version: "3.3.1")
     @version = ::Gem::Version.new version
   end
 end
