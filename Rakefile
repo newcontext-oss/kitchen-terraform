@@ -5,6 +5,7 @@ require "digest"
 require "open-uri"
 require "pathname"
 require "rake/clean"
+require "rbconfig"
 require "shellwords"
 require "uri"
 require "zip"
@@ -55,24 +56,22 @@ def download_hashicorp_release(destination:, product:, sha256_sum:, version:)
 end
 
 def execute_kitchen_terraform(terraform_path:, working_directory:)
-  escaped_terraform_path = ::Shellwords.escape ::File.expand_path terraform_path
-
-  ::Dir
-    .chdir working_directory do
-      sh "KITCHEN_LOG=debug PATH=#{escaped_terraform_path}:$PATH #{kitchen_binstub} test"
-    end
+  sh(
+    kitchen_environment(terraform_path: terraform_path),
+    "#{kitchen_binstub} test",
+    chdir: working_directory
+  )
 end
 
 CLOBBER.include "**/.kitchen"
 CLOBBER.include "**/.terraform"
 
 def execute_kitchen_terraform_via_rake(terraform_path:, working_directory:)
-  escaped_terraform_path = ::Shellwords.escape ::File.expand_path terraform_path
-
-  ::Dir
-    .chdir working_directory do
-      sh "KITCHEN_LOG=debug PATH=#{escaped_terraform_path}:$PATH #{rake_binstub} kitchen:all"
-    end
+  sh(
+    kitchen_environment(terraform_path: terraform_path),
+    "#{rake_binstub} kitchen:all",
+    chdir: working_directory
+  )
 end
 
 def extract_hashicorp_release(destination:, source:)
@@ -102,6 +101,16 @@ end
 
 def kitchen_binstub
   binstub name: "kitchen"
+end
+
+def kitchen_environment(terraform_path:)
+  escaped_terraform_path = ::Shellwords.escape ::File.dirname ::File.expand_path terraform_path
+  ruby_path = ::File.dirname ::RbConfig.ruby
+
+  {
+    "KITCHEN_LOG" => "debug",
+    "PATH" => "#{ruby_path}:#{escaped_terraform_path}"
+  }
 end
 
 def rake_binstub
