@@ -14,12 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/verifier"
+require "kitchen"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
 require "kitchen/verifier/inspec"
+
+# This namespace is defined by Kitchen.
+#
+# @see http://www.rubydoc.info/gems/test-kitchen/Kitchen/Verifier
+module ::Kitchen::Verifier
+end
 
 # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the behaviour and
 # state of resources in the Terraform state.

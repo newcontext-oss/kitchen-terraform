@@ -52,8 +52,6 @@ version = ::Kitchen::Terraform::Version.new
       "~> 0.6.0"
     )
 
-  specification.add_development_dependency "codeclimate-test-reporter", "~> 1.0"
-
   specification.add_development_dependency "guard", "~> 2.14"
 
   specification.add_development_dependency "guard-bundler", "~> 2.1"
@@ -120,6 +118,12 @@ version = ::Kitchen::Terraform::Version.new
     .add_development_dependency(
       "rubyzip",
       "~> 1.2"
+    )
+
+  specification
+    .add_development_dependency(
+      "simplecov",
+      "~> 0.16.1"
     )
 
   specification.add_development_dependency "travis", "~> 1.8"

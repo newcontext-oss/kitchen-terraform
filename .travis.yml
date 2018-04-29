@@ -3,261 +3,134 @@ sudo: false
 language: ruby
 cache:
   directories:
-    - vendor/bundle
-    - vendor/cache
-
+  - vendor/bundle
+  - vendor/cache
 before_install:
-  - gem update --system
-  - gem --version
-  - gem install bundler
-  - gem update bundler
-
+- gem update --system
+- gem --version
+- gem install bundler
+- gem update bundler
 install:
-  -
-    bin/bundle
-      install
-      --binstubs
-      --jobs=$(nproc --ignore=1)
-      --path=vendor/bundle
-      --retry=3
-
+- bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3
 before_cache: bin/bundle clean
-
 jobs:
   include:
-    -
-      stage: unit tests and code coverage with newest supported version of ruby
-      rvm: 2.5
-      script: bin/rake tests:unit:all
-      after_success: bin/codeclimate-test-reporter
-
-    -
-      stage: unit tests with legacy supported versions of ruby
-      rvm: 2.4
-      script: bin/rake tests:unit:all
-
-    -
-      rvm: 2.3
-      script: bin/rake tests:unit:all
-
-    -
-      rvm: 2.2
-      script: bin/rake tests:unit:all
-
-    -
-      stage: integration tests with newest supported version of terraform
-      sudo: required
-
-      services:
-        - docker
-
-      rvm: 2.5
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
-      script: bin/rake tests:integration:all
-
-    -
-      sudo: required
-
-      services:
-        - docker
-
-      rvm: 2.4
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
-      script: bin/rake tests:integration:all
-
-    -
-      sudo: required
-
-      services:
-        - docker
-
-      rvm: 2.3
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
-      script: bin/rake tests:integration:all
-
-    -
-      sudo: required
-
-      services:
-        - docker
-
-      rvm: 2.2
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
-      script: bin/rake tests:integration:all
-
-    -
-      stage: integration tests with legacy supported versions of terraform
-      sudo: required
-
-      services:
-        - docker
-
-      rvm: 2.5
-
-      env:
-        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
-      script: bin/rake tests:integration:all[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
-
-    -
-      sudo: required
-
-      services:
-        - docker
-
-      rvm: 2.4
-
-      env:
-        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
-      script: bin/rake tests:integration:all[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
-
-    -
-      sudo: required
-
-      services:
-        - docker
-
-      rvm: 2.3
-
-      env:
-        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
-      script: bin/rake tests:integration:all[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
-
-    -
-      sudo: required
-
-      services:
-        - docker
-
-      rvm: 2.2
-
-      env:
-        - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
-
-      install:
-        -
-          bin/bundle
-            install
-            --binstubs
-            --jobs=$(nproc --ignore=1)
-            --path=vendor/bundle
-            --retry=3
-            --without=development
-
-      script: bin/rake tests:integration:all[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
-
-    -
-      stage: deploy to rubygems.org
-      rvm: 2.5
-
-      before_install:
-        - gem update --system
-        - gem --version
-
-      install: skip
-      script: skip
-      before_cache: skip
-
-      before_deploy:
-        -
-          openssl
-            aes-256-cbc
-            -K $encrypted_d73b39cf4bfa_key
-            -iv $encrypted_d73b39cf4bfa_iv
-            -in certs/gem-private_key.pem.enc
-            -out certs/gem-private_key.pem
-            -d
-
-        - gem cert --add certs/gem-public_cert.pem
-
-      deploy:
-        provider: rubygems
-
-        api_key:
-          secure: Y52epwcQvGsZ4c7LbHBZCGbgUzh0ujUMp0rEWrwr0o+7Ty86PsGkdLgfRi5V2/BXjw5l8pU8QHCCPyLAcjOhDwLtr87dVfw0FOtY7q22eqNfMdfIqc0AfwdmgcrLF6fr7LZHS678YKMzXepoi6FSnIV0BfG7ZEV3/iM9CIl0YzU7l04MGB0QGinE5frAt2g/LPWwtdky1CHOqUc08/wSHjn0ytSUImV4dqV8iaQwtS6WorRgohrgikY1/Ae2rpssMPiRQxHCL8RT5RtVf0Ph7CmYER/DmaPUwzPoFTwD1+tCcXqZCMdeLnhc9hDT09+myvG6XYFI8NWvvhiBqIi+gihvqrKbOvPBIZUZuHjwCQAcXhf3C7VtPo6wkHVdUzCCUqpXIcvKgLDzrh5UcAgZf2H77+MgH9JP4kre3NxIWFiIZ/mhmu5yrCz753TzIUPRAxqIppVIP73fJ2nuUPuCv8+hGKrdVq4ekwHi7y0B4gYakw82+hBG/p1jG+KtyChrjXP/2xppRrCNkHfNuwo1NAOtmOpDVCofdjuWeR0/rhFDNY/zzdZdE19lzSqPGkSKGYnguA5FICjy1kxD5VMICj2S2zbK5cg+y2wn1/0JF31paSjX+y8t1vl7ziWMaO+zX62zED6hxWtOELt0W2mlQ6RJLpdUjb6h9cQzop0ubrY=
-
-        gem: kitchen-terraform
-
-        on:
-          repo: newcontext-oss/kitchen-terraform
-          branch: master
-          tags: true
-
-        skip_cleanup: true
-
+  - stage: unit tests and code coverage with newest supported version of ruby
+    rvm: 2.5
+    before_script:
+    - curl --location https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+      > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - "./cc-test-reporter before-build"
+    script: bin/rake tests:unit:all
+    after_script: "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
+  - stage: unit tests with legacy supported versions of ruby
+    rvm: 2.4
+    script: bin/rake tests:unit:all
+  - rvm: 2.3
+    script: bin/rake tests:unit:all
+  - rvm: 2.2
+    script: bin/rake tests:unit:all
+  - stage: integration tests with newest supported version of terraform
+    sudo: required
+    services:
+    - docker
+    rvm: 2.5
+    install:
+    - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+      --retry=3 --without=development
+    script: bin/rake tests:integration:all
+  - sudo: required
+    services:
+    - docker
+    rvm: 2.4
+    install:
+    - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+      --retry=3 --without=development
+    script: bin/rake tests:integration:all
+  - sudo: required
+    services:
+    - docker
+    rvm: 2.3
+    install:
+    - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+      --retry=3 --without=development
+    script: bin/rake tests:integration:all
+  - sudo: required
+    services:
+    - docker
+    rvm: 2.2
+    install:
+    - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+      --retry=3 --without=development
+    script: bin/rake tests:integration:all
+  - stage: integration tests with legacy supported versions of terraform
+    sudo: required
+    services:
+    - docker
+    rvm: 2.5
+    env:
+    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+    install:
+    - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+      --retry=3 --without=development
+    script: bin/rake tests:integration:all[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+  - sudo: required
+    services:
+    - docker
+    rvm: 2.4
+    env:
+    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+    install:
+    - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+      --retry=3 --without=development
+    script: bin/rake tests:integration:all[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+  - sudo: required
+    services:
+    - docker
+    rvm: 2.3
+    env:
+    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+    install:
+    - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+      --retry=3 --without=development
+    script: bin/rake tests:integration:all[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+  - sudo: required
+    services:
+    - docker
+    rvm: 2.2
+    env:
+    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+    install:
+    - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+      --retry=3 --without=development
+    script: bin/rake tests:integration:all[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
+  - stage: deploy to rubygems.org
+    rvm: 2.5
+    before_install:
+    - gem update --system
+    - gem --version
+    install: skip
+    script: skip
+    before_cache: skip
+    before_deploy:
+    - openssl aes-256-cbc -K $encrypted_d73b39cf4bfa_key -iv $encrypted_d73b39cf4bfa_iv
+      -in certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
+    - gem cert --add certs/gem-public_cert.pem
+    deploy:
+      provider: rubygems
+      api_key:
+        secure: Y52epwcQvGsZ4c7LbHBZCGbgUzh0ujUMp0rEWrwr0o+7Ty86PsGkdLgfRi5V2/BXjw5l8pU8QHCCPyLAcjOhDwLtr87dVfw0FOtY7q22eqNfMdfIqc0AfwdmgcrLF6fr7LZHS678YKMzXepoi6FSnIV0BfG7ZEV3/iM9CIl0YzU7l04MGB0QGinE5frAt2g/LPWwtdky1CHOqUc08/wSHjn0ytSUImV4dqV8iaQwtS6WorRgohrgikY1/Ae2rpssMPiRQxHCL8RT5RtVf0Ph7CmYER/DmaPUwzPoFTwD1+tCcXqZCMdeLnhc9hDT09+myvG6XYFI8NWvvhiBqIi+gihvqrKbOvPBIZUZuHjwCQAcXhf3C7VtPo6wkHVdUzCCUqpXIcvKgLDzrh5UcAgZf2H77+MgH9JP4kre3NxIWFiIZ/mhmu5yrCz753TzIUPRAxqIppVIP73fJ2nuUPuCv8+hGKrdVq4ekwHi7y0B4gYakw82+hBG/p1jG+KtyChrjXP/2xppRrCNkHfNuwo1NAOtmOpDVCofdjuWeR0/rhFDNY/zzdZdE19lzSqPGkSKGYnguA5FICjy1kxD5VMICj2S2zbK5cg+y2wn1/0JF31paSjX+y8t1vl7ziWMaO+zX62zED6hxWtOELt0W2mlQ6RJLpdUjb6h9cQzop0ubrY=
+      gem: kitchen-terraform
+      on:
+        repo: newcontext-oss/kitchen-terraform
+        branch: master
+        tags: true
+      skip_cleanup: true
 notifications:
   webhooks:
     urls:
-      - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
+    - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
+env:
+  global:
+    secure: k7lAguy8oX6S2DnSumvzzBMT0MYxZDeTWh2bBEXJvpsfIRHjtKHG6XLKLgAHF4oAyrPKBA/KNyy4hHcQwIj5gaez6zSBjXwAZ9ddVsng5BqU3rUj+lPmbGMa1+SpIyGm1KIabA84QEpzeRVXFmUnEMFm8vX6ptuPwBUThapVtZJw8gSgYAV/BxEAVLnMVazacU1/w2tp3+mDOexLcQHxTitqaYJoVXhyubKBMVZfd2UC5xRyT3/Pw+5IvDR+58R9sphfGtg8rBLPgC+BTDdPgZHGPZK4qt4AJLv9aAYJdpWGdrxO6rYeSwpO+ZRxVSQP4T+RINL/pmkcRYaKV+mXsVIpXu6rL0dHlGCPyT22W6OGiK4niKKiPXccjyvwDsA2+0tH1RKbC56kXOzprDREsZzdEdhyE5VWvjv4peIRqMcPSX5KjJlhC6n2zmvtr3tYsuB4KKiUUOQSOSCEaXgbNRew/gOQShwX8a7Q9tb3TytPASNGQaFDBsKE3Z1rynzj7NWXjm+HBWVBmjqsXxzNBjzOlSakAMc/TeK7Iubv7F3P9S1glWvrsz+Rmmwo3WesLZ/ZbhI+4tZxSSiNaJAo5TtWPmA9ZtyWnkKlLbY/ZRYT+X7jFRvtkf9ddDOqoTHrTGAGZHHlOkW3dG6f1mylsGjqfXixzLRWWpAMysEoqv4=

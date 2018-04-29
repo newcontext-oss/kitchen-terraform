@@ -34,6 +34,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   * variable_files
   * variables
 
+* Loading of Kitchen constants to enable the use of Kitchen Rake tasks
+
 ## [3.3.0] - 2018-03-22
 
 ### Added
