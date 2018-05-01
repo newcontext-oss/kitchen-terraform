@@ -150,7 +150,7 @@ require "support/kitchen/terraform/configurable_examples"
                     "-check-variables=true",
                     "-no-color",
                     "-var-file=/variable/file",
-                    "-var=\"key=value\""
+                    "-var=key\\=value"
                   ]
               )
             end
@@ -188,7 +188,7 @@ require "support/kitchen/terraform/configurable_examples"
                       "-no-color",
                       "-parallelism=10",
                       "-var-file=/variable/file",
-                      "-var=\"key=value\""
+                      "-var=key\\=value"
                     ]
                 )
               end

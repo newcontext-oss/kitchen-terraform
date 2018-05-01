@@ -146,6 +146,18 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     super()
   end
 
+  def backend_configurations_flags
+    config_backend_configurations
+      .map do |key, value|
+        "-backend-config=#{::Shellwords.escape "#{key}=#{value}"}"
+      end
+      .join " "
+  end
+
+  def color_flag
+    config_color and "" or "-no-color"
+  end
+
   # This action creates the Kitchen Instance by preparing the Terraform working directory .
   #
   # === Workflow
@@ -254,18 +266,94 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     action_failed error: error
   end
 
-  private
+  def destroy_flags
+    [
+      "-force",
+      "-input=false",
+      "-refresh=true",
+      lock_timeout_flag,
+      lock_flag,
+      color_flag,
+      parallelism_flag,
+      variable_files_flags,
+      variables_flags
+    ]
+  end
 
-  attr_reader :client
+  def init_flags
+    [
+      "-backend=true",
+      "-force-copy",
+      "-get-plugins=true",
+      "-get=true",
+      "-input=false",
+      "-verify-plugins=true",
+      backend_configurations_flags,
+      lock_timeout_flag,
+      lock_flag,
+      color_flag,
+      plugin_directory_flag
+    ]
+  end
 
-  # @api private
-  def backend_configurations_flags
-    config_backend_configurations
-      .map do |key, value|
-        "-backend-config=#{::Shellwords.escape "#{key}=#{value}"}"
+  def init_flags_with_upgrade
+    [
+      "-backend=true",
+      "-force-copy",
+      "-get-plugins=true",
+      "-get=true",
+      "-input=false",
+      "-upgrade",
+      "-verify-plugins=true",
+      backend_configurations_flags,
+      lock_timeout_flag,
+      lock_flag,
+      color_flag,
+      plugin_directory_flag
+    ]
+  end
+
+  def lock_flag
+    "-lock=#{config_lock}"
+  end
+
+  def lock_timeout_flag
+    "-lock-timeout=#{config_lock_timeout}s"
+  end
+
+  def parallelism_flag
+    "-parallelism=#{config_parallelism}"
+  end
+
+  def plugin_directory_flag
+    config_plugin_directory and
+      "-plugin-dir=#{::Shellwords.escape config_plugin_directory}" or
+      ""
+  end
+
+  def root_module_directory
+    ::Shellwords.escape config_root_module_directory
+  end
+
+  def variable_files_flags
+    config_variable_files
+      .map do |path|
+        "-var-file=#{::Shellwords.escape path}"
       end
       .join " "
   end
+
+  def variables_flags
+    config_variables
+      .map do |key, value|
+        "-var=#{::Shellwords.escape "#{key}=#{value}"}"
+      end
+      .join " "
+  end
+
+  private
+
+  attr_reader :client
 
   # @api private
   def client_destroy
@@ -285,105 +373,5 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def client_init_with_upgrade
     client.init flags: init_flags_with_upgrade
-  end
-
-  # api private
-  def color_flag
-    config_color and "" or "-no-color"
-  end
-
-  # @api private
-  def destroy_flags
-    [
-      "-force",
-      "-input=false",
-      "-refresh=true",
-      lock_timeout_flag,
-      lock_flag,
-      color_flag,
-      parallelism_flag,
-      variable_files_flags,
-      variables_flags
-    ]
-  end
-
-  # @api private
-  def init_flags
-    [
-      "-backend=true",
-      "-force-copy",
-      "-get-plugins=true",
-      "-get=true",
-      "-input=false",
-      "-verify-plugins=true",
-      backend_configurations_flags,
-      lock_timeout_flag,
-      lock_flag,
-      color_flag,
-      plugin_directory_flag
-    ]
-  end
-
-  # @api private
-  def init_flags_with_upgrade
-    [
-      "-backend=true",
-      "-force-copy",
-      "-get-plugins=true",
-      "-get=true",
-      "-input=false",
-      "-upgrade",
-      "-verify-plugins=true",
-      backend_configurations_flags,
-      lock_timeout_flag,
-      lock_flag,
-      color_flag,
-      plugin_directory_flag
-    ]
-  end
-
-  # @api private
-  def lock_flag
-    "-lock=#{config_lock}"
-  end
-
-  # @api private
-  def lock_timeout_flag
-    "-lock-timeout=#{config_lock_timeout}s"
-  end
-
-  # @api private
-  def parallelism_flag
-    "-parallelism=#{config_parallelism}"
-  end
-
-  # @api private
-  def plugin_directory_flag
-    config_plugin_directory and
-      "-plugin-dir=#{::Shellwords.escape config_plugin_directory}" or
-      ""
-  end
-
-  # @api private
-  def root_module_directory
-    ::Shellwords.escape config_root_module_directory
-  end
-
-  # @api private
-  def variable_files_flags
-    config_variable_files
-      .map do |path|
-        "-var-file=#{::Shellwords.escape path}"
-      end
-      .join " "
-  end
-
-  # @api private
-  def variables_flags
-    config_variables
-      .map do |key, value|
-        "-var=#{::Shellwords.escape "#{key}=#{value}"}"
-      end
-      .join " "
   end
 end

@@ -162,7 +162,7 @@ require "support/kitchen/terraform/configurable_examples"
                 "-input=false",
                 "-upgrade",
                 "-verify-plugins=true",
-                "-backend-config=key\=value",
+                "-backend-config=key\\=value",
                 "-lock-timeout=0s",
                 "-lock=true",
                 "-no-color",
@@ -248,7 +248,7 @@ require "support/kitchen/terraform/configurable_examples"
                 "-get=true",
                 "-input=false",
                 "-verify-plugins=true",
-                "-backend-config=key\=value",
+                "-backend-config=key\\=value",
                 "-lock-timeout=0s",
                 "-lock=true",
                 "-no-color",
@@ -314,7 +314,7 @@ require "support/kitchen/terraform/configurable_examples"
                     "-no-color",
                     "-parallelism=10",
                     "-var-file=/variable/file",
-                    "-var=key\=value"
+                    "-var=key\\=value"
                   ]
               )
             end

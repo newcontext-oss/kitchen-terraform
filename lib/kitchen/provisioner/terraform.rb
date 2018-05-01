@@ -63,7 +63,14 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   def_delegators(
     :driver,
     :color_flag,
+    :config_color,
     :config_command_timeout,
+    :config_lock,
+    :config_lock_timeout,
+    :config_parallelism,
+    :config_root_module_directory,
+    :config_variable_files,
+    :config_variables,
     :lock_flag,
     :lock_timeout_flag,
     :parallelism_flag,
@@ -128,6 +135,7 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
 
     self
   rescue ::Kitchen::StandardError => error
+    puts error.message
     action_failed error: error
   end
 
