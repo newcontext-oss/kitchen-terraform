@@ -19,7 +19,7 @@ which enable a system to use Test Kitchen to converge a
 state with [InSpec][inspec] controls.
 
 As Kitchen-Terraform integrates several distinctive technologies in a
-nontrivial manner, reviewing the documenation of each of the
+nontrivial manner, reviewing the documentation of each of the
 aforementioned products is strongly encouraged.
 
 ## Installation
@@ -145,7 +145,7 @@ Kitchen-Terraform and its dependencies are assumed to have been
 installed on the test system as described in the
 [Installation](#installation) section.
 
-The [Docker Community Editiion][docker-community-edition] is assumed to
+The [Docker Community Edition][docker-community-edition] is assumed to
 have been installed on the test system.
 
 The working directory on the test system is assumed to contain a
