@@ -261,13 +261,6 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
 <span class="na">title</span><span class="pi">:</span> <span class="s">Extensive Kitchen-Terraform</span>
 <span class="na">version</span><span class="pi">:</span> <span class="s">0.1.0</span>
 
-<span class="na">depends</span><span class="pi">:</span>
-  <span class="pi">-</span>
-    <span class="c1"># Depending on the inspec-aws project adds additional InSpec resources</span>
-    <span class="c1"># specific to AWS</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">aws</span>
-    <span class="na">url</span><span class="pi">:</span> <span class="s">https://github.com/chef/inspec-aws/archive/master.tar.gz</span>
-
 </code></pre></div>          <br><br>
           Populate the InSpec attributes control,
           <p
@@ -363,12 +356,14 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">reachable_other_host_public_ip_address</span> <span class="o">=</span>
+<span class="nb">require</span> <span class="s2">"awspec"</span>
+
+<span class="n">reachable_other_host_id</span> <span class="o">=</span>
   <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
   <span class="c1"># output</span>
   <span class="n">attribute</span><span class="p">(</span>
-    <span class="s2">"reachable_other_host_public_ip_address"</span><span class="p">,</span>
-    <span class="ss">description: </span><span class="s2">"The public IP address of the AWS EC2 instance which should be reachable"</span>
+    <span class="s2">"reachable_other_host_id"</span><span class="p">,</span>
+    <span class="ss">description: </span><span class="s2">"The ID of the AWS EC2 instance which should be reachable"</span>
   <span class="p">)</span>
 
 <span class="n">control</span> <span class="s2">"reachable_other_host"</span> <span class="k">do</span>
@@ -376,7 +371,11 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
 
   <span class="n">describe</span> <span class="s2">"The other host"</span> <span class="k">do</span>
     <span class="n">subject</span> <span class="k">do</span>
-      <span class="n">host</span> <span class="n">reachable_other_host_public_ip_address</span>
+      <span class="c1"># host is a resource provided by InSpec</span>
+      <span class="n">host</span><span class="p">(</span>
+        <span class="c1"># ec2 is a resource provided by awspec</span>
+        <span class="n">ec2</span><span class="p">(</span><span class="n">reachable_other_host_id</span><span class="p">).</span><span class="nf">public_ip_address</span>
+      <span class="p">)</span>
     <span class="k">end</span>
 
     <span class="n">before</span> <span class="k">do</span>
@@ -520,9 +519,9 @@ The isolated, regional location in which to place the subnet of the module
 <span class="p">}</span>
 
 <span class="c1"># This output is used as an attribute in the reachable_other_host control</span>
-<span class="n">output</span> <span class="s2">"reachable_other_host_public_ip_address"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The public IP address of the reachable_other_host instance"</span>
-  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${module.extensive_kitchen_terraform.reachable_other_host_public_ip_address}"</span>
+<span class="n">output</span> <span class="s2">"reachable_other_host_id"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The ID of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${module.extensive_kitchen_terraform.reachable_other_host_id}"</span>
 <span class="p">}</span>
 
 <span class="c1"># This output is used as an attribute in the inspec_attributes control</span>
@@ -735,9 +734,9 @@ The public key material to use for SSH authentication with the instances
 <span class="c1"># Output Configuration</span>
 
 <span class="c1"># This output is used as an attribute in the reachable_other_host control</span>
-<span class="n">output</span> <span class="s2">"reachable_other_host_public_ip_address"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The public IP address of the reachable_other_host instance"</span>
-  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_instance.reachable_other_host.public_ip}"</span>
+<span class="n">output</span> <span class="s2">"reachable_other_host_id"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The ID of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_instance.reachable_other_host.id}"</span>
 <span class="p">}</span>
 
 <span class="c1"># This output is used to obtain targets for InSpec</span>
@@ -869,11 +868,10 @@ The public key material to use for SSH authentication with the instances
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
-  <span class="c1"># aws-sdk is required to leverage the InSpec AWS plugin while it is in initial</span>
-  <span class="c1"># development</span>
+  <span class="c1"># awspec will be required to test AWS resources until Kitchen-Terraform supports the AWS InSpec backend.</span>
   <span class="n">gem</span><span class="p">(</span>
-    <span class="s2">"aws-sdk"</span><span class="p">,</span>
-    <span class="s2">"~&gt; 2.0"</span>
+    <span class="s2">"awspec"</span><span class="p">,</span>
+    <span class="s2">"~&gt; 1.5"</span>
   <span class="p">)</span>
 
   <span class="n">gem</span><span class="p">(</span>

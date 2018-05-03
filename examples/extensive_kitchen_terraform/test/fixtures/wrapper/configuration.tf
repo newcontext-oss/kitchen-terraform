@@ -44,9 +44,9 @@ output "instances_ami_operating_system_name" {
 }
 
 # This output is used as an attribute in the reachable_other_host control
-output "reachable_other_host_public_ip_address" {
-  description = "The public IP address of the reachable_other_host instance"
-  value       = "${module.extensive_kitchen_terraform.reachable_other_host_public_ip_address}"
+output "reachable_other_host_id" {
+  description = "The ID of the reachable_other_host instance"
+  value       = "${module.extensive_kitchen_terraform.reachable_other_host_id}"
 }
 
 # This output is used as an attribute in the inspec_attributes control
