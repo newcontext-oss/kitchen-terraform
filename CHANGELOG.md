@@ -122,7 +122,7 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-* Verifier `:groups` have an optional `:ssh_key` attribute that overides
+* Verifier `:groups` have an optional `:ssh_key` attribute that overrides
   the Test Kitchen SSH Transport `:ssh_key`
 
 ## [2.0.0] - 2017-09-13
@@ -162,7 +162,7 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Moved the project version constant to the gem namespace
 
-* Corrected obsolote information in the aws_provider example
+* Corrected obsolete information in the aws_provider example
 
 ## [1.0.2] - 2017-07-16
 
@@ -218,7 +218,7 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 * Dropped support for Ruby 2.1
 
-* Improved project documenation
+* Improved project documentation
 
 * Moved all provisioner configuration attributes to the driver
 
@@ -260,7 +260,7 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-* Driver configuration option to specify the pathanme of the Terraform
+* Driver configuration option to specify the pathname of the Terraform
   command-line interface
 
 * "terraform_state" InSpec attribute containing the pathname of the

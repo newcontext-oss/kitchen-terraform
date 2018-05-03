@@ -195,6 +195,7 @@ bin/middleman build --build-dir docs
 <!-- Markdown links and image definitions -->
 [code-climate-cli]: https://github.com/codeclimate/codeclimate
 [code-climate]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
+[fork-a-repo]: https://help.github.com/articles/fork-a-repo/
 [git-tag]: https://git-scm.com/book/en/v2/Git-Basics-Tagging
 [github-issue-tracker]: https://github.com/newcontext-oss/kitchen-terraform/issues
 [gitter-chat]: https://gitter.im/kitchen-terraform/Lobby

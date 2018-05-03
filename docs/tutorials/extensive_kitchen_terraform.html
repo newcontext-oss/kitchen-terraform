@@ -239,7 +239,7 @@
         >
           Prepare the
           <a href="https://www.inspec.io/docs/reference/profiles/">InSpec profile</a>
-          by mimicing the following Bash script.
+          by mimicking the following Bash script.
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
 mkdir <span class="nt">-p</span> <span class="nb">test</span>/integration/extensive_suite/controls
@@ -458,7 +458,7 @@ ssh-keygen <span class="se">\</span>
           of the module to better support testing without polluting the core logic. Second, it provides an opportunity
           to test the user experience of the module and identify areas of the design that can be improved or simplified.
           <br><br>
-          Prepare the configuration by mimicing the following Bash script.
+          Prepare the configuration by mimicking the following Bash script.
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
 mkdir <span class="nt">-p</span> <span class="nb">test</span>/fixtures/wrapper
@@ -554,10 +554,10 @@ ${path.cwd}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate
           id="list-six"
           role="tabpanel"
         >
-          The Terraform module is the actual artefact under test. The design of the module is informed by the InSpec
+          The Terraform module is the actual artifact under test. The design of the module is informed by the InSpec
           profile and the fixture configuration.
           <br><br>
-          Prepare the module by mimicing the following Bash script.
+          Prepare the module by mimicking the following Bash script.
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
 touch module.tf
@@ -882,14 +882,14 @@ The public key material to use for SSH authentication with the instances
   <span class="p">)</span>
 <span class="k">end</span>
 
-</code></pre></div>          Install the declared Ruby gem dependencies by mimicing the following Bash script.
+</code></pre></div>          Install the declared Ruby gem dependencies by mimicking the following Bash script.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
 gem install bundler
 bundle install
 
-</code></pre></div>          Test the Terraform module using multiple platforms by mimicing the following Bash script.
+</code></pre></div>          Test the Terraform module using multiple platforms by mimicking the following Bash script.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 

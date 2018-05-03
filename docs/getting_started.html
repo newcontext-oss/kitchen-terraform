@@ -165,7 +165,7 @@ bundle install
 
 <span class="na">suites</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">kt_suite</span>
-</code></pre></div>          Please refer back to this file as we continue to move on, take special note of the root_module_directory, group and control names under verifier and the suite name. Each of these coorespond to a folder structure and Inspec control test.
+</code></pre></div>          Please refer back to this file as we continue to move on, take special note of the root_module_directory, group and control names under verifier and the suite name. Each of these correspond to a folder structure and Inspec control test.
         </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add the block of code into it.
@@ -183,7 +183,7 @@ bundle install
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">module</span> <span class="s2">"kt_test"</span> <span class="p">{</span>
   <span class="n">source</span> <span class="o">=</span> <span class="s2">"../../.."</span>
 <span class="p">}</span>
-</code></pre></div>          Apply the fixutre Terraform module configuration with Test Kitchen.
+</code></pre></div>          Apply the fixture Terraform module configuration with Test Kitchen.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
 </code></pre></div>        </div>

@@ -19,7 +19,7 @@ which enable a system to use Test Kitchen to converge a
 state with [InSpec][inspec] controls.
 
 As Kitchen-Terraform integrates several distinctive technologies in a
-nontrivial manner, reviewing the documenation of each of the
+nontrivial manner, reviewing the documentation of each of the
 aforementioned products is strongly encouraged.
 
 ## Installation
