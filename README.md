@@ -141,9 +141,8 @@ which utilizes the [Docker provider][docker-provider].
 
 The test system is assumed to be running Ubuntu 17.04.
 
-Kitchen-Terraform and its dependencies are assumed to have been
-installed on the test system as described in the
-[Installation](#installation) section.
+Terraform, Ruby, and Bundler are assumed to have been installed on the
+test system as described in the [Installation](#installation) section.
 
 The [Docker Community Edition][docker-community-edition] is assumed to
 have been installed on the test system.
