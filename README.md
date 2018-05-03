@@ -157,7 +157,6 @@ hierarchy of files comprising the following blocks.
 .
 ├── .kitchen.yml
 ├── Gemfile
-├── Gemfile.lock
 ├── main.tf
 └── test
     └── integration
@@ -165,6 +164,14 @@ hierarchy of files comprising the following blocks.
             ├── controls
             │   ├── operating_system.rb
             └── inspec.yml
+```
+
+> Gemfile
+
+```ruby
+source "https://rubygems.org/"
+
+gem 'kitchen-terraform'
 ```
 
 > ./.kitchen.yml (Test Kitchen configuration)
@@ -253,6 +260,7 @@ and verify that the container is running Ubuntu.
 > Verifying with Kitchen-Terraform
 
 ```sh
+$ bundle install
 $ bundle exec kitchen test
 -----> Starting Kitchen...
 ...
