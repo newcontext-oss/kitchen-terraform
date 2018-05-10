@@ -18,9 +18,12 @@ require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/provisioner/terraform"
 require "kitchen/verifier/terraform"
+require "support/kitchen/terraform/client_context"
 
 ::RSpec
   .shared_context "Kitchen::Instance" do
+    include_context "Kitchen::Terraform::Client"
+
     let :default_config do
       {kitchen_root: kitchen_root}
     end

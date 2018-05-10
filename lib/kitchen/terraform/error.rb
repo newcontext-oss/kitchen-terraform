@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
 require "kitchen/terraform"
 
 # This class represents errors that occur while Kitchen-Terraform is executing.
-class ::Kitchen::Terraform::Error < ::StandardError
+class ::Kitchen::Terraform::Error < ::Kitchen::StandardError
 end

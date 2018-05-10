@@ -18,7 +18,6 @@ require "kitchen"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
-require "kitchen/terraform/error"
 require "kitchen/verifier/inspec"
 
 # This namespace is defined by Kitchen.
@@ -30,40 +29,23 @@ end
 # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the behaviour and
 # state of resources in the Terraform state.
 #
-# === Commands
+# === Command-Line Interface
 #
-# The following command-line commands are provided by the verifier.
+# The following actions are implemented by the verifier:
 #
-# ==== kitchen verify
+# * {#call kitchen verify}
 #
-# A Test Kitchen instance is verified by iterating through the groups and executing the associated InSpec controls in a
-# manner similar to the following command-line command.
+# === Enable the Plugin
 #
-#   inspec exec \
-#     [--attrs=<terraform_outputs>] \
-#     --backend=<ssh|local> \
-#     [--no-color] \
-#     [--controls=<group.controls>] \
-#     --host=<group.hostnames.current|localhost> \
-#     [--password=<group.password>] \
-#     [--port=<group.port>] \
-#     --profiles-path=test/integration/<suite> \
-#     [--user=<group.username>] \
-#
-# === InSpec Profiles
-#
-# The {https://www.inspec.io/docs/reference/profiles/ InSpec profile} for a Test Kitchen suite must be defined under
-# +./test/integration/<suite>/+.
-#
-# === Configuration Attributes
-#
-# The configuration attributes of the verifier control the behaviour of the InSpec runner. Within the
-# {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}, these attributes must be
-# declared in the +verifier+ mapping along with the plugin name.
+# The +verifier+ mapping must be declared with the plugin name within the
+# {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}.
 #
 #   verifier:
 #     name: terraform
-#     a_configuration_attribute: some value
+#
+# === Configuration
+#
+# The configuration of the verifier controls the behaviour of the InSpec runner.
 #
 # ==== color
 #
@@ -73,7 +55,11 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Groups}
 #
-# @version 2
+# === InSpec Profiles
+#
+# The {https://www.inspec.io/docs/reference/profiles/ InSpec profile} for a
+# {https://kitchen.ci/docs/getting-started/kitchen-yml Kitchen Suite} must be defined under
+# +./test/integration/<suite>/+.
 class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   kitchen_verifier_api_version 2
 
@@ -83,50 +69,176 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
 
   include ::Kitchen::Terraform::Configurable
 
-  # The verifier enumerates through each hostname of each group and verifies the associated InSpec controls.
+  # This action verifies the Kitchen Instance by executing the InSpec controls of each group.
+  # === Workflow
   #
-  # @example
-  #   `kitchen verify suite-name`
-  # @param state [::Hash] the mutable instance and verifier state.
+  # ==== Executing the InSpec Controls of a Group
+  #
+  #   inspec exec \
+  #     [--attrs=<terraform_outputs>] \
+  #     --backend=<ssh|local> \
+  #     [--no-color] \
+  #     [--controls=<group.controls>] \
+  #     --host=<group.hostnames.current|localhost> \
+  #     [--password=<group.password>] \
+  #     [--port=<group.port>] \
+  #     --profiles-path=test/integration/<suite> \
+  #     [--user=<group.username>] \
+  #
+  # @example Describe the verify action
+  #   kitchen help verify
+  # @example Verify a Kitchen Instance named default-ubuntu
+  #   kitchen verify default-ubuntu
+  # @param kitchen_state [::Hash] the Kitchen state is queried for the Terraform output.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [void]
-  def call(state)
-    state
-      .fetch :kitchen_terraform_output do
-        raise(
-          ::Kitchen::Terraform::Error,
-          "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \
-            "kitchen-terraform provisioner has not successfully converged"
-        )
-      end
-      .tap do |output|
-        ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
-          .call(
-            groups: config_groups,
-            output: ::Kitchen::Util.stringified_hash(output)
-          ) do |group:, hostname:|
-            state
-              .store(
-                :kitchen_terraform_group,
-                group
-              )
-            state
-              .store(
-                :kitchen_terraform_hostname,
-                hostname
-              )
-            info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"
-            super state
-          end
-      end
-  rescue ::Kitchen::Terraform::Error => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
+  # @return [self]
+  def call(kitchen_state)
+    enumerate_groups_and_hostnames kitchen_state: kitchen_state do
+      super kitchen_state
+    end
+
+    self
+  rescue ::Kitchen::StandardError => error
+    action_failed error: error
   end
 
   private
+
+  attr_accessor(
+    :group,
+    :hostname,
+    :inspec_runner_options,
+    :kitchen_state
+  )
+
+  # @api private
+  def enumerate_groups_and_hostnames(kitchen_state:)
+    self.kitchen_state = kitchen_state
+
+    ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
+      .call(
+        groups: config_groups,
+        output: output
+      ) do |group:, hostname:|
+        prepare_to_verify(
+          group: group,
+          hostname: hostname
+        )
+
+        yield
+      end
+  end
+
+  # @api private
+  def apply_kitchen_terraform_runner_options
+    configure_inspec_runner_profile
+    configure_inspec_runner_transport
+  end
+
+  # @api private
+  def configure_inspec_runner_attributes
+    inspec_runner_options
+      .store(
+        :attributes,
+        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
+          .call(
+            group: group,
+            output: output
+          )
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_backend
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend
+      .call(
+        hostname: hostname,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_controls
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
+      .call(
+        group: group,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_host
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
+      .call(
+        hostname: hostname,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_port
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
+      .call(
+        group: group,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_profile
+    configure_inspec_runner_attributes
+    configure_inspec_runner_controls
+  end
+
+  # @api private
+  def configure_inspec_runner_ssh_key
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerSSHKey
+      .call(
+        group: group,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def configure_inspec_runner_transport
+    configure_inspec_runner_backend
+    configure_inspec_runner_host
+    configure_inspec_runner_port
+    configure_inspec_runner_ssh_key
+    configure_inspec_runner_user
+  end
+
+  # @api private
+  def configure_inspec_runner_user
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
+      .call(
+        group: group,
+        options: inspec_runner_options
+      )
+  end
+
+  # @api private
+  def output
+    ::Kitchen::Util
+      .stringified_hash(
+        kitchen_state
+          .fetch(:kitchen_terraform_output) do
+            raise(
+              ::Kitchen::ActionFailed,
+              "The Kitchen state does not include :kitchen_terraform_output; this implies that the Terraform " \
+                "provisioner has not successfully converged"
+            )
+          end
+      )
+  end
+
+  # @api private
+  def prepare_to_verify(group:, hostname:)
+    self.group = group
+    self.hostname = hostname
+    info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"
+    self
+  end
 
   # Modifies the Inspec Runner options generated by the kitchen-inspec verifier to support the verification of each
   # group's hosts.
@@ -134,49 +246,10 @@ class ::Kitchen::Verifier::Terraform < ::Kitchen::Verifier::Inspec
   # @api private
   # @return [::Hash] Inspec Runner options.
   # @see https://github.com/chef/inspec/blob/master/lib/inspec/runner.rb ::Inspec::Runner
-  def runner_options(transport, state = {}, platform = nil, suite = nil)
-    super(transport, state, platform, suite)
-      .tap do |options|
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend
-          .call(
-            hostname: state.fetch(:kitchen_terraform_hostname),
-            options: options
-          )
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
-          .call(
-            hostname: state.fetch(:kitchen_terraform_hostname),
-            options: options
-          )
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
-          .call(
-            group: state.fetch(:kitchen_terraform_group),
-            options: options
-          )
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerSSHKey
-          .call(
-            group: state.fetch(:kitchen_terraform_group),
-            options: options
-          )
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
-          .call(
-            group: state.fetch(:kitchen_terraform_group),
-            options: options
-          )
-        options
-          .store(
-            :attributes,
-            ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
-              .call(
-                group: state.fetch(:kitchen_terraform_group),
-                output: ::Kitchen::Util.stringified_hash(state.fetch(:kitchen_terraform_output))
-              )
-          )
-        ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
-          .call(
-            group: state.fetch(:kitchen_terraform_group),
-            options: options
-          )
-      end
+  def runner_options(transport, kitchen_state = {}, platform = nil, suite = nil)
+    self.inspec_runner_options = super
+    apply_kitchen_terraform_runner_options
+    inspec_runner_options
   end
 end
 

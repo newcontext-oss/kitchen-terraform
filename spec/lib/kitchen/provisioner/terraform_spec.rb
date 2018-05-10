@@ -15,47 +15,46 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/driver/terraform"
 require "kitchen/provisioner/terraform"
-require "kitchen/terraform/error"
+require "support/kitchen/instance_context"
+require "support/kitchen/terraform/client_dependency_examples"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec
   .describe ::Kitchen::Provisioner::Terraform do
+    include_context "Kitchen::Instance" do
+      let :driver do
+        ::Kitchen::Driver::Terraform
+          .new(
+            backend_configurations: {key: "value"},
+            color: false,
+            kitchen_root: kitchen_root,
+            plugin_directory: "/plugin/directory",
+            variable_files: ["/variable/file"],
+            variables: {key: "value"}
+          )
+      end
+
+      let :provisioner do
+        described_instance
+      end
+    end
+
     let :described_instance do
-      described_class.new({})
+      described_class.new
+    end
+
+    it_behaves_like "Kitchen::Terraform::ClientDependency" do
+      subject do
+        described_instance
+      end
     end
 
     it_behaves_like "Kitchen::Terraform::Configurable"
 
     describe "#call" do
       subject do
-        lambda do
-          described_instance.call kitchen_state
-        end
-      end
-
-      let :driver do
-        ::Kitchen::Driver::Terraform.new
-      end
-
-      let :kitchen_instance do
-        ::Kitchen::Instance
-          .new(
-            driver: driver,
-            logger: ::Kitchen::Logger.new,
-            platform: ::Kitchen::Platform.new(name: "test-platform"),
-            provisioner: described_instance,
-            state_file:
-              ::Kitchen::StateFile
-                .new(
-                  "/kitchen/root",
-                  "test-suite-test-platform"
-                ),
-            suite: ::Kitchen::Suite.new(name: "test-suite"),
-            transport: ::Kitchen::Transport::Base.new,
-            verifier: ::Kitchen::Verifier::Base.new
-          )
+        described_instance
       end
 
       let :kitchen_state do
@@ -63,56 +62,167 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       before do
-        described_instance.finalize_config! kitchen_instance
+        subject.finalize_config! instance
       end
 
-      describe "error handling" do
-        context "when the driver create action is a failure" do
-          before do
-            allow(driver)
-              .to(
-                receive(:apply)
-                  .and_raise(
-                    ::Kitchen::Terraform::Error,
-                    "mocked Driver#create failure"
-                  )
+      def expect_invoking_method
+        expect do
+          subject.call kitchen_state
+        end
+      end
+
+      context "when `terraform workspace select <kitchen-instance>` results in failure" do
+        before do
+          run_general_command_failure(
+            command: :within_kitchen_instance_workspace,
+            message: "mocked `terraform workspace select <kitchen-instance>` failure"
+          )
+        end
+
+        specify do
+          expect_invoking_method
+            .to(
+              raise_error(
+                ::Kitchen::ActionFailed,
+                "mocked `terraform workspace select <kitchen-instance>` failure"
               )
+            )
+        end
+      end
+
+      context "when `terraform workspace select <kitchen-instance>` results in success" do
+        before do
+          allow(client).to receive(:within_kitchen_instance_workspace).and_yield
+        end
+
+        context "when `terraform get` results in failure" do
+          before do
+            run_general_command_failure(
+              command: :get,
+              message: "mocked `terraform get` failure"
+            )
           end
 
-          it do
-            is_expected
+          specify do
+            expect_invoking_method
               .to(
                 raise_error(
                   ::Kitchen::ActionFailed,
-                  "mocked Driver#create failure"
+                  "mocked `terraform get` failure"
                 )
               )
           end
         end
 
-        context "when the driver create action is a success" do
+        context "when `terraform get` results in success" do
           before do
-            allow(driver).to receive(:apply).and_yield output: "mocked Driver#create output"
+            run_specific_command_success(
+              command: :get,
+              flags: ["-update"]
+            )
           end
 
-          it do
-            is_expected.to_not raise_error
+          context "when `terraform validate` results in failure" do
+            before do
+              run_general_command_failure(
+                command: :validate,
+                message: "mocked `terraform validate` failure"
+              )
+            end
+
+            specify do
+              expect_invoking_method
+                .to(
+                  raise_error(
+                    ::Kitchen::ActionFailed,
+                    "mocked `terraform validate` failure"
+                  )
+                )
+            end
           end
-        end
-      end
 
-      describe "Test Kitchen state manipulation" do
-        subject do
-          kitchen_state
-        end
+          context "when `terraform validate` results in success" do
+            before do
+              run_specific_command_success(
+                command: :validate,
+                flags:
+                  [
+                    "-check-variables=true",
+                    "-no-color",
+                    "-var-file=/variable/file",
+                    "-var=key\\=value"
+                  ]
+              )
+            end
 
-        before do
-          allow(driver).to receive(:apply).and_yield output: "mocked Driver#create output"
-          described_instance.call kitchen_state
-        end
+            context "when `terraform apply` results in failure" do
+              before do
+                run_general_command_failure(
+                  command: :apply,
+                  message: "mocked `terraform apply` failure"
+                )
+              end
 
-        it do
-          is_expected.to include kitchen_terraform_output: "mocked Driver#create output"
+              specify do
+                expect_invoking_method
+                  .to(
+                    raise_error(
+                      ::Kitchen::ActionFailed,
+                      "mocked `terraform apply` failure"
+                    )
+                  )
+              end
+            end
+
+            context "when `terraform apply` results in success" do
+              before do
+                run_specific_command_success(
+                  command: :apply,
+                  flags:
+                    [
+                      "-auto-approve=true",
+                      "-input=false",
+                      "-refresh=true",
+                      "-lock-timeout=0s",
+                      "-lock=true",
+                      "-no-color",
+                      "-parallelism=10",
+                      "-var-file=/variable/file",
+                      "-var=key\\=value"
+                    ]
+                )
+              end
+
+              context "when `terraform output` results in failure" do
+                before do
+                  run_general_command_failure(
+                    command: :output,
+                    message: "mocked `terraform output` failure"
+                  )
+                end
+
+                specify do
+                  expect_invoking_method
+                    .to(
+                      raise_error(
+                        ::Kitchen::ActionFailed,
+                        "mocked `terraform output` failure"
+                      )
+                    )
+                end
+              end
+
+              context "when `terraform output` results in success" do
+                before do
+                  run_general_command_success command: :output
+                end
+
+                specify do
+                  expect_invoking_method.to_not raise_error
+                end
+              end
+            end
+          end
         end
       end
     end
