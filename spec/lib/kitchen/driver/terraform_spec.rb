@@ -163,9 +163,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
     describe ".serial_actions" do
       shared_examples "actions are returned" do
         specify do
-          /^2.2/
-            .match ::RUBY_VERSION and
-            skip "Not applicable to Ruby v2.2"
+        ::Gem::Requirement
+          .new("~> 2.2.0")
+          .satisfied_by? ::Gem::Version.new ::RUBY_VERSION and
+          skip "Not applicable to Ruby v2.2"
 
           expect(described_class.serial_actions)
             .to(
