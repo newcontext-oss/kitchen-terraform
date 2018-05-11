@@ -167,7 +167,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             .match ::RUBY_VERSION and
             skip "Not applicable to Ruby v2.2"
 
-          expect(described_class.serial_actions(version: version))
+          expect(described_class.serial_actions)
             .to(
               contain_exactly(
                 :create,
@@ -180,23 +180,26 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
 
       context "when the version is less than 4.0.0" do
+        before do
+          ::Kitchen::Terraform::Version.version= "3.3.0"
+        end
+
         specify do
-          expect(described_class.serial_actions(version: ::Kitchen::Terraform::Version.new(version: "3.3.0")))
-            .to be_empty
+          expect(described_class.serial_actions).to be_empty
         end
       end
 
       context "when the version is equal to 4.0.0" do
-        let :version do
-          ::Kitchen::Terraform::Version.new version: "4.0.0"
+        before do
+          ::Kitchen::Terraform::Version.version= "4.0.0"
         end
 
         it_behaves_like "actions are returned"
       end
 
       context "when the version is greater than 4.0.0" do
-        let :version do
-          ::Kitchen::Terraform::Version.new version: "5.6.7"
+        before do
+          ::Kitchen::Terraform::Version.version= "5.6.7"
         end
 
         it_behaves_like "actions are returned"

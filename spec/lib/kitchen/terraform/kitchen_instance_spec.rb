@@ -23,16 +23,12 @@ require "kitchen/terraform/version"
   .describe ::Kitchen::Terraform::KitchenInstance do
     describe ".new" do
       subject do
-        described_class
-          .new(
-            kitchen_instance: instance_double(::Object),
-            version: version
-          )
+        described_class.new kitchen_instance: instance_double(::Object)
       end
 
       context "when the version is less than 4.0.0" do
-        let :version do
-          ::Kitchen::Terraform::Version.new version: "3.4.5"
+        before do
+          ::Kitchen::Terraform::Version.version= "3.4.5"
         end
 
         specify do
@@ -41,8 +37,8 @@ require "kitchen/terraform/version"
       end
 
       context "when the version is equal to 4.0.0" do
-        let :version do
-          ::Kitchen::Terraform::Version.new version: "4.0.0"
+        before do
+          ::Kitchen::Terraform::Version.version= "4.0.0"
         end
 
         specify do
@@ -51,8 +47,8 @@ require "kitchen/terraform/version"
       end
 
       context "when the version is greater than 4.0.0" do
-        let :version do
-          ::Kitchen::Terraform::Version.new version: "5.6.7"
+        before do
+          ::Kitchen::Terraform::Version.version= "5.6.7"
         end
 
         specify do
