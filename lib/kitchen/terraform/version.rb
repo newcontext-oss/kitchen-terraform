@@ -19,7 +19,9 @@ require "kitchen/terraform"
 
 # This class represents the version of the Kitchen-Terraform gem.
 module ::Kitchen::Terraform::Version
+  # rubocop:disable Style/MutableConstant
   self::VALUE = "3.3.1"
+  # rubocop:enable Style/MutableConstant
 
   def self.assign_specification_version(specification:)
     specification.version = value.to_s
