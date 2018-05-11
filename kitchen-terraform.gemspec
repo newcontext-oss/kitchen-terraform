@@ -27,7 +27,8 @@ version = ::Kitchen::Terraform::Version.new
       "Nick Willever",
       "Steven A. Burns",
       "Walter Dolce",
-      "curleighbraces"
+      "curleighbraces",
+      "Austin Heiman"
     ]
 
   specification.description = "kitchen-terraform is a set of Test Kitchen plugins for testing Terraform configuration"
@@ -134,7 +135,7 @@ version = ::Kitchen::Terraform::Version.new
 
   specification.add_runtime_dependency "dry-validation", "~> 0.10"
 
-  specification.add_runtime_dependency "kitchen-inspec", "~> 0.18"
+  specification.add_runtime_dependency "inspec", "~> 2.1"
 
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
 
