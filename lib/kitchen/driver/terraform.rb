@@ -208,7 +208,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #
   # If the gem version satisfies the requirement of ~> 3.3 then no names are returned.
   #
-  # If the gem version satisfies the requirement of >= 4 then +:create+, +:converge+, +:setup+, and +:destroy+ are returned.
+  # If the gem version satisfies the requirement of >= 4 then +:create+, +:converge+, +:setup+, and +:destroy+ are
+  # returned.
   #
   # @return [::Array<Symbol>] the action method names.
   def self.serial_actions
