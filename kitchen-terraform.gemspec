@@ -151,16 +151,16 @@ require "rubygems"
           "~> 1.16"
         )
 
+      # rubocop:disable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
       ::Gem::Requirement
         .new("~> 2.2.0")
         .satisfied_by? ::Gem::Version.new ::RUBY_VERSION and
-        # rubocop:disable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
         specification
           .post_install_message=(
             "DEPRECATING: the current version of Ruby is #{::RUBY_VERSION}; this version will not be supported in " \
               "an upcoming major release of Kitchen-Terraform"
           )
-        # rubocop:enable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
+      # rubocop:enable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
 
       specification.required_ruby_version =
         [
