@@ -17,35 +17,45 @@
 require "rubygems"
 require "kitchen/terraform"
 
-# The version of the kitchen-terraform gem.
+# This class represents the version of the Kitchen-Terraform gem.
 module ::Kitchen::Terraform::Version
+  self::VALUE = "3.3.1"
+
   def self.assign_specification_version(specification:)
-    specification.version = version.to_s
+    specification.version = value.to_s
     self
   end
 
   def self.assign_plugin_version(configurable_class:)
-    configurable_class.plugin_version version.to_s
+    configurable_class.plugin_version value.to_s
     self
   end
 
   def self.if_satisfies(requirement:)
     ::Gem::Requirement
       .new(requirement)
-      .satisfied_by? version and
+      .satisfied_by? value and
       yield
 
     self
   end
 
-  def self.version=(version)
-    @version = ::Gem::Version.new version
-    self
+  def self.temporarily_override(version:)
+    current_value = self.value
+    self.value = version
+    yield
+    self.value = current_value
   end
 
   private_class_method
 
-  def self.version
-    @version or self.version= "3.3.1" and @version
+  def self.value
+    self.value = self::VALUE if not @value
+    @value
+  end
+
+  def self.value=(version)
+    @value = ::Gem::Version.new version
+    self
   end
 end

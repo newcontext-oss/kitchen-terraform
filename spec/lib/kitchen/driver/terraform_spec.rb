@@ -180,8 +180,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
 
       context "when the version is less than 4.0.0" do
-        before do
-          ::Kitchen::Terraform::Version.version= "3.3.0"
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "3.3.0",
+              &example
+            )
         end
 
         specify do
@@ -190,16 +194,24 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
 
       context "when the version is equal to 4.0.0" do
-        before do
-          ::Kitchen::Terraform::Version.version= "4.0.0"
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "4.0.0",
+              &example
+            )
         end
 
         it_behaves_like "actions are returned"
       end
 
       context "when the version is greater than 4.0.0" do
-        before do
-          ::Kitchen::Terraform::Version.version= "5.6.7"
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "5.6.7",
+              &example
+            )
         end
 
         it_behaves_like "actions are returned"

@@ -27,8 +27,12 @@ require "kitchen/terraform/version"
       end
 
       context "when the version is less than 4.0.0" do
-        before do
-          ::Kitchen::Terraform::Version.version= "3.4.5"
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "3.4.5",
+              &example
+            )
         end
 
         specify do
@@ -37,8 +41,12 @@ require "kitchen/terraform/version"
       end
 
       context "when the version is equal to 4.0.0" do
-        before do
-          ::Kitchen::Terraform::Version.version= "4.0.0"
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "4.0.0",
+              &example
+            )
         end
 
         specify do
@@ -47,8 +55,12 @@ require "kitchen/terraform/version"
       end
 
       context "when the version is greater than 4.0.0" do
-        before do
-          ::Kitchen::Terraform::Version.version= "5.6.7"
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "5.6.7",
+              &example
+            )
         end
 
         specify do
