@@ -628,7 +628,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               shell_out_run_success(
                 command:
                   /destroy\s
-                    -force\s
+                    -auto-approve\s
                     -lock=true\s
                     -lock-timeout=0s\s
                     -input=false\s

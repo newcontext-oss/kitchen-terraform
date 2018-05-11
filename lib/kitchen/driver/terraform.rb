@@ -97,7 +97,7 @@ end
 # ===== Destroying the Terraform State
 #
 #   terraform destroy \
-#     -force \
+#     -auto-approve \
 #     -lock=<lock> \
 #     -lock-timeout=<lock_timeout>s \
 #     -input=false \
@@ -405,7 +405,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .run(
         command:
           "destroy " \
-            "-force " \
+            "-auto-approve " \
             "#{lock_flag} " \
             "#{lock_timeout_flag} " \
             "-input=false " \
