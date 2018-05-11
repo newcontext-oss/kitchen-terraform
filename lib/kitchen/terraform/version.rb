@@ -43,7 +43,7 @@ module ::Kitchen::Terraform::Version
   end
 
   def self.temporarily_override(version:)
-    current_value = self.value
+    current_value = value
     self.value = version
     yield
     self.value = current_value
