@@ -27,22 +27,21 @@ require "rubygems"
 module ::Kitchen::Terraform::KitchenInstance
   # Creates a new KitchenInstance.
   #
-  # If the version satisfies the requirement of +~> 3.3+ then a breaking KitchenInstance is created.
+  # If the gem version satisfies the requirement of +~> 3.3+ then a breaking KitchenInstance is created.
   #
-  # If the version satisfies the requirement of +>= 4+ then a breaking KitchenInstance is created.
+  # If the gem version satisfies the requirement of +>= 4+ then a breaking KitchenInstance is created.
   #
   # @param kitchen_instance [::Kitchen::Instance] the ::Kitchen::Instance which will act as the delegate.
-  # @param version [::Kitchen::Terraform::Version] the version to compare against the requirement.
   # @return [::Kitchen::Terraform::Breaking::KitchenInstance, ::Kitchen::Terraform::Deprecating::KitchenInstance] the
   #   new KitchenInstance.
-  def self.new(kitchen_instance:, version: ::Kitchen::Terraform::Version.new)
-    version
-      .if_satisfies requirement: ::Gem::Requirement.new("~> 3.3") do
+  def self.new(kitchen_instance:)
+    ::Kitchen::Terraform::Version
+      .if_satisfies requirement: "~> 3.3" do
         return ::Kitchen::Terraform::Deprecating::KitchenInstance.new kitchen_instance
       end
 
-    version
-      .if_satisfies requirement: ::Gem::Requirement.new(">= 4") do
+    ::Kitchen::Terraform::Version
+      .if_satisfies requirement: ">= 4" do
         return ::Kitchen::Terraform::Breaking::KitchenInstance.new kitchen_instance
       end
   end

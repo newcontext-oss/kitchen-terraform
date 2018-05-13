@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
 require "kitchen/terraform/breaking/kitchen_instance"
 require "kitchen/terraform/deprecating/kitchen_instance"
 require "kitchen/terraform/kitchen_instance"
@@ -24,40 +25,52 @@ require "kitchen/terraform/version"
     describe ".new" do
       subject do
         described_class
-          .new(
-            kitchen_instance: instance_double(::Object),
-            version: version
+      end
+
+      let :kitchen_instance do
+        instance_double ::Kitchen::Instance
+      end
+
+      around do |example|
+        ::Kitchen::Terraform::Version
+          .temporarily_override(
+            version: version,
+            &example
           )
+      end
+
+      shared_examples "it should return a breaking Kitchen Instance" do
+        specify do
+          expect(subject.new(kitchen_instance: kitchen_instance))
+            .to be_kind_of ::Kitchen::Terraform::Breaking::KitchenInstance
+        end
       end
 
       context "when the version is less than 4.0.0" do
         let :version do
-          ::Kitchen::Terraform::Version.new version: "3.4.5"
+          "3.4.5"
         end
 
-        specify do
-          is_expected.to be_kind_of ::Kitchen::Terraform::Deprecating::KitchenInstance
+        specify "should return a deprecated Kitchen Instance" do
+          expect(subject.new(kitchen_instance: kitchen_instance))
+            .to be_kind_of ::Kitchen::Terraform::Deprecating::KitchenInstance
         end
       end
 
       context "when the version is equal to 4.0.0" do
         let :version do
-          ::Kitchen::Terraform::Version.new version: "4.0.0"
+          "4.0.0"
         end
 
-        specify do
-          is_expected.to be_kind_of ::Kitchen::Terraform::Breaking::KitchenInstance
-        end
+        it_behaves_like "it should return a breaking Kitchen Instance"
       end
 
       context "when the version is greater than 4.0.0" do
         let :version do
-          ::Kitchen::Terraform::Version.new version: "5.6.7"
+          "5.6.7"
         end
 
-        specify do
-          is_expected.to be_kind_of ::Kitchen::Terraform::Breaking::KitchenInstance
-        end
+        it_behaves_like "it should return a breaking Kitchen Instance"
       end
     end
   end

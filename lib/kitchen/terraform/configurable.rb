@@ -27,10 +27,7 @@ module ::Kitchen::Terraform::Configurable
   #
   # @return [self]
   def self.included(configurable_class)
-    ::Kitchen::Terraform::Version
-      .new
-      .assign_plugin_version configurable_class: configurable_class
-
+    ::Kitchen::Terraform::Version.assign_plugin_version configurable_class: configurable_class
     self
   end
 

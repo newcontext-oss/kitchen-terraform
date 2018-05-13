@@ -206,20 +206,20 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # This method queries for the names of the action methods which must be run in serial via a shared mutex.
   #
-  # If the version satisfies the requirement of ~> 3.3 then no names are returned.
+  # If the gem version satisfies the requirement of ~> 3.3 then no names are returned.
   #
-  # If the version satisfies the requirement of >= 4 then +:create+, +:converge+, +:setup+, and +:destroy+ are returned.
+  # If the gem version satisfies the requirement of >= 4 then +:create+, +:converge+, +:setup+, and +:destroy+ are
+  # returned.
   #
-  # @param version [::Kitchen::Terraform::Version] the version to compare against the requirements.
   # @return [::Array<Symbol>] the action method names.
-  def self.serial_actions(version: ::Kitchen::Terraform::Version.new)
-    version
-      .if_satisfies requirement: ::Gem::Requirement.new("~> 3.3") do
+  def self.serial_actions
+    ::Kitchen::Terraform::Version
+      .if_satisfies requirement: "~> 3.3" do
         no_parallel_for
       end
 
-    version
-      .if_satisfies requirement: ::Gem::Requirement.new(">= 4") do
+    ::Kitchen::Terraform::Version
+      .if_satisfies requirement: ">= 4" do
         super()
           .empty? and
           no_parallel_for(
