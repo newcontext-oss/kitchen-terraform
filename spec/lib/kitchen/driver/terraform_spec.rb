@@ -163,11 +163,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
     describe ".serial_actions" do
       shared_examples "actions are returned" do
         specify do
-          /^2.2/
-            .match ::RUBY_VERSION and
+          ::Gem::Requirement
+            .new("~> 2.2.0")
+            .satisfied_by? ::Gem::Version.new ::RUBY_VERSION and
             skip "Not applicable to Ruby v2.2"
 
-          expect(described_class.serial_actions(version: version))
+          expect(described_class.serial_actions)
             .to(
               contain_exactly(
                 :create,
@@ -180,23 +181,38 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
 
       context "when the version is less than 4.0.0" do
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "3.3.0",
+              &example
+            )
+        end
+
         specify do
-          expect(described_class.serial_actions(version: ::Kitchen::Terraform::Version.new(version: "3.3.0")))
-            .to be_empty
+          expect(described_class.serial_actions).to be_empty
         end
       end
 
       context "when the version is equal to 4.0.0" do
-        let :version do
-          ::Kitchen::Terraform::Version.new version: "4.0.0"
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "4.0.0",
+              &example
+            )
         end
 
         it_behaves_like "actions are returned"
       end
 
       context "when the version is greater than 4.0.0" do
-        let :version do
-          ::Kitchen::Terraform::Version.new version: "5.6.7"
+        around do |example|
+          ::Kitchen::Terraform::Version
+            .temporarily_override(
+              version: "5.6.7",
+              &example
+            )
         end
 
         it_behaves_like "actions are returned"

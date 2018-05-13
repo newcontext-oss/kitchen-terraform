@@ -8,7 +8,6 @@
 
 require "kitchen/terraform/version.rb"
 require "rubygems"
-version = ::Kitchen::Terraform::Version.new
 
 ::Gem::Specification.new do |specification|
   specification
@@ -39,7 +38,7 @@ version = ::Kitchen::Terraform::Version.new
 
   specification.summary = "Test Kitchen plugins for testing Terraform configuration"
 
-  version.assign_specification_version specification: specification
+  ::Kitchen::Terraform::Version.assign_specification_version specification: specification
 
   specification.email = "kitchen-terraform@newcontext.com"
 
@@ -145,25 +144,24 @@ version = ::Kitchen::Terraform::Version.new
 
   specification.signing_key = "certs/gem-private_key.pem"
 
-  version
-    .if_satisfies requirement: ::Gem::Requirement.new("~> 3.3") do
+  ::Kitchen::Terraform::Version
+    .if_satisfies requirement: "~> 3.3" do
       specification
         .add_runtime_dependency(
           "test-kitchen",
           "~> 1.16"
         )
 
-      ::Kitchen::Terraform::Version
-        .new(version: ::RUBY_VERSION)
-        .if_satisfies requirement: ::Gem::Requirement.new("~> 2.2.0") do
-          # rubocop:disable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
-          specification
-            .post_install_message=(
-              "DEPRECATING: the current version of Ruby is #{::RUBY_VERSION}; this version will not be supported in " \
-                "an upcoming major release of Kitchen-Terraform"
-            )
-          # rubocop:enable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
-        end
+      # rubocop:disable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
+      ::Gem::Requirement
+        .new("~> 2.2.0")
+        .satisfied_by? ::Gem::Version.new ::RUBY_VERSION and
+        specification
+          .post_install_message=(
+            "DEPRECATING: the current version of Ruby is #{::RUBY_VERSION}; this version will not be supported in " \
+              "an upcoming major release of Kitchen-Terraform"
+          )
+      # rubocop:enable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
 
       specification.required_ruby_version =
         [
@@ -172,8 +170,8 @@ version = ::Kitchen::Terraform::Version.new
         ]
     end
 
-  version
-    .if_satisfies requirement: ::Gem::Requirement.new(">= 4") do
+  ::Kitchen::Terraform::Version
+    .if_satisfies requirement: ">= 4" do
       specification
         .add_runtime_dependency(
           "test-kitchen",
