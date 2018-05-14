@@ -26,6 +26,7 @@ require "support/kitchen/terraform/configurable_examples"
     let :described_instance do
       described_class
         .new(
+          color: false,
           groups:
             [
               {
@@ -69,9 +70,13 @@ require "support/kitchen/terraform/configurable_examples"
                   "test-suite-test-platform"
                 ),
             suite: ::Kitchen::Suite.new(name: "test-suite"),
-            transport: ::Kitchen::Transport::Ssh.new,
+            transport: ssh_transport,
             verifier: described_instance
           )
+      end
+
+      let :ssh_transport do
+        ::Kitchen::Transport::Ssh.new
       end
 
       before do
@@ -132,25 +137,43 @@ require "support/kitchen/terraform/configurable_examples"
             }
           end
 
+          let :runner_options do
+            {
+              "backend" => "ssh",
+              "color" => described_instance.[](:color),
+              "compression" => ssh_transport.[](:compression),
+              "compression_level" => ssh_transport.[](:compression_level),
+              "connection_retries" => ssh_transport.[](:connection_retries),
+              "connection_retry_sleep" => ssh_transport.[](:connection_retry_sleep),
+              "connection_timeout" => ssh_transport.[](:connection_timeout),
+              "host" => "hostname",
+              "keepalive" => ssh_transport.[](:keepalive),
+              "keepalive_interval" => ssh_transport.[](:keepalive_interval),
+              "key_files" => ["ssh_key"],
+              "logger" => kitchen_instance.logger,
+              "max_wait_until_ready" => ssh_transport.[](:max_wait_until_ready),
+              "port" => 1234,
+              "sudo" => true,
+              "sudo_command" => described_instance.[](:sudo_command),
+              "sudo_options" => described_instance.[](:sudo_options),
+              "user" => "username",
+              attributes:
+                {
+                  "attribute_name" => "output_value",
+                  "hostnames" => "hostname",
+                  "output_name" => "output_value"
+                },
+              attrs: described_instance.[](:attrs),
+              backend_cache: false,
+              controls: ["control"]
+            }
+          end
+
           before do
             allow(runner_class)
               .to(
                 receive(:new)
-                  .with(
-                    including(
-                      attributes: {
-                        "attribute_name" => "output_value",
-                        "hostnames" => "hostname",
-                        "output_name" => "output_value"
-                      },
-                      "backend" => "ssh",
-                      controls: ["control"],
-                      "host" => "hostname",
-                      "key_files" => ["ssh_key"],
-                      "port" => 1234,
-                      "user" => "username"
-                    )
-                  )
+                  .with(runner_options)
                   .and_return(runner)
               )
 
