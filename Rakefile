@@ -58,7 +58,7 @@ end
 def execute_kitchen_terraform(terraform_path:, working_directory:)
   sh(
     kitchen_environment(terraform_path: terraform_path),
-    "#{kitchen_binstub} test",
+    "#{kitchen_binstub} test --destroy=always",
     chdir: working_directory
   )
 end
