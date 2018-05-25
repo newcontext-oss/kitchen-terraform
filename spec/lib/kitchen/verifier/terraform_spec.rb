@@ -16,6 +16,7 @@
 
 require "inspec"
 require "kitchen"
+require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/groups_examples"
@@ -83,7 +84,7 @@ require "support/kitchen/terraform/configurable_examples"
         described_instance.finalize_config! kitchen_instance
       end
 
-      context "when the Test Kitchen state omits :kitchen_terraform_output" do
+      context "when the Kitchen state omits :kitchen_terraform_output" do
         let :kitchen_state do
           {}
         end
@@ -93,14 +94,14 @@ require "support/kitchen/terraform/configurable_examples"
             .to(
               raise_error(
                 ::Kitchen::ActionFailed,
-                "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \
+                "The Kitchen state does not include :kitchen_terraform_output; this implies that the " \
                   "kitchen-terraform provisioner has not successfully converged"
               )
             )
         end
       end
 
-      context "when the Test Kitchen state includes :kitchen_terraform_output" do
+      context "when the Kitchen state includes :kitchen_terraform_output" do
         let :kitchen_state do
           {kitchen_terraform_output: kitchen_terraform_output}
         end
@@ -153,9 +154,9 @@ require "support/kitchen/terraform/configurable_examples"
               "logger" => kitchen_instance.logger,
               "max_wait_until_ready" => ssh_transport.[](:max_wait_until_ready),
               "port" => 1234,
-              "sudo" => true,
-              "sudo_command" => described_instance.[](:sudo_command),
-              "sudo_options" => described_instance.[](:sudo_options),
+              "sudo" => false,
+              "sudo_command" => "sudo -E",
+              "sudo_options" => "",
               "user" => "username",
               attributes:
                 {
@@ -163,7 +164,7 @@ require "support/kitchen/terraform/configurable_examples"
                   "hostnames" => "hostname",
                   "output_name" => "output_value"
                 },
-              attrs: described_instance.[](:attrs),
+              attrs: nil,
               backend_cache: false,
               controls: ["control"]
             }
@@ -195,7 +196,7 @@ require "support/kitchen/terraform/configurable_examples"
                 .to(
                   raise_error(
                     ::Kitchen::ActionFailed,
-                    "Inspec Runner returns 1"
+                    "InSpec Runner exited with 1"
                   )
                 )
             end
