@@ -91,7 +91,7 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
                 options.dig :attributes
               end
                 .to(
-                    "attribute_name" => "output_name value",
+                  "attribute_name" => "output_name value",
                   "output_name" => "output_name value"
                 )
             )
