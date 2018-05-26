@@ -16,6 +16,7 @@
 
 require "inspec"
 require "kitchen"
+require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/groups_examples"
@@ -26,6 +27,7 @@ require "support/kitchen/terraform/configurable_examples"
     let :described_instance do
       described_class
         .new(
+          color: false,
           groups:
             [
               {
@@ -69,16 +71,20 @@ require "support/kitchen/terraform/configurable_examples"
                   "test-suite-test-platform"
                 ),
             suite: ::Kitchen::Suite.new(name: "test-suite"),
-            transport: ::Kitchen::Transport::Ssh.new,
+            transport: ssh_transport,
             verifier: described_instance
           )
+      end
+
+      let :ssh_transport do
+        ::Kitchen::Transport::Ssh.new
       end
 
       before do
         described_instance.finalize_config! kitchen_instance
       end
 
-      context "when the Test Kitchen state omits :kitchen_terraform_output" do
+      context "when the Kitchen state omits :kitchen_terraform_output" do
         let :kitchen_state do
           {}
         end
@@ -88,14 +94,14 @@ require "support/kitchen/terraform/configurable_examples"
             .to(
               raise_error(
                 ::Kitchen::ActionFailed,
-                "The Test Kitchen state does not include :kitchen_terraform_output; this implies that the " \
+                "The Kitchen state does not include :kitchen_terraform_output; this implies that the " \
                   "kitchen-terraform provisioner has not successfully converged"
               )
             )
         end
       end
 
-      context "when the Test Kitchen state includes :kitchen_terraform_output" do
+      context "when the Kitchen state includes :kitchen_terraform_output" do
         let :kitchen_state do
           {kitchen_terraform_output: kitchen_terraform_output}
         end
@@ -121,10 +127,6 @@ require "support/kitchen/terraform/configurable_examples"
             instance_double ::Inspec::Runner
           end
 
-          let :runner_class do
-            class_double(::Inspec::Runner).as_stubbed_const
-          end
-
           let :kitchen_terraform_output do
             {
               "output_name" => {"value" => "output_value"},
@@ -132,39 +134,55 @@ require "support/kitchen/terraform/configurable_examples"
             }
           end
 
+          let :runner_options do
+            {
+              "backend" => "ssh",
+              "color" => false,
+              "compression" => false,
+              "compression_level" => 0,
+              "connection_retries" => 5,
+              "connection_retry_sleep" => 1,
+              "connection_timeout" => 15,
+              "host" => "hostname",
+              "keepalive" => true,
+              "keepalive_interval" => 60,
+              "key_files" => ["ssh_key"],
+              "logger" => kitchen_instance.logger,
+              "max_wait_until_ready" => 600,
+              "port" => 1234,
+              "sudo" => false,
+              "sudo_command" => "sudo -E",
+              "sudo_options" => "",
+              "user" => "username",
+              attributes:
+                {
+                  "attribute_name" => "output_value",
+                  "hostnames" => "hostname",
+                  "output_name" => "output_value"
+                },
+              attrs: nil,
+              backend_cache: false,
+              controls: ["control"]
+            }
+          end
+
           before do
-            allow(runner_class)
+            allow(::Inspec::Runner)
               .to(
                 receive(:new)
-                  .with(
-                    including(
-                      attributes: {
-                        "attribute_name" => "output_value",
-                        "hostnames" => "hostname",
-                        "output_name" => "output_value"
-                      },
-                      "backend" => "ssh",
-                      controls: ["control"],
-                      "host" => "hostname",
-                      "key_files" => ["ssh_key"],
-                      "port" => 1234,
-                      "user" => "username"
-                    )
-                  )
+                  .with(runner_options)
                   .and_return(runner)
-              )
-
-            allow(runner)
-              .to(
-                receive(:run)
-                  .with(no_args)
-                  .and_return(exit_code)
               )
           end
 
           context "when the InSpec runner returns an exit code other than 0" do
-            let :exit_code do
-              1
+            before do
+              allow(runner)
+                .to(
+                  receive(:run)
+                    .with(no_args)
+                    .and_return(1)
+                )
             end
 
             it "does raise an error" do
@@ -172,15 +190,20 @@ require "support/kitchen/terraform/configurable_examples"
                 .to(
                   raise_error(
                     ::Kitchen::ActionFailed,
-                    "Inspec Runner returns 1"
+                    "InSpec Runner exited with 1"
                   )
                 )
             end
           end
 
           context "when the InSpec runner returns an exit code of 0" do
-            let :exit_code do
-              0
+            before do
+              allow(runner)
+                .to(
+                  receive(:run)
+                    .with(no_args)
+                    .and_return(0)
+                )
             end
 
             it "does not raise an error" do

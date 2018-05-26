@@ -13,6 +13,7 @@ require "rubygems"
   specification
     .authors = [
       "Aaron Lane",
+      "Austin Heiman",
       "Clay Thomas",
       "David Begin",
       "Erik R. Rygg",
@@ -133,8 +134,6 @@ require "rubygems"
 
   specification.add_runtime_dependency "dry-validation", "~> 0.10"
 
-  specification.add_runtime_dependency "kitchen-inspec", "~> 0.18"
-
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
 
   specification.cert_chain = ["certs/gem-public_cert.pem"]
@@ -145,6 +144,13 @@ require "rubygems"
 
   ::Kitchen::Terraform::Version
     .if_satisfies requirement: "~> 3.3" do
+      specification
+        .add_runtime_dependency(
+          "inspec",
+          ">= 1.44.8",
+          "< 3"
+        )
+
       specification
         .add_runtime_dependency(
           "test-kitchen",
@@ -171,6 +177,12 @@ require "rubygems"
 
   ::Kitchen::Terraform::Version
     .if_satisfies requirement: ">= 4" do
+      specification
+        .add_runtime_dependency(
+          "inspec",
+          "~> 2.1"
+        )
+
       specification
         .add_runtime_dependency(
           "test-kitchen",

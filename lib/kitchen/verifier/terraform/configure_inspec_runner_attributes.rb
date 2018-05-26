@@ -58,36 +58,39 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
   # Invokes the function
   #
   # @param group [::Hash] a kitchen-terraform verifier group.
+  # @param options [::Hash] the InSpec Runner options.
   # @param output [::String] the output of the Terraform state.
   # @raise [::Kitchen::Terraform::Error] if the configuration fails.
-  # @return [::Hash] the configured attributes.
-  def self.call(group:, output:)
+  # @return [void]
+  def self.call(group:, options:, output:)
     group
       .fetch(
         :attributes,
         {}
       )
       .tap do |group_attributes|
-        return(
-          output
-            .keys
-            .+(group_attributes.keys)
-            .zip(
-              output
-                .keys
-                .+(group_attributes.values)
-            )
-            .reduce ::Hash.new do |resolved_attributes, (attribute_name, output_name)|
-              resolved_attributes
-                .merge(
-                  attribute_name
-                    .to_s =>
-                      output
-                        .fetch(output_name.to_s)
-                        .fetch("value")
-                )
-            end
-        )
+        options
+          .store(
+            :attributes,
+            output
+              .keys
+              .+(group_attributes.keys)
+              .zip(
+                output
+                  .keys
+                  .+(group_attributes.values)
+              )
+              .reduce(::Hash.new) do |resolved_attributes, (attribute_name, output_name)|
+                resolved_attributes
+                  .merge(
+                    attribute_name
+                      .to_s =>
+                        output
+                          .fetch(output_name.to_s)
+                          .fetch("value")
+                  )
+              end
+          )
       end
   rescue ::KeyError => error
     raise(
