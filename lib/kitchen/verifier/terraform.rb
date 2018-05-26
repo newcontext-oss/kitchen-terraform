@@ -154,16 +154,19 @@ class ::Kitchen::Verifier::Terraform
         ::Kitchen::Util
           .stringified_hash(
             transport_connection_options
-              .slice(
-                :compression,
-                :compression_level,
-                :connection_retries,
-                :connection_retry_sleep,
-                :timeout,
-                :keepalive,
-                :keepalive_interval,
-                :max_wait_until_ready
-              )
+              .select do |key|
+                [
+                  :compression,
+                  :compression_level,
+                  :connection_retries,
+                  :connection_retry_sleep,
+                  :timeout,
+                  :keepalive,
+                  :keepalive_interval,
+                  :max_wait_until_ready
+                ]
+                  .include? key
+              end
           )
       )
 
