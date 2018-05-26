@@ -13,6 +13,7 @@ require "rubygems"
   specification
     .authors = [
       "Aaron Lane",
+      "Austin Heiman",
       "Clay Thomas",
       "David Begin",
       "Erik R. Rygg",
@@ -26,8 +27,7 @@ require "rubygems"
       "Nick Willever",
       "Steven A. Burns",
       "Walter Dolce",
-      "curleighbraces",
-      "Austin Heiman"
+      "curleighbraces"
     ]
 
   specification.description = "kitchen-terraform is a set of Test Kitchen plugins for testing Terraform configuration"
