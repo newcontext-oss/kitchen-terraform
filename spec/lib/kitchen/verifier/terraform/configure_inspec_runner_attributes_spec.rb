@@ -18,19 +18,26 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
 
 ::RSpec
   .describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes do
+    subject do
+      described_class
+    end
+
     describe ".call" do
+      def call_method
+        subject
+          .call(
+            group: group,
+            options: options,
+            output: output
+          )
+      end
+
       let :group do
         {}
       end
 
-      subject do
-        lambda do
-          described_class
-            .call(
-              group: group,
-              output: output
-            )
-        end
+      let :options do
+        {}
       end
 
       context "when the value of the Terraform output command result is unexpected" do
@@ -38,8 +45,10 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
           {"name" => {"unexpected" => "value"}}
         end
 
-        it do
-          is_expected
+        specify do
+          expect do
+            call_method
+          end
             .to result_in_failure.with_message /Configuring InSpec runner attributes resulted in failure: .*\"value\"/
         end
       end
@@ -53,8 +62,10 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
           {"output_name" => {"value" => "output_name value"}}
         end
 
-        it do
-          is_expected
+        specify do
+          expect do
+            call_method
+          end
             .to(
               result_in_failure
                 .with_message(/Configuring InSpec runner attributes resulted in failure: .*\"not_output_name\"/)
@@ -71,12 +82,16 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
           {"output_name" => {"value" => "output_name value"}}
         end
 
-        it do
-          is_expected
+        specify do
+          expect do
+            call_method
+          end
             .to(
-              result_in_success
-                .with_message(
-                  "attribute_name" => "output_name value",
+              change do
+                options.dig :attributes
+              end
+                .to(
+                    "attribute_name" => "output_name value",
                   "output_name" => "output_name value"
                 )
             )

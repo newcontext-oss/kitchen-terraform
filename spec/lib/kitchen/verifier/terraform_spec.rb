@@ -127,10 +127,6 @@ require "support/kitchen/terraform/configurable_examples"
             instance_double ::Inspec::Runner
           end
 
-          let :runner_class do
-            class_double(::Inspec::Runner).as_stubbed_const
-          end
-
           let :kitchen_terraform_output do
             {
               "output_name" => {"value" => "output_value"},
@@ -141,18 +137,18 @@ require "support/kitchen/terraform/configurable_examples"
           let :runner_options do
             {
               "backend" => "ssh",
-              "color" => described_instance.[](:color),
-              "compression" => ssh_transport.[](:compression),
-              "compression_level" => ssh_transport.[](:compression_level),
-              "connection_retries" => ssh_transport.[](:connection_retries),
-              "connection_retry_sleep" => ssh_transport.[](:connection_retry_sleep),
-              "connection_timeout" => ssh_transport.[](:connection_timeout),
+              "color" => false,
+              "compression" => false,
+              "compression_level" => 0,
+              "connection_retries" => 5,
+              "connection_retry_sleep" => 1,
+              "connection_timeout" => 15,
               "host" => "hostname",
-              "keepalive" => ssh_transport.[](:keepalive),
-              "keepalive_interval" => ssh_transport.[](:keepalive_interval),
+              "keepalive" => true,
+              "keepalive_interval" => 60,
               "key_files" => ["ssh_key"],
               "logger" => kitchen_instance.logger,
-              "max_wait_until_ready" => ssh_transport.[](:max_wait_until_ready),
+              "max_wait_until_ready" => 600,
               "port" => 1234,
               "sudo" => false,
               "sudo_command" => "sudo -E",
@@ -171,24 +167,22 @@ require "support/kitchen/terraform/configurable_examples"
           end
 
           before do
-            allow(runner_class)
+            allow(::Inspec::Runner)
               .to(
                 receive(:new)
                   .with(runner_options)
                   .and_return(runner)
               )
-
-            allow(runner)
-              .to(
-                receive(:run)
-                  .with(no_args)
-                  .and_return(exit_code)
-              )
           end
 
           context "when the InSpec runner returns an exit code other than 0" do
-            let :exit_code do
-              1
+            before do
+              allow(runner)
+                .to(
+                  receive(:run)
+                    .with(no_args)
+                    .and_return(1)
+                )
             end
 
             it "does raise an error" do
@@ -203,8 +197,13 @@ require "support/kitchen/terraform/configurable_examples"
           end
 
           context "when the InSpec runner returns an exit code of 0" do
-            let :exit_code do
-              0
+            before do
+              allow(runner)
+                .to(
+                  receive(:run)
+                    .with(no_args)
+                    .and_return(0)
+                )
             end
 
             it "does not raise an error" do
