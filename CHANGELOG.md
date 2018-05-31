@@ -15,8 +15,9 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 * Breaking support for concurrency with the following commands:
   `create`, `converge`, `setup`, and `destroy`
 
-* Breaking support for terraform < 0.11.4 with:
+* providing support for terraform >= 0.11.4 with:
   `destroy` <- change -force flag to -auto-approve
+  (this is version wrapped and backwards compatible)
 
 ## [3.3.1] - 2018-04-29
 
