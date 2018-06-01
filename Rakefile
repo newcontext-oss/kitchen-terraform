@@ -55,10 +55,11 @@ def download_hashicorp_release(destination:, product:, sha256_sum:, version:)
     end
 end
 
-def execute_kitchen_terraform(terraform_path:, working_directory:)
+def execute_kitchen_terraform(terraform_path:, tests_count:, working_directory:)
   sh(
     kitchen_environment(terraform_path: terraform_path),
-    "#{kitchen_binstub} test --destroy=always",
+    "#{kitchen_binstub} test --destroy=always | tee /dev/tty | " \
+      "grep 'Test Summary: #{tests_count} successful, 0 failures, 0 skipped'",
     chdir: working_directory
   )
 end
@@ -66,10 +67,11 @@ end
 CLOBBER.include "**/.kitchen"
 CLOBBER.include "**/.terraform"
 
-def execute_kitchen_terraform_via_rake(terraform_path:, working_directory:)
+def execute_kitchen_terraform_via_rake(terraform_path:, tests_count:, working_directory:)
   sh(
     kitchen_environment(terraform_path: terraform_path),
-    "#{rake_binstub} kitchen:all",
+    "#{rake_binstub} kitchen:all | tee /dev/tty | " \
+      "grep 'Test Summary: #{tests_count} successful, 0 failures, 0 skipped'",
     chdir: working_directory
   )
 end
@@ -224,6 +226,7 @@ namespace :tests do
           current_task
             .prerequisites
             .first,
+        tests_count: 2,
         working_directory: "integration/basic"
       )
     end
@@ -244,6 +247,7 @@ namespace :tests do
           current_task
             .prerequisites
             .first,
+        tests_count: 1,
         working_directory: "integration/no_outputs_defined"
       )
     end
@@ -264,6 +268,7 @@ namespace :tests do
           current_task
             .prerequisites
             .first,
+        tests_count: 2,
         working_directory: "integration/rake_tasks"
       )
     end
@@ -298,6 +303,7 @@ namespace :tests do
           current_task
             .prerequisites
             .first,
+        tests_count: 2,
         working_directory: "integration/Shell Words"
       )
     end
