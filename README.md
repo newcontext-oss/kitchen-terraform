@@ -234,7 +234,7 @@ resource "docker_container" "ubuntu" {
 ```hcl
 output "container_hostname" {
   description = "The hostname of the container."
-  value       = "localhost"
+  value       = "127.0.0.1"
 }
 ```
 
