@@ -65,8 +65,8 @@ class ::Kitchen::Terraform::InSpec
   def run_runner(target:)
     runner
       .add_target(target)
-      .tap do |profile|
-        logger.info "Loaded #{profile}"
+      .tap do |profiles|
+        logger.info "Loaded #{profiles.last}"
       end
 
     yield exit_code: runner.run
