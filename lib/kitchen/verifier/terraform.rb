@@ -258,6 +258,20 @@ class ::Kitchen::Verifier::Terraform
     self.inspec_options = {}
   end
 
+  # @api private
+  def inspec_target
+    {
+      path:
+        ::File
+          .join(
+            config.fetch(:test_base_path),
+            instance
+              .suite
+              .name
+          )
+    }
+  end
+
   # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
   #
   # @api private
@@ -286,7 +300,7 @@ class ::Kitchen::Verifier::Terraform
 
     ::Kitchen::Terraform::InSpec
       .new(options: inspec_options)
-      .run
+      .run(target: inspec_target)
   end
 end
 

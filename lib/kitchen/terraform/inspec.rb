@@ -33,10 +33,11 @@ class ::Kitchen::Terraform::InSpec
 
   # run executes InSpec controls.
   #
+  # @param [::Hash] target with controls to execute.
   # @raise [::Kitchen::Terraform::Error] if the Inspec::Runner exits with an invalid code.
   # @return [void]
-  def run
-    run_runner do |exit_code:|
+  def run(target:)
+    run_runner target: target do |exit_code:|
       if not VALID_EXIT_CODES.include? exit_code
         raise(
           ::Kitchen::Terraform::Error,
@@ -48,16 +49,26 @@ class ::Kitchen::Terraform::InSpec
 
   private
 
-  attr_accessor :runner
+  attr_accessor(
+    :logger,
+    :runner
+  )
 
   # @api private
   # @param options [::Hash] options for an Inspec::Runner.
   def initialize(options:)
+    self.logger = options.fetch "logger"
     self.runner = ::Inspec::Runner.new options
   end
 
   # @api private
-  def run_runner
+  def run_runner(target:)
+    runner
+      .add_target(target)
+      .tap do |profile|
+        logger.info "Loaded #{profile}"
+      end
+
     yield exit_code: runner.run
   end
 end
