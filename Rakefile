@@ -55,10 +55,10 @@ def download_hashicorp_release(destination:, product:, sha256_sum:, version:)
     end
 end
 
-def execute_kitchen_terraform(terraform_path:, working_directory:)
+def execute_kitchen_terraform(grep_pattern:, terraform_path:, working_directory:)
   sh(
     kitchen_environment(terraform_path: terraform_path),
-    "#{kitchen_binstub} test --destroy=always",
+    "#{kitchen_binstub} test --destroy=always | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
     chdir: working_directory
   )
 end
@@ -66,10 +66,10 @@ end
 CLOBBER.include "**/.kitchen"
 CLOBBER.include "**/.terraform"
 
-def execute_kitchen_terraform_via_rake(terraform_path:, working_directory:)
+def execute_kitchen_terraform_via_rake(grep_pattern:, terraform_path:, working_directory:)
   sh(
     kitchen_environment(terraform_path: terraform_path),
-    "#{rake_binstub} kitchen:all",
+    "#{rake_binstub} kitchen:all | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
     chdir: working_directory
   )
 end
@@ -220,6 +220,8 @@ namespace :tests do
       puts "Running integration tests for basic functionality"
 
       execute_kitchen_terraform(
+        grep_pattern:
+          "Test Summary: 1 successful, 0 failures, 0 skipped.*Test Summary: 1 successful, 0 failures, 0 skipped",
         terraform_path:
           current_task
             .prerequisites
@@ -240,6 +242,7 @@ namespace :tests do
       puts "Running integration tests for no outputs defined"
 
       execute_kitchen_terraform(
+        grep_pattern: "Test Summary: 1 successful, 0 failures, 0 skipped",
         terraform_path:
           current_task
             .prerequisites
@@ -260,6 +263,8 @@ namespace :tests do
       puts "Running integration tests for Rake tasks"
 
       execute_kitchen_terraform_via_rake(
+        grep_pattern:
+          "Test Summary: 1 successful, 0 failures, 0 skipped.*Test Summary: 1 successful, 0 failures, 0 skipped",
         terraform_path:
           current_task
             .prerequisites
@@ -294,6 +299,8 @@ namespace :tests do
         )
 
       execute_kitchen_terraform(
+        grep_pattern:
+          "Test Summary: 1 successful, 0 failures, 0 skipped.*Test Summary: 1 successful, 0 failures, 0 skipped",
         terraform_path:
           current_task
             .prerequisites
