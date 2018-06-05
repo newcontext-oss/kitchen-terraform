@@ -27,7 +27,8 @@ require "mixlib/shellout"
             .run(
               command: "command",
               duration: duration,
-              logger: logger
+              logger: logger,
+              working_directory: "/working/directory"
             )
         end
       end
@@ -51,6 +52,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration
@@ -74,6 +76,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration
@@ -108,6 +111,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration
@@ -145,6 +149,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration
@@ -178,6 +183,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration
@@ -226,6 +232,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration

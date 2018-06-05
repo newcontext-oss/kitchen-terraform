@@ -29,11 +29,12 @@ module ::Kitchen::Terraform::ShellOut
   # @param command [::String] the command to run.
   # @param duration [::Integer] the maximum duration in seconds to run the command.
   # @param logger [::Kitchen::Logger] a Test Kitchen logger to capture the output from running the command.
+  # @param working_directory [::String] the directory in which to run the command.
   # @raise [::Kitchen::Terraform::Error] if running the command fails.
   # @return [::String] the standard output from running the command.
   # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
   # @yieldparam standard_output [::String] the standard output from running the command.
-  def self.run(command:, duration: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT, logger:, &block)
+  def self.run(command:, duration: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT, logger:, working_directory:, &block)
     block ||=
       lambda do |standard_output:|
         standard_output
@@ -43,6 +44,7 @@ module ::Kitchen::Terraform::ShellOut
       command: command,
       duration: duration,
       logger: logger,
+      working_directory: working_directory,
       &block
     )
   rescue ::Errno::EACCES,
@@ -64,18 +66,19 @@ module ::Kitchen::Terraform::ShellOut
   end
 
   # @api private
-  def self.run_shell_out(command:, duration:, logger:)
+  def self.run_shell_out(command:, duration:, logger:, working_directory:)
     yield(
       standard_output:
         ::Mixlib::ShellOut
           .new(
             "terraform #{command}",
+            cwd: working_directory,
             environment: {"TF_IN_AUTOMATION" => "true"},
             live_stream: logger,
             timeout: duration
           )
           .tap do |shell_out|
-            logger.warn "Running command `#{shell_out.command}`"
+            logger.warn "Running command `#{shell_out.command}` in directory #{working_directory}"
             shell_out.run_command
             shell_out.error!
           end

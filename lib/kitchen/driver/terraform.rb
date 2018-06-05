@@ -248,6 +248,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .run(
         duration: config_command_timeout,
         logger: logger,
+        working_directory: config_root_module_directory,
         &block
       )
   end
@@ -301,7 +302,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
                 .run(
                   command: "version",
                   duration: 600,
-                  logger: logger
+                  logger: logger,
+                  working_directory: "."
                 )
           )
       )
@@ -328,10 +330,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{parallelism_flag} " \
             "-refresh=true " \
             "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
+            "#{variable_files_flags}",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 
@@ -339,9 +341,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def apply_run_get
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "get -update #{root_module_directory}",
+        command: "get -update",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 
@@ -354,10 +357,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-check-variables=true " \
             "#{color_flag} " \
             "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
+            "#{variable_files_flags}",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 
@@ -392,10 +395,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-get=true " \
             "-get-plugins=true " \
             "#{plugin_directory_flag} " \
-            "-verify-plugins=true " \
-            "#{root_module_directory}",
+            "-verify-plugins=true",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 
@@ -418,10 +421,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{parallelism_flag} " \
             "-refresh=true " \
             "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
+            "#{variable_files_flags}",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 
@@ -441,10 +444,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-get=true " \
             "-get-plugins=true " \
             "#{plugin_directory_flag} " \
-            "-verify-plugins=true " \
-            "#{root_module_directory}",
+            "-verify-plugins=true",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 
@@ -454,7 +457,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .run(
         command: "workspace delete kitchen-terraform-#{instance_name}",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 
@@ -464,7 +468,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .run(
         command: "workspace select default",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 
@@ -506,14 +511,16 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       .run(
         command: "workspace select kitchen-terraform-#{instance_name}",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   rescue ::Kitchen::Terraform::Error
     ::Kitchen::Terraform::ShellOut
       .run(
         command: "workspace new kitchen-terraform-#{instance_name}",
         duration: config_command_timeout,
-        logger: logger
+        logger: logger,
+        working_directory: config_root_module_directory
       )
   end
 

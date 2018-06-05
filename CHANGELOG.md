@@ -8,255 +8,259 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-* Breaking support for Test-Kitchen >= 1.16.0, < 1.20.0
+- Breaking support for Test-Kitchen >= 1.16.0, < 1.20.0
 
-* Breaking support for Ruby 2.2
+- Breaking support for Ruby 2.2
 
-* Breaking support for concurrency with the following commands:
+- Breaking support for concurrency with the following commands:
   `create`, `converge`, `setup`, and `destroy`
 
-* providing support for terraform >= 0.11.4 with:
+- providing support for terraform >= 0.11.4 with:
   `destroy` <- change -force flag to -auto-approve
   (this is version wrapped and backwards compatible)
+
+* Changing directory to root_module_directory before running Terraform
+  commands
 
 ## [3.3.1] - 2018-04-29
 
 ### Changed
 
-* Deprecating support for Ruby 2.2; this version reaches end of life on
+- Deprecating support for Ruby 2.2; this version reaches end of life on
   March 31, 2018
 
-* Deprecating support for concurrency with the following commands:
+- Deprecating support for concurrency with the following commands:
   `create`, `converge`, `setup`, and `destroy`; these commands invoke
   Terraform in a manner which is not safe for concurrency
 
 ### Fixed
 
-* Escaping the following configuration attributes for safe usage in the
+- Escaping the following configuration attributes for safe usage in the
   shell out commands:
-  * backend_configurations
-  * plugin_directory
-  * root_module_directory
-  * variable_files
-  * variables
 
-* Loading of Kitchen constants to enable the use of Kitchen Rake tasks
+  - backend_configurations
+  - plugin_directory
+  - root_module_directory
+  - variable_files
+  - variables
+
+- Loading of Kitchen constants to enable the use of Kitchen Rake tasks
 
 ## [3.3.0] - 2018-03-22
 
 ### Added
 
-* The `lock` configuration attribute of the driver toggles locking of
+- The `lock` configuration attribute of the driver toggles locking of
   the Terraform state file
 
 ## [3.2.0] - 2018-03-21
 
 ### Added
 
-* Support for Ruby 2.5
+- Support for Ruby 2.5
 
 ## [3.1.0] - 2018-01-07
 
 ### Added
 
-* Caveat describing how to use a bastion host with the verifier groups
+- Caveat describing how to use a bastion host with the verifier groups
 
-* Support for InSpec to include > 1.44.8, < 2.0.0
+- Support for InSpec to include > 1.44.8, < 2.0.0
 
-* Support for Test Kitchen to include > 1.16.0, < 2.0.0
+- Support for Test Kitchen to include > 1.16.0, < 2.0.0
 
 ### Changed
 
-* Format of changelog to adhere to Keep a Changelog 1.0.0
+- Format of changelog to adhere to Keep a Changelog 1.0.0
 
-* Internal success and failure to be modeled without monads
+- Internal success and failure to be modeled without monads
 
-* All driver and provisioner actions to attempt to select or create a
+- All driver and provisioner actions to attempt to select or create a
   Terraform workspace
 
-* Format and wording of the verifier `groups` attribute documentation
+- Format and wording of the verifier `groups` attribute documentation
 
 ### Fixed
 
-* Documented supported Terraform version for ClientVersionVerifier
-* Failure during `kitchen converge` when no Terraform outputs are
+- Documented supported Terraform version for ClientVersionVerifier
+- Failure during `kitchen converge` when no Terraform outputs are
   defined
 
-* Failure on Windows due to use of single quoted arguments for
+- Failure on Windows due to use of single quoted arguments for
   `-backend-config` and `-var`
 
 ## [3.0.0] - 2017-11-28
 
 ### Added
 
-* Support for Terraform versions >= 0.10.2, < 0.12.0
+- Support for Terraform versions >= 0.10.2, < 0.12.0
 
 ### Changed
 
-* Update `kitchen create` and `kitchen converge` to initialize and
+- Update `kitchen create` and `kitchen converge` to initialize and
   apply, respectively
 
-* Driver and provisioner commands use Terraform workspaces
+- Driver and provisioner commands use Terraform workspaces
 
-* Execute Terraform commands in an environment including
+- Execute Terraform commands in an environment including
   the TF_IN_AUTOMATION variable
 
-* Change the lock_timeout configuration attribute of the driver to an
+- Change the lock_timeout configuration attribute of the driver to an
   integer representing seconds
 
-* Remove the state configuration attribute from the driver
+- Remove the state configuration attribute from the driver
 
-* Remove the verify_plugins configuration attribute from the driver
+- Remove the verify_plugins configuration attribute from the driver
 
-* Rename the directory configuration attribute of the driver to
+- Rename the directory configuration attribute of the driver to
   root_module_directory
 
-* Lock InSpec to 1.44.8 to maintain support for Ruby 2.2
+- Lock InSpec to 1.44.8 to maintain support for Ruby 2.2
 
-* Moved examples and tutorials to a
+- Moved examples and tutorials to a
   [GitHub site](https://newcontext-oss.github.io/kitchen-terraform/)
 
 ### Fixed
 
-* Issues resolving relative paths in Terraform configuration files
+- Issues resolving relative paths in Terraform configuration files
 
-* Links to broken documentation on RubyDoc
+- Links to broken documentation on RubyDoc
 
 ## [2.1.0] - 2017-10-11
 
 ### Added
 
-* Verifier `:groups` have an optional `:ssh_key` attribute that overrides
+- Verifier `:groups` have an optional `:ssh_key` attribute that overrides
   the Test Kitchen SSH Transport `:ssh_key`
 
 ## [2.0.0] - 2017-09-13
 
 ### Added
 
-* Added a description to the gem specification
+- Added a description to the gem specification
 
-* Added support for Terraform version ~> 0.10.2 and the init command
+- Added support for Terraform version ~> 0.10.2 and the init command
 
-* Added configuration attributes to the driver
+- Added configuration attributes to the driver
 
-  * backend_configurations
+  - backend_configurations
 
-  * lock_timeout
+  - lock_timeout
 
-  * plugin_directory
+  - plugin_directory
 
-  * verify_plugins
+  - verify_plugins
 
-* Added the color configuration attribute to the verifier
+- Added the color configuration attribute to the verifier
 
 ### Changed
 
-* Dropped support for Terraform versions < 0.10.2
+- Dropped support for Terraform versions < 0.10.2
 
-* The driver's variables configuration attribute must be a hash of
+- The driver's variables configuration attribute must be a hash of
   symbols and strings
 
-* Removed configuration attributes from the driver
+- Removed configuration attributes from the driver
 
-  * cli
+  - cli
 
-  * plan
+  - plan
 
 ### Fixed
 
-* Moved the project version constant to the gem namespace
+- Moved the project version constant to the gem namespace
 
-* Corrected obsolete information in the aws_provider example
+- Corrected obsolete information in the aws_provider example
 
 ## [1.0.2] - 2017-07-16
 
 ### Added
 
-* The Bundler Gemfile.lock is committed to enable Code Climate's
+- The Bundler Gemfile.lock is committed to enable Code Climate's
   bundler-audit engine and to simplify testing and releasing this gem
   with Travis CI
 
-* RSpec produces backtraces for failures in Travis CI
+- RSpec produces backtraces for failures in Travis CI
 
 ### Changed
 
-* The integration tests use Terraform version 0.9.11 instead of version
+- The integration tests use Terraform version 0.9.11 instead of version
   0.9.10
 
-* The integration tests display the Terraform versions
+- The integration tests display the Terraform versions
 
 ### Fixed
 
-* The Getting Started guide uses kitchen-terraform 1.0 configuration
+- The Getting Started guide uses kitchen-terraform 1.0 configuration
   attributes (thanks [@davidbegin])
 
-* The Developing guide uses the new GitHub organization
+- The Developing guide uses the new GitHub organization
 
-* The Developing guide drops reference to gem trust policies
+- The Developing guide drops reference to gem trust policies
 
 ## [1.0.1] - 2017-07-05
 
 ### Added
 
-* David Begin joined the gem specification authors
+- David Begin joined the gem specification authors
 
 ### Fixed
 
-* Corrected release date for 1.0.0 in the Change Log
+- Corrected release date for 1.0.0 in the Change Log
 
-* Added missing diff link for 1.0.0 in the Change Log
+- Added missing diff link for 1.0.0 in the Change Log
 
-* Corrected broken GitHub links in the Read Me (thanks [@davidbegin])
+- Corrected broken GitHub links in the Read Me (thanks [@davidbegin])
 
-* Add missing thanks in 1.0.0
+- Add missing thanks in 1.0.0
 
 ## [1.0.0] - 2017-07-01
 
 ### Added
 
-* Support for output variables with spaces (thanks [@jbussdieker])
+- Support for output variables with spaces (thanks [@jbussdieker])
 
 ### Changed
 
-* Dropped support for Terraform version 0.6
+- Dropped support for Terraform version 0.6
 
-* Dropped support for Ruby 2.1
+- Dropped support for Ruby 2.1
 
-* Improved project documentation
+- Improved project documentation
 
-* Moved all provisioner configuration attributes to the driver
+- Moved all provisioner configuration attributes to the driver
 
-* Dropped support for specifying the configuration attribute `variables`
+- Dropped support for specifying the configuration attribute `variables`
   in the literal `name=value` notation
 
-* Dropped support for the value of the output variable specified by
+- Dropped support for the value of the output variable specified by
   the configuration attribute `hostnames` being in CSV format
 
-* Renamed the configuration attribute `apply_timeout` to
+- Renamed the configuration attribute `apply_timeout` to
   `command_timeout`
 
-* Default the configuration attribute `cli` to `"terraform"`
+- Default the configuration attribute `cli` to `"terraform"`
 
-* Default the configuration attribute `color` to be based on the
+- Default the configuration attribute `color` to be based on the
   association of the Test Kitchen process with a terminal emulator
 
-* Improved the engine for validating configuration attribute values
+- Improved the engine for validating configuration attribute values
 
 ### Fixed
 
-* Added missing URL to 0.7.0 changes
+- Added missing URL to 0.7.0 changes
 
 ## [0.7.0] - 2017-04-23
 
 ### Added
 
-* Support for Terraform v0.9
+- Support for Terraform v0.9
 
 ## [0.6.1] - 2017-02-23
 
 ### Fixed
 
-* `terraform plan` during `kitchen converge` was not reading the state
+- `terraform plan` during `kitchen converge` was not reading the state
   file so subsequent converges would create duplicate state
   (thanks [@johnrengelman])
 
@@ -264,174 +268,174 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-* Driver configuration option to specify the pathname of the Terraform
+- Driver configuration option to specify the pathname of the Terraform
   command-line interface
 
-* "terraform_state" InSpec attribute containing the pathname of the
+- "terraform_state" InSpec attribute containing the pathname of the
   state file
 
 ### Changed
 
-* Restructured code for better distribution of responsibilities
+- Restructured code for better distribution of responsibilities
 
-* Intermediate workflow Terraform commands will be logged at the debug
+- Intermediate workflow Terraform commands will be logged at the debug
   level
 
 ### Fixed
 
-* Broken reference to the Getting Started guide (thanks [@nellshamrell])
+- Broken reference to the Getting Started guide (thanks [@nellshamrell])
 
-* Output names for Terraform 0.6 are correctly parsed
+- Output names for Terraform 0.6 are correctly parsed
 
-* Incomplete InSpec control definition in the Getting Started guide (
+- Incomplete InSpec control definition in the Getting Started guide (
   thanks [@burythehammer])
 
-* Missing descriptions of the plan and state provisioner configuration
+- Missing descriptions of the plan and state provisioner configuration
   options
 
 ## [0.5.1] - 2017-02-17
 
 ### Fixed
 
-* Support for Terraform configurations that do not define any outputs
+- Support for Terraform configurations that do not define any outputs
   (thanks [@johnrengelman])
 
 ## [0.5.0] - 2017-01-09
 
 ### Added
 
-* Support for Terraform v0.8
+- Support for Terraform v0.8
 
-* Support for Ruby 2.4
+- Support for Ruby 2.4
 
 ### Fixed
 
-* Docker provider example's group controls configuration
+- Docker provider example's group controls configuration
 
 ## [0.4.0] - 2016-12-24
 
 ### Added
 
-* A shiny, new logo (thanks [@ksexton])
+- A shiny, new logo (thanks [@ksexton])
 
-* A shiny, new [Travis CI build plan] (thanks [@justindossey])
+- A shiny, new [Travis CI build plan] (thanks [@justindossey])
 
-* Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury] and [@m00gs])
+- Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury] and [@m00gs])
 
-* [Code Climate coverage]
+- [Code Climate coverage]
 
-* Group attributes default to a mapping of all Terraform output
+- Group attributes default to a mapping of all Terraform output
   variables to equivalently named InSpec attributes (thanks [@shinka81])
 
-* A Docker provider example (thanks [@errygg])
+- A Docker provider example (thanks [@errygg])
 
-* An OpenStack provider example (thanks [@xmik])
+- An OpenStack provider example (thanks [@xmik])
 
-* Groups with no hostnames will have their controls executed locally; in
+- Groups with no hostnames will have their controls executed locally; in
   theory, this enables testing of any provider API
 
-* Provisioner configuration for the `terraform apply -parallelism`
+- Provisioner configuration for the `terraform apply -parallelism`
   option (thanks [@s3lehtin])
 
-* Clay Thomas, Ewa Czechowska, Erik R. Rygg, Kyle Sexton, and Walter
+- Clay Thomas, Ewa Czechowska, Erik R. Rygg, Kyle Sexton, and Walter
   Dolce join the gem specification authors
 
 ### Changed
 
-* Removed the pin on the RubyGems version from the gem specification
+- Removed the pin on the RubyGems version from the gem specification
   (thanks [@jbussdieker])
 
 ### Fixed
 
-* Use the current version in the Gemfile example (thanks [@walterdolce])
+- Use the current version in the Gemfile example (thanks [@walterdolce])
 
 ## [0.3.0] - 2016-10-04
 
 ### Added
 
-* Support for Terraform v0.7 (thanks [@esword], [@maniacal], and
+- Support for Terraform v0.7 (thanks [@esword], [@maniacal], and
   [@nictrix])
 
-* Getting started guide under `examples/getting_started` (thanks
+- Getting started guide under `examples/getting_started` (thanks
   [@nellshamrell])
 
-* Kevin Dickerson, Nell Shamrell-Harrington, and Michael Glenney join
+- Kevin Dickerson, Nell Shamrell-Harrington, and Michael Glenney join
   the gem specification authors
 
 ### Changed
 
-* Example project moved under `examples/detailed` (thanks
+- Example project moved under `examples/detailed` (thanks
   [@nellshamrell])
 
-* Deprecate support for Terraform v0.6
+- Deprecate support for Terraform v0.6
 
 ### Fixed
 
-* Release date of kitchen-terraform v0.2.0
+- Release date of kitchen-terraform v0.2.0
 
-* Remove references to verifying the gem; it's problematic even with
+- Remove references to verifying the gem; it's problematic even with
   low security (thanks [@kevindickerson])
 
 ## [0.2.0] - 2016-09-12
 
 ### Added
 
-* Live log stream of output from Terraform commands
+- Live log stream of output from Terraform commands
 
-* Coercion and validation of configuration values
+- Coercion and validation of configuration values
 
-* Configuration option for timeout of Terraform apply command
+- Configuration option for timeout of Terraform apply command
 
-* Configuration option for colored output of Terraform plan and apply
+- Configuration option for colored output of Terraform plan and apply
   commands (thanks [@nictrix])
 
-* Configuration of variable assignments using a map
+- Configuration of variable assignments using a map
 
-* Getting started guide (thanks [@nellshamrell])
+- Getting started guide (thanks [@nellshamrell])
 
 ### Changed
 
-* CHANGELOG format is based on [Keep a CHANGELOG] \(thanks [@amaltson]\)
+- CHANGELOG format is based on [Keep a CHANGELOG] \(thanks [@amaltson]\)
 
-* Gem specification email address (thanks [@mrheath])
+- Gem specification email address (thanks [@mrheath])
 
-* Example project automatically waits for remote SSH to be available
+- Example project automatically waits for remote SSH to be available
 
-* Improve error handling and messages (thanks [@cullenmcdermott])
+- Improve error handling and messages (thanks [@cullenmcdermott])
 
-* Deprecate configuration of variable assignments using a list or string
+- Deprecate configuration of variable assignments using a list or string
 
 ### Fixed
 
-* Inspec is pinned at the minor feature level to reduce bug risk
+- Inspec is pinned at the minor feature level to reduce bug risk
 
 ## [0.1.2] - 2016-08-04
 
 ### Added
 
-* Link to referenced users' profiles in the Change Log
+- Link to referenced users' profiles in the Change Log
 
-* Display RuboCop Cop names in Guard output
+- Display RuboCop Cop names in Guard output
 
-* Contributing and developing guides (thanks [@nictrix])
+- Contributing and developing guides (thanks [@nictrix])
 
-* Example instructions suggest IAM user creation for enhanced security (
+- Example instructions suggest IAM user creation for enhanced security (
   thanks [@nictrix])
 
 ### Changed
 
-* Example configuration is compatible with more AWS accounts (thanks
+- Example configuration is compatible with more AWS accounts (thanks
   [@nictrix])
 
 ### Fixed
 
-* Remove enforcement of RubyGems trust policy (thanks [@fivetwentysix])
+- Remove enforcement of RubyGems trust policy (thanks [@fivetwentysix])
 
-* Only suggest the LowSecurity RubyGems trust policy; in a clean Bundler
+- Only suggest the LowSecurity RubyGems trust policy; in a clean Bundler
   environment, this is the highest policy that can be successfully
   applied
 
-* Only enforce code coverage requirements when Guard runs all specs
+- Only enforce code coverage requirements when Guard runs all specs
 
 ## [0.1.1] - 2016-07-26
 
@@ -439,35 +443,35 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-* Replace `0 == fixnum_object` with `fixnum_object.zero?`
+- Replace `0 == fixnum_object` with `fixnum_object.zero?`
 
-* Include LICENSE and README in the gem
+- Include LICENSE and README in the gem
 
-* Remove specs from the gem
+- Remove specs from the gem
 
-* Add Nick Willever to the gem specification authors
+- Add Nick Willever to the gem specification authors
 
 ### Fixed
 
-* Lower the development bundle trust policy to MediumSecurity due to
+- Lower the development bundle trust policy to MediumSecurity due to
   rubocop-0.42.0 not being signed :crying_cat_face:
 
-* Fix the line length of the gem specification signing key configuration
+- Fix the line length of the gem specification signing key configuration
 
-* Correct the reference to `bundle install --trust-profile` with
+- Correct the reference to `bundle install --trust-profile` with
   `bundle install --trust-policy` in the README (thanks [@nellshamrell]
   and [@nictrix])
 
-* Clarify the gem installation instructions in the README (thanks
+- Clarify the gem installation instructions in the README (thanks
   [@nictrix])
 
 ## 0.1.0 - 2016-07-22
 
 ### Added
 
-* Initial release
+- Initial release
 
-[Unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.1...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.1...HEAD
 [3.3.1]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.0...v3.3.1
 [3.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.1.0...v3.2.0
@@ -488,7 +492,6 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 [0.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v0.1.0...v0.1.1
-
 [@amaltson]: https://github.com/amaltson
 [@burythehammer]: https://github.com/burythehammer
 [@cullenmcdermott]: https://github.com/cullenmcdermott
@@ -510,5 +513,5 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 [@shinka81]: https://github.com/shinka81
 [@walterdolce]: https://github.com/walterdolce
 [@xmik]: https://github.com/xmik
-[Code Climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
-[Travis CI build plan]: https://travis-ci.org/newcontext-oss/kitchen-terraform
+[code climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
+[travis ci build plan]: https://travis-ci.org/newcontext-oss/kitchen-terraform
