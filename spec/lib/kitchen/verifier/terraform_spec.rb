@@ -122,17 +122,35 @@ require "support/kitchen/terraform/configurable_examples"
           end
         end
 
-        context "when the :kitchen_terraform_output does include the configured :hostnames key" do
+        shared_context "Inspec::Profile" do
+          let :profile do
+            instance_double ::Inspec::Profile
+          end
+
+          before do
+            allow(profile).to receive(:name).and_return "profile-name"
+          end
+        end
+
+        shared_context "Inspec::Runner instance" do
+          include_context "Inspec::Profile"
+
           let :runner do
             instance_double ::Inspec::Runner
           end
 
-          let :kitchen_terraform_output do
-            {
-              "output_name" => {"value" => "output_value"},
-              "hostnames" => {"value" => "hostname"}
-            }
+          before do
+            allow(runner)
+              .to(
+                receive(:add_target)
+                  .with(path: "/test/base/path/test-suite")
+                  .and_return([profile])
+              )
           end
+        end
+
+        shared_context "Inspec::Runner" do
+          include_context "Inspec::Runner instance"
 
           let :runner_options do
             {
@@ -173,6 +191,17 @@ require "support/kitchen/terraform/configurable_examples"
                   .with(runner_options)
                   .and_return(runner)
               )
+          end
+        end
+
+        context "when the :kitchen_terraform_output does include the configured :hostnames key" do
+          include_context "Inspec::Runner"
+
+          let :kitchen_terraform_output do
+            {
+              "output_name" => {"value" => "output_value"},
+              "hostnames" => {"value" => "hostname"}
+            }
           end
 
           context "when the InSpec runner returns an exit code other than 0" do
