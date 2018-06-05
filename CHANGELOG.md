@@ -6,7 +6,9 @@ The format is based on
 [Keep a Changelog](http://keepachangelog.com/en/1.0.0) and this project
 adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased][unreleased]
+
+### Changed
 
 - Breaking support for Test-Kitchen >= 1.16.0, < 1.20.0
 
@@ -19,7 +21,7 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   `destroy` <- change -force flag to -auto-approve
   (this is version wrapped and backwards compatible)
 
-* Changing directory to root_module_directory before running Terraform
+- Changing directory to root_module_directory before running Terraform
   commands
 
 ## [3.3.1] - 2018-04-29
@@ -318,11 +320,20 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - A shiny, new logo (thanks [@ksexton])
 
+<<<<<<< HEAD
+
 - A shiny, new [Travis CI build plan] (thanks [@justindossey])
 
 - Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury] and [@m00gs])
 
-- [Code Climate coverage]
+- # [Code Climate coverage]
+- A shiny, new [Travis CI build plan][travis ci build plan] (thanks [@justindossey])
+
+- Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury] and [@m00gs])
+
+- [Code Climate coverage][code climate coverage]
+
+  > > > > > > > Apply suggested styling to Change Log; add header
 
 - Group attributes default to a mapping of all Terraform output
   variables to equivalently named InSpec attributes (thanks [@shinka81])
