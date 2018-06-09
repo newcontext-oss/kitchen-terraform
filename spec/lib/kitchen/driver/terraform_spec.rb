@@ -624,11 +624,22 @@ require "support/kitchen/terraform/result_in_success_matcher"
           end
 
           context "when `terraform destroy` results in success" do
+            let :force_flag do
+              "-force"
+            end
+
+            ::Kitchen::Terraform::Version
+              .if_satisfies requirement: ">=4.0" do
+                let :force_flag do
+                  "-auto-approve"
+                end
+              end
+
             before do
               shell_out_run_success(
                 command:
                   /destroy\s
-                    -force\s
+                    #{force_flag}\s
                     -lock=true\s
                     -lock-timeout=0s\s
                     -input=false\s

@@ -27,7 +27,8 @@ require "rubygems"
       "Nick Willever",
       "Steven A. Burns",
       "Walter Dolce",
-      "curleighbraces"
+      "curleighbraces",
+      "Gary Foster"
     ]
 
   specification.description = "kitchen-terraform is a set of Test Kitchen plugins for testing Terraform configuration"
