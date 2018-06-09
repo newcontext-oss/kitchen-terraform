@@ -109,12 +109,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
             .with(
               command: command,
               options:
-              {
-                cwd: working_directory,
-                live_stream: kitchen_logger,
-                timeout: 600
-              }
-
+                {
+                  cwd: working_directory,
+                  live_stream: kitchen_logger,
+                  timeout: 600
+                }
             )
             .and_return(return_value)
         )
@@ -127,12 +126,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
             .with(
               command: command,
               options:
-              {
-                cwd: kitchen_root,
-                live_stream: kitchen_logger,
-                timeout: 600,
-              }
-
+                {
+                  cwd: kitchen_root,
+                  live_stream: kitchen_logger,
+                  timeout: 600
+                }
             )
             .and_yield(standard_output: standard_output)
         )
