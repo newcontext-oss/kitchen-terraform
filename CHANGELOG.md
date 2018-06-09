@@ -320,20 +320,11 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - A shiny, new logo (thanks [@ksexton])
 
-<<<<<<< HEAD
-
-- A shiny, new [Travis CI build plan] (thanks [@justindossey])
-
-- Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury] and [@m00gs])
-
-- # [Code Climate coverage]
 - A shiny, new [Travis CI build plan][travis ci build plan] (thanks [@justindossey])
 
 - Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury] and [@m00gs])
 
 - [Code Climate coverage][code climate coverage]
-
-  > > > > > > > Apply suggested styling to Change Log; add header
 
 - Group attributes default to a mapping of all Terraform output
   variables to equivalently named InSpec attributes (thanks [@shinka81])
