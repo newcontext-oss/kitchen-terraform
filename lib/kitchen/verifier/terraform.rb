@@ -259,17 +259,14 @@ class ::Kitchen::Verifier::Terraform
   end
 
   # @api private
-  def inspec_target
-    {
-      path:
-        ::File
-          .join(
-            config.fetch(:test_base_path),
-            instance
-              .suite
-              .name
-          )
-    }
+  def inspec_profile_path
+    ::File
+      .join(
+        config.fetch(:test_base_path),
+        instance
+          .suite
+          .name
+      )
   end
 
   # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
@@ -299,8 +296,11 @@ class ::Kitchen::Verifier::Terraform
     configure_inspec_profile_options group: group
 
     ::Kitchen::Terraform::InSpec
-      .new(options: inspec_options)
-      .run(target: inspec_target)
+      .new(
+        options: inspec_options,
+        path: inspec_profile_path
+      )
+      .exec
   end
 end
 
