@@ -70,6 +70,21 @@ require "mixlib/shellout"
       end
 
       shared_context "when an error occurs" do
+        def mock_run_command(original, *arguments)
+          original
+            .call(*arguments)
+            .tap do |shell_out|
+              allow(shell_out)
+                .to(
+                  receive(:run_command)
+                    .and_raise(
+                      error_class,
+                      "mocked error"
+                    )
+                )
+            end
+        end
+
         before do
           allow(::Mixlib::ShellOut)
             .to(
@@ -81,20 +96,7 @@ require "mixlib/shellout"
                   live_stream: logger,
                   timeout: duration
                 )
-                .and_wrap_original do |original, *arguments|
-                  original
-                    .call(*arguments)
-                    .tap do |shell_out|
-                      allow(shell_out)
-                        .to(
-                          receive(:run_command)
-                            .and_raise(
-                              error_class,
-                              "mocked error"
-                            )
-                        )
-                    end
-                end
+                .and_wrap_original(&method(:mock_run_command))
             )
         end
       end
