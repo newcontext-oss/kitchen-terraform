@@ -85,17 +85,23 @@ require "mixlib/shellout"
             end
         end
 
-        before do
-          allow(::Mixlib::ShellOut)
-            .to(
-              receive(:new)
-                .with(
-                  "terraform command",
+        let :new_arguments do
+          [
+            "terraform command",
+            {
                   cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration
-                )
+            }
+          ]
+        end
+
+        before do
+          allow(::Mixlib::ShellOut)
+            .to(
+              receive(:new)
+                .with(*new_arguments)
                 .and_wrap_original(&method(:mock_run_command))
             )
         end
