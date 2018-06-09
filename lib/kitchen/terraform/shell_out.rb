@@ -26,14 +26,17 @@ require "mixlib/shellout"
 module ::Kitchen::Terraform::ShellOut
   # Runs a Terraform command.
   #
+  # @option options [::String] :cwd the directory in which to run the command.
+  # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
+  #   command.
+  # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
   # @param command [::String] the command to run.
-  # @param duration [::Integer] the maximum duration in seconds to run the command.
-  # @param logger [::Kitchen::Logger] a Test Kitchen logger to capture the output from running the command.
+  # @param options [::Hash] options which adjust the execution of the command.
   # @raise [::Kitchen::Terraform::Error] if running the command fails.
   # @return [::String] the standard output from running the command.
   # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
   # @yieldparam standard_output [::String] the standard output from running the command.
-  def self.run(command:, duration: ::Mixlib::ShellOut::DEFAULT_READ_TIMEOUT, logger:, &block)
+  def self.run(command:, options:, &block)
     block ||=
       lambda do |standard_output:|
         standard_output
@@ -41,8 +44,7 @@ module ::Kitchen::Terraform::ShellOut
 
     run_shell_out(
       command: command,
-      duration: duration,
-      logger: logger,
+      options: options,
       &block
     )
   rescue ::Errno::EACCES,
@@ -64,18 +66,19 @@ module ::Kitchen::Terraform::ShellOut
   end
 
   # @api private
-  def self.run_shell_out(command:, duration:, logger:)
+  def self.run_shell_out(command:, options:)
     yield(
       standard_output:
         ::Mixlib::ShellOut
           .new(
             "terraform #{command}",
-            environment: {"TF_IN_AUTOMATION" => "true"},
-            live_stream: logger,
-            timeout: duration
+            options.merge(environment: {"TF_IN_AUTOMATION" => "true"})
           )
           .tap do |shell_out|
-            logger.warn "Running command `#{shell_out.command}`"
+            shell_out
+              .live_stream
+              .warn "Running command `#{shell_out.command}` in directory #{shell_out.cwd}"
+
             shell_out.run_command
             shell_out.error!
           end

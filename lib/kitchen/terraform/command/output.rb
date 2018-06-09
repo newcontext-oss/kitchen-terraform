@@ -23,13 +23,15 @@ require "kitchen/terraform/shell_out"
 module ::Kitchen::Terraform::Command::Output
   # Runs the command with JSON foramtting.
   #
-  # @param duration [::Integer] the maximum duration in seconds to run the command.
-  # @param logger [::Kitchen::Logger] a Test Kitchen logger to capture the output from running the command.
+  # @option options [::String] :cwd the directory in which to run the command.
+  # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
+  #   command.
+  # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
+  # @param options [::Hash] options which adjust the execution of the command.
   # @yieldparam output [::String] the standard output of the command parsed as JSON.
-  def self.run(duration:, logger:, &block)
+  def self.run(options:, &block)
     run_shell_out(
-      duration: duration,
-      logger: logger,
+      options: options,
       &block
     )
   rescue ::JSON::ParserError => error
@@ -58,12 +60,11 @@ module ::Kitchen::Terraform::Command::Output
   end
 
   # @api private
-  def self.run_shell_out(duration:, logger:)
+  def self.run_shell_out(options:)
     ::Kitchen::Terraform::ShellOut
       .run(
         command: "output -json",
-        duration: duration,
-        logger: logger
+        options: options
       ) do |standard_output:|
         yield output: ::JSON.parse(standard_output)
       end
