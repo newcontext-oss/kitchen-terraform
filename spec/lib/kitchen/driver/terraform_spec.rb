@@ -82,14 +82,18 @@ require "support/kitchen/terraform/result_in_success_matcher"
       class_double(::Kitchen::Terraform::ShellOut).as_stubbed_const
     end
 
-    def shell_out_run_failure(command:, message: "mocked `terraform` failure")
+    def shell_out_run_failure(command:, message: "mocked `terraform` failure", working_directory: kitchen_root)
       allow(shell_out)
         .to(
           receive(:run)
             .with(
               command: command,
-              duration: 600,
-              logger: kitchen_logger
+              options:
+                {
+                  cwd: working_directory,
+                  live_stream: kitchen_logger,
+                  timeout: 600
+                }
             )
             .and_raise(
               ::Kitchen::Terraform::Error,
@@ -98,14 +102,18 @@ require "support/kitchen/terraform/result_in_success_matcher"
         )
     end
 
-    def shell_out_run_success(command:, return_value: "mocked `terraform` success")
+    def shell_out_run_success(command:, return_value: "mocked `terraform` success", working_directory: kitchen_root)
       allow(shell_out)
         .to(
           receive(:run)
             .with(
               command: command,
-              duration: 600,
-              logger: kitchen_logger
+              options:
+                {
+                  cwd: working_directory,
+                  live_stream: kitchen_logger,
+                  timeout: 600
+                }
             )
             .and_return(return_value)
         )
@@ -117,8 +125,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
           receive(:run)
             .with(
               command: command,
-              duration: 600,
-              logger: kitchen_logger
+              options:
+                {
+                  cwd: kitchen_root,
+                  live_stream: kitchen_logger,
+                  timeout: 600
+                }
             )
             .and_yield(standard_output: standard_output)
         )
@@ -246,7 +258,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform get` results in success" do
           before do
-            shell_out_run_success command: "get -update #{kitchen_root}"
+            shell_out_run_success command: "get -update"
           end
 
           context "when `terraform validate` results in failure" do
@@ -266,12 +278,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
             before do
               shell_out_run_success(
                 command:
-                  /validate\s
-                    -check-variables=true\s
-                    -no-color\s
-                    -var=key\\=value\s
-                    -var-file=\/variable\/file\s
-                    #{kitchen_root}/x
+                  "validate " \
+                    "-check-variables=true " \
+                    "-no-color " \
+                    "-var=key\\=value " \
+                    "-var-file=\/variable\/file"
               )
             end
 
@@ -292,17 +303,16 @@ require "support/kitchen/terraform/result_in_success_matcher"
               before do
                 shell_out_run_success(
                   command:
-                    /apply\s
-                      -lock=true\s
-                      -lock-timeout=0s\s
-                      -input=false\s
-                      -auto-approve=true\s
-                      -no-color\s
-                      -parallelism=10\s
-                      -refresh=true\s
-                      -var=key\\=value\s
-                      -var-file=\/variable\/file\s
-                      #{kitchen_root}/x
+                    "apply " \
+                      "-lock=true " \
+                      "-lock-timeout=0s " \
+                      "-input=false " \
+                      "-auto-approve=true " \
+                      "-no-color " \
+                      "-parallelism=10 " \
+                      "-refresh=true " \
+                      "-var=key\\=value " \
+                      "-var-file=\/variable\/file"
                 )
               end
 
@@ -462,20 +472,19 @@ require "support/kitchen/terraform/result_in_success_matcher"
         before do
           shell_out_run_success(
             command:
-              /init\s
-                -input=false\s
-                -lock=true\s
-                -lock-timeout=0s\s
-                -no-color\s
-                -upgrade\s
-                -force-copy\s
-                -backend=true\s
-                -backend-config=key\\=value\s
-                -get=true\s
-                -get-plugins=true\s
-                -plugin-dir=\/plugin\/directory\s
-                -verify-plugins=true\s
-                #{kitchen_root}/x
+              "init " \
+                "-input=false " \
+                "-lock=true " \
+                "-lock-timeout=0s " \
+                "-no-color " \
+                "-upgrade " \
+                "-force-copy " \
+                "-backend=true " \
+                "-backend-config=key\\=value " \
+                "-get=true " \
+                "-get-plugins=true " \
+                "-plugin-dir=\/plugin\/directory " \
+                "-verify-plugins=true"
           )
         end
 
@@ -555,19 +564,18 @@ require "support/kitchen/terraform/result_in_success_matcher"
         before do
           shell_out_run_success(
             command:
-              /init\s
-                -input=false\s
-                -lock=true\s
-                -lock-timeout=0s\s
-                -no-color\s
-                -force-copy\s
-                -backend=true\s
-                -backend-config=key\\=value\s
-                -get=true\s
-                -get-plugins=true\s
-                -plugin-dir=\/plugin\/directory\s
-                -verify-plugins=true\s
-                #{kitchen_root}/x
+              "init " \
+                "-input=false " \
+                "-lock=true " \
+                "-lock-timeout=0s " \
+                "-no-color " \
+                "-force-copy " \
+                "-backend=true " \
+                "-backend-config=key\\=value " \
+                "-get=true " \
+                "-get-plugins=true " \
+                "-plugin-dir=\/plugin\/directory " \
+                "-verify-plugins=true"
           )
         end
 
@@ -638,17 +646,16 @@ require "support/kitchen/terraform/result_in_success_matcher"
             before do
               shell_out_run_success(
                 command:
-                  /destroy\s
-                    #{force_flag}\s
-                    -lock=true\s
-                    -lock-timeout=0s\s
-                    -input=false\s
-                    -no-color\s
-                    -parallelism=10\s
-                    -refresh=true\s
-                    -var=key\\=value\s
-                    -var-file=\/variable\/file\s
-                    #{kitchen_root}/x
+                  "destroy " \
+                    "#{force_flag} " \
+                    "-lock=true " \
+                    "-lock-timeout=0s " \
+                    "-input=false " \
+                    "-no-color " \
+                    "-parallelism=10 " \
+                    "-refresh=true " \
+                    "-var=key\\=value " \
+                    "-var-file=\/variable\/file"
               )
             end
 
@@ -719,7 +726,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
         before do
           shell_out_run_failure(
             command: "version",
-            message: "mocked `terraform version` failure"
+            message: "mocked `terraform version` failure",
+            working_directory: "."
           )
         end
 
@@ -738,7 +746,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
         before do
           shell_out_run_success(
             command: "version",
-            return_value: version_return_value
+            return_value: version_return_value,
+            working_directory: "."
           )
         end
 

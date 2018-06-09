@@ -26,8 +26,12 @@ require "mixlib/shellout"
           described_class
             .run(
               command: "command",
-              duration: duration,
-              logger: logger
+              options:
+                {
+                  cwd: "/working/directory",
+                  live_stream: logger,
+                  timeout: duration
+                }
             )
         end
       end
@@ -51,6 +55,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration
@@ -67,32 +72,49 @@ require "mixlib/shellout"
         end
       end
 
-      context "when a permissions error occurs" do
+      shared_context "when an error occurs" do
+        def mock_run_command(original, *arguments)
+          original
+            .call(*arguments)
+            .tap do |shell_out|
+              allow(shell_out)
+                .to(
+                  receive(:run_command)
+                    .and_raise(
+                      error_class,
+                      "mocked error"
+                    )
+                )
+            end
+        end
+
+        let :new_arguments do
+          [
+            "terraform command",
+            {
+              cwd: "/working/directory",
+              environment: environment,
+              live_stream: logger,
+              timeout: duration
+            }
+          ]
+        end
+
         before do
           allow(::Mixlib::ShellOut)
             .to(
               receive(:new)
-                .with(
-                  "terraform command",
-                  environment: environment,
-                  live_stream: logger,
-                  timeout: duration
-                )
-                .and_wrap_original do |original, *arguments|
-                  original
-                    .call(*arguments)
-                    .tap do |shell_out|
-                      allow(shell_out)
-                        .to(
-                          receive(:run_command)
-                            .and_raise(
-                              ::Errno::EACCES,
-                              "mocked error"
-                            )
-                        )
-                    end
-                end
+                .with(*new_arguments)
+                .and_wrap_original(&method(:mock_run_command))
             )
+        end
+      end
+
+      context "when a permissions error occurs" do
+        include_context "when an error occurs"
+
+        let :error_class do
+          ::Errno::EACCES
         end
 
         it do
@@ -102,31 +124,10 @@ require "mixlib/shellout"
       end
 
       context "when an entry error occurs" do
-        before do
-          allow(::Mixlib::ShellOut)
-            .to(
-              receive(:new)
-                .with(
-                  "terraform command",
-                  environment: environment,
-                  live_stream: logger,
-                  timeout: duration
-                )
-                .and_wrap_original do |original, *arguments|
-                  original
-                    .call(*arguments)
-                    .tap do |shell_out|
-                      allow(shell_out)
-                        .to(
-                          receive(:run_command)
-                            .and_raise(
-                              ::Errno::ENOENT,
-                              "mocked error"
-                            )
-                        )
-                    end
-                end
-            )
+        include_context "when an error occurs"
+
+        let :error_class do
+          ::Errno::ENOENT
         end
 
         it do
@@ -139,31 +140,10 @@ require "mixlib/shellout"
       end
 
       context "when a timeout error occurs" do
-        before do
-          allow(::Mixlib::ShellOut)
-            .to(
-              receive(:new)
-                .with(
-                  "terraform command",
-                  environment: environment,
-                  live_stream: logger,
-                  timeout: duration
-                )
-                .and_wrap_original do |original, *arguments|
-                  original
-                    .call(*arguments)
-                    .tap do |shell_out|
-                      allow(shell_out)
-                        .to(
-                          receive(:run_command)
-                            .and_raise(
-                              ::Mixlib::ShellOut::CommandTimeout,
-                              "mocked error"
-                            )
-                        )
-                    end
-                end
-            )
+        include_context "when an error occurs"
+
+        let :error_class do
+          ::Mixlib::ShellOut::CommandTimeout
         end
 
         it do
@@ -178,6 +158,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration
@@ -226,6 +207,7 @@ require "mixlib/shellout"
               receive(:new)
                 .with(
                   "terraform command",
+                  cwd: "/working/directory",
                   environment: environment,
                   live_stream: logger,
                   timeout: duration

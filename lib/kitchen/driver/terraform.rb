@@ -246,8 +246,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     apply_run_apply
     ::Kitchen::Terraform::Command::Output
       .run(
-        duration: config_command_timeout,
-        logger: logger,
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          },
         &block
       )
   end
@@ -300,8 +304,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
               ::Kitchen::Terraform::ShellOut
                 .run(
                   command: "version",
-                  duration: 600,
-                  logger: logger
+                  options:
+                    {
+                      cwd: ".",
+                      live_stream: logger,
+                      timeout: 600
+                    }
                 )
           )
       )
@@ -328,10 +336,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{parallelism_flag} " \
             "-refresh=true " \
             "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
+            "#{variable_files_flags}",
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 
@@ -339,9 +350,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def apply_run_get
     ::Kitchen::Terraform::ShellOut
       .run(
-        command: "get -update #{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
+        command: "get -update",
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 
@@ -354,10 +369,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-check-variables=true " \
             "#{color_flag} " \
             "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
+            "#{variable_files_flags}",
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 
@@ -392,10 +410,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-get=true " \
             "-get-plugins=true " \
             "#{plugin_directory_flag} " \
-            "-verify-plugins=true " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
+            "-verify-plugins=true",
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 
@@ -418,10 +439,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "#{parallelism_flag} " \
             "-refresh=true " \
             "#{variables_flags} " \
-            "#{variable_files_flags} " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
+            "#{variable_files_flags}",
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 
@@ -441,10 +465,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
             "-get=true " \
             "-get-plugins=true " \
             "#{plugin_directory_flag} " \
-            "-verify-plugins=true " \
-            "#{root_module_directory}",
-        duration: config_command_timeout,
-        logger: logger
+            "-verify-plugins=true",
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 
@@ -453,8 +480,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::ShellOut
       .run(
         command: "workspace delete kitchen-terraform-#{instance_name}",
-        duration: config_command_timeout,
-        logger: logger
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 
@@ -463,8 +494,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::ShellOut
       .run(
         command: "workspace select default",
-        duration: config_command_timeout,
-        logger: logger
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 
@@ -505,15 +540,23 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::ShellOut
       .run(
         command: "workspace select kitchen-terraform-#{instance_name}",
-        duration: config_command_timeout,
-        logger: logger
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   rescue ::Kitchen::Terraform::Error
     ::Kitchen::Terraform::ShellOut
       .run(
         command: "workspace new kitchen-terraform-#{instance_name}",
-        duration: config_command_timeout,
-        logger: logger
+        options:
+          {
+            cwd: config_root_module_directory,
+            live_stream: logger,
+            timeout: config_command_timeout
+          }
       )
   end
 

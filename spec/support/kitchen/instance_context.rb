@@ -17,6 +17,7 @@
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/provisioner/terraform"
+require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 
 ::RSpec
