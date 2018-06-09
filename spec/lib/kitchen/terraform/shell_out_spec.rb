@@ -26,9 +26,12 @@ require "mixlib/shellout"
           described_class
             .run(
               command: "command",
-              duration: duration,
-              logger: logger,
-              working_directory: "/working/directory"
+              options:
+                {
+                  cwd: "/working/directory",
+                  live_stream: logger,
+                  timeout: duration
+                }
             )
         end
       end
@@ -89,10 +92,10 @@ require "mixlib/shellout"
           [
             "terraform command",
             {
-                  cwd: "/working/directory",
-                  environment: environment,
-                  live_stream: logger,
-                  timeout: duration
+              cwd: "/working/directory",
+              environment: environment,
+              live_stream: logger,
+              timeout: duration
             }
           ]
         end

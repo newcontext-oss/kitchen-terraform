@@ -88,9 +88,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
           receive(:run)
             .with(
               command: command,
-              duration: 600,
-              logger: kitchen_logger,
-              working_directory: working_directory
+              options:
+                {
+                  cwd: working_directory,
+                  live_stream: kitchen_logger,
+                  timeout: 600
+                }
             )
             .and_raise(
               ::Kitchen::Terraform::Error,
@@ -105,9 +108,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
           receive(:run)
             .with(
               command: command,
-              duration: 600,
-              logger: kitchen_logger,
-              working_directory: working_directory
+              options:
+              {
+                cwd: working_directory,
+                live_stream: kitchen_logger,
+                timeout: 600
+              }
+
             )
             .and_return(return_value)
         )
@@ -119,9 +126,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
           receive(:run)
             .with(
               command: command,
-              duration: 600,
-              logger: kitchen_logger,
-              working_directory: kitchen_root
+              options:
+              {
+                cwd: kitchen_root,
+                live_stream: kitchen_logger,
+                timeout: 600,
+              }
+
             )
             .and_yield(standard_output: standard_output)
         )
