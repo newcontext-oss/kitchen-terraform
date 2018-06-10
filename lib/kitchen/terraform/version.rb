@@ -72,7 +72,7 @@ module ::Kitchen::Terraform::Version
 
   # @api private
   def self.value
-    self.value = ::Gem::Version.new "3.3.1" if not @value
+    self.value = ::Gem::Version.new "4.0.0" if not @value
     @value
   end
 

@@ -182,6 +182,13 @@ end
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   kitchen_driver_api_version 2
 
+  no_parallel_for(
+    :create,
+    :converge,
+    :setup,
+    :destroy
+  )
+
   include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
   include ::Kitchen::Terraform::ConfigAttribute::Color
@@ -203,35 +210,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   include ::Kitchen::Terraform::ConfigAttribute::Variables
 
   include ::Kitchen::Terraform::Configurable
-
-  # This method queries for the names of the action methods which must be run in serial via a shared mutex.
-  #
-  # If the gem version satisfies the requirement of ~> 3.3 then no names are returned.
-  #
-  # If the gem version satisfies the requirement of >= 4 then +:create+, +:converge+, +:setup+, and +:destroy+ are
-  # returned.
-  #
-  # @return [::Array<Symbol>] the action method names.
-  def self.serial_actions
-    ::Kitchen::Terraform::Version
-      .if_satisfies requirement: "~> 3.3" do
-        no_parallel_for
-      end
-
-    ::Kitchen::Terraform::Version
-      .if_satisfies requirement: ">= 4" do
-        super()
-          .empty? and
-          no_parallel_for(
-            :create,
-            :converge,
-            :setup,
-            :destroy
-          )
-      end
-
-    super()
-  end
 
   # Applies changes to the state by selecting the test workspace, updating the dependency modules, validating the root
   # module, applying the state changes, and retrieving the state output.
@@ -422,16 +400,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_destroy
-    force_flag = "-force"
-    ::Kitchen::Terraform::Version
-      .if_satisfies requirement: ">=4.0" do
-        force_flag = "-auto-approve"
-      end
     ::Kitchen::Terraform::ShellOut
       .run(
         command:
           "destroy " \
-            "#{force_flag} " \
+            "-auto-approve " \
             "#{lock_flag} " \
             "#{lock_timeout_flag} " \
             "-input=false " \

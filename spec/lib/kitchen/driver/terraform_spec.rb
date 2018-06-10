@@ -173,61 +173,16 @@ require "support/kitchen/terraform/result_in_success_matcher"
     it_behaves_like "Kitchen::Terraform::Configurable"
 
     describe ".serial_actions" do
-      shared_examples "actions are returned" do
-        specify do
-          ::Gem::Requirement
-            .new("~> 2.2.0")
-            .satisfied_by? ::Gem::Version.new ::RUBY_VERSION and
-            skip "Not applicable to Ruby v2.2"
-
-          expect(described_class.serial_actions)
-            .to(
-              contain_exactly(
-                :create,
-                :converge,
-                :setup,
-                :destroy
-              )
+      specify "actions are returned" do
+        expect(described_class.serial_actions)
+          .to(
+            contain_exactly(
+              :create,
+              :converge,
+              :setup,
+              :destroy
             )
-        end
-      end
-
-      context "when the version is less than 4.0.0" do
-        around do |example|
-          ::Kitchen::Terraform::Version
-            .temporarily_override(
-              version: "3.3.0",
-              &example
-            )
-        end
-
-        specify do
-          expect(described_class.serial_actions).to be_empty
-        end
-      end
-
-      context "when the version is equal to 4.0.0" do
-        around do |example|
-          ::Kitchen::Terraform::Version
-            .temporarily_override(
-              version: "4.0.0",
-              &example
-            )
-        end
-
-        it_behaves_like "actions are returned"
-      end
-
-      context "when the version is greater than 4.0.0" do
-        around do |example|
-          ::Kitchen::Terraform::Version
-            .temporarily_override(
-              version: "5.6.7",
-              &example
-            )
-        end
-
-        it_behaves_like "actions are returned"
+          )
       end
     end
 
@@ -632,22 +587,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
           end
 
           context "when `terraform destroy` results in success" do
-            let :force_flag do
-              "-force"
-            end
-
-            ::Kitchen::Terraform::Version
-              .if_satisfies requirement: ">=4.0" do
-                let :force_flag do
-                  "-auto-approve"
-                end
-              end
-
             before do
               shell_out_run_success(
                 command:
                   "destroy " \
-                    "#{force_flag} " \
+                    "-auto-approve " \
                     "-lock=true " \
                     "-lock-timeout=0s " \
                     "-input=false " \
