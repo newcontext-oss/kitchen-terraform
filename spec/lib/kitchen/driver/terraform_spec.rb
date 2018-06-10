@@ -697,7 +697,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when the value of the `terraform version` result is not supported" do
           let :version_return_value do
-            "Terraform v0.9.0"
+            "Terraform v0.11.3"
           end
 
           it do
@@ -713,7 +713,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when the value of the `terraform version` result is supported" do
           let :version_return_value do
-            "Terraform v0.11.0"
+            "Terraform v0.11.4"
           end
 
           it do
