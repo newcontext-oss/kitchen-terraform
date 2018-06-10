@@ -16,7 +16,6 @@
 
 require "kitchen"
 require "kitchen/terraform"
-require "kitchen/terraform/kitchen_instance"
 require "kitchen/terraform/version"
 
 # Refinements to Kitchen::Configurable.
@@ -48,7 +47,7 @@ module ::Kitchen::Terraform::Configurable
         "Instance must be provided to #{self}"
       )
 
-    @instance = ::Kitchen::Terraform::KitchenInstance.new kitchen_instance: kitchen_instance
+    @instance = kitchen_instance
     validate_config!
     expand_paths!
     load_needed_dependencies!

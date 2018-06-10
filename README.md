@@ -48,7 +48,7 @@ Installation instructions can be found in the
 
 Kitchen-Terraform aims to support all versions of Ruby that are in
 ["normal" or "security" maintenance][ruby-branches], which is currently
-the interval of `>= 2.2, < 2.5`.
+the interval of `>= 2.3, < 2.6`.
 
 [rbenv] can be used to manage versions of Ruby on the system.
 
@@ -362,6 +362,7 @@ Kitchen-Terraform is maintained by New Context.
 Kitchen-Terraform is distributed under the [Apache License][license].
 
 <!-- Markdown links and image definitions -->
+
 [build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg?style=plastic
 [build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [bundler-getting-started]: https://bundler.io/#getting-started

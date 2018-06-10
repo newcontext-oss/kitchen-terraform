@@ -8,6 +8,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.0.0] - 2018-06-XY
+
 ### Changed
 
 - Breaking support for Test-Kitchen >= 1.16.0, < 1.20.0
@@ -17,12 +19,11 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Breaking support for concurrency with the following commands:
   `create`, `converge`, `setup`, and `destroy`
 
-- providing support for terraform >= 0.11.4 with:
-  `destroy` <- change -force flag to -auto-approve
-  (this is version wrapped and backwards compatible)
+- Replacing deprecated `terraform destroy -force` flag with supported
+  `terraform destroy -auto-approve` flag
 
-- Changing directory to root_module_directory before running Terraform
-  commands
+- Changing directory to `root_module_directory` before running
+  Terraform commands
 
 ## [3.3.1] - 2018-04-29
 
@@ -473,7 +474,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.1...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.0...HEAD
+[4.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.1...v4.0.0
 [3.3.1]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.0...v3.3.1
 [3.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.2.0...v3.3.0
 [3.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.1.0...v3.2.0
