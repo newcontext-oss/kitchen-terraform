@@ -158,7 +158,7 @@ require "rubygems"
         "< 2.6"
       ]
 
-  specification.requirements = ["Terraform >= 0.10.2, < 0.12.0"]
+  specification.requirements = ["Terraform >= 0.11.4, < 0.12.0"]
 
   specification.signing_key = "certs/gem-private_key.pem"
 end

@@ -60,7 +60,7 @@ jobs:
     - docker
     rvm: 2.5
     env:
-    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+    - TERRAFORM_VERSION=0.11.4 TERRAFORM_SHA256_SUM=817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
     install:
     - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
       --retry=3 --without=development
@@ -70,7 +70,7 @@ jobs:
     - docker
     rvm: 2.4
     env:
-    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+    - TERRAFORM_VERSION=0.11.4 TERRAFORM_SHA256_SUM=817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
     install:
     - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
       --retry=3 --without=development
@@ -80,7 +80,7 @@ jobs:
     - docker
     rvm: 2.3
     env:
-    - TERRAFORM_VERSION=0.10.8 TERRAFORM_SHA256_SUM=b786c0cf936e24145fad632efd0fe48c831558cc9e43c071fffd93f35e3150db
+    - TERRAFORM_VERSION=0.11.4 TERRAFORM_SHA256_SUM=817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
     install:
     - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
       --retry=3 --without=development

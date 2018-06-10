@@ -30,7 +30,7 @@ require "kitchen/terraform/client_version_verifier"
       shared_examples "the version is unsupported" do
         it do
           is_expected
-            .to result_in_failure.with_message "Terraform v#{version} is not supported; install Terraform ~> v0.11.0"
+            .to result_in_failure.with_message "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
         end
       end
 
@@ -40,34 +40,18 @@ require "kitchen/terraform/client_version_verifier"
         end
       end
 
-      context "when the version is 0.10.1" do
+      context "when the version is 0.11.3" do
         it_behaves_like "the version is unsupported" do
           let :version do
-            "0.10.1"
+            "0.11.3"
           end
         end
       end
 
-      context "when the version is 0.10.2" do
+      context "when the version is 0.11.4" do
         it_behaves_like "the version is supported" do
           let :version do
-            "0.10.2"
-          end
-        end
-      end
-
-      context "when the version is 0.10.8" do
-        it_behaves_like "the version is supported" do
-          let :version do
-            "0.10.8"
-          end
-        end
-      end
-
-      context "when the version is 0.11.0" do
-        it_behaves_like "the version is supported" do
-          let :version do
-            "0.11.0"
+            "0.11.4"
           end
         end
       end
