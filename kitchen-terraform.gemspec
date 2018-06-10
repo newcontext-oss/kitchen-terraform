@@ -137,65 +137,28 @@ require "rubygems"
 
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
 
+  specification
+    .add_runtime_dependency(
+      "inspec",
+      "~> 2.1"
+    )
+
+  specification
+    .add_runtime_dependency(
+      "test-kitchen",
+      "~> 1.20"
+    )
+
   specification.cert_chain = ["certs/gem-public_cert.pem"]
+
+  specification
+    .required_ruby_version =
+      [
+        ">= 2.3",
+        "< 2.6"
+      ]
 
   specification.requirements = ["Terraform >= 0.10.2, < 0.12.0"]
 
   specification.signing_key = "certs/gem-private_key.pem"
-
-  ::Kitchen::Terraform::Version
-    .if_satisfies requirement: "~> 3.3" do
-      specification
-        .add_runtime_dependency(
-          "inspec",
-          ">= 1.44.8",
-          "< 3"
-        )
-
-      specification
-        .add_runtime_dependency(
-          "test-kitchen",
-          "~> 1.16"
-        )
-
-      # rubocop:disable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
-      ::Gem::Requirement
-        .new("~> 2.2.0")
-        .satisfied_by? ::Gem::Version.new ::RUBY_VERSION and
-        specification
-          .post_install_message=(
-            "DEPRECATING: the current version of Ruby is #{::RUBY_VERSION}; this version will not be supported in " \
-              "an upcoming major release of Kitchen-Terraform"
-          )
-      # rubocop:enable Gemspec/RedundantParentheses, Layout/SpaceAroundOperators
-
-      specification.required_ruby_version =
-        [
-          ">= 2.2",
-          "< 2.6"
-        ]
-    end
-
-  ::Kitchen::Terraform::Version
-    .if_satisfies requirement: ">= 4" do
-      specification
-        .add_runtime_dependency(
-          "inspec",
-          "~> 2.1"
-        )
-
-      specification
-        .add_runtime_dependency(
-          "test-kitchen",
-          "~> 1.20"
-        )
-
-      # rubocop:disable Gemspec/DuplicatedAssignment
-      specification.required_ruby_version =
-        [
-          ">= 2.3",
-          "< 2.6"
-        ]
-      # rubocop:enable Gemspec/DuplicatedAssignment
-    end
 end

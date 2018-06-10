@@ -36,7 +36,7 @@ require "support/kitchen/instance_context"
       end
 
       it "equals the gem version" do
-        is_expected.to eq "3.3.1"
+        is_expected.to eq "4.0.0"
       end
     end
 
