@@ -157,6 +157,7 @@ hierarchy of files comprising the following blocks.
 ├── .kitchen.yml
 ├── Gemfile
 ├── main.tf
+├── outputs.tf
 └── test
     └── integration
         └── example
@@ -190,6 +191,7 @@ verifier:
   name: terraform
   groups:
     - name: container
+      hostnames: container_hostname
       port: 2222
       username: root
 
@@ -225,6 +227,14 @@ resource "docker_container" "ubuntu" {
     external = 2222
     internal = 22
   }
+}
+```
+> ./outputs.tf
+
+```hcl
+output "container_hostname" {
+  description = "The hostname of the container."
+  value       = "127.0.0.1"
 }
 ```
 
