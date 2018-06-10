@@ -25,6 +25,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - Changing directory to `root_module_directory` before running
   Terraform commands
 
+- Breaking support for Terraform >= 0.10.2, < 0.11.4
+
 ## [3.3.1] - 2018-04-29
 
 ### Changed
