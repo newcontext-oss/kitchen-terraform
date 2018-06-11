@@ -25,23 +25,22 @@ require "support/kitchen/terraform/configurable_examples"
 ::RSpec
   .describe ::Kitchen::Verifier::Terraform do
     let :described_instance do
-      described_class
-        .new(
-          color: false,
-          groups:
-            [
-              {
-                attributes: {attribute_name: "output_name"},
-                controls: ["control"],
-                hostnames: "hostnames",
-                name: "name",
-                port: 1234,
-                ssh_key: "ssh_key",
-                username: "username"
-              }
-            ],
-          test_base_path: "/test/base/path"
-        )
+      described_class.new(
+        color: false,
+        groups: [
+          {
+            attributes: {attribute_name: "output_name"},
+            attrs: ["attrs.yml"],
+            controls: ["control"],
+            hostnames: "hostnames",
+            name: "name",
+            port: 1234,
+            ssh_key: "ssh_key",
+            username: "username"
+          }
+        ],
+        test_base_path: "/test/base/path"
+      )
     end
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
@@ -178,7 +177,7 @@ require "support/kitchen/terraform/configurable_examples"
                   "hostnames" => "hostname",
                   "output_name" => "output_value"
                 },
-              attrs: nil,
+              attrs: ["attrs.yml"],
               backend_cache: false,
               controls: ["control"]
             }
