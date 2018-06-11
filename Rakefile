@@ -221,7 +221,7 @@ namespace :tests do
 
       execute_kitchen_terraform(
         grep_pattern:
-          "Test Summary: 1 successful, 0 failures, 0 skipped.*Test Summary: 1 successful, 0 failures, 0 skipped",
+          "Test Summary: 1 successful, 0 failures, 0 skipped.*Test Summary: 3 successful, 0 failures, 0 skipped",
         terraform_path:
           current_task
             .prerequisites
