@@ -243,7 +243,6 @@ class ::Kitchen::Verifier::Terraform
         "logger" => logger,
         "sudo" => false,
         "sudo_command" => "sudo -E",
-        attrs: nil,
         "sudo_options" => ""
       )
   end
