@@ -39,8 +39,8 @@ end
 # manner similar to the following command-line command.
 #
 #   inspec exec \
-#     [--attrs=<terraform_outputs>] \
-#     --backend=<ssh|local> \
+#     [--attrs=<group.attrs>] \
+#     --backend=<group.backend> \
 #     [--no-color] \
 #     [--controls=<group.controls>] \
 #     --host=<group.hostnames.current|localhost> \
@@ -179,11 +179,7 @@ class ::Kitchen::Verifier::Terraform
 
   # @api private
   def configure_inspec_group_connection_options(group:, hostname:)
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend
-      .call(
-        hostname: hostname,
-        options: inspec_options
-      )
+    inspec_options.store :backend, group.fetch(:backend)
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
       .call(
@@ -212,8 +208,7 @@ class ::Kitchen::Verifier::Terraform
 
   # @api private
   def configure_inspec_profile_options(group:)
-    inspec_options.store(
-      :attrs, group.fetch(:attrs) do
+    inspec_options.store(:attrs, group.fetch(:attrs) do
         []
       end
     )
@@ -236,7 +231,6 @@ class ::Kitchen::Verifier::Terraform
   def configure_inspec_miscellaneous_options
     inspec_options
       .merge!(
-        "backend" => "ssh",
         "color" => config_color,
         "logger" => logger,
         "sudo" => false,
@@ -311,7 +305,6 @@ class ::Kitchen::Verifier::Terraform
 end
 
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
-require "kitchen/verifier/terraform/configure_inspec_runner_backend"
 require "kitchen/verifier/terraform/configure_inspec_runner_controls"
 require "kitchen/verifier/terraform/configure_inspec_runner_host"
 require "kitchen/verifier/terraform/configure_inspec_runner_port"

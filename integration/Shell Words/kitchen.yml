@@ -1,6 +1,12 @@
 ---
 driver:
   name: terraform
+  lock_timeout: 5
+  plugin_directory: Plugin Directory
+  variable_files:
+    - Variable Files/Variable File.tfvars
+  variables:
+    docker_container_name: Ub.nt.-C.nt..n.r
 
 provisioner:
   name: terraform
@@ -13,12 +19,17 @@ verifier:
   name: terraform
   groups:
     - name: container
+      backend: docker
       controls:
         - operating_system
-      port: 2222
       hostnames: hostnames
     - name: localhost
+      attrs:
+        - test/integration/example/first attrs.yml
+        - test/integration/example/second attrs.yml
+      backend: local
       controls:
+        - attrs
         - state_files
 
 platforms:

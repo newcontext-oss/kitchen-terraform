@@ -32,8 +32,8 @@ require "kitchen/terraform/config_schemas/groups"
 # Example::
 #   _
 #     groups:
-#       -
-#         name: a_group
+#       - name: a_group
+#         backend: local
 #
 # ===== attributes
 #
@@ -51,8 +51,38 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_overridden_attributes
 #         attributes:
 #           an_attribute: an_output
+#         backend: local
 # Caveat:: As all Terraform outputs are associated with equivalently named InSpec profile attributes by default, this
 #          key is only necessary to provide alternative attribute names.
+#
+# ===== attrs
+#
+# This key comprises the paths to
+# {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes} files.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequince of scalars}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_profile_attributes
+#         attrs:
+#           - /path/to/first_attributes.yml
+#           - /path/to/second_attributes.yml
+#         backend: local
+#
+# ===== backend
+#
+# This key contains the type of InSpec backend to be used for making a connection to hosts.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: True
+# Example::
+#   _
+#     groups:
+#       - name: a_group_with_a_backend
+#         backend: docker
 #
 # ===== controls
 #
