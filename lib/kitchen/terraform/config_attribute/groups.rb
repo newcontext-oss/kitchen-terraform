@@ -96,6 +96,7 @@ require "kitchen/terraform/config_schemas/groups"
 #   _
 #     groups:
 #       - name: a_group_with_no_backend_cache
+#         backend: local
 #         backend_cache: false
 #
 # ===== controls

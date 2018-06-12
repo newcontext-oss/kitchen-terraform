@@ -32,6 +32,7 @@ require "support/kitchen/terraform/configurable_examples"
             attributes: {attribute_name: "output_name"},
             attrs: ["attrs.yml"],
             backend: "backend",
+            backend_cache: false,
             controls: ["control"],
             hostnames: "hostnames",
             name: "name",

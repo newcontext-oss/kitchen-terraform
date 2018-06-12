@@ -96,6 +96,11 @@ require "support/kitchen/terraform/config_attribute_context"
                         error_message: /groups.*0.*attrs.*0.*must be a string/, value: [{name: "abc", attrs: [123]}]
       end
 
+      context "when the group associates :backend_cache with a nonboolean" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*backend_cache.*must be boolean/, value: [{backend_cache: "abc"}]
+      end
+
       context "when the group associates :controls with a nonarray" do
         it_behaves_like "the value is invalid",
                         error_message: /groups.*0.*controls.*must be an array/, value: [{name: "abc", controls: 123}]

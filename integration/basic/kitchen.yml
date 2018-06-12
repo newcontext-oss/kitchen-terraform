@@ -22,6 +22,7 @@ verifier:
         - test/integration/example/first_attrs.yml
         - test/integration/example/second_attrs.yml
       backend: local
+      backend_cache: false
       controls:
         - attrs
         - state_files

@@ -35,13 +35,8 @@ require "kitchen/terraform/config_schemas"
             required(:backend).filled :str?
             optional(:attributes).value :hash_of_symbols_and_strings?
             optional(:attrs).each(:str?, :filled?)
-
-            optional(:controls)
-              .each(
-                :filled?,
-                :str?
-              )
-
+            optional(:backend_cache).value :bool?
+            optional(:controls).each(:filled?, :str?)
             optional(:hostnames).value :str?
             optional(:port).value :int?
 
