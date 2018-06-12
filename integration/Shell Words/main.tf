@@ -27,9 +27,4 @@ resource "docker_container" "ubuntu" {
   image    = "${docker_image.ubuntu.name}"
   must_run = true
   name     = "${var.docker_container_name}"
-
-  ports {
-    external = 2222
-    internal = 22
-  }
 }

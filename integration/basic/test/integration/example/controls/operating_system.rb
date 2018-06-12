@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 control "operating_system" do
-  describe "the operating system" do
-    subject do command("lsb_release -a").stdout end
+  desc "This control validates the platform family of the operating system."
 
-    it "is Ubuntu" do is_expected.to match /Ubuntu/ end
+  describe os.family do
+    it do
+      should eq "debian"
+    end
   end
 end
