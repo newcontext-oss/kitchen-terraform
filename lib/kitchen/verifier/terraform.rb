@@ -41,6 +41,7 @@ end
 #   inspec exec \
 #     [--attrs=<group.attrs>] \
 #     --backend=<group.backend> \
+#     --backend-cache=<group.backend_cache> \
 #     [--no-color] \
 #     [--controls=<group.controls>] \
 #     --host=<group.hostnames.current|localhost> \
@@ -181,6 +182,12 @@ class ::Kitchen::Verifier::Terraform
   def configure_inspec_group_connection_options(group:, hostname:)
     inspec_options.store :backend, group.fetch(:backend)
 
+    inspec_options.store(:backend_cache,
+                         group.fetch(:backend_cache) do
+                           true
+                         end
+                        )
+
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
       .call(
         hostname: hostname,
@@ -235,9 +242,8 @@ class ::Kitchen::Verifier::Terraform
         "logger" => logger,
         "sudo" => false,
         "sudo_command" => "sudo -E",
-        "sudo_options" => "",
         attrs: nil,
-        backend_cache: false
+        "sudo_options" => ""
       )
   end
 
