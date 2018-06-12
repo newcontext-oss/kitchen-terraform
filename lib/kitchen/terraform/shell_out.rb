@@ -72,7 +72,7 @@ module ::Kitchen::Terraform::ShellOut
         ::Mixlib::ShellOut
           .new(
             "terraform #{command}",
-            options.merge(environment: {"TF_IN_AUTOMATION" => "true"})
+            options.merge(environment: {"TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1"})
           )
           .tap do |shell_out|
             shell_out
