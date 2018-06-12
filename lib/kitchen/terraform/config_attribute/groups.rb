@@ -60,7 +60,7 @@ require "kitchen/terraform/config_schemas/groups"
 # This key comprises the paths to
 # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes} files.
 #
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequince of scalars}
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
 # Required:: False
 # Example::
 #   _
@@ -84,12 +84,25 @@ require "kitchen/terraform/config_schemas/groups"
 #       - name: a_group_with_a_backend
 #         backend: docker
 #
+# ===== backend_cache
+#
+# This key toggles caching of InSpec backend command output.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
+# Required:: False
+# Default:: +true+
+# Example::
+#   _
+#     groups:
+#       - name: a_group_with_no_backend_cache
+#         backend_cache: false
+#
 # ===== controls
 #
 # This key comprises the names of {https://www.inspec.io/docs/reference/dsl_inspec/ InSpec controls} to exclusively
 # include from the InSpec profile of the associated Test Kitchen instance.
 #
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequince of scalars}
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
 # Required:: False
 # Example::
 #   _
