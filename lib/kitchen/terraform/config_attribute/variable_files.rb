@@ -22,7 +22,7 @@ require "kitchen/terraform/file_path_config_attribute_definer"
 # This attribute comprises paths to
 # {https://www.terraform.io/docs/configuration/variables.html#variable-files Terraform variable files}.
 #
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequince of scalars}
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
 # Required:: False
 # Example::
 #   _
