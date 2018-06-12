@@ -31,6 +31,7 @@ require "support/kitchen/terraform/configurable_examples"
           {
             attributes: {attribute_name: "output_name"},
             attrs: ["attrs.yml"],
+            backend: "backend",
             controls: ["control"],
             hostnames: "hostnames",
             name: "name",
@@ -153,7 +154,6 @@ require "support/kitchen/terraform/configurable_examples"
 
           let :runner_options do
             {
-              "backend" => "ssh",
               "color" => false,
               "compression" => false,
               "compression_level" => 0,
@@ -178,6 +178,7 @@ require "support/kitchen/terraform/configurable_examples"
                   "output_name" => "output_value"
                 },
               attrs: ["attrs.yml"],
+              backend: "backend",
               backend_cache: false,
               controls: ["control"]
             }

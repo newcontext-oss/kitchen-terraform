@@ -5,5 +5,5 @@ output "backend_state" {
 
 output "hostnames" {
   description = "The hostnames to test"
-  value       = ["localhost"]
+  value       = ["${docker_container.ubuntu.name}"]
 }
