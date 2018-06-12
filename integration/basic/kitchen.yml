@@ -13,14 +13,15 @@ verifier:
   name: terraform
   groups:
     - name: container
+      backend: docker
       controls:
         - operating_system
-      port: 2222
       hostnames: hostnames
     - name: localhost
       attrs:
         - test/integration/example/first_attrs.yml
         - test/integration/example/second_attrs.yml
+      backend: local
       controls:
         - attrs
         - state_files

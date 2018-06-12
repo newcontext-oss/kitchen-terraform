@@ -32,13 +32,9 @@ require "kitchen/terraform/config_schemas"
         .each do
           schema do
             required(:name).filled :str?
+            required(:backend).filled :str?
             optional(:attributes).value :hash_of_symbols_and_strings?
-
-            optional(:attrs)
-              .each(
-                :str?,
-                :filled?
-              )
+            optional(:attrs).each(:str?, :filled?)
 
             optional(:controls)
               .each(

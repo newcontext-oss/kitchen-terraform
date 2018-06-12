@@ -9,6 +9,7 @@ verifier:
   name: terraform
   groups:
     - name: no_outputs_defined
+      backend: local
 
 platforms:
   - name: localhost
