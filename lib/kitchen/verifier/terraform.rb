@@ -215,10 +215,11 @@ class ::Kitchen::Verifier::Terraform
 
   # @api private
   def configure_inspec_profile_options(group:)
-    inspec_options.store(:attrs, group.fetch(:attrs) do
-        []
-      end
-    )
+    inspec_options.store(:attrs,
+                         group.fetch(:attrs) do
+                           []
+                         end
+                        )
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
       .call(
