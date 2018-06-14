@@ -34,6 +34,7 @@ require "support/kitchen/terraform/configurable_examples"
             backend: "backend",
             backend_cache: false,
             controls: ["control"],
+            enable_password: "enable_password",
             hostnames: "hostnames",
             name: "name",
             port: 1234,
@@ -180,7 +181,8 @@ require "support/kitchen/terraform/configurable_examples"
               attrs: ["attrs.yml"],
               backend: "backend",
               backend_cache: false,
-              controls: ["control"]
+              controls: ["control"],
+              enable_password: "enable_password"
             }
           end
 

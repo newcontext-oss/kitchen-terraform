@@ -37,6 +37,7 @@ require "kitchen/terraform/config_schemas"
             optional(:attrs).each(:str?, :filled?)
             optional(:backend_cache).value :bool?
             optional(:controls).each(:filled?, :str?)
+            optional(:enable_password).filled :str?
             optional(:hostnames).value :str?
             optional(:port).value :int?
 
