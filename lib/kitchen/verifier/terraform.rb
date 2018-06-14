@@ -188,6 +188,8 @@ class ::Kitchen::Verifier::Terraform
                          end
                         )
 
+    inspec_options.store :enable_password, group.fetch(:enable_password)
+
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
       .call(
         hostname: hostname,
