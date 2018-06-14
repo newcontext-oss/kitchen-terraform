@@ -240,7 +240,6 @@ class ::Kitchen::Verifier::Terraform
     inspec_options
       .merge!(
         "color" => config_color,
-        "logger" => logger,
         "sudo" => false,
         "sudo_command" => "sudo -E",
         "sudo_options" => ""
@@ -282,6 +281,7 @@ class ::Kitchen::Verifier::Terraform
   # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/configurable.rb#L252-L274
   def load_needed_dependencies!
     require "kitchen/terraform/inspec"
+    ::Kitchen::Terraform::InSpec.logger = logger
   rescue ::LoadError => load_error
     raise(
       ::Kitchen::ClientError,
