@@ -120,6 +120,21 @@ require "kitchen/terraform/config_schemas/groups"
 #           - control_two
 #           - control_four
 #
+# ===== enable_password
+#
+# This key contains the password to use for authentication with a Cisco IOS device in enable mode.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_enable_password
+#         backend: ssh
+#         enable_password: Cisc0!
+# Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
+#
 # ===== hostnames
 #
 # This key contains the name of a Terraform output which provides one or more hostnames to be targeted by the InSpec
