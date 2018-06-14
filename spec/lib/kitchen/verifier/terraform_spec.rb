@@ -165,7 +165,6 @@ require "support/kitchen/terraform/configurable_examples"
               "keepalive" => true,
               "keepalive_interval" => 60,
               "key_files" => ["ssh_key"],
-              "logger" => kitchen_instance.logger,
               "max_wait_until_ready" => 600,
               "port" => 1234,
               "sudo" => false,

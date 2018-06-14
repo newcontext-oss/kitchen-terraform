@@ -31,6 +31,16 @@ class ::Kitchen::Terraform::InSpec
     ]
       .freeze
 
+  class << self
+    # logger= sets the logger for all InSpec processes.
+    #
+    # @param logger [::Kitchen::Logger] the logger to use.
+    # @return [void]
+    def logger=(logger)
+      ::Inspec::Log.logger = logger
+    end
+  end
+
   # exec executes the InSpec controls of an InSpec profile.
   #
   # @raise [::Kitchen::Terraform::Error] if the execution of the InSpec controls fails.
@@ -56,21 +66,10 @@ class ::Kitchen::Terraform::InSpec
   # @param options [::Hash] options for execution.
   # @param path [::String] the path to the InSpec profile which contains the controls to be executed.
   def initialize(options:, path:)
-    ::Inspec::Runner
-      .new(options)
-      .tap do |runner|
-        self.runner = runner
-
-        options
-          .fetch("logger")
-          .info(
-            "Loaded #{
-              runner
-                .add_target(path: path)
-                .last
-            }"
-          )
-      end
+    ::Inspec::Runner.new(options).tap do |runner|
+      self.runner = runner
+      ::Inspec::Log.info ::String.new "Loaded #{runner.add_target(path: path).last.name}"
+    end
   end
 
   # @api private
