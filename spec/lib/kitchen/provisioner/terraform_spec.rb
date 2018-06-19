@@ -112,7 +112,7 @@ require "support/kitchen/terraform/configurable_examples"
         end
 
         it do
-          is_expected.to include kitchen_terraform_output: "mocked Driver#create output"
+          is_expected.to include kitchen_terraform_outputs: "mocked Driver#create output"
         end
       end
     end
