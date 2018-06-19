@@ -3,7 +3,7 @@ output "backend_state" {
   value       = "${path.module}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate"
 }
 
-output "hostnames" {
-  description = "The hostnames to test"
+output "hosts" {
+  description = "The hosts to test"
   value       = ["${docker_container.ubuntu.name}"]
 }

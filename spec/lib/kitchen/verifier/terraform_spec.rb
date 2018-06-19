@@ -35,7 +35,7 @@ require "support/kitchen/terraform/configurable_examples"
             backend_cache: false,
             controls: ["control"],
             enable_password: "enable_password",
-            hostnames: "hostnames",
+            hosts_output: "hosts",
             name: "name",
             port: 1234,
             ssh_key: "ssh_key",
@@ -86,7 +86,7 @@ require "support/kitchen/terraform/configurable_examples"
         described_instance.finalize_config! kitchen_instance
       end
 
-      context "when the Kitchen state omits :kitchen_terraform_output" do
+      context "when the Kitchen state omits :kitchen_terraform_outputs" do
         let :kitchen_state do
           {}
         end
@@ -96,20 +96,20 @@ require "support/kitchen/terraform/configurable_examples"
             .to(
               raise_error(
                 ::Kitchen::ActionFailed,
-                "The Kitchen state does not include :kitchen_terraform_output; this implies that the " \
+                "The Kitchen state does not include :kitchen_terraform_outputs; this implies that the " \
                   "kitchen-terraform provisioner has not successfully converged"
               )
             )
         end
       end
 
-      context "when the Kitchen state includes :kitchen_terraform_output" do
+      context "when the Kitchen state includes :kitchen_terraform_outputs" do
         let :kitchen_state do
-          {kitchen_terraform_output: kitchen_terraform_output}
+          {kitchen_terraform_outputs: kitchen_terraform_outputs}
         end
 
-        context "when the :kitchen_terraform_output does not include the configured :hostnames key" do
-          let :kitchen_terraform_output do
+        context "when the :kitchen_terraform_outputs does not include the configured :hosts_output key" do
+          let :kitchen_terraform_outputs do
             {}
           end
 
@@ -118,7 +118,7 @@ require "support/kitchen/terraform/configurable_examples"
               .to(
                 raise_error(
                   ::Kitchen::ActionFailed,
-                  /Enumeration of groups and hostnames resulted in failure/
+                  /Enumeration of groups and hosts resulted in failure/
                 )
               )
           end
@@ -162,7 +162,6 @@ require "support/kitchen/terraform/configurable_examples"
               "connection_retries" => 5,
               "connection_retry_sleep" => 1,
               "connection_timeout" => 15,
-              "host" => "hostname",
               "keepalive" => true,
               "keepalive_interval" => 60,
               "key_files" => ["ssh_key"],
@@ -175,14 +174,15 @@ require "support/kitchen/terraform/configurable_examples"
               attributes:
                 {
                   "attribute_name" => "output_value",
-                  "hostnames" => "hostname",
+                  "hosts" => "host",
                   "output_name" => "output_value"
                 },
               attrs: ["attrs.yml"],
               backend: "backend",
               backend_cache: false,
               controls: ["control"],
-              enable_password: "enable_password"
+              enable_password: "enable_password",
+              host: "host"
             }
           end
 
@@ -196,13 +196,13 @@ require "support/kitchen/terraform/configurable_examples"
           end
         end
 
-        context "when the :kitchen_terraform_output does include the configured :hostnames key" do
+        context "when the :kitchen_terraform_outputs does include the configured :hosts_output key" do
           include_context "Inspec::Runner"
 
-          let :kitchen_terraform_output do
+          let :kitchen_terraform_outputs do
             {
               "output_name" => {"value" => "output_value"},
-              "hostnames" => {"value" => "hostname"}
+              "hosts" => {"value" => "host"}
             }
           end
 

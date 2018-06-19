@@ -135,10 +135,10 @@ require "kitchen/terraform/config_schemas/groups"
 #         enable_password: Cisc0!
 # Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
 #
-# ===== hostnames
+# ===== hosts_output
 #
-# This key contains the name of a Terraform output which provides one or more hostnames to be targeted by the InSpec
-# profile of the associated Test Kitchen instance.
+# This key contains the name of a Terraform output which provides one or more hosts to be targeted by the InSpec profile
+# of the associated Test Kitchen instance.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
@@ -146,8 +146,9 @@ require "kitchen/terraform/config_schemas/groups"
 #   _
 #     groups:
 #       -
-#         name: a_group_with_hostnames
-#         hostnames: an_output
+#         name: a_group_with_hosts
+#         backend: ssh
+#         hosts_output: an_output
 # Caveat:: The output must be a string or an array of strings. If this key is omitted then +"localhost"+ will be the
 #          target of the profile. To connect to the hosts through a bastion host, a +ProxyCommand+ in the
 #          appropriate {https://linux.die.net/man/5/ssh_config SSH configuration file} must be configured on the system.

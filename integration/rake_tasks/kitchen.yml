@@ -16,7 +16,7 @@ verifier:
       backend: docker
       controls:
         - operating_system
-      hostnames: hostnames
+      hosts_outpu: hosts
     - name: localhost
       backend: local
       controls:

@@ -16,7 +16,7 @@ verifier:
       backend: docker
       controls:
         - operating_system
-      hostnames: hostnames
+      hosts_output: hosts
     - name: localhost
       attrs:
         - test/integration/example/first_attrs.yml
