@@ -122,9 +122,9 @@ require "support/kitchen/terraform/config_attribute_context"
                         error_message: /groups.*0.*enable_password.*must be filled/, value: [{enable_password: ""}]
       end
 
-      context "when the group associates :hostnames with a nonstring" do
+      context "when the group associates :hosts_output with a nonstring" do
         it_behaves_like "the value is invalid",
-                        error_message: /groups.*0.*hostnames.*must be a string/, value: [{name: "abc", hostnames: 123}]
+                        error_message: /groups.*0.*hosts_output.*must be a string/, value: [{hosts_output: 123}]
       end
 
       context "when the group associates :port with a noninteger" do

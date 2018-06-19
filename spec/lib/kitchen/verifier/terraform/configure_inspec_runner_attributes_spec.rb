@@ -28,7 +28,7 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
           .call(
             group: group,
             options: options,
-            output: output
+            outputs: outputs
           )
       end
 
@@ -41,7 +41,7 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
       end
 
       context "when the value of the Terraform output command result is unexpected" do
-        let :output do
+        let :outputs do
           {"name" => {"unexpected" => "value"}}
         end
 
@@ -58,7 +58,7 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
           {attributes: {attribute_name: "not_output_name"}}
         end
 
-        let :output do
+        let :outputs do
           {"output_name" => {"value" => "output_name value"}}
         end
 
@@ -78,7 +78,7 @@ require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
           {attributes: {attribute_name: "output_name"}}
         end
 
-        let :output do
+        let :outputs do
           {"output_name" => {"value" => "output_name value"}}
         end
 
