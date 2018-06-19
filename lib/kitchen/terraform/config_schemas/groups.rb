@@ -28,6 +28,7 @@ require "kitchen/terraform/config_schemas"
         predicates ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
         extend ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
       end
+
       required(:value)
         .each do
           schema do
@@ -38,7 +39,7 @@ require "kitchen/terraform/config_schemas"
             optional(:backend_cache).value :bool?
             optional(:controls).each(:filled?, :str?)
             optional(:enable_password).filled :str?
-            optional(:hostnames).value :str?
+            optional(:hosts_output).filled :str?
             optional(:port).value :int?
 
             optional(:ssh_key)
