@@ -66,7 +66,7 @@ class ::Kitchen::Terraform::InSpec
   # @param options [::Hash] options for execution.
   # @param path [::String] the path to the InSpec profile which contains the controls to be executed.
   def initialize(options:, path:)
-    ::Inspec::Runner.new(options).tap do |runner|
+    ::Inspec::Runner.new(options.merge(logger: ::Inspec::Log.logger)).tap do |runner|
       self.runner = runner
       ::Inspec::Log.info ::String.new "Loaded #{runner.add_target(path: path).last.name}"
     end
