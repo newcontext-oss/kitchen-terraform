@@ -153,6 +153,25 @@ require "kitchen/terraform/config_schemas/groups"
 #          +ProxyCommand+ in the appropriate {https://linux.die.net/man/5/ssh_config SSH configuration file} must be
 #          configured on the system.
 #
+# ===== key_files
+#
+# This key comprises paths to key files (also known as identity files) to be used for
+# {https://linux.die.net/man/1/ssh SSH authentication} with hosts in the Terraform state.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_key_files
+#         backend: ssh
+#         hosts_output: an_output
+#         key_files:
+#           - /path/to/first/key/file
+#           - /path/to/second/key/file
+# Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
+#
 # ===== port
 #
 # This key contains the port to use when connecting with {https://en.wikipedia.org/wiki/Secure_Shell Secure Shell (SSH)}
@@ -167,20 +186,6 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_a_port
 #         port: 1234
 # Caveat:: If this key is omitted then the port of the Test Kitchen SSH transport will be used.
-#
-# ===== ssh_key
-#
-# This key contains the path to a private SSH key to use when connecting with SSH to the hosts of the group.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
-# Required:: False
-# Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_an_ssh_key
-#         ssh_key: /path/to/an/ssh/key</
-# Caveat:: If this key is omitted then the private SSH key of the Test Kitchen SSH Transport will be used.
 #
 # ===== username
 #
