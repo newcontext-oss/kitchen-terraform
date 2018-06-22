@@ -27,4 +27,14 @@ resource "docker_container" "ubuntu" {
   image    = "${docker_image.ubuntu.name}"
   must_run = true
   name     = "ubuntu_container"
+
+  ports {
+    external = 2222
+    internal = 22
+  }
+
+  upload {
+    content = "${file("${path.module}/test/fixtures/id_rsa.pub")}"
+    file    = "/root/.ssh/authorized_keys"
+  }
 }

@@ -40,16 +40,17 @@ end
 # manner similar to the following command-line command.
 #
 #   inspec exec \
-#     [--attrs=<group.attrs>] \
-#     --backend=<group.backend> \
-#     --backend-cache=<group.backend_cache> \
+#     [--attrs=group.attrs] \
+#     --backend=group.backend \
+#     --backend-cache=group.backend_cache \
 #     [--no-color] \
-#     [--controls=<group.controls>] \
-#     --host=<group.hosts_output> \
-#     [--password=<group.password>] \
-#     [--port=<group.port>] \
-#     --profiles-path=test/integration/<suite> \
-#     [--user=<group.username>] \
+#     [--controls=group.controls] \
+#     --host=group.hosts_output \
+#     [--key-files=group.key_files]
+#     [--password=group.password] \
+#     [--port=group.port] \
+#     --profiles-path=test/integration/suite \
+#     [--user=group.username] \
 #
 # === InSpec Profiles
 #
@@ -185,16 +186,13 @@ class ::Kitchen::Verifier::Terraform
       enable_password: group.fetch(:enable_password) do
         ""
       end,
-      host: host
+      host: host,
+      key_files: group.fetch(:key_files) do
+        []
+      end
     )
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
-      .call(
-        group: group,
-        options: inspec_options
-      )
-
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerSSHKey
       .call(
         group: group,
         options: inspec_options
@@ -308,5 +306,4 @@ end
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
 require "kitchen/verifier/terraform/configure_inspec_runner_controls"
 require "kitchen/verifier/terraform/configure_inspec_runner_port"
-require "kitchen/verifier/terraform/configure_inspec_runner_ssh_key"
 require "kitchen/verifier/terraform/configure_inspec_runner_user"
