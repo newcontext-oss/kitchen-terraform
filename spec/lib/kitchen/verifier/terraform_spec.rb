@@ -63,7 +63,7 @@ require "support/kitchen/terraform/configurable_examples"
         ::Kitchen::Instance
           .new(
             driver: ::Kitchen::Driver::Base.new,
-            logger: ::Kitchen::Logger.new,
+            logger: logger,
             platform: ::Kitchen::Platform.new(name: "test-platform"),
             provisioner: ::Kitchen::Provisioner::Base.new,
             state_file:
@@ -76,6 +76,10 @@ require "support/kitchen/terraform/configurable_examples"
             transport: ssh_transport,
             verifier: described_instance
           )
+      end
+
+      let :logger do
+        ::Kitchen::Logger.new
       end
 
       let :ssh_transport do
@@ -183,6 +187,7 @@ require "support/kitchen/terraform/configurable_examples"
               enable_password: "enable_password",
               host: "host",
               key_files: ["first_key_file", "second_key_file"],
+              logger: logger
             }
           end
 
