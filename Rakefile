@@ -198,13 +198,10 @@ file(
 end
 
 namespace :tests do
-  namespace :unit do
-    desc "Run all unit tests"
-
-    task :all do
-      puts "Running all unit tests"
-      sh "#{rspec_binstub} --backtrace"
-    end
+  desc "Run all unit tests"
+  task :unit do
+    puts "Running all unit tests"
+    sh "#{rspec_binstub} --backtrace"
   end
 
   namespace :integration do
@@ -349,32 +346,13 @@ namespace :tests do
         source: prerequisites.first
       )
     end
-
-    desc "Run all integration tests"
-
-    task(
-      :all,
-      [
-        :terraform_version,
-        :terraform_sha256_sum
-      ] =>
-        [
-          "tests:integration:basic",
-          "tests:integration:no_outputs_defined",
-          "tests:integration:shell_words"
-        ]
-    )
   end
 
-  desc "Run all tests"
-
-  task(
-    all:
-      [
-        "tests:unit:all",
-        "tests:integration:all"
-      ]
-  )
+  desc "Run all integration tests"
+  task :integration, [:terraform_version, :terraform_sha256_sum] =>
+    ["tests:integration:basic", "tests:integration:no_outputs_defined", "tests:integration:shell_words"]
 end
 
-task default: "tests:all"
+desc "Run all tests"
+task tests: ["tests:unit", "tests:integration"]
+task default: "tests"
