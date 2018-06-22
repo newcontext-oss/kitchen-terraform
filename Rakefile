@@ -280,7 +280,7 @@ namespace :tests do
       [
         :terraform_version,
         :terraform_sha256_sum
-      ] => ["bin/terraform", "clobber"]
+      ] => ["clobber", "bin/terraform"]
     ) do |current_task|
       puts "Running integration tests for shell words"
 
