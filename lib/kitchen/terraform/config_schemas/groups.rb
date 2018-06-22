@@ -40,14 +40,8 @@ require "kitchen/terraform/config_schemas"
             optional(:controls).each(:filled?, :str?)
             optional(:enable_password).filled :str?
             optional(:hosts_output).filled :str?
+            optional(:key_files).each(:filled?, :str?)
             optional(:port).value :int?
-
-            optional(:ssh_key)
-              .maybe(
-                :str?,
-                :filled?
-              )
-
             optional(:username).value :str?
           end
         end

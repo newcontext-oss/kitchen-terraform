@@ -36,9 +36,9 @@ require "support/kitchen/terraform/configurable_examples"
             controls: ["control"],
             enable_password: "enable_password",
             hosts_output: "hosts",
+            key_files: ["first_key_file", "second_key_file"],
             name: "name",
             port: 1234,
-            ssh_key: "ssh_key",
             username: "username"
           }
         ],
@@ -164,7 +164,6 @@ require "support/kitchen/terraform/configurable_examples"
               "connection_timeout" => 15,
               "keepalive" => true,
               "keepalive_interval" => 60,
-              "key_files" => ["ssh_key"],
               "max_wait_until_ready" => 600,
               "port" => 1234,
               "sudo" => false,
@@ -182,7 +181,8 @@ require "support/kitchen/terraform/configurable_examples"
               backend_cache: false,
               controls: ["control"],
               enable_password: "enable_password",
-              host: "host"
+              host: "host",
+              key_files: ["first_key_file", "second_key_file"],
             }
           end
 
