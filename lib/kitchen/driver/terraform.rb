@@ -284,7 +284,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
                   command: "version",
                   options:
                     {
-                      cwd: ".",
+                      cwd: ::Dir.pwd,
                       live_stream: logger,
                       timeout: 600
                     }
