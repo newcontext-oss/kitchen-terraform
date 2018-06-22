@@ -191,6 +191,7 @@ verifier:
   name: terraform
   groups:
     - name: container
+      backend: ssh
       hosts_output: container_hostname
       port: 2222
       username: root
