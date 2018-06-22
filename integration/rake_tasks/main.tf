@@ -27,19 +27,4 @@ resource "docker_container" "ubuntu" {
   image    = "${docker_image.ubuntu.name}"
   must_run = true
   name     = "ubuntu_container"
-
-  ports {
-    external = 2222
-    internal = 22
-  }
-}
-
-output "backend_state" {
-  description = "The path to the backend state file"
-  value       = "${path.module}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate"
-}
-
-output "hostnames" {
-  description = "The hostnames to test"
-  value       = ["localhost"]
 }

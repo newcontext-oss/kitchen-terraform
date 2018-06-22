@@ -41,7 +41,7 @@ require "mixlib/shellout"
       end
 
       let :environment do
-        {"TF_IN_AUTOMATION" => "true"}
+        {"TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1"}
       end
 
       let :logger do

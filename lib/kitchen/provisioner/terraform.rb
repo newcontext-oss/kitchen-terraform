@@ -98,7 +98,7 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
       .apply do |output:|
         state
           .store(
-            :kitchen_terraform_output,
+            :kitchen_terraform_outputs,
             output
           )
       end

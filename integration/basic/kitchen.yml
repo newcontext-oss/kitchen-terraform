@@ -13,12 +13,21 @@ verifier:
   name: terraform
   groups:
     - name: container
+      backend: ssh
       controls:
         - operating_system
+      hosts_output: hosts
+      key_files:
+        - test/fixtures/id_rsa
       port: 2222
-      hostnames: hostnames
     - name: localhost
+      attrs:
+        - test/integration/example/first_attrs.yml
+        - test/integration/example/second_attrs.yml
+      backend: local
+      backend_cache: false
       controls:
+        - attrs
         - state_files
 
 platforms:

@@ -191,7 +191,8 @@ verifier:
   name: terraform
   groups:
     - name: container
-      hostnames: container_hostname
+      backend: ssh
+      hosts_output: container_hostname
       port: 2222
       username: root
 
@@ -229,6 +230,7 @@ resource "docker_container" "ubuntu" {
   }
 }
 ```
+
 > ./outputs.tf
 
 ```hcl

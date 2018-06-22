@@ -19,6 +19,7 @@ require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
+require "kitchen/terraform/group_and_hosts_enumerator"
 
 # This namespace is defined by Kitchen.
 #
@@ -39,15 +40,17 @@ end
 # manner similar to the following command-line command.
 #
 #   inspec exec \
-#     [--attrs=<terraform_outputs>] \
-#     --backend=<ssh|local> \
+#     [--attrs=group.attrs] \
+#     --backend=group.backend \
+#     --backend-cache=group.backend_cache \
 #     [--no-color] \
-#     [--controls=<group.controls>] \
-#     --host=<group.hostnames.current|localhost> \
-#     [--password=<group.password>] \
-#     [--port=<group.port>] \
-#     --profiles-path=test/integration/<suite> \
-#     [--user=<group.username>] \
+#     [--controls=group.controls] \
+#     --host=group.hosts_output \
+#     [--key-files=group.key_files]
+#     [--password=group.password] \
+#     [--port=group.port] \
+#     --profiles-path=test/integration/suite \
+#     [--user=group.username] \
 #
 # === InSpec Profiles
 #
@@ -90,16 +93,13 @@ class ::Kitchen::Verifier::Terraform
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def call(kitchen_state)
-    load_output kitchen_state: kitchen_state
+    load_outputs kitchen_state: kitchen_state
 
-    ::Kitchen::Verifier::Terraform::EnumerateGroupsAndHostnames
-      .call(
-        groups: config_groups,
-        output: output
-      ) do |group:, hostname:|
+    ::Kitchen::Terraform::GroupAndHostsEnumerator.new(groups: config_groups, outputs: outputs)
+      .each_group_and_hosts do |group:, host:|
         verify(
           group: group,
-          hostname: hostname
+          host: host
         )
       end
   rescue ::Kitchen::Terraform::Error => error
@@ -144,8 +144,7 @@ class ::Kitchen::Verifier::Terraform
 
   private
 
-  attr_accessor :inspec_options
-  attr_reader :output
+  attr_accessor :inspec_options, :outputs
 
   # @api private
   def configure_inspec_connection_options(transport_connection_options:)
@@ -178,26 +177,22 @@ class ::Kitchen::Verifier::Terraform
   end
 
   # @api private
-  def configure_inspec_group_connection_options(group:, hostname:)
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerBackend
-      .call(
-        hostname: hostname,
-        options: inspec_options
-      )
-
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerHost
-      .call(
-        hostname: hostname,
-        options: inspec_options
-      )
+  def configure_inspec_group_connection_options(group:, host:)
+    inspec_options.merge!(
+      backend: group.fetch(:backend),
+      backend_cache: group.fetch(:backend_cache) do
+        true
+      end,
+      enable_password: group.fetch(:enable_password) do
+        ""
+      end,
+      host: host,
+      key_files: group.fetch(:key_files) do
+        []
+      end
+    )
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
-      .call(
-        group: group,
-        options: inspec_options
-      )
-
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerSSHKey
       .call(
         group: group,
         options: inspec_options
@@ -212,11 +207,18 @@ class ::Kitchen::Verifier::Terraform
 
   # @api private
   def configure_inspec_profile_options(group:)
+    inspec_options.store(
+      :attrs,
+      group.fetch(:attrs) do
+        []
+      end
+    )
+
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
       .call(
         group: group,
         options: inspec_options,
-        output: output
+        outputs: outputs
       )
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
@@ -230,24 +232,20 @@ class ::Kitchen::Verifier::Terraform
   def configure_inspec_miscellaneous_options
     inspec_options
       .merge!(
-        "backend" => "ssh",
         "color" => config_color,
-        "logger" => logger,
         "sudo" => false,
         "sudo_command" => "sudo -E",
-        "sudo_options" => "",
-        attrs: nil,
-        backend_cache: false
+        "sudo_options" => ""
       )
   end
 
   # @api private
-  def load_output(kitchen_state:)
-    @output = ::Kitchen::Util.stringified_hash Hash kitchen_state.fetch :kitchen_terraform_output
+  def load_outputs(kitchen_state:)
+    self.outputs = ::Kitchen::Util.stringified_hash Hash kitchen_state.fetch :kitchen_terraform_outputs
   rescue ::KeyError
     raise(
       ::Kitchen::Terraform::Error,
-      "The Kitchen state does not include :kitchen_terraform_output; this implies that the kitchen-terraform " \
+      "The Kitchen state does not include :kitchen_terraform_outputs; this implies that the kitchen-terraform " \
         "provisioner has not successfully converged"
     )
   end
@@ -259,17 +257,14 @@ class ::Kitchen::Verifier::Terraform
   end
 
   # @api private
-  def inspec_target
-    {
-      path:
-        ::File
-          .join(
-            config.fetch(:test_base_path),
-            instance
-              .suite
-              .name
-          )
-    }
+  def inspec_profile_path
+    ::File
+      .join(
+        config.fetch(:test_base_path),
+        instance
+          .suite
+          .name
+      )
   end
 
   # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
@@ -279,6 +274,7 @@ class ::Kitchen::Verifier::Terraform
   # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/configurable.rb#L252-L274
   def load_needed_dependencies!
     require "kitchen/terraform/inspec"
+    ::Kitchen::Terraform::InSpec.logger = logger
   rescue ::LoadError => load_error
     raise(
       ::Kitchen::ClientError,
@@ -288,27 +284,26 @@ class ::Kitchen::Verifier::Terraform
 
   # @api private
   # @raise [::Kitchen::Terraform::Error] if running InSpec results in failure.
-  def verify(group:, hostname:)
-    info "Verifying host '#{hostname}' of group '#{group.fetch :name}'"
+  def verify(group:, host:)
+    info "Verifying host '#{host}' of group '#{group.fetch :name}'"
 
     configure_inspec_group_connection_options(
       group: group,
-      hostname: hostname
+      host: host
     )
 
     configure_inspec_profile_options group: group
 
     ::Kitchen::Terraform::InSpec
-      .new(options: inspec_options)
-      .run(target: inspec_target)
+      .new(
+        options: inspec_options,
+        path: inspec_profile_path
+      )
+      .exec
   end
 end
 
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
-require "kitchen/verifier/terraform/configure_inspec_runner_backend"
 require "kitchen/verifier/terraform/configure_inspec_runner_controls"
-require "kitchen/verifier/terraform/configure_inspec_runner_host"
 require "kitchen/verifier/terraform/configure_inspec_runner_port"
-require "kitchen/verifier/terraform/configure_inspec_runner_ssh_key"
 require "kitchen/verifier/terraform/configure_inspec_runner_user"
-require "kitchen/verifier/terraform/enumerate_groups_and_hostnames"

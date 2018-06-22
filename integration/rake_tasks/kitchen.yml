@@ -13,11 +13,12 @@ verifier:
   name: terraform
   groups:
     - name: container
+      backend: docker
       controls:
         - operating_system
-      port: 2222
-      hostnames: hostnames
+      hosts_outpu: hosts
     - name: localhost
+      backend: local
       controls:
         - state_files
 

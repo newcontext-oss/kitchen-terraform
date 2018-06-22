@@ -25,23 +25,25 @@ require "support/kitchen/terraform/configurable_examples"
 ::RSpec
   .describe ::Kitchen::Verifier::Terraform do
     let :described_instance do
-      described_class
-        .new(
-          color: false,
-          groups:
-            [
-              {
-                attributes: {attribute_name: "output_name"},
-                controls: ["control"],
-                hostnames: "hostnames",
-                name: "name",
-                port: 1234,
-                ssh_key: "ssh_key",
-                username: "username"
-              }
-            ],
-          test_base_path: "/test/base/path"
-        )
+      described_class.new(
+        color: false,
+        groups: [
+          {
+            attributes: {attribute_name: "output_name"},
+            attrs: ["attrs.yml"],
+            backend: "backend",
+            backend_cache: false,
+            controls: ["control"],
+            enable_password: "enable_password",
+            hosts_output: "hosts",
+            key_files: ["first_key_file", "second_key_file"],
+            name: "name",
+            port: 1234,
+            username: "username"
+          }
+        ],
+        test_base_path: "/test/base/path"
+      )
     end
 
     it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
@@ -61,7 +63,7 @@ require "support/kitchen/terraform/configurable_examples"
         ::Kitchen::Instance
           .new(
             driver: ::Kitchen::Driver::Base.new,
-            logger: ::Kitchen::Logger.new,
+            logger: logger,
             platform: ::Kitchen::Platform.new(name: "test-platform"),
             provisioner: ::Kitchen::Provisioner::Base.new,
             state_file:
@@ -76,6 +78,10 @@ require "support/kitchen/terraform/configurable_examples"
           )
       end
 
+      let :logger do
+        ::Kitchen::Logger.new
+      end
+
       let :ssh_transport do
         ::Kitchen::Transport::Ssh.new
       end
@@ -84,7 +90,7 @@ require "support/kitchen/terraform/configurable_examples"
         described_instance.finalize_config! kitchen_instance
       end
 
-      context "when the Kitchen state omits :kitchen_terraform_output" do
+      context "when the Kitchen state omits :kitchen_terraform_outputs" do
         let :kitchen_state do
           {}
         end
@@ -94,20 +100,20 @@ require "support/kitchen/terraform/configurable_examples"
             .to(
               raise_error(
                 ::Kitchen::ActionFailed,
-                "The Kitchen state does not include :kitchen_terraform_output; this implies that the " \
+                "The Kitchen state does not include :kitchen_terraform_outputs; this implies that the " \
                   "kitchen-terraform provisioner has not successfully converged"
               )
             )
         end
       end
 
-      context "when the Kitchen state includes :kitchen_terraform_output" do
+      context "when the Kitchen state includes :kitchen_terraform_outputs" do
         let :kitchen_state do
-          {kitchen_terraform_output: kitchen_terraform_output}
+          {kitchen_terraform_outputs: kitchen_terraform_outputs}
         end
 
-        context "when the :kitchen_terraform_output does not include the configured :hostnames key" do
-          let :kitchen_terraform_output do
+        context "when the :kitchen_terraform_outputs does not include the configured :hosts_output key" do
+          let :kitchen_terraform_outputs do
             {}
           end
 
@@ -116,7 +122,7 @@ require "support/kitchen/terraform/configurable_examples"
               .to(
                 raise_error(
                   ::Kitchen::ActionFailed,
-                  /Enumeration of groups and hostnames resulted in failure/
+                  /Enumeration of groups and hosts resulted in failure/
                 )
               )
           end
@@ -154,18 +160,14 @@ require "support/kitchen/terraform/configurable_examples"
 
           let :runner_options do
             {
-              "backend" => "ssh",
               "color" => false,
               "compression" => false,
               "compression_level" => 0,
               "connection_retries" => 5,
               "connection_retry_sleep" => 1,
               "connection_timeout" => 15,
-              "host" => "hostname",
               "keepalive" => true,
               "keepalive_interval" => 60,
-              "key_files" => ["ssh_key"],
-              "logger" => kitchen_instance.logger,
               "max_wait_until_ready" => 600,
               "port" => 1234,
               "sudo" => false,
@@ -175,12 +177,17 @@ require "support/kitchen/terraform/configurable_examples"
               attributes:
                 {
                   "attribute_name" => "output_value",
-                  "hostnames" => "hostname",
+                  "hosts" => "host",
                   "output_name" => "output_value"
                 },
-              attrs: nil,
+              attrs: ["attrs.yml"],
+              backend: "backend",
               backend_cache: false,
-              controls: ["control"]
+              controls: ["control"],
+              enable_password: "enable_password",
+              host: "host",
+              key_files: ["first_key_file", "second_key_file"],
+              logger: logger
             }
           end
 
@@ -194,13 +201,13 @@ require "support/kitchen/terraform/configurable_examples"
           end
         end
 
-        context "when the :kitchen_terraform_output does include the configured :hostnames key" do
+        context "when the :kitchen_terraform_outputs does include the configured :hosts_output key" do
           include_context "Inspec::Runner"
 
-          let :kitchen_terraform_output do
+          let :kitchen_terraform_outputs do
             {
               "output_name" => {"value" => "output_value"},
-              "hostnames" => {"value" => "hostname"}
+              "hosts" => {"value" => "host"}
             }
           end
 

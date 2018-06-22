@@ -32,8 +32,8 @@ require "kitchen/terraform/config_schemas/groups"
 # Example::
 #   _
 #     groups:
-#       -
-#         name: a_group
+#       - name: a_group
+#         backend: local
 #
 # ===== attributes
 #
@@ -51,15 +51,60 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_overridden_attributes
 #         attributes:
 #           an_attribute: an_output
+#         backend: local
 # Caveat:: As all Terraform outputs are associated with equivalently named InSpec profile attributes by default, this
 #          key is only necessary to provide alternative attribute names.
+#
+# ===== attrs
+#
+# This key comprises the paths to
+# {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes} files.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_profile_attributes
+#         attrs:
+#           - /path/to/first_attributes.yml
+#           - /path/to/second_attributes.yml
+#         backend: local
+#
+# ===== backend
+#
+# This key contains the type of {https://www.inspec.io/docs/reference/cli/#exec InSpec backend} to be used for making a
+# connection to hosts.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: True
+# Example::
+#   _
+#     groups:
+#       - name: a_group_with_a_backend
+#         backend: docker
+#
+# ===== backend_cache
+#
+# This key toggles caching of InSpec backend command output.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
+# Required:: False
+# Default:: +true+
+# Example::
+#   _
+#     groups:
+#       - name: a_group_with_no_backend_cache
+#         backend: local
+#         backend_cache: false
 #
 # ===== controls
 #
 # This key comprises the names of {https://www.inspec.io/docs/reference/dsl_inspec/ InSpec controls} to exclusively
 # include from the InSpec profile of the associated Test Kitchen instance.
 #
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequince of scalars}
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
 # Required:: False
 # Example::
 #   _
@@ -75,10 +120,9 @@ require "kitchen/terraform/config_schemas/groups"
 #           - control_two
 #           - control_four
 #
-# ===== hostnames
+# ===== enable_password
 #
-# This key contains the name of a Terraform output which provides one or more hostnames to be targeted by the InSpec
-# profile of the associated Test Kitchen instance.
+# This key contains the password to use for authentication with a Cisco IOS device in enable mode.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
@@ -86,11 +130,47 @@ require "kitchen/terraform/config_schemas/groups"
 #   _
 #     groups:
 #       -
-#         name: a_group_with_hostnames
-#         hostnames: an_output
-# Caveat:: The output must be a string or an array of strings. If this key is omitted then +"localhost"+ will be the
-#          target of the profile. To connect to the hosts through a bastion host, a +ProxyCommand+ in the
-#          appropriate {https://linux.die.net/man/5/ssh_config SSH configuration file} must be configured on the system.
+#         name: a_group_with_enable_password
+#         backend: ssh
+#         enable_password: Cisc0!
+# Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
+#
+# ===== hosts_output
+#
+# This key contains the name of a Terraform output which provides one or more hosts to be targeted by the InSpec profile
+# of the associated Test Kitchen instance.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_hosts
+#         backend: ssh
+#         hosts_output: an_output
+# Caveat:: The output must be a string or an array of strings. To connect to the hosts through a bastion host, a
+#          +ProxyCommand+ in the appropriate {https://linux.die.net/man/5/ssh_config SSH configuration file} must be
+#          configured on the system.
+#
+# ===== key_files
+#
+# This key comprises paths to key files (also known as identity files) to be used for
+# {https://linux.die.net/man/1/ssh SSH authentication} with hosts in the Terraform state.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_key_files
+#         backend: ssh
+#         hosts_output: an_output
+#         key_files:
+#           - /path/to/first/key/file
+#           - /path/to/second/key/file
+# Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
 #
 # ===== port
 #
@@ -106,20 +186,6 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_a_port
 #         port: 1234
 # Caveat:: If this key is omitted then the port of the Test Kitchen SSH transport will be used.
-#
-# ===== ssh_key
-#
-# This key contains the path to a private SSH key to use when connecting with SSH to the hosts of the group.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
-# Required:: False
-# Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_an_ssh_key
-#         ssh_key: /path/to/an/ssh/key</
-# Caveat:: If this key is omitted then the private SSH key of the Test Kitchen SSH Transport will be used.
 #
 # ===== username
 #
