@@ -671,7 +671,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           shell_out_run_failure(
             command: "version",
             message: "mocked `terraform version` failure",
-            working_directory: "."
+            working_directory: ::Dir.pwd
           )
         end
 
@@ -691,7 +691,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           shell_out_run_success(
             command: "version",
             return_value: version_return_value,
-            working_directory: "."
+            working_directory: ::Dir.pwd
           )
         end
 
