@@ -172,7 +172,6 @@ require "support/kitchen/terraform/configurable_examples"
               "keepalive" => true,
               "keepalive_interval" => 60,
               "max_wait_until_ready" => 600,
-              "port" => 1234,
               "sudo" => false,
               "sudo_command" => "sudo -E",
               "sudo_options" => "",
@@ -193,6 +192,7 @@ require "support/kitchen/terraform/configurable_examples"
               password: "password",
               path: "path",
               proxy_command: "proxy_command",
+              port: 1234,
               user: "user"
             }
           end
