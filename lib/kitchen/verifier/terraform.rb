@@ -192,14 +192,10 @@ class ::Kitchen::Verifier::Terraform
       end
     )
 
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
-      .call(
-        group: group,
-        options: inspec_options
-      )
     group.keys.include? :password and inspec_options.store :password, group.fetch(:password)
+    group.keys.include? :user and inspec_options.store :user, group.fetch(:user)
 
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
       .call(
         group: group,
         options: inspec_options
@@ -307,4 +303,3 @@ end
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
 require "kitchen/verifier/terraform/configure_inspec_runner_controls"
 require "kitchen/verifier/terraform/configure_inspec_runner_port"
-require "kitchen/verifier/terraform/configure_inspec_runner_user"

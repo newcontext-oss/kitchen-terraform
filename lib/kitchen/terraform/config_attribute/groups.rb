@@ -204,9 +204,9 @@ require "kitchen/terraform/config_schemas/groups"
 #         port: 1234
 # Caveat:: If this key is omitted then the port of the Test Kitchen SSH transport will be used.
 #
-# ===== username
+# ===== user
 #
-# This key contains the username to use when connecting with SSH to the hosts of the group.
+# This key contains the name of the user to use for authentication with hosts in the Terraform state.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
@@ -214,9 +214,10 @@ require "kitchen/terraform/config_schemas/groups"
 #   _
 #     groups:
 #       -
-#         name: a_group_with_a_username
-#         username: tester
-# Caveat:: If this key is omitted then the username of the Test Kitcen SSH Transport will be used.
+#         name: a_group_with_user
+#         user: tester
+# Caveat:: InSpec will only use this key if it is configured in combination with a backend which supports user
+#          authentication.
 module ::Kitchen::Terraform::ConfigAttribute::Groups
   ::Kitchen::Terraform::ConfigAttribute
     .new(
