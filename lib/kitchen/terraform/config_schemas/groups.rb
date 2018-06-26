@@ -45,6 +45,7 @@ require "kitchen/terraform/config_schemas"
             optional(:path).filled :str?
             optional(:port).value :int?
             optional(:proxy_command).filled :str?
+            optional(:reporter).each(:filled?, :str?)
             optional(:user).filled :str?
           end
         end

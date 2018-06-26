@@ -42,6 +42,7 @@ require "support/kitchen/terraform/configurable_examples"
             path: "path",
             port: 1234,
             proxy_command: "proxy_command",
+            reporter: ["reporter"],
             user: "user"
           }
         ],
@@ -172,6 +173,7 @@ require "support/kitchen/terraform/configurable_examples"
               "keepalive" => true,
               "keepalive_interval" => 60,
               "max_wait_until_ready" => 600,
+              "reporter" => ["reporter"],
               "sudo" => false,
               "sudo_command" => "sudo -E",
               "sudo_options" => "",

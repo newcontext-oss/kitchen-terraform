@@ -172,6 +172,21 @@ require "support/kitchen/terraform/config_attribute_context"
                         error_message: /groups.*0.*port.*must be an integer/, value: [{name: "abc", port: "abc"}]
       end
 
+      context "when the group associates :reporter with a nonarray" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*reporter.*must be an array/, value: [{reporter: 123}]
+      end
+
+      context "when the group associates :reporter with an array which includes a nonstring" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*reporter.*0.*must be a string/, value: [{reporter: [123]}]
+      end
+
+      context "when the group associates :reporter with an array which includes an empty string" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*reporter.*0.*must be filled/, value: [{reporter: [""]}]
+      end
+
       context "when the group associates :user with a nonstring" do
         it_behaves_like "the value is invalid",
                         error_message: /groups.*0.*user.*must be a string/, value: [{user: 123}]
