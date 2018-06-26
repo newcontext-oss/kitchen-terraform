@@ -42,15 +42,16 @@ end
 #   inspec exec \
 #     [--attrs=group.attrs] \
 #     --backend=group.backend \
-#     --backend-cache=group.backend_cache \
+#     [--backend-cache=group.backend_cache] \
 #     [--no-color] \
 #     [--controls=group.controls] \
-#     --host=group.hosts_output \
-#     [--key-files=group.key_files]
+#     [--enable-password=group.enable_password] \
+#     --host=group.hosts_output.x \
+#     [--key-files=group.key_files] \
 #     [--password=group.password] \
 #     [--port=group.port] \
-#     --profiles-path=test/integration/suite \
-#     [--user=group.username] \
+#     [--profiles-path=test/integration/suite] \
+#     [--user=group.user] \
 #
 # === InSpec Profiles
 #
