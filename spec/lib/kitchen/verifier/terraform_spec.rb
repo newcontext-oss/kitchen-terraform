@@ -39,6 +39,7 @@ require "support/kitchen/terraform/configurable_examples"
             key_files: ["first_key_file", "second_key_file"],
             name: "name",
             password: "password",
+            path: "path",
             port: 1234,
             user: "user"
           }
@@ -189,6 +190,7 @@ require "support/kitchen/terraform/configurable_examples"
               key_files: ["first_key_file", "second_key_file"],
               logger: logger,
               password: "password",
+              path: "path",
               user: "user"
             }
           end

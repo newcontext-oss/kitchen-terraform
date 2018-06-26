@@ -49,6 +49,7 @@ end
 #     --host=group.hosts_output.x \
 #     [--key-files=group.key_files] \
 #     [--password=group.password] \
+#     [--path=group.path] \
 #     [--port=group.port] \
 #     [--profiles-path=test/integration/suite] \
 #     [--user=group.user] \
@@ -190,6 +191,7 @@ class ::Kitchen::Verifier::Terraform
     group.keys.include? :enable_password and inspec_options.store :enable_password, group.fetch(:enable_password)
     group.keys.include? :key_files and inspec_options.store :key_files, group.fetch(:key_files)
     group.keys.include? :password and inspec_options.store :password, group.fetch(:password)
+    group.keys.include? :path and inspec_options.store :path, group.fetch(:path)
     group.keys.include? :user and inspec_options.store :user, group.fetch(:user)
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
