@@ -265,6 +265,21 @@ require "kitchen/terraform/config_schemas/groups"
 #         self_signed: true
 # Caveat:: InSpec will only use this key if it is configured in combination with the +winrm+ backend.
 #
+# ===== shell
+#
+# This attribute toggles the use of a subshell when scanning hosts.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
+# Required:: False
+# Example::
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           shell: true
+# Caveat:: InSpec will only use this attribute if the system executing InSpec is Unix-like.
+#
 # ===== user
 #
 # This key contains the name of the user to use for authentication with hosts in the Terraform state.

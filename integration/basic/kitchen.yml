@@ -23,6 +23,7 @@ verifier:
       proxy_command: nc %h %p
       reporter:
         - cli
+      shell: true
     - name: SSH with credentials
       backend: ssh
       controls:
