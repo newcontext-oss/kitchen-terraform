@@ -192,6 +192,7 @@ class ::Kitchen::Verifier::Terraform
     group.keys.include? :key_files and inspec_options.store :key_files, group.fetch(:key_files)
     group.keys.include? :password and inspec_options.store :password, group.fetch(:password)
     group.keys.include? :path and inspec_options.store :path, group.fetch(:path)
+    group.keys.include? :proxy_command and inspec_options.store :proxy_command, group.fetch(:proxy_command)
     group.keys.include? :user and inspec_options.store :user, group.fetch(:user)
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerPort
