@@ -21,14 +21,18 @@ verifier:
         - test/fixtures/id_rsa
       port: 2222
       proxy_command: nc %h %p
+      reporter:
+        - cli
     - name: SSH with credentials
       backend: ssh
       controls:
         - operating_system
       hosts_output: hosts
       password: root
-      user: root
       port: 2222
+      reporter:
+        - documentation
+      user: root
     - name: localhost
       attrs:
         - test/integration/example/first_attrs.yml
@@ -38,6 +42,8 @@ verifier:
       controls:
         - attrs
         - state_files
+      reporter:
+        - progress
 
 platforms:
   - name: ubuntu

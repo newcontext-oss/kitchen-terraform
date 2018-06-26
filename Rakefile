@@ -215,16 +215,11 @@ namespace :tests do
       ] => ["bin/terraform"]
     ) do |current_task|
       puts "Running integration tests for basic functionality"
-
-      execute_kitchen_terraform(
-        grep_pattern:
-          "Test Summary: 1 successful, 0 failures, 0 skipped.*Test Summary: 3 successful, 0 failures, 0 skipped",
-        terraform_path:
-          current_task
-            .prerequisites
-            .first,
-        working_directory: "integration/basic"
-      )
+      execute_kitchen_terraform grep_pattern: "Test Summary: 1 successful, 0 failures, 0 skipped" \
+                                                ".*1 example, 0 failures.*" \
+                                                "3 examples, 0 failures",
+                                terraform_path: current_task.prerequisites.first,
+                                working_directory: "integration/basic"
     end
 
     desc "Run integration tests for no outputs defined"
