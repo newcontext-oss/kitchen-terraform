@@ -197,6 +197,7 @@ class ::Kitchen::Verifier::Terraform
         group: group,
         options: inspec_options
       )
+    group.keys.include? :password and inspec_options.store :password, group.fetch(:password)
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerUser
       .call(
