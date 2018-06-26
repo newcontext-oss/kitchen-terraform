@@ -19,25 +19,27 @@ require "kitchen/terraform/config_schemas/groups"
 
 # This attribute configures the execution of {https://www.inspec.io/docs/reference/profiles/ InSpec profiles} against
 # different groups of resources in the Terraform state. Each group may be configured by using the proceeding attributes.
+# Many of these attributes map directly to {https://www.inspec.io/docs/reference/cli/#exec InSpec exec options}.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760193 Sequence of mappings}
 # Required:: False
 #
 # ===== name
 #
-# This key contains the name of the group to be used for logging purposes.
+# This attribute contains the name of the group to be used for logging purposes.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: True
 # Example::
-#   _
-#     groups:
-#       - name: a_group
-#         backend: local
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
 #
 # ===== attributes
 #
-# This key comprises associations of the names of
+# This attribute comprises associations of the names of
 # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes} with the names of
 # {https://www.terraform.io/docs/configuration/outputs.html Terraform outputs}. The values of the outputs will be
 # exposed as attributes when InSpec executes.
@@ -45,225 +47,234 @@ require "kitchen/terraform/config_schemas/groups"
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760142 Mapping of scalars to scalars}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_overridden_attributes
-#         attributes:
-#           an_attribute: an_output
-#         backend: local
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           attributes:
+#             an_attribute: an_output
 # Caveat:: As all Terraform outputs are associated with equivalently named InSpec profile attributes by default, this
-#          key is only necessary to provide alternative attribute names.
+#          attribute is only necessary to provide alternative attribute names.
 #
 # ===== attrs
 #
-# This key comprises the paths to
+# This attribute comprises the paths to
 # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes} files.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_profile_attributes
-#         attrs:
-#           - /path/to/first_attributes.yml
-#           - /path/to/second_attributes.yml
-#         backend: local
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           attrs:
+#             - /path/to/first_attributes.yml
+#             - /path/to/second_attributes.yml
 #
 # ===== backend
 #
-# This key contains the type of {https://www.inspec.io/docs/reference/cli/#exec InSpec backend} to be used for making a
+# This attribute contains the type of {https://www.inspec.io/docs/reference/cli/#exec InSpec backend} to be used for making a
 # connection to hosts.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: True
 # Example::
-#   _
-#     groups:
-#       - name: a_group_with_a_backend
-#         backend: docker
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           backend: docker
 #
 # ===== backend_cache
 #
-# This key toggles caching of InSpec backend command output.
+# This attribute toggles caching of InSpec backend command output.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
 # Required:: False
-# Default:: +true+
 # Example::
-#   _
-#     groups:
-#       - name: a_group_with_no_backend_cache
-#         backend: local
-#         backend_cache: false
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           backend_cache: false
 #
 # ===== controls
 #
-# This key comprises the names of {https://www.inspec.io/docs/reference/dsl_inspec/ InSpec controls} to exclusively
+# This attribute comprises the names of {https://www.inspec.io/docs/reference/dsl_inspec/ InSpec controls} to exclusively
 # include from the InSpec profile of the associated Test Kitchen instance.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_a_first_subset_of_controls
-#         controls:
-#           - control_one
-#           - control_three
-#       -
-#         name: a_group_with_a_second_subset_of_controls
-#         controls:
-#           - control_two
-#           - control_four
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: first_group
+#           controls:
+#             - control_one
+#             - control_three
+#         - name: second_group
+#           controls:
+#             - control_two
+#             - control_four
 #
 # ===== enable_password
 #
-# This key contains the password to use for authentication with a Cisco IOS device in enable mode.
+# This attribute contains the password to use for authentication with a Cisco IOS device in enable mode.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_enable_password
-#         backend: ssh
-#         enable_password: Cisc0!
-# Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           backend: ssh
+#           enable_password: Cisc0!
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +ssh+ backend.
 #
 # ===== hosts_output
 #
-# This key contains the name of a Terraform output which provides one or more hosts to be targeted by the InSpec profile
+# This attribute contains the name of a Terraform output which provides one or more hosts to be targeted by the InSpec profile
 # of the associated Test Kitchen instance.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_hosts
-#         backend: ssh
-#         hosts_output: an_output
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           hosts_output: an_output
 # Caveat:: The output must be a string or an array of strings.
 #
 # ===== key_files
 #
-# This key comprises paths to key files (also known as identity files) to be used for
+# This attribute comprises paths to key files (also known as identity files) to be used for
 # {https://linux.die.net/man/1/ssh SSH authentication} with hosts in the Terraform state.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_key_files
-#         backend: ssh
-#         hosts_output: an_output
-#         key_files:
-#           - /path/to/first/key/file
-#           - /path/to/second/key/file
-# Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           backend: ssh
+#           key_files:
+#             - /path/to/first/key/file
+#             - /path/to/second/key/file
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +ssh+ backend.
 #
 # ===== password
 #
-# This key contains the password to use for authentication with hosts in the Terraform state.
+# This attribute contains the password to use for authentication with hosts in the Terraform state.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_password
-#         backend: ssh
-#         password: Th3P455I5Th3W0rd
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           backend: ssh
+#           password: Th3P455I5Th3W0rd
 #
-# Caveat:: InSpec will only use this key if it is configured in combination with a backend which supports password
+# Caveat:: InSpec will only use this attribute if it is configured in combination with a backend which supports password
 #          authentication.
 #
 # ===== path
 #
-# This key contains the login path to use when connecting to a target.
+# This attribute contains the login path to use when connecting to a target.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_path
-#         backend: winrm
-#         path: /login
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           backend: winrm
+#           path: /login
 #
-# Caveat:: InSpec will only use this key if it is configured in combination with the +winrm+ backend.
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +winrm+ backend.
 #
 # ===== port
 #
-# This key contains the port to use when connecting with {https://en.wikipedia.org/wiki/Secure_Shell Secure Shell (SSH)}
+# This attribute contains the port to use when connecting with {https://en.wikipedia.org/wiki/Secure_Shell Secure Shell (SSH)}
 # to the hosts of the group.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803828 Integer}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_a_port
-#         port: 1234
-# Caveat:: If this key is omitted then the port of the Test Kitchen SSH transport will be used.
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           port: 1234
+# Caveat:: If this attribute is omitted then the port of the Test Kitchen SSH transport will be used.
 #
 # ===== proxy_command
 #
-# This key contains the proxy command to use when connecting to a target via SSH.
+# This attribute contains the proxy command to use when connecting to a target via SSH.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_proxy_command
-#         backend: ssh
-#         proxy_command: ssh root@127.0.0.1 -W %h:%p
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           backend: ssh
+#           proxy_command: ssh root@127.0.0.1 -W %h:%p
 #
-# Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +ssh+ backend.
 #
 # ===== reporter
 #
-# This key comprises the {https://www.inspec.io/docs/reference/reporters/#supported-reporters InSpec reporters}
+# This attribute comprises the {https://www.inspec.io/docs/reference/reporters/#supported-reporters InSpec reporters}
 # to use when reporting test output.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_reporter
-#         reporter:
-#           - cli
-#           - documentation
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           reporter:
+#             - cli
+#             - documentation
 #
 # ===== self_signed
 #
-# This key toggles permission to use self-signed certificates while scanning remote Windows hosts.
+# This attribute toggles permission to use self-signed certificates while scanning remote Windows hosts.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
 # Required:: False
-# Default:: +true+
 # Example::
-#   _
-#     groups:
-#       - name: a_group_with_self_signed
-#         backend: winrm
-#         self_signed: true
-# Caveat:: InSpec will only use this key if it is configured in combination with the +winrm+ backend.
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           backend: winrm
+#           self_signed: true
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +winrm+ backend.
 #
 # ===== shell
 #
@@ -282,17 +293,18 @@ require "kitchen/terraform/config_schemas/groups"
 #
 # ===== user
 #
-# This key contains the name of the user to use for authentication with hosts in the Terraform state.
+# This attribute contains the name of the user to use for authentication with hosts in the Terraform state.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: False
 # Example::
-#   _
-#     groups:
-#       -
-#         name: a_group_with_user
-#         user: tester
-# Caveat:: InSpec will only use this key if it is configured in combination with a backend which supports user
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           user: tester
+# Caveat:: InSpec will only use this attribute if it is configured in combination with a backend which supports user
 #          authentication.
 module ::Kitchen::Terraform::ConfigAttribute::Groups
   ::Kitchen::Terraform::ConfigAttribute
