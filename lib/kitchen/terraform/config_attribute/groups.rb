@@ -149,9 +149,7 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_hosts
 #         backend: ssh
 #         hosts_output: an_output
-# Caveat:: The output must be a string or an array of strings. To connect to the hosts through a bastion host, a
-#          +ProxyCommand+ in the appropriate {https://linux.die.net/man/5/ssh_config SSH configuration file} must be
-#          configured on the system.
+# Caveat:: The output must be a string or an array of strings.
 #
 # ===== key_files
 #
@@ -219,6 +217,22 @@ require "kitchen/terraform/config_schemas/groups"
 #         name: a_group_with_a_port
 #         port: 1234
 # Caveat:: If this key is omitted then the port of the Test Kitchen SSH transport will be used.
+#
+# ===== proxy_command
+#
+# This key contains the proxy command to use when connecting to a target via SSH.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_proxy_command
+#         backend: ssh
+#         proxy_command: ssh root@127.0.0.1 -W %h:%p
+#
+# Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
 #
 # ===== user
 #
