@@ -152,9 +152,14 @@ require "support/kitchen/terraform/config_attribute_context"
                         error_message: /groups.*0.*port.*must be an integer/, value: [{name: "abc", port: "abc"}]
       end
 
-      context "when the group associates :username with a nonstring" do
+      context "when the group associates :user with a nonstring" do
         it_behaves_like "the value is invalid",
-                        error_message: /groups.*0.*username.*must be a string/, value: [{name: "abc", username: 123}]
+                        error_message: /groups.*0.*user.*must be a string/, value: [{user: 123}]
+      end
+
+      context "when the group associates :user with a string which is empty" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*user.*must be filled/, value: [{user: ""}]
       end
     end
   end
