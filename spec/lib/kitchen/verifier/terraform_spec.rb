@@ -40,7 +40,7 @@ require "support/kitchen/terraform/configurable_examples"
             name: "name",
             password: "password",
             port: 1234,
-            username: "username"
+            user: "user"
           }
         ],
         test_base_path: "/test/base/path"
@@ -174,7 +174,6 @@ require "support/kitchen/terraform/configurable_examples"
               "sudo" => false,
               "sudo_command" => "sudo -E",
               "sudo_options" => "",
-              "user" => "username",
               attributes:
                 {
                   "attribute_name" => "output_value",
@@ -190,6 +189,7 @@ require "support/kitchen/terraform/configurable_examples"
               key_files: ["first_key_file", "second_key_file"],
               logger: logger,
               password: "password",
+              user: "user"
             }
           end
 

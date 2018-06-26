@@ -43,7 +43,7 @@ require "kitchen/terraform/config_schemas"
             optional(:key_files).each(:filled?, :str?)
             optional(:password).filled :str?
             optional(:port).value :int?
-            optional(:username).value :str?
+            optional(:user).filled :str?
           end
         end
     end
