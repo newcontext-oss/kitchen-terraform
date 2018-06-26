@@ -182,12 +182,10 @@ class ::Kitchen::Verifier::Terraform
   def configure_inspec_group_connection_options(group:, host:)
     inspec_options.merge!(
       backend: group.fetch(:backend),
-      backend_cache: group.fetch(:backend_cache) do
-        true
-      end,
       host: host
     )
 
+    group.keys.include? :backend_cache and inspec_options.store :backend_cache, group.fetch(:backend_cache)
     group.keys.include? :enable_password and inspec_options.store :enable_password, group.fetch(:enable_password)
     group.keys.include? :key_files and inspec_options.store :key_files, group.fetch(:key_files)
     group.keys.include? :password and inspec_options.store :password, group.fetch(:password)
