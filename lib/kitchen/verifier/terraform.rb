@@ -205,6 +205,7 @@ class ::Kitchen::Verifier::Terraform
     )
 
     group.keys.include? :controls and inspec_options.store :controls, group.fetch(:controls)
+    group.keys.include? :reporter and inspec_options.store "reporter", group.fetch(:reporter)
 
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
       .call(
