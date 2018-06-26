@@ -192,6 +192,11 @@ require "support/kitchen/terraform/config_attribute_context"
                         error_message: /groups.*0.*self_signed.*must be boolean/, value: [{self_signed: "abc"}]
       end
 
+      context "when the group associates :shell with a nonboolean" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*shell.*must be boolean/, value: [{shell: "abc"}]
+      end
+
       context "when the group associates :user with a nonstring" do
         it_behaves_like "the value is invalid",
                         error_message: /groups.*0.*user.*must be a string/, value: [{user: 123}]
