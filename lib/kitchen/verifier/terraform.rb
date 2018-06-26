@@ -183,15 +183,11 @@ class ::Kitchen::Verifier::Terraform
       backend_cache: group.fetch(:backend_cache) do
         true
       end,
-      enable_password: group.fetch(:enable_password) do
-        ""
-      end,
-      host: host,
-      key_files: group.fetch(:key_files) do
-        []
-      end
+      host: host
     )
 
+    group.keys.include? :enable_password and inspec_options.store :enable_password, group.fetch(:enable_password)
+    group.keys.include? :key_files and inspec_options.store :key_files, group.fetch(:key_files)
     group.keys.include? :password and inspec_options.store :password, group.fetch(:password)
     group.keys.include? :user and inspec_options.store :user, group.fetch(:user)
 
