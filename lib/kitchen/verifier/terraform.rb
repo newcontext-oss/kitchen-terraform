@@ -192,6 +192,7 @@ class ::Kitchen::Verifier::Terraform
     group.keys.include? :path and inspec_options.store :path, group.fetch(:path)
     group.keys.include? :port and inspec_options.store :port, group.fetch(:port)
     group.keys.include? :proxy_command and inspec_options.store :proxy_command, group.fetch(:proxy_command)
+    group.keys.include? :self_signed and inspec_options.store :self_signed, group.fetch(:self_signed)
     group.keys.include? :user and inspec_options.store :user, group.fetch(:user)
   end
 

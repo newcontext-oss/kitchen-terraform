@@ -43,6 +43,7 @@ require "support/kitchen/terraform/configurable_examples"
             port: 1234,
             proxy_command: "proxy_command",
             reporter: ["reporter"],
+            self_signed: false,
             user: "user"
           }
         ],
@@ -195,6 +196,7 @@ require "support/kitchen/terraform/configurable_examples"
               path: "path",
               proxy_command: "proxy_command",
               port: 1234,
+              self_signed: false,
               user: "user"
             }
           end

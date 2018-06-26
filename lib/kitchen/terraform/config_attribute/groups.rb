@@ -250,6 +250,21 @@ require "kitchen/terraform/config_schemas/groups"
 #           - cli
 #           - documentation
 #
+# ===== self_signed
+#
+# This key toggles permission to use self-signed certificates while scanning remote Windows hosts.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
+# Required:: False
+# Default:: +true+
+# Example::
+#   _
+#     groups:
+#       - name: a_group_with_self_signed
+#         backend: winrm
+#         self_signed: true
+# Caveat:: InSpec will only use this key if it is configured in combination with the +winrm+ backend.
+#
 # ===== user
 #
 # This key contains the name of the user to use for authentication with hosts in the Terraform state.
