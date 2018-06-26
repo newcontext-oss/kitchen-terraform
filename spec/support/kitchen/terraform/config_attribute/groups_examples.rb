@@ -137,6 +137,16 @@ require "support/kitchen/terraform/config_attribute_context"
                         error_message: /groups.*0.*key_files.*0.*must be a string/, value: [{key_files: [123]}]
       end
 
+      context "when the group associates :password with a nonstring" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*password.*must be a string/, value: [{password: 123}]
+      end
+
+      context "when the group associates :password with a string which is empty" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*password.*must be filled/, value: [{password: ""}]
+      end
+
       context "when the group associates :port with a noninteger" do
         it_behaves_like "the value is invalid",
                         error_message: /groups.*0.*port.*must be an integer/, value: [{name: "abc", port: "abc"}]
