@@ -234,6 +234,22 @@ require "kitchen/terraform/config_schemas/groups"
 #
 # Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
 #
+# ===== reporter
+#
+# This key comprises the {https://www.inspec.io/docs/reference/reporters/#supported-reporters InSpec reporters}
+# to use when reporting test output.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_reporter
+#         reporter:
+#           - cli
+#           - documentation
+#
 # ===== user
 #
 # This key contains the name of the user to use for authentication with hosts in the Terraform state.
