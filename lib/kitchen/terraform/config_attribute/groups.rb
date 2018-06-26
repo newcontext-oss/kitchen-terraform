@@ -172,6 +172,23 @@ require "kitchen/terraform/config_schemas/groups"
 #           - /path/to/second/key/file
 # Caveat:: InSpec will only use this key if it is configured in combination with the +ssh+ backend.
 #
+# ===== password
+#
+# This key contains the password to use for authentication with hosts in the Terraform state.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_password
+#         backend: ssh
+#         password: Th3P455I5Th3W0rd
+#
+# Caveat:: InSpec will only use this key if it is configured in combination with a backend which supports password
+#          authentication.
+#
 # ===== port
 #
 # This key contains the port to use when connecting with {https://en.wikipedia.org/wiki/Secure_Shell Secure Shell (SSH)}

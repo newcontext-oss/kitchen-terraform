@@ -38,6 +38,7 @@ require "support/kitchen/terraform/configurable_examples"
             hosts_output: "hosts",
             key_files: ["first_key_file", "second_key_file"],
             name: "name",
+            password: "password",
             port: 1234,
             username: "username"
           }
@@ -187,7 +188,8 @@ require "support/kitchen/terraform/configurable_examples"
               enable_password: "enable_password",
               host: "host",
               key_files: ["first_key_file", "second_key_file"],
-              logger: logger
+              logger: logger,
+              password: "password",
             }
           end
 
