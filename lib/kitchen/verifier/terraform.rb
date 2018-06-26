@@ -208,17 +208,13 @@ class ::Kitchen::Verifier::Terraform
       end
     )
 
+    group.keys.include? :controls and inspec_options.store :controls, group.fetch(:controls)
+
     ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
       .call(
         group: group,
         options: inspec_options,
         outputs: outputs
-      )
-
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerControls
-      .call(
-        group: group,
-        options: inspec_options
       )
   end
 
@@ -298,5 +294,4 @@ class ::Kitchen::Verifier::Terraform
 end
 
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
-require "kitchen/verifier/terraform/configure_inspec_runner_controls"
 require "kitchen/verifier/terraform/configure_inspec_runner_port"
