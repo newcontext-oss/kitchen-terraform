@@ -42,6 +42,7 @@ require "kitchen/terraform/config_schemas"
             optional(:hosts_output).filled :str?
             optional(:key_files).each(:filled?, :str?)
             optional(:password).filled :str?
+            optional(:path).filled :str?
             optional(:port).value :int?
             optional(:user).filled :str?
           end

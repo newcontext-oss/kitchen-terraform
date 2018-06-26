@@ -189,6 +189,22 @@ require "kitchen/terraform/config_schemas/groups"
 # Caveat:: InSpec will only use this key if it is configured in combination with a backend which supports password
 #          authentication.
 #
+# ===== path
+#
+# This key contains the login path to use when connecting to a target.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: False
+# Example::
+#   _
+#     groups:
+#       -
+#         name: a_group_with_path
+#         backend: winrm
+#         path: /login
+#
+# Caveat:: InSpec will only use this key if it is configured in combination with the +winrm+ backend.
+#
 # ===== port
 #
 # This key contains the port to use when connecting with {https://en.wikipedia.org/wiki/Secure_Shell Secure Shell (SSH)}
