@@ -516,4 +516,4 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 [@walterdolce]: https://github.com/walterdolce
 [@xmik]: https://github.com/xmik
 [code climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
-[travis ci build plan]: https://travis-ci.org/newcontext-oss/kitchen-terraform
+[travis ci build plan]: https://travis-ci.com/newcontext-oss/kitchen-terraform

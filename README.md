@@ -363,7 +363,7 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 
 <!-- Markdown links and image definitions -->
 [build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg?style=plastic
-[build-status]: https://travis-ci.org/newcontext-oss/kitchen-terraform
+[build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [bundler-getting-started]: https://bundler.io/#getting-started
 [bundler-in-depth]: https://bundler.io/gemfile.html
 [bundler]: https://bundler.io/index.html#getting-started

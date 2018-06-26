@@ -209,4 +209,4 @@ bin/middleman build --build-dir docs
 [terraform-docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
 [terraform]: https://www.terraform.io/
 [test-kitchen]: https://github.com/test-kitchen/test-kitchen/tree/v1.16.0
-[travis-ci]: https://travis-ci.org/newcontext-oss/kitchen-terraform
+[travis-ci]: https://travis-ci.com/newcontext-oss/kitchen-terraform

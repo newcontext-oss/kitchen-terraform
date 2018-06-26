@@ -868,7 +868,8 @@ The public key material to use for SSH authentication with the instances
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
-  <span class="c1"># awspec will be required to test AWS resources until Kitchen-Terraform supports the AWS InSpec backend.</span>
+  <span class="c1"># awspec will be required to test AWS resources until Kitchen-Terraform supports</span>
+  <span class="c1"># the AWS InSpec backend</span>
   <span class="n">gem</span><span class="p">(</span>
     <span class="s2">"awspec"</span><span class="p">,</span>
     <span class="s2">"~&gt; 1.5"</span>
@@ -876,7 +877,7 @@ The public key material to use for SSH authentication with the instances
 
   <span class="n">gem</span><span class="p">(</span>
     <span class="s2">"kitchen-terraform"</span><span class="p">,</span>
-    <span class="s2">"~&gt; 3.1"</span>
+    <span class="s2">"~&gt; 3.3"</span>
   <span class="p">)</span>
 <span class="k">end</span>
 
