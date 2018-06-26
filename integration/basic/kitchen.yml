@@ -12,13 +12,21 @@ transport:
 verifier:
   name: terraform
   groups:
-    - name: container
+    - name: SSH with key files
       backend: ssh
       controls:
         - operating_system
       hosts_output: hosts
       key_files:
         - test/fixtures/id_rsa
+      port: 2222
+    - name: SSH with credentials
+      backend: ssh
+      controls:
+        - operating_system
+      hosts_output: hosts
+      password: root
+      user: root
       port: 2222
     - name: localhost
       attrs:
