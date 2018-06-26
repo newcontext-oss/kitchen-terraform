@@ -41,6 +41,7 @@ require "support/kitchen/terraform/configurable_examples"
             password: "password",
             path: "path",
             port: 1234,
+            proxy_command: "proxy_command",
             user: "user"
           }
         ],
@@ -191,6 +192,7 @@ require "support/kitchen/terraform/configurable_examples"
               logger: logger,
               password: "password",
               path: "path",
+              proxy_command: "proxy_command",
               user: "user"
             }
           end

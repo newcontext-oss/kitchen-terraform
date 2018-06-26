@@ -157,6 +157,16 @@ require "support/kitchen/terraform/config_attribute_context"
                         error_message: /groups.*0.*path.*must be filled/, value: [{path: ""}]
       end
 
+      context "when the group associates :proxy_command with a nonstring" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*proxy_command.*must be a string/, value: [{proxy_command: 123}]
+      end
+
+      context "when the group associates :proxy_command with a string which is empty" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*proxy_command.*must be filled/, value: [{proxy_command: ""}]
+      end
+
       context "when the group associates :port with a noninteger" do
         it_behaves_like "the value is invalid",
                         error_message: /groups.*0.*port.*must be an integer/, value: [{name: "abc", port: "abc"}]

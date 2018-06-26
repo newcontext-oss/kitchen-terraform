@@ -140,7 +140,8 @@ require "rubygems"
   specification
     .add_runtime_dependency(
       "inspec",
-      "~> 2.1"
+      ">= 2.1.10",
+      "< 3"
     )
 
   specification
