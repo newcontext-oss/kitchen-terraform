@@ -291,6 +291,22 @@ require "kitchen/terraform/config_schemas/groups"
 #           shell: true
 # Caveat:: InSpec will only use this attribute if the system executing InSpec is Unix-like.
 #
+# ===== shell_command
+#
+# This attribute contains the shell command to use when connecting to a target.
+#
+# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+# Required:: False
+# Example::
+#   *kitchen.yml*
+#     verifier:
+#       name: terraform
+#       groups:
+#         - name: a_group
+#           shell: true
+#           shell_command: /bin/ksh
+# Caveat:: InSpec will only use this attribute if it is configured in combination with +shell: true+.
+#
 # ===== user
 #
 # This attribute contains the name of the user to use for authentication with hosts in the Terraform state.

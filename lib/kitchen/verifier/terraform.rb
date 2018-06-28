@@ -194,6 +194,7 @@ class ::Kitchen::Verifier::Terraform
     group.keys.include? :proxy_command and inspec_options.store :proxy_command, group.fetch(:proxy_command)
     group.keys.include? :self_signed and inspec_options.store :self_signed, group.fetch(:self_signed)
     group.keys.include? :shell and inspec_options.store :shell, group.fetch(:shell)
+    group.keys.include? :shell_command and inspec_options.store :shell_command, group.fetch(:shell_command)
     group.keys.include? :user and inspec_options.store :user, group.fetch(:user)
   end
 

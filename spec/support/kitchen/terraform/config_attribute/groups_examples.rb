@@ -197,6 +197,16 @@ require "support/kitchen/terraform/config_attribute_context"
                         error_message: /groups.*0.*shell.*must be boolean/, value: [{shell: "abc"}]
       end
 
+      context "when the group associates :shell_command with a nonstring" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*shell_command.*must be a string/, value: [{shell_command: 123}]
+      end
+
+      context "when the group associates :shell_command with a string which is empty" do
+        it_behaves_like "the value is invalid",
+                        error_message: /groups.*0.*shell_command.*must be filled/, value: [{shell_command: ""}]
+      end
+
       context "when the group associates :user with a nonstring" do
         it_behaves_like "the value is invalid",
                         error_message: /groups.*0.*user.*must be a string/, value: [{user: 123}]
