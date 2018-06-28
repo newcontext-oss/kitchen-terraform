@@ -45,6 +45,7 @@ require "support/kitchen/terraform/configurable_examples"
             reporter: ["reporter"],
             self_signed: false,
             shell: false,
+            shell_command: "/bin/shell",
             user: "user"
           }
         ],
@@ -199,6 +200,7 @@ require "support/kitchen/terraform/configurable_examples"
               port: 1234,
               self_signed: false,
               shell: false,
+              shell_command: "/bin/shell",
               user: "user"
             }
           end

@@ -24,6 +24,7 @@ verifier:
       reporter:
         - cli
       shell: true
+      shell_command: /bin/sh
     - name: SSH with credentials
       backend: ssh
       controls:
