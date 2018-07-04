@@ -49,6 +49,7 @@ require "kitchen/terraform/config_schemas"
             optional(:self_signed).value :bool?
             optional(:shell).value :bool?
             optional(:shell_command).filled :str?
+            optional(:shell_options).filled :str?
             optional(:user).filled :str?
           end
         end
