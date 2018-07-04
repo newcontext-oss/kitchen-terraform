@@ -46,6 +46,7 @@ require "support/kitchen/terraform/configurable_examples"
             self_signed: false,
             shell: false,
             shell_command: "/bin/shell",
+            shell_options: "--option=value",
             user: "user"
           }
         ],
@@ -201,6 +202,7 @@ require "support/kitchen/terraform/configurable_examples"
               self_signed: false,
               shell: false,
               shell_command: "/bin/shell",
+              shell_options: "--option=value",
               user: "user"
             }
           end
