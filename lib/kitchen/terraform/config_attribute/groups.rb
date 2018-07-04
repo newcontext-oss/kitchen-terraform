@@ -138,7 +138,7 @@ require "kitchen/terraform/config_schemas/groups"
 #         - name: a_group
 #           backend: ssh
 #           enable_password: Cisc0!
-# Caveat:: InSpec will only use this attribute if it is configured in combination with the +ssh+ backend.
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +backend: ssh+.
 #
 # ===== hosts_output
 #
@@ -173,7 +173,7 @@ require "kitchen/terraform/config_schemas/groups"
 #           key_files:
 #             - /path/to/first/key/file
 #             - /path/to/second/key/file
-# Caveat:: InSpec will only use this attribute if it is configured in combination with the +ssh+ backend.
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +backend: ssh+.
 #
 # ===== password
 #
@@ -207,8 +207,7 @@ require "kitchen/terraform/config_schemas/groups"
 #         - name: a_group
 #           backend: winrm
 #           path: /login
-#
-# Caveat:: InSpec will only use this attribute if it is configured in combination with the +winrm+ backend.
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +backend: winrm+.
 #
 # ===== port
 #
@@ -240,8 +239,7 @@ require "kitchen/terraform/config_schemas/groups"
 #         - name: a_group
 #           backend: ssh
 #           proxy_command: ssh root@127.0.0.1 -W %h:%p
-#
-# Caveat:: InSpec will only use this attribute if it is configured in combination with the +ssh+ backend.
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +backend: ssh+.
 #
 # ===== reporter
 #
@@ -274,7 +272,7 @@ require "kitchen/terraform/config_schemas/groups"
 #         - name: a_group
 #           backend: winrm
 #           self_signed: true
-# Caveat:: InSpec will only use this attribute if it is configured in combination with the +winrm+ backend.
+# Caveat:: InSpec will only use this attribute if it is configured in combination with the +backend: winrm+.
 #
 # ===== shell
 #
