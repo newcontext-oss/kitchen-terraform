@@ -76,8 +76,8 @@ require "kitchen/terraform/config_schemas/groups"
 #
 # ===== backend
 #
-# This attribute contains the type of {https://www.inspec.io/docs/reference/cli/#exec InSpec backend} to be used for making a
-# connection to hosts.
+# This attribute contains the type of {https://www.inspec.io/docs/reference/cli/#exec InSpec backend} to be used for
+# making a connection to hosts.
 #
 # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
 # Required:: True
