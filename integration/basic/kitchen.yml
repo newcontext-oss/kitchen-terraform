@@ -25,6 +25,7 @@ verifier:
         - cli
       shell: true
       shell_command: /bin/sh
+      shell_options: -x
     - name: SSH with credentials
       backend: ssh
       controls:
