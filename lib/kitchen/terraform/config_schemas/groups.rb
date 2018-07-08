@@ -14,43 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry-validation"
-require "kitchen/terraform/config_predicates/hash_of_symbols_and_strings"
+require "dry/validation"
 require "kitchen/terraform/config_schemas"
+require "kitchen/terraform/config_schemas/group"
 
-# Kitchen::Terraform::ConfigSchemas::Groups is a validation schema for the groups configuration attribute.
-#
-# @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
-::Kitchen::Terraform::ConfigSchemas::Groups =
-  ::Dry::Validation
-    .Schema do
-      configure do
-        predicates ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
-        extend ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
-      end
-
-      required(:value)
-        .each do
-          schema do
-            required(:name).filled :str?
-            required(:backend).filled :str?
-            optional(:attributes).value :hash_of_symbols_and_strings?
-            optional(:attrs).each(:str?, :filled?)
-            optional(:backend_cache).value :bool?
-            optional(:controls).each(:filled?, :str?)
-            optional(:enable_password).filled :str?
-            optional(:hosts_output).filled :str?
-            optional(:key_files).each(:filled?, :str?)
-            optional(:password).filled :str?
-            optional(:path).filled :str?
-            optional(:port).value :int?
-            optional(:proxy_command).filled :str?
-            optional(:reporter).each(:filled?, :str?)
-            optional(:self_signed).value :bool?
-            optional(:shell).value :bool?
-            optional(:shell_command).filled :str?
-            optional(:shell_options).filled :str?
-            optional(:user).filled :str?
-          end
+module Kitchen
+  module Terraform
+    module ConfigSchemas
+      # Kitchen::Terraform::ConfigSchemas::Groups is a validation schema for the groups configuration attribute.
+      #
+      # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
+      Groups = ::Dry::Validation.Schema do
+        required(:value).each do
+          schema ::Kitchen::Terraform::ConfigSchemas::Group
         end
+      end
     end
+  end
+end
