@@ -14,14 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
+require "kitchen/terraform/config_schemas/groups"
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Groups" do
-  include_context "Kitchen::Terraform::ConfigAttribute", attribute: :groups do
-    describe "the basic schema" do
-      context "when the config omits :groups" do
-        it_behaves_like "a default value is used", default_value: []
-      end
+::RSpec.describe ::Kitchen::Terraform::ConfigSchemas::Groups do
+  subject do
+    described_class
+  end
+
+  describe ".call" do
+    specify "the value must be an array" do
+      expect(subject.call(value: 123).errors).to contain_exactly [:value, ["must be an array"]]
+    end
+
+    specify "the value may be an array which includes no elements" do
+      expect(subject.call(value: []).errors).to be_empty
+    end
+
+    specify "the value may be an array which includes hashes" do
+      expect(subject.call(value: [123]).errors).to contain_exactly [:value, {0 => ["must be a hash"]}]
     end
   end
 end
