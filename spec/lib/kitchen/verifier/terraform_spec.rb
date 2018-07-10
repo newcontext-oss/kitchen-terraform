@@ -22,247 +22,239 @@ require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/groups_examples"
 require "support/kitchen/terraform/configurable_examples"
 
-::RSpec
-  .describe ::Kitchen::Verifier::Terraform do
-    let :described_instance do
-      described_class.new(
-        color: false,
-        groups: [
-          {
-            attributes: {attribute_name: "output_name"},
-            attrs: ["attrs.yml"],
-            backend: "backend",
-            backend_cache: false,
-            controls: ["control"],
-            enable_password: "enable_password",
-            hosts_output: "hosts",
-            key_files: ["first_key_file", "second_key_file"],
-            name: "name",
-            password: "password",
-            path: "path",
-            port: 1234,
-            proxy_command: "proxy_command",
-            reporter: ["reporter"],
-            self_signed: false,
-            shell: false,
-            shell_command: "/bin/shell",
-            shell_options: "--option=value",
-            user: "user"
-          }
-        ],
-        test_base_path: "/test/base/path"
-      )
+::RSpec.describe ::Kitchen::Verifier::Terraform do
+  let :described_instance do
+    described_class.new(
+      color: false,
+      groups: [
+        {
+          attributes: {attribute_name: "output_name"},
+          attrs: ["attrs.yml"],
+          backend: "backend",
+          backend_cache: false,
+          bastion_host: "bastion_host",
+          bastion_port: 5678,
+          bastion_user: "bastion_user",
+          controls: ["control"],
+          enable_password: "enable_password",
+          hosts_output: "hosts",
+          key_files: ["first_key_file", "second_key_file"],
+          name: "name",
+          password: "password",
+          path: "path",
+          port: 1234,
+          proxy_command: "proxy_command",
+          reporter: ["reporter"],
+          self_signed: false,
+          shell: false,
+          shell_command: "/bin/shell",
+          shell_options: "--option=value",
+          user: "user",
+        },
+      ],
+      test_base_path: "/test/base/path",
+    )
+  end
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Groups"
+
+  it_behaves_like "Kitchen::Terraform::Configurable"
+
+  describe "#call" do
+    subject do
+      lambda do
+        described_instance.call kitchen_state
+      end
     end
 
-    it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
+    let :kitchen_instance do
+      ::Kitchen::Instance
+        .new(
+          driver: ::Kitchen::Driver::Base.new,
+          logger: logger,
+          platform: ::Kitchen::Platform.new(name: "test-platform"),
+          provisioner: ::Kitchen::Provisioner::Base.new,
+          state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
+          suite: ::Kitchen::Suite.new(name: "test-suite"),
+          transport: ssh_transport,
+          verifier: described_instance,
+        )
+    end
 
-    it_behaves_like "Kitchen::Terraform::ConfigAttribute::Groups"
+    let :logger do
+      ::Kitchen::Logger.new
+    end
 
-    it_behaves_like "Kitchen::Terraform::Configurable"
+    let :ssh_transport do
+      ::Kitchen::Transport::Ssh.new
+    end
 
-    describe "#call" do
-      subject do
-        lambda do
-          described_instance.call kitchen_state
-        end
+    before do
+      described_instance.finalize_config! kitchen_instance
+    end
+
+    context "when the Kitchen state omits :kitchen_terraform_outputs" do
+      let :kitchen_state do
+        {}
       end
 
-      let :kitchen_instance do
-        ::Kitchen::Instance
-          .new(
-            driver: ::Kitchen::Driver::Base.new,
-            logger: logger,
-            platform: ::Kitchen::Platform.new(name: "test-platform"),
-            provisioner: ::Kitchen::Provisioner::Base.new,
-            state_file:
-              ::Kitchen::StateFile
-                .new(
-                  "/kitchen/root",
-                  "test-suite-test-platform"
-                ),
-            suite: ::Kitchen::Suite.new(name: "test-suite"),
-            transport: ssh_transport,
-            verifier: described_instance
+      it do
+        is_expected
+          .to(
+            raise_error(
+              ::Kitchen::ActionFailed,
+              "The Kitchen state does not include :kitchen_terraform_outputs; this implies that the " \
+              "kitchen-terraform provisioner has not successfully converged"
+            )
           )
       end
+    end
 
-      let :logger do
-        ::Kitchen::Logger.new
+    context "when the Kitchen state includes :kitchen_terraform_outputs" do
+      let :kitchen_state do
+        {kitchen_terraform_outputs: kitchen_terraform_outputs}
       end
 
-      let :ssh_transport do
-        ::Kitchen::Transport::Ssh.new
-      end
-
-      before do
-        described_instance.finalize_config! kitchen_instance
-      end
-
-      context "when the Kitchen state omits :kitchen_terraform_outputs" do
-        let :kitchen_state do
+      context "when the :kitchen_terraform_outputs does not include the configured :hosts_output key" do
+        let :kitchen_terraform_outputs do
           {}
         end
 
-        it do
+        it "raise an action failed error" do
           is_expected
             .to(
               raise_error(
                 ::Kitchen::ActionFailed,
-                "The Kitchen state does not include :kitchen_terraform_outputs; this implies that the " \
-                  "kitchen-terraform provisioner has not successfully converged"
+                /Enumeration of groups and hosts resulted in failure/
               )
             )
         end
       end
 
-      context "when the Kitchen state includes :kitchen_terraform_outputs" do
-        let :kitchen_state do
-          {kitchen_terraform_outputs: kitchen_terraform_outputs}
+      shared_context "Inspec::Profile" do
+        let :profile do
+          instance_double ::Inspec::Profile
         end
 
-        context "when the :kitchen_terraform_outputs does not include the configured :hosts_output key" do
-          let :kitchen_terraform_outputs do
-            {}
+        before do
+          allow(profile).to receive(:name).and_return "profile-name"
+        end
+      end
+
+      shared_context "Inspec::Runner instance" do
+        include_context "Inspec::Profile"
+
+        let :runner do
+          instance_double ::Inspec::Runner
+        end
+
+        before do
+          allow(runner)
+            .to(
+              receive(:add_target)
+                .with(path: "/test/base/path/test-suite")
+                .and_return([profile])
+            )
+        end
+      end
+
+      shared_context "Inspec::Runner" do
+        include_context "Inspec::Runner instance"
+
+        let :runner_options do
+          {
+            "color" => false,
+            "compression" => false,
+            "compression_level" => 0,
+            "connection_retries" => 5,
+            "connection_retry_sleep" => 1,
+            "connection_timeout" => 15,
+            "keepalive" => true,
+            "keepalive_interval" => 60,
+            "max_wait_until_ready" => 600,
+            "reporter" => ["reporter"],
+            "sudo" => false,
+            "sudo_command" => "sudo -E",
+            "sudo_options" => "",
+            attributes: {"attribute_name" => "output_value", "hosts" => "host", "output_name" => "output_value"},
+            attrs: ["attrs.yml"],
+            backend: "backend",
+            backend_cache: false,
+            bastion_host: "bastion_host",
+            bastion_port: 5678,
+            bastion_user: "bastion_user",
+            controls: ["control"],
+            enable_password: "enable_password",
+            host: "host",
+            key_files: ["first_key_file", "second_key_file"],
+            logger: logger,
+            password: "password",
+            path: "path",
+            proxy_command: "proxy_command",
+            port: 1234,
+            self_signed: false,
+            shell: false,
+            shell_command: "/bin/shell",
+            shell_options: "--option=value",
+            user: "user",
+          }
+        end
+
+        before do
+          allow(::Inspec::Runner)
+            .to(
+              receive(:new)
+                .with(runner_options)
+                .and_return(runner)
+            )
+        end
+      end
+
+      context "when the :kitchen_terraform_outputs does include the configured :hosts_output key" do
+        include_context "Inspec::Runner"
+
+        let :kitchen_terraform_outputs do
+          {"output_name" => {"value" => "output_value"}, "hosts" => {"value" => "host"}}
+        end
+
+        context "when the InSpec runner returns an exit code other than 0" do
+          before do
+            allow(runner)
+              .to(
+                receive(:run)
+                  .with(no_args)
+                  .and_return(1)
+              )
           end
 
-          it "raise an action failed error" do
+          it "does raise an error" do
             is_expected
               .to(
                 raise_error(
                   ::Kitchen::ActionFailed,
-                  /Enumeration of groups and hosts resulted in failure/
+                  "InSpec Runner exited with 1"
                 )
               )
           end
         end
 
-        shared_context "Inspec::Profile" do
-          let :profile do
-            instance_double ::Inspec::Profile
-          end
-
-          before do
-            allow(profile).to receive(:name).and_return "profile-name"
-          end
-        end
-
-        shared_context "Inspec::Runner instance" do
-          include_context "Inspec::Profile"
-
-          let :runner do
-            instance_double ::Inspec::Runner
-          end
-
+        context "when the InSpec runner returns an exit code of 0" do
           before do
             allow(runner)
               .to(
-                receive(:add_target)
-                  .with(path: "/test/base/path/test-suite")
-                  .and_return([profile])
+                receive(:run)
+                  .with(no_args)
+                  .and_return(0)
               )
           end
-        end
 
-        shared_context "Inspec::Runner" do
-          include_context "Inspec::Runner instance"
-
-          let :runner_options do
-            {
-              "color" => false,
-              "compression" => false,
-              "compression_level" => 0,
-              "connection_retries" => 5,
-              "connection_retry_sleep" => 1,
-              "connection_timeout" => 15,
-              "keepalive" => true,
-              "keepalive_interval" => 60,
-              "max_wait_until_ready" => 600,
-              "reporter" => ["reporter"],
-              "sudo" => false,
-              "sudo_command" => "sudo -E",
-              "sudo_options" => "",
-              attributes:
-                {
-                  "attribute_name" => "output_value",
-                  "hosts" => "host",
-                  "output_name" => "output_value"
-                },
-              attrs: ["attrs.yml"],
-              backend: "backend",
-              backend_cache: false,
-              controls: ["control"],
-              enable_password: "enable_password",
-              host: "host",
-              key_files: ["first_key_file", "second_key_file"],
-              logger: logger,
-              password: "password",
-              path: "path",
-              proxy_command: "proxy_command",
-              port: 1234,
-              self_signed: false,
-              shell: false,
-              shell_command: "/bin/shell",
-              shell_options: "--option=value",
-              user: "user"
-            }
-          end
-
-          before do
-            allow(::Inspec::Runner)
-              .to(
-                receive(:new)
-                  .with(runner_options)
-                  .and_return(runner)
-              )
-          end
-        end
-
-        context "when the :kitchen_terraform_outputs does include the configured :hosts_output key" do
-          include_context "Inspec::Runner"
-
-          let :kitchen_terraform_outputs do
-            {
-              "output_name" => {"value" => "output_value"},
-              "hosts" => {"value" => "host"}
-            }
-          end
-
-          context "when the InSpec runner returns an exit code other than 0" do
-            before do
-              allow(runner)
-                .to(
-                  receive(:run)
-                    .with(no_args)
-                    .and_return(1)
-                )
-            end
-
-            it "does raise an error" do
-              is_expected
-                .to(
-                  raise_error(
-                    ::Kitchen::ActionFailed,
-                    "InSpec Runner exited with 1"
-                  )
-                )
-            end
-          end
-
-          context "when the InSpec runner returns an exit code of 0" do
-            before do
-              allow(runner)
-                .to(
-                  receive(:run)
-                    .with(no_args)
-                    .and_return(0)
-                )
-            end
-
-            it "does not raise an error" do
-              is_expected.to_not raise_error
-            end
+          it "does not raise an error" do
+            is_expected.to_not raise_error
           end
         end
       end
     end
   end
+end
