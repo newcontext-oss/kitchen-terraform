@@ -27,6 +27,9 @@ module Kitchen
         optional(:attributes).filled :hash?
         optional(:attrs).each(:filled?, :str?)
         optional(:backend_cache).value :bool?
+        optional(:bastion_host).filled :str?
+        optional(:bastion_port).value :int?
+        optional(:bastion_user).filled :str?
         optional(:controls).each(:filled?, :str?)
         optional(:enable_password).filled :str?
         optional(:hosts_output).filled :str?
