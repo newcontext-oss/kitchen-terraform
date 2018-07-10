@@ -16,9 +16,9 @@
 
 require "kitchen/terraform/config_schemas/group"
 
-::RSpec.describe ::Kitchen::Terraform::ConfigSchemas::Group do
+::RSpec.describe "Kitchen::Terraform::ConfigSchemas::Group" do
   subject do
-    described_class
+    ::Kitchen::Terraform::ConfigSchemas::Group
   end
 
   describe ".call" do
@@ -76,6 +76,38 @@ require "kitchen/terraform/config_schemas/group"
 
     specify "the input must associate :backend_cache with a boolean" do
       expect(subject.call(backend_cache: 123).errors).to include backend_cache: ["must be boolean"]
+    end
+
+    specify "the input may include :bastion_host" do
+      expect(subject.call({}).errors).not_to include bastion_host: ["is missing"]
+    end
+
+    specify "the input must associate :bastion_host with a string" do
+      expect(subject.call({bastion_host: 123}).errors).to include bastion_host: ["must be a string"]
+    end
+
+    specify "the input must associate :bastion_host with a nonempty string" do
+      expect(subject.call(bastion_host: "").errors).to include bastion_host: ["must be filled"]
+    end
+
+    specify "the input may include :bastion_port" do
+      expect(subject.call({}).errors).not_to include bastion_port: ["is missing"]
+    end
+
+    specify "the input must associate :bastion_port with an integer" do
+      expect(subject.call({bastion_port: "abc"}).errors).to include bastion_port: ["must be an integer"]
+    end
+
+    specify "the input may include :bastion_user" do
+      expect(subject.call({}).errors).not_to include bastion_user: ["is missing"]
+    end
+
+    specify "the input must associate :bastion_user with a string" do
+      expect(subject.call({bastion_user: 123}).errors).to include bastion_user: ["must be a string"]
+    end
+
+    specify "the input must associate :bastion_user with a nonempty string" do
+      expect(subject.call(bastion_user: "").errors).to include bastion_user: ["must be filled"]
     end
 
     specify "the input may include :controls" do

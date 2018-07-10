@@ -20,6 +20,7 @@ require "kitchen/terraform/config_attribute/groups"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
 require "kitchen/terraform/group_and_hosts_enumerator"
+require "kitchen/terraform/inspec_options_mapper"
 
 # This namespace is defined by Kitchen.
 #
@@ -96,14 +97,10 @@ class ::Kitchen::Verifier::Terraform
   # @return [void]
   def call(kitchen_state)
     load_outputs kitchen_state: kitchen_state
-
     ::Kitchen::Terraform::GroupAndHostsEnumerator.new(groups: config_groups, outputs: outputs)
       .each_group_and_hosts do |group:, host:|
-        verify(
-          group: group,
-          host: host
-        )
-      end
+      verify group: group, host: host
+    end
   rescue ::Kitchen::Terraform::Error => error
     raise(
       ::Kitchen::ActionFailed,
@@ -126,21 +123,7 @@ class ::Kitchen::Verifier::Terraform
   # @return [self]
   def finalize_config!(kitchen_instance)
     super kitchen_instance
-
-    kitchen_instance
-      .transport
-      .tap do |transport|
-        configure_inspec_connection_options(
-          transport_connection_options:
-            transport
-            .send(
-              :connection_options,
-              transport.diagnose
-            )
-            .dup
-        )
-      end
-
+    configure_inspec_connection_options
     configure_inspec_miscellaneous_options
   end
 
@@ -149,27 +132,8 @@ class ::Kitchen::Verifier::Terraform
   attr_accessor :inspec_options, :outputs
 
   # @api private
-  def configure_inspec_connection_options(transport_connection_options:)
-    inspec_options
-      .merge!(
-        ::Kitchen::Util
-          .stringified_hash(
-            transport_connection_options
-              .select do |key|
-                [
-                  :compression,
-                  :compression_level,
-                  :connection_retries,
-                  :connection_retry_sleep,
-                  :timeout,
-                  :keepalive,
-                  :keepalive_interval,
-                  :max_wait_until_ready
-                ]
-                  .include? key
-              end
-          )
-      )
+  def configure_inspec_connection_options
+    inspec_options.merge! transport_connection_options
 
     inspec_options
       .store(
@@ -179,55 +143,13 @@ class ::Kitchen::Verifier::Terraform
   end
 
   # @api private
-  def configure_inspec_group_connection_options(group:, host:)
-    inspec_options.merge!(
-      backend: group.fetch(:backend),
-      host: host
-    )
-
-    group.keys.include? :backend_cache and inspec_options.store :backend_cache, group.fetch(:backend_cache)
-    group.keys.include? :enable_password and inspec_options.store :enable_password, group.fetch(:enable_password)
-    group.keys.include? :key_files and inspec_options.store :key_files, group.fetch(:key_files)
-    group.keys.include? :password and inspec_options.store :password, group.fetch(:password)
-    group.keys.include? :path and inspec_options.store :path, group.fetch(:path)
-    group.keys.include? :port and inspec_options.store :port, group.fetch(:port)
-    group.keys.include? :proxy_command and inspec_options.store :proxy_command, group.fetch(:proxy_command)
-    group.keys.include? :self_signed and inspec_options.store :self_signed, group.fetch(:self_signed)
-    group.keys.include? :shell and inspec_options.store :shell, group.fetch(:shell)
-    group.keys.include? :shell_command and inspec_options.store :shell_command, group.fetch(:shell_command)
-    group.keys.include? :shell_options and inspec_options.store :shell_options, group.fetch(:shell_options)
-    group.keys.include? :user and inspec_options.store :user, group.fetch(:user)
-  end
-
-  # @api private
-  def configure_inspec_profile_options(group:)
-    inspec_options.store(
-      :attrs,
-      group.fetch(:attrs) do
-        []
-      end
-    )
-
-    group.keys.include? :controls and inspec_options.store :controls, group.fetch(:controls)
-    group.keys.include? :reporter and inspec_options.store "reporter", group.fetch(:reporter)
-
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
-      .call(
-        group: group,
-        options: inspec_options,
-        outputs: outputs
-      )
-  end
-
-  # @api private
   def configure_inspec_miscellaneous_options
-    inspec_options
-      .merge!(
-        "color" => config_color,
-        "sudo" => false,
-        "sudo_command" => "sudo -E",
-        "sudo_options" => ""
-      )
+    inspec_options.merge!(
+      "color" => config_color,
+      "sudo" => false,
+      "sudo_command" => "sudo -E",
+      "sudo_options" => "",
+    )
   end
 
   # @api private
@@ -237,7 +159,7 @@ class ::Kitchen::Verifier::Terraform
     raise(
       ::Kitchen::Terraform::Error,
       "The Kitchen state does not include :kitchen_terraform_outputs; this implies that the kitchen-terraform " \
-        "provisioner has not successfully converged"
+      "provisioner has not successfully converged"
     )
   end
 
@@ -274,23 +196,34 @@ class ::Kitchen::Verifier::Terraform
   end
 
   # @api private
+  def transport_connection_options
+    instance.transport.tap do |transport|
+      return ::Kitchen::Util.stringified_hash(
+               transport.send(:connection_options, transport.diagnose).dup.select do |key|
+                 [
+                   :compression,
+                   :compression_level,
+                   :connection_retries,
+                   :connection_retry_sleep,
+                   :timeout,
+                   :keepalive,
+                   :keepalive_interval,
+                   :max_wait_until_ready,
+                 ].include? key
+               end
+             )
+    end
+  end
+
+  # @api private
   # @raise [::Kitchen::Terraform::Error] if running InSpec results in failure.
   def verify(group:, host:)
     info "Verifying host '#{host}' of group '#{group.fetch :name}'"
-
-    configure_inspec_group_connection_options(
-      group: group,
-      host: host
-    )
-
-    configure_inspec_profile_options group: group
-
-    ::Kitchen::Terraform::InSpec
-      .new(
-        options: inspec_options,
-        path: inspec_profile_path
-      )
-      .exec
+    inspec_options.store :host, host
+    ::Kitchen::Terraform::InSpecOptionsMapper.new(group: group).map options: inspec_options
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call group: group, options: inspec_options,
+                                                                         outputs: outputs
+    ::Kitchen::Terraform::InSpec.new(options: inspec_options, path: inspec_profile_path).exec
   end
 end
 
