@@ -22,14 +22,6 @@ require "train"
 # InSpec instances act as interfaces to the InSpec gem.
 class ::Kitchen::Terraform::InSpec
   EXIT_CODE_SUCCESS = 0
-  EXIT_CODE_SUCCESS_WITH_SKIPPED = 101
-
-  VALID_EXIT_CODES =
-    [
-      EXIT_CODE_SUCCESS,
-      EXIT_CODE_SUCCESS_WITH_SKIPPED
-    ]
-      .freeze
 
   class << self
     # logger= sets the logger for all InSpec processes.
@@ -46,8 +38,7 @@ class ::Kitchen::Terraform::InSpec
   # @raise [::Kitchen::Terraform::Error] if the execution of the InSpec controls fails.
   # @return [void]
   def exec
-    self.exit_code = runner.run
-    validate_exit_code
+    validate exit_code: runner.run
   rescue ::ArgumentError, ::RuntimeError, ::Train::UserError => error
     raise(
       ::Kitchen::Terraform::Error,
@@ -57,10 +48,7 @@ class ::Kitchen::Terraform::InSpec
 
   private
 
-  attr_accessor(
-    :exit_code,
-    :runner
-  )
+  attr_accessor :runner
 
   # @api private
   # @param options [::Hash] options for execution.
@@ -73,17 +61,9 @@ class ::Kitchen::Terraform::InSpec
   end
 
   # @api private
-  def validate_exit_code
-    VALID_EXIT_CODES
-      .find(
-        lambda do
-          raise(
-            ::Kitchen::Terraform::Error,
-            "InSpec Runner exited with #{exit_code}"
-          )
-        end
-      ) do |valid_exit_code|
-        valid_exit_code == exit_code
-      end
+  def validate(exit_code:)
+    if EXIT_CODE_SUCCESS != exit_code
+      raise ::Kitchen::Terraform::Error, "InSpec Runner exited with #{exit_code}"
+    end
   end
 end
