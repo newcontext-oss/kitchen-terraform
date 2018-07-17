@@ -171,7 +171,6 @@ require "support/kitchen/terraform/configurable_examples"
             "connection_retries" => 5,
             "connection_retry_sleep" => 1,
             "connection_timeout" => 15,
-            "distinct_exit" => false,
             "keepalive" => true,
             "keepalive_interval" => 60,
             "max_wait_until_ready" => 600,
