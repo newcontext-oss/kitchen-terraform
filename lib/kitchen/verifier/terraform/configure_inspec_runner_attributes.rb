@@ -55,47 +55,43 @@ require "kitchen/verifier/terraform"
 # @see https://www.terraform.io/docs/configuration/outputs.html Terraform output variables
 # @see https://www.terraform.io/docs/state/index.html Terraform state
 module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
-  # Invokes the function
-  #
-  # @param group [::Hash] a kitchen-terraform verifier group.
-  # @param options [::Hash] the InSpec Runner options.
-  # @param outputs [::String] the outputs of the Terraform state.
-  # @raise [::Kitchen::Terraform::Error] if the configuration fails.
-  # @return [void]
-  def self.call(group:, options:, outputs:)
-    group
-      .fetch(
-        :attributes,
+  class << self
+    # Invokes the function
+    #
+    # @param group [::Hash] a kitchen-terraform verifier group.
+    # @param options [::Hash] the InSpec Runner options.
+    # @param outputs [::String] the outputs of the Terraform state.
+    # @raise [::Kitchen::Terraform::Error] if the configuration fails.
+    # @return [void]
+    def call(group:, options:, outputs:)
+      group.fetch :attributes do
         {}
-      )
-      .tap do |group_attributes|
-        options
-          .store(
-            :attributes,
-            outputs
-              .keys
-              .+(group_attributes.keys)
-              .zip(
-                outputs
-                  .keys
-                  .+(group_attributes.values)
-              )
-              .reduce(::Hash.new) do |resolved_attributes, (attribute_name, output_name)|
-                resolved_attributes
-                  .merge(
-                    attribute_name
-                      .to_s =>
-                        outputs
-                          .fetch(output_name.to_s)
-                          .fetch("value")
-                  )
-              end
-          )
       end
-  rescue ::KeyError => key_error
-    raise(
-      ::Kitchen::Terraform::Error,
-      "Configuring InSpec runner attributes resulted in failure: #{key_error.message}"
-    )
+        .tap do |group_attributes|
+          options.store(
+            :attributes,
+            resolve(group_attributes: group_attributes, outputs: outputs)
+          )
+        end
+    rescue ::KeyError => key_error
+      raise ::Kitchen::Terraform::Error, "Configuring InSpec runner attributes resulted in failure: #{key_error.message}"
+    end
+
+    private
+
+    # @api private
+    def meld(group_attributes:, outputs:)
+      outputs.keys.tap do |outputs_keys|
+        return outputs_keys.+(group_attributes.keys).zip outputs_keys.+ group_attributes.values
+      end
+    end
+
+    # @api private
+    def resolve(group_attributes:, outputs:)
+      meld(group_attributes: group_attributes, outputs: outputs)
+        .reduce(::Hash.new) do |resolved_attributes, (attribute_name, output_name)|
+          resolved_attributes.merge(attribute_name.to_s => outputs.fetch(output_name.to_s).fetch("value"))
+        end
+    end
   end
 end
