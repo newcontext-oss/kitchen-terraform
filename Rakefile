@@ -267,13 +267,7 @@ namespace :tests do
 
     desc "Run integration tests for shell words"
 
-    task(
-      :shell_words,
-      [
-        :terraform_version,
-        :terraform_sha256_sum
-      ] => ["clobber", "bin/terraform"]
-    ) do |current_task|
+    task :shell_words, [:terraform_version, :terraform_sha256_sum] => ["bin/terraform"] do |current_task|
       puts "Running integration tests for shell words"
 
       ::Rake::Task
