@@ -3,8 +3,8 @@
 ::File
   .expand_path("../lib", __FILE__)
   .tap do |directory|
-  $LOAD_PATH.include? directory or $LOAD_PATH.unshift directory
-end
+    $LOAD_PATH.include? directory or $LOAD_PATH.unshift directory
+  end
 
 require "kitchen/terraform/version.rb"
 require "rubygems"
@@ -12,24 +12,24 @@ require "rubygems"
 ::Gem::Specification.new do |specification|
   specification
     .authors = [
-    "Aaron Lane",
-    "Austin Heiman",
-    "Clay Thomas",
-    "David Begin",
-    "Erik R. Rygg",
-    "Ewa Czechowska",
-    "John Engelman",
-    "Kevin Dickerson",
-    "Kyle Sexton",
-    "Matt Long",
-    "Michael Glenney",
-    "Nell Shamrell-Harrington",
-    "Nick Willever",
-    "Steven A. Burns",
-    "Walter Dolce",
-    "curleighbraces",
-    "Gary Foster",
-  ]
+      "Aaron Lane",
+      "Austin Heiman",
+      "Clay Thomas",
+      "David Begin",
+      "Erik R. Rygg",
+      "Ewa Czechowska",
+      "John Engelman",
+      "Kevin Dickerson",
+      "Kyle Sexton",
+      "Matt Long",
+      "Michael Glenney",
+      "Nell Shamrell-Harrington",
+      "Nick Willever",
+      "Steven A. Burns",
+      "Walter Dolce",
+      "curleighbraces",
+      "Gary Foster"
+    ]
 
   specification.description = "kitchen-terraform is a set of Test Kitchen plugins for testing Terraform configuration"
 
@@ -154,7 +154,7 @@ require "rubygems"
 
   specification.required_ruby_version = [
     ">= 2.3",
-    "< 2.6",
+    "< 2.6"
   ]
 
   specification.requirements = ["Terraform >= 0.11.4, < 0.12.0"]
