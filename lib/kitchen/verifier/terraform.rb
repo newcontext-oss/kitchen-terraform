@@ -146,6 +146,7 @@ class ::Kitchen::Verifier::Terraform
   def configure_inspec_miscellaneous_options
     inspec_options.merge!(
       "color" => config_color,
+      "distinct_exit" => false,
       "sudo" => false,
       "sudo_command" => "sudo -E",
       "sudo_options" => "",

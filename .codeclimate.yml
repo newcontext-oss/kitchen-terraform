@@ -2,7 +2,7 @@
 version: "2"
 plugins:
   bundler-audit:
-    enabled: false
+    enabled: true
   duplication:
     enabled: true
     config:
@@ -17,7 +17,7 @@ plugins:
   reek:
     enabled: true
   rubocop:
-    enabled: true
+    enabled: false
 exclude_patterns:
   - "doc/"
   - "docs/"
