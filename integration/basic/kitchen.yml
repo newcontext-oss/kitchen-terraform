@@ -26,6 +26,7 @@ verifier:
       shell: true
       shell_command: /bin/sh
       shell_options: -x
+      show_progress: true
     - name: SSH with credentials
       backend: ssh
       controls:
@@ -35,6 +36,7 @@ verifier:
       port: 2222
       reporter:
         - documentation
+      show_progress: true
       user: root
     - name: localhost
       attrs:
@@ -47,6 +49,7 @@ verifier:
         - state_files
       reporter:
         - progress
+      show_progress: true
 
 platforms:
   - name: ubuntu
