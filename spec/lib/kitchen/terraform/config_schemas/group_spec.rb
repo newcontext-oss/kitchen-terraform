@@ -266,6 +266,14 @@ require "kitchen/terraform/config_schemas/group"
       expect(subject.call(shell_options: "").errors).to include shell_options: ["must be filled"]
     end
 
+    specify "the input may include :show_progress" do
+      expect(subject.call({}).errors).not_to include show_progress: ["is missing"]
+    end
+
+    specify "the input must associate :show_progress with a boolean" do
+      expect(subject.call(show_progress: 123).errors).to include show_progress: ["must be boolean"]
+    end
+
     specify "the input may include :user" do
       expect(subject.call({}).errors).not_to include user: ["is missing"]
     end
