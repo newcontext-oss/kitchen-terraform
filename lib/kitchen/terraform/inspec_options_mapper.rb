@@ -26,7 +26,7 @@ class ::Kitchen::Terraform::InSpecOptionsMapper
 
   KEYS = [:attrs, :backend, :backend_cache, :bastion_host, :bastion_port, :bastion_user, :controls, :enable_password,
           :key_files, :password, :path, :port, :proxy_command, :reporter, :self_signed, :shell, :shell_command,
-          :shell_options, :show_progress, :ssl, :sudo, :sudo_command, :sudo_options, :sudo_password, :user]
+          :shell_options, :show_progress, :ssl, :sudo, :sudo_command, :sudo_options, :sudo_password, :user, :vendor_cache]
 
   def map(options:)
     KEYS.each do |key|
