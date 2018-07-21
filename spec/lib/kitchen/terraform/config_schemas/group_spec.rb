@@ -337,5 +337,17 @@ require "kitchen/terraform/config_schemas/group"
     specify "the input must associate :user with a nonempty string" do
       expect(subject.call(user: "").errors).to include user: ["must be filled"]
     end
+
+    specify "the input may include :vendor_cache" do
+      expect(subject.call({}).errors).not_to include vendor_cache: ["is missing"]
+    end
+
+    specify "the input must associate :vendor_cache with a string" do
+      expect(subject.call(vendor_cache: 123).errors).to include vendor_cache: ["must be a string"]
+    end
+
+    specify "the input must associate :vendor_cache with a nonempty string" do
+      expect(subject.call(vendor_cache: "").errors).to include vendor_cache: ["must be filled"]
+    end
   end
 end

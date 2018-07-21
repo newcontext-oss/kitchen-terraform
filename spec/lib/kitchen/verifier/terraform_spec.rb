@@ -56,6 +56,7 @@ require "support/kitchen/terraform/configurable_examples"
           show_progress: false,
           ssl: false,
           user: "user",
+          vendor_cache: "vendor_cache",
         },
       ],
       test_base_path: "/test/base/path",
@@ -212,6 +213,7 @@ require "support/kitchen/terraform/configurable_examples"
             show_progress: false,
             ssl: false,
             user: "user",
+            vendor_cache: "vendor_cache",
           }
         end
 

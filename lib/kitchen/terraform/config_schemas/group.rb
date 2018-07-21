@@ -50,6 +50,7 @@ module Kitchen
         optional(:sudo_options).filled :str?
         optional(:sudo_password).filled :str?
         optional(:user).filled :str?
+        optional(:vendor_cache).filled :str?
       end
     end
   end
