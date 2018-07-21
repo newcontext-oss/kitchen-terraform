@@ -22,4 +22,5 @@ exclude_patterns:
   - "doc/"
   - "docs/"
   - "examples/"
+  - "integration/"
   - "website/"
