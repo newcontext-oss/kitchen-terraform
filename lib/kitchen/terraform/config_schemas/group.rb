@@ -44,6 +44,7 @@ module Kitchen
         optional(:shell_command).filled :str?
         optional(:shell_options).filled :str?
         optional(:show_progress).value :bool?
+        optional(:ssl).value :bool?
         optional(:user).filled :str?
       end
     end

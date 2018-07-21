@@ -274,6 +274,14 @@ require "kitchen/terraform/config_schemas/group"
       expect(subject.call(show_progress: 123).errors).to include show_progress: ["must be boolean"]
     end
 
+    specify "the input may include :ssl" do
+      expect(subject.call({}).errors).not_to include ssl: ["is missing"]
+    end
+
+    specify "the input must associate :ssl with a boolean" do
+      expect(subject.call(ssl: 123).errors).to include ssl: ["must be boolean"]
+    end
+
     specify "the input may include :user" do
       expect(subject.call({}).errors).not_to include user: ["is missing"]
     end
