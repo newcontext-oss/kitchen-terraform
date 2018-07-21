@@ -282,6 +282,50 @@ require "kitchen/terraform/config_schemas/group"
       expect(subject.call(ssl: 123).errors).to include ssl: ["must be boolean"]
     end
 
+    specify "the input may include :sudo" do
+      expect(subject.call({}).errors).not_to include sudo: ["is missing"]
+    end
+
+    specify "the input must associate :sudo with a boolean" do
+      expect(subject.call(sudo: 123).errors).to include sudo: ["must be boolean"]
+    end
+
+    specify "the input may include :sudo_command" do
+      expect(subject.call({}).errors).not_to include sudo_command: ["is missing"]
+    end
+
+    specify "the input must associate :sudo_command with a string" do
+      expect(subject.call(sudo_command: 123).errors).to include sudo_command: ["must be a string"]
+    end
+
+    specify "the input must associate :sudo_command with a nonempty string" do
+      expect(subject.call(sudo_command: "").errors).to include sudo_command: ["must be filled"]
+    end
+
+    specify "the input may include :sudo_options" do
+      expect(subject.call({}).errors).not_to include sudo_options: ["is missing"]
+    end
+
+    specify "the input must associate :sudo_options with a string" do
+      expect(subject.call(sudo_options: 123).errors).to include sudo_options: ["must be a string"]
+    end
+
+    specify "the input must associate :sudo_options with a nonempty string" do
+      expect(subject.call(sudo_options: "").errors).to include sudo_options: ["must be filled"]
+    end
+
+    specify "the input may include :sudo_password" do
+      expect(subject.call({}).errors).not_to include sudo_password: ["is missing"]
+    end
+
+    specify "the input must associate :sudo_password with a string" do
+      expect(subject.call(sudo_password: 123).errors).to include sudo_password: ["must be a string"]
+    end
+
+    specify "the input must associate :sudo_password with a nonempty string" do
+      expect(subject.call(sudo_password: "").errors).to include sudo_password: ["must be filled"]
+    end
+
     specify "the input may include :user" do
       expect(subject.call({}).errors).not_to include user: ["is missing"]
     end
