@@ -45,6 +45,10 @@ module Kitchen
         optional(:shell_options).filled :str?
         optional(:show_progress).value :bool?
         optional(:ssl).value :bool?
+        optional(:sudo).value :bool?
+        optional(:sudo_command).filled :str?
+        optional(:sudo_options).filled :str?
+        optional(:sudo_password).filled :str?
         optional(:user).filled :str?
       end
     end
