@@ -9,7 +9,7 @@
 [![Build status][build-status-shield]][build-status]
 [![Test coverage][test-coverage-shield]][test-coverage]
 [![Maintainability][maintainability-shield]][maintainability]
-[![Dependencies][gemnasium-shield]][gemnasium]
+[![Dependencies][hakiri-shield]][hakiri]
 
 [![Gitter chat][gitter-shield]][gitter]
 
@@ -379,8 +379,8 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg?style=plastic
 [gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg?style=plastic
 [gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=plastic
-[gemnasium-shield]: https://img.shields.io/gemnasium/newcontext-oss/kitchen-terraform.svg?style=plastic
-[gemnasium]: https://beta.gemnasium.com/projects/github.com/newcontext-oss/kitchen-terraform
+[hakiri-shield]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/master.svg
+[hakiri]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/
 [gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg?style=plastic
 [gitter]: https://gitter.im/kitchen-terraform/Lobby
 [inspec]: https://www.inspec.io/
