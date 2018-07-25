@@ -129,7 +129,7 @@ class ::Kitchen::Verifier::Terraform
 
   private
 
-  attr_accessor :inspec_options, :outputs
+  attr_accessor :inspec_options, :outputs, :transport_attributes
 
   # @api private
   def configure_inspec_connection_options
@@ -168,6 +168,8 @@ class ::Kitchen::Verifier::Terraform
   def initialize(configuration = {})
     init_config configuration
     self.inspec_options = {}
+    self.transport_attributes = [:compression, :compression_level, :connection_retries, :connection_retry_sleep,
+                                 :connection_timeout, :keepalive, :keepalive_interval, :max_wait_until_ready]
   end
 
   # @api private
@@ -198,22 +200,13 @@ class ::Kitchen::Verifier::Terraform
 
   # @api private
   def transport_connection_options
-    instance.transport.tap do |transport|
-      return ::Kitchen::Util.stringified_hash(
-               transport.send(:connection_options, transport.diagnose).dup.select do |key|
-                 [
-                   :compression,
-                   :compression_level,
-                   :connection_retries,
-                   :connection_retry_sleep,
-                   :timeout,
-                   :keepalive,
-                   :keepalive_interval,
-                   :max_wait_until_ready,
-                 ].include? key
-               end
-             )
-    end
+    return ::Kitchen::Util.stringified_hash(
+             instance.transport.diagnose.select do |key|
+               transport_attributes.include? key
+             end.tap do |options|
+               options.store :timeout, options.fetch(:connection_timeout)
+             end
+           )
   end
 
   # @api private
