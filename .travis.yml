@@ -17,6 +17,8 @@ jobs:
   include:
   - stage: unit tests and code coverage with newest supported version of ruby
     rvm: 2.5
+    env:
+      - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     before_script:
     - curl --location https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
       > ./cc-test-reporter
@@ -111,6 +113,3 @@ notifications:
   webhooks:
     urls:
     - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
-env:
-  global:
-    secure: k7lAguy8oX6S2DnSumvzzBMT0MYxZDeTWh2bBEXJvpsfIRHjtKHG6XLKLgAHF4oAyrPKBA/KNyy4hHcQwIj5gaez6zSBjXwAZ9ddVsng5BqU3rUj+lPmbGMa1+SpIyGm1KIabA84QEpzeRVXFmUnEMFm8vX6ptuPwBUThapVtZJw8gSgYAV/BxEAVLnMVazacU1/w2tp3+mDOexLcQHxTitqaYJoVXhyubKBMVZfd2UC5xRyT3/Pw+5IvDR+58R9sphfGtg8rBLPgC+BTDdPgZHGPZK4qt4AJLv9aAYJdpWGdrxO6rYeSwpO+ZRxVSQP4T+RINL/pmkcRYaKV+mXsVIpXu6rL0dHlGCPyT22W6OGiK4niKKiPXccjyvwDsA2+0tH1RKbC56kXOzprDREsZzdEdhyE5VWvjv4peIRqMcPSX5KjJlhC6n2zmvtr3tYsuB4KKiUUOQSOSCEaXgbNRew/gOQShwX8a7Q9tb3TytPASNGQaFDBsKE3Z1rynzj7NWXjm+HBWVBmjqsXxzNBjzOlSakAMc/TeK7Iubv7F3P9S1glWvrsz+Rmmwo3WesLZ/ZbhI+4tZxSSiNaJAo5TtWPmA9ZtyWnkKlLbY/ZRYT+X7jFRvtkf9ddDOqoTHrTGAGZHHlOkW3dG6f1mylsGjqfXixzLRWWpAMysEoqv4=
