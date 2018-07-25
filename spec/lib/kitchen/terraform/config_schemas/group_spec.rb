@@ -16,34 +16,90 @@
 
 require "kitchen/terraform/config_schemas/group"
 
-::RSpec.describe "Kitchen::Terraform::ConfigSchemas::Group" do
+::RSpec.describe Kitchen::Terraform::ConfigSchemas::Group do
   subject do
-    ::Kitchen::Terraform::ConfigSchemas::Group
+    described_class
+  end
+
+  shared_examples "a string" do
+    specify "the input must associate the attribute with a string" do
+      expect(subject.call({attribute => 123}).errors).to include attribute => ["must be a string"]
+    end
+
+    specify "the input must associate the attribute with a nonempty string" do
+      expect(subject.call(attribute => "").errors).to include attribute => ["must be filled"]
+    end
+  end
+
+  shared_examples "a required string" do
+    specify "the input must include the attribute" do
+      expect(subject.call({}).errors).to include attribute => ["is missing"]
+    end
+
+    it_behaves_like "a string"
+  end
+
+  shared_examples "an optional array of strings" do
+    specify "the input may include the attribute" do
+      expect(subject.call({}).errors).not_to include attribute => ["is missing"]
+    end
+
+    specify "the input must associate the attribute with an array" do
+      expect(subject.call(attribute => 123).errors).to include attribute => ["must be an array"]
+    end
+
+    specify "the input must associate the attribute with an array which includes strings" do
+      expect(subject.call(attribute => [123]).errors).to include attribute => {0 => ["must be a string"]}
+    end
+
+    specify "the input must associate the attribute with an array which includes nonempty strings" do
+      expect(subject.call(attribute => [""]).errors).to include attribute => {0 => ["must be filled"]}
+    end
+  end
+
+  shared_examples "an optional boolean" do
+    specify "the input may include the attribute" do
+      expect(subject.call({}).errors).not_to include attribute => ["is missing"]
+    end
+
+    specify "the input must associate the attribute with a boolean" do
+      expect(subject.call(attribute => 123).errors).to include attribute => ["must be boolean"]
+    end
+  end
+
+  shared_examples "an optional integer" do
+    specify "the input may include the attribute" do
+      expect(subject.call({}).errors).not_to include attribute => ["is missing"]
+    end
+
+    specify "the input must associate the attribute with an integer" do
+      expect(subject.call({attribute => "abc"}).errors).to include attribute => ["must be an integer"]
+    end
+  end
+
+  shared_examples "an optional string" do
+    specify "the input may include the attribute" do
+      expect(subject.call({}).errors).not_to include attribute => ["is missing"]
+    end
+
+    it_behaves_like "a string"
   end
 
   describe ".call" do
-    specify "the input must include :name" do
-      expect(subject.call({}).errors).to include name: ["is missing"]
+    describe ":name" do
+      let :attribute do
+        :name
+      end
+
+      it_behaves_like "a required string"
     end
 
-    specify "the input must associate :name with a string" do
-      expect(subject.call(name: 123).errors).to include name: ["must be a string"]
-    end
+    describe ":backend" do
+      let :attribute do
+        :backend
+      end
 
-    specify "the input must associate :name with a nonempty string" do
-      expect(subject.call(name: "").errors).to include name: ["must be filled"]
-    end
-
-    specify "the input must include :backend" do
-      expect(subject.call({}).errors).to include backend: ["is missing"]
-    end
-
-    specify "the input must associate :backend with a string" do
-      expect(subject.call(backend: 123).errors).to include backend: ["must be a string"]
-    end
-
-    specify "the input must associate :backend with a nonempty string" do
-      expect(subject.call(backend: "").errors).to include backend: ["must be filled"]
+      it_behaves_like "a required string"
     end
 
     specify "the input may include :attributes" do
@@ -54,300 +110,212 @@ require "kitchen/terraform/config_schemas/group"
       expect(subject.call(attributes: 123).errors).to include attributes: ["must be a hash"]
     end
 
-    specify "the input may include :attrs" do
-      expect(subject.call({}).errors).not_to include attrs: ["is missing"]
-    end
-
-    specify "the input must associate :attrs with an array" do
-      expect(subject.call(attrs: 123).errors).to include attrs: ["must be an array"]
-    end
-
-    specify "the input must associate :attrs with an array which includes strings" do
-      expect(subject.call(attrs: [123]).errors).to include attrs: {0 => ["must be a string"]}
-    end
-
-    specify "the input must associate :attrs with an array which includes nonempty strings" do
-      expect(subject.call(attrs: [""]).errors).to include attrs: {0 => ["must be filled"]}
-    end
-
-    specify "the input may include :backend_cache" do
-      expect(subject.call({}).errors).not_to include backend_cache: ["is missing"]
-    end
-
-    specify "the input must associate :backend_cache with a boolean" do
-      expect(subject.call(backend_cache: 123).errors).to include backend_cache: ["must be boolean"]
-    end
-
-    specify "the input may include :bastion_host" do
-      expect(subject.call({}).errors).not_to include bastion_host: ["is missing"]
-    end
-
-    specify "the input must associate :bastion_host with a string" do
-      expect(subject.call({bastion_host: 123}).errors).to include bastion_host: ["must be a string"]
-    end
-
-    specify "the input must associate :bastion_host with a nonempty string" do
-      expect(subject.call(bastion_host: "").errors).to include bastion_host: ["must be filled"]
-    end
-
-    specify "the input may include :bastion_port" do
-      expect(subject.call({}).errors).not_to include bastion_port: ["is missing"]
-    end
-
-    specify "the input must associate :bastion_port with an integer" do
-      expect(subject.call({bastion_port: "abc"}).errors).to include bastion_port: ["must be an integer"]
-    end
-
-    specify "the input may include :bastion_user" do
-      expect(subject.call({}).errors).not_to include bastion_user: ["is missing"]
-    end
-
-    specify "the input must associate :bastion_user with a string" do
-      expect(subject.call({bastion_user: 123}).errors).to include bastion_user: ["must be a string"]
-    end
-
-    specify "the input must associate :bastion_user with a nonempty string" do
-      expect(subject.call(bastion_user: "").errors).to include bastion_user: ["must be filled"]
-    end
-
-    specify "the input may include :controls" do
-      expect(subject.call({}).errors).not_to include controls: ["is missing"]
-    end
-
-    specify "the input must associate :controls with an array" do
-      expect(subject.call(controls: 123).errors).to include controls: ["must be an array"]
-    end
-
-    specify "the input must associate :controls with an array which includes strings" do
-      expect(subject.call(controls: [123]).errors).to include controls: {0 => ["must be a string"]}
-    end
-
-    specify "the input must associate :controls with an array which includes nonempty strings" do
-      expect(subject.call(controls: [""]).errors).to include controls: {0 => ["must be filled"]}
-    end
+    describe ":attrs" do
+      let :attribute do
+        :attrs
+      end
 
-    specify "the input may include :enable_password" do
-      expect(subject.call({}).errors).not_to include enable_password: ["is missing"]
+      it_behaves_like "an optional array of strings"
     end
 
-    specify "the input must associate :enable_password with a string" do
-      expect(subject.call(enable_password: 123).errors).to include enable_password: ["must be a string"]
-    end
-
-    specify "the input must associate :enable_password with a nonempty string" do
-      expect(subject.call(enable_password: "").errors).to include enable_password: ["must be filled"]
-    end
-
-    specify "the input may include :hosts_output" do
-      expect(subject.call({}).errors).not_to include hosts_output: ["is missing"]
-    end
-
-    specify "the input must associate :hosts_output with a string" do
-      expect(subject.call(hosts_output: 123).errors).to include hosts_output: ["must be a string"]
-    end
-
-    specify "the input must associate :hosts_output with a nonempty string" do
-      expect(subject.call(hosts_output: "").errors).to include hosts_output: ["must be filled"]
-    end
-
-    specify "the input may include :key_files" do
-      expect(subject.call({}).errors).not_to include key_files: ["is missing"]
-    end
+    describe ":backend_cache" do
+      let :attribute do
+        :backend_cache
+      end
 
-    specify "the input must associate :key_files with an array" do
-      expect(subject.call(key_files: 123).errors).to include key_files: ["must be an array"]
+      it_behaves_like "an optional boolean"
     end
 
-    specify "the input must associate :key_files with an array which includes strings" do
-      expect(subject.call(key_files: [123]).errors).to include key_files: {0 => ["must be a string"]}
-    end
+    describe ":bastion_host" do
+      let :attribute do
+        :bastion_host
+      end
 
-    specify "the input must associate :key_files with an array which includes nonempty strings" do
-      expect(subject.call(key_files: [""]).errors).to include key_files: {0 => ["must be filled"]}
+      it_behaves_like "an optional string"
     end
 
-    specify "the input may include :password" do
-      expect(subject.call({}).errors).not_to include password: ["is missing"]
-    end
+    describe ":bastion_port" do
+      let :attribute do
+        :bastion_port
+      end
 
-    specify "the input must associate :password with a string" do
-      expect(subject.call(password: 123).errors).to include password: ["must be a string"]
+      it_behaves_like "an optional integer"
     end
 
-    specify "the input must associate :password with a nonempty string" do
-      expect(subject.call(password: "").errors).to include password: ["must be filled"]
-    end
+    describe ":bastion_user" do
+      let :attribute do
+        :bastion_user
+      end
 
-    specify "the input may include :path" do
-      expect(subject.call({}).errors).not_to include path: ["is missing"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :path with a string" do
-      expect(subject.call(path: 123).errors).to include path: ["must be a string"]
-    end
+    describe ":controls" do
+      let :attribute do
+        :controls
+      end
 
-    specify "the input must associate :path with a nonempty string" do
-      expect(subject.call(path: "").errors).to include path: ["must be filled"]
+      it_behaves_like "an optional array of strings"
     end
 
-    specify "the input may include :port" do
-      expect(subject.call({}).errors).not_to include port: ["is missing"]
-    end
+    describe ":enable_password" do
+      let :attribute do
+        :enable_password
+      end
 
-    specify "the input must associate :port with an integer" do
-      expect(subject.call(port: "abc").errors).to include port: ["must be an integer"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input may include :proxy_command" do
-      expect(subject.call({}).errors).not_to include proxy_command: ["is missing"]
-    end
+    describe ":hosts_output" do
+      let :attribute do
+        :hosts_output
+      end
 
-    specify "the input must associate :proxy_command with a string" do
-      expect(subject.call(proxy_command: 123).errors).to include proxy_command: ["must be a string"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :proxy_command with a nonempty string" do
-      expect(subject.call(proxy_command: "").errors).to include proxy_command: ["must be filled"]
-    end
+    describe ":key_files" do
+      let :attribute do
+        :key_files
+      end
 
-    specify "the input may include :reporter" do
-      expect(subject.call({}).errors).not_to include reporter: ["is missing"]
+      it_behaves_like "an optional array of strings"
     end
 
-    specify "the input must associate :reporter with an array" do
-      expect(subject.call(reporter: 123).errors).to include reporter: ["must be an array"]
-    end
+    describe ":password" do
+      let :attribute do
+        :password
+      end
 
-    specify "the input must associate :reporter with an array which includes strings" do
-      expect(subject.call(reporter: [123]).errors).to include reporter: {0 => ["must be a string"]}
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :reporter with an array which includes nonempty strings" do
-      expect(subject.call(reporter: [""]).errors).to include reporter: {0 => ["must be filled"]}
-    end
+    describe ":path" do
+      let :attribute do
+        :path
+      end
 
-    specify "the input may include :self_signed" do
-      expect(subject.call({}).errors).not_to include self_signed: ["is missing"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :self_signed with a boolean" do
-      expect(subject.call(self_signed: 123).errors).to include self_signed: ["must be boolean"]
-    end
+    describe ":port" do
+      let :attribute do
+        :port
+      end
 
-    specify "the input may include :shell" do
-      expect(subject.call({}).errors).not_to include shell: ["is missing"]
+      it_behaves_like "an optional integer"
     end
 
-    specify "the input must associate :shell with a boolean" do
-      expect(subject.call(shell: 123).errors).to include shell: ["must be boolean"]
-    end
+    describe ":proxy_command" do
+      let :attribute do
+        :proxy_command
+      end
 
-    specify "the input may include :shell_command" do
-      expect(subject.call({}).errors).not_to include shell_command: ["is missing"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :shell_command with a string" do
-      expect(subject.call(shell_command: 123).errors).to include shell_command: ["must be a string"]
-    end
+    describe ":reporter" do
+      let :attribute do
+        :reporter
+      end
 
-    specify "the input must associate :shell_command with a nonempty string" do
-      expect(subject.call(shell_command: "").errors).to include shell_command: ["must be filled"]
+      it_behaves_like "an optional array of strings"
     end
 
-    specify "the input may include :shell_options" do
-      expect(subject.call({}).errors).not_to include shell_options: ["is missing"]
-    end
+    describe ":self_signed" do
+      let :attribute do
+        :self_signed
+      end
 
-    specify "the input must associate :shell_options with a string" do
-      expect(subject.call(shell_options: 123).errors).to include shell_options: ["must be a string"]
+      it_behaves_like "an optional boolean"
     end
 
-    specify "the input must associate :shell_options with a nonempty string" do
-      expect(subject.call(shell_options: "").errors).to include shell_options: ["must be filled"]
-    end
+    describe ":shell" do
+      let :attribute do
+        :shell
+      end
 
-    specify "the input may include :show_progress" do
-      expect(subject.call({}).errors).not_to include show_progress: ["is missing"]
+      it_behaves_like "an optional boolean"
     end
 
-    specify "the input must associate :show_progress with a boolean" do
-      expect(subject.call(show_progress: 123).errors).to include show_progress: ["must be boolean"]
-    end
+    describe ":shell_command" do
+      let :attribute do
+        :shell_command
+      end
 
-    specify "the input may include :ssl" do
-      expect(subject.call({}).errors).not_to include ssl: ["is missing"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :ssl with a boolean" do
-      expect(subject.call(ssl: 123).errors).to include ssl: ["must be boolean"]
-    end
+    describe ":shell_options" do
+      let :attribute do
+        :shell_options
+      end
 
-    specify "the input may include :sudo" do
-      expect(subject.call({}).errors).not_to include sudo: ["is missing"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :sudo with a boolean" do
-      expect(subject.call(sudo: 123).errors).to include sudo: ["must be boolean"]
-    end
+    describe ":show_progress" do
+      let :attribute do
+        :show_progress
+      end
 
-    specify "the input may include :sudo_command" do
-      expect(subject.call({}).errors).not_to include sudo_command: ["is missing"]
+      it_behaves_like "an optional boolean"
     end
 
-    specify "the input must associate :sudo_command with a string" do
-      expect(subject.call(sudo_command: 123).errors).to include sudo_command: ["must be a string"]
-    end
+    describe ":ssl" do
+      let :attribute do
+        :ssl
+      end
 
-    specify "the input must associate :sudo_command with a nonempty string" do
-      expect(subject.call(sudo_command: "").errors).to include sudo_command: ["must be filled"]
+      it_behaves_like "an optional boolean"
     end
 
-    specify "the input may include :sudo_options" do
-      expect(subject.call({}).errors).not_to include sudo_options: ["is missing"]
-    end
+    describe ":sudo" do
+      let :attribute do
+        :sudo
+      end
 
-    specify "the input must associate :sudo_options with a string" do
-      expect(subject.call(sudo_options: 123).errors).to include sudo_options: ["must be a string"]
+      it_behaves_like "an optional boolean"
     end
 
-    specify "the input must associate :sudo_options with a nonempty string" do
-      expect(subject.call(sudo_options: "").errors).to include sudo_options: ["must be filled"]
-    end
+    describe ":sudo_command" do
+      let :attribute do
+        :sudo_command
+      end
 
-    specify "the input may include :sudo_password" do
-      expect(subject.call({}).errors).not_to include sudo_password: ["is missing"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :sudo_password with a string" do
-      expect(subject.call(sudo_password: 123).errors).to include sudo_password: ["must be a string"]
-    end
+    describe ":sudo_options" do
+      let :attribute do
+        :sudo_options
+      end
 
-    specify "the input must associate :sudo_password with a nonempty string" do
-      expect(subject.call(sudo_password: "").errors).to include sudo_password: ["must be filled"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input may include :user" do
-      expect(subject.call({}).errors).not_to include user: ["is missing"]
-    end
+    describe ":sudo_password" do
+      let :attribute do
+        :sudo_password
+      end
 
-    specify "the input must associate :user with a string" do
-      expect(subject.call(user: 123).errors).to include user: ["must be a string"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :user with a nonempty string" do
-      expect(subject.call(user: "").errors).to include user: ["must be filled"]
-    end
+    describe ":user" do
+      let :attribute do
+        :user
+      end
 
-    specify "the input may include :vendor_cache" do
-      expect(subject.call({}).errors).not_to include vendor_cache: ["is missing"]
+      it_behaves_like "an optional string"
     end
 
-    specify "the input must associate :vendor_cache with a string" do
-      expect(subject.call(vendor_cache: 123).errors).to include vendor_cache: ["must be a string"]
-    end
+    describe ":vendor_cache" do
+      let :attribute do
+        :vendor_cache
+      end
 
-    specify "the input must associate :vendor_cache with a nonempty string" do
-      expect(subject.call(vendor_cache: "").errors).to include vendor_cache: ["must be filled"]
+      it_behaves_like "an optional string"
     end
   end
 end
