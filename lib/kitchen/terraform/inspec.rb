@@ -21,8 +21,6 @@ require "train"
 
 # InSpec instances act as interfaces to the InSpec gem.
 class ::Kitchen::Terraform::InSpec
-  EXIT_CODE_SUCCESS = 0
-
   class << self
     # logger= sets the logger for all InSpec processes.
     #
@@ -48,12 +46,13 @@ class ::Kitchen::Terraform::InSpec
 
   private
 
-  attr_accessor :runner
+  attr_accessor :runner, :exit_code_success
 
   # @api private
   # @param options [::Hash] options for execution.
   # @param path [::String] the path to the InSpec profile which contains the controls to be executed.
   def initialize(options:, path:)
+    self.exit_code_success = 0
     ::Inspec::Runner.new(options.merge(logger: ::Inspec::Log.logger)).tap do |runner|
       self.runner = runner
       ::Inspec::Log.info ::String.new "Loaded #{runner.add_target(path: path).last.name}"
@@ -62,7 +61,7 @@ class ::Kitchen::Terraform::InSpec
 
   # @api private
   def validate(exit_code:)
-    if EXIT_CODE_SUCCESS != exit_code
+    if exit_code_success != exit_code
       raise ::Kitchen::Terraform::Error, "InSpec Runner exited with #{exit_code}"
     end
   end

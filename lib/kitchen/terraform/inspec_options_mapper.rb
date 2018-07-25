@@ -18,36 +18,32 @@ require "kitchen/terraform"
 
 # Kitchen::Terraform::InSpecOptionsMapper maps group configuration attributes to an InSpec options hash.
 class ::Kitchen::Terraform::InSpecOptionsMapper
-  GROUP_TO_OPTIONS = ::Hash.new do |hash, key|
-    hash.store key, key
-  end
-
-  GROUP_TO_OPTIONS.store :reporter, "reporter"
-
-  KEYS = [:attrs, :backend, :backend_cache, :bastion_host, :bastion_port, :bastion_user, :controls, :enable_password,
-          :key_files, :password, :path, :port, :proxy_command, :reporter, :self_signed, :shell, :shell_command,
-          :shell_options, :show_progress, :ssl, :sudo, :sudo_command, :sudo_options, :sudo_password, :user, :vendor_cache]
-
+  # map populates an InSpec options hash based on the intersection between the group keys and the supported options
+  # keys, converting keys from symbols to strings as required by InSpec.
+  #
+  # @param options [::Hash] the InSpec options hash to be populated.
+  # @return [void]
   def map(options:)
-    KEYS.each do |key|
-      if group_keys.include? key
-        options.store GROUP_TO_OPTIONS.dig(key), group.fetch(key)
-      end
+    group_keys.&(options_keys).each do |key|
+      options.store group_to_options.dig(key), group.fetch(key)
     end
   end
 
   private
 
-  attr_accessor :group, :group_keys
+  attr_accessor :group, :group_keys, :group_to_options, :options_keys
 
+  # @api private
   def initialize(group:)
     self.group = group
     self.group_keys = group.keys
-  end
-
-  def store(group_key:, options:, options_key:)
-    if group_keys.include? group_key
-      options.store options_key, group.fetch(group_key)
+    self.group_to_options = ::Hash.new do |hash, key|
+      hash.store key, key
     end
+    group_to_options.store :reporter, "reporter"
+    self.options_keys = [:attrs, :backend, :backend_cache, :bastion_host, :bastion_port, :bastion_user, :controls,
+                         :enable_password, :key_files, :password, :path, :port, :proxy_command, :reporter, :self_signed,
+                         :shell, :shell_command, :shell_options, :show_progress, :ssl, :sudo, :sudo_command,
+                         :sudo_options, :sudo_password, :user, :vendor_cache]
   end
 end
