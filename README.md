@@ -365,7 +365,7 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 
 <!-- Markdown links and image definitions -->
 
-[build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg?style=plastic
+[build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg
 [build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [bundler-getting-started]: https://bundler.io/#getting-started
 [bundler-in-depth]: https://bundler.io/gemfile.html
@@ -376,19 +376,19 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [docker]: https://www.docker.com/
 [docker-community-edition]: https://store.docker.com/editions/community/docker-ce-server-ubuntu
 [docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
-[gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg?style=plastic
-[gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg?style=plastic
-[gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg?style=plastic
+[gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg
+[gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg
+[gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg
 [hakiri-shield]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/master.svg
 [hakiri]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/
-[gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg?style=plastic
+[gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg
 [gitter]: https://gitter.im/kitchen-terraform/Lobby
 [inspec]: https://www.inspec.io/
 [kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
-[maintainability-shield]: https://img.shields.io/codeclimate/maintainability/newcontext-oss/kitchen-terraform.svg?style=plastic
+[maintainability-shield]: https://img.shields.io/codeclimate/maintainability/newcontext-oss/kitchen-terraform.svg
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/maintainability
 [new-context-github]: https://github.com/newcontext
 [new-context-linkedin]: https://www.linkedin.com/company/-new-context-
@@ -407,7 +407,7 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [terraform-provisioner]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Provisioner/Terraform
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
-[test-coverage-shield]: https://img.shields.io/codeclimate/c/newcontext-oss/kitchen-terraform.svg?style=plastic
+[test-coverage-shield]: https://img.shields.io/codeclimate/c/newcontext-oss/kitchen-terraform.svg
 [test-coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/test_coverage
 [test-kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [test-kitchen]: http://kitchen.ci/index.html
