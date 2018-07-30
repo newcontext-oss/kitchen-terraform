@@ -53,12 +53,7 @@ end
 #     [--path=group.path] \
 #     [--port=group.port] \
 #     [--profiles-path=test/integration/suite] \
-#     [--user=group.user] \
-#
-# === InSpec Profiles
-#
-# The {https://www.inspec.io/docs/reference/profiles/ InSpec profile} for a Test Kitchen suite must be defined under
-# +./test/integration/<suite>/+.
+#     [--user=group.user]
 #
 # === Configuration Attributes
 #
@@ -74,9 +69,11 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Color}
 #
-# ==== groups
+# ==== systems
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Groups}
+#
+# === Ruby Interface
 #
 # This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
 # :reek:PrimaDonnaMethod { exclude: [ finalize_config!, load_needed_dependencies! ] }
