@@ -21,9 +21,9 @@ require "kitchen/terraform/config_schemas/group"
 module Kitchen
   module Terraform
     module ConfigSchemas
-      # Kitchen::Terraform::ConfigSchemas::Groups is a validation schema for the groups configuration attribute.
+      # The value of the +systems+ key must be a sequence of systems.
       #
-      # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
+      # {include:Kitchen::Terraform::ConfigSchemas::Group}
       Groups = ::Dry::Validation.Schema do
         required(:value).each do
           schema ::Kitchen::Terraform::ConfigSchemas::Group
