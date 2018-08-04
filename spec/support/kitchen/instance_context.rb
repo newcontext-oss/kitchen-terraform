@@ -20,15 +20,14 @@ require "kitchen/provisioner/terraform"
 require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 
-::RSpec
-  .shared_context "Kitchen::Instance" do
-    let :default_config do
-      {kitchen_root: kitchen_root}
-    end
+::RSpec.shared_context "Kitchen::Instance" do
+  let :default_config do
+    {kitchen_root: kitchen_root}
+  end
 
-    let :driver do
-      ::Kitchen::Driver::Terraform.new default_config
-    end
+  let :driver do
+    ::Kitchen::Driver::Terraform.new default_config
+  end
 
   let :instance do
     ::Kitchen::Instance.new driver: driver, lifecycle_hooks: lifecycle_hooks, logger: logger, platform: platform,
@@ -36,34 +35,35 @@ require "kitchen/verifier/terraform"
                             verifier: verifier
   end
 
-    let :kitchen_root do
-      "/kitchen/root"
-    end
+  let :kitchen_root do
+    "/kitchen/root"
+  end
 
-    let :logger do
-      ::Kitchen::Logger.new
-    end
   let :lifecycle_hooks do
     ::Kitchen::LifecycleHooks.new default_config
   end
 
-    let :platform do
-      ::Kitchen::Platform.new name: "platform"
-    end
-
-    let :provisioner do
-      ::Kitchen::Provisioner::Terraform.new default_config
-    end
-
-    let :suite do
-      ::Kitchen::Suite.new name: "suite"
-    end
-
-    let :transport do
-      ::Kitchen::Transport::Ssh.new
-    end
-
-    let :verifier do
-      ::Kitchen::Verifier::Terraform.new default_config
-    end
+  let :logger do
+    ::Kitchen::Logger.new
   end
+
+  let :platform do
+    ::Kitchen::Platform.new name: "platform"
+  end
+
+  let :provisioner do
+    ::Kitchen::Provisioner::Terraform.new default_config
+  end
+
+  let :suite do
+    ::Kitchen::Suite.new name: "suite"
+  end
+
+  let :transport do
+    ::Kitchen::Transport::Ssh.new
+  end
+
+  let :verifier do
+    ::Kitchen::Verifier::Terraform.new default_config
+  end
+end
