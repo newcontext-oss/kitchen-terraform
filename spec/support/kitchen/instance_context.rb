@@ -30,19 +30,11 @@ require "kitchen/verifier/terraform"
       ::Kitchen::Driver::Terraform.new default_config
     end
 
-    let :instance do
-      ::Kitchen::Instance
-        .new(
-          driver: driver,
-          logger: logger,
-          platform: platform,
-          provisioner: provisioner,
-          state_file: object,
-          suite: suite,
-          transport: transport,
-          verifier: verifier
-        )
-    end
+  let :instance do
+    ::Kitchen::Instance.new driver: driver, lifecycle_hooks: lifecycle_hooks, logger: logger, platform: platform,
+                            provisioner: provisioner, state_file: object, suite: suite, transport: transport,
+                            verifier: verifier
+  end
 
     let :kitchen_root do
       "/kitchen/root"
@@ -51,6 +43,9 @@ require "kitchen/verifier/terraform"
     let :logger do
       ::Kitchen::Logger.new
     end
+  let :lifecycle_hooks do
+    ::Kitchen::LifecycleHooks.new default_config
+  end
 
     let :platform do
       ::Kitchen::Platform.new name: "platform"

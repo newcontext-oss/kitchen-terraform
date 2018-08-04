@@ -51,24 +51,14 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_class.new config
     end
 
-    let :kitchen_instance do
-      ::Kitchen::Instance
-        .new(
-          driver: described_instance,
-          logger: kitchen_logger,
-          platform: ::Kitchen::Platform.new(name: "test-platform"),
-          provisioner: ::Kitchen::Provisioner::Base.new,
-          state_file:
-            ::Kitchen::StateFile
-              .new(
-                kitchen_root,
-                "test-suite-test-platform"
-              ),
-          suite: ::Kitchen::Suite.new(name: "test-suite"),
-          transport: ::Kitchen::Transport::Base.new,
-          verifier: ::Kitchen::Verifier::Base.new
-        )
-    end
+  let :kitchen_instance do
+    ::Kitchen::Instance.new driver: described_instance, lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+                            logger: kitchen_logger, platform: ::Kitchen::Platform.new(name: "test-platform"),
+                            provisioner: ::Kitchen::Provisioner::Base.new,
+                            state_file: ::Kitchen::StateFile.new(kitchen_root, "test-suite-test-platform"),
+                            suite: ::Kitchen::Suite.new(name: "test-suite"), transport: ::Kitchen::Transport::Base.new,
+                            verifier: ::Kitchen::Verifier::Base.new
+  end
 
     let :kitchen_logger do
       described_instance.send :logger

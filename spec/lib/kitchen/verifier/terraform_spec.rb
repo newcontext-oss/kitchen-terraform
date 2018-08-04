@@ -23,44 +23,21 @@ require "support/kitchen/terraform/config_attribute/groups_examples"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
+  let :config do
+    {color: false,
+     groups: [{attributes: {attribute_name: "output_name"}, attrs: ["attrs.yml"], backend: "backend",
+               backend_cache: false, bastion_host: "bastion_host", bastion_port: 5678, bastion_user: "bastion_user",
+               controls: ["control"], enable_password: "enable_password", hosts_output: "hosts",
+               key_files: ["first_key_file", "second_key_file"], name: "name", password: "password", path: "path",
+               port: 1234, proxy_command: "proxy_command", reporter: ["reporter"], self_signed: false, shell: false,
+               shell_command: "/bin/shell", shell_options: "--option=value", sudo: false, sudo_command: "/bin/sudo",
+               sudo_options: "--option=value", sudo_password: "sudo_password", show_progress: false, ssl: false,
+               user: "user", vendor_cache: "vendor_cache"}],
+     test_base_path: "/test/base/path"}
+  end
+
   let :described_instance do
-    described_class.new(
-      color: false,
-      groups: [
-        {
-          attributes: {attribute_name: "output_name"},
-          attrs: ["attrs.yml"],
-          backend: "backend",
-          backend_cache: false,
-          bastion_host: "bastion_host",
-          bastion_port: 5678,
-          bastion_user: "bastion_user",
-          controls: ["control"],
-          enable_password: "enable_password",
-          hosts_output: "hosts",
-          key_files: ["first_key_file", "second_key_file"],
-          name: "name",
-          password: "password",
-          path: "path",
-          port: 1234,
-          proxy_command: "proxy_command",
-          reporter: ["reporter"],
-          self_signed: false,
-          shell: false,
-          shell_command: "/bin/shell",
-          shell_options: "--option=value",
-          sudo: false,
-          sudo_command: "/bin/sudo",
-          sudo_options: "--option=value",
-          sudo_password: "sudo_password",
-          show_progress: false,
-          ssl: false,
-          user: "user",
-          vendor_cache: "vendor_cache",
-        },
-      ],
-      test_base_path: "/test/base/path",
-    )
+    described_class.new config
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
@@ -77,17 +54,13 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     let :kitchen_instance do
-      ::Kitchen::Instance
-        .new(
-          driver: ::Kitchen::Driver::Base.new,
-          logger: logger,
-          platform: ::Kitchen::Platform.new(name: "test-platform"),
-          provisioner: ::Kitchen::Provisioner::Base.new,
-          state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
-          suite: ::Kitchen::Suite.new(name: "test-suite"),
-          transport: ssh_transport,
-          verifier: described_instance,
-        )
+      ::Kitchen::Instance.new driver: ::Kitchen::Driver::Base.new,
+                              lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config), logger: logger,
+                              platform: ::Kitchen::Platform.new(name: "test-platform"),
+                              provisioner: ::Kitchen::Provisioner::Base.new,
+                              state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
+                              suite: ::Kitchen::Suite.new(name: "test-suite"), transport: ssh_transport,
+                              verifier: described_instance
     end
 
     let :logger do

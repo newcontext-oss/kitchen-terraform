@@ -139,11 +139,7 @@ require "rubygems"
       "< 3"
     )
 
-  specification
-    .add_runtime_dependency(
-      "test-kitchen",
-      "~> 1.20"
-    )
+  specification.add_runtime_dependency "test-kitchen", "~> 1.23"
 
   specification.cert_chain = ["certs/gem-public_cert.pem"]
 

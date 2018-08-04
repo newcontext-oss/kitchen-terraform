@@ -39,28 +39,25 @@ require "support/kitchen/terraform/configurable_examples"
         ::Kitchen::Driver::Terraform.new
       end
 
-      let :kitchen_instance do
-        ::Kitchen::Instance
-          .new(
-            driver: driver,
-            logger: ::Kitchen::Logger.new,
-            platform: ::Kitchen::Platform.new(name: "test-platform"),
-            provisioner: described_instance,
-            state_file:
-              ::Kitchen::StateFile
-                .new(
-                  "/kitchen/root",
-                  "test-suite-test-platform"
-                ),
-            suite: ::Kitchen::Suite.new(name: "test-suite"),
-            transport: ::Kitchen::Transport::Base.new,
-            verifier: ::Kitchen::Verifier::Base.new
-          )
-      end
 
-      let :kitchen_state do
-        {}
-      end
+    let :kitchen_instance do
+      ::Kitchen::Instance
+        .new(
+          driver: driver,
+          lifecycle_hooks: ::Kitchen::LifecycleHooks.new({}),
+          logger: ::Kitchen::Logger.new,
+          platform: ::Kitchen::Platform.new(name: "test-platform"),
+          provisioner: described_instance,
+          state_file: ::Kitchen::StateFile
+            .new(
+              "/kitchen/root",
+              "test-suite-test-platform"
+            ),
+          suite: ::Kitchen::Suite.new(name: "test-suite"),
+          transport: ::Kitchen::Transport::Base.new,
+          verifier: ::Kitchen::Verifier::Base.new,
+        )
+    end
 
       before do
         described_instance.finalize_config! kitchen_instance
