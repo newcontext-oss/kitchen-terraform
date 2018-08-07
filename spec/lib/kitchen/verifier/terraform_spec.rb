@@ -19,20 +19,20 @@ require "kitchen"
 require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
-require "support/kitchen/terraform/config_attribute/groups_examples"
+require "support/kitchen/terraform/config_attribute/systems_examples"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
   let :config do
     {color: false,
-     groups: [{attributes: {attribute_name: "output_name"}, attrs: ["attrs.yml"], backend: "backend",
-               backend_cache: false, bastion_host: "bastion_host", bastion_port: 5678, bastion_user: "bastion_user",
-               controls: ["control"], enable_password: "enable_password", hosts_output: "hosts",
-               key_files: ["first_key_file", "second_key_file"], name: "name", password: "password", path: "path",
-               port: 1234, proxy_command: "proxy_command", reporter: ["reporter"], self_signed: false, shell: false,
-               shell_command: "/bin/shell", shell_options: "--option=value", sudo: false, sudo_command: "/bin/sudo",
-               sudo_options: "--option=value", sudo_password: "sudo_password", show_progress: false, ssl: false,
-               user: "user", vendor_cache: "vendor_cache"}],
+     systems: [{attributes: {attribute_name: "output_name"}, attrs: ["attrs.yml"], backend: "backend",
+                backend_cache: false, bastion_host: "bastion_host", bastion_port: 5678, bastion_user: "bastion_user",
+                controls: ["control"], enable_password: "enable_password", hosts_output: "hosts",
+                key_files: ["first_key_file", "second_key_file"], name: "name", password: "password", path: "path",
+                port: 1234, proxy_command: "proxy_command", reporter: ["reporter"], self_signed: false, shell: false,
+                shell_command: "/bin/shell", shell_options: "--option=value", sudo: false, sudo_command: "/bin/sudo",
+                sudo_options: "--option=value", sudo_password: "sudo_password", show_progress: false, ssl: false,
+                user: "user", vendor_cache: "vendor_cache"}],
      test_base_path: "/test/base/path"}
   end
 
@@ -42,7 +42,7 @@ require "support/kitchen/terraform/configurable_examples"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
-  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Groups"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Systems"
 
   it_behaves_like "Kitchen::Terraform::Configurable"
 
@@ -107,7 +107,7 @@ require "support/kitchen/terraform/configurable_examples"
             .to(
               raise_error(
                 ::Kitchen::ActionFailed,
-                /Enumeration of groups and hosts resulted in failure/
+                /Enumeration of systems and hosts resulted in failure/
               )
             )
         end

@@ -16,17 +16,17 @@
 
 require "dry/validation"
 require "kitchen/terraform/config_schemas"
-require "kitchen/terraform/config_schemas/group"
+require "kitchen/terraform/config_schemas/system"
 
 module Kitchen
   module Terraform
     module ConfigSchemas
       # The value of the +systems+ key must be a sequence of systems.
       #
-      # {include:Kitchen::Terraform::ConfigSchemas::Group}
-      Groups = ::Dry::Validation.Schema do
+      # {include:Kitchen::Terraform::ConfigSchemas::System}
+      Systems = ::Dry::Validation.Schema do
         required(:value).each do
-          schema ::Kitchen::Terraform::ConfigSchemas::Group
+          schema ::Kitchen::Terraform::ConfigSchemas::System
         end
       end
     end

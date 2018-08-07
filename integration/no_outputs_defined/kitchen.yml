@@ -7,7 +7,7 @@ provisioner:
 
 verifier:
   name: terraform
-  groups:
+  systems:
     - name: no_outputs_defined
       backend: local
 

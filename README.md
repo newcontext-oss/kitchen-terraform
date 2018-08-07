@@ -189,7 +189,7 @@ transport:
 
 verifier:
   name: terraform
-  groups:
+  systems:
     - name: container
       backend: ssh
       hosts_output: container_hostname
@@ -286,7 +286,7 @@ $$$$$$ Running command `terraform apply...`
        Finished converging <example-ubuntu>...
 ...
 -----> Verifying <example-ubuntu>...
-       Verifying host 'localhost' of group 'container'
+       Verifying host 'localhost' of system 'container'
 ...
   ✔  operating_system: the operating system is Ubuntu
 ...

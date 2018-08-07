@@ -16,10 +16,10 @@
 
 require "support/kitchen/terraform/config_attribute_context"
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Groups" do
-  include_context "Kitchen::Terraform::ConfigAttribute", attribute: :groups do
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Systems" do
+  include_context "Kitchen::Terraform::ConfigAttribute", attribute: :systems do
     describe "the basic schema" do
-      context "when the config omits :groups" do
+      context "when the config omits :systems" do
         it_behaves_like "a default value is used", default_value: []
       end
     end

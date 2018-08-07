@@ -17,7 +17,7 @@
 require "kitchen/terraform/error"
 require "kitchen/verifier/terraform"
 
-# Configures the InSpec profile attributes for the Inspec::Runner used by the verifier to verify a group.
+# Configures the InSpec profile attributes for the Inspec::Runner used by the verifier to verify a system.
 #
 # Three different maps are merged to create the profile attributes.
 #
@@ -35,7 +35,7 @@ require "kitchen/verifier/terraform"
 #     "second_output_variable_name" => "second_output_variable_value"
 #   }
 #
-# The third map is comprised of attributes defined by a group's +:attributes+; the keys are converted to strings and the
+# The third map is comprised of attributes defined by a system's +:attributes+; the keys are converted to strings and the
 # values are assumed to be Terraform output variable names which are resolved. This map takes precedence in any key
 # conflicts with the second map.
 #
@@ -58,19 +58,19 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
   class << self
     # Invokes the function
     #
-    # @param group [::Hash] a kitchen-terraform verifier group.
+    # @param system [::Hash] a kitchen-terraform verifier system.
     # @param options [::Hash] the InSpec Runner options.
     # @param outputs [::String] the outputs of the Terraform state.
     # @raise [::Kitchen::Terraform::Error] if the configuration fails.
     # @return [void]
-    def call(group:, options:, outputs:)
-      group.fetch :attributes do
+    def call(system:, options:, outputs:)
+      system.fetch :attributes do
         {}
       end
-        .tap do |group_attributes|
+        .tap do |system_attributes|
           options.store(
             :attributes,
-            resolve(group_attributes: group_attributes, outputs: outputs)
+            resolve(system_attributes: system_attributes, outputs: outputs)
           )
         end
     rescue ::KeyError => key_error
@@ -80,15 +80,15 @@ module ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes
     private
 
     # @api private
-    def meld(group_attributes:, outputs:)
+    def meld(system_attributes:, outputs:)
       outputs.keys.tap do |outputs_keys|
-        return outputs_keys.+(group_attributes.keys).zip outputs_keys.+ group_attributes.values
+        return outputs_keys.+(system_attributes.keys).zip outputs_keys.+ system_attributes.values
       end
     end
 
     # @api private
-    def resolve(group_attributes:, outputs:)
-      meld(group_attributes: group_attributes, outputs: outputs)
+    def resolve(system_attributes:, outputs:)
+      meld(system_attributes: system_attributes, outputs: outputs)
         .reduce(::Hash.new) do |resolved_attributes, (attribute_name, output_name)|
           resolved_attributes.merge(attribute_name.to_s => outputs.fetch(output_name.to_s).fetch("value"))
         end

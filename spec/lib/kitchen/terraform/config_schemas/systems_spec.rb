@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_schemas/groups"
+require "kitchen/terraform/config_schemas/systems"
 
-::RSpec.describe ::Kitchen::Terraform::ConfigSchemas::Groups do
+::RSpec.describe ::Kitchen::Terraform::ConfigSchemas::Systems do
   subject do
     described_class
   end
