@@ -11,7 +11,7 @@ transport:
 
 verifier:
   name: terraform
-  groups:
+  systems:
     - name: container
       backend: docker
       controls:

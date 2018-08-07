@@ -16,86 +16,84 @@
 
 require "kitchen/verifier/terraform/configure_inspec_runner_attributes"
 
-::RSpec
-  .describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes do
-    subject do
-      described_class
+::RSpec.describe ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes do
+  subject do
+    described_class
+  end
+
+  describe ".call" do
+    def call_method
+      subject
+        .call(
+          system: system,
+          options: options,
+          outputs: outputs,
+        )
     end
 
-    describe ".call" do
-      def call_method
-        subject
-          .call(
-            group: group,
-            options: options,
-            outputs: outputs
+    let :system do
+      {}
+    end
+
+    let :options do
+      {}
+    end
+
+    context "when the value of the Terraform output command result is unexpected" do
+      let :outputs do
+        {"name" => {"unexpected" => "value"}}
+      end
+
+      specify do
+        expect do
+          call_method
+        end.to result_in_failure.with_message /Configuring InSpec runner attributes resulted in failure: .*\"value\"/
+      end
+    end
+
+    context "when the system attribute output names do not match the value of the Terraform output command result" do
+      let :system do
+        {attributes: {attribute_name: "not_output_name"}}
+      end
+
+      let :outputs do
+        {"output_name" => {"value" => "output_name value"}}
+      end
+
+      specify do
+        expect do
+          call_method
+        end
+          .to(
+            result_in_failure
+              .with_message(/Configuring InSpec runner attributes resulted in failure: .*\"not_output_name\"/)
           )
       end
+    end
 
-      let :group do
-        {}
+    context "when the system attribute output names match the value of the Terraform output command result" do
+      let :system do
+        {attributes: {attribute_name: "output_name"}}
       end
 
-      let :options do
-        {}
+      let :outputs do
+        {"output_name" => {"value" => "output_name value"}}
       end
 
-      context "when the value of the Terraform output command result is unexpected" do
-        let :outputs do
-          {"name" => {"unexpected" => "value"}}
+      specify do
+        expect do
+          call_method
         end
-
-        specify do
-          expect do
-            call_method
-          end
-            .to result_in_failure.with_message /Configuring InSpec runner attributes resulted in failure: .*\"value\"/
-        end
-      end
-
-      context "when the group attribute output names do not match the value of the Terraform output command result" do
-        let :group do
-          {attributes: {attribute_name: "not_output_name"}}
-        end
-
-        let :outputs do
-          {"output_name" => {"value" => "output_name value"}}
-        end
-
-        specify do
-          expect do
-            call_method
-          end
-            .to(
-              result_in_failure
-                .with_message(/Configuring InSpec runner attributes resulted in failure: .*\"not_output_name\"/)
-            )
-        end
-      end
-
-      context "when the group attribute output names match the value of the Terraform output command result" do
-        let :group do
-          {attributes: {attribute_name: "output_name"}}
-        end
-
-        let :outputs do
-          {"output_name" => {"value" => "output_name value"}}
-        end
-
-        specify do
-          expect do
-            call_method
-          end
-            .to(
-              change do
-                options.[] :attributes
-              end
-                .to(
-                  "attribute_name" => "output_name value",
-                  "output_name" => "output_name value"
-                )
-            )
-        end
+          .to(
+            change do
+              options.[] :attributes
+            end
+              .to(
+                "attribute_name" => "output_name value",
+                "output_name" => "output_name value",
+              )
+          )
       end
     end
   end
+end

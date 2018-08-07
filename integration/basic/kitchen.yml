@@ -11,7 +11,7 @@ transport:
 
 verifier:
   name: terraform
-  groups:
+  systems:
     - name: SSH with key files
       backend: ssh
       controls:

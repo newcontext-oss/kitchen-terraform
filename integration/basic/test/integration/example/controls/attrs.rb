@@ -9,8 +9,8 @@ second_attribute = attribute "second",
                              description: "This value should be loaded from test/integration/example/second_attrs.yml."
 
 control "attrs" do
-  desc "This control validates that the elements of the verifier.groups.x.attrs attribute are successfully passed to " \
-       "InSpec as attrs."
+  desc "This control validates that the elements of the verifier.systems.x.attrs attribute are successfully passed " \
+       "to InSpec as attrs."
 
   describe first_attribute do
     it do

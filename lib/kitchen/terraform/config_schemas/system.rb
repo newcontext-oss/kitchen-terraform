@@ -263,7 +263,7 @@ module Kitchen
       # ====== port
       #
       # The value of the +port+ key is an integer which is used as the port number when connecting via SSH to the hosts
-      # of the group.
+      # of the system.
       #
       # The +port+ key must be used in combination with +backend: ssh+.
       #
@@ -498,7 +498,7 @@ module Kitchen
       #       - name: a system
       #         backend: local
       #         vendor_cache: /opt/inspec-cache
-      Group = ::Dry::Validation.Params do
+      System = ::Dry::Validation.Params do
         required(:name).filled :str?
         required(:backend).filled :str?
         optional(:attributes).filled :hash?

@@ -16,10 +16,10 @@
 
 require "kitchen"
 require "kitchen/terraform/config_attribute/color"
-require "kitchen/terraform/config_attribute/groups"
+require "kitchen/terraform/config_attribute/systems"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
-require "kitchen/terraform/group_and_hosts_enumerator"
+require "kitchen/terraform/system_and_hosts_enumerator"
 require "kitchen/terraform/inspec_options_mapper"
 
 # This namespace is defined by Kitchen.
@@ -37,23 +37,23 @@ end
 #
 # ==== kitchen verify
 #
-# A Test Kitchen instance is verified by iterating through the groups and executing the associated InSpec controls in a
+# A Test Kitchen instance is verified by iterating through the systems and executing the associated InSpec controls in a
 # manner similar to the following command-line command.
 #
 #   inspec exec \
-#     [--attrs=group.attrs] \
-#     --backend=group.backend \
-#     [--backend-cache=group.backend_cache] \
+#     [--attrs=system.attrs] \
+#     --backend=system.backend \
+#     [--backend-cache=system.backend_cache] \
 #     [--no-color] \
-#     [--controls=group.controls] \
-#     [--enable-password=group.enable_password] \
-#     --host=group.hosts_output.x \
-#     [--key-files=group.key_files] \
-#     [--password=group.password] \
-#     [--path=group.path] \
-#     [--port=group.port] \
+#     [--controls=system.controls] \
+#     [--enable-password=system.enable_password] \
+#     --host=system.hosts_output.x \
+#     [--key-files=system.key_files] \
+#     [--password=system.password] \
+#     [--path=system.path] \
+#     [--port=system.port] \
 #     [--profiles-path=test/integration/suite] \
-#     [--user=group.user]
+#     [--user=system.user]
 #
 # === Configuration Attributes
 #
@@ -71,7 +71,7 @@ end
 #
 # ==== systems
 #
-# {include:Kitchen::Terraform::ConfigAttribute::Groups}
+# {include:Kitchen::Terraform::ConfigAttribute::Sysetms}
 #
 # === Ruby Interface
 #
@@ -81,11 +81,11 @@ class ::Kitchen::Verifier::Terraform
   include ::Kitchen::Configurable
   include ::Kitchen::Logging
   include ::Kitchen::Terraform::ConfigAttribute::Color
-  include ::Kitchen::Terraform::ConfigAttribute::Groups
+  include ::Kitchen::Terraform::ConfigAttribute::Systems
   include ::Kitchen::Terraform::Configurable
   @api_version = 2
 
-  # The verifier enumerates through each hostname of each group and verifies the associated InSpec controls.
+  # The verifier enumerates through each hostname of each system and verifies the associated InSpec controls.
   #
   # @example
   #   `kitchen verify suite-name`
@@ -94,9 +94,9 @@ class ::Kitchen::Verifier::Terraform
   # @return [void]
   def call(kitchen_state)
     load_outputs kitchen_state: kitchen_state
-    ::Kitchen::Terraform::GroupAndHostsEnumerator.new(groups: config_groups, outputs: outputs)
-      .each_group_and_hosts do |group:, host:|
-      verify group: group, host: host
+    ::Kitchen::Terraform::SystemAndHostsEnumerator.new(systems: config_systems, outputs: outputs)
+      .each_system_and_hosts do |system:, host:|
+      verify system: system, host: host
     end
   rescue ::Kitchen::Terraform::Error => error
     raise(
@@ -114,7 +114,7 @@ class ::Kitchen::Verifier::Terraform
     false
   end
 
-  # finalize_config! configures InSpec options which remain consistent between groups.
+  # finalize_config! configures InSpec options which remain consistent between systems.
   #
   # @param kitchen_instance [::Kitchen::Instance] an associated Kitchen instance.
   # @return [self]
@@ -208,11 +208,11 @@ class ::Kitchen::Verifier::Terraform
 
   # @api private
   # @raise [::Kitchen::Terraform::Error] if running InSpec results in failure.
-  def verify(group:, host:)
-    info "Verifying host '#{host}' of group '#{group.fetch :name}'"
+  def verify(system:, host:)
+    info "Verifying host '#{host}' of system '#{system.fetch :name}'"
     inspec_options.store :host, host
-    ::Kitchen::Terraform::InSpecOptionsMapper.new(group: group).map options: inspec_options
-    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call group: group, options: inspec_options,
+    ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: inspec_options
+    ::Kitchen::Verifier::Terraform::ConfigureInspecRunnerAttributes.call system: system, options: inspec_options,
                                                                          outputs: outputs
     ::Kitchen::Terraform::InSpec.new(options: inspec_options, path: inspec_profile_path).exec
   end

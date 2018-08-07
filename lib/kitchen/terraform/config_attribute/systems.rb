@@ -15,21 +15,21 @@
 # limitations under the License.
 
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_schemas/groups"
+require "kitchen/terraform/config_schemas/systems"
 
 module Kitchen
   module Terraform
     class ConfigAttribute
-      # {include:Kitchen::Terraform::ConfigSchemas::Groups}
+      # {include:Kitchen::Terraform::ConfigSchemas::Systems}
       #
       # If the +systems+ key is omitted then no tests will be executed.
-      module Groups
+      module Systems
         ::Kitchen::Terraform::ConfigAttribute.new(
-          attribute: :groups,
+          attribute: :systems,
           default_value: lambda do
             []
           end,
-          schema: ::Kitchen::Terraform::ConfigSchemas::Groups,
+          schema: ::Kitchen::Terraform::ConfigSchemas::Systems,
         ).apply config_attribute: self
       end
     end
