@@ -36,6 +36,8 @@ module Kitchen
       #
       # ===== Required Keys
       #
+      # The following keys must be included by every system.
+      #
       # ====== name
       #
       # The value of the +name+ key is a scalar which is used to refer to the system for logging purposes.
@@ -62,6 +64,9 @@ module Kitchen
       #         backend: docker
       #
       # ===== Optional Keys
+      #
+      # The following keys may be included by any system to alter the behaviour of InSpec. Any key which is omitted
+      # will be associated with a default value as defined by InSpec.
       #
       # ====== attrs
       #
