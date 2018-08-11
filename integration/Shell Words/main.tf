@@ -6,11 +6,11 @@ terraform {
 
 provider "docker" {
   host    = "unix://localhost/var/run/docker.sock"
-  version = "~> 0.1"
+  version = "~> 1.0"
 }
 
 provider "local" {
-  version = "~> 1.0"
+  version = "~> 1.1"
 }
 
 data "docker_registry_image" "ubuntu" {
