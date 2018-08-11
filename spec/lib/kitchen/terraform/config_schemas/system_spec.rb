@@ -102,12 +102,12 @@ require "kitchen/terraform/config_schemas/system"
       it_behaves_like "a required string"
     end
 
-    specify "the input may include :attributes" do
-      expect(subject.call({}).errors).not_to include attributes: ["is missing"]
+    specify "the input may include :attrs_outputs" do
+      expect(subject.call({}).errors).not_to include attrs_outputs: ["is missing"]
     end
 
-    specify "the input must associate :attributes with a hash" do
-      expect(subject.call(attributes: 123).errors).to include attributes: ["must be a hash"]
+    specify "the input must associate :attrs_outputs with a hash" do
+      expect(subject.call(attrs_outputs: 123).errors).to include attrs_outputs: ["must be a hash"]
     end
 
     describe ":attrs" do
@@ -164,6 +164,14 @@ require "kitchen/terraform/config_schemas/system"
       end
 
       it_behaves_like "an optional string"
+    end
+
+    describe ":hosts" do
+      let :attribute do
+        :hosts
+      end
+
+      it_behaves_like "an optional array of strings"
     end
 
     describe ":hosts_output" do
