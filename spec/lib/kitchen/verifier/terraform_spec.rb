@@ -25,10 +25,10 @@ require "support/kitchen/terraform/configurable_examples"
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
   let :config do
     {color: false,
-     systems: [{attributes: {attribute_name: "output_name"}, attrs: ["attrs.yml"], backend: "backend",
+     systems: [{attrs_outputs: {attribute_name: "output_name"}, attrs: ["attrs.yml"], backend: "backend",
                 backend_cache: false, bastion_host: "bastion_host", bastion_port: 5678, bastion_user: "bastion_user",
                 controls: ["control"], enable_password: "enable_password", hosts_output: "hosts",
-                key_files: ["first_key_file", "second_key_file"], name: "name", password: "password", path: "path",
+                key_files: ["first_key_file", "second_key_file"], name: "a-system", password: "password", path: "path",
                 port: 1234, proxy_command: "proxy_command", reporter: ["reporter"], self_signed: false, shell: false,
                 shell_command: "/bin/shell", shell_options: "--option=value", sudo: false, sudo_command: "/bin/sudo",
                 sudo_options: "--option=value", sudo_password: "sudo_password", show_progress: false, ssl: false,
@@ -75,41 +75,43 @@ require "support/kitchen/terraform/configurable_examples"
       described_instance.finalize_config! kitchen_instance
     end
 
-    context "when the Kitchen state omits :kitchen_terraform_outputs" do
+    context "when the :kitchen_terraform_outputs key is omitted from the Kitchen state" do
       let :kitchen_state do
         {}
       end
 
-      it do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::ActionFailed,
-              "The Kitchen state does not include :kitchen_terraform_outputs; this implies that the " \
-              "kitchen-terraform provisioner has not successfully converged"
-            )
-          )
+      specify "should raise an action failed error indicating the missing :kitchen_terraform_outputs key" do
+        is_expected.to raise_error ::Kitchen::ActionFailed,
+                                   "Loading Terraform outputs from the Kitchen state failed; this implies that the " \
+                                   "Kitchen-Terraform provisioner has not successfully converged\nkey not found: " \
+                                   ":kitchen_terraform_outputs"
       end
     end
 
-    context "when the Kitchen state includes :kitchen_terraform_outputs" do
+    context "when the :kitchen_terraform_outputs key is included in the Kitchen state" do
       let :kitchen_state do
         {kitchen_terraform_outputs: kitchen_terraform_outputs}
       end
 
-      context "when the :kitchen_terraform_outputs does not include the configured :hosts_output key" do
+      context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
         let :kitchen_terraform_outputs do
           {}
         end
 
-        it "raise an action failed error" do
-          is_expected
-            .to(
-              raise_error(
-                ::Kitchen::ActionFailed,
-                /Enumeration of systems and hosts resulted in failure/
-              )
-            )
+        specify "should raise an action failed error indicating the missing output" do
+          is_expected.to raise_error ::Kitchen::ActionFailed,
+                                     "Resolving the attrs of system a-system failed\nkey not found: \"output_name\""
+        end
+      end
+
+      context "when the value of the :kitchen_terraform_outputs key omits the value of the :hosts_output key" do
+        let :kitchen_terraform_outputs do
+          {"output_name": {"value": "output value"}}
+        end
+
+        specify "should raise an action failed error indicating the missing :hosts_output key" do
+          is_expected.to raise_error ::Kitchen::ActionFailed,
+                                     "Resolving the hosts of system a-system failed\nkey not found: \"hosts\""
         end
       end
 
