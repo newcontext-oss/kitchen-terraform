@@ -14,55 +14,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
-require "kitchen/terraform/error"
 require "inspec"
+require "kitchen/terraform/error"
 require "train"
 
-# InSpec instances act as interfaces to the InSpec gem.
-class ::Kitchen::Terraform::InSpec
-  class << self
-    # logger= sets the logger for all InSpec processes.
-    #
-    # @param logger [::Kitchen::Logger] the logger to use.
-    # @return [void]
-    def logger=(logger)
-      ::Inspec::Log.logger = logger
-    end
-  end
+module Kitchen
+  module Terraform
+    # InSpec is the class of objects which act as interfaces to InSpec.
+    class InSpec
+      class << self
+        # .logger= sets the logger for all InSpec processes.
+        #
+        # @param logger [::Kitchen::Logger] the logger to use.
+        # @return [void]
+        def logger=(logger)
+          ::Inspec::Log.logger = logger
+        end
+      end
 
-  # exec executes the InSpec controls of an InSpec profile.
-  #
-  # @raise [::Kitchen::Terraform::Error] if the execution of the InSpec controls fails.
-  # @return [void]
-  def exec
-    validate exit_code: runner.run
-  rescue ::ArgumentError, ::RuntimeError, ::Train::UserError => error
-    raise(
-      ::Kitchen::Terraform::Error,
-      error.message
-    )
-  end
+      # #exec executes InSpec.
+      #
+      # @return [self]
+      def exec
+        @runner.run.tap do |exit_code|
+          if 0 != exit_code
+            raise ::Kitchen::Terraform::Error, "InSpec Runner exited with #{exit_code}"
+          end
+        end
 
-  private
+        self
+      rescue ::ArgumentError, ::RuntimeError, ::Train::UserError => error
+        raise ::Kitchen::Terraform::Error, "Executing InSpec failed\n#{error.message}"
+      end
 
-  attr_accessor :runner, :exit_code_success
+      # #info logs an information message using the InSpec logger.
+      #
+      # @param message [::String] the message to be logged.
+      # @return [self]
+      def info(message:)
+        ::Inspec::Log.info ::String.new message
 
-  # @api private
-  # @param options [::Hash] options for execution.
-  # @param path [::String] the path to the InSpec profile which contains the controls to be executed.
-  def initialize(options:, path:)
-    self.exit_code_success = 0
-    ::Inspec::Runner.new(options.merge(logger: ::Inspec::Log.logger)).tap do |runner|
-      self.runner = runner
-      ::Inspec::Log.info ::String.new "Loaded #{runner.add_target(path: path).last.name}"
-    end
-  end
+        self
+      end
 
-  # @api private
-  def validate(exit_code:)
-    if exit_code_success != exit_code
-      raise ::Kitchen::Terraform::Error, "InSpec Runner exited with #{exit_code}"
+      private
+
+      def initialize(options:, profile_path:)
+        @runner = ::Inspec::Runner.new options.merge logger: ::Inspec::Log.logger
+        @runner.add_target path: profile_path
+      end
     end
   end
 end

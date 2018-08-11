@@ -201,6 +201,21 @@ module Kitchen
       #         backend: ssh
       #         enable_password: Cisc0!
       #
+      # ====== hosts
+      #
+      # The value of the +hosts+ key is a sequence of scalars which is used as addresses of hosts in the system.
+      #
+      # The +hosts+ key must be used in combination with a backend which enables remote connections.
+      #
+      # <em>Example kitchen.yml</em>
+      #   verifier:
+      #     name: terraform
+      #     systems:
+      #       - name: a system
+      #         backend: ssh
+      #         hosts:
+      #           - hostname.domainname
+      #
       # ====== hosts_output
       #
       # The value of the +hosts_output+ key is a scalar which is used to obtain the addresses of hosts in the system
@@ -506,14 +521,15 @@ module Kitchen
       System = ::Dry::Validation.Params do
         required(:name).filled :str?
         required(:backend).filled :str?
-        optional(:attributes).filled :hash?
         optional(:attrs).each(:filled?, :str?)
+        optional(:attrs_outputs).filled :hash?
         optional(:backend_cache).value :bool?
         optional(:bastion_host).filled :str?
         optional(:bastion_port).value :int?
         optional(:bastion_user).filled :str?
         optional(:controls).each(:filled?, :str?)
         optional(:enable_password).filled :str?
+        optional(:hosts).each :filled?, :str?
         optional(:hosts_output).filled :str?
         optional(:key_files).each(:filled?, :str?)
         optional(:password).filled :str?
