@@ -8,24 +8,50 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
-## [4.0.0] - 2018-06-XY
+## [4.0.0] - 2018-08-13
+
+> An open-source software release is never late.
+> Nor is it early.
+> It arrives precisely when the maintainers get around to finishing it.
+
+_Gandalf the Free-As-In-Beer_
+
+### Added
+
+- The verifier configuration gained a `:systems` attribute which replaced the `:groups` attribute; refer to the updated
+  [Terraform Verifier documentation][terraform-verifier] for more details
+
+- The Terraform shell out environment now enables `TF_WARN_OUTPUT_ERRORS` to work around
+  [Terraform issue #17655][terraform-issue-17655]
 
 ### Changed
 
-- Breaking support for Test-Kitchen >= 1.16.0, < 1.20.0
+- Support for Terraform < 0.11.4 was broken
 
-- Breaking support for Ruby 2.2
+- Support for InSpec < 2.2.34 was broken
 
-- Breaking support for concurrency with the following commands:
+- Support for InSpec >= 2.2.34, < 3 was introduced
+
+- Support for Kitchen < 1.20.0 was broken
+
+- Support for Kitchen ~> 1.23 was introduced
+
+- Support for Ruby 2.2 was broken
+
+- Support for concurrency with the following commands was broken:
   `create`, `converge`, `setup`, and `destroy`
 
-- Replacing deprecated `terraform destroy -force` flag with supported
+- The deprecated `terraform destroy -force` flag was replaced with the supported
   `terraform destroy -auto-approve` flag
 
-- Changing directory to `root_module_directory` before running
-  Terraform commands
+- The working directory of the Terraform shell out environment was changed to the value of the `:root_module_directory`
+  attribute of the driver configuration
 
-- Breaking support for Terraform >= 0.10.2, < 0.11.4
+- Support for the `:groups` attribute of the verifier configuration was broken; `:systems` replaces `:groups`
+
+- InSpec was reconfigured to use the Kitchen logger for all logging
+
+- InSpec was reconfigured to exclusively return 0 and 1 as exit codes
 
 ## [3.3.1] - 2018-04-29
 
@@ -521,3 +547,5 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 [@xmik]: https://github.com/xmik
 [code climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
 [travis ci build plan]: https://travis-ci.com/newcontext-oss/kitchen-terraform
+[terraform-issue-17655]: https://github.com/hashicorp/terraform/issues/17655
+[terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
