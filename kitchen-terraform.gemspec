@@ -18,7 +18,7 @@ require "rubygems"
   specification.summary = "Test Kitchen plugins for testing Terraform configuration"
   ::Kitchen::Terraform::Version.assign_specification_version specification: specification
   specification.email = "kitchen-terraform@newcontext.com"
-  specification.homepage = "https://github.com/newcontext-oss/kitchen-terraform"
+  specification.homepage = "https://newcontext-oss.github.io/kitchen-terraform/"
   specification.license = "Apache-2.0"
   specification.add_development_dependency "bundler-audit", "~> 0.6.0"
   specification.add_development_dependency "guard", "~> 2.14"
