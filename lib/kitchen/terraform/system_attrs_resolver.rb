@@ -44,8 +44,10 @@ module Kitchen
       #
       # @param outputs [#to_hash] the outputs of the Terraform state under test.
       def initialize(outputs:)
-        @outputs = Hash[outputs].transform_values do |value|
-          value.fetch "value"
+        @outputs = Hash[outputs].inject({}) do |hash, (key, value)|
+          hash.store key, value.fetch("value")
+
+          hash
         end
       rescue ::KeyError => key_error
         raise ::Kitchen::Terraform::Error, "Preparing to resolve attrs failed\n#{key_error}"
