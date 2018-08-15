@@ -94,11 +94,11 @@ module Kitchen
       def verify(inspec_options:, inspec_profile_path:)
         if @hosts.empty?
           ::Kitchen::Terraform::InSpecWithoutHosts
-            .new(options: inspec_options.merge(attributes: @attributes), profile_path: inspec_profile_path).exec system: self
         else
           ::Kitchen::Terraform::InSpecWithHosts
-            .new(options: inspec_options.merge(attributes: @attributes), profile_path: inspec_profile_path).exec system: self
         end
+          .new(options: inspec_options.merge(attributes: @attributes), profile_path: inspec_profile_path)
+          .exec(system: self)
 
         self
       end
