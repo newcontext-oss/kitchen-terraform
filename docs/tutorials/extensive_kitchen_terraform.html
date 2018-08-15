@@ -272,43 +272,27 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">static_terraform_output</span> <span class="o">=</span>
-  <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
-  <span class="c1"># output</span>
-  <span class="n">attribute</span><span class="p">(</span>
-    <span class="s2">"static_terraform_output"</span><span class="p">,</span>
-    <span class="ss">description: </span><span class="s2">"An arbitrary, static output"</span>
-  <span class="p">)</span>
+<span class="n">static_terraform_output</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
+  <span class="s2">"static_terraform_output"</span><span class="p">,</span>
+  <span class="ss">description: </span><span class="s2">"The Terraform configuration under test must define an "</span> <span class="p">\</span>
+  <span class="s2">"equivalently named output"</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="n">customized_inspec_attribute</span> <span class="o">=</span>
-  <span class="c1"># The Test Kitchen configuration must map this attribute to the</span>
-  <span class="c1"># 'static_terraform_output' output</span>
-  <span class="n">attribute</span><span class="p">(</span>
-    <span class="s2">"customized_inspec_attribute"</span><span class="p">,</span>
-    <span class="ss">description: </span><span class="s2">"A configured alias for static_terraform_output"</span>
-  <span class="p">)</span>
+<span class="n">customized_inspec_attribute</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
+  <span class="s2">"customized_inspec_attribute"</span><span class="p">,</span>
+  <span class="ss">description: </span><span class="s2">"The Test Kitchen configuration must map this attribute to the "</span> <span class="p">\</span>
+  <span class="s2">"'static_terraform_output' output"</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">control</span> <span class="s2">"inspec_attributes"</span> <span class="k">do</span>
   <span class="n">desc</span> <span class="s2">"A demonstration of how InSpec attributes are mapped to Terraform outputs"</span>
 
-  <span class="n">describe</span> <span class="s2">"The 'static_terraform_output' attribute"</span> <span class="k">do</span>
-    <span class="n">subject</span> <span class="k">do</span>
-      <span class="n">static_terraform_output</span>
-    <span class="k">end</span>
-
-    <span class="n">it</span> <span class="s2">"is mapped to the 'static_terraform_output' output by default"</span> <span class="k">do</span>
-      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"static terraform output"</span>
-    <span class="k">end</span>
+  <span class="n">describe</span> <span class="n">static_terraform_output</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">eq</span> <span class="s2">"static terraform output"</span> <span class="p">}</span>
   <span class="k">end</span>
 
-  <span class="n">describe</span> <span class="s2">"The 'customized_inspec_attribute' attribute"</span> <span class="k">do</span>
-    <span class="n">subject</span> <span class="k">do</span>
-      <span class="n">customized_inspec_attribute</span>
-    <span class="k">end</span>
-
-    <span class="n">it</span> <span class="s2">"is mapped to the 'static_terraform_output' output by configuration"</span> <span class="k">do</span>
-      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">eq</span> <span class="s2">"static terraform output"</span>
-    <span class="k">end</span>
+  <span class="n">describe</span> <span class="n">customized_inspec_attribute</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">eq</span> <span class="s2">"static terraform output"</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
@@ -323,25 +307,17 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">instances_ami_operating_system_name</span> <span class="o">=</span>
-  <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
-  <span class="c1"># output</span>
-  <span class="n">attribute</span><span class="p">(</span>
-    <span class="s2">"instances_ami_operating_system_name"</span><span class="p">,</span>
-    <span class="ss">description: </span><span class="s2">"The name of the operating system on the AWS EC2 instances AMI"</span>
-  <span class="p">)</span>
+<span class="n">instances_ami_operating_system_name</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
+  <span class="s2">"instances_ami_operating_system_name"</span><span class="p">,</span>
+  <span class="ss">description: </span><span class="s2">"The Terraform configuration under test must define the "</span> <span class="p">\</span>
+  <span class="s2">"equivalently named output"</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">control</span> <span class="s2">"operating_system"</span> <span class="k">do</span>
   <span class="n">desc</span> <span class="s2">"Verifies the name of the operating system on the targeted host"</span>
 
-  <span class="n">describe</span> <span class="s2">"The operating system name"</span> <span class="k">do</span>
-    <span class="n">subject</span> <span class="k">do</span>
-      <span class="n">os</span><span class="p">[</span><span class="ss">:name</span><span class="p">]</span>
-    <span class="k">end</span>
-
-    <span class="n">it</span> <span class="s2">"is equal to the 'instances_ami_operating_system_name' output"</span> <span class="k">do</span>
-      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">eq</span> <span class="n">instances_ami_operating_system_name</span>
-    <span class="k">end</span>
+  <span class="n">describe</span> <span class="n">os</span><span class="p">.</span><span class="nf">name</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">eq</span> <span class="n">instances_ami_operating_system_name</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
@@ -356,35 +332,17 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="nb">require</span> <span class="s2">"awspec"</span>
-
-<span class="n">reachable_other_host_id</span> <span class="o">=</span>
-  <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
-  <span class="c1"># output</span>
-  <span class="n">attribute</span><span class="p">(</span>
-    <span class="s2">"reachable_other_host_id"</span><span class="p">,</span>
-    <span class="ss">description: </span><span class="s2">"The ID of the AWS EC2 instance which should be reachable"</span>
-  <span class="p">)</span>
+<span class="n">reachable_other_host_ip_address</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
+  <span class="s2">"reachable_other_host_ip_address"</span><span class="p">,</span>
+  <span class="ss">description: </span><span class="s2">"The Terraform configuration under test must define the "</span> <span class="p">\</span>
+  <span class="s2">"equivalently named output"</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">control</span> <span class="s2">"reachable_other_host"</span> <span class="k">do</span>
   <span class="n">desc</span> <span class="s2">"Verifies that the other host is reachable from the current host"</span>
 
-  <span class="n">describe</span> <span class="s2">"The other host"</span> <span class="k">do</span>
-    <span class="n">subject</span> <span class="k">do</span>
-      <span class="c1"># host is a resource provided by InSpec</span>
-      <span class="n">host</span><span class="p">(</span>
-        <span class="c1"># ec2 is a resource provided by awspec</span>
-        <span class="n">ec2</span><span class="p">(</span><span class="n">reachable_other_host_id</span><span class="p">).</span><span class="nf">public_ip_address</span>
-      <span class="p">)</span>
-    <span class="k">end</span>
-
-    <span class="n">before</span> <span class="k">do</span>
-      <span class="nb">sleep</span> <span class="mi">5</span>
-    <span class="k">end</span>
-
-    <span class="n">it</span> <span class="s2">"is reachable"</span> <span class="k">do</span>
-      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">be_reachable</span>
-    <span class="k">end</span>
+  <span class="n">describe</span> <span class="n">host</span> <span class="n">reachable_other_host_ip_address</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">be_reachable</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
@@ -399,26 +357,17 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">terraform_state</span> <span class="o">=</span>
-  <span class="c1"># The Terraform configuration under test must define the equivalently named</span>
-  <span class="c1"># output</span>
-  <span class="n">attribute</span><span class="p">(</span>
-    <span class="s2">"terraform_state"</span><span class="p">,</span>
-    <span class="ss">description: </span><span class="s2">"The path to the Terraform state file"</span>
-  <span class="p">)</span>
-    <span class="p">.</span><span class="nf">chomp</span>
+<span class="n">terraform_state</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
+  <span class="s2">"terraform_state"</span><span class="p">,</span>
+  <span class="ss">description: </span><span class="s2">"The Terraform configuration under test must define the "</span> <span class="p">\</span>
+  <span class="s2">"equivalently named output"</span><span class="p">,</span>
+<span class="p">).</span><span class="nf">chomp</span>
 
 <span class="n">control</span> <span class="s2">"state_file"</span> <span class="k">do</span>
   <span class="n">desc</span> <span class="s2">"Verifies that the Terraform state file can be used in InSpec controls"</span>
 
-  <span class="n">describe</span> <span class="s2">"The Terraform version in the Terraform state file"</span> <span class="k">do</span>
-    <span class="n">subject</span> <span class="k">do</span>
-      <span class="n">json</span><span class="p">(</span><span class="n">terraform_state</span><span class="p">).</span><span class="nf">terraform_version</span>
-    <span class="k">end</span>
-
-    <span class="n">it</span> <span class="s2">"matches the MAJOR.MINOR.PATCH format"</span> <span class="k">do</span>
-      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">match</span> <span class="sr">/\d+\.\d+\.\d+/</span>
-    <span class="k">end</span>
+  <span class="n">describe</span> <span class="n">json</span><span class="p">(</span><span class="n">terraform_state</span><span class="p">).</span><span class="nf">terraform_version</span> <span class="k">do</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">match</span> <span class="sr">/\d+\.\d+\.\d+/</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
@@ -461,31 +410,18 @@ ssh-keygen <span class="se">\</span>
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
 mkdir <span class="nt">-p</span> <span class="nb">test</span>/fixtures/wrapper
-touch <span class="nb">test</span>/fixtures/wrapper/configuration.tf
-
+touch <span class="nb">test</span>/fixtures/wrapper/main.tf <span class="nb">test</span>/fixtures/wrapper/outputs.tf <span class="se">\</span>
+  <span class="nb">test</span>/fixtures/wrapper/variables.tf
 </code></pre></div>          <br><br>
-          Populate the configuration file,
-          <p
-            class="font-weight-bold"
-            style="color: #32c850; display: inline;"
-          >
-            test/fixtures/wrapper/configuration.tf
-          </p>
-          , to match the following example.
+          Populate the variables file,
+          <p class="font-weight-bold" style="color: #32c850; display: inline;">test/fixtures/wrapper/variables.tf</p>, to match the following example.
           <br><br>
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Input Variable Configuration</span>
-
-<span class="n">variable</span> <span class="s2">"instances_ami"</span> <span class="p">{</span>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">variable</span> <span class="s2">"instances_ami"</span> <span class="p">{</span>
   <span class="n">description</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOD</span><span class="sh">
 The Amazon Machine Image (AMI) to use for the AWS EC2 instances of the module
 </span><span class="no">EOD</span>
 
   <span class="n">type</span> <span class="o">=</span> <span class="s2">"string"</span>
-<span class="p">}</span>
-
-<span class="n">variable</span> <span class="s2">"instances_ami_operating_system_name"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The name of the operating system within the AMI"</span>
-  <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
 <span class="p">}</span>
 
 <span class="n">variable</span> <span class="s2">"subnet_availability_zone"</span> <span class="p">{</span>
@@ -496,9 +432,17 @@ The isolated, regional location in which to place the subnet of the module
   <span class="n">type</span> <span class="o">=</span> <span class="s2">"string"</span>
 <span class="p">}</span>
 
-<span class="c1"># Module Configuration</span>
-
-<span class="n">module</span> <span class="s2">"extensive_kitchen_terraform"</span> <span class="p">{</span>
+</code></pre></div>          <br><br>
+          Populate the main file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/fixtures/wrapper/main.tf
+          </p>
+          , to match the following example.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">module</span> <span class="s2">"extensive_kitchen_terraform"</span> <span class="p">{</span>
   <span class="n">instances_ami</span> <span class="o">=</span> <span class="s2">"${var.instances_ami}"</span>
 
   <span class="c1"># The generated key pair will be used to configure SSH authentication</span>
@@ -509,39 +453,44 @@ The isolated, regional location in which to place the subnet of the module
   <span class="n">subnet_availability_zone</span> <span class="o">=</span> <span class="s2">"${var.subnet_availability_zone}"</span>
 <span class="p">}</span>
 
-<span class="c1"># Output Configuration</span>
+</code></pre></div>          <br><br>
+          Populate the outputs file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/fixtures/wrapper/outputs.tf
+          </p>
+          , to match the following example.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">output</span> <span class="s2">"reachable_other_host_ip_address"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOD</span><span class="sh">
+This output is used as an attribute in the reachable_other_host control
+</span><span class="no">EOD</span>
 
-<span class="c1"># This output is used as an attribute in the operating_system control</span>
-<span class="n">output</span> <span class="s2">"instances_ami_operating_system_name"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The name of the operating system within the AMI"</span>
-
-  <span class="n">value</span> <span class="o">=</span> <span class="s2">"${var.instances_ami_operating_system_name}"</span>
+  <span class="n">value</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOV</span><span class="sh">
+${module.extensive_kitchen_terraform.reachable_other_host_ip_address}
+</span><span class="no">EOV</span>
 <span class="p">}</span>
 
-<span class="c1"># This output is used as an attribute in the reachable_other_host control</span>
-<span class="n">output</span> <span class="s2">"reachable_other_host_id"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The ID of the reachable_other_host instance"</span>
-  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${module.extensive_kitchen_terraform.reachable_other_host_id}"</span>
-<span class="p">}</span>
-
-<span class="c1"># This output is used as an attribute in the inspec_attributes control</span>
 <span class="n">output</span> <span class="s2">"static_terraform_output"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"A static value"</span>
-  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"static terraform output"</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOD</span><span class="sh">
+This output is used as an attribute in the inspec_attributes control
+</span><span class="no">EOD</span>
+
+  <span class="n">value</span> <span class="o">=</span> <span class="s2">"static terraform output"</span>
 <span class="p">}</span>
 
-<span class="c1"># This output is used as an attribute in the state_file control</span>
 <span class="n">output</span> <span class="s2">"terraform_state"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The path to the Terraform state file"</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"This output is used as an attribute in the state_file control"</span>
 
   <span class="n">value</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOV</span><span class="sh">
 ${path.cwd}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate
 </span><span class="no">EOV</span>
 <span class="p">}</span>
 
-<span class="c1"># This output is used to obtain targets for InSpec</span>
 <span class="n">output</span> <span class="s2">"remote_group_public_dns"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The list of public DNS names of the remote_group instances"</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"This output is used to obtain targets for InSpec"</span>
 
   <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"${module.extensive_kitchen_terraform.remote_group_public_dns}"</span><span class="p">]</span>
 <span class="p">}</span>
@@ -559,29 +508,13 @@ ${path.cwd}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate
           Prepare the module by mimicking the following Bash script.
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
-touch module.tf
+touch main.tf variables.tf outputs.tf
 
 </code></pre></div>          <br><br>
-          Populate the module file,
-          <p
-            class="font-weight-bold"
-            style="color: #32c850; display: inline;"
-          >
-            module.tf
-          </p>
-          , to match the following example.
+          Populate the variables file,
+          <p class="font-weight-bold" style="color: #32c850; display: inline;">variables.tf</p>, to match the following example.
           <br><br>
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Terraform Configuration</span>
-
-<span class="n">terraform</span> <span class="p">{</span>
-  <span class="c1"># The configuration is restricted to Terraform versions supported by</span>
-  <span class="c1"># Kitchen-Terraform</span>
-  <span class="n">required_version</span> <span class="o">=</span> <span class="s2">"&gt;= 0.10.2, &lt; 0.12.0"</span>
-<span class="p">}</span>
-
-<span class="c1"># Input Variable Configuration</span>
-
-<span class="n">variable</span> <span class="s2">"instances_ami"</span> <span class="p">{</span>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">variable</span> <span class="s2">"instances_ami"</span> <span class="p">{</span>
   <span class="n">description</span> <span class="o">=</span> <span class="s2">"The Amazon Machine Image (AMI) to use for the AWS EC2 instances"</span>
   <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
 <span class="p">}</span>
@@ -599,17 +532,29 @@ The public key material to use for SSH authentication with the instances
   <span class="n">type</span>        <span class="o">=</span> <span class="s2">"string"</span>
 <span class="p">}</span>
 
-<span class="c1"># Provider Configuration</span>
+</code></pre></div>          <br><br>
+          Populate the main file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            main.tf
+          </p>
+          , to match the following example.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">terraform</span> <span class="p">{</span>
+  <span class="c1"># The configuration is restricted to Terraform versions supported by</span>
+  <span class="c1"># Kitchen-Terraform</span>
+  <span class="n">required_version</span> <span class="o">=</span> <span class="s2">"&gt;= 0.11.4, &lt; 0.12.0"</span>
+<span class="p">}</span>
 
 <span class="n">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
-  <span class="n">version</span> <span class="o">=</span> <span class="s2">"~&gt; 0.1"</span>
+  <span class="n">version</span> <span class="o">=</span> <span class="s2">"~&gt; 1.31"</span>
 <span class="p">}</span>
 
 <span class="n">provider</span> <span class="s2">"random"</span> <span class="p">{</span>
-  <span class="n">version</span> <span class="o">=</span> <span class="s2">"~&gt; 1.0"</span>
+  <span class="n">version</span> <span class="o">=</span> <span class="s2">"~&gt; 1.3"</span>
 <span class="p">}</span>
-
-<span class="c1"># Resource Configuration</span>
 
 <span class="c1"># These aws_instances will be targeted with the operating_system control and the</span>
 <span class="c1"># reachable_other_host control</span>
@@ -731,15 +676,21 @@ The public key material to use for SSH authentication with the instances
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="c1"># Output Configuration</span>
-
-<span class="c1"># This output is used as an attribute in the reachable_other_host control</span>
-<span class="n">output</span> <span class="s2">"reachable_other_host_id"</span> <span class="p">{</span>
-  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The ID of the reachable_other_host instance"</span>
-  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_instance.reachable_other_host.id}"</span>
+</code></pre></div>          <br><br>
+          Populate the outputs file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            outputs.tf
+          </p>
+          , to match the following example.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">output</span> <span class="s2">"reachable_other_host_ip_address"</span> <span class="p">{</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"The IP address of the reachable_other_host instance"</span>
+  <span class="n">value</span>       <span class="o">=</span> <span class="s2">"${aws_instance.reachable_other_host.public_ip}"</span>
 <span class="p">}</span>
 
-<span class="c1"># This output is used to obtain targets for InSpec</span>
 <span class="n">output</span> <span class="s2">"remote_group_public_dns"</span> <span class="p">{</span>
   <span class="n">description</span> <span class="o">=</span> <span class="s2">"The list of public DNS names of the remote_group instances"</span>
   <span class="n">value</span>       <span class="o">=</span> <span class="p">[</span><span class="s2">"${aws_instance.remote_group.*.public_dns}"</span><span class="p">]</span>
@@ -757,7 +708,7 @@ The public key material to use for SSH authentication with the instances
             class="font-weight-bold"
             style="color: #32c850; display: inline;"
           >
-            .kitchen.yml
+            kitchen.yml
           </p>
           , to match the following example.
           <br><br>
@@ -771,63 +722,30 @@ The public key material to use for SSH authentication with the instances
 <span class="na">provisioner</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
 
-<span class="na">transport</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
-  <span class="na">connection_retry_sleep</span><span class="pi">:</span> <span class="s">5</span>
-  <span class="na">port</span><span class="pi">:</span> <span class="s">22</span>
-
-  <span class="c1"># The generated key pair is configured to be used for the SSH authentication</span>
-  <span class="c1"># performed by InSpec</span>
-  <span class="na">ssh_key</span><span class="pi">:</span> <span class="s">test/assets/key_pair</span>
-
 <span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">sudo</span><span class="pi">:</span> <span class="no">false</span>
 
 <span class="c1"># Platforms provide hooks for overriding the global Test Kitchen plugin</span>
 <span class="c1"># configuration to provide platform-specific values</span>
 <span class="na">platforms</span><span class="pi">:</span>
-  <span class="pi">-</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">centos</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">centos</span>
 
     <span class="na">driver</span><span class="pi">:</span>
       <span class="na">variables</span><span class="pi">:</span>
         <span class="na">instances_ami</span><span class="pi">:</span> <span class="s">ami-ae7bfdb8</span>
-        <span class="na">instances_ami_operating_system_name</span><span class="pi">:</span> <span class="s">centos</span>
+
         <span class="na">subnet_availability_zone</span><span class="pi">:</span> <span class="s">us-east-1a</span>
 
-    <span class="na">transport</span><span class="pi">:</span>
-      <span class="na">username</span><span class="pi">:</span> <span class="s">centos</span>
-
-  <span class="pi">-</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
-
-    <span class="na">driver</span><span class="pi">:</span>
-      <span class="na">variables</span><span class="pi">:</span>
-        <span class="na">instances_ami</span><span class="pi">:</span> <span class="s">ami-1ee65166</span>
-        <span class="na">instances_ami_operating_system_name</span><span class="pi">:</span> <span class="s">ubuntu</span>
-        <span class="na">subnet_availability_zone</span><span class="pi">:</span> <span class="s">us-west-2b</span>
-
-    <span class="na">transport</span><span class="pi">:</span>
-      <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
-
-<span class="c1"># Suites include tests and provide additional hooks for overriding the global Test</span>
-<span class="c1"># Kitchen plugin configuration</span>
-<span class="na">suites</span><span class="pi">:</span>
-  <span class="pi">-</span>
-    <span class="c1"># Kitchen-Terraform will assume that the InSpec profile for this suite is</span>
-    <span class="c1"># located at test/integration/extensive_suite</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">extensive_suite</span>
-
     <span class="na">verifier</span><span class="pi">:</span>
-      <span class="na">groups</span><span class="pi">:</span>
-        <span class="pi">-</span>
-          <span class="na">name</span><span class="pi">:</span> <span class="s">local</span>
+      <span class="na">systems</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">local</span>
 
           <span class="c1"># The customized_inspec_attribute InSpec attribute is configured to</span>
           <span class="c1"># satisfy the inspec_attributes control</span>
-          <span class="na">attributes</span><span class="pi">:</span>
+          <span class="na">attrs_outputs</span><span class="pi">:</span>
             <span class="na">customized_inspec_attribute</span><span class="pi">:</span> <span class="s">static_terraform_output</span>
+
+          <span class="na">backend</span><span class="pi">:</span> <span class="s">local</span>
 
           <span class="c1"># A subset of the controls included in the extensive_suite InSpec</span>
           <span class="c1"># profile will be executed</span>
@@ -835,11 +753,12 @@ The public key material to use for SSH authentication with the instances
             <span class="pi">-</span> <span class="s">inspec_attributes</span>
             <span class="pi">-</span> <span class="s">state_file</span>
 
-          <span class="c1"># The hostnames attribute is omitted which means that the configured</span>
-          <span class="c1"># controls will be executed on localhost</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">remote</span>
 
-        <span class="pi">-</span>
-          <span class="na">name</span><span class="pi">:</span> <span class="s">remote</span>
+          <span class="na">attrs</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s">test/integration/extensive_suite/centos_attributes.yml</span>
+
+          <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
 
           <span class="na">controls</span><span class="pi">:</span>
             <span class="pi">-</span> <span class="s">operating_system</span>
@@ -847,7 +766,68 @@ The public key material to use for SSH authentication with the instances
 
           <span class="c1"># The value of the Terraform output named remote_group_public_dns will</span>
           <span class="c1"># be used to obtain the hostnames to target with InSpec</span>
-          <span class="na">hostnames</span><span class="pi">:</span> <span class="s">remote_group_public_dns</span>
+          <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">remote_group_public_dns</span>
+
+          <span class="c1"># The generated key pair is configured to be used for the SSH</span>
+          <span class="c1"># authentication performed by InSpec</span>
+          <span class="na">key_files</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s">test/assets/key_pair</span>
+
+          <span class="na">user</span><span class="pi">:</span> <span class="s">centos</span>
+
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
+
+    <span class="na">driver</span><span class="pi">:</span>
+      <span class="na">variables</span><span class="pi">:</span>
+        <span class="na">instances_ami</span><span class="pi">:</span> <span class="s">ami-1ee65166</span>
+
+        <span class="na">subnet_availability_zone</span><span class="pi">:</span> <span class="s">us-west-2b</span>
+
+    <span class="na">verifier</span><span class="pi">:</span>
+      <span class="na">systems</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">local</span>
+
+          <span class="c1"># The customized_inspec_attribute InSpec attribute is configured to</span>
+          <span class="c1"># satisfy the inspec_attributes control</span>
+          <span class="na">attrs_outputs</span><span class="pi">:</span>
+            <span class="na">customized_inspec_attribute</span><span class="pi">:</span> <span class="s">static_terraform_output</span>
+
+          <span class="na">backend</span><span class="pi">:</span> <span class="s">local</span>
+
+          <span class="c1"># A subset of the controls included in the extensive_suite InSpec</span>
+          <span class="c1"># profile will be executed</span>
+          <span class="na">controls</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s">inspec_attributes</span>
+            <span class="pi">-</span> <span class="s">state_file</span>
+
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">remote</span>
+
+          <span class="na">attrs</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s">test/integration/extensive_suite/ubuntu_attributes.yml</span>
+
+          <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
+
+          <span class="na">controls</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s">operating_system</span>
+            <span class="pi">-</span> <span class="s">reachable_other_host</span>
+
+          <span class="c1"># The value of the Terraform output named remote_group_public_dns will</span>
+          <span class="c1"># be used to obtain the hostnames to target with InSpec</span>
+          <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">remote_group_public_dns</span>
+
+          <span class="c1"># The generated key pair is configured to be used for the SSH</span>
+          <span class="c1"># authentication performed by InSpec</span>
+          <span class="na">key_files</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="s">test/assets/key_pair</span>
+
+          <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+
+<span class="c1"># Suites include tests and provide additional hooks for overriding the global Test</span>
+<span class="c1"># Kitchen plugin configuration</span>
+<span class="na">suites</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="c1"># Kitchen-Terraform will assume that the InSpec profile for this suite is</span>
+    <span class="c1"># located at test/integration/extensive_suite</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">extensive_suite</span>
 
 </code></pre></div>        </div>
         <div
@@ -868,17 +848,7 @@ The public key material to use for SSH authentication with the instances
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
-  <span class="c1"># awspec will be required to test AWS resources until Kitchen-Terraform supports</span>
-  <span class="c1"># the AWS InSpec backend</span>
-  <span class="n">gem</span><span class="p">(</span>
-    <span class="s2">"awspec"</span><span class="p">,</span>
-    <span class="s2">"~&gt; 1.5"</span>
-  <span class="p">)</span>
-
-  <span class="n">gem</span><span class="p">(</span>
-    <span class="s2">"kitchen-terraform"</span><span class="p">,</span>
-    <span class="s2">"~&gt; 3.3"</span>
-  <span class="p">)</span>
+  <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span><span class="p">,</span> <span class="s2">"~&gt; 4.0"</span>
 <span class="k">end</span>
 
 </code></pre></div>          Install the declared Ruby gem dependencies by mimicking the following Bash script.
@@ -914,9 +884,6 @@ bundle install
   <span class="nb">export </span>AWS_SESSION_TOKEN
 <span class="o">}</span>
 
-<span class="c"># Workaround for https://github.com/hashicorp/terraform/issues/17655</span>
-<span class="nb">export </span><span class="nv">TF_WARN_OUTPUT_ERRORS</span><span class="o">=</span>1
-
 export_aws_sts_session <span class="s2">"us-east-1"</span>
 
 <span class="c"># Destroy any existing Terraform state in us-east-1</span>
@@ -941,7 +908,6 @@ export_aws_sts_session <span class="s2">"us-west-2"</span>
 <span class="c"># Perform the same steps for Ubuntu in us-west-2</span>
 bundle <span class="nb">exec </span>kitchen <span class="nb">test </span>ubuntu
 
-<span class="nb">unset </span>TF_WARN_OUTPUT_ERRORS
 drop_aws_sts_session
 
 </code></pre></div>        </div>

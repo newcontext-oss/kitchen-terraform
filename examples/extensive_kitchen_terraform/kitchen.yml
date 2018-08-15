@@ -1,0 +1,116 @@
+driver:
+  name: terraform
+
+  # The test fixture Terraform configuration is configured to be the Terraform
+  # root module
+  root_module_directory: test/fixtures/wrapper
+
+provisioner:
+  name: terraform
+
+verifier:
+  name: terraform
+
+# Platforms provide hooks for overriding the global Test Kitchen plugin
+# configuration to provide platform-specific values
+platforms:
+  - name: centos
+
+    driver:
+      variables:
+        instances_ami: ami-ae7bfdb8
+
+        subnet_availability_zone: us-east-1a
+
+    verifier:
+      systems:
+        - name: local
+
+          # The customized_inspec_attribute InSpec attribute is configured to
+          # satisfy the inspec_attributes control
+          attrs_outputs:
+            customized_inspec_attribute: static_terraform_output
+
+          backend: local
+
+          # A subset of the controls included in the extensive_suite InSpec
+          # profile will be executed
+          controls:
+            - inspec_attributes
+            - state_file
+
+        - name: remote
+
+          attrs:
+            - test/integration/extensive_suite/centos_attributes.yml
+
+          backend: ssh
+
+          controls:
+            - operating_system
+            - reachable_other_host
+
+          # The value of the Terraform output named remote_group_public_dns will
+          # be used to obtain the hostnames to target with InSpec
+          hosts_output: remote_group_public_dns
+
+          # The generated key pair is configured to be used for the SSH
+          # authentication performed by InSpec
+          key_files:
+            - test/assets/key_pair
+
+          user: centos
+
+  - name: ubuntu
+
+    driver:
+      variables:
+        instances_ami: ami-1ee65166
+
+        subnet_availability_zone: us-west-2b
+
+    verifier:
+      systems:
+        - name: local
+
+          # The customized_inspec_attribute InSpec attribute is configured to
+          # satisfy the inspec_attributes control
+          attrs_outputs:
+            customized_inspec_attribute: static_terraform_output
+
+          backend: local
+
+          # A subset of the controls included in the extensive_suite InSpec
+          # profile will be executed
+          controls:
+            - inspec_attributes
+            - state_file
+
+        - name: remote
+
+          attrs:
+            - test/integration/extensive_suite/ubuntu_attributes.yml
+
+          backend: ssh
+
+          controls:
+            - operating_system
+            - reachable_other_host
+
+          # The value of the Terraform output named remote_group_public_dns will
+          # be used to obtain the hostnames to target with InSpec
+          hosts_output: remote_group_public_dns
+
+          # The generated key pair is configured to be used for the SSH
+          # authentication performed by InSpec
+          key_files:
+            - test/assets/key_pair
+
+          user: ubuntu
+
+# Suites include tests and provide additional hooks for overriding the global Test
+# Kitchen plugin configuration
+suites:
+  - # Kitchen-Terraform will assume that the InSpec profile for this suite is
+    # located at test/integration/extensive_suite
+    name: extensive_suite
