@@ -75,7 +75,7 @@ the semantic versioning of the Ruby gem.
 source "https://rubygems.org/" do
   gem(
     "kitchen-terraform",
-    "~> 3.1"
+    "~> 4.0"
   )
 end
 ```
@@ -103,7 +103,7 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 3.1.0
+gem install kitchen-terraform --version 4.0.0
 ```
 
 This approach is not recommended as it requires more effort to install
@@ -183,18 +183,15 @@ driver:
 provisioner:
   name: terraform
 
-transport:
-  name: ssh
-  password: root
-
 verifier:
   name: terraform
   systems:
     - name: container
       backend: ssh
       hosts_output: container_hostname
+      password: root
       port: 2222
-      username: root
+      user: root
 
 platforms:
   - name: ubuntu
