@@ -1,42 +1,16 @@
-# Terraform Configuration
-
 terraform {
   # The configuration is restricted to Terraform versions supported by
   # Kitchen-Terraform
-  required_version = ">= 0.10.2, < 0.12.0"
+  required_version = ">= 0.11.4, < 0.12.0"
 }
-
-# Input Variable Configuration
-
-variable "instances_ami" {
-  description = "The Amazon Machine Image (AMI) to use for the AWS EC2 instances"
-  type        = "string"
-}
-
-variable "key_pair_public_key" {
-  description = <<EOD
-The public key material to use for SSH authentication with the instances
-EOD
-
-  type = "string"
-}
-
-variable "subnet_availability_zone" {
-  description = "The isolated, regional location in which to place the subnet"
-  type        = "string"
-}
-
-# Provider Configuration
 
 provider "aws" {
-  version = "~> 0.1"
+  version = "~> 1.31"
 }
 
 provider "random" {
-  version = "~> 1.0"
+  version = "~> 1.3"
 }
-
-# Resource Configuration
 
 # These aws_instances will be targeted with the operating_system control and the
 # reachable_other_host control
@@ -156,18 +130,4 @@ resource "aws_vpc" "extensive_tutorial" {
   tags {
     Name = "kitchen_terraform_extensive_tutorial"
   }
-}
-
-# Output Configuration
-
-# This output is used as an attribute in the reachable_other_host control
-output "reachable_other_host_id" {
-  description = "The ID of the reachable_other_host instance"
-  value       = "${aws_instance.reachable_other_host.id}"
-}
-
-# This output is used to obtain targets for InSpec
-output "remote_group_public_dns" {
-  description = "The list of public DNS names of the remote_group instances"
-  value       = ["${aws_instance.remote_group.*.public_dns}"]
 }

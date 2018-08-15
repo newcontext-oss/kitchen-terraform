@@ -81,7 +81,7 @@ mkdir -p test/integration/kt_suite/controls \
          <br><br>
          <% code("ruby") do %>
 source "https://rubygems.org/" do
-  gem "kitchen-terraform"
+  gem "kitchen-terraform", "~> 4.0"
 end
          <% end %>
          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
@@ -102,12 +102,9 @@ driver:
 provisioner:
   name: terraform
 
-transport:
-  name: ssh
-
 verifier:
   name: terraform
-  groups:
+  systems:
     - name: basic
       controls:
         - file_check

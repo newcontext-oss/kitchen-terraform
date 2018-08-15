@@ -366,19 +366,49 @@ title: Extensive Kitchen-Terraform
 <%= lines %>
           <% end %>
           <br><br>
-          Populate the configuration file,
+          Populate the variables file,
+          <p class="font-weight-bold" style="color: #32c850; display: inline;">test/fixtures/wrapper/variables.tf</p>, to match the following example.
+          <br><br>
+          <%
+            read_example_file(
+              language: "ruby",
+              path: "extensive_kitchen_terraform/test/fixtures/wrapper/variables.tf"
+            ) do
+          %>
+<%= lines %>
+          <% end %>
+          <br><br>
+          Populate the main file,
           <p
             class="font-weight-bold"
             style="color: #32c850; display: inline;"
           >
-            test/fixtures/wrapper/configuration.tf
+            test/fixtures/wrapper/main.tf
           </p>
           , to match the following example.
           <br><br>
           <%
             read_example_file(
               language: "ruby",
-              path: "extensive_kitchen_terraform/test/fixtures/wrapper/configuration.tf"
+              path: "extensive_kitchen_terraform/test/fixtures/wrapper/main.tf"
+            ) do
+          %>
+<%= lines %>
+          <% end %>
+          <br><br>
+          Populate the outputs file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/fixtures/wrapper/outputs.tf
+          </p>
+          , to match the following example.
+          <br><br>
+          <%
+            read_example_file(
+              language: "ruby",
+              path: "extensive_kitchen_terraform/test/fixtures/wrapper/outputs.tf"
             ) do
           %>
 <%= lines %>
@@ -403,19 +433,49 @@ title: Extensive Kitchen-Terraform
 <%= lines %>
           <% end %>
           <br><br>
-          Populate the module file,
+          Populate the variables file,
+          <p class="font-weight-bold" style="color: #32c850; display: inline;">variables.tf</p>, to match the following example.
+          <br><br>
+          <%
+            read_example_file(
+              language: "ruby",
+              path: "extensive_kitchen_terraform/variables.tf"
+            ) do
+          %>
+<%= lines %>
+          <% end %>
+          <br><br>
+          Populate the main file,
           <p
             class="font-weight-bold"
             style="color: #32c850; display: inline;"
           >
-            module.tf
+            main.tf
           </p>
           , to match the following example.
           <br><br>
           <%
             read_example_file(
               language: "ruby",
-              path: "extensive_kitchen_terraform/module.tf"
+              path: "extensive_kitchen_terraform/main.tf"
+            ) do
+          %>
+<%= lines %>
+          <% end %>
+          <br><br>
+          Populate the outputs file,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            outputs.tf
+          </p>
+          , to match the following example.
+          <br><br>
+          <%
+            read_example_file(
+              language: "ruby",
+              path: "extensive_kitchen_terraform/outputs.tf"
             ) do
           %>
 <%= lines %>
@@ -432,14 +492,14 @@ title: Extensive Kitchen-Terraform
             class="font-weight-bold"
             style="color: #32c850; display: inline;"
           >
-            .kitchen.yml
+            kitchen.yml
           </p>
           , to match the following example.
           <br><br>
           <%
             read_example_file(
               language: "yml",
-              path: "extensive_kitchen_terraform/.kitchen.yml"
+              path: "extensive_kitchen_terraform/kitchen.yml"
             ) do
           %>
 <%= lines %>

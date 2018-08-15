@@ -1,3 +1,3 @@
 #! /usr/bin/env bash
 
-touch module.tf
+touch main.tf variables.tf outputs.tf
