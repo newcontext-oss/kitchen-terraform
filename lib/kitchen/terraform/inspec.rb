@@ -25,9 +25,15 @@ module Kitchen
       class << self
         # .logger= sets the logger for all InSpec processes.
         #
+        # The logdev of the logger is extended to conform to interface expected by InSpec.
+        #
         # @param logger [::Kitchen::Logger] the logger to use.
         # @return [void]
         def logger=(logger)
+          logger.logdev.define_singleton_method :filename do
+            false
+          end
+
           ::Inspec::Log.logger = logger
         end
       end
