@@ -126,8 +126,8 @@ end
 CLOBBER.include "bin/terraform"
 
 file "tmp/terraform-provider-docker.zip", [:version, :sha256_sum, :platform] => ["tmp"] do |current_task, arguments|
-  arguments.with_defaults version: "1.0.1",
-                          sha256_sum: "16b731013014df1007da0c0c9f25b48b10c20a04864daa624602549908c5c8a5",
+  arguments.with_defaults version: "0.1.1",
+                          sha256_sum: "08a1fbd839f39910330bc90fed440b4f72a138ea72408482b0adf63c9fbee99b",
                           platform: "linux"
   download_hashicorp_release destination: current_task.name, platform: arguments.platform,
                              product: "terraform-provider-docker", sha256_sum: arguments.sha256_sum,
