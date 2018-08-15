@@ -80,12 +80,7 @@ module Kitchen
       def call(kitchen_state)
         load_outputs kitchen_state: kitchen_state
         config_systems.each do |system|
-          ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: @inspec_options
-          ::Kitchen::Terraform::System
-            .new(mapping: system)
-            .resolve_attrs(system_attrs_resolver: @system_attrs_resolver)
-            .resolve_hosts(system_hosts_resolver: @system_hosts_resolver)
-            .verify(inspec_options: @inspec_options, inspec_profile_path: inspec_profile_path)
+          verify system: system
         end
       rescue ::Kitchen::Terraform::Error => error
         raise ::Kitchen::ActionFailed, error.message
@@ -132,11 +127,12 @@ module Kitchen
         )
       end
 
+      def configure_inspec_system_options(system:)
+        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: @inspec_options
+      end
+
       def load_outputs(kitchen_state:)
-        ::Kitchen::Util.stringified_hash(Hash(kitchen_state.fetch(:kitchen_terraform_outputs))).tap do |outputs|
-          @system_attrs_resolver = ::Kitchen::Terraform::SystemAttrsResolver.new outputs: outputs
-          @system_hosts_resolver = ::Kitchen::Terraform::SystemHostsResolver.new outputs: outputs
-        end
+        @outputs = ::Kitchen::Util.stringified_hash Hash kitchen_state.fetch :kitchen_terraform_outputs
       rescue ::KeyError => key_error
         raise ::Kitchen::Terraform::Error,
               "Loading Terraform outputs from the Kitchen state failed; this implies that the " \
@@ -146,6 +142,7 @@ module Kitchen
       def initialize(configuration = {})
         init_config configuration
         @inspec_options = {}
+        @outputs = {}
         @transport_attributes = [
           :compression, :compression_level, :connection_retries, :connection_retry_sleep, :connection_timeout,
           :keepalive, :keepalive_interval, :max_wait_until_ready,
@@ -153,7 +150,7 @@ module Kitchen
       end
 
       def inspec_profile_path
-        ::File.join config.fetch(:test_base_path), instance.suite.name
+        @inspec_profile_path ||= ::File.join config.fetch(:test_base_path), instance.suite.name
       end
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
@@ -168,6 +165,14 @@ module Kitchen
         raise ::Kitchen::ClientError, load_error.message
       end
 
+      def system_attrs_resolver
+        @system_attrs_resolver ||= ::Kitchen::Terraform::SystemAttrsResolver.new outputs: @outputs
+      end
+
+      def system_hosts_resolver
+        @system_hosts_resolver ||= ::Kitchen::Terraform::SystemHostsResolver.new outputs: @outputs
+      end
+
       def transport_connection_options
         ::Kitchen::Util.stringified_hash(
           instance.transport.diagnose.select do |key|
@@ -176,6 +181,15 @@ module Kitchen
             options.store :timeout, options.fetch(:connection_timeout)
           end
         )
+      end
+
+      def verify(system:)
+        configure_inspec_system_options system: system
+        ::Kitchen::Terraform::System
+          .new(mapping: system)
+          .resolve_attrs(system_attrs_resolver: system_attrs_resolver)
+          .resolve_hosts(system_hosts_resolver: system_hosts_resolver)
+          .verify(inspec_options: @inspec_options, inspec_profile_path: inspec_profile_path)
       end
     end
   end
