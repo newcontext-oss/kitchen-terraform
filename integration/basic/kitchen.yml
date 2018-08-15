@@ -1,4 +1,3 @@
----
 driver:
   name: terraform
 
@@ -16,7 +15,8 @@ verifier:
       backend: ssh
       controls:
         - operating_system
-      hosts_output: hosts
+      hosts:
+        - localhost
       key_files:
         - test/fixtures/id_rsa
       port: 2222
