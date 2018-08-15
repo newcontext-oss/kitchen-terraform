@@ -6,7 +6,7 @@ terraform {
 
 provider "docker" {
   host    = "unix://localhost/var/run/docker.sock"
-  version = "~> 1.0"
+  version = "~> 0.1"
 }
 
 provider "local" {
