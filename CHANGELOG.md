@@ -10,18 +10,19 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [4.0.0] - 2018-08-13
 
-> An open-source software release is never late.
-> Nor is it early.
-> It arrives precisely when the maintainers get around to finishing it.
-
-_Gandalf the Free-As-In-Beer_
+"An open-source software release is never late. Nor is it early. It
+arrives precisely when the maintainers get around to finishing it." -
+Gandalf the Free-As-In-Beer
 
 ### Added
 
-- The verifier configuration gained a `:systems` attribute which replaced the `:groups` attribute; refer to the updated
-  [Terraform Verifier documentation][terraform-verifier] for more details
+- The verifier configuration gained a `:systems` attribute which
+  replaced the `:groups` attribute; refer to the updated
+  [Terraform Verifier documentation][terraform-verifier] for more
+  details
 
-- The Terraform shell out environment now enables `TF_WARN_OUTPUT_ERRORS` to work around
+- The Terraform shell out environment now enables
+  `TF_WARN_OUTPUT_ERRORS` to work around
   [Terraform issue #17655][terraform-issue-17655]
 
 ### Changed
@@ -41,13 +42,15 @@ _Gandalf the Free-As-In-Beer_
 - Support for concurrency with the following commands was broken:
   `create`, `converge`, `setup`, and `destroy`
 
-- The deprecated `terraform destroy -force` flag was replaced with the supported
-  `terraform destroy -auto-approve` flag
+- The deprecated `terraform destroy -force` flag was replaced with the
+  supported `terraform destroy -auto-approve` flag
 
-- The working directory of the Terraform shell out environment was changed to the value of the `:root_module_directory`
-  attribute of the driver configuration
+- The working directory of the Terraform shell out environment was
+  changed to the value of the `:root_module_directory` attribute of the
+  driver configuration
 
-- Support for the `:groups` attribute of the verifier configuration was broken; `:systems` replaces `:groups`
+- Support for the `:groups` attribute of the verifier configuration was
+  broken; `:systems` replaces `:groups`
 
 - InSpec was reconfigured to use the Kitchen logger for all logging
 
@@ -161,8 +164,8 @@ _Gandalf the Free-As-In-Beer_
 
 ### Added
 
-- Verifier `:groups` have an optional `:ssh_key` attribute that overrides
-  the Test Kitchen SSH Transport `:ssh_key`
+- Verifier `:groups` have an optional `:ssh_key` attribute that
+  overrides the Test Kitchen SSH Transport `:ssh_key`
 
 ## [2.0.0] - 2017-09-13
 
@@ -349,7 +352,8 @@ _Gandalf the Free-As-In-Beer_
 
 - A shiny, new logo (thanks [@ksexton])
 
-- A shiny, new [Travis CI build plan][travis ci build plan] (thanks [@justindossey])
+- A shiny, new [Travis CI build plan][travis ci build plan] (thanks
+  [@justindossey])
 
 - Support for Ruby 2.1 and 2.2 (thanks [@mrmarbury] and [@m00gs])
 
