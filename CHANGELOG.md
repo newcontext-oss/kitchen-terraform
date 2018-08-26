@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- The `kitchen doctor` command will now identity deprecated
+  configuration attributes
+
 ## [4.0.4] - 2018-11-21
 
 ### Fixed
