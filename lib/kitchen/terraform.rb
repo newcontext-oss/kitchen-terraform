@@ -14,10 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Dummy namespace for Test Kitchen to allow loading of Kitchen::Terraform::Version from gem specification.
+# This namespace is defined by {https://www.rubydoc.info/gems/test-kitchen/Kitchen Kitchen}.
 module ::Kitchen
-end
-
-# The namespace for kitchen-terraform.
-module ::Kitchen::Terraform
+  # The namespace for Kitchen-Terraform objects which are not Kitchen plugins.
+  module ::Kitchen::Terraform
+  end
 end
