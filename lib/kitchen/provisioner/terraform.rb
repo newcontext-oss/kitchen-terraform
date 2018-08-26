@@ -33,17 +33,25 @@ end
 #
 # ==== kitchen converge
 #
-# A Test Kitchen instance is converged through the following steps.
+# A Kitchen instance is converged. This instance corresponds to a Terraform state.
 #
-# ===== Selecting the Test Terraform Workspace
+# ===== Describing the Command
+#
+#   kitchen help converge
+#
+# ===== Converging a Kitchen Instance
+#
+#   kitchen converge default-ubuntu
+#
+# ====== Selecting the Test Terraform Workspace
 #
 #   terraform workspace select kitchen-terraform-<instance>
 #
-# ===== Updating the Terraform Dependency Modules
+# ====== Updating the Terraform Dependency Modules
 #
 #   terraform get -update <directory>
 #
-# ===== Validating the Terraform Root Module
+# ====== Validating the Terraform Root Module
 #
 #   terraform validate \
 #     -check-variables=true \
@@ -52,7 +60,7 @@ end
 #     [-var-file=<variable_files.first>...] \
 #     <directory>
 #
-# ===== Applying the Terraform State Changes
+# ====== Applying the Terraform State Changes
 #
 #   terraform apply\
 #     -lock=<lock> \
@@ -66,19 +74,19 @@ end
 #     [-var-file=<variable_files.first>...] \
 #     <directory>
 #
-# ===== Retrieving the Terraform Output
+# ====== Retrieving the Terraform Output
 #
 #   terraform output -json
 #
 # ==== kitchen doctor
 #
-# Checks the system and the Kitchen configuration for common errors.
+# Checks the test system and the Kitchen configuration for common errors.
 #
-# ===== Describing the command
+# ===== Describing the Command
 #
 #   kitchen help doctor
 #
-# ===== Checking for errors
+# ===== Checking for Errors
 #
 #   kitchen doctor
 #
@@ -89,12 +97,6 @@ end
 #
 #   provisioner:
 #     name: terraform
-#
-# @example Describe the converge command
-#   kitchen help converge
-# @example Converge a Test Kitchen instance
-#   kitchen converge default-ubuntu
-# @version 2
 class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   kitchen_provisioner_api_version 2
 
