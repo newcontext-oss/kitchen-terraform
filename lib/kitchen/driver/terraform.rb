@@ -47,9 +47,17 @@ end
 #
 # ==== kitchen create
 #
-# A Test Kitchen instance is created through the following steps.
+# A Kitchen instance is created. This instance corresponds to a Terraform state.
 #
-# ===== Initializing the Terraform Working Directory
+# ===== Describing the Command
+#
+#   kitchen help create
+#
+# ===== Creating a Kitchen Instance
+#
+#   kitchen create default-ubuntu
+#
+# ====== Initializing the Terraform Working Directory
 #
 #   terraform init \
 #     -input=false \
@@ -66,15 +74,23 @@ end
 #     -verify-plugins=true \
 #     <root_module_directory>
 #
-# ===== Creating a Test Terraform Workspace
+# ====== Creating a Test Terraform Workspace
 #
 #   terraform workspace <new|select> kitchen-terraform-<instance>
 #
 # ==== kitchen destroy
 #
-# A Test Kitchen instance is destroyed through the following steps.
+# A Kitchen instance is destroyed. This instance corresponds to a Terraform state.
 #
-# ===== Initializing the Terraform Working Directory
+# ===== Describing the Command
+#
+#   kitchen help destroy
+#
+# ===== Destroying a Kitchen Instance
+#
+#   kitchen destroy default-ubuntu
+#
+# ====== Initializing the Terraform Working Directory
 #
 #   terraform init \
 #     -input=false \
@@ -90,11 +106,11 @@ end
 #     -verify-plugins=true \
 #     <root_module_directory>
 #
-# ===== Selecting the Test Terraform Workspace
+# ====== Selecting the Test Terraform Workspace
 #
 #   terraform workspace <select|new> kitchen-terraform-<instance>
 #
-# ===== Destroying the Terraform State
+# ====== Destroying the Terraform State
 #
 #   terraform destroy \
 #     -auto-approve \
@@ -108,29 +124,29 @@ end
 #     [-var-file=<variable_files.first>...] \
 #     <root_module_directory>
 #
-# ===== Selecting the Default Terraform Workspace
+# ====== Selecting the Default Terraform Workspace
 #
 #   terraform workspace select default
 #
-# ===== Deleting the Test Terraform Workspace
+# ====== Deleting the Test Terraform Workspace
 #
 #   terraform workspace delete kitchen-terraform-<instance>
+#
+# ==== kitchen doctor
+#
+# Checks the test system and the Kitchen configuration for common errors.
+#
+# ===== Describing the Command
+#
+#   kitchen help doctor
+#
+# ===== Checking for Errors
+#
+#   kitchen doctor
 #
 # === Shelling Out
 #
 # {include:Kitchen::Terraform::ShellOut}
-#
-# ==== kitchen doctor
-#
-# Checks the system and the Kitchen configuration for common errors.
-#
-# ===== Describing the command
-#
-#   kitchen help doctor
-#
-# ===== Checking for errors
-#
-#   kitchen doctor
 #
 # === Configuration Attributes
 #
@@ -181,15 +197,6 @@ end
 # ==== variables
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Variables}
-#
-# @example Describe the create command
-#   kitchen help create
-# @example Create a Test Kitchen instance
-#   kitchen create default-ubuntu
-# @example Describe the destroy command
-#   kitchen help destroy
-# @example Destroy a Test Kitchen instance
-#   kitchen destroy default-ubuntu
 # @version 2
 class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   kitchen_driver_api_version 2

@@ -37,18 +37,26 @@ module Kitchen
     #
     # ==== kitchen verify
     #
-    # A Test Kitchen instance is verified by iterating through the systems and executing the associated InSpec controls
-    # against the hosts of each system.
-    #
-    # ==== kitchen doctor
-    #
-    # Checks the system and the Kitchen configuration for common errors.
+    # A Kitchen instance is verified by iterating through the systems and executing the associated InSpec controls
+    # against the hosts of each system. This instance corresponds to a Terraform state.
     #
     # ===== Describing the command
     #
+    #   kitchen help verify
+    #
+    # ===== Verifying a Kitchen instance
+    #
+    #   kitchen verify default-ubuntu
+    #
+    # ==== kitchen doctor
+    #
+    # Checks the test system and the Kitchen configuration for common errors.
+    #
+    # ===== Describing the Command
+    #
     #   kitchen help doctor
     #
-    # ===== Checking for errors
+    # ===== Checking for Errors
     #
     #   kitchen doctor
     #
