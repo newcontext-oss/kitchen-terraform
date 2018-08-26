@@ -40,6 +40,18 @@ module Kitchen
     # A Test Kitchen instance is verified by iterating through the systems and executing the associated InSpec controls
     # against the hosts of each system.
     #
+    # ==== kitchen doctor
+    #
+    # Checks the system and the Kitchen configuration for common errors.
+    #
+    # ===== Describing the command
+    #
+    #   kitchen help doctor
+    #
+    # ===== Checking for errors
+    #
+    #   kitchen doctor
+    #
     # === Configuration Attributes
     #
     # The configuration attributes of the verifier control the behaviour of the InSpec runner. Within the
