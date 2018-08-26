@@ -9,6 +9,8 @@
 .DS_Store/
 .cache/
 .sass-cache/
+.solargraph.yml
+.vscode/
 .yardoc/
 Gemfile.lock
 bin/
