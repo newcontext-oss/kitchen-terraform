@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- The `kitchen doctor` command will now identity deprecated
+  configuration attributes
+
 ## [4.0.0] - 2018-08-13
 
 "An open-source software release is never late. Nor is it early. It
