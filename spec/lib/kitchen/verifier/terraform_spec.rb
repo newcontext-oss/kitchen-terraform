@@ -247,4 +247,29 @@ require "support/kitchen/terraform/configurable_examples"
       end
     end
   end
+
+  describe "#doctor" do
+    subject do
+      described_class.new groups: []
+    end
+
+    specify "should inform the user of a deprecated config attribute" do
+      logger = ::Kitchen::Logger.new
+
+      allow(logger).to receive :warn
+      expect(logger).to receive(:warn).with "The groups configuration attribute is deprecated.\nThe systems " \
+                                            "configuration attribute replaces groups.\nRead the systems " \
+                                            "documentation at: https://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Terraform/ConfigAttribute/Systems"
+      ::Kitchen::Instance.new driver: ::Kitchen::Driver::Base.new,
+                              lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+                              logger: logger,
+                              platform: ::Kitchen::Platform.new(name: "test-platform"),
+                              provisioner: ::Kitchen::Provisioner::Base.new,
+                              state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
+                              suite: ::Kitchen::Suite.new(name: "test-suite"),
+                              transport: ::Kitchen::Transport::Ssh.new,
+                              verifier: subject
+      subject.doctor({})
+    end
+  end
 end
