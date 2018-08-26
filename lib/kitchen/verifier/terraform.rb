@@ -24,9 +24,7 @@ require "kitchen/terraform/system_attrs_resolver"
 require "kitchen/terraform/system_hosts_resolver"
 
 module Kitchen
-  # This namespace is defined by Kitchen.
-  #
-  # @see https://www.rubydoc.info/gems/test-kitchen/Kitchen/Verifier
+  # This namespace is defined by {https://www.rubydoc.info/gems/test-kitchen/Kitchen/Verifier Kitchen}.
   module Verifier
     # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the behaviour and
     # state of resources in the Terraform state.
