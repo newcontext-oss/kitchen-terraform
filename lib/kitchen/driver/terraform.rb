@@ -120,6 +120,18 @@ end
 #
 # {include:Kitchen::Terraform::ShellOut}
 #
+# ==== kitchen doctor
+#
+# Checks the system and the Kitchen configuration for common errors.
+#
+# ===== Describing the command
+#
+#   kitchen help doctor
+#
+# ===== Checking for errors
+#
+#   kitchen doctor
+#
 # === Configuration Attributes
 #
 # The configuration attributes of the driver control the behaviour of the Terraform commands that are run. Within the

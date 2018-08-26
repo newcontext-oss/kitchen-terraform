@@ -70,6 +70,18 @@ end
 #
 #   terraform output -json
 #
+# ==== kitchen doctor
+#
+# Checks the system and the Kitchen configuration for common errors.
+#
+# ===== Describing the command
+#
+#   kitchen help doctor
+#
+# ===== Checking for errors
+#
+#   kitchen doctor
+#
 # === Configuration Attributes
 #
 # The provisioner has no configuration attributes, but the +provisioner+ mapping must be declared with the plugin name
