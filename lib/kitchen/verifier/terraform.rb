@@ -70,6 +70,10 @@ module Kitchen
       include ::Kitchen::Terraform::Configurable
       @api_version = 2
 
+      deprecate_config_for :groups,
+                           "The systems configuration attribute replaces groups.\nRead the systems " \
+                           "documentation at: https://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Terraform/ConfigAttribute/Systems"
+
       # The verifier enumerates through each host of each system and verifies the associated InSpec controls.
       #
       # @example
@@ -84,15 +88,6 @@ module Kitchen
         end
       rescue ::Kitchen::Terraform::Error => error
         raise ::Kitchen::ActionFailed, error.message
-      end
-
-      # doctor checks the system and configuration for common errors.
-      #
-      # @param _kitchen_state [::Hash] the mutable Kitchen instance state.
-      # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
-      # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/verifier/base.rb#L85-L91
-      def doctor(_kitchen_state)
-        false
       end
 
       # finalize_config! configures InSpec options which remain consistent between systems.

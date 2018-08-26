@@ -30,6 +30,21 @@ module ::Kitchen::Terraform::Configurable
     self
   end
 
+  # doctor checks the system and configuration for common errors.
+  #
+  # @param _kitchen_state [::Hash] the mutable Kitchen instance state.
+  # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
+  # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/verifier/base.rb#L85-L91
+  def doctor(_kitchen_state)
+    return false if deprecated_config.empty?
+
+    deprecated_config.each_pair do |attribute, message|
+      logger.warn "The #{attribute} configuration attribute is deprecated.\n#{message}"
+    end
+
+    return true
+  end
+
   # Alternative implementation of Kitchen::Configurable#finalize_config! which validates the configuration before
   # attempting to expand paths.
   #
@@ -41,16 +56,14 @@ module ::Kitchen::Terraform::Configurable
   #   Kitchen::Configurable#finalize_config!
   # @see https://github.com/test-kitchen/test-kitchen/issues/1229 Test Kitchen: Issue #1229
   def finalize_config!(kitchen_instance)
-    kitchen_instance or
-      raise(
-        ::Kitchen::ClientError,
-        "Instance must be provided to #{self}"
-      )
+    raise ::Kitchen::ClientError, "Instance must be provided to #{self}" if not kitchen_instance
 
     @instance = kitchen_instance
+    deprecate_config!
     validate_config!
     expand_paths!
     load_needed_dependencies!
-    self
+
+    return self
   end
 end
