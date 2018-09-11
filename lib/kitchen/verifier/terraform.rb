@@ -149,8 +149,10 @@ module Kitchen
         ]
       end
 
-      def inspec_profile_path
-        @inspec_profile_path ||= ::File.join config.fetch(:test_base_path), instance.suite.name
+      def inspec_profile_paths(system:)
+        system.fetch :profile_paths do
+          [::File.join(config.fetch(:test_base_path), instance.suite.name)]
+        end
       end
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
@@ -189,7 +191,7 @@ module Kitchen
           .new(mapping: system)
           .resolve_attrs(system_attrs_resolver: system_attrs_resolver)
           .resolve_hosts(system_hosts_resolver: system_hosts_resolver)
-          .verify(inspec_options: @inspec_options, inspec_profile_path: inspec_profile_path)
+          .verify(inspec_options: @inspec_options, inspec_profile_paths: inspec_profile_paths(system: system))
       end
     end
   end

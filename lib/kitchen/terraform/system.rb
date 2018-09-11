@@ -89,15 +89,15 @@ module Kitchen
       # #verify verifies the system by executing InSpec.
       #
       # @param inspec_options [::Hash] the options to be passed to InSpec.
-      # @param inspec_profile_path [::String] the path to the profile which InSpec will execute.
+      # @param inspec_profile_paths [::Array] the paths to the profiles which InSpec will execute.
       # @return [self]
-      def verify(inspec_options:, inspec_profile_path:)
+      def verify(inspec_options:, inspec_profile_paths:)
         if @hosts.empty?
           ::Kitchen::Terraform::InSpecWithoutHosts
         else
           ::Kitchen::Terraform::InSpecWithHosts
         end
-          .new(options: inspec_options.merge(attributes: @attributes), profile_path: inspec_profile_path)
+          .new(options: inspec_options.merge(attributes: @attributes), profile_paths: inspec_profile_paths)
           .exec(system: self)
 
         self

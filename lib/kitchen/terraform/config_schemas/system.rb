@@ -330,6 +330,22 @@ module Kitchen
       #           - cli
       #           - documentation
       #
+      # ====== profile_paths
+      #
+      # The value of the +profile_paths+ key is a sequence of scalars which is used to locate
+      # {https://www.inspec.io/docs/reference/profiles/ InSpec profiles} containing the controls to be executed against
+      # the system.
+      #
+      # <em>Example kitchen.yml</em>
+      #   verifier:
+      #     name: terraform
+      #     systems:
+      #       - name: a system
+      #         backend: local
+      #         profile_paths:
+      #           - /path/to/first/profile
+      #           - /path/to/second/profile
+      #
       # ====== self_signed
       #
       # The value of the +self_signed+ key is a boolean which is used to toggle permission for self-signed certificates
@@ -535,6 +551,7 @@ module Kitchen
         optional(:password).filled :str?
         optional(:path).filled :str?
         optional(:port).value :int?
+        optional(:profile_paths).each :filled?, :str?
         optional(:proxy_command).filled :str?
         optional(:reporter).each(:filled?, :str?)
         optional(:self_signed).value :bool?

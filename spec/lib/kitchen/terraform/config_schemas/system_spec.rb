@@ -214,6 +214,14 @@ require "kitchen/terraform/config_schemas/system"
       it_behaves_like "an optional integer"
     end
 
+    describe ":profile_paths" do
+      let :attribute do
+        :profile_paths
+      end
+
+      it_behaves_like "an optional array of strings"
+    end
+
     describe ":proxy_command" do
       let :attribute do
         :proxy_command

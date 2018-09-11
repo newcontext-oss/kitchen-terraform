@@ -24,16 +24,43 @@ require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
   let :config do
-    {color: false,
-     systems: [{attrs_outputs: {attribute_name: "output_name"}, attrs: ["attrs.yml"], backend: "backend",
-                backend_cache: false, bastion_host: "bastion_host", bastion_port: 5678, bastion_user: "bastion_user",
-                controls: ["control"], enable_password: "enable_password", hosts_output: "hosts",
-                key_files: ["first_key_file", "second_key_file"], name: "a-system", password: "password", path: "path",
-                port: 1234, proxy_command: "proxy_command", reporter: ["reporter"], self_signed: false, shell: false,
-                shell_command: "/bin/shell", shell_options: "--option=value", sudo: false, sudo_command: "/bin/sudo",
-                sudo_options: "--option=value", sudo_password: "sudo_password", show_progress: false, ssl: false,
-                user: "user", vendor_cache: "vendor_cache"}],
-     test_base_path: "/test/base/path"}
+    {
+      color: false,
+      systems: [
+        {
+          attrs_outputs: {attribute_name: "output_name"},
+          attrs: ["attrs.yml"],
+          backend: "backend",
+          backend_cache: false,
+          bastion_host: "bastion_host",
+          bastion_port: 5678,
+          bastion_user: "bastion_user",
+          controls: ["control"],
+          enable_password: "enable_password",
+          hosts_output: "hosts",
+          key_files: ["first_key_file", "second_key_file"],
+          name: "a-system",
+          password: "password",
+          path: "path",
+          port: 1234,
+          proxy_command: "proxy_command",
+          reporter: ["reporter"],
+          self_signed: false,
+          shell: false,
+          shell_command: "/bin/shell",
+          shell_options: "--option=value",
+          sudo: false,
+          sudo_command: "/bin/sudo",
+          sudo_options: "--option=value",
+          sudo_password: "sudo_password",
+          show_progress: false,
+          ssl: false,
+          user: "user",
+          vendor_cache: "vendor_cache",
+        },
+      ],
+      test_base_path: "/test/base/path",
+    }
   end
 
   let :described_instance do
@@ -126,24 +153,18 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       shared_context "Inspec::Runner instance" do
+        include_context "Inspec::Runner"
         include_context "Inspec::Profile"
 
-        let :runner do
-          instance_double ::Inspec::Runner
-        end
-
         before do
-          allow(runner)
-            .to(
-              receive(:add_target)
-                .with(path: "/test/base/path/test-suite")
-                .and_return([profile])
-            )
+          allow(runner).to receive(:add_target).with(path: profile_path).and_return([profile])
         end
       end
 
       shared_context "Inspec::Runner" do
-        include_context "Inspec::Runner instance"
+        let :runner do
+          instance_double ::Inspec::Runner
+        end
 
         let :runner_options do
           {
@@ -202,13 +223,7 @@ require "support/kitchen/terraform/configurable_examples"
         end
       end
 
-      context "when the :kitchen_terraform_outputs does include the configured :hosts_output key" do
-        include_context "Inspec::Runner"
-
-        let :kitchen_terraform_outputs do
-          {"output_name" => {"value" => "output_value"}, "hosts" => {"value" => "host"}}
-        end
-
+      shared_examples "InSpec executes" do
         context "when the InSpec runner returns an exit code other than 0" do
           before do
             allow(runner)
@@ -243,6 +258,73 @@ require "support/kitchen/terraform/configurable_examples"
           it "does not raise an error" do
             is_expected.to_not raise_error
           end
+        end
+      end
+
+      context "when the :kitchen_terraform_outputs does include the configured :hosts_output key" do
+        let :kitchen_terraform_outputs do
+          {"output_name" => {"value" => "output_value"}, "hosts" => {"value" => "host"}}
+        end
+
+        context "when the :profile_paths key is not configured" do
+          include_context "Inspec::Runner instance"
+
+          let :profile_path do
+            "/test/base/path/test-suite"
+          end
+
+          it_behaves_like "InSpec executes"
+        end
+
+        context "when the :profile_paths key is configured" do
+          include_context "Inspec::Runner instance"
+
+          let :config do
+            {
+              color: false,
+              systems: [
+                {
+                  attrs_outputs: {attribute_name: "output_name"},
+                  attrs: ["attrs.yml"],
+                  backend: "backend",
+                  backend_cache: false,
+                  bastion_host: "bastion_host",
+                  bastion_port: 5678,
+                  bastion_user: "bastion_user",
+                  controls: ["control"],
+                  enable_password: "enable_password",
+                  hosts_output: "hosts",
+                  key_files: ["first_key_file", "second_key_file"],
+                  name: "a-system",
+                  password: "password",
+                  path: "path",
+                  port: 1234,
+                  profile_paths: ["/first/profile"],
+                  proxy_command: "proxy_command",
+                  reporter: ["reporter"],
+                  self_signed: false,
+                  shell: false,
+                  shell_command: "/bin/shell",
+                  shell_options: "--option=value",
+                  sudo: false,
+                  sudo_command: "/bin/sudo",
+                  sudo_options: "--option=value",
+                  sudo_password: "sudo_password",
+                  show_progress: false,
+                  ssl: false,
+                  user: "user",
+                  vendor_cache: "vendor_cache",
+                },
+              ],
+              test_base_path: "/test/base/path",
+            }
+          end
+
+          let :profile_path do
+            "/first/profile"
+          end
+
+          it_behaves_like "InSpec executes"
         end
       end
     end
