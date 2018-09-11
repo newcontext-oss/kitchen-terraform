@@ -1,4 +1,4 @@
-# Changelog
+# Change Log
 
 All notable changes to this project will be documented in this file.
 
@@ -7,6 +7,13 @@ The format is based on
 adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
+
+### Added
+
+- Systems gained a `profile_paths` attribute which enables the
+  specification of different InSpec profile paths; refer to the
+  [documentation][terraform-verifier-systems-profile-paths] for more
+  details
 
 ## [4.0.0] - 2018-08-13
 
@@ -553,3 +560,4 @@ Gandalf the Free-As-In-Beer
 [travis ci build plan]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [terraform-issue-17655]: https://github.com/hashicorp/terraform/issues/17655
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
+[terraform-verifier-systems-profile-paths]: https://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Verifier/Terraform#label-profile_paths
