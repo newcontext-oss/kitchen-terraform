@@ -18,6 +18,7 @@ require "inspec"
 require "kitchen"
 require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
+require "support/kitchen/instance_context"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/systems_examples"
 require "support/kitchen/terraform/configurable_examples"
@@ -40,24 +41,6 @@ require "support/kitchen/terraform/configurable_examples"
     described_class.new config
   end
 
-  let :kitchen_instance do
-    ::Kitchen::Instance.new(
-      driver: ::Kitchen::Driver::Base.new,
-      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
-      logger: logger,
-      platform: ::Kitchen::Platform.new(name: "test-platform"),
-      provisioner: ::Kitchen::Provisioner::Base.new,
-      state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
-      suite: ::Kitchen::Suite.new(name: "test-suite"),
-      transport: ::Kitchen::Transport::Ssh.new,
-      verifier: subject,
-    )
-  end
-
-  let :logger do
-    ::Kitchen::Logger.new
-  end
-
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Systems"
@@ -69,8 +52,14 @@ require "support/kitchen/terraform/configurable_examples"
       described_instance
     end
 
+    include_context "Kitchen::Instance" do
+      let :verifier do
+        subject
+      end
+    end
+
     before do
-      subject.finalize_config! kitchen_instance
+      subject.finalize_config! instance
     end
 
     context "when the :kitchen_terraform_outputs key is omitted from the Kitchen state" do
@@ -140,7 +129,7 @@ require "support/kitchen/terraform/configurable_examples"
           allow(runner)
             .to(
               receive(:add_target)
-                .with(path: "/test/base/path/test-suite")
+                .with(path: "/test/base/path/suite")
                 .and_return([profile])
             )
         end
@@ -255,9 +244,15 @@ require "support/kitchen/terraform/configurable_examples"
       described_class.new groups: []
     end
 
+    include_context "Kitchen::Instance" do
+      let :verifier do
+        subject
+      end
+    end
+
     after do
       allow(logger).to receive :warn
-      kitchen_instance
+      instance
       subject.doctor({})
     end
 
