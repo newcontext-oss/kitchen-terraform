@@ -17,21 +17,29 @@
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_type/integer"
 
-# This attribute controls the number of concurrent operations to use while Terraform
-# {https://www.terraform.io/docs/internals/graph.html#walking-the-graph walks the resource graph}.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803828 Integer}
-# Required:: False
-# Default:: +10+
-# Example:: <code>parallelism: 50</code>
-module ::Kitchen::Terraform::ConfigAttribute::Parallelism
-  ::Kitchen::Terraform::ConfigAttributeType::Integer
-    .apply(
-      attribute: :parallelism,
-      config_attribute: self,
-      default_value:
-        lambda do
-          10
+module Kitchen
+  module Terraform
+    class ConfigAttribute
+      # This attribute controls the number of concurrent operations to use while Terraform
+      # {https://www.terraform.io/docs/internals/graph.html#walking-the-graph walks the resource graph}.
+      #
+      # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803828 Integer}
+      # Required:: False
+      # Default:: +10+
+      # Example:: <code>parallelism: 50</code>
+      module Parallelism
+        ::Kitchen::Terraform::ConfigAttributeType::Integer.apply(
+          attribute: :parallelism,
+          config_attribute: self,
+          default_value: lambda do
+            10
+          end,
+        )
+
+        def config_parallelism_flag
+          "-parallelism=#{config_parallelism}"
         end
-    )
+      end
+    end
+  end
 end
