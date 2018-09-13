@@ -38,21 +38,4 @@ require "support/kitchen/instance_context"
       expect(subject.instance_variable_get(:@plugin_version)).to eq "4.0.4"
     end
   end
-
-  describe "#finalize_config" do
-    subject do
-      described_instance
-    end
-
-    include_context "Kitchen::Instance"
-
-    after do
-      described_instance.finalize_config! instance
-    end
-
-    specify "should call #validate_config! before calling #expand_paths!" do
-      is_expected.to receive(:validate_config!).ordered
-      is_expected.to receive(:expand_paths!).ordered
-    end
-  end
 end

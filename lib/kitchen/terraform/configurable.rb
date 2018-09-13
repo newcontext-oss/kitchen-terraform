@@ -47,26 +47,13 @@ module Kitchen
         return true
       end
 
-      # Alternative implementation of Kitchen::Configurable#finalize_config! which validates the configuration before
-      # attempting to expand paths.
-      #
-      # @note this method should be removed when Test Kitchen: Issue #1229 is solved.
-      # @param kitchen_instance [::Kitchen::Instance] an associated Test Kitchen instance.
-      # @return [self] itself, for use in chaining.
-      # @raise [::Kitchen::ClientError] if the instance is nil.
-      # @see https://github.com/test-kitchen/test-kitchen/blob/v1.16.0/lib/kitchen/configurable.rb#L46
-      #   Kitchen::Configurable#finalize_config!
-      # @see https://github.com/test-kitchen/test-kitchen/issues/1229 Test Kitchen: Issue #1229
-      def finalize_config!(kitchen_instance)
-        raise ::Kitchen::ClientError, "Instance must be provided to #{self}" if not kitchen_instance
+      private
 
-        @instance = kitchen_instance
-        deprecate_config!
-        validate_config!
-        expand_paths!
-        load_needed_dependencies!
-
-        return self
+      # @note this method should be removed when
+      #   {https://github.com/test-kitchen/test-kitchen/issues/1229 Kitchen: Issue #1229} is solved.
+      def expand_paths!
+        validate_config! if not @config_validated
+        super
       end
 
       # #execute_action yields to a block which contains a Kitchen action.
@@ -77,6 +64,15 @@ module Kitchen
         yield
       rescue ::Kitchen::Terraform::Error => error
         raise ::Kitchen::ActionFailed, error.message
+      end
+
+      # @note this method should be removed when
+      #   {https://github.com/test-kitchen/test-kitchen/issues/1229 Kitchen: Issue #1229} is solved.
+      def validate_config!
+        return if @config_validated
+
+        super
+        @config_validated = true
       end
     end
   end
