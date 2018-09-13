@@ -104,20 +104,11 @@ module Kitchen
       # @param state [::Hash] the mutable instance and provisioner state.
       # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
       def call(state)
-        instance
-          .driver
-          .apply do |output:|
-          state
-            .store(
-              :kitchen_terraform_outputs,
-              output
-            )
+        execute_action do
+          instance.driver.apply do |output:|
+            state.store :kitchen_terraform_outputs, output
+          end
         end
-      rescue ::Kitchen::Terraform::Error => error
-        raise(
-          ::Kitchen::ActionFailed,
-          error.message
-        )
       end
     end
   end

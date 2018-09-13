@@ -40,6 +40,24 @@ require "support/kitchen/terraform/configurable_examples"
     described_class.new config
   end
 
+  let :kitchen_instance do
+    ::Kitchen::Instance.new(
+      driver: ::Kitchen::Driver::Base.new,
+      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+      logger: logger,
+      platform: ::Kitchen::Platform.new(name: "test-platform"),
+      provisioner: ::Kitchen::Provisioner::Base.new,
+      state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
+      suite: ::Kitchen::Suite.new(name: "test-suite"),
+      transport: ::Kitchen::Transport::Ssh.new,
+      verifier: subject,
+    )
+  end
+
+  let :logger do
+    ::Kitchen::Logger.new
+  end
+
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Systems"
@@ -48,31 +66,11 @@ require "support/kitchen/terraform/configurable_examples"
 
   describe "#call" do
     subject do
-      lambda do
-        described_instance.call kitchen_state
-      end
-    end
-
-    let :kitchen_instance do
-      ::Kitchen::Instance.new driver: ::Kitchen::Driver::Base.new,
-                              lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config), logger: logger,
-                              platform: ::Kitchen::Platform.new(name: "test-platform"),
-                              provisioner: ::Kitchen::Provisioner::Base.new,
-                              state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
-                              suite: ::Kitchen::Suite.new(name: "test-suite"), transport: ssh_transport,
-                              verifier: described_instance
-    end
-
-    let :logger do
-      ::Kitchen::Logger.new
-    end
-
-    let :ssh_transport do
-      ::Kitchen::Transport::Ssh.new
+      described_instance
     end
 
     before do
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
     context "when the :kitchen_terraform_outputs key is omitted from the Kitchen state" do
@@ -81,10 +79,12 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       specify "should raise an action failed error indicating the missing :kitchen_terraform_outputs key" do
-        is_expected.to raise_error ::Kitchen::ActionFailed,
-                                   "Loading Terraform outputs from the Kitchen state failed; this implies that the " \
-                                   "Kitchen-Terraform provisioner has not successfully converged\nkey not found: " \
-                                   ":kitchen_terraform_outputs"
+        expect do
+          subject.call kitchen_state
+        end.to raise_error ::Kitchen::ActionFailed,
+                           "Loading Terraform outputs from the Kitchen state failed; this implies that the " \
+                           "Kitchen-Terraform provisioner has not successfully converged\nkey not found: " \
+                           ":kitchen_terraform_outputs"
       end
     end
 
@@ -99,8 +99,10 @@ require "support/kitchen/terraform/configurable_examples"
         end
 
         specify "should raise an action failed error indicating the missing output" do
-          is_expected.to raise_error ::Kitchen::ActionFailed,
-                                     "Resolving the attrs of system a-system failed\nkey not found: \"output_name\""
+          expect do
+            subject.call kitchen_state
+          end.to raise_error ::Kitchen::ActionFailed,
+                             "Resolving the attrs of system a-system failed\nkey not found: \"output_name\""
         end
       end
 
@@ -110,8 +112,10 @@ require "support/kitchen/terraform/configurable_examples"
         end
 
         specify "should raise an action failed error indicating the missing :hosts_output key" do
-          is_expected.to raise_error ::Kitchen::ActionFailed,
-                                     "Resolving the hosts of system a-system failed\nkey not found: \"hosts\""
+          expect do
+            subject.call kitchen_state
+          end.to raise_error ::Kitchen::ActionFailed,
+                             "Resolving the hosts of system a-system failed\nkey not found: \"hosts\""
         end
       end
 
@@ -220,13 +224,9 @@ require "support/kitchen/terraform/configurable_examples"
           end
 
           it "does raise an error" do
-            is_expected
-              .to(
-                raise_error(
-                  ::Kitchen::ActionFailed,
-                  "InSpec Runner exited with 1"
-                )
-              )
+            expect do
+              subject.call kitchen_state
+            end.to raise_error ::Kitchen::ActionFailed, "InSpec Runner exited with 1"
           end
         end
 
@@ -241,7 +241,9 @@ require "support/kitchen/terraform/configurable_examples"
           end
 
           it "does not raise an error" do
-            is_expected.to_not raise_error
+            expect do
+              subject.call kitchen_state
+            end.to_not raise_error
           end
         end
       end
@@ -253,23 +255,17 @@ require "support/kitchen/terraform/configurable_examples"
       described_class.new groups: []
     end
 
-    specify "should inform the user of a deprecated config attribute" do
-      logger = ::Kitchen::Logger.new
-
+    after do
       allow(logger).to receive :warn
+      kitchen_instance
+      subject.doctor({})
+    end
+
+    specify "should inform the user of a deprecated config attribute" do
       expect(logger).to receive(:warn).with "The groups configuration attribute is deprecated.\nThe systems " \
                                             "configuration attribute replaces groups.\nRead the systems " \
-                                            "documentation at: https://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Terraform/ConfigAttribute/Systems"
-      ::Kitchen::Instance.new driver: ::Kitchen::Driver::Base.new,
-                              lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
-                              logger: logger,
-                              platform: ::Kitchen::Platform.new(name: "test-platform"),
-                              provisioner: ::Kitchen::Provisioner::Base.new,
-                              state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
-                              suite: ::Kitchen::Suite.new(name: "test-suite"),
-                              transport: ::Kitchen::Transport::Ssh.new,
-                              verifier: subject
-      subject.doctor({})
+                                            "documentation at: " \
+                                            "https://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Terraform/ConfigAttribute/Systems"
     end
   end
 end

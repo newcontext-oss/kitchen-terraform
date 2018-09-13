@@ -100,12 +100,12 @@ module Kitchen
       # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def call(kitchen_state)
-        load_outputs kitchen_state: kitchen_state
-        config_systems.each do |system|
-          verify system: system
+        execute_action do
+          load_outputs kitchen_state: kitchen_state
+          config_systems.each do |system|
+            verify system: system
+          end
         end
-      rescue ::Kitchen::Terraform::Error => error
-        raise ::Kitchen::ActionFailed, error.message
       end
 
       # finalize_config! configures InSpec options which remain consistent between systems.
