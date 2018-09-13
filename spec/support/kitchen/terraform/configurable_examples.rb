@@ -18,63 +18,24 @@ require "kitchen"
 require "kitchen/driver/terraform"
 require "support/kitchen/instance_context"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::Configurable" do
-    describe "@api_version" do
-      subject do
-        described_class.instance_variable_get :@api_version
-      end
-
-      it do
-        is_expected.to eq 2
-      end
+::RSpec.shared_examples "Kitchen::Terraform::Configurable" do
+  describe "@api_version" do
+    subject do
+      described_class.instance_variable_get :@api_version
     end
 
-    describe "@plugin_version" do
-      subject do
-        described_class.instance_variable_get :@plugin_version
-      end
-
-      it "equals the gem version" do
-        is_expected.to eq "4.0.0"
-      end
-    end
-
-    describe "#finalize_config" do
-      context "when the instance is undefined" do
-        subject do
-          lambda do
-            described_instance.finalize_config! nil
-          end
-        end
-
-        it do
-          is_expected
-            .to(
-              raise_error(
-                ::Kitchen::ClientError,
-                "Instance must be provided to #{described_instance}"
-              )
-            )
-        end
-      end
-
-      context "when the instance is defined" do
-        include_context "Kitchen::Instance"
-
-        after do
-          described_instance.finalize_config! instance
-        end
-
-        subject do
-          described_instance
-        end
-
-        it do
-          is_expected.to receive(:validate_config!).ordered
-          is_expected.to receive(:expand_paths!).ordered
-          is_expected.to receive(:load_needed_dependencies!).ordered
-        end
-      end
+    it do
+      is_expected.to eq 2
     end
   end
+
+  describe "@plugin_version" do
+    subject do
+      described_class.instance_variable_get :@plugin_version
+    end
+
+    it "equals the gem version" do
+      is_expected.to eq "4.0.0"
+    end
+  end
+end
