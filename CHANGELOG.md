@@ -8,6 +8,13 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+# [4.0.1] - 2018-09-15
+
+### Fixed
+
+- The version of InSpec was pinned to 2.2.78 as 2.2.101 introduced a
+  breaking change to the InSpec profile attributes system
+
 ## [4.0.0] - 2018-08-13
 
 "An open-source software release is never late. Nor is it early. It
@@ -506,7 +513,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.1...HEAD
+[4.0.1]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.0...v4.0.1
 [4.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.1...v4.0.0
 [3.3.1]: https://github.com/newcontext/kitchen-terraform/compare/v3.3.0...v3.3.1
 [3.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v3.2.0...v3.3.0
