@@ -88,6 +88,7 @@ jobs:
           --retry=3 --without=development
       script: bin/rake tests:integration[$TERRAFORM_VERSION,$TERRAFORM_SHA256_SUM]
     - stage: deploy to rubygems.org
+      if: branch = master
       rvm: 2.5
       before_install:
         - gem update --system
