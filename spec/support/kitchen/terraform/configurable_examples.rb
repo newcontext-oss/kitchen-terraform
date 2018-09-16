@@ -53,7 +53,6 @@ require "support/kitchen/instance_context"
     specify "should call #validate_config! before calling #expand_paths!" do
       is_expected.to receive(:validate_config!).ordered
       is_expected.to receive(:expand_paths!).ordered
-      is_expected.to receive(:load_needed_dependencies!).ordered
     end
   end
 end
