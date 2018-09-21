@@ -301,13 +301,6 @@ Kitchen-Terraform thrives on community contributions.
 Information about contributing to Kitchen-Terraform can be found in the
 [Contributing document][contributing-document].
 
-## Developing
-
-Pull requests to Kitchen-Terraform are always welcome!
-
-Information about developing Kitchen-Terraform can be found in the
-[Developing document][developing-document].
-
 ## Changelog
 
 Kitchen-Terraform adheres to semantic versioning and documents all
@@ -369,7 +362,6 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [bundler]: https://bundler.io/index.html#getting-started
 [changelog]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CHANGELOG.md
 [contributing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md
-[developing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/DEVELOPING.md
 [docker]: https://www.docker.com/
 [docker-community-edition]: https://store.docker.com/editions/community/docker-ce-server-ubuntu
 [docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
