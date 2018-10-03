@@ -35,7 +35,7 @@ require "support/kitchen/instance_context"
     end
 
     it "equals the gem version" do
-      expect(subject.instance_variable_get(:@plugin_version)).to eq "4.0.2"
+      expect(subject.instance_variable_get(:@plugin_version)).to eq "4.0.3"
     end
   end
 
