@@ -42,7 +42,8 @@ require "rubygems"
   specification.add_runtime_dependency "dry-types", "~> 0.9"
   specification.add_runtime_dependency "dry-validation", "~> 0.10"
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
-  specification.add_runtime_dependency "inspec", ">= 2.2.70", "<= 2.2.78"
+  specification.add_runtime_dependency "inspec", "~> 2.2", "!= 2.2.101", "!=2.2.102", "!= 2.2.112", "!= 2.3.4",
+                                       "!= 2.3.5"
   specification.add_runtime_dependency "test-kitchen", "~> 1.23"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
   specification.required_ruby_version = [">= 2.3", "< 2.6"]
