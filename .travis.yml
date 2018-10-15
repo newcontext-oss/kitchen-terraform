@@ -17,6 +17,7 @@ jobs:
   include:
     - stage: integration tests on windows
       os: windows
+      language: shell
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
           --retry=3 --without=development
