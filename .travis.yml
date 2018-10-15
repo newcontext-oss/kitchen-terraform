@@ -15,6 +15,12 @@ install:
 before_cache: bin/bundle clean
 jobs:
   include:
+    - stage: integration tests on windows
+      os: windows
+      install:
+        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
+          --retry=3 --without=development
+      script: bin/rake tests:integration
     - stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.5
       env:
