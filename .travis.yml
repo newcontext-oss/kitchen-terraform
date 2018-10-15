@@ -18,6 +18,10 @@ jobs:
     - stage: integration tests on windows
       os: windows
       language: shell
+      before_install:
+        - gem update --system
+        - gem --version
+        - gem update bundler --no-document
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
           --retry=3 --without=development
