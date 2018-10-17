@@ -25,7 +25,7 @@ jobs:
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
           --retry=3 --without=development
-      script: bin/rake tests:integration
+      script: bin/rake tests:integration[0.11.8,b14dbb9b9b100ddcd516ad426f31a23016ce351d7481407bc91bceb342307826,windows]
     - stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.5
       env:
