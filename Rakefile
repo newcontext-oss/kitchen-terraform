@@ -87,13 +87,11 @@ def kitchen_binstub
 end
 
 def kitchen_environment(terraform_path:)
-  escaped_terraform_path = ::Shellwords.escape ::File.dirname ::File.expand_path terraform_path
-  original_path = ::ENV.fetch "PATH"
-  ruby_path = ::File.dirname ::RbConfig.ruby
-
   {
     "KITCHEN_LOG" => "debug",
-    "PATH" => "#{ruby_path}#{::File::PATH_SEPARATOR}#{escaped_terraform_path}#{::File::PATH_SEPARATOR}#{original_path}",
+    "PATH" => [
+      ::File.dirname(::RbConfig.ruby), ::File.dirname(::File.expand_path(terraform_path)), ::ENV.fetch("PATH"),
+    ].map!(&::Shellwords.method(:escape)).join(::File::PATH_SEPARATOR),
   }
 end
 
