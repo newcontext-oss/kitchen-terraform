@@ -91,7 +91,10 @@ def kitchen_environment(terraform_path:)
   original_path = ::ENV.fetch "PATH"
   ruby_path = ::File.dirname ::RbConfig.ruby
 
-  {"KITCHEN_LOG" => "debug", "PATH" => "#{ruby_path}:#{escaped_terraform_path}:#{original_path}"}
+  {
+    "KITCHEN_LOG" => "debug",
+    "PATH" => "#{ruby_path}#{::File::PATH_SEPARATOR}#{escaped_terraform_path}#{::File::PATH_SEPARATOR}#{original_path}",
+  }
 end
 
 def rake_binstub
