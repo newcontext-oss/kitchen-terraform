@@ -19,7 +19,7 @@ jobs:
       os: windows
       language: shell
       before_install:
-        - gem update --system
+        - gem update --no-document --system
         - gem --version
         - gem update bundler --no-document
       install:
