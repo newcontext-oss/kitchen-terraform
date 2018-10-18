@@ -21,7 +21,6 @@ jobs:
       before_install:
         - gem update --no-document --system
         - gem --version
-        - gem update bundler --no-document
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
           --retry=3 --without=development
