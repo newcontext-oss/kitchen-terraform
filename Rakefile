@@ -90,7 +90,8 @@ def kitchen_environment(terraform_path:)
   {
     "KITCHEN_LOG" => "debug",
     "PATH" => [
-      ::File.dirname(::RbConfig.ruby), ::File.dirname(::File.expand_path(terraform_path)), ::ENV.fetch("PATH"),
+      ::File.dirname(::RbConfig.ruby), ::File.dirname(::File.expand_path(terraform_path)),
+      ::ENV.fetch("PATH").tr("\\", "/"),
     ].map!(&::Shellwords.method(:escape)).join(::File::PATH_SEPARATOR),
   }
 end
