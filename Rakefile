@@ -10,6 +10,10 @@ require "shellwords"
 require "uri"
 require "zip"
 
+BIN_PATH = ::File.join ENV.fetch("HOME"), "bin"
+TERRAFORM_PATH = ::FILE.join BIN_PATH, "terraform"
+KITCHEN_ENVIRONMENT = {"KITCHEN_LOG" => "DEBUG"}
+
 def binstub(name:)
   ::File
     .expand_path(
@@ -45,8 +49,7 @@ def download_hashicorp_release(destination:, platform:, product:, sha256_sum:, v
 end
 
 def execute_kitchen_terraform(grep_pattern:, terraform_path:, working_directory:)
-  sh kitchen_environment(terraform_path: terraform_path),
-     "#{kitchen_binstub} test --destroy=always | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
+  sh KITCHEN_ENVIRONMENT, "#{kitchen_binstub} test --destroy=always | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
      chdir: working_directory
 end
 
@@ -54,8 +57,8 @@ CLOBBER.include "**/.kitchen"
 CLOBBER.include "**/.terraform"
 
 def execute_kitchen_terraform_via_rake(grep_pattern:, terraform_path:, working_directory:)
-  sh kitchen_environment(terraform_path: terraform_path),
-     "#{rake_binstub} kitchen:all | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'", chdir: working_directory
+  sh KITCHEN_ENVIRONMENT, "#{rake_binstub} kitchen:all | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
+     chdir: working_directory
 end
 
 def extract_hashicorp_release(destination:, source:)
@@ -86,17 +89,6 @@ def kitchen_binstub
   binstub name: "kitchen"
 end
 
-def kitchen_environment(terraform_path:)
-  {
-    "KITCHEN_LOG" => "debug",
-    "PATH" => ::ENV.fetch("PATH").tr("\\", "/").split(::File::PATH_SEPARATOR)
-      .prepend(::File.dirname(::RbConfig.ruby), ::File.dirname(::File.expand_path(terraform_path)))
-      .map! do |pathname|
-      ::Shellwords.escape pathname.gsub ":", "\\:"
-    end.join(":"),
-  }
-end
-
 def rake_binstub
   binstub name: "rake"
 end
@@ -119,14 +111,14 @@ file "tmp/terraform.zip",
                              version: arguments.terraform_version
 end
 
-directory "bin"
+directory BIN_PATH
 
-file "bin/terraform",
-     [:terraform_version, :terraform_sha256_sum, :terraform_platform] => ["tmp/terraform.zip", "bin"] do |current_task|
+file TERRAFORM_PATH,
+     [:terraform_version, :terraform_sha256_sum, :terraform_platform] => ["tmp/terraform.zip", BIN_PATH] do |current_task|
   extract_hashicorp_release destination: ::File.dirname(current_task.name), source: current_task.prerequisites.first
 end
 
-CLOBBER.include "bin/terraform"
+CLOBBER.include TERRAFORM_PATH
 
 file "tmp/terraform-provider-docker.zip", [:version, :sha256_sum, :platform] => ["tmp"] do |current_task, arguments|
   arguments.with_defaults version: "0.1.1",
@@ -156,7 +148,7 @@ namespace :tests do
   namespace :integration do
     desc "Run integration tests for basic functionality"
 
-    task :basic, [:terraform_version, :terraform_sha256_sum, :terraform_platform] => ["bin/terraform"] do |current_task|
+    task :basic, [:terraform_version, :terraform_sha256_sum, :terraform_platform] => [TERRAFORM_PATH] do |current_task|
       puts "Running integration tests for basic functionality"
       execute_kitchen_terraform grep_pattern: "Test Summary: 1 successful, 0 failures, 0 skipped" \
                                 ".*1 example, 0 failures.*" \
@@ -168,7 +160,7 @@ namespace :tests do
     desc "Run integration tests for no outputs defined"
 
     task :no_outputs_defined,
-         [:terraform_version, :terraform_sha256_sum, :terraform_platform] => ["bin/terraform"] do |current_task|
+         [:terraform_version, :terraform_sha256_sum, :terraform_platform] => [TERRAFORM_PATH] do |current_task|
       puts "Running integration tests for no outputs defined"
 
       execute_kitchen_terraform grep_pattern: "Test Summary: 1 successful, 0 failures, 0 skipped",
@@ -179,7 +171,7 @@ namespace :tests do
     desc "Run integration tests for Rake tasks"
 
     task :rake_tasks,
-         [:terraform_version, :terraform_sha256_sum, :terraform_platform] => ["bin/terraform"] do |current_task|
+         [:terraform_version, :terraform_sha256_sum, :terraform_platform] => [TERRAFORM_PATH] do |current_task|
       puts "Running integration tests for Rake tasks"
 
       execute_kitchen_terraform_via_rake grep_pattern: "Test Summary: 1 successful, 0 failures, 0 skipped.*Test " \
@@ -195,7 +187,7 @@ namespace :tests do
            :terraform_version, :terraform_sha256_sum, :terraform_platform, :terraform_provider_docker_version,
            :terraform_provider_docker_sha256_sum, :terraform_provider_local_version,
            :terraform_provider_local_sha256_sum,
-         ] => ["bin/terraform"] do |current_task, arguments|
+         ] => [TERRAFORM_PATH] do |current_task, arguments|
       puts "Running integration tests for shell words"
 
       ::Rake::Task.[]("integration/Shell Words/Plugin Directory/terraform-provider-docker")
