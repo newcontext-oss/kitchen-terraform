@@ -11,7 +11,7 @@ require "uri"
 require "zip"
 
 BIN_PATH = ::File.join ENV.fetch("HOME"), "bin"
-TERRAFORM_PATH = ::FILE.join BIN_PATH, "terraform"
+TERRAFORM_PATH = ::File.join BIN_PATH, "terraform"
 KITCHEN_ENVIRONMENT = {"KITCHEN_LOG" => "DEBUG"}
 
 def binstub(name:)
