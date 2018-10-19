@@ -14,14 +14,6 @@ BIN_PATH = ::File.join ENV.fetch("HOME"), "bin"
 TERRAFORM_PATH = ::File.join BIN_PATH, "terraform"
 KITCHEN_ENVIRONMENT = {"KITCHEN_LOG" => "DEBUG"}
 
-def binstub(name:)
-  ::File
-    .expand_path(
-      "../bin/#{name}",
-      __FILE__
-    )
-end
-
 def download_hashicorp_release(destination:, platform:, product:, sha256_sum:, version:)
   uri = ::URI::HTTPS.build host: "releases.hashicorp.com",
                            path: ::File.join("/", product, version, "#{product}_#{version}_#{platform}_amd64.zip")
@@ -49,7 +41,7 @@ def download_hashicorp_release(destination:, platform:, product:, sha256_sum:, v
 end
 
 def execute_kitchen_terraform(grep_pattern:, terraform_path:, working_directory:)
-  sh KITCHEN_ENVIRONMENT, "#{kitchen_binstub} test --destroy=always | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
+  sh KITCHEN_ENVIRONMENT, "bundle exec kitchen test --destroy=always | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
      chdir: working_directory
 end
 
@@ -57,7 +49,7 @@ CLOBBER.include "**/.kitchen"
 CLOBBER.include "**/.terraform"
 
 def execute_kitchen_terraform_via_rake(grep_pattern:, terraform_path:, working_directory:)
-  sh KITCHEN_ENVIRONMENT, "#{rake_binstub} kitchen:all | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
+  sh KITCHEN_ENVIRONMENT, "bundle exec rake kitchen:all | tee /dev/tty | grep -Pz '(?s)#{grep_pattern}'",
      chdir: working_directory
 end
 
@@ -83,18 +75,6 @@ def extract_hashicorp_release(destination:, source:)
       )
     end
   end
-end
-
-def kitchen_binstub
-  binstub name: "kitchen"
-end
-
-def rake_binstub
-  binstub name: "rake"
-end
-
-def rspec_binstub
-  binstub name: "rspec"
 end
 
 directory "tmp"
@@ -142,7 +122,7 @@ namespace :tests do
   desc "Run all unit tests"
   task :unit do
     puts "Running all unit tests"
-    sh "#{rspec_binstub} --backtrace"
+    sh "bundle exec rspec --backtrace"
   end
 
   namespace :integration do
