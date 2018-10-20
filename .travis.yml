@@ -21,6 +21,7 @@ jobs:
       before_install:
         - gem update --no-document --system
         - gem --version
+        - bundle --version
         - curl --version
         - sha256sum --version
         - unzip -v
