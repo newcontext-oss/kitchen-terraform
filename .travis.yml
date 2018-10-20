@@ -33,6 +33,7 @@ jobs:
         - sha256sum --check --ignore-missing terraform_0.11.8_SHA256SUMS
         - unzip terraform_0.11.8_windows_amd64.zip -d $HOME/bin
         - chmod +x $HOME/bin/terraform.exe
+        - ln --symbolic $HOME/bin/terraform.exe $HOME/bin/terraform
       script:
         - cd integration/basic
         - '../../bin/kitchen test --destroy=always --log-level=debug |
