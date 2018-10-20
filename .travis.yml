@@ -32,7 +32,6 @@ jobs:
         - curl --remote-name https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_windows_amd64.zip
         - sha256sum --check --ignore-missing terraform_0.11.8_SHA256SUMS
         - unzip terraform_0.11.8_windows_amd64.zip -d bin
-        - ls -l bin
       script:
         - cd integration/basic
         - 'PATH=../../bin:$PATH kitchen test --destroy=always --log-level=debug'
