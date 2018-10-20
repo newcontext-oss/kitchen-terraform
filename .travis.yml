@@ -38,6 +38,7 @@ jobs:
         - cd integration/basic
         - '../../bin/kitchen test --destroy=always --log-level=debug |
           grep "Test Summary: 1 successful, 0 failures, 0 skipped.*1 example, 0 failures.*3 examples, 0 failures"'
+        - cd -
     - stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.5
       env:
