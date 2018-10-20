@@ -21,10 +21,20 @@ jobs:
       before_install:
         - gem update --no-document --system
         - gem --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
           --retry=3 --without=development
-      script: bin/rake tests:integration[0.11.8,b14dbb9b9b100ddcd516ad426f31a23016ce351d7481407bc91bceb342307826,windows]
+        - curl --remote-name https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_SHA256SUMS
+        - curl --remote-name https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_windows_amd64.zip
+        - sha256sum --check --ignore-missing terraform_0.11.8_SHA256SUMS
+        - unzip terraform_0.11.8_windows_amd64.zip -d $HOME/bin
+      script:
+        - cd integration/basic
+        - '../../bin/kitchen test --destroy=always --log-level=debug |
+          grep "Test Summary: 1 successful, 0 failures, 0 skipped.*1 example, 0 failures.*3 examples, 0 failures"'
     - stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.5
       env:
