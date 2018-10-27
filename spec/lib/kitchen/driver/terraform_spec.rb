@@ -221,7 +221,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               command: "validate " \
               "-check-variables=true " \
               "-no-color " \
-              "-var=key\\=value " \
+              "-var=\"key=value\" " \
               "-var-file=\/variable\/file",
             )
           end
@@ -250,7 +250,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-no-color " \
                 "-parallelism=10 " \
                 "-refresh=true " \
-                "-var=key\\=value " \
+                "-var=\"key=value\" " \
                 "-var-file=\/variable\/file",
               )
             end
@@ -415,7 +415,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-upgrade " \
           "-force-copy " \
           "-backend=true " \
-          "-backend-config=key\\=value " \
+          "-backend-config=\"key=value\" " \
           "-get=true " \
           "-get-plugins=true " \
           "-plugin-dir=\/plugin\/directory " \
@@ -505,7 +505,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-no-color " \
           "-force-copy " \
           "-backend=true " \
-          "-backend-config=key\\=value " \
+          "-backend-config=\"key=value\" " \
           "-get=true " \
           "-get-plugins=true " \
           "-plugin-dir=\/plugin\/directory " \
@@ -576,7 +576,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-no-color " \
               "-parallelism=10 " \
               "-refresh=true " \
-              "-var=key\\=value " \
+              "-var=\"key=value\" " \
               "-var-file=\/variable\/file",
             )
           end

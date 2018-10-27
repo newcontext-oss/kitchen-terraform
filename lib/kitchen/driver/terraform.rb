@@ -273,97 +273,76 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::UserError] if the version is not supported.
   # @return [void]
   def verify_dependencies
-    logger
-      .warn(
-        ::Kitchen::Terraform::ClientVersionVerifier
-          .new
-          .verify(
-            version_output:
-              ::Kitchen::Terraform::ShellOut
-                .run(
-                  command: "version",
-                  options:
-                    {
-                      cwd: ::Dir.pwd,
-                      live_stream: logger,
-                      timeout: 600
-                    }
-                )
-          )
-      )
-  rescue ::Kitchen::Terraform::Error => error
-    raise(
-      ::Kitchen::UserError,
-      error.message
+    logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify(
+      version_output: ::Kitchen::Terraform::ShellOut.run(
+        command: "version",
+        options: {
+          cwd: ::Dir.pwd,
+          live_stream: logger,
+          timeout: 600,
+        },
+      ),
     )
+  rescue ::Kitchen::Terraform::Error => error
+    raise ::Kitchen::UserError, error.message
   end
 
   private
 
   # @api private
   def apply_run_apply
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "apply " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "-input=false " \
-            "-auto-approve=true " \
-            "#{color_flag} " \
-            "#{parallelism_flag} " \
-            "-refresh=true " \
-            "#{variables_flags} " \
-            "#{variable_files_flags}",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "apply " \
+      "#{lock_flag} " \
+      "#{lock_timeout_flag} " \
+      "-input=false " \
+      "-auto-approve=true " \
+      "#{color_flag} " \
+      "#{parallelism_flag} " \
+      "-refresh=true " \
+      "#{variables_flags} " \
+      "#{variable_files_flags}",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def apply_run_get
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "get -update",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "get -update",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def apply_run_validate
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "validate " \
-            "-check-variables=true " \
-            "#{color_flag} " \
-            "#{variables_flags} " \
-            "#{variable_files_flags}",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "validate " \
+      "-check-variables=true " \
+      "#{color_flag} " \
+      "#{variables_flags} " \
+      "#{variable_files_flags}",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def backend_configurations_flags
-    config_backend_configurations
-      .map do |key, value|
-        "-backend-config=#{::Shellwords.escape "#{key}=#{value}"}"
-      end
-      .join " "
+    config_backend_configurations.map do |key, value|
+      "-backend-config=\"#{::Shellwords.escape key}=#{::Shellwords.escape value}\""
+    end.join " "
   end
 
   # api private
@@ -544,10 +523,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def variables_flags
-    config_variables
-      .map do |key, value|
-        "-var=#{::Shellwords.escape "#{key}=#{value}"}"
-      end
-      .join " "
+    config_variables.map do |key, value|
+      "-var=\"#{::Shellwords.escape key}=#{::Shellwords.escape value}\""
+    end.join " "
   end
 end
