@@ -1,0 +1,25 @@
+---
+driver:
+  name: terraform
+
+provisioner:
+  name: terraform
+
+verifier:
+  name: terraform
+
+platforms:
+  - name: local
+
+suites:
+  - name: variables_and_outputs
+    includes:
+      - local
+    driver:
+      root_module_directory:
+        test/terraform/variables_and_outputs
+      variable_files:
+        - test/terraform/variables_and_outputs/variable_files/main.tfvars
+      variables:
+        local_file_content_from_configuration_variable: abc
+  
