@@ -127,10 +127,6 @@ module Kitchen
         )
       end
 
-      def configure_inspec_system_options(system:)
-        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: @inspec_options
-      end
-
       def load_outputs(kitchen_state:)
         @outputs = ::Kitchen::Util.stringified_hash Hash kitchen_state.fetch :kitchen_terraform_outputs
       rescue ::KeyError => key_error
@@ -173,6 +169,10 @@ module Kitchen
         @system_hosts_resolver ||= ::Kitchen::Terraform::SystemHostsResolver.new outputs: @outputs
       end
 
+      def system_inspec_options(system:)
+        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: @inspec_options.dup
+      end
+
       def transport_connection_options
         ::Kitchen::Util.stringified_hash(
           instance.transport.diagnose.select do |key|
@@ -184,12 +184,11 @@ module Kitchen
       end
 
       def verify(system:)
-        configure_inspec_system_options system: system
         ::Kitchen::Terraform::System
           .new(mapping: system)
           .resolve_attrs(system_attrs_resolver: system_attrs_resolver)
           .resolve_hosts(system_hosts_resolver: system_hosts_resolver)
-          .verify(inspec_options: @inspec_options, inspec_profile_path: inspec_profile_path)
+          .verify(inspec_options: system_inspec_options(system: system), inspec_profile_path: inspec_profile_path)
       end
     end
   end
