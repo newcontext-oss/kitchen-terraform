@@ -33,9 +33,7 @@ jobs:
         - sha256sum --check --ignore-missing terraform_0.11.8_SHA256SUMS
         - unzip terraform_0.11.8_windows_amd64.zip -d bin
       script:
-        - cd integration/basic
-        - 'PATH=../../bin:$PATH kitchen test --destroy=always --log-level=debug'
-        - cd -
+        - 'PATH=bin:$PATH kitchen test --destroy=always --log-level=debug'
     - stage: unit tests and code coverage with newest supported version of ruby
       rvm: 2.5
       env:
