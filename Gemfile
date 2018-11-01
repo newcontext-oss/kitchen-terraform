@@ -5,6 +5,6 @@ source "https://rubygems.org/" do
 
   group :test do
     gem "rake"
-    gem "rubyzip"
+    gem "tty-which"
   end
 end
