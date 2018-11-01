@@ -88,8 +88,10 @@ jobs:
         - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
-        - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip
+        - curl --remote-name
+          https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
+        - curl --remote-name
+          https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip
         - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip -d bin
       script:
@@ -120,8 +122,10 @@ jobs:
       language: shell
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
-        - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_windows_amd64.zip
+        - curl --remote-name
+          https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
+        - curl --remote-name
+          https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_windows_amd64.zip
         - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_windows_amd64.zip -d bin
       script:
