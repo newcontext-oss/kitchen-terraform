@@ -2,97 +2,153 @@ cache:
   directories:
     - vendor/bundle
     - vendor/cache
-env:
-  - TERRAFORM_VERSION=0.11.10
-  - TERRAFORM_VERSION=0.11.9
-  - TERRAFORM_VERSION=0.11.8
-  - TERRAFORM_VERSION=0.11.7
-  - TERRAFORM_VERSION=0.11.6
-  - TERRAFORM_VERSION=0.11.5
-  - TERRAFORM_VERSION=0.11.4
 notifications:
   webhooks: 
     - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
-rvm:
-  - '2.5'
-  - '2.4'
-  - '2.3'
 before_cache: bin/bundle clean
 jobs:
   include:
     - stage: "Unit Tests"
-      name: "Ruby 2.5"
-      env:
-        - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
-        - TERRAFORM_VERSION=0.11.8
-      rvm: '2.5'
+      os: linux
+      dist: trusty
+      sudo: false
+      language: ruby
+      name: "Ruby 2.3"
+      rvm: '2.3'
       before_install:
         - gem --version
         - bundle --version
         - curl --version
+      script: bin/rspec --backtrace
+    - name: "Ruby 2.4"
+      rvm: '2.4'
+    - name: "Ruby 2.5 with Code Climate"
+      rvm: '2.5'
+      env:
+        - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
       before_script:
         - curl --location https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
           > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
         - './cc-test-reporter before-build'
-      script: bin/rspec --backtrace
       after_script: './cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT'
-    - name: "Ruby 2.4"
-      rvm: '2.4'
-      before_script: true
-      after_script: true
-    - name: "Ruby 2.3"
-      rvm: '2.3'
-      before_script: true
-      after_script: true
-    - stage: "Integration Tests"
-      name: Linux
+    - stage: "Integration Tests on Linux"
       os: linux
       dist: trusty
       sudo: false
       language: ruby
-      env:
-        - TERRAFORM_VERSION=0.11.10
+      rvm: '2.5'
       before_install:
         - gem --version
         - bundle --version
         - curl --version
         - sha256sum --version
         - unzip -v        
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
       install:
-        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
-          --retry=3 --without=development
-        - curl --remote-name
+        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
+        - curl --remote-name 
+          https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
+        - curl --remote-name 
           https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_linux_amd64.zip
         - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_linux_amd64.zip -d bin
       script:
         - 'PATH=bin:$PATH kitchen test --destroy=always --log-level=debug local'
-    - name: MacOS
+      name: "Terraform 0.11.4"
+      env:
+        - TERRAFORM_VERSION=0.11.4
+    - name: "Terraform 0.11.5"
+      env:
+        - TERRAFORM_VERSION=0.11.5
+    - name: "Terraform 0.11.6"
+      env:
+        - TERRAFORM_VERSION=0.11.6
+    - name: "Terraform 0.11.7"
+      env:
+        - TERRAFORM_VERSION=0.11.7
+    - name: "Terraform 0.11.8"
+      env:
+        - TERRAFORM_VERSION=0.11.8
+    - name: "Terraform 0.11.9"
+      env:
+        - TERRAFORM_VERSION=0.11.9
+    - name: "Terraform 0.11.10"
+      env:
+        - TERRAFORM_VERSION=0.11.10
+    - stage: "Integration Tests on MacOS"
       os: osx
       osx_image: xcode10
+      before_install:
+        - gem --version
+        - bundle --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
-        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
-          --retry=3 --without=development
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip
+        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
+        - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
+        - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip
         - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip -d bin
-    - name: Windows
+      script:
+        - 'PATH=bin:$PATH kitchen test --destroy=always --log-level=debug local'
+      name: "Terraform 0.11.4"
+      env:
+        - TERRAFORM_VERSION=0.11.4
+    - name: "Terraform 0.11.5"
+      env:
+        - TERRAFORM_VERSION=0.11.5
+    - name: "Terraform 0.11.6"
+      env:
+        - TERRAFORM_VERSION=0.11.6
+    - name: "Terraform 0.11.7"
+      env:
+        - TERRAFORM_VERSION=0.11.7
+    - name: "Terraform 0.11.8"
+      env:
+        - TERRAFORM_VERSION=0.11.8
+    - name: "Terraform 0.11.9"
+      env:
+        - TERRAFORM_VERSION=0.11.9
+    - name: "Terraform 0.11.10"
+      env:
+        - TERRAFORM_VERSION=0.11.10
+    - stage: "Integration Tests on Windows"
       os: windows
       language: shell
       install:
-        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle
-          --retry=3 --without=development
-        - curl --remote-name 
-          https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_windows_amd64.zip
+        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
+        - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
+        - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_windows_amd64.zip
         - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_windows_amd64.zip -d bin
-    - stage: deploy to rubygems.org
+      name: "Terraform 0.11.4"
+      env:
+        - TERRAFORM_VERSION=0.11.4
+    - name: "Terraform 0.11.5"
+      env:
+        - TERRAFORM_VERSION=0.11.5
+    - name: "Terraform 0.11.6"
+      env:
+        - TERRAFORM_VERSION=0.11.6
+    - name: "Terraform 0.11.7"
+      env:
+        - TERRAFORM_VERSION=0.11.7
+    - name: "Terraform 0.11.8"
+      env:
+        - TERRAFORM_VERSION=0.11.8
+    - name: "Terraform 0.11.9"
+      env:
+        - TERRAFORM_VERSION=0.11.9
+    - name: "Terraform 0.11.10"
       env:
         - TERRAFORM_VERSION=0.11.10
+    - stage: "Deploy to RubyGems"
+      if: branch = master
+      os: linux
+      dist: trusty
+      sudo: false
+      language: ruby
       rvm: '2.5'
       before_install:
         - gem --version
@@ -100,8 +156,8 @@ jobs:
       script: true
       before_cache: true
       before_deploy:
-        - openssl aes-256-cbc -K $encrypted_8619fb193385_key -iv $encrypted_8619fb193385_iv -in
-          certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
+        - openssl aes-256-cbc -K $encrypted_8619fb193385_key -iv $encrypted_8619fb193385_iv
+          -in certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
         - gem cert --add certs/gem-public_cert.pem
       deploy:
         provider: rubygems
@@ -110,6 +166,5 @@ jobs:
         gem: kitchen-terraform
         on:
           repo: newcontext-oss/kitchen-terraform
-          branch: master
           tags: true
         skip_cleanup: true
