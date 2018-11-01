@@ -52,7 +52,7 @@ jobs:
           https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - curl --remote-name 
           https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_linux_amd64.zip
-        - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
+        - sha256sum --check terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_linux_amd64.zip -d bin
       script:
         - 'PATH=bin:$PATH bin/rake test:kitchen:all'
@@ -92,7 +92,7 @@ jobs:
           https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - curl --remote-name
           https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip
-        - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
+        - sha256sum --check terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip -d bin
       script:
         - 'PATH=bin:$PATH bin/rake test:kitchen:all'
@@ -126,7 +126,7 @@ jobs:
           https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - curl --remote-name
           https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_windows_amd64.zip
-        - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
+        - sha256sum --check terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_windows_amd64.zip -d bin
       script:
         - 'PATH=bin:$PATH bin/rake test:kitchen:all'
