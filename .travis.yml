@@ -19,7 +19,7 @@ jobs:
         - gem --version
         - bundle --version
         - curl --version
-      script: bin/rspec --backtrace
+      script: bin/rake test:rspec
     - name: "Ruby 2.4"
       rvm: '2.4'
     - name: "Ruby 2.5 with Code Climate"
@@ -31,6 +31,8 @@ jobs:
           > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
         - './cc-test-reporter before-build'
+      script:
+        - bin/rake test:rspec
       after_script: './cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT'
     - stage: "Integration Tests on Linux"
       os: linux
@@ -53,7 +55,7 @@ jobs:
         - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_linux_amd64.zip -d bin
       script:
-        - 'PATH=bin:$PATH kitchen test --destroy=always --log-level=debug local'
+        - 'PATH=bin:$PATH bin/rake test:kitchen:all'
       name: "Terraform 0.11.4"
       env:
         - TERRAFORM_VERSION=0.11.4
@@ -91,7 +93,7 @@ jobs:
         - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_darwin_amd64.zip -d bin
       script:
-        - 'PATH=bin:$PATH kitchen test --destroy=always --log-level=debug local'
+        - 'PATH=bin:$PATH bin/rake test:kitchen:all'
       name: "Terraform 0.11.4"
       env:
         - TERRAFORM_VERSION=0.11.4
@@ -122,6 +124,8 @@ jobs:
         - curl --remote-name https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_windows_amd64.zip
         - sha256sum --check --ignore-missing terraform_"$TERRAFORM_VERSION"_SHA256SUMS
         - unzip terraform_"$TERRAFORM_VERSION"_windows_amd64.zip -d bin
+      script:
+        - 'PATH=bin:$PATH bin/rake test:kitchen:all'
       name: "Terraform 0.11.4"
       env:
         - TERRAFORM_VERSION=0.11.4
