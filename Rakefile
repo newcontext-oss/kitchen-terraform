@@ -5,12 +5,7 @@ require "rspec/core/rake_task"
 require "tty/which"
 
 namespace :test do
-  if TTY::Which.exist? "terraform"
-    ::Kitchen::RakeTasks.new do
-      ::ENV.store "KITCHEN_LOG", "debug"
-      ::Kitchen.logger = ::Kitchen.default_logger
-    end
-  end
+  ::Kitchen::RakeTasks.new if ::TTY::Which.exist? "terraform"
 
   ::RSpec::Core::RakeTask.new :rspec do |task|
     task.rspec_opts = "--backtrace"
