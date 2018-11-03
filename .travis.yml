@@ -339,6 +339,13 @@ jobs:
       name: "Terraform 0.11.4"
       os: windows
       language: shell
+      before_install:
+        - gem --version
+        - gem install bundler
+        - bundle --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
@@ -351,6 +358,13 @@ jobs:
     - name: "Terraform 0.11.5"
       os: windows
       language: shell
+      before_install:
+        - gem --version
+        - gem install bundler
+        - bundle --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
@@ -363,6 +377,13 @@ jobs:
     - name: "Terraform 0.11.6"
       os: windows
       language: shell
+      before_install:
+        - gem --version
+        - gem install bundler
+        - bundle --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
@@ -375,6 +396,13 @@ jobs:
     - name: "Terraform 0.11.7"
       os: windows
       language: shell
+      before_install:
+        - gem --version
+        - gem install bundler
+        - bundle --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
@@ -387,6 +415,13 @@ jobs:
     - name: "Terraform 0.11.8"
       os: windows
       language: shell
+      before_install:
+        - gem --version
+        - gem install bundler
+        - bundle --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
@@ -399,6 +434,13 @@ jobs:
     - name: "Terraform 0.11.9"
       os: windows
       language: shell
+      before_install:
+        - gem --version
+        - gem install bundler
+        - bundle --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
@@ -411,6 +453,13 @@ jobs:
     - name: "Terraform 0.11.10"
       os: windows
       language: shell
+      before_install:
+        - gem --version
+        - gem install bundler
+        - bundle --version
+        - curl --version
+        - sha256sum --version
+        - unzip -v
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
