@@ -10,12 +10,12 @@ before_cache: bin/bundle clean
 jobs:
   include:
     - stage: "Unit Tests"
-      name: "Ruby 2.3.4 on Linux"
+      name: "Ruby 2.3 on Linux"
       os: linux
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.3.4
+      rvm: '2.3'
       before_install:
         - gem --version
         - bundle --version
@@ -24,12 +24,12 @@ jobs:
         - bin/bundle check --path=vendor/bundle ||
           bin/bundle install --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3
       script: bin/rake test:rspec
-    - name: "Ruby 2.4.1 with Code Climate on Linux"
+    - name: "Ruby 2.4 with Code Climate on Linux"
       os: linux
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       env:
         - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
       before_install:
@@ -68,7 +68,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       before_install:
         - gem --version
         - bundle --version
@@ -90,7 +90,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       before_install:
         - gem --version
         - bundle --version
@@ -112,7 +112,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       before_install:
         - gem --version
         - bundle --version
@@ -134,7 +134,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       before_install:
         - gem --version
         - bundle --version
@@ -156,7 +156,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       before_install:
         - gem --version
         - bundle --version
@@ -178,7 +178,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       before_install:
         - gem --version
         - bundle --version
@@ -200,7 +200,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       before_install:
         - gem --version
         - bundle --version
@@ -512,7 +512,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: 2.4.1
+      rvm: '2.4'
       before_install:
         - gem --version
         - openssl version
