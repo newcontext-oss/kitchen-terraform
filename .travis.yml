@@ -337,7 +337,6 @@ jobs:
       os: windows
       language: shell
       before_install:
-        - echo $PATH
         - gem --version
         - gem install bundler
         - bundle --version
@@ -352,7 +351,6 @@ jobs:
       os: windows
       language: shell
       before_install:
-        - echo $PATH
         - gem --version
         - gem install bundler
         - bundle --version
@@ -367,7 +365,6 @@ jobs:
       os: windows
       language: shell
       before_install:
-        - echo $PATH
         - gem --version
         - gem install bundler
         - bundle --version
@@ -382,7 +379,6 @@ jobs:
       os: windows
       language: shell
       before_install:
-        - echo $PATH
         - gem --version
         - gem install bundler
         - bundle --version
@@ -397,7 +393,6 @@ jobs:
       os: windows
       language: shell
       before_install:
-        - echo $PATH
         - gem --version
         - gem install bundler
         - bundle --version
@@ -412,7 +407,6 @@ jobs:
       os: windows
       language: shell
       before_install:
-        - echo $PATH
         - gem --version
         - gem install bundler
         - bundle --version
