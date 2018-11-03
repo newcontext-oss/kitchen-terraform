@@ -319,6 +319,9 @@ jobs:
       name: "Terraform 0.11.4"
       os: windows
       language: shell
+      env:
+        - encrypted_8619fb193385_key=""
+        - encrypted_8619fb193385_iv=""
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -333,6 +336,9 @@ jobs:
     - name: "Terraform 0.11.5"
       os: windows
       language: shell
+      env:
+        - encrypted_8619fb193385_key=""
+        - encrypted_8619fb193385_iv=""
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -347,6 +353,9 @@ jobs:
     - name: "Terraform 0.11.6"
       os: windows
       language: shell
+      env:
+        - encrypted_8619fb193385_key=""
+        - encrypted_8619fb193385_iv=""
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -361,6 +370,9 @@ jobs:
     - name: "Terraform 0.11.7"
       os: windows
       language: shell
+      env:
+        - encrypted_8619fb193385_key=""
+        - encrypted_8619fb193385_iv=""
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -375,6 +387,9 @@ jobs:
     - name: "Terraform 0.11.8"
       os: windows
       language: shell
+      env:
+        - encrypted_8619fb193385_key=""
+        - encrypted_8619fb193385_iv=""
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -389,6 +404,9 @@ jobs:
     - name: "Terraform 0.11.9"
       os: windows
       language: shell
+      env:
+        - encrypted_8619fb193385_key=""
+        - encrypted_8619fb193385_iv=""
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
