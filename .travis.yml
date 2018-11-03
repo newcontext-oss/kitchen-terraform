@@ -218,7 +218,7 @@ jobs:
         - shasum --version
         - unzip -v
       install:
-        - bin/bundle install --jobs=$(sysctl -n hw.ncpu) --path=vendor/bundle --retry=3 --without=development
+        - bin/bundle install --jobs=$(expr $(sysctl -n hw.ncpu) - 1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
           https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_darwin_amd64.zip
         - shasum --algorithm 256 terraform_0.11.4_darwin_amd64.zip |
@@ -236,7 +236,7 @@ jobs:
         - shasum --version
         - unzip -v
       install:
-        - bin/bundle install --jobs=$(sysctl -n hw.ncpu) --path=vendor/bundle --retry=3 --without=development
+        - bin/bundle install --jobs=$(expr $(sysctl -n hw.ncpu) - 1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
           https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_darwin_amd64.zip
         - shasum --algorithm 256 terraform_0.11.5_darwin_amd64.zip |
@@ -254,7 +254,7 @@ jobs:
         - shasum --version
         - unzip -v
       install:
-        - bin/bundle install --jobs=$(sysctl -n hw.ncpu) --path=vendor/bundle --retry=3 --without=development
+        - bin/bundle install --jobs=$(expr $(sysctl -n hw.ncpu) - 1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
           https://releases.hashicorp.com/terraform/0.11.6/terraform_0.11.6_darwin_amd64.zip
         - shasum --algorithm 256 terraform_0.11.6_darwin_amd64.zip |
@@ -272,7 +272,7 @@ jobs:
         - shasum --version
         - unzip -v
       install:
-        - bin/bundle install --jobs=$(sysctl -n hw.ncpu) --path=vendor/bundle --retry=3 --without=development
+        - bin/bundle install --jobs=$(expr $(sysctl -n hw.ncpu) - 1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
           https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_darwin_amd64.zip
         - shasum --algorithm 256 terraform_0.11.7_darwin_amd64.zip |
@@ -290,7 +290,7 @@ jobs:
         - shasum --version
         - unzip -v
       install:
-        - bin/bundle install --jobs=$(sysctl -n hw.ncpu) --path=vendor/bundle --retry=3 --without=development
+        - bin/bundle install --jobs=$(expr $(sysctl -n hw.ncpu) - 1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
           https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_darwin_amd64.zip
         - shasum --algorithm 256 terraform_0.11.8_darwin_amd64.zip |
@@ -308,7 +308,7 @@ jobs:
         - shasum --version
         - unzip -v
       install:
-        - bin/bundle install --jobs=$(sysctl -n hw.ncpu) --path=vendor/bundle --retry=3 --without=development
+        - bin/bundle install --jobs=$(expr $(sysctl -n hw.ncpu) - 1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
           https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_darwin_amd64.zip
         - shasum --algorithm 256 terraform_0.11.9_darwin_amd64.zip |
@@ -326,7 +326,7 @@ jobs:
         - shasum --version
         - unzip -v
       install:
-        - bin/bundle install --jobs=$(sysctl -n hw.ncpu) --path=vendor/bundle --retry=3 --without=development
+        - bin/bundle install --jobs=$(expr $(sysctl -n hw.ncpu) - 1) --path=vendor/bundle --retry=3 --without=development
         - curl --remote-name
           https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_darwin_amd64.zip
         - shasum --algorithm 256 terraform_0.11.10_darwin_amd64.zip |
