@@ -369,17 +369,11 @@ jobs:
         - gem --version
         - gem install bundler
         - bundle --version
-        - curl --version
-        - sha256sum --version
-        - unzip -v
+        - choco --version
       install:
         - bin/bundle check --path=vendor/bundle ||
           bin/bundle install --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_windows_amd64.zip
-        - sha256sum terraform_0.11.4_windows_amd64.zip |
-          grep a762b329798b872f44df3b5db33122469a3cf1ad28c1915fee17605ec8245508
-        - unzip terraform_0.11.4_windows_amd64.zip -d "$HOME"/bin
+        - choco install terraform --version=0.11.4
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.5"
@@ -390,17 +384,11 @@ jobs:
         - gem --version
         - gem install bundler
         - bundle --version
-        - curl --version
-        - sha256sum --version
-        - unzip -v
+        - choco --version
       install:
         - bin/bundle check --path=vendor/bundle ||
           bin/bundle install --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_windows_amd64.zip
-        - sha256sum terraform_0.11.5_windows_amd64.zip |
-          grep 0c16be99bae3b252875ff58749adc7d4d32e25d2fe3d858d0090018f3b82d7aa
-        - unzip terraform_0.11.5_windows_amd64.zip -d "$HOME"/bin
+        - choco install terraform --version=0.11.5
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.6"
@@ -411,17 +399,11 @@ jobs:
         - gem --version
         - gem install bundler
         - bundle --version
-        - curl --version
-        - sha256sum --version
-        - unzip -v
+        - choco --version
       install:
         - bin/bundle check --path=vendor/bundle ||
           bin/bundle install --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/0.11.6/terraform_0.11.6_windows_amd64.zip
-        - sha256sum terraform_0.11.6_windows_amd64.zip |
-          grep 8002f35d514a8fcf616e3be3de16076ff737adc01ee7dd0f36eca13970990749
-        - unzip terraform_0.11.6_windows_amd64.zip -d "$HOME"/bin
+        - choco install terraform --version=0.11.6
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.7"
@@ -432,17 +414,11 @@ jobs:
         - gem --version
         - gem install bundler
         - bundle --version
-        - curl --version
-        - sha256sum --version
-        - unzip -v
+        - choco --version
       install:
         - bin/bundle check --path=vendor/bundle ||
           bin/bundle install --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_windows_amd64.zip
-        - sha256sum terraform_0.11.7_windows_amd64.zip |
-          grep 5fd003ef20f7a6a85ced4ad30bf95698afd4d0bfd477541583ff014e96026d6c
-        - unzip terraform_0.11.7_windows_amd64.zip -d "$HOME"/bin
+        - choco install terraform --version=0.11.7
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.8"
@@ -453,17 +429,11 @@ jobs:
         - gem --version
         - gem install bundler
         - bundle --version
-        - curl --version
-        - sha256sum --version
-        - unzip -v
+        - choco --version
       install:
         - bin/bundle check --path=vendor/bundle ||
           bin/bundle install --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_windows_amd64.zip
-        - sha256sum terraform_0.11.8_windows_amd64.zip |
-          grep b14dbb9b9b100ddcd516ad426f31a23016ce351d7481407bc91bceb342307826
-        - unzip terraform_0.11.8_windows_amd64.zip -d "$HOME"/bin
+        - choco install terraform --version=0.11.8
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.9"
@@ -474,38 +444,11 @@ jobs:
         - gem --version
         - gem install bundler
         - bundle --version
-        - curl --version
-        - sha256sum --version
-        - unzip -v
+        - choco --version
       install:
         - bin/bundle check --path=vendor/bundle ||
           bin/bundle install --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_windows_amd64.zip
-        - sha256sum terraform_0.11.9_windows_amd64.zip |
-          grep d2fa6ce1f5019011678593fe1b85578e94e59bf9e89238258aafd803323db668
-        - unzip terraform_0.11.9_windows_amd64.zip -d "$HOME"/bin
-      script:
-        - bin/rake test:kitchen:all
-    - name: "Terraform 0.11.10"
-      os: windows
-      language: shell
-      before_install:
-        - echo $PATH
-        - gem --version
-        - gem install bundler
-        - bundle --version
-        - curl --version
-        - sha256sum --version
-        - unzip -v
-      install:
-        - bin/bundle check --path=vendor/bundle ||
-          bin/bundle install --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3 --without=development
-        - curl --remote-name
-          https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_windows_amd64.zip
-        - sha256sum terraform_0.11.10_windows_amd64.zip |
-          grep 7bbb3d631fa0050431cc73e7fc9892ef60128d838ed8b4afc1a36f1398c717a2
-        - unzip terraform_0.11.10_windows_amd64.zip -d "$HOME"/bin
+        - choco install terraform --version=0.11.9
       script:
         - bin/rake test:kitchen:all
     - stage: "Deploy to RubyGems"
