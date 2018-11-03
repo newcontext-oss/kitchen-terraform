@@ -204,6 +204,8 @@ jobs:
       name: "Terraform 0.11.4"
       os: osx
       osx_image: xcode10
+      language: ruby
+      rvm: '2.4'
       addons:
         homebrew:
           packages:
@@ -220,6 +222,8 @@ jobs:
     - name: "Terraform 0.11.5"
       os: osx
       osx_image: xcode10
+      language: ruby
+      rvm: '2.4'
       addons:
         homebrew:
           packages:
@@ -236,6 +240,8 @@ jobs:
     - name: "Terraform 0.11.6"
       os: osx
       osx_image: xcode10
+      language: ruby
+      rvm: '2.4'
       addons:
         homebrew:
           packages:
@@ -252,6 +258,8 @@ jobs:
     - name: "Terraform 0.11.7"
       os: osx
       osx_image: xcode10
+      language: ruby
+      rvm: '2.4'
       addons:
         homebrew:
           packages:
@@ -268,6 +276,8 @@ jobs:
     - name: "Terraform 0.11.8"
       os: osx
       osx_image: xcode10
+      language: ruby
+      rvm: '2.4'
       addons:
         homebrew:
           packages:
@@ -284,6 +294,8 @@ jobs:
     - name: "Terraform 0.11.9"
       os: osx
       osx_image: xcode10
+      language: ruby
+      rvm: '2.4'
       addons:
         homebrew:
           packages:
@@ -300,6 +312,8 @@ jobs:
     - name: "Terraform 0.11.10"
       os: osx
       osx_image: xcode10
+      language: ruby
+      rvm: '2.4'
       addons:
         homebrew:
           packages:
