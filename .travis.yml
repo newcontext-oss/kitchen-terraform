@@ -2,6 +2,8 @@ cache:
   directories:
     - vendor/bundle
     - vendor/cache
+git:
+  depth: 1
 notifications:
   webhooks: 
     - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
