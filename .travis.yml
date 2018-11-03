@@ -327,7 +327,7 @@ jobs:
         - bin/bundle config without development
       install:
         - bin/bundle check || bin/bundle install
-        - choco install terraform --version=0.11.4
+        - choco install terraform --verbose --version=0.11.4
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.5"
@@ -341,7 +341,7 @@ jobs:
         - bin/bundle config without development
       install:
         - bin/bundle check || bin/bundle install
-        - choco install terraform --version=0.11.5
+        - choco install terraform --verbose --version=0.11.5
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.6"
@@ -355,7 +355,7 @@ jobs:
         - bin/bundle config without development
       install:
         - bin/bundle check || bin/bundle install
-        - choco install terraform --version=0.11.6
+        - choco install terraform --verbose --version=0.11.6
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.7"
@@ -369,7 +369,7 @@ jobs:
         - bin/bundle config without development
       install:
         - bin/bundle check || bin/bundle install
-        - choco install terraform --version=0.11.7
+        - choco install terraform --verbose --version=0.11.7
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.8"
@@ -383,7 +383,7 @@ jobs:
         - bin/bundle config without development
       install:
         - bin/bundle check || bin/bundle install
-        - choco install terraform --version=0.11.8
+        - choco install terraform --verbose --version=0.11.8
       script:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.9"
@@ -397,7 +397,7 @@ jobs:
         - bin/bundle config without development
       install:
         - bin/bundle check || bin/bundle install
-        - choco install terraform --version=0.11.9
+        - choco install terraform --verbose --version=0.11.9
       script:
         - bin/rake test:kitchen:all
     - stage: "Deploy to RubyGems"
