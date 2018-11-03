@@ -316,7 +316,7 @@ jobs:
     - stage: "Integration Tests on Windows"
       name: "Terraform 0.11.4"
       os: windows
-      language: shell
+      language: minimal
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -330,7 +330,7 @@ jobs:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.5"
       os: windows
-      language: shell
+      language: minimal
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -344,7 +344,7 @@ jobs:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.6"
       os: windows
-      language: shell
+      language: minimal
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -358,7 +358,7 @@ jobs:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.7"
       os: windows
-      language: shell
+      language: minimal
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -372,7 +372,7 @@ jobs:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.8"
       os: windows
-      language: shell
+      language: minimal
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
@@ -386,7 +386,7 @@ jobs:
         - bin/rake test:kitchen:all
     - name: "Terraform 0.11.9"
       os: windows
-      language: shell
+      language: minimal
       before_install:
         - gem install bundler
         - bin/bundle config jobs $(nproc --ignore=1)
