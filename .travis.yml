@@ -407,12 +407,14 @@ jobs:
       sudo: false
       language: ruby
       rvm: '2.4'
+      env:
+        - secure: 'J5e3tkk2OmiHhVajoOosMF7OznL3D5jt2pQyTnZBAw4gJf9/GMx5w5eW6c5hEvszq03dvuVaUeZiyi07JQ6LjG1h8REA9YnBQbxNN9Dij5ptEtOFDV8M6fuAn2Uq388OZ9jTfw65m8hLjLYPK8jjKQIzf4B2ts0TitdsLXhNVOCIY+Cgtq0/vOgnexpphDdRWK/l6bkOnOumg8GMvV9eiOwaFzPmMWsyzuVZJ7JvowU2gxLPC0hmWWS4G7krSmOa+perUWy3qEa2DwWO9jwQ6KZCwSGYMhjvrbpEYoGKFlZbMdOMesfvmFoqB3xFNva6a6sFt6rdHzxtWn6DFFWz1EKIpsEgK/Pp7qTUY2+bbSBkeEuFJo66rjOlcIlIkNhLj/8T/uCtsM4Zkv4tRyIZWNaNeWmP4+GmCN9oPYYOP5M/AM8UEEePfW0z9d/RuzbDF9vEhZ/yE1068/sbblX/GnwdPBKZ2PKxpyCqAvlGWOWXSJP1kL2gcsjGcku8hbT2h1uJu17tkcn5YyVSzW2XFotO+GJl9Kn3rf6fVD+24jrj1qa4eud8y82/iGyHa/DbQd7a8BjaA/amCI0ZujwbZxnaVFMW8GQCmPP+TXuwbj7Al2DXEGFhdkwGQnzz5bJ0pDjdqxMd27jYgOn+qYQvbFNdcJm/DnGbJdeirZyjMG4='
       install: true
       script: true
       before_cache: true
       before_deploy:
-        - openssl aes-256-cbc -K $encrypted_8619fb193385_key -iv $encrypted_8619fb193385_iv
-          -in certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
+        - openssl aes-256-cbc -K $rubygems_private_key_password -in certs/gem-private_key.pem.enc
+          -out certs/gem-private_key.pem -d
         - gem cert --add certs/gem-public_cert.pem
       deploy:
         provider: rubygems
