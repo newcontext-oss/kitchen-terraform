@@ -7,8 +7,6 @@ notifications:
   webhooks: 
     - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
 before_cache: bin/bundle clean
-stages:
-  - "Integration tests on Windows"
 jobs:
   include:
     - stage: "Unit Tests"
