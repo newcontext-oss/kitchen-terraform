@@ -9,12 +9,12 @@ before_cache: bin/bundle clean
 jobs:
   include:
     - stage: "Unit Tests"
-      name: "Ruby 2.3 on Linux"
+      name: "Ruby 2.3.4 on Linux"
       os: linux
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.3'
+      rvm: 2.3.4
       before_install:
         - gem --version
         - bundle --version
@@ -22,24 +22,12 @@ jobs:
       install:
         - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3
       script: bin/rake test:rspec
-    - name: "Ruby 2.4 on Linux"
+    - name: "Ruby 2.4.1 with Code Climate on Linux"
       os: linux
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.4'
-      before_install:
-        - gem --version
-        - bundle --version
-        - curl --version
-      install:
-        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3
-    - name: "Ruby 2.5 with Code Climate on Linux"
-      os: linux
-      dist: trusty
-      sudo: false
-      language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       env:
         - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
       before_install:
@@ -56,13 +44,27 @@ jobs:
       script:
         - bin/rake test:rspec
       after_script: './cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT'
+    - name: "Ruby 2.5 on Linux"
+      os: linux
+      dist: trusty
+      sudo: false
+      language: ruby
+      rvm: '2.5'
+      before_install:
+        - gem --version
+        - bundle --version
+        - curl --version
+      install:
+        - bin/bundle install --binstubs --jobs=$(nproc --ignore=1) --path=vendor/bundle --retry=3
+      script:
+        - bin/rake test:rspec
     - stage: "Integration Tests on Linux"
       name: "Terraform 0.11.4"
       os: linux
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       before_install:
         - gem --version
         - bundle --version
@@ -83,7 +85,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       before_install:
         - gem --version
         - bundle --version
@@ -104,7 +106,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       before_install:
         - gem --version
         - bundle --version
@@ -125,7 +127,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       before_install:
         - gem --version
         - bundle --version
@@ -146,7 +148,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       before_install:
         - gem --version
         - bundle --version
@@ -167,7 +169,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       before_install:
         - gem --version
         - bundle --version
@@ -188,7 +190,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       before_install:
         - gem --version
         - bundle --version
@@ -422,7 +424,7 @@ jobs:
       dist: trusty
       sudo: false
       language: ruby
-      rvm: '2.5'
+      rvm: 2.4.1
       before_install:
         - gem --version
       install: true
