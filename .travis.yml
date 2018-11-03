@@ -10,8 +10,7 @@ before_cache: bin/bundle clean
 jobs:
   include:
   - stage: Unit Tests
-    name: Ruby 2.3 on Linux
-    os: linux
+    name: Ruby 2.3 on Ubuntu 14.p0
     dist: trusty
     sudo: false
     language: ruby
@@ -23,8 +22,7 @@ jobs:
     install:
     - bin/bundle check || bin/bundle install
     script: bin/rake test:rspec
-  - name: Ruby 2.4 with Code Climate on Linux
-    os: linux
+  - name: Ruby 2.4 with Code Climate on Ubuntu 14.04
     dist: trusty
     sudo: false
     language: ruby
@@ -45,8 +43,7 @@ jobs:
     script:
     - bin/rake test:rspec
     after_script: "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
-  - name: Ruby 2.5 on Linux
-    os: linux
+  - name: Ruby 2.5 on Ubuntu 14.04
     dist: trusty
     sudo: false
     language: ruby
@@ -59,9 +56,8 @@ jobs:
     - bin/bundle check || bin/bundle install
     script:
     - bin/rake test:rspec
-  - stage: Integration Tests on Linux
+  - stage: Integration Tests on Ubuntu 14.04
     name: Terraform 0.11.4
-    os: linux
     dist: trusty
     sudo: false
     language: ruby
@@ -79,7 +75,6 @@ jobs:
     script:
     - bin/rake test:kitchen:all
   - name: Terraform 0.11.5
-    os: linux
     dist: trusty
     sudo: false
     language: ruby
@@ -97,7 +92,6 @@ jobs:
     script:
     - bin/rake test:kitchen:all
   - name: Terraform 0.11.6
-    os: linux
     dist: trusty
     sudo: false
     language: ruby
@@ -115,7 +109,6 @@ jobs:
     script:
     - bin/rake test:kitchen:all
   - name: Terraform 0.11.7
-    os: linux
     dist: trusty
     sudo: false
     language: ruby
@@ -133,7 +126,6 @@ jobs:
     script:
     - bin/rake test:kitchen:all
   - name: Terraform 0.11.8
-    os: linux
     dist: trusty
     sudo: false
     language: ruby
@@ -151,7 +143,6 @@ jobs:
     script:
     - bin/rake test:kitchen:all
   - name: Terraform 0.11.9
-    os: linux
     dist: trusty
     sudo: false
     language: ruby
@@ -169,7 +160,6 @@ jobs:
     script:
     - bin/rake test:kitchen:all
   - name: Terraform 0.11.10
-    os: linux
     dist: trusty
     sudo: false
     language: ruby
@@ -393,7 +383,6 @@ jobs:
     - bin/rake test:kitchen:all
   - stage: Deploy to RubyGems
     if: branch = master
-    os: linux
     dist: trusty
     sudo: false
     language: ruby
