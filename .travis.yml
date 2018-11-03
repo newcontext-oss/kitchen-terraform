@@ -10,7 +10,7 @@ before_cache: bin/bundle clean
 jobs:
   include:
   - stage: Unit Tests
-    name: Ruby 2.3 on Ubuntu 14.p0
+    name: Ruby 2.3 on Ubuntu 14.04
     dist: trusty
     sudo: false
     language: ruby
