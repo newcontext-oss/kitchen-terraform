@@ -478,6 +478,7 @@ jobs:
       rvm: 2.4.1
       before_install:
         - gem --version
+        - openssl version
       install: true
       script: true
       before_cache: true
