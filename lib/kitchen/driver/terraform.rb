@@ -419,7 +419,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def destroy_run_workspace_delete_instance
     ::Kitchen::Terraform::ShellOut.run(
-      command: "workspace delete kitchen-terraform-#{instance_name}",
+      command: "workspace delete #{workspace_name}",
       options: {
         cwd: config_root_module_directory,
         live_stream: logger,
@@ -438,11 +438,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         timeout: config_command_timeout,
       },
     )
-  end
-
-  # @api private
-  def instance_name
-    @instance_name ||= instance.name
   end
 
   # @api private
@@ -475,7 +470,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def run_workspace_select_instance
     ::Kitchen::Terraform::ShellOut.run(
-      command: "workspace select kitchen-terraform-#{instance_name}",
+      command: "workspace select #{workspace_name}",
       options: {
         cwd: config_root_module_directory,
         live_stream: logger,
@@ -484,7 +479,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     )
   rescue ::Kitchen::Terraform::Error
     ::Kitchen::Terraform::ShellOut.run(
-      command: "workspace new kitchen-terraform-#{instance_name}",
+      command: "workspace new #{workspace_name}",
       options: {
         cwd: config_root_module_directory,
         live_stream: logger,
@@ -505,5 +500,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     config_variables.map do |key, value|
       "-var=\"#{::Shellwords.escape key}=#{::Shellwords.escape value}\""
     end.join " "
+  end
+
+  def workspace_name
+    @workspace_name ||= "kitchen-terraform-#{::Shellwords.escape instance.name}"
   end
 end
