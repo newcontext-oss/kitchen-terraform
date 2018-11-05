@@ -23,5 +23,6 @@ Gemfile.lock
 integration/Shell\ Words/Plugin\ Directory/
 terraform_*/
 terraform.tfstate.d/
+test/terraform/Plug Ins/Plug In Directory/
 tmp/
 vendor/
