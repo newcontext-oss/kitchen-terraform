@@ -22,7 +22,7 @@ suites:
         - name: attrs
           backend: local
           attrs:
-            - test/integration/attributes/attrs.yml
+            - test/integration/attributes/Attribute File.yml
           controls:
             - attrs
         - name: attrs_outputs
@@ -34,7 +34,7 @@ suites:
         - name: precedence
           backend: local
           attrs:
-            - test/integration/attributes/attrs.yml
+            - test/integration/attributes/Attribute File.yml
           attrs_outputs:
             first_output: second_output
             second_output: third_output
@@ -46,9 +46,9 @@ suites:
     driver:
       root_module_directory: test/terraform/variables
       variable_files:
-        - test/terraform/variables/variable_files/main.tfvars
+        - test/terraform/variables/variable_files/Variable File.tfvars
       variables:
-        local_file_content_from_variable: abc
+        local_file_content_from_variable: A\ B C
     verifier:
       systems:
         - name: variable_files
