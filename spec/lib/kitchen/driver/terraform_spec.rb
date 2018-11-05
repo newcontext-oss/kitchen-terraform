@@ -42,7 +42,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       kitchen_root: kitchen_root,
       plugin_directory: "/plugin/directory",
       variable_files: ["/variable/file"],
-      variables: {key: "value"},
+      variables: {key: "A Value"},
     }
   end
 
@@ -221,7 +221,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               command: "validate " \
               "-check-variables=true " \
               "-no-color " \
-              "-var=\"key=value\" " \
+              "-var=\"key=A Value\" " \
               "-var-file=\/variable\/file",
             )
           end
@@ -250,7 +250,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-no-color " \
                 "-parallelism=10 " \
                 "-refresh=true " \
-                "-var=\"key=value\" " \
+                "-var=\"key=A Value\" " \
                 "-var-file=\/variable\/file",
               )
             end
@@ -576,7 +576,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-no-color " \
               "-parallelism=10 " \
               "-refresh=true " \
-              "-var=\"key=value\" " \
+              "-var=\"key=A Value\" " \
               "-var-file=\/variable\/file",
             )
           end

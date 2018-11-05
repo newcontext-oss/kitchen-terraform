@@ -498,7 +498,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def variables_flags
     config_variables.map do |key, value|
-      "-var=\"#{::Shellwords.escape key}=#{::Shellwords.escape value}\""
+      "-var=\"#{::Shellwords.escape key}=#{::Shellwords.join ::Shellwords.split value}\""
     end.join " "
   end
 
