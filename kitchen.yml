@@ -40,6 +40,14 @@ suites:
             second_output: third_output
           controls:
             - precedence
+  - name: plug-ins
+    driver:
+      plugin_directory: test/terraform/Plug Ins/Plug In Directory
+      root_module_directory: test/terraform/Plug Ins
+    verifier:
+      systems:
+        - name: default
+          backend: local
   - name: variables
     includes:
       - local
