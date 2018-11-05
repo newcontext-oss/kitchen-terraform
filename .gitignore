@@ -22,5 +22,6 @@ examples/*/test/assets
 Gemfile.lock
 integration/Shell\ Words/Plugin\ Directory/
 terraform_*/
+terraform.tfstate.d/
 tmp/
 vendor/
