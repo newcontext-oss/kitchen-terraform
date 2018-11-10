@@ -394,6 +394,7 @@ jobs:
       directories:
       - vendor/bundle
       - vendor/choco
+      - /c/ProgramData/chocolatey/lib/terraform/tools
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
@@ -416,6 +417,7 @@ jobs:
       directories:
       - vendor/bundle
       - vendor/choco
+      - /c/ProgramData/chocolatey/lib/terraform/tools
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
@@ -438,6 +440,7 @@ jobs:
       directories:
       - vendor/bundle
       - vendor/choco
+      - /c/ProgramData/chocolatey/lib/terraform/tools
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
@@ -460,6 +463,7 @@ jobs:
       directories:
       - vendor/bundle
       - vendor/choco
+      - /c/ProgramData/chocolatey/lib/terraform/tools
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
@@ -482,6 +486,7 @@ jobs:
       directories:
       - vendor/bundle
       - vendor/choco
+      - /c/ProgramData/chocolatey/lib/terraform/tools
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
@@ -504,6 +509,7 @@ jobs:
       directories:
       - vendor/bundle
       - vendor/choco
+      - /c/ProgramData/chocolatey/lib/terraform/tools
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
