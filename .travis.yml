@@ -198,7 +198,7 @@ jobs:
     name: Terraform 0.11.4
     os: osx
     language: ruby
-    rvm: 2.4.1
+    rvm: 2.4.3
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
@@ -216,7 +216,7 @@ jobs:
   - name: Terraform 0.11.5
     os: osx
     language: ruby
-    rvm: 2.4.1
+    rvm: 2.4.3
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
@@ -234,7 +234,7 @@ jobs:
   - name: Terraform 0.11.6
     os: osx
     language: ruby
-    rvm: 2.4.1
+    rvm: 2.4.3
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
@@ -252,7 +252,7 @@ jobs:
   - name: Terraform 0.11.7
     os: osx
     language: ruby
-    rvm: 2.4.1
+    rvm: 2.4.3
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
@@ -270,7 +270,7 @@ jobs:
   - name: Terraform 0.11.8
     os: osx
     language: ruby
-    rvm: 2.4.1
+    rvm: 2.4.3
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
@@ -288,7 +288,7 @@ jobs:
   - name: Terraform 0.11.9
     os: osx
     language: ruby
-    rvm: 2.4.1
+    rvm: 2.4.3
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
@@ -306,7 +306,7 @@ jobs:
   - name: Terraform 0.11.10
     os: osx
     language: ruby
-    rvm: 2.4.1
+    rvm: 2.4.3
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
