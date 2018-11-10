@@ -5,7 +5,6 @@
 .vscode/
 .yardoc/
 *.gem
-**/.bundle/
 **/.idea/
 **/.kitchen.local.yml
 **/.kitchen/

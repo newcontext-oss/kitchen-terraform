@@ -19,8 +19,6 @@ jobs:
     rvm: 2.3.4
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     install:
     - bin/bundle check || bin/bundle install
     script: bin/rake test:rspec
@@ -33,8 +31,6 @@ jobs:
     - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     install:
     - bin/bundle check || bin/bundle install
     before_script:
@@ -52,8 +48,6 @@ jobs:
     rvm: '2.5'
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     install:
     - bin/bundle check || bin/bundle install
     script:
@@ -66,8 +60,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -88,8 +80,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -110,8 +100,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -132,8 +120,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -154,8 +140,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -176,8 +160,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -198,8 +180,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -220,8 +200,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -240,8 +218,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -260,8 +236,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -280,8 +254,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -300,8 +272,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -320,8 +290,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -340,8 +308,6 @@ jobs:
     rvm: 2.4.1
     before_install:
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -361,8 +327,6 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -380,8 +344,6 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -399,8 +361,6 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -418,8 +378,6 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -437,8 +395,6 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install
@@ -456,8 +412,6 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
-    - bin/bundle config path vendor/bundle
-    - bin/bundle config retry 3
     - bin/bundle config without development
     install:
     - bin/bundle check || bin/bundle install

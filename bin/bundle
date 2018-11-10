@@ -8,10 +8,14 @@
 # this file is here to facilitate running it.
 #
 
+::File.expand_path("../../vendor/bundle/gems", __FILE__).tap do |directory|
+  $LOAD_PATH.include? directory or $LOAD_PATH.unshift directory
+end
+
 require "rubygems"
 
 m = Module.new do
-    module_function
+  module_function
 
   def invoked_as_script?
     File.expand_path($0) == File.expand_path(__FILE__)
