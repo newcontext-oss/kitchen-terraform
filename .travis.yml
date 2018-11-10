@@ -324,7 +324,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -341,7 +341,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -358,7 +358,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -375,7 +375,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -392,7 +392,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -409,7 +409,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
