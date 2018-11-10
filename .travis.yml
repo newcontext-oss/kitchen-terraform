@@ -17,7 +17,8 @@ jobs:
     language: ruby
     rvm: 2.3.4
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     install:
     - bin/bundle check || bin/bundle install
@@ -30,7 +31,8 @@ jobs:
     env:
     - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     install:
     - bin/bundle check || bin/bundle install
@@ -48,7 +50,8 @@ jobs:
     language: ruby
     rvm: '2.5'
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     install:
     - bin/bundle check || bin/bundle install
@@ -61,7 +64,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -82,7 +86,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -103,7 +108,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -124,7 +130,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -145,7 +152,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -166,7 +174,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -187,7 +196,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -213,7 +223,8 @@ jobs:
         - $HOME/Library/Caches/Homebrew
         - /usr/local/Cellar/terraform
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
     install:
@@ -237,7 +248,8 @@ jobs:
         - $HOME/Library/Caches/Homebrew
         - /usr/local/Cellar/terraform
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
     install:
@@ -261,7 +273,8 @@ jobs:
         - $HOME/Library/Caches/Homebrew
         - /usr/local/Cellar/terraform
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
     install:
@@ -285,7 +298,8 @@ jobs:
         - $HOME/Library/Caches/Homebrew
         - /usr/local/Cellar/terraform
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
     install:
@@ -309,7 +323,8 @@ jobs:
         - $HOME/Library/Caches/Homebrew
         - /usr/local/Cellar/terraform
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
     install:
@@ -333,7 +348,8 @@ jobs:
         - $HOME/Library/Caches/Homebrew
         - /usr/local/Cellar/terraform
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
     install:
@@ -357,7 +373,8 @@ jobs:
         - $HOME/Library/Caches/Homebrew
         - /usr/local/Cellar/terraform
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bin/bundle config without development
     install:
@@ -380,7 +397,8 @@ jobs:
       - vendor/bundle
       - vendor/choco
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -401,7 +419,8 @@ jobs:
       - vendor/bundle
       - vendor/choco
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -422,7 +441,8 @@ jobs:
       - vendor/bundle
       - vendor/choco
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -443,7 +463,8 @@ jobs:
       - vendor/bundle
       - vendor/choco
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -464,7 +485,8 @@ jobs:
       - vendor/bundle
       - vendor/choco
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
@@ -485,7 +507,8 @@ jobs:
       - vendor/bundle
       - vendor/choco
     before_install:
-    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
+      --version="~> 1.17"
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config without development
     install:
