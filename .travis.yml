@@ -7,8 +7,6 @@ git:
 notifications:
   webhooks:
   - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
-stages:
-  - Integration Tests on Windows
 jobs:
   include:
   - stage: Unit Tests
