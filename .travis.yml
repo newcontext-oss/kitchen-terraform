@@ -22,7 +22,8 @@ jobs:
     - bin/bundle config jobs $(nproc --ignore=1)
     install:
     - bin/bundle check || bin/bundle install --quiet
-    script: bin/rake test:rspec
+    script:
+      - bin/rspec
   - name: Ruby 2.4 with Code Climate on Ubuntu 14.04
     dist: trusty
     sudo: false
@@ -40,7 +41,7 @@ jobs:
     - chmod +x ./cc-test-reporter
     - "./cc-test-reporter before-build"
     script:
-    - bin/rake test:rspec
+    - bin/rspec
     after_script: "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
   - name: Ruby 2.5 on Ubuntu 14.04
     dist: trusty
@@ -52,7 +53,7 @@ jobs:
     install:
     - bin/bundle check || bin/bundle install --quiet
     script:
-    - bin/rake test:rspec
+    - bin/rspec
   - stage: Integration Tests on Ubuntu 14.04
     name: Terraform 0.11.4
     dist: trusty
