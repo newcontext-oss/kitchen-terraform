@@ -40,8 +40,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
       backend_configurations: {key: "value"},
       color: false,
       kitchen_root: kitchen_root,
-      plugin_directory: "/plugin/directory",
-      variable_files: ["/variable/file"],
+      plugin_directory: "/Arbitrary Directory/Plugin Directory",
+      variable_files: ["/Arbitrary Directory/Variable File.tfvars"],
       variables: {key: "A Value"},
     }
   end
@@ -222,7 +222,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-check-variables=true " \
               "-no-color " \
               "-var=\"key=A Value\" " \
-              "-var-file=\"\/variable\/file\"",
+              "-var-file='/Arbitrary Directory/Variable File.tfvars'",
             )
           end
 
@@ -251,7 +251,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-parallelism=10 " \
                 "-refresh=true " \
                 "-var=\"key=A Value\" " \
-                "-var-file=\"\/variable\/file\"",
+                "-var-file='/Arbitrary Directory/Variable File.tfvars'",
               )
             end
 
@@ -418,7 +418,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-backend-config=\"key=value\" " \
           "-get=true " \
           "-get-plugins=true " \
-          "-plugin-dir=\"\/plugin\/directory\" " \
+          "-plugin-dir='/Arbitrary Directory/Plugin Directory' " \
           "-verify-plugins=true",
         )
       end
@@ -508,7 +508,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-backend-config=\"key=value\" " \
           "-get=true " \
           "-get-plugins=true " \
-          "-plugin-dir=\"\/plugin\/directory\" " \
+          "-plugin-dir='/Arbitrary Directory/Plugin Directory' " \
           "-verify-plugins=true",
         )
       end
@@ -577,7 +577,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-parallelism=10 " \
               "-refresh=true " \
               "-var=\"key=A Value\" " \
-              "-var-file=\"\/variable\/file\"",
+              "-var-file='/Arbitrary Directory/Variable File.tfvars'",
             )
           end
 

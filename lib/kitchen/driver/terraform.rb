@@ -458,7 +458,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def plugin_directory_flag
     if config_plugin_directory
-      "-plugin-dir=\"#{::Shellwords.escape config_plugin_directory}\""
+      "-plugin-dir='#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}'"
     else
       ""
     end
@@ -493,7 +493,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def variable_files_flags
     config_variable_files.map do |path|
-      "-var-file=\"#{::Shellwords.escape path}\""
+      "-var-file='#{::Shellwords.shelljoin ::Shellwords.shellsplit path}'"
     end.join " "
   end
 
