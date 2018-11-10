@@ -222,7 +222,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-check-variables=true " \
               "-no-color " \
               "-var=\"key=A Value\" " \
-              "-var-file=\/variable\/file",
+              "-var-file=\"\/variable\/file\"",
             )
           end
 
@@ -251,7 +251,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-parallelism=10 " \
                 "-refresh=true " \
                 "-var=\"key=A Value\" " \
-                "-var-file=\/variable\/file",
+                "-var-file=\"\/variable\/file\"",
               )
             end
 
@@ -418,7 +418,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-backend-config=\"key=value\" " \
           "-get=true " \
           "-get-plugins=true " \
-          "-plugin-dir=\/plugin\/directory " \
+          "-plugin-dir=\"\/plugin\/directory\" " \
           "-verify-plugins=true",
         )
       end
@@ -508,7 +508,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-backend-config=\"key=value\" " \
           "-get=true " \
           "-get-plugins=true " \
-          "-plugin-dir=\/plugin\/directory " \
+          "-plugin-dir=\"\/plugin\/directory\" " \
           "-verify-plugins=true",
         )
       end
@@ -577,7 +577,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-parallelism=10 " \
               "-refresh=true " \
               "-var=\"key=A Value\" " \
-              "-var-file=\/variable\/file",
+              "-var-file=\"\/variable\/file\"",
             )
           end
 
