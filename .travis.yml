@@ -359,7 +359,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config path vendor/bundle
     - bin/bundle config retry 3
@@ -378,7 +378,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config path vendor/bundle
     - bin/bundle config retry 3
@@ -397,7 +397,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config path vendor/bundle
     - bin/bundle config retry 3
@@ -416,7 +416,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config path vendor/bundle
     - bin/bundle config retry 3
@@ -435,7 +435,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config path vendor/bundle
     - bin/bundle config retry 3
@@ -454,7 +454,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler
+    - gem install bundler --conservative --install-dir=vendor/gem --minimal-deps --no-document --version=1.16.6
     - bin/bundle config jobs $(nproc --ignore=1)
     - bin/bundle config path vendor/bundle
     - bin/bundle config retry 3
