@@ -402,7 +402,7 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config without development
     install:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check || GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
-    - choco install terraform --cache-location=vendor/choco --confirm --limitoutput --no-progress --version=0.11.4
+    - choco install terraform --cache-location=vendor/choco --confirm --no-progress --version=0.11.4
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
@@ -425,7 +425,7 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config without development
     install:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check || GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
-    - choco install terraform --cache-location=vendor/choco --confirm --limitoutput --no-progress --version=0.11.5
+    - choco install terraform --cache-location=vendor/choco --confirm --no-progress --version=0.11.5
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
@@ -448,7 +448,7 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config without development
     install:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check || GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
-    - choco install terraform --cache-location=vendor/choco --confirm --limitoutput --no-progress --version=0.11.6
+    - choco install terraform --cache-location=vendor/choco --confirm --no-progress --version=0.11.6
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
@@ -471,7 +471,7 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config without development
     install:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check || GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
-    - choco install terraform --cache-location=vendor/choco --confirm --limitoutput --no-progress --version=0.11.7
+    - choco install terraform --cache-location=vendor/choco --confirm --no-progress --version=0.11.7
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
@@ -494,7 +494,7 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config without development
     install:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check || GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
-    - choco install terraform --cache-location=vendor/choco --confirm --limitoutput --no-progress --version=0.11.8
+    - choco install terraform --cache-location=vendor/choco --confirm --no-progress --version=0.11.8
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
@@ -517,7 +517,7 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config without development
     install:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check || GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
-    - choco install terraform --cache-location=vendor/choco --confirm --limitoutput --no-progress --version=0.11.9
+    - choco install terraform --cache-location=vendor/choco --confirm --no-progress --version=0.11.9
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
