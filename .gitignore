@@ -5,6 +5,7 @@
 .vscode/
 .yardoc/
 *.gem
+*.tfstate.backup
 **/.idea/
 **/.kitchen.local.yml
 **/.kitchen/
