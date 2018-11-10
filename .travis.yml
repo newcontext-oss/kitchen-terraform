@@ -452,7 +452,7 @@ jobs:
     - bin/rake test:kitchen:all
   - name: Terraform 0.11.9
     os: windows
-    language: minimal
+    language: shell
     before_install:
     - gem install bundler
     - bin/bundle config jobs $(nproc --ignore=1)
