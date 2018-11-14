@@ -231,9 +231,9 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
     install:
-    - terraform -version | grep 0.11.4 || HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
       GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/6ba53b8c76b5ccb90679533e186b6fdc22e3bdbe/Formula/terraform.rb
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
@@ -252,9 +252,9 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
     install:
-    - terraform -version | grep 0.11.5 || HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
       GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/4688cbe6b501e284ab976ce3b19b62beddfb3fc4/Formula/terraform.rb
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
@@ -273,9 +273,9 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
     install:
-    - terraform -version | grep 0.11.6 || HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
       GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/99e5732850be15a89bd74fcd9f7b452241a5d08e/Formula/terraform.rb
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
@@ -294,9 +294,9 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
     install:
-    - terraform -version | grep 0.11.7 || HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
       GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/0a5f283f5fa18b4bd2dc0e111ca83257af962c9d/Formula/terraform.rb
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
@@ -315,9 +315,9 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
     install:
-    - terraform -version | grep 0.11.8 || HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
       GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/3507fce2ba1f36cc371fe888fd093bf5aa79981d/Formula/terraform.rb
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
@@ -336,9 +336,9 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
     install:
-    - terraform -version | grep 0.11.9 || HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
       GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/12c25cb2fc4b51bd0271f5d1fd00c6f500863966/Formula/terraform.rb
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
@@ -357,9 +357,9 @@ jobs:
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
     install:
-    - terraform -version | grep 0.11.10 || HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
     - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
       GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/49017817fb34b76fdc81f33665fdd7661fe5e558/Formula/terraform.rb
     - curl --remote-name
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
