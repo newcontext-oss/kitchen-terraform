@@ -342,9 +342,10 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
-    - bundle config --local jobs $(nproc --ignore=1)
-    - bundle config --local without development
+    - powershell -command
+      'gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"'
+    - powershell -command 'bundle config --local jobs $(nproc --ignore=1)'
+    - powershell -command 'bundle config --local without development'
     install:
     - bundle check || bundle install
     - choco install terraform --confirm --no-progress --version=0.11.4
