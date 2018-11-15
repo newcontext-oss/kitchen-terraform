@@ -19,11 +19,11 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
-    script: GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rspec
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
+    script:
+    - vendor/bundle/bin/rspec
   - name: Ruby 2.4 with Code Climate on Ubuntu 14.04
     dist: trusty
     sudo: false
@@ -34,17 +34,16 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     before_script:
     - curl --location --silent https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
       > ./cc-test-reporter
     - chmod +x ./cc-test-reporter
     - "./cc-test-reporter before-build"
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rspec
+    - vendor/bundle/bin/rspec
     after_script: "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
   - name: Ruby 2.5 on Ubuntu 14.04
     dist: trusty
@@ -54,12 +53,11 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rspec
+    - vendor/bundle/bin/rspec
   - stage: Integration Tests on Ubuntu 14.04
     name: Terraform 0.11.4
     dist: trusty
@@ -69,11 +67,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
     - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
     - unzip terraform_0.11.4_linux_amd64.zip -d "$HOME"/bin
@@ -83,7 +80,7 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.5
     dist: trusty
     sudo: false
@@ -92,11 +89,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip
     - sha256sum terraform_0.11.5_linux_amd64.zip | grep 131c440263382c79c7f783b70ff35cd1d03eb31c44f7738d153d95a0b8436ac9
     - unzip terraform_0.11.5_linux_amd64.zip -d "$HOME"/bin
@@ -106,7 +102,7 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.6
     dist: trusty
     sudo: false
@@ -115,11 +111,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.6/terraform_0.11.6_linux_amd64.zip
     - sha256sum terraform_0.11.6_linux_amd64.zip | grep aed5c7388a3c54dc816986903d4dea32e182a002d746295e1016f6db741f472d
     - unzip terraform_0.11.6_linux_amd64.zip -d "$HOME"/bin
@@ -129,7 +124,7 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.7
     dist: trusty
     sudo: false
@@ -138,11 +133,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip
     - sha256sum terraform_0.11.7_linux_amd64.zip | grep 6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418
     - unzip terraform_0.11.7_linux_amd64.zip -d "$HOME"/bin
@@ -152,7 +146,7 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.8
     dist: trusty
     sudo: false
@@ -161,11 +155,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
     - sha256sum terraform_0.11.8_linux_amd64.zip | grep 84ccfb8e13b5fce63051294f787885b76a1fedef6bdbecf51c5e586c9e20c9b7
     - unzip terraform_0.11.8_linux_amd64.zip -d "$HOME"/bin
@@ -175,7 +168,7 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.9
     dist: trusty
     sudo: false
@@ -184,11 +177,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_linux_amd64.zip
     - sha256sum terraform_0.11.9_linux_amd64.zip | grep 5d674e7b83945c37f7f14d0e4f655787dad86ba15b26e185604aa0c3812394ab
     - unzip terraform_0.11.9_linux_amd64.zip -d "$HOME"/bin
@@ -198,7 +190,7 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.10
     dist: trusty
     sudo: false
@@ -207,11 +199,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_linux_amd64.zip
     - sha256sum terraform_0.11.10_linux_amd64.zip | grep 43543a0e56e31b0952ea3623521917e060f2718ab06fe2b2d506cfaa14d54527
     - unzip terraform_0.11.10_linux_amd64.zip -d "$HOME"/bin
@@ -221,7 +212,7 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - stage: Integration Tests on MacOS
     name: Terraform 0.11.4
     os: osx
@@ -230,11 +221,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/6ba53b8c76b5ccb90679533e186b6fdc22e3bdbe/Formula/terraform.rb
     - curl --remote-name --silent
@@ -243,7 +233,7 @@ jobs:
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.5
     os: osx
     language: ruby
@@ -251,11 +241,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/4688cbe6b501e284ab976ce3b19b62beddfb3fc4/Formula/terraform.rb
     - curl --remote-name --silent
@@ -264,7 +253,7 @@ jobs:
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.6
     os: osx
     language: ruby
@@ -272,11 +261,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/99e5732850be15a89bd74fcd9f7b452241a5d08e/Formula/terraform.rb
     - curl --remote-name --silent
@@ -285,7 +273,7 @@ jobs:
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.7
     os: osx
     language: ruby
@@ -293,11 +281,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/0a5f283f5fa18b4bd2dc0e111ca83257af962c9d/Formula/terraform.rb
     - curl --remote-name --silent
@@ -306,7 +293,7 @@ jobs:
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.8
     os: osx
     language: ruby
@@ -314,11 +301,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/3507fce2ba1f36cc371fe888fd093bf5aa79981d/Formula/terraform.rb
     - curl --remote-name --silent
@@ -327,7 +313,7 @@ jobs:
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.9
     os: osx
     language: ruby
@@ -335,11 +321,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/12c25cb2fc4b51bd0271f5d1fd00c6f500863966/Formula/terraform.rb
     - curl --remote-name --silent
@@ -348,7 +333,7 @@ jobs:
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - name: Terraform 0.11.10
     os: osx
     language: ruby
@@ -356,11 +341,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/49017817fb34b76fdc81f33665fdd7661fe5e558/Formula/terraform.rb
     - curl --remote-name --silent
@@ -369,7 +353,7 @@ jobs:
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/rake test:kitchen:all
+    - vendor/bundle/bin/rake test:kitchen:all
   - stage: Integration Tests on Windows
     name: Terraform 0.11.4
     os: windows
@@ -377,11 +361,10 @@ jobs:
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - choco install terraform --confirm --no-progress --version=0.11.4
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -389,18 +372,17 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command '$env:GEM_PATH="$env:TRAVIS_BUILD_DIR/vendor/bundle"; & bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/bin/rake test:kitchen:all'
   - name: Terraform 0.11.5
     os: windows
     language: shell
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - choco install terraform --confirm --no-progress --version=0.11.5
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -408,18 +390,17 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command '$env:GEM_PATH="$env:TRAVIS_BUILD_DIR/vendor/bundle"; & bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/bin/rake test:kitchen:all'
   - name: Terraform 0.11.6
     os: windows
     language: shell
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - choco install terraform --confirm --no-progress --version=0.11.6
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -427,18 +408,17 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command '$env:GEM_PATH="$env:TRAVIS_BUILD_DIR/vendor/bundle"; & bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/bin/rake test:kitchen:all'
   - name: Terraform 0.11.7
     os: windows
     language: shell
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - choco install terraform --confirm --no-progress --version=0.11.7
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -446,18 +426,17 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command '$env:GEM_PATH="$env:TRAVIS_BUILD_DIR/vendor/bundle"; & bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/bin/rake test:kitchen:all'
   - name: Terraform 0.11.8
     os: windows
     language: shell
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - choco install terraform --confirm --no-progress --version=0.11.8
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -465,18 +444,17 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command '$env:GEM_PATH="$env:TRAVIS_BUILD_DIR/vendor/bundle"; & bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/bin/rake test:kitchen:all'
   - name: Terraform 0.11.9
     os: windows
     language: shell
     before_install:
     - gem install bundler --conservative --install-dir=vendor/bundle --minimal-deps --no-document --no-wrappers
       --version="~> 1.17"
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local jobs $(nproc --ignore=1)
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle config --local without development
+    - vendor/bundle/bin/bundle config --local jobs $(nproc --ignore=1)
+    - vendor/bundle/bin/bundle config --local without development
     install:
-    - GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle check ||
-      GEM_PATH="$TRAVIS_BUILD_DIR/vendor/bundle" bin/bundle install
+    - vendor/bundle/bin/bundle check || vendor/bundle/bin/bundle install
     - choco install terraform --confirm --no-progress --version=0.11.9
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -484,7 +462,7 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command '$env:GEM_PATH="$env:TRAVIS_BUILD_DIR/vendor/bundle"; & bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/bin/rake test:kitchen:all'
   - stage: Deploy to RubyGems
     if: branch = master
     dist: trusty
