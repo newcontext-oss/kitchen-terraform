@@ -345,7 +345,6 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
-    - ridk install
     install:
     - bundle check || bundle install --standalone
     - bundle exec rake build
@@ -366,7 +365,6 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
-    - ridk install
     install:
     - bundle check || bundle install --standalone
     - bundle exec rake build
@@ -387,7 +385,6 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
-    - ridk install
     install:
     - bundle check || bundle install --standalone
     - bundle exec rake build
@@ -408,7 +405,6 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
-    - ridk install
     install:
     - bundle check || bundle install --standalone
     - bundle exec rake build
@@ -429,7 +425,6 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
-    - ridk install
     install:
     - bundle check || bundle install --standalone
     - bundle exec rake build
@@ -450,7 +445,6 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
-    - ridk install
     install:
     - bundle check || bundle install --standalone
     - bundle exec rake build
