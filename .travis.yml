@@ -346,7 +346,10 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle check || bundle install
+    - bundle check || bundle install --standalone
+    - bundle exec rake build
+    - gem install pkg/kitchen-terraform.gem --conservative --ignore-dependencies
+      --install-dir=vendor/bundle/ruby/2.5.0/gems --no-document
     - choco install terraform --confirm --no-progress --version=0.11.4
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -354,7 +357,7 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command 'bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/ruby/2.5.0/bin/rake test:kitchen:all'
   - name: Terraform 0.11.5
     os: windows
     language: shell
@@ -363,7 +366,10 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle check || bundle install
+    - bundle check || bundle install --standalone
+    - bundle exec rake build
+    - gem install pkg/kitchen-terraform.gem --conservative --ignore-dependencies
+      --install-dir=vendor/bundle/ruby/2.5.0/gems --no-document
     - choco install terraform --confirm --no-progress --version=0.11.5
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -371,7 +377,7 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command 'bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/ruby/2.5.0/bin/rake test:kitchen:all'
   - name: Terraform 0.11.6
     os: windows
     language: shell
@@ -380,7 +386,10 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle check || bundle install
+    - bundle check || bundle install --standalone
+    - bundle exec rake build
+    - gem install pkg/kitchen-terraform.gem --conservative --ignore-dependencies
+      --install-dir=vendor/bundle/ruby/2.5.0/gems --no-document
     - choco install terraform --confirm --no-progress --version=0.11.6
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -388,7 +397,7 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command 'bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/ruby/2.5.0/bin/rake test:kitchen:all'
   - name: Terraform 0.11.7
     os: windows
     language: shell
@@ -397,7 +406,10 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle check || bundle install
+    - bundle check || bundle install --standalone
+    - bundle exec rake build
+    - gem install pkg/kitchen-terraform.gem --conservative --ignore-dependencies
+      --install-dir=vendor/bundle/ruby/2.5.0/gems --no-document
     - choco install terraform --confirm --no-progress --version=0.11.7
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -405,7 +417,7 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command 'bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/ruby/2.5.0/bin/rake test:kitchen:all'
   - name: Terraform 0.11.8
     os: windows
     language: shell
@@ -414,7 +426,10 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle check || bundle install
+    - bundle check || bundle install --standalone
+    - bundle exec rake build
+    - gem install pkg/kitchen-terraform.gem --conservative --ignore-dependencies
+      --install-dir=vendor/bundle/ruby/2.5.0/gems --no-document
     - choco install terraform --confirm --no-progress --version=0.11.8
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -422,7 +437,7 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command 'bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/ruby/2.5.0/bin/rake test:kitchen:all'
   - name: Terraform 0.11.9
     os: windows
     language: shell
@@ -431,7 +446,10 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle check || bundle install
+    - bundle check || bundle install --standalone
+    - bundle exec rake build
+    - gem install pkg/kitchen-terraform.gem --conservative --ignore-dependencies
+      --install-dir=vendor/bundle/ruby/2.5.0/gems --no-document
     - choco install terraform --confirm --no-progress --version=0.11.9
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -439,7 +457,7 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command 'bundle exec rake test:kitchen:all'
+    - powershell -command 'vendor/bundle/ruby/2.5.0/bin/rake test:kitchen:all'
   - stage: Deploy to RubyGems
     if: branch = master
     dist: trusty
