@@ -17,7 +17,7 @@ jobs:
     language: ruby
     rvm: 2.3.4
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     install:
     - bundle check || bundle install
@@ -31,7 +31,7 @@ jobs:
     env:
     - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     install:
     - bundle check || bundle install
@@ -49,7 +49,7 @@ jobs:
     language: ruby
     rvm: '2.5'
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     install:
     - bundle check || bundle install
@@ -62,7 +62,7 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -83,7 +83,7 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -104,7 +104,7 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -125,7 +125,7 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -146,7 +146,7 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -167,7 +167,7 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -188,7 +188,7 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -209,7 +209,7 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -228,7 +228,7 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -247,7 +247,7 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -266,7 +266,7 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -285,7 +285,7 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -304,7 +304,7 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -323,7 +323,7 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -342,7 +342,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -362,7 +362,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -382,7 +382,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -402,7 +402,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -422,7 +422,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -442,7 +442,7 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --no-wrappers --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
