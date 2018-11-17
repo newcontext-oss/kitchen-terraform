@@ -346,8 +346,6 @@ jobs:
     - powershell -command "& 'echo' \$env:PATH"
     - which gem || true
     - powershell -command "& 'which' 'gem'"
-    - which bundler || true
-    - powershell -command "& 'which' 'bundler'"
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - which bundler
     - powershell -command "& 'which' 'bundler'"
