@@ -19,6 +19,7 @@ coverage/
 doc/
 examples/*/Gemfile.lock
 examples/*/test/assets
+Gemfile.lock
 integration/Shell\ Words/Plugin\ Directory/
 terraform_*/
 terraform.tfstate.d/
