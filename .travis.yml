@@ -347,8 +347,8 @@ jobs:
     - which gem || true
     - powershell -command "& 'which' 'gem'"
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
-    - which bundle
-    - powershell -command "& 'which' 'bundle'"
+    - which bundler
+    - powershell -command "& 'which' 'bundler'"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
