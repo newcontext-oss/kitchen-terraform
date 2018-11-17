@@ -354,7 +354,6 @@ jobs:
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'echo' \$env:PATH"
     - powershell -command "& 'c:\tools\ruby25\bin\bundle' 'exec' 'rake' 'test:kitchen:all'"
   - name: Terraform 0.11.5
     os: windows
