@@ -22,7 +22,7 @@ jobs:
     install:
     - bundle install --deployment --gemfile=Gemfile-Ruby-2_3
     script:
-    - bundle exec rspec
+    - bundle exec rake
   - name: Ruby 2.4 with Code Climate on Ubuntu 14.04
     dist: trusty
     sudo: false
@@ -41,7 +41,7 @@ jobs:
     - chmod +x ./cc-test-reporter
     - "./cc-test-reporter before-build"
     script:
-    - bundle exec rspec
+    - bundle exec rake
     after_script: "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
   - name: Ruby 2.5 on Ubuntu 14.04
     dist: trusty
@@ -54,7 +54,7 @@ jobs:
     install:
     - bundle install --deployment
     script:
-    - bundle exec rspec
+    - bundle exec rake
   - stage: Integration Tests on Ubuntu 14.04
     name: Terraform 0.11.4
     dist: trusty
