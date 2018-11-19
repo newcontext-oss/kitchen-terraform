@@ -361,6 +361,7 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment false
     - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -379,6 +380,7 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment false
     - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -397,6 +399,7 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment false
     - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -415,6 +418,7 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment false
     - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -433,6 +437,7 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment false
     - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -451,6 +456,7 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment false
     - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
