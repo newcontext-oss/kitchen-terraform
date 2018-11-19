@@ -450,6 +450,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86-mswin64
 
 DEPENDENCIES
   bundler (~> 1.17)!
