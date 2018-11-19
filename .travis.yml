@@ -362,6 +362,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local specific-platform true
     - bundle config --local without development
     install:
     - powershell -command "& 'bundle' 'install'"
@@ -379,6 +380,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local specific-platform true
     - bundle config --local without development
     install:
     - powershell -command "& 'bundle' 'install'"
@@ -396,6 +398,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local specific-platform true
     - bundle config --local without development
     install:
     - powershell -command "& 'bundle' 'install'"
@@ -413,6 +416,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local specific-platform true
     - bundle config --local without development
     install:
     - powershell -command "& 'bundle' 'install'"
@@ -430,6 +434,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local specific-platform true
     - bundle config --local without development
     install:
     - powershell -command "& 'bundle' 'install'"
@@ -447,6 +452,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local specific-platform true
     - bundle config --local without development
     install:
     - powershell -command "& 'bundle' 'install'"
