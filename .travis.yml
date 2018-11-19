@@ -18,9 +18,10 @@ jobs:
     rvm: 2.3.4
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_3
     - bundle config --local jobs $(nproc --ignore=1)
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_3
+    - bundle install
     script:
     - bundle exec rake
   - name: Ruby 2.4 with Code Climate on Ubuntu 14.04
@@ -32,9 +33,10 @@ jobs:
     - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     before_script:
     - curl --location --silent https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
       > ./cc-test-reporter
@@ -52,7 +54,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     install:
-    - bundle install --deployment
+    - bundle install
     script:
     - bundle exec rake
   - stage: Integration Tests on Ubuntu 14.04
@@ -63,10 +65,11 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
     - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
     - unzip terraform_0.11.4_linux_amd64.zip -d "$HOME"/bin
@@ -84,10 +87,11 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip
     - sha256sum terraform_0.11.5_linux_amd64.zip | grep 131c440263382c79c7f783b70ff35cd1d03eb31c44f7738d153d95a0b8436ac9
     - unzip terraform_0.11.5_linux_amd64.zip -d "$HOME"/bin
@@ -105,10 +109,11 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.6/terraform_0.11.6_linux_amd64.zip
     - sha256sum terraform_0.11.6_linux_amd64.zip | grep aed5c7388a3c54dc816986903d4dea32e182a002d746295e1016f6db741f472d
     - unzip terraform_0.11.6_linux_amd64.zip -d "$HOME"/bin
@@ -126,10 +131,11 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip
     - sha256sum terraform_0.11.7_linux_amd64.zip | grep 6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418
     - unzip terraform_0.11.7_linux_amd64.zip -d "$HOME"/bin
@@ -147,10 +153,11 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
     - sha256sum terraform_0.11.8_linux_amd64.zip | grep 84ccfb8e13b5fce63051294f787885b76a1fedef6bdbecf51c5e586c9e20c9b7
     - unzip terraform_0.11.8_linux_amd64.zip -d "$HOME"/bin
@@ -168,10 +175,11 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_linux_amd64.zip
     - sha256sum terraform_0.11.9_linux_amd64.zip | grep 5d674e7b83945c37f7f14d0e4f655787dad86ba15b26e185604aa0c3812394ab
     - unzip terraform_0.11.9_linux_amd64.zip -d "$HOME"/bin
@@ -189,10 +197,11 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_linux_amd64.zip
     - sha256sum terraform_0.11.10_linux_amd64.zip | grep 43543a0e56e31b0952ea3623521917e060f2718ab06fe2b2d506cfaa14d54527
     - unzip terraform_0.11.10_linux_amd64.zip -d "$HOME"/bin
@@ -210,10 +219,11 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/6ba53b8c76b5ccb90679533e186b6fdc22e3bdbe/Formula/terraform.rb
     - curl --remote-name --silent
@@ -229,10 +239,11 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/4688cbe6b501e284ab976ce3b19b62beddfb3fc4/Formula/terraform.rb
     - curl --remote-name --silent
@@ -248,10 +259,11 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/99e5732850be15a89bd74fcd9f7b452241a5d08e/Formula/terraform.rb
     - curl --remote-name --silent
@@ -267,10 +279,11 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/0a5f283f5fa18b4bd2dc0e111ca83257af962c9d/Formula/terraform.rb
     - curl --remote-name --silent
@@ -286,10 +299,11 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/3507fce2ba1f36cc371fe888fd093bf5aa79981d/Formula/terraform.rb
     - curl --remote-name --silent
@@ -305,10 +319,11 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/12c25cb2fc4b51bd0271f5d1fd00c6f500863966/Formula/terraform.rb
     - curl --remote-name --silent
@@ -324,10 +339,11 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
-    - bundle install --deployment --gemfile=Gemfile-Ruby-2_4
+    - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
       https://raw.githubusercontent.com/Homebrew/homebrew-core/49017817fb34b76fdc81f33665fdd7661fe5e558/Formula/terraform.rb
     - curl --remote-name --silent
@@ -346,7 +362,7 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment
+    - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.4
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -363,7 +379,7 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment
+    - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.5
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -380,7 +396,7 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment
+    - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.6
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -397,7 +413,7 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment
+    - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.7
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -414,7 +430,7 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment
+    - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.8
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
@@ -431,7 +447,7 @@ jobs:
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
-    - bundle install --deployment
+    - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.9
     - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
