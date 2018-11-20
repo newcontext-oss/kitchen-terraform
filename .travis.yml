@@ -17,6 +17,7 @@ jobs:
     rvm: 2.3.4
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_3
     - bundle config --local jobs $(nproc --ignore=1)
     install:
@@ -31,6 +32,7 @@ jobs:
     - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     install:
@@ -49,6 +51,7 @@ jobs:
     rvm: '2.5'
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local jobs $(nproc --ignore=1)
     install:
     - bundle install
@@ -61,6 +64,7 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -82,6 +86,7 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -103,6 +108,7 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -124,6 +130,7 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -145,6 +152,7 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -166,6 +174,7 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -187,6 +196,7 @@ jobs:
     rvm: 2.4.1
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
@@ -209,6 +219,7 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
@@ -229,6 +240,7 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
@@ -249,6 +261,7 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
@@ -269,6 +282,7 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
@@ -289,6 +303,7 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
@@ -309,6 +324,7 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
@@ -329,6 +345,7 @@ jobs:
     rvm: 2.4.3
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
@@ -349,8 +366,6 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
-    - bundle config --local deployment false
-    - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -368,8 +383,6 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
-    - bundle config --local deployment false
-    - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -387,8 +400,6 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
-    - bundle config --local deployment false
-    - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -406,8 +417,6 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
-    - bundle config --local deployment false
-    - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -425,8 +434,6 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
-    - bundle config --local deployment false
-    - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -444,8 +451,6 @@ jobs:
     language: shell
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
-    - bundle config --local deployment false
-    - bundle config --local frozen false
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
