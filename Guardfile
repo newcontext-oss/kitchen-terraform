@@ -18,8 +18,8 @@ group :red_green_refactor, halt_on_fail: true do
       :rspec,
       all_after_pass: true,
       all_on_start: true,
-      cmd: "bin/rspec",
-      failure_mode: :focus
+      cmd: "bundle exec rspec",
+      failure_mode: :focus,
     ) do
       watch dsl.rspec.spec_files
 
