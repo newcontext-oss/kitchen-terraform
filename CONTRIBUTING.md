@@ -30,9 +30,9 @@ Familiarity with the following technologies is important in
 understanding the design and behaviour of Kitchen-Terraform.
 
 - [Ruby][ruby]
-- [Test Kitchen][test-kitchen]
+- [Kitchen][kitchen]
 - [Terraform][terraform]
-- [Inspec][inspec]
+- [InSpec][inspec]
 
 ## Reporting Bugs
 
@@ -59,12 +59,14 @@ documentation web site follow the same
 
 [RSpec][rspec] is used as the unit testing framework.
 
+[Rake][rake] is used to orchestrate the unit tests.
+
 The following command will execute the unit tests.
 
 > Executing unit tests with RSpec
 
 ```sh
-bin/rspec
+bundle exec rake test:spec
 ```
 
 [.rspec](.rspec) contains command line options which will be
@@ -88,10 +90,13 @@ run appropriate unit tests.
 > Watching for file changes with Guard
 
 ```sh
-bin/guard
+bundle exec guard
 ```
 
 #### Integration Testing
+
+[Kitchen][kitchen], [Terraform][terraform], and [InSpec][inspec] are
+used as the integration testing framework.
 
 [Rake][rake] is used to orchestrate the integration tests.
 
@@ -100,19 +105,10 @@ The following command will execute the integration tests.
 > Executing integration tests with Rake
 
 ```sh
-bin/rake tests:integration:all
+bundle exec rake test:kitchen:all
 ```
 
 [Rakefile](Rakefile) contains the task definitions.
-
-The following command will display all of the available integration
-tests.
-
-> Displaying the integration tests with Rake
-
-```sh
-bin/rake --tasks tests:integration
-```
 
 The [Terraform Docker provider][terraform-docker-provider] is used to
 run integration tests against a real Terraform state.
@@ -172,7 +168,7 @@ the content can be reviewed at <http://localhost:4567/>.
 > Running Middleman server to review content changes
 
 ```sh
-env NO_CONTRACTS=true bin/middleman server --build-dir docs
+env NO_CONTRACTS=true bundle exec middleman server --build-dir docs
 ```
 
 [config.rb](config.rb) contains Middleman configuration.
@@ -189,7 +185,7 @@ project.
 > Building HTML site based on Middleman project
 
 ```sh
-bin/middleman build --build-dir docs
+bundle exec middleman build --build-dir docs
 ```
 
 <!-- Markdown links and image definitions -->
@@ -208,5 +204,5 @@ bin/middleman build --build-dir docs
 [ruby]: https://www.ruby-lang.org/en/
 [terraform-docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
 [terraform]: https://www.terraform.io/
-[test-kitchen]: https://github.com/test-kitchen/test-kitchen/tree/v1.16.0
+[kitchen]: https://github.com/test-kitchen/test-kitchen/
 [travis-ci]: https://travis-ci.com/newcontext-oss/kitchen-terraform
