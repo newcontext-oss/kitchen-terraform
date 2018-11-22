@@ -3,6 +3,9 @@ before_cache:
 cache:
   directories:
   - vendor/bundle
+env:
+  global:
+    secure: qBUVpzA/PxvIz+HO0dzhSLXUV2mWHY8OesfWFH4ARZF3LCz+7oF416GDhVuAkHnsKW/TPDi2K5BQpElsimgrjwBtc1J4tcV9vHTW3PUXHmznZWNoN5MhiU0y6b4D3qGkmBInfJ+NuVcCQMo0Wc5L3ptZBcB89ZkS2IA10fNJ78OjboUw8nRr9o6KpPu5mRQCULNT6A71bQqUmD+G+A+oN8ftJ9SxeaVgtiV2lR4qIE41KgQViPeNUhcZVKjqzVUTLGOk/8I2YxLN4GcE7IQ1kge8NdR81SdS12QUTgW9L34BLoNfiKXbKzwiMfmqA/0oe+2qfBwNZNWie5X7UtyI8NZ2lmUeCuh2dRML/Yhzk7rqOM4sQ2PnBaDHwawdK0KbRFLHzUMVWOQZjvznhDBTcpGkSCPualXlnIcB37aUwx/pr56sel8H/ObWQHYgfF6oG87/5aizVRuSPU/wL7jIYBcu3CwFnWPCI/9sEK6HvakIJZfTtBodkXQd6wclGVrq0ZJB/MnX21FJM71mPVaIksOdvPRelAKAUrtJaB8Eo1QjhMgBEaVhzKhh7TPdBlRKRd7F4Yaxh4Jyow3n/mxfaf5d4dG2MN3JzKyOz17T7W9byh/jVbLVmTlYIFZUKO6qN3mdbKtHJc7upmCnrpxsj8nY/oqXc4w4WUT+YfA9V/M=
 git:
   depth: 1
 notifications:
@@ -470,8 +473,8 @@ jobs:
     install: true
     script: true
     before_deploy:
-    - openssl aes-256-cbc -K $encrypted_d2736267bf9a_key -iv $encrypted_d2736267bf9a_iv
-      -in certs/gem-private_key.pem.enc -out certs/gem-private_key.pem -d
+    - openssl aes-256-cbc -k "$rubygems_private_key_password" -in certs/gem-private_key.pem.enc
+      -out certs/gem-private_key.pem -d
     - gem cert --add certs/gem-public_cert.pem
     deploy:
       provider: rubygems
