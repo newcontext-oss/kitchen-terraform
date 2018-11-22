@@ -1,0 +1,69 @@
+---
+driver:
+  name: terraform
+provisioner:
+  name: terraform
+verifier:
+  name: terraform
+platforms:
+  - name: local
+suites:
+  - name: attributes
+    includes:
+      - local
+    driver:
+      root_module_directory: test/terraform/attributes
+    verifier:
+      systems:
+        - name: default
+          backend: local
+          controls:
+            - default
+        - name: attrs
+          backend: local
+          attrs:
+            - test/integration/attributes/Attribute File.yml
+          controls:
+            - attrs
+        - name: attrs_outputs
+          backend: local
+          attrs_outputs:
+            first_output: second_output
+          controls:
+            - attrs_outputs
+        - name: precedence
+          backend: local
+          attrs:
+            - test/integration/attributes/Attribute File.yml
+          attrs_outputs:
+            first_output: second_output
+            second_output: third_output
+          controls:
+            - precedence
+  - name: plug-ins
+    driver:
+      plugin_directory: test/terraform/Plug Ins/Plug In Directory
+      root_module_directory: test/terraform/Plug Ins
+    verifier:
+      systems:
+        - name: default
+          backend: local
+  - name: variables
+    includes:
+      - local
+    driver:
+      root_module_directory: test/terraform/variables
+      variable_files:
+        - test/terraform/variables/variable_files/Variable File.tfvars
+      variables:
+        local_file_content_from_variable: A\ B C
+    verifier:
+      systems:
+        - name: variable_files
+          backend: local
+          controls:
+            - variable_files
+        - name: variables
+          backend: local
+          controls:
+            - variables

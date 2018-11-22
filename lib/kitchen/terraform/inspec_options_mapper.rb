@@ -27,6 +27,8 @@ class ::Kitchen::Terraform::InSpecOptionsMapper
     system_keys.&(options_keys).each do |key|
       options.store system_to_options.dig(key), system.fetch(key)
     end
+
+    options
   end
 
   private

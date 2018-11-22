@@ -222,16 +222,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     apply_run_get
     apply_run_validate
     apply_run_apply
-    ::Kitchen::Terraform::Command::Output
-      .run(
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          },
-        &block
-      )
+    ::Kitchen::Terraform::Command::Output.run(
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+      &block
+    )
   end
 
   # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
@@ -273,97 +271,76 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::UserError] if the version is not supported.
   # @return [void]
   def verify_dependencies
-    logger
-      .warn(
-        ::Kitchen::Terraform::ClientVersionVerifier
-          .new
-          .verify(
-            version_output:
-              ::Kitchen::Terraform::ShellOut
-                .run(
-                  command: "version",
-                  options:
-                    {
-                      cwd: ::Dir.pwd,
-                      live_stream: logger,
-                      timeout: 600
-                    }
-                )
-          )
-      )
-  rescue ::Kitchen::Terraform::Error => error
-    raise(
-      ::Kitchen::UserError,
-      error.message
+    logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify(
+      version_output: ::Kitchen::Terraform::ShellOut.run(
+        command: "version",
+        options: {
+          cwd: ::Dir.pwd,
+          live_stream: logger,
+          timeout: 600,
+        },
+      ),
     )
+  rescue ::Kitchen::Terraform::Error => error
+    raise ::Kitchen::UserError, error.message
   end
 
   private
 
   # @api private
   def apply_run_apply
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "apply " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "-input=false " \
-            "-auto-approve=true " \
-            "#{color_flag} " \
-            "#{parallelism_flag} " \
-            "-refresh=true " \
-            "#{variables_flags} " \
-            "#{variable_files_flags}",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "apply " \
+      "#{lock_flag} " \
+      "#{lock_timeout_flag} " \
+      "-input=false " \
+      "-auto-approve=true " \
+      "#{color_flag} " \
+      "#{parallelism_flag} " \
+      "-refresh=true " \
+      "#{variables_flags} " \
+      "#{variable_files_flags}",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def apply_run_get
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "get -update",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "get -update",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def apply_run_validate
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "validate " \
-            "-check-variables=true " \
-            "#{color_flag} " \
-            "#{variables_flags} " \
-            "#{variable_files_flags}",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "validate " \
+      "-check-variables=true " \
+      "#{color_flag} " \
+      "#{variables_flags} " \
+      "#{variable_files_flags}",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def backend_configurations_flags
-    config_backend_configurations
-      .map do |key, value|
-        "-backend-config=#{::Shellwords.escape "#{key}=#{value}"}"
-      end
-      .join " "
+    config_backend_configurations.map do |key, value|
+      "-backend-config=\"#{::Shellwords.escape key}=#{::Shellwords.escape value}\""
+    end.join " "
   end
 
   # api private
@@ -373,112 +350,94 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def create_run_init
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "init " \
-            "-input=false " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "#{color_flag} " \
-            "-upgrade " \
-            "-force-copy " \
-            "-backend=true " \
-            "#{backend_configurations_flags} " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "#{plugin_directory_flag} " \
-            "-verify-plugins=true",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "init " \
+      "-input=false " \
+      "#{lock_flag} " \
+      "#{lock_timeout_flag} " \
+      "#{color_flag} " \
+      "-upgrade " \
+      "-force-copy " \
+      "-backend=true " \
+      "#{backend_configurations_flags} " \
+      "-get=true " \
+      "-get-plugins=true " \
+      "#{plugin_directory_flag} " \
+      "-verify-plugins=true",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def destroy_run_destroy
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "destroy " \
-            "-auto-approve " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "-input=false " \
-            "#{color_flag} " \
-            "#{parallelism_flag} " \
-            "-refresh=true " \
-            "#{variables_flags} " \
-            "#{variable_files_flags}",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "destroy " \
+      "-auto-approve " \
+      "#{lock_flag} " \
+      "#{lock_timeout_flag} " \
+      "-input=false " \
+      "#{color_flag} " \
+      "#{parallelism_flag} " \
+      "-refresh=true " \
+      "#{variables_flags} " \
+      "#{variable_files_flags}",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def destroy_run_init
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command:
-          "init " \
-            "-input=false " \
-            "#{lock_flag} " \
-            "#{lock_timeout_flag} " \
-            "#{color_flag} " \
-            "-force-copy " \
-            "-backend=true " \
-            "#{backend_configurations_flags} " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "#{plugin_directory_flag} " \
-            "-verify-plugins=true",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "init " \
+      "-input=false " \
+      "#{lock_flag} " \
+      "#{lock_timeout_flag} " \
+      "#{color_flag} " \
+      "-force-copy " \
+      "-backend=true " \
+      "#{backend_configurations_flags} " \
+      "-get=true " \
+      "-get-plugins=true " \
+      "#{plugin_directory_flag} " \
+      "-verify-plugins=true",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def destroy_run_workspace_delete_instance
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace delete kitchen-terraform-#{instance_name}",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "workspace delete #{workspace_name}",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def destroy_run_workspace_select_default
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace select default",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
-  end
-
-  # @api private
-  def instance_name
-    @instance_name ||= instance.name
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "workspace select default",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
@@ -498,9 +457,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def plugin_directory_flag
-    config_plugin_directory and
-      "-plugin-dir=#{::Shellwords.escape config_plugin_directory}" or
+    if config_plugin_directory
+      "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}\""
+    else
       ""
+    end
   end
 
   # @api private
@@ -510,44 +471,40 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def run_workspace_select_instance
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace select kitchen-terraform-#{instance_name}",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "workspace select #{workspace_name}",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   rescue ::Kitchen::Terraform::Error
-    ::Kitchen::Terraform::ShellOut
-      .run(
-        command: "workspace new kitchen-terraform-#{instance_name}",
-        options:
-          {
-            cwd: config_root_module_directory,
-            live_stream: logger,
-            timeout: config_command_timeout
-          }
-      )
+    ::Kitchen::Terraform::ShellOut.run(
+      command: "workspace new #{workspace_name}",
+      options: {
+        cwd: config_root_module_directory,
+        live_stream: logger,
+        timeout: config_command_timeout,
+      },
+    )
   end
 
   # @api private
   def variable_files_flags
-    config_variable_files
-      .map do |path|
-        "-var-file=#{::Shellwords.escape path}"
-      end
-      .join " "
+    config_variable_files.map do |path|
+      "-var-file=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit path}\""
+    end.join " "
   end
 
   # @api private
   def variables_flags
-    config_variables
-      .map do |key, value|
-        "-var=#{::Shellwords.escape "#{key}=#{value}"}"
-      end
-      .join " "
+    config_variables.map do |key, value|
+      "-var=\"#{::Shellwords.escape key}=#{::Shellwords.join ::Shellwords.split value}\""
+    end.join " "
+  end
+
+  def workspace_name
+    @workspace_name ||= "kitchen-terraform-#{::Shellwords.escape instance.name}"
   end
 end

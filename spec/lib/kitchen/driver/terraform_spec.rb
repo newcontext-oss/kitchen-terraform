@@ -40,9 +40,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
       backend_configurations: {key: "value"},
       color: false,
       kitchen_root: kitchen_root,
-      plugin_directory: "/plugin/directory",
-      variable_files: ["/variable/file"],
-      variables: {key: "value"},
+      plugin_directory: "/Arbitrary Directory/Plugin Directory",
+      variable_files: ["/Arbitrary Directory/Variable File.tfvars"],
+      variables: {key: "A Value"},
     }
   end
 
@@ -221,8 +221,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
               command: "validate " \
               "-check-variables=true " \
               "-no-color " \
-              "-var=key\\=value " \
-              "-var-file=\/variable\/file",
+              "-var=\"key=A Value\" " \
+              "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
             )
           end
 
@@ -250,8 +250,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-no-color " \
                 "-parallelism=10 " \
                 "-refresh=true " \
-                "-var=key\\=value " \
-                "-var-file=\/variable\/file",
+                "-var=\"key=A Value\" " \
+                "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
               )
             end
 
@@ -415,10 +415,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-upgrade " \
           "-force-copy " \
           "-backend=true " \
-          "-backend-config=key\\=value " \
+          "-backend-config=\"key=value\" " \
           "-get=true " \
           "-get-plugins=true " \
-          "-plugin-dir=\/plugin\/directory " \
+          "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
           "-verify-plugins=true",
         )
       end
@@ -505,10 +505,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-no-color " \
           "-force-copy " \
           "-backend=true " \
-          "-backend-config=key\\=value " \
+          "-backend-config=\"key=value\" " \
           "-get=true " \
           "-get-plugins=true " \
-          "-plugin-dir=\/plugin\/directory " \
+          "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
           "-verify-plugins=true",
         )
       end
@@ -576,8 +576,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-no-color " \
               "-parallelism=10 " \
               "-refresh=true " \
-              "-var=key\\=value " \
-              "-var-file=\/variable\/file",
+              "-var=\"key=A Value\" " \
+              "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
             )
           end
 

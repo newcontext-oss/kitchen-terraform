@@ -1,11 +1,12 @@
 .cache/
 .DS_Store/
+.ruby-version
 .sass-cache/
 .solargraph.yml
 .vscode/
 .yardoc/
 *.gem
-**/.bundle/
+*.tfstate.backup
 **/.idea/
 **/.kitchen.local.yml
 **/.kitchen/
@@ -19,8 +20,9 @@ coverage/
 doc/
 examples/*/Gemfile.lock
 examples/*/test/assets
-Gemfile.lock
 integration/Shell\ Words/Plugin\ Directory/
 terraform_*/
+terraform.tfstate.d/
+test/terraform/Plug Ins/Plug In Directory/
 tmp/
 vendor/
