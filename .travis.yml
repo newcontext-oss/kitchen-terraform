@@ -3,9 +3,6 @@ before_cache:
 cache:
   directories:
   - vendor/bundle
-env:
-  global:
-    secure: qBUVpzA/PxvIz+HO0dzhSLXUV2mWHY8OesfWFH4ARZF3LCz+7oF416GDhVuAkHnsKW/TPDi2K5BQpElsimgrjwBtc1J4tcV9vHTW3PUXHmznZWNoN5MhiU0y6b4D3qGkmBInfJ+NuVcCQMo0Wc5L3ptZBcB89ZkS2IA10fNJ78OjboUw8nRr9o6KpPu5mRQCULNT6A71bQqUmD+G+A+oN8ftJ9SxeaVgtiV2lR4qIE41KgQViPeNUhcZVKjqzVUTLGOk/8I2YxLN4GcE7IQ1kge8NdR81SdS12QUTgW9L34BLoNfiKXbKzwiMfmqA/0oe+2qfBwNZNWie5X7UtyI8NZ2lmUeCuh2dRML/Yhzk7rqOM4sQ2PnBaDHwawdK0KbRFLHzUMVWOQZjvznhDBTcpGkSCPualXlnIcB37aUwx/pr56sel8H/ObWQHYgfF6oG87/5aizVRuSPU/wL7jIYBcu3CwFnWPCI/9sEK6HvakIJZfTtBodkXQd6wclGVrq0ZJB/MnX21FJM71mPVaIksOdvPRelAKAUrtJaB8Eo1QjhMgBEaVhzKhh7TPdBlRKRd7F4Yaxh4Jyow3n/mxfaf5d4dG2MN3JzKyOz17T7W9byh/jVbLVmTlYIFZUKO6qN3mdbKtHJc7upmCnrpxsj8nY/oqXc4w4WUT+YfA9V/M=
 git:
   depth: 1
 notifications:
@@ -513,6 +510,8 @@ jobs:
     dist: trusty
     language: ruby
     rvm: 2.4.1
+    env:
+      secure: qBUVpzA/PxvIz+HO0dzhSLXUV2mWHY8OesfWFH4ARZF3LCz+7oF416GDhVuAkHnsKW/TPDi2K5BQpElsimgrjwBtc1J4tcV9vHTW3PUXHmznZWNoN5MhiU0y6b4D3qGkmBInfJ+NuVcCQMo0Wc5L3ptZBcB89ZkS2IA10fNJ78OjboUw8nRr9o6KpPu5mRQCULNT6A71bQqUmD+G+A+oN8ftJ9SxeaVgtiV2lR4qIE41KgQViPeNUhcZVKjqzVUTLGOk/8I2YxLN4GcE7IQ1kge8NdR81SdS12QUTgW9L34BLoNfiKXbKzwiMfmqA/0oe+2qfBwNZNWie5X7UtyI8NZ2lmUeCuh2dRML/Yhzk7rqOM4sQ2PnBaDHwawdK0KbRFLHzUMVWOQZjvznhDBTcpGkSCPualXlnIcB37aUwx/pr56sel8H/ObWQHYgfF6oG87/5aizVRuSPU/wL7jIYBcu3CwFnWPCI/9sEK6HvakIJZfTtBodkXQd6wclGVrq0ZJB/MnX21FJM71mPVaIksOdvPRelAKAUrtJaB8Eo1QjhMgBEaVhzKhh7TPdBlRKRd7F4Yaxh4Jyow3n/mxfaf5d4dG2MN3JzKyOz17T7W9byh/jVbLVmTlYIFZUKO6qN3mdbKtHJc7upmCnrpxsj8nY/oqXc4w4WUT+YfA9V/M=
     install: true
     script: true
     before_deploy:
