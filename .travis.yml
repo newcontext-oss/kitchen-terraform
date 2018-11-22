@@ -464,7 +464,6 @@ jobs:
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
   - stage: Deploy to RubyGems
-    if: branch = master
     dist: trusty
     language: ruby
     rvm: 2.4.1
