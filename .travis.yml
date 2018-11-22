@@ -1,5 +1,5 @@
 before_cache:
-  - bundle clean
+- bundle clean
 cache:
   directories:
   - vendor/bundle
@@ -16,7 +16,8 @@ jobs:
     language: ruby
     rvm: 2.3.4
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_3
     - bundle config --local jobs $(nproc --ignore=1)
@@ -31,7 +32,8 @@ jobs:
     env:
     - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~>1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
@@ -50,7 +52,8 @@ jobs:
     language: ruby
     rvm: '2.5'
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local jobs $(nproc --ignore=1)
     install:
@@ -63,7 +66,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
@@ -73,11 +77,12 @@ jobs:
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
     - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
     - unzip terraform_0.11.4_linux_amd64.zip -d "$HOME"/bin
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip |
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
-    - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_linux_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.5
@@ -85,7 +90,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
@@ -95,11 +101,12 @@ jobs:
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.5/terraform_0.11.5_linux_amd64.zip
     - sha256sum terraform_0.11.5_linux_amd64.zip | grep 131c440263382c79c7f783b70ff35cd1d03eb31c44f7738d153d95a0b8436ac9
     - unzip terraform_0.11.5_linux_amd64.zip -d "$HOME"/bin
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip |
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
-    - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_linux_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.6
@@ -107,7 +114,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
@@ -117,11 +125,12 @@ jobs:
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.6/terraform_0.11.6_linux_amd64.zip
     - sha256sum terraform_0.11.6_linux_amd64.zip | grep aed5c7388a3c54dc816986903d4dea32e182a002d746295e1016f6db741f472d
     - unzip terraform_0.11.6_linux_amd64.zip -d "$HOME"/bin
-    - curl --remote-name --silent
+    - curl --remote-name --silent   
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip |
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
-    - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_linux_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.7
@@ -129,7 +138,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
@@ -139,11 +149,12 @@ jobs:
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.7/terraform_0.11.7_linux_amd64.zip
     - sha256sum terraform_0.11.7_linux_amd64.zip | grep 6b8ce67647a59b2a3f70199c304abca0ddec0e49fd060944c26f666298e23418
     - unzip terraform_0.11.7_linux_amd64.zip -d "$HOME"/bin
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip |
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
-    - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_linux_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.8
@@ -151,7 +162,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
@@ -161,11 +173,12 @@ jobs:
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_linux_amd64.zip
     - sha256sum terraform_0.11.8_linux_amd64.zip | grep 84ccfb8e13b5fce63051294f787885b76a1fedef6bdbecf51c5e586c9e20c9b7
     - unzip terraform_0.11.8_linux_amd64.zip -d "$HOME"/bin
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip |
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
-    - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_linux_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.9
@@ -173,7 +186,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
@@ -183,11 +197,12 @@ jobs:
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.9/terraform_0.11.9_linux_amd64.zip
     - sha256sum terraform_0.11.9_linux_amd64.zip | grep 5d674e7b83945c37f7f14d0e4f655787dad86ba15b26e185604aa0c3812394ab
     - unzip terraform_0.11.9_linux_amd64.zip -d "$HOME"/bin
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip |
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
-    - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_linux_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.10
@@ -195,7 +210,8 @@ jobs:
     language: ruby
     rvm: 2.4.1
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
@@ -205,11 +221,12 @@ jobs:
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_linux_amd64.zip
     - sha256sum terraform_0.11.10_linux_amd64.zip | grep 43543a0e56e31b0952ea3623521917e060f2718ab06fe2b2d506cfaa14d54527
     - unzip terraform_0.11.10_linux_amd64.zip -d "$HOME"/bin
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip |
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
-    - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_linux_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - stage: Integration Tests on MacOS
@@ -218,20 +235,22 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
     - bundle install
-    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
       https://raw.githubusercontent.com/Homebrew/homebrew-core/6ba53b8c76b5ccb90679533e186b6fdc22e3bdbe/Formula/terraform.rb
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
-    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.5
@@ -239,20 +258,22 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
     - bundle install
-    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
       https://raw.githubusercontent.com/Homebrew/homebrew-core/4688cbe6b501e284ab976ce3b19b62beddfb3fc4/Formula/terraform.rb
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
-    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.6
@@ -260,20 +281,22 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
     - bundle install
-    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
       https://raw.githubusercontent.com/Homebrew/homebrew-core/99e5732850be15a89bd74fcd9f7b452241a5d08e/Formula/terraform.rb
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
-    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.7
@@ -281,20 +304,22 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
     - bundle install
-    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
       https://raw.githubusercontent.com/Homebrew/homebrew-core/0a5f283f5fa18b4bd2dc0e111ca83257af962c9d/Formula/terraform.rb
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
-    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.8
@@ -302,20 +327,22 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
     - bundle install
-    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
       https://raw.githubusercontent.com/Homebrew/homebrew-core/3507fce2ba1f36cc371fe888fd093bf5aa79981d/Formula/terraform.rb
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
-    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.9
@@ -323,20 +350,22 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
     - bundle install
-    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
       https://raw.githubusercontent.com/Homebrew/homebrew-core/12c25cb2fc4b51bd0271f5d1fd00c6f500863966/Formula/terraform.rb
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
-    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - name: Terraform 0.11.10
@@ -344,20 +373,22 @@ jobs:
     language: ruby
     rvm: 2.4.3
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
     - bundle install
-    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
       https://raw.githubusercontent.com/Homebrew/homebrew-core/49017817fb34b76fdc81f33665fdd7661fe5e558/Formula/terraform.rb
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
-    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
   - stage: Integration Tests on Windows
@@ -365,102 +396,114 @@ jobs:
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.4
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
-    - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_windows_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
   - name: Terraform 0.11.5
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.5
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
-    - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_windows_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
   - name: Terraform 0.11.6
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.6
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
-    - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_windows_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
   - name: Terraform 0.11.7
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.7
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
-    - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_windows_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
   - name: Terraform 0.11.8
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.8
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
-    - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_windows_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
   - name: Terraform 0.11.9
     os: windows
     language: shell
     before_install:
-    - gem install bundler --conservative --minimal-deps --no-document --version="~> 1.17"
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.9
-    - curl --remote-name --silent
+    - curl --remote-name --silent 
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
     - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip |
       grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
-    - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    - unzip terraform-provider-local_1.1.0_windows_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
   - stage: Deploy to RubyGems
@@ -468,11 +511,11 @@ jobs:
     language: ruby
     rvm: 2.4.1
     env:
-    - secure: J5e3tkk2OmiHhVajoOosMF7OznL3D5jt2pQyTnZBAw4gJf9/GMx5w5eW6c5hEvszq03dvuVaUeZiyi07JQ6LjG1h8REA9YnBQbxNN9Dij5ptEtOFDV8M6fuAn2Uq388OZ9jTfw65m8hLjLYPK8jjKQIzf4B2ts0TitdsLXhNVOCIY+Cgtq0/vOgnexpphDdRWK/l6bkOnOumg8GMvV9eiOwaFzPmMWsyzuVZJ7JvowU2gxLPC0hmWWS4G7krSmOa+perUWy3qEa2DwWO9jwQ6KZCwSGYMhjvrbpEYoGKFlZbMdOMesfvmFoqB3xFNva6a6sFt6rdHzxtWn6DFFWz1EKIpsEgK/Pp7qTUY2+bbSBkeEuFJo66rjOlcIlIkNhLj/8T/uCtsM4Zkv4tRyIZWNaNeWmP4+GmCN9oPYYOP5M/AM8UEEePfW0z9d/RuzbDF9vEhZ/yE1068/sbblX/GnwdPBKZ2PKxpyCqAvlGWOWXSJP1kL2gcsjGcku8hbT2h1uJu17tkcn5YyVSzW2XFotO+GJl9Kn3rf6fVD+24jrj1qa4eud8y82/iGyHa/DbQd7a8BjaA/amCI0ZujwbZxnaVFMW8GQCmPP+TXuwbj7Al2DXEGFhdkwGQnzz5bJ0pDjdqxMd27jYgOn+qYQvbFNdcJm/DnGbJdeirZyjMG4=
+      secure: qBUVpzA/PxvIz+HO0dzhSLXUV2mWHY8OesfWFH4ARZF3LCz+7oF416GDhVuAkHnsKW/TPDi2K5BQpElsimgrjwBtc1J4tcV9vHTW3PUXHmznZWNoN5MhiU0y6b4D3qGkmBInfJ+NuVcCQMo0Wc5L3ptZBcB89ZkS2IA10fNJ78OjboUw8nRr9o6KpPu5mRQCULNT6A71bQqUmD+G+A+oN8ftJ9SxeaVgtiV2lR4qIE41KgQViPeNUhcZVKjqzVUTLGOk/8I2YxLN4GcE7IQ1kge8NdR81SdS12QUTgW9L34BLoNfiKXbKzwiMfmqA/0oe+2qfBwNZNWie5X7UtyI8NZ2lmUeCuh2dRML/Yhzk7rqOM4sQ2PnBaDHwawdK0KbRFLHzUMVWOQZjvznhDBTcpGkSCPualXlnIcB37aUwx/pr56sel8H/ObWQHYgfF6oG87/5aizVRuSPU/wL7jIYBcu3CwFnWPCI/9sEK6HvakIJZfTtBodkXQd6wclGVrq0ZJB/MnX21FJM71mPVaIksOdvPRelAKAUrtJaB8Eo1QjhMgBEaVhzKhh7TPdBlRKRd7F4Yaxh4Jyow3n/mxfaf5d4dG2MN3JzKyOz17T7W9byh/jVbLVmTlYIFZUKO6qN3mdbKtHJc7upmCnrpxsj8nY/oqXc4w4WUT+YfA9V/M=
     install: true
     script: true
     before_deploy:
-    - openssl aes-256-cbc -K $rubygems_private_key_password -in certs/gem-private_key.pem.enc
+    - openssl aes-256-cbc -k "$rubygems_private_key_password" -in certs/gem-private_key.pem.enc
       -out certs/gem-private_key.pem -d
     - gem cert --add certs/gem-public_cert.pem
     deploy:
