@@ -267,9 +267,9 @@ jobs:
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
-    https://raw.githubusercontent.com/Homebrew/homebrew-core/4688cbe6b501e284ab976ce3b19b62beddfb3fc4/Formula/terraform.rb
+      https://raw.githubusercontent.com/Homebrew/homebrew-core/4688cbe6b501e284ab976ce3b19b62beddfb3fc4/Formula/terraform.rb
     - curl --remote-name --silent 
-    https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
+      https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
