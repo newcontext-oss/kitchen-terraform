@@ -515,8 +515,8 @@ jobs:
     install: true
     script: true
     before_deploy:
-    - openssl aes-256-cbc -k "$rubygems_private_key_password" -in certs/gem-private_key.pem.enc
-      -out certs/gem-private_key.pem -d
+    - echo $rubygems_private_key_password |
+      gpg --decrypt --output certs/gem-private_key.pem --passphrase-fd 0 certs/gem-private_key.pem.gpg
     - gem cert --add certs/gem-public_cert.pem
     deploy:
       provider: rubygems
