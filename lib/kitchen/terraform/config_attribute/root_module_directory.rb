@@ -54,10 +54,6 @@ module Kitchen
         def config_root_module_directory_default_value
           "."
         end
-
-        def config_root_module_directory_path
-          ::Shellwords.escape config_root_module_directory
-        end
       end
     end
   end

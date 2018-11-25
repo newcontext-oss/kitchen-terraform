@@ -239,7 +239,7 @@ module Kitchen
         apply_run_apply
         ::Kitchen::Terraform::Command::Output.run(
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -308,7 +308,7 @@ module Kitchen
           "#{config_variables_flags} " \
           "#{config_variable_files_flags}",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -319,7 +319,7 @@ module Kitchen
         ::Kitchen::Terraform::ShellOut.run(
           command: "get -update",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -334,7 +334,7 @@ module Kitchen
           "#{config_variables_flags} " \
           "#{config_variable_files_flags}",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -357,7 +357,7 @@ module Kitchen
           "#{config_plugin_directory_flag} " \
           "-verify-plugins=true",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -377,7 +377,7 @@ module Kitchen
           "#{config_variables_flags} " \
           "#{config_variable_files_flags}",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -399,7 +399,7 @@ module Kitchen
           "#{config_plugin_directory_flag} " \
           "-verify-plugins=true",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -410,7 +410,7 @@ module Kitchen
         ::Kitchen::Terraform::ShellOut.run(
           command: "workspace select default",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -418,7 +418,7 @@ module Kitchen
         ::Kitchen::Terraform::ShellOut.run(
           command: "workspace delete #{workspace_name}",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -429,7 +429,7 @@ module Kitchen
         ::Kitchen::Terraform::ShellOut.run(
           command: "workspace select #{workspace_name}",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
@@ -438,7 +438,7 @@ module Kitchen
         ::Kitchen::Terraform::ShellOut.run(
           command: "workspace new #{workspace_name}",
           options: {
-            cwd: config_root_module_directory_path,
+            cwd: config_root_module_directory,
             live_stream: logger,
             timeout: config_command_timeout,
           },
