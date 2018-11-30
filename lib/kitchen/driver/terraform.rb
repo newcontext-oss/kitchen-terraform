@@ -339,7 +339,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def backend_configurations_flags
     config_backend_configurations.map do |key, value|
-      "-backend-config=\"#{::Shellwords.escape key}=#{::Shellwords.escape value}\""
+      "-backend-config='#{key}=#{value}'"
     end.join " "
   end
 
@@ -458,7 +458,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def plugin_directory_flag
     if config_plugin_directory
-      "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}\""
+      "-plugin-dir='#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}'"
     else
       ""
     end
@@ -493,14 +493,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def variable_files_flags
     config_variable_files.map do |path|
-      "-var-file=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit path}\""
+      "-var-file='#{::Shellwords.shelljoin ::Shellwords.shellsplit path}'"
     end.join " "
   end
 
   # @api private
   def variables_flags
     config_variables.map do |key, value|
-      "-var=\"#{::Shellwords.escape key}=#{::Shellwords.join ::Shellwords.split value}\""
+      "-var='#{key}=#{value}'"
     end.join " "
   end
 
