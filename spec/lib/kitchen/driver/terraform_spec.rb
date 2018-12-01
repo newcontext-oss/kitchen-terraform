@@ -37,7 +37,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
 ::RSpec.describe ::Kitchen::Driver::Terraform do
   let :config do
     {
-      backend_configurations: {key: "value"},
+      backend_configurations: {
+        string: "A String", map: "{ key = \"A Value\" }", list: "[ \"Element One\", \"Element Two\" ]",
+      },
       color: false,
       kitchen_root: kitchen_root,
       plugin_directory: "/Arbitrary Directory/Plugin Directory",
@@ -221,9 +223,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
               command: "validate " \
               "-check-variables=true " \
               "-no-color " \
-              "-var='string=A String' " \
-              "-var='map={ key = \"A Value\" }' " \
-              "-var='list=[ \"Element One\", \"Element Two\" ]' " \
+              "-var=string\\=A\\ String " \
+              "-var=map\\=\\{\\ key\\ \\=\\ \\\"A\\ Value\\\"\\ \\} " \
+              "-var=list\\=\\[\\ \\\"Element\\ One\\\",\\ \\\"Element\\ Two\\\"\\ \\] " \
               "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
             )
           end
@@ -252,9 +254,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-no-color " \
                 "-parallelism=10 " \
                 "-refresh=true " \
-                "-var='string=A String' " \
-                "-var='map={ key = \"A Value\" }' " \
-                "-var='list=[ \"Element One\", \"Element Two\" ]' " \
+                "-var=string\\=A\\ String " \
+                "-var=map\\=\\{\\ key\\ \\=\\ \\\"A\\ Value\\\"\\ \\} " \
+                "-var=list\\=\\[\\ \\\"Element\\ One\\\",\\ \\\"Element\\ Two\\\"\\ \\] " \
                 "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
               )
             end
@@ -419,7 +421,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-upgrade " \
           "-force-copy " \
           "-backend=true " \
-          "-backend-config='key=value' " \
+          "-backend-config=string\\=A\\ String " \
+          "-backend-config=map\\=\\{\\ key\\ \\=\\ \\\"A\\ Value\\\"\\ \\} " \
+          "-backend-config=list\\=\\[\\ \\\"Element\\ One\\\",\\ \\\"Element\\ Two\\\"\\ \\] " \
           "-get=true " \
           "-get-plugins=true " \
           "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
@@ -509,7 +513,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-no-color " \
           "-force-copy " \
           "-backend=true " \
-          "-backend-config='key=value' " \
+          "-backend-config=string\\=A\\ String " \
+          "-backend-config=map\\=\\{\\ key\\ \\=\\ \\\"A\\ Value\\\"\\ \\} " \
+          "-backend-config=list\\=\\[\\ \\\"Element\\ One\\\",\\ \\\"Element\\ Two\\\"\\ \\] " \
           "-get=true " \
           "-get-plugins=true " \
           "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
@@ -580,9 +586,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-no-color " \
               "-parallelism=10 " \
               "-refresh=true " \
-              "-var='string=A String' " \
-              "-var='map={ key = \"A Value\" }' " \
-              "-var='list=[ \"Element One\", \"Element Two\" ]' " \
+              "-var=string\\=A\\ String " \
+              "-var=map\\=\\{\\ key\\ \\=\\ \\\"A\\ Value\\\"\\ \\} " \
+              "-var=list\\=\\[\\ \\\"Element\\ One\\\",\\ \\\"Element\\ Two\\\"\\ \\] " \
               "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
             )
           end
