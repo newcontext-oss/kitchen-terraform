@@ -56,9 +56,9 @@ suites:
       variable_files:
         - test/terraform/variables/variable_files/Variable File.tfvars
       variables:
-        string: A String
-        map: '{ key = "A Value" }'
-        list: '[ "Element One", "Element Two" ]'
+        string: '\"A String\"'
+        map: '{ key = \"A Value\" }'
+        list: '[ \"Element One\", \"Element Two\" ]'
     verifier:
       systems:
         - name: variable_files
