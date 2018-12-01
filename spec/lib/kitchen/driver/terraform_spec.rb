@@ -224,7 +224,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-var='string=A String' " \
               "-var='map={ key = \"A Value\" }' " \
               "-var='list=[ \"Element One\", \"Element Two\" ]' " \
-              "-var-file='/Arbitrary Directory/Variable File.tfvars'",
+              "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
             )
           end
 
@@ -255,7 +255,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-var='string=A String' " \
                 "-var='map={ key = \"A Value\" }' " \
                 "-var='list=[ \"Element One\", \"Element Two\" ]' " \
-                "-var-file='/Arbitrary Directory/Variable File.tfvars'",
+                "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
               )
             end
 
@@ -422,7 +422,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-backend-config='key=value' " \
           "-get=true " \
           "-get-plugins=true " \
-          "-plugin-dir='/Arbitrary Directory/Plugin Directory' " \
+          "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
           "-verify-plugins=true",
         )
       end
@@ -512,7 +512,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "-backend-config='key=value' " \
           "-get=true " \
           "-get-plugins=true " \
-          "-plugin-dir='/Arbitrary Directory/Plugin Directory' " \
+          "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
           "-verify-plugins=true",
         )
       end
@@ -583,7 +583,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               "-var='string=A String' " \
               "-var='map={ key = \"A Value\" }' " \
               "-var='list=[ \"Element One\", \"Element Two\" ]' " \
-              "-var-file='/Arbitrary Directory/Variable File.tfvars'",
+              "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
             )
           end
 
