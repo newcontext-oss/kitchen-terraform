@@ -26,6 +26,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   configuration.expect_with :rspec do |expect_configuration|
     expect_configuration.include_chain_clauses_in_custom_matcher_descriptions = true
+    expect_configuration.max_formatted_output_length = nil
   end
 
   configuration.fail_fast = true

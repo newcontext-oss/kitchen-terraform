@@ -339,7 +339,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def backend_configurations_flags
     config_backend_configurations.map do |key, value|
-      "-backend-config=\"#{::Shellwords.escape key}=#{::Shellwords.escape value}\""
+      "-backend-config=\"#{key}=#{value}\""
     end.join " "
   end
 
@@ -500,7 +500,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def variables_flags
     config_variables.map do |key, value|
-      "-var=\"#{::Shellwords.escape key}=#{::Shellwords.join ::Shellwords.split value}\""
+      "-var=\"#{key}=#{value}\""
     end.join " "
   end
 

@@ -8,6 +8,21 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.0.5] - 2018-12-01
+
+### Fixed
+
+- The escaping of Terraform command-line arguments... Again! Arguments
+  for `-backend-config` and `-var` are surrounded by double quotes but
+  are not escaped. This compromise is intended to ensure proper
+  handling of arguments containing HashiCorp Language (HCL) on Linux,
+  MacOS, and Windows. The corresponding values for the Kitchen
+  configuration attributes `driver.backend_configurations` and
+  `driver.variables` must be properly escaped depending on the execution
+  environment. The [Kitchen configuration file](kitchen.yml) used for
+  integration testing of Kitchen-Terraform contains examples of escaped
+  HCL values.
+
 ## [4.0.4] - 2018-11-21
 
 ### Fixed
@@ -533,7 +548,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.4...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.5...HEAD
+[4.0.5]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.4...v4.0.5
 [4.0.4]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.3...v4.0.4
 [4.0.3]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.2...v4.0.3
 [4.0.2]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.1...v4.0.2
