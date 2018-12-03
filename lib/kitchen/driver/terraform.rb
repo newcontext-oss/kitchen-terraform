@@ -212,24 +212,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   include ::Kitchen::Terraform::Configurable
 
   # Applies changes to the state by selecting the test workspace, updating the dependency modules, validating the root
-  # module, applying the state changes, and retrieving the state output.
+  # module, and applying the state changes.
   #
   # @raise [::Kitchen::Terraform::Error] if one of the steps fails.
   # @return [void]
-  # @yieldparam output [::String] the state output.
   def apply(&block)
     run_workspace_select_instance
     apply_run_get
     apply_run_validate
     apply_run_apply
-    ::Kitchen::Terraform::Command::Output.run(
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
-      &block
-    )
   end
 
   # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
@@ -263,6 +254,19 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     raise(
       ::Kitchen::ActionFailed,
       error.message
+    )
+  end
+
+  # Retrieves the Terraform state outputs.
+  #
+  # @raise [::Kitchen::Terraform::Error] if the retrieval fails.
+  # @return [void]
+  # @yieldparam output [::String] the state output.
+  def retrieve_outputs(&block)
+    ::Kitchen::Terraform::Command::Output.run(
+      options: {
+        cwd: config_root_module_directory, live_stream: logger, timeout: config_command_timeout,
+      }, &block
     )
   end
 

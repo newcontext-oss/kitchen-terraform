@@ -85,27 +85,12 @@ require "support/kitchen/terraform/configurable_examples"
 
       context "when the driver create action is a success" do
         before do
-          allow(driver).to receive(:apply).and_yield output: "mocked Driver#create output"
+          allow(driver).to receive :apply
         end
 
         it do
           is_expected.to_not raise_error
         end
-      end
-    end
-
-    describe "Test Kitchen state manipulation" do
-      subject do
-        kitchen_state
-      end
-
-      before do
-        allow(driver).to receive(:apply).and_yield output: "mocked Driver#create output"
-        described_instance.call kitchen_state
-      end
-
-      it do
-        is_expected.to include kitchen_terraform_outputs: "mocked Driver#create output"
       end
     end
   end

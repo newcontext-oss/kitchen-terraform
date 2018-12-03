@@ -8,6 +8,15 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.0.6] - 2018-12-02
+
+### Fixed
+
+- `terraform output` is moved from `kitchen converge` to
+  `kitchen verify` to ensure Terraform state outputs are up to date for
+  use as InSpec attributes regardless of the result of
+  `kitchen converge`.
+
 ## [4.0.5] - 2018-12-01
 
 ### Fixed
@@ -548,7 +557,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.5...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.6...HEAD
+[4.0.6]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.5...v4.0.6
 [4.0.5]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.4...v4.0.5
 [4.0.4]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.3...v4.0.4
 [4.0.3]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.2...v4.0.3

@@ -264,82 +264,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
               )
             end
-
-            context "when `terraform output` results in failure due to no outputs defined" do
-              before do
-                shell_out_run_failure(
-                  command: "output -json",
-                  message: "no outputs defined",
-                )
-              end
-
-              it do
-                is_expected.to yield_with_args output: {}
-              end
-            end
-
-            context "when `terraform output` results in failure" do
-              before do
-                shell_out_run_failure(
-                  command: "output -json",
-                  message: "mocked `terraform output` failure",
-                )
-              end
-
-              it do
-                is_expected.to result_in_failure.with_message "mocked `terraform output` failure"
-              end
-            end
-
-            context "when `terraform output` results in success" do
-              before do
-                shell_out_run_yield(
-                  command: "output -json",
-                  standard_output: terraform_output_value,
-                )
-              end
-
-              context "when the value of the `terraform output` result is not valid JSON" do
-                let :terraform_output_value do
-                  "not valid JSON"
-                end
-
-                it do
-                  is_expected.to result_in_failure.with_message /Parsing Terraform output as JSON failed:/
-                end
-              end
-
-              context "when the value of the `terraform output` result is valid JSON" do
-                let :terraform_output_value do
-                  ::JSON.dump value_as_hash
-                end
-
-                let :value_as_hash do
-                  {
-                    output_name: {
-                      sensitive: false,
-                      type: "list",
-                      value: ["output_value_1"],
-                    },
-                  }
-                end
-
-                it do
-                  is_expected
-                    .to(
-                      yield_with_args(
-                        output: {
-                          "output_name" => {
-                            "sensitive" => false,
-                            "type" => "list",
-                            "value" => ["output_value_1"],
-                          },
-                        },
-                      )
-                    )
-                end
-              end
-            end
           end
         end
       end
@@ -648,6 +572,78 @@ require "support/kitchen/terraform/result_in_success_matcher"
               end
             end
           end
+        end
+      end
+    end
+  end
+
+  describe "#retrieve_outputs" do
+    subject do
+      described_instance
+    end
+
+    before do
+      described_instance.finalize_config! kitchen_instance
+    end
+
+    context "when the command results in failure due to no outputs defined" do
+      before do
+        shell_out_run_failure command: "output -json", message: "no outputs defined"
+      end
+
+      specify "should ignore the failure and yield an empty hash" do
+        expect do |block|
+          subject.retrieve_outputs(&block)
+        end.to yield_with_args outputs: {}
+      end
+    end
+
+    context "when the command results in failure not due to no outputs defined" do
+      before do
+        shell_out_run_failure command: "output -json", message: "mocked `terraform output` failure"
+      end
+
+      specify "should result in failure with the command failure message" do
+        expect do
+          subject.retrieve_outputs
+        end.to result_in_failure.with_message "mocked `terraform output` failure"
+      end
+    end
+
+    context "when the command results in success" do
+      before do
+        shell_out_run_yield command: "output -json", standard_output: terraform_output_value
+      end
+
+      context "when the value of the command result is not valid JSON" do
+        let :terraform_output_value do
+          "not valid JSON"
+        end
+
+        specify "should result in failure with a message which indicates the output is not valid JSON" do
+          expect do
+            subject.retrieve_outputs
+          end.to result_in_failure.with_message(/Parsing Terraform output as JSON failed:/)
+        end
+      end
+
+      context "when the value of the command result is valid JSON" do
+        let :terraform_output_value do
+          ::JSON.dump value_as_hash
+        end
+
+        let :value_as_hash do
+          {output_name: {sensitive: false, type: "list", value: ["output_value_1"]}}
+        end
+
+        specify "should yield the hash which results from processing the output as JSON" do
+          expect do |block|
+            subject.retrieve_outputs(&block)
+          end.to yield_with_args(
+            outputs: {
+              "output_name" => {"sensitive" => false, "type" => "list", "value" => ["output_value_1"]},
+            },
+          )
         end
       end
     end

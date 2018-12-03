@@ -37,8 +37,13 @@ module Kitchen
     #
     # ==== kitchen verify
     #
-    # A Test Kitchen instance is verified by iterating through the systems and executing the associated InSpec controls
-    # against the hosts of each system.
+    # A Kitchen instance is verified by iterating through the systems and executing the associated InSpec controls
+    # against the hosts of each system. The outputs of the Terraform state are retrieved and exposed as attributes to
+    # the InSpec controls.
+    #
+    # ===== Retrieving the Terraform Output
+    #
+    #   terraform output -json
     #
     # === Configuration Attributes
     #
@@ -74,11 +79,11 @@ module Kitchen
       #
       # @example
       #   `kitchen verify suite-name`
-      # @param kitchen_state [::Hash] the mutable instance and verifier state.
+      # @param _kitchen_state [::Hash] the mutable instance and verifier state.
       # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
-      def call(kitchen_state)
-        load_outputs kitchen_state: kitchen_state
+      def call(_kitchen_state)
+        load_outputs
         config_systems.each do |system|
           verify system: system
         end
@@ -127,12 +132,10 @@ module Kitchen
         )
       end
 
-      def load_outputs(kitchen_state:)
-        @outputs = ::Kitchen::Util.stringified_hash Hash kitchen_state.fetch :kitchen_terraform_outputs
-      rescue ::KeyError => key_error
-        raise ::Kitchen::Terraform::Error,
-              "Loading Terraform outputs from the Kitchen state failed; this implies that the " \
-              "Kitchen-Terraform provisioner has not successfully converged\n#{key_error}"
+      def load_outputs
+        instance.driver.retrieve_outputs do |outputs:|
+          @outputs.replace ::Kitchen::Util.stringified_hash outputs
+        end
       end
 
       def initialize(configuration = {})
