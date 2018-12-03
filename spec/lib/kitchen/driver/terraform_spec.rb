@@ -594,7 +594,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       specify "should ignore the failure and yield an empty hash" do
         expect do |block|
           subject.retrieve_outputs(&block)
-        end.to yield_with_args output: {}
+        end.to yield_with_args outputs: {}
       end
     end
 
@@ -640,7 +640,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           expect do |block|
             subject.retrieve_outputs(&block)
           end.to yield_with_args(
-            output: {
+            outputs: {
               "output_name" => {"sensitive" => false, "type" => "list", "value" => ["output_value_1"]},
             },
           )

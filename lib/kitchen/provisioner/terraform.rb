@@ -66,10 +66,6 @@ end
 #     [-var-file=<variable_files.first>...] \
 #     <directory>
 #
-# ===== Retrieving the Terraform Output
-#
-#   terraform output -json
-#
 # === Configuration Attributes
 #
 # The provisioner has no configuration attributes, but the +provisioner+ mapping must be declared with the plugin name

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "json"
+require "kitchen"
 require "kitchen/terraform/command"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
@@ -57,7 +58,7 @@ module ::Kitchen::Terraform::Command::Output
     # @api private
     def handle_kitchen_terraform(error:)
       /no\\ outputs\\ defined/.match ::Regexp.escape error.to_s or raise error
-      yield output: {}
+      yield outputs: {}
     end
 
     # @api private
@@ -67,7 +68,7 @@ module ::Kitchen::Terraform::Command::Output
           command: "output -json",
           options: options,
         ) do |standard_output:|
-        yield output: ::JSON.parse(standard_output)
+        yield outputs: ::JSON.parse(standard_output)
       end
     end
   end
