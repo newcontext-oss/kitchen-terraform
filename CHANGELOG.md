@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## Changed
+
+- The bundled version of InSpec is now ~> 3.0. Despite the major
+  version change, it is intended to be backward compatible.
+
 ## [4.0.6] - 2018-12-02
 
 ### Fixed
