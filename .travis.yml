@@ -268,7 +268,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:all
+    - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
   - name: Terraform 0.11.5
     os: osx
     language: ruby
@@ -291,7 +291,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:all
+    - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
   - name: Terraform 0.11.6
     os: osx
     language: ruby
@@ -314,7 +314,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:all
+    - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
   - name: Terraform 0.11.7
     os: osx
     language: ruby
@@ -337,7 +337,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:all
+    - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
   - name: Terraform 0.11.8
     os: osx
     language: ruby
@@ -360,7 +360,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:all
+    - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
   - name: Terraform 0.11.9
     os: osx
     language: ruby
@@ -383,7 +383,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:all
+    - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
   - name: Terraform 0.11.10
     os: osx
     language: ruby
@@ -406,7 +406,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:all
+    - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
   - stage: Integration Tests on Windows
     name: Terraform 0.11.4
     os: windows
@@ -426,7 +426,8 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
+      'test:kitchen:variables-local'"
   - name: Terraform 0.11.5
     os: windows
     language: shell
@@ -445,7 +446,8 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
+      'test:kitchen:variables-local'"
   - name: Terraform 0.11.6
     os: windows
     language: shell
@@ -464,7 +466,8 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
+      'test:kitchen:variables-local'"
   - name: Terraform 0.11.7
     os: windows
     language: shell
@@ -483,7 +486,8 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
+      'test:kitchen:variables-local'"
   - name: Terraform 0.11.8
     os: windows
     language: shell
@@ -502,7 +506,8 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
+      'test:kitchen:variables-local'"
   - name: Terraform 0.11.9
     os: windows
     language: shell
@@ -521,7 +526,8 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:all'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
+      'test:kitchen:variables-local'"
   - stage: Deploy to RubyGems
     dist: trusty
     language: ruby
