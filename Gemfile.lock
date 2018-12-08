@@ -35,6 +35,7 @@ GEM
     azure_mgmt_resources (0.17.2)
       ms_rest_azure (~> 0.11.0)
     backports (3.11.4)
+    bcrypt_pbkdf (1.0.0)
     builder (3.2.3)
     coderay (1.1.2)
     coffee-script (2.4.1)
@@ -436,6 +437,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bcrypt_pbkdf (~> 1.0)!
   guard (~> 2.14)!
   guard-bundler (~> 2.1)!
   guard-rspec (~> 4.7)!
