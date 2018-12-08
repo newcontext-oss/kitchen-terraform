@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: ..
   specs:
     kitchen-terraform (4.0.6)
       dry-types (~> 0.9)
@@ -479,7 +479,7 @@ DEPENDENCIES
   yard (~> 0.9)!
 
 RUBY VERSION
-   ruby 2.4.5p335
+   ruby 2.3.8p459
 
 BUNDLED WITH
    1.17.1

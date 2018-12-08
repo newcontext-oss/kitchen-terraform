@@ -19,7 +19,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_3
+    - bundle config --local gemfile ruby-2.3/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     install:
     - bundle install
@@ -35,7 +35,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~>1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     install:
     - bundle install
@@ -71,7 +71,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -97,7 +97,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -123,7 +123,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -149,7 +149,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -175,7 +175,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -201,7 +201,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -227,7 +227,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
     install:
@@ -252,7 +252,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -275,7 +275,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -298,7 +298,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -321,7 +321,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -344,7 +344,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -367,7 +367,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
@@ -390,7 +390,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local deployment true
-    - bundle config --local gemfile Gemfile-Ruby-2_4
+    - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
     - bundle config --local without development
     install:
