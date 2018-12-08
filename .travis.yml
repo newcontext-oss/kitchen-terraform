@@ -3,6 +3,8 @@ before_cache:
 cache:
   directories:
   - vendor/bundle
+  - ruby-2.4/vendor/bundle
+  - ruby-2.3/vendor/bundle
 git:
   depth: 1
 notifications:
