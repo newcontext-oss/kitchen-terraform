@@ -74,6 +74,7 @@ jobs:
     - bundle config --local gemfile Gemfile-Ruby-2_4
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without development
+    - docker build --tag eg_sshd test/terraform/backend-ssh
     install:
     - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
