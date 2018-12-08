@@ -7,6 +7,7 @@ source "https://rubygems.org/" do
 
   group :test do
     gem "rake"
+    gem "rbnacl"
     gem "tty-which"
   end
 end

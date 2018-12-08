@@ -20,13 +20,13 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     autoprefixer-rails (8.6.5)
       execjs
-    aws-sdk (2.11.186)
-      aws-sdk-resources (= 2.11.186)
-    aws-sdk-core (2.11.186)
+    aws-sdk (2.11.188)
+      aws-sdk-resources (= 2.11.188)
+    aws-sdk-core (2.11.188)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.11.186)
-      aws-sdk-core (= 2.11.186)
+    aws-sdk-resources (2.11.188)
+      aws-sdk-core (= 2.11.188)
     aws-sigv4 (1.0.3)
     azure_graph_rbac (0.17.0)
       ms_rest_azure (~> 0.11.0)
@@ -179,7 +179,7 @@ GEM
     httpclient (2.8.3)
     i18n (0.7.0)
     inifile (3.0.0)
-    inspec (3.0.61)
+    inspec (3.0.64)
       addressable (~> 2.4)
       faraday (>= 0.9.0)
       faraday_middleware (~> 0.12.2)
@@ -275,7 +275,7 @@ GEM
       mixlib-versioning
       thor
     mixlib-log (2.0.4)
-    mixlib-shellout (2.4.0)
+    mixlib-shellout (2.4.2)
     mixlib-versioning (1.2.2)
     ms_rest (0.7.3)
       concurrent-ruby (~> 1.0)
@@ -323,10 +323,12 @@ GEM
     rack (2.0.6)
     rack-livereload (0.3.17)
       rack
-    rake (12.3.1)
+    rake (12.3.2)
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
+    rbnacl (6.0.0)
+      ffi
     representable (3.0.4)
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
@@ -468,6 +470,7 @@ DEPENDENCIES
   pry (~> 0.10)!
   pry-coolline (~> 0.2)!
   rake!
+  rbnacl!
   rspec (~> 3.4)!
   rubyzip (~> 1.2)!
   simplecov (~> 0.16.1)!
