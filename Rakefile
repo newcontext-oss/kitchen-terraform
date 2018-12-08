@@ -8,17 +8,12 @@ namespace :test do
     puts "The gem named rspec is not available"
   end
   begin
-    require "tty/which"
-    if ::TTY::Which.exist? "terraform"
-      begin
-        require "kitchen/rake_tasks"
-        ::Kitchen::RakeTasks.new
-      rescue ::LoadError
-        puts "The gem named test-kitchen is not available"
-      end
-    end
+    require "kitchen/rake_tasks"
+    ::Kitchen::RakeTasks.new
+  rescue ::Kitchen::UserError
+    puts "Terraform is not available; omitting Kitchen tasks"
   rescue ::LoadError
-    puts "The gem named tty-which is not available"
+    puts "The gem named test-kitchen is not available"
   end
 end
 
