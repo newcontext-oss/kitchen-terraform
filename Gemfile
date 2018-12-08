@@ -6,8 +6,8 @@ source "https://rubygems.org/" do
   gemspec
 
   group :test do
-    gem "rake"
-    gem "rbnacl"
-    gem "tty-which"
+    gem "rake", "~> 12.3"
+    gem "rbnacl", "~> 4.0"
+    gem "tty-which", "~> 0.4.0"
   end
 end

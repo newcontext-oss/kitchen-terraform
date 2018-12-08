@@ -327,7 +327,7 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
-    rbnacl (6.0.0)
+    rbnacl (4.0.2)
       ffi
     representable (3.0.4)
       declarative (< 0.1.0)
@@ -469,13 +469,13 @@ DEPENDENCIES
   mini_racer (~> 0.2.0)!
   pry (~> 0.10)!
   pry-coolline (~> 0.2)!
-  rake!
-  rbnacl!
+  rake (~> 12.3)!
+  rbnacl (~> 4.0)!
   rspec (~> 3.4)!
   rubyzip (~> 1.2)!
   simplecov (~> 0.16.1)!
   travis (~> 1.8)!
-  tty-which!
+  tty-which (~> 0.4.0)!
   yard (~> 0.9)!
 
 RUBY VERSION
