@@ -191,7 +191,7 @@ module Kitchen
       # The value of the +enable_password+ key is a scalar which is used as the password for authentication with a
       # Cisco IOS device in enable mode.
       #
-      # The +enable_password+ key must be used in combination with +backend: ssh+.
+      # The +enable_password+ key must be used in combination with <tt>backend: ssh</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -270,7 +270,7 @@ module Kitchen
       #
       # The value of the +path+ key is a scalar which is used as the login path when connecting to a host in the system.
       #
-      # The +path+ key must be used in combination with +backend: winrm+.
+      # The +path+ key must be used in combination with <tt>backend: winrm</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -285,7 +285,7 @@ module Kitchen
       # The value of the +port+ key is an integer which is used as the port number when connecting via SSH to the hosts
       # of the system.
       #
-      # The +port+ key must be used in combination with +backend: ssh+.
+      # The +port+ key must be used in combination with <tt>backend: ssh</tt>.
       #
       # If the +port+ key is omitted then the value of the +port+ key of the Test Kitchen transport will be used.
       #
@@ -302,7 +302,7 @@ module Kitchen
       # The value of the +proxy_command+ key is a scalar which is used as a proxy command when connecting to a host via
       # SSH.
       #
-      # The +proxy_command+ key must be used in combination with +backend: ssh+.
+      # The +proxy_command+ key must be used in combination with <tt>backend: ssh</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -335,7 +335,7 @@ module Kitchen
       # The value of the +self_signed+ key is a boolean which is used to toggle permission for self-signed certificates
       # during testing of Windows hosts.
       #
-      # The +self_signed+ key must be used in combination with +backend: winrm+.
+      # The +self_signed+ key must be used in combination with <tt>backend: winrm</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -366,7 +366,7 @@ module Kitchen
       # The value of the +shell_command+ key is a scalar which is used to override the default shell command used to
       # instantiate a subshell.
       #
-      # The +shell_command+ key must be used in combination with +shell: true+.
+      # The +shell_command+ key must be used in combination with <tt>shell: true</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -382,7 +382,7 @@ module Kitchen
       #
       # The value of the +shell_options+ key is a scalar which is used to provide options to the subshell.
       #
-      # The +shell_options+ key must be used in combination with +shell: true+.
+      # The +shell_options+ key must be used in combination with <tt>shell: true</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -414,7 +414,7 @@ module Kitchen
       # hosts in the system. InSpec's reference to Secure Socket Layer (SSL) is a misnomer as that protocol has been
       # deprecated in favour of TLS.
       #
-      # The +ssl+ key must be used in combination with +backend: winrm+.
+      # The +ssl+ key must be used in combination with <tt>backend: winrm</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -446,7 +446,7 @@ module Kitchen
       # The value of the +sudo_command+ key is a scalar which is used to override the default command used to
       # invoke sudo.
       #
-      # The +sudo_command+ key must be used in combination with +sudo: true+.
+      # The +sudo_command+ key must be used in combination with <tt>sudo: true</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -462,7 +462,7 @@ module Kitchen
       #
       # The value of the +sudo_options+ key is a scalar which is used to provide options to the sudo command.
       #
-      # The +sudo_options+ key must be used in combination with +sudo: true+.
+      # The +sudo_options+ key must be used in combination with <tt>sudo: true</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -479,7 +479,7 @@ module Kitchen
       # The value of the +sudo_password+ key is a scalar which is used as the password for authentication with the sudo
       # command.
       #
-      # The +sudo_password+ key must be used in combination with +sudo: true+.
+      # The +sudo_password+ key must be used in combination with <tt>sudo: true</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
