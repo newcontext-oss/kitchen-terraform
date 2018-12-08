@@ -23,4 +23,5 @@ exclude_patterns:
   - "docs/"
   - "examples/"
   - "integration/"
+  - "test/integration"
   - "website/"
