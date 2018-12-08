@@ -317,6 +317,8 @@ GEM
       ffi (>= 0.5.0, < 2)
     rbnacl (4.0.2)
       ffi
+    rbnacl-libsodium (1.0.16)
+      rbnacl (>= 3.0.1)
     representable (3.0.4)
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
@@ -399,7 +401,6 @@ GEM
       launchy (~> 2.1)
       pusher-client (~> 0.4)
       typhoeus (~> 0.6, >= 0.6.8)
-    tty-which (0.4.0)
     typhoeus (0.8.0)
       ethon (>= 0.8.0)
     tzinfo (1.2.5)
@@ -450,10 +451,10 @@ DEPENDENCIES
   pry-coolline (~> 0.2)!
   rake (~> 12.3)!
   rbnacl (~> 4.0)!
+  rbnacl-libsodium (~> 1.0)!
   rspec (~> 3.4)!
   simplecov (~> 0.16.1)!
   travis (~> 1.8)!
-  tty-which (~> 0.4.0)!
   yard (~> 0.9)!
 
 RUBY VERSION

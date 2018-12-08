@@ -8,6 +8,6 @@ source "https://rubygems.org/" do
   group :test do
     gem "rake", "~> 12.3"
     gem "rbnacl", "~> 4.0"
-    gem "tty-which", "~> 0.4.0"
+    gem "rbnacl-libsodium", "~> 1.0"
   end
 end
