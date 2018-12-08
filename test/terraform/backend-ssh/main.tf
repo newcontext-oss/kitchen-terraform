@@ -9,7 +9,7 @@ resource "docker_image" "eg_sshd" {
 }
 
 resource "docker_container" "host" {
-  image    = "${docker_image.ubuntu.name}"
+  image    = "${docker_image.eg_sshd.name}"
   must_run = true
   name     = "host"
 
