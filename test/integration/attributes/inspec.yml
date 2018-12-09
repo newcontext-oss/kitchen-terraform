@@ -1,9 +1,6 @@
 ---
 name: attributes
 attributes:
-  - name: first_output
-    type: string
-    required: true
   - name: second_output
     type: string
     required: true
