@@ -6,15 +6,6 @@ data "docker_registry_image" "ubuntu_sshd" {
   name = "rastasheep/ubuntu-sshd:latest"
 }
 
-resource "docker_network" "hosts" {
-  ipam_config {
-    gateway = "172.21.0.1"
-    subnet  = "172.21.0.0/16"
-  }
-
-  name = "hosts"
-}
-
 resource "docker_image" "ubuntu_sshd" {
   keep_locally  = true
   name          = "${data.docker_registry_image.ubuntu_sshd.name}"
@@ -27,8 +18,8 @@ resource "docker_container" "host" {
   name     = "host"
 
   networks_advanced {
-    ipv4_address = "172.21.0.2"
-    name         = "${docker_network.hosts.name}"
+    ipv4_address = "172.17.0.2"
+    name         = "bridge"
   }
 
   ports {
@@ -48,8 +39,8 @@ resource "docker_container" "bastion_host" {
   name     = "bastion-host"
 
   networks_advanced {
-    ipv4_address = "172.21.0.3"
-    name         = "${docker_network.hosts.name}"
+    ipv4_address = "172.17.0.3"
+    name         = "bridge"
   }
 
   ports {
