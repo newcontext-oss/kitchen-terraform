@@ -54,7 +54,7 @@ suites:
             - 172.17.0.2
           key_files:
             - test/terraform/backend-ssh/id_ed25519
-          port: 2222
+          port: 22
           user: root
         - name: hosts output and password
           backend: ssh
