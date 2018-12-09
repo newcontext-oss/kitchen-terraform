@@ -48,7 +48,8 @@ resource "docker_container" "bastion_host" {
   name     = "bastion-host"
 
   networks_advanced {
-    name = "${docker_network.hosts.name}"
+    ipv4_address = "172.21.0.3"
+    name         = "${docker_network.hosts.name}"
   }
 
   ports {
