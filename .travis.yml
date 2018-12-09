@@ -27,6 +27,9 @@ jobs:
     - bundle install
     script:
     - bundle exec rake
+    cache:
+      directories:
+      - ruby-2.3/vendor/bundle
   - name: Ruby 2.4 with Code Climate on Ubuntu 14.04
     dist: trusty
     language: ruby
@@ -49,6 +52,9 @@ jobs:
     script:
     - bundle exec rake
     after_script: "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Ruby 2.5 on Ubuntu 14.04
     dist: trusty
     language: ruby
@@ -62,6 +68,9 @@ jobs:
     - bundle install
     script:
     - bundle exec rake
+    cache:
+      directories:
+      - vendor/bundle
   - stage: Integration Tests on Ubuntu 14.04
     name: Terraform 0.11.4
     dist: trusty
@@ -89,6 +98,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.5
     dist: trusty
     language: ruby
@@ -115,6 +127,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.6
     dist: trusty
     language: ruby
@@ -141,6 +156,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.7
     dist: trusty
     language: ruby
@@ -167,6 +185,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.8
     dist: trusty
     language: ruby
@@ -193,6 +214,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.9
     dist: trusty
     language: ruby
@@ -219,6 +243,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.10
     dist: trusty
     language: ruby
@@ -245,6 +272,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:all
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - stage: Integration Tests on MacOS
     name: Terraform 0.11.4
     os: osx
@@ -269,6 +299,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.5
     os: osx
     language: ruby
@@ -292,6 +325,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.6
     os: osx
     language: ruby
@@ -315,6 +351,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.7
     os: osx
     language: ruby
@@ -338,6 +377,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.8
     os: osx
     language: ruby
@@ -361,6 +403,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.9
     os: osx
     language: ruby
@@ -384,6 +429,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.10
     os: osx
     language: ruby
@@ -407,6 +455,9 @@ jobs:
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
     - bundle exec rake test:kitchen:attributes-local test:kitchen:plug-ins-local test:kitchen:variables-local
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - stage: Integration Tests on Windows
     name: Terraform 0.11.4
     os: windows
@@ -428,6 +479,9 @@ jobs:
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
       'test:kitchen:variables-local'"
+    cache:
+      directories:
+      - vendor/bundle
   - name: Terraform 0.11.5
     os: windows
     language: shell
@@ -448,6 +502,9 @@ jobs:
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
       'test:kitchen:variables-local'"
+    cache:
+      directories:
+      - vendor/bundle
   - name: Terraform 0.11.6
     os: windows
     language: shell
@@ -468,6 +525,9 @@ jobs:
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
       'test:kitchen:variables-local'"
+    cache:
+      directories:
+      - vendor/bundle
   - name: Terraform 0.11.7
     os: windows
     language: shell
@@ -488,6 +548,9 @@ jobs:
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
       'test:kitchen:variables-local'"
+    cache:
+      directories:
+      - vendor/bundle
   - name: Terraform 0.11.8
     os: windows
     language: shell
@@ -508,6 +571,9 @@ jobs:
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
       'test:kitchen:variables-local'"
+    cache:
+      directories:
+      - vendor/bundle
   - name: Terraform 0.11.9
     os: windows
     language: shell
@@ -528,6 +594,9 @@ jobs:
     script:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-local' 'test:kitchen:plug-ins-local'
       'test:kitchen:variables-local'"
+    cache:
+      directories:
+      - vendor/bundle
   - stage: Deploy to RubyGems
     dist: trusty
     language: ruby
@@ -536,6 +605,7 @@ jobs:
       secure: "HW2zmi2JLs6x3MgnqVz/qUizy29mMOd4lJJceMZiNV8FbK36FWu05Ix3xUs/yDtAr1fkkgiljmtNFpsDUjVrVNbSfzzZltx3FFV3qougBRiZXy/7HGCpDQZcVvuisBeYdVMApA4lulyuy7NFFWNbKc7QImyyyS1hFKBxNvyLa+Nt/5OAZZ9BpdruCi1g0wiADZF/296SFTeiorj+EpD7ZZXUrlU/AS0dhW6X+W5AnA17I9hWvauHCht51V5dCZ58UNMXNyLM3DoZwxTYP+txCPcd3DJR7ZwVrbt8tgtnidD9Rnass1ku2z2bLgpbJIc/NbR2pt+CrGYBGsfN7BiYLbylyA/dnnIatSAbfsqwRt6P+iLM40mbFSri/AdN3mjb2vOHINAEF2Z/QoiVRmZV1m1lJTec/Dlp2u1cL1Rt33B9iNKJjEQKe3vgXzB7Gxb654BBTZ5+t2ATbyb7bgn4O6Xdj0Z8OB73E60AUlGZZE17zPU/7n0C6icwxLZxVcpZCD25g1cgTkFepqmPPtashOE07XR8TjD5WLxL6uphpZwGmelLp9zhv8MhkVNFPMFYGEJ268lG1wtXK7G3EfqMepPeEOJIesNVu8RYjEA8G5U/2SMDV4EucWv0c/izf7bWy3Xx4TmEAbUmRscJLeCK62KBk3SEr1s6ZNTgpT8W1/8="
     install: true
     script: true
+    cache: false
     before_deploy:
     - echo $rubygems_private_key_password |
       gpg --decrypt --output certs/gem-private_key.pem --passphrase-fd 0 certs/gem-private_key.pem.gpg
