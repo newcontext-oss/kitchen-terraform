@@ -8,6 +8,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.1.0] - 2018-12-09
+
 ## Changed
 
 - The bundled version of InSpec is now ~> 3.0. Despite the major
@@ -562,7 +564,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.6...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.1.0...HEAD
+[4.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.6...v4.1.0
 [4.0.6]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.5...v4.0.6
 [4.0.5]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.4...v4.0.5
 [4.0.4]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.3...v4.0.4

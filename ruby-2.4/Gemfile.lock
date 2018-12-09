@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    kitchen-terraform (4.0.6)
+    kitchen-terraform (4.1.0)
       dry-types (~> 0.9)
       dry-validation (~> 0.10)
       inspec (~> 3.0)
