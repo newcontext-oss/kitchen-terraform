@@ -27,3 +27,19 @@ resource "docker_container" "host" {
     file    = "/root/.ssh/authorized_keys"
   }
 }
+
+resource "docker_container" "bastion_host" {
+  image    = "${docker_image.ubuntu_sshd.name}"
+  must_run = true
+  name     = "bastion-host"
+
+  ports {
+    external = 2223
+    internal = 22
+  }
+
+  upload {
+    content = "${file("${path.module}/id_ed25519.pub")}"
+    file    = "/root/.ssh/authorized_keys"
+  }
+}
