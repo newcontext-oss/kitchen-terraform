@@ -62,6 +62,9 @@ suites:
           password: root
           port: 2222
           proxy_command: nc %h %p
+          shell: true
+          shell_command: /bin/sh
+          shell_options: -x
           user: root
   - name: plug-ins
     driver:
