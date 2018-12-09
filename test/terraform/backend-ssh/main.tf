@@ -7,6 +7,11 @@ data "docker_registry_image" "ubuntu_sshd" {
 }
 
 resource "docker_network" "hosts" {
+  ipam_config {
+    gateway = "172.21.0.1/16"
+    subnet  = "172.21.0.0/16"
+  }
+
   name = "hosts"
 }
 
@@ -22,8 +27,8 @@ resource "docker_container" "host" {
   name     = "host"
 
   networks_advanced {
-    aliases = ["host"]
-    name    = "${docker_network.hosts.name}"
+    ipv4_address = "172.21.0.2/16"
+    name         = "${docker_network.hosts.name}"
   }
 
   ports {

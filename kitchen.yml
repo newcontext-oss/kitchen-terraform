@@ -51,7 +51,7 @@ suites:
           bastion_port: 2223
           bastion_user: root
           hosts:
-            - host
+            - 172.21.0.2
           key_files:
             - test/terraform/backend-ssh/id_ed25519
           port: 2222
