@@ -96,6 +96,8 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    before_script:
+    - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
     - bundle exec rake test:kitchen:all
     cache:
@@ -125,6 +127,8 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    before_script:
+    - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
     - bundle exec rake test:kitchen:all
     cache:
@@ -154,6 +158,8 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    before_script:
+    - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
     - bundle exec rake test:kitchen:all
     cache:
@@ -183,6 +189,8 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    before_script:
+    - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
     - bundle exec rake test:kitchen:all
     cache:
@@ -212,6 +220,8 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    before_script:
+    - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
     - bundle exec rake test:kitchen:all
     cache:
@@ -241,6 +251,8 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    before_script:
+    - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
     - bundle exec rake test:kitchen:all
     cache:
@@ -270,6 +282,8 @@ jobs:
       grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
     - unzip terraform-provider-local_1.1.0_linux_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    before_script:
+    - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
     - bundle exec rake test:kitchen:all
     cache:
