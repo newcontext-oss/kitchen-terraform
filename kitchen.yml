@@ -61,6 +61,7 @@ suites:
           hosts_output: hosts
           password: root
           port: 2222
+          proxy_command: nc %h %p
           user: root
   - name: plug-ins
     driver:
