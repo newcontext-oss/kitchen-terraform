@@ -45,7 +45,7 @@ suites:
       root_module_directory: test/terraform/backend-ssh
     verifier:
       systems:
-        - name: bastion host with static hosts and key files
+        - name: bastion, hosts, key files
           backend: ssh
           bastion_host: localhost
           bastion_port: 2223
@@ -56,7 +56,7 @@ suites:
             - test/terraform/backend-ssh/id_ed25519
           port: 22
           user: root
-        - name: hosts output and password
+        - name: hosts output, password, proxy command, shell
           backend: ssh
           hosts_output: hosts
           password: root
