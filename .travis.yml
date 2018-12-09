@@ -603,6 +603,9 @@ jobs:
     rvm: 2.4.1
     env:
       secure: "HW2zmi2JLs6x3MgnqVz/qUizy29mMOd4lJJceMZiNV8FbK36FWu05Ix3xUs/yDtAr1fkkgiljmtNFpsDUjVrVNbSfzzZltx3FFV3qougBRiZXy/7HGCpDQZcVvuisBeYdVMApA4lulyuy7NFFWNbKc7QImyyyS1hFKBxNvyLa+Nt/5OAZZ9BpdruCi1g0wiADZF/296SFTeiorj+EpD7ZZXUrlU/AS0dhW6X+W5AnA17I9hWvauHCht51V5dCZ58UNMXNyLM3DoZwxTYP+txCPcd3DJR7ZwVrbt8tgtnidD9Rnass1ku2z2bLgpbJIc/NbR2pt+CrGYBGsfN7BiYLbylyA/dnnIatSAbfsqwRt6P+iLM40mbFSri/AdN3mjb2vOHINAEF2Z/QoiVRmZV1m1lJTec/Dlp2u1cL1Rt33B9iNKJjEQKe3vgXzB7Gxb654BBTZ5+t2ATbyb7bgn4O6Xdj0Z8OB73E60AUlGZZE17zPU/7n0C6icwxLZxVcpZCD25g1cgTkFepqmPPtashOE07XR8TjD5WLxL6uphpZwGmelLp9zhv8MhkVNFPMFYGEJ268lG1wtXK7G3EfqMepPeEOJIesNVu8RYjEA8G5U/2SMDV4EucWv0c/izf7bWy3Xx4TmEAbUmRscJLeCK62KBk3SEr1s6ZNTgpT8W1/8="
+    before_install:
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
     install: true
     script: true
     cache: false
