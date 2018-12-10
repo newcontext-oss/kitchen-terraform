@@ -1,2 +1,9 @@
 ---
 name: attributes
+attributes:
+  - name: second_output
+    type: string
+    required: true
+  - name: third_output
+    type: string
+    required: true

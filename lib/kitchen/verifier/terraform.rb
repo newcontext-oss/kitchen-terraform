@@ -66,7 +66,7 @@ module Kitchen
     # === Ruby Interface
     #
     # This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
-    # :reek:PrimaDonnaMethod { exclude: [ finalize_config!, load_needed_dependencies! ] }
+    # :reek:MissingSafeMethod { exclude: [ finalize_config!, load_needed_dependencies! ] }
     class Terraform
       include ::Kitchen::Configurable
       include ::Kitchen::Logging

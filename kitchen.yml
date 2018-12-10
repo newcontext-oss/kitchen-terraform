@@ -40,6 +40,32 @@ suites:
             second_output: third_output
           controls:
             - precedence
+  - name: backend-ssh
+    driver:
+      root_module_directory: test/terraform/backend-ssh
+    verifier:
+      systems:
+        - name: bastion, hosts, key files
+          backend: ssh
+          bastion_host: localhost
+          bastion_port: 2223
+          bastion_user: root
+          hosts:
+            - 172.21.0.2
+          key_files:
+            - test/terraform/backend-ssh/id_ed25519
+          port: 22
+          user: root
+        - name: hosts output, password, proxy command, shell
+          backend: ssh
+          hosts_output: hosts
+          password: root
+          port: 2222
+          proxy_command: nc %h %p
+          shell: true
+          shell_command: /bin/sh
+          shell_options: -x
+          user: root
   - name: plug-ins
     driver:
       plugin_directory: test/terraform/Plug Ins/Plug In Directory

@@ -6,7 +6,6 @@ source "https://rubygems.org/" do
   gemspec
 
   group :test do
-    gem "rake"
-    gem "tty-which"
+    gem "rake", "~> 12.3"
   end
 end

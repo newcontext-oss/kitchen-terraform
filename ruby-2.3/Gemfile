@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
-ruby "~> 2.4"
+ruby "~> 2.3"
 
 source "https://rubygems.org/" do
-  gemspec
+  gemspec path: "../"
 
   group :test do
-    gem "rake"
-    gem "tty-which"
+    gem "rake", "~> 12.3"
   end
 end
