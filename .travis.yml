@@ -490,6 +490,7 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
+      - /c/ProgramData/chocolatey/bin
       - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.5
@@ -514,6 +515,7 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
+      - /c/ProgramData/chocolatey/bin
       - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.6
@@ -538,6 +540,7 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
+      - /c/ProgramData/chocolatey/bin
       - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.7
@@ -562,6 +565,7 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
+      - /c/ProgramData/chocolatey/bin
       - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.8
@@ -586,6 +590,7 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
+      - /c/ProgramData/chocolatey/bin
       - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.9
@@ -610,6 +615,7 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
+      - /c/ProgramData/chocolatey/bin
       - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - stage: Deploy to RubyGems
