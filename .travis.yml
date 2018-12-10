@@ -490,7 +490,6 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
-      - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.5
     os: windows
@@ -514,7 +513,6 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
-      - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.6
     os: windows
@@ -538,7 +536,6 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
-      - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.7
     os: windows
@@ -562,7 +559,6 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
-      - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.8
     os: windows
@@ -586,7 +582,6 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
-      - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - name: Terraform 0.11.9
     os: windows
@@ -610,7 +605,6 @@ jobs:
       'test:kitchen:variables-local'"
     cache:
       directories:
-      - /c/ProgramData/chocolatey/lib/terraform/tools
       - vendor/bundle
   - stage: Deploy to RubyGems
     dist: trusty
