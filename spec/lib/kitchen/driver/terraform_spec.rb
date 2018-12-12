@@ -189,7 +189,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance.finalize_config! kitchen_instance
     end
 
-    shared_examples "terraform: get; validate; apply; output" do
+    shared_examples "terraform: get; validate; apply" do
       context "when `terraform get` results in failure" do
         before do
           shell_out_run_failure(
@@ -295,7 +295,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
         end
 
-        it_behaves_like "terraform: get; validate; apply; output"
+        it_behaves_like "terraform: get; validate; apply"
       end
     end
 
@@ -304,7 +304,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
       end
 
-      it_behaves_like "terraform: get; validate; apply; output"
+      it_behaves_like "terraform: get; validate; apply"
     end
   end
 
