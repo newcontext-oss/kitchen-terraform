@@ -262,7 +262,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #
   # @raise [::Kitchen::Terraform::Error] if the retrieval fails.
   # @return [void]
-  # @yieldparam output [::String] the state output.
+  # @yieldparam output [::Hash] the state output.
   def retrieve_outputs(&block)
     run_workspace_select_instance
     ::Kitchen::Terraform::Command::Output.run(

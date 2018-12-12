@@ -30,7 +30,7 @@ module ::Kitchen::Terraform::Command::Output
     #   command.
     # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
     # @param options [::Hash] options which adjust the execution of the command.
-    # @yieldparam output [::String] the standard output of the command parsed as JSON.
+    # @yieldparam output [::Hash] the standard output of the command parsed as JSON.
     def run(options:, &block)
       run_shell_out(
         options: options,
