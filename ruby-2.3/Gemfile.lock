@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    kitchen-terraform (4.1.0)
+    kitchen-terraform (4.1.1)
       dry-types (~> 0.9)
       dry-validation (~> 0.10)
       inspec (~> 3.0)
@@ -20,13 +20,13 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     autoprefixer-rails (8.6.5)
       execjs
-    aws-sdk (2.11.188)
-      aws-sdk-resources (= 2.11.188)
-    aws-sdk-core (2.11.188)
+    aws-sdk (2.11.189)
+      aws-sdk-resources (= 2.11.189)
+    aws-sdk-core (2.11.189)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.11.188)
-      aws-sdk-core (= 2.11.188)
+    aws-sdk-resources (2.11.189)
+      aws-sdk-core (= 2.11.189)
     aws-sigv4 (1.0.3)
     azure_graph_rbac (0.17.0)
       ms_rest_azure (~> 0.11.0)
@@ -264,7 +264,7 @@ GEM
       mixlib-versioning
       thor
     mixlib-log (2.0.4)
-    mixlib-shellout (2.4.2)
+    mixlib-shellout (2.4.4)
     mixlib-versioning (1.2.2)
     ms_rest (0.7.3)
       concurrent-ruby (~> 1.0)
@@ -340,7 +340,7 @@ GEM
     rubyntlm (0.6.2)
     rubyzip (1.2.2)
     sass (3.4.25)
-    semverse (2.0.0)
+    semverse (3.0.0)
     servolux (0.13.0)
     shellany (0.0.1)
     signet (0.11.0)
@@ -357,7 +357,7 @@ GEM
     temple (0.8.0)
     term-ansicolor (1.7.0)
       tins (~> 1.0)
-    test-kitchen (1.23.3)
+    test-kitchen (1.23.5)
       mixlib-install (~> 3.6)
       mixlib-shellout (>= 1.2, < 3.0)
       net-scp (~> 1.1)
@@ -373,7 +373,7 @@ GEM
     timeliness (0.3.8)
     tins (1.20.2)
     tomlrb (1.2.7)
-    train (1.5.6)
+    train (1.5.11)
       aws-sdk (~> 2)
       azure_graph_rbac (~> 0.16)
       azure_mgmt_key_vault (~> 0.17)
@@ -455,4 +455,4 @@ RUBY VERSION
    ruby 2.3.8p459
 
 BUNDLED WITH
-   1.17.1
+   1.17.2

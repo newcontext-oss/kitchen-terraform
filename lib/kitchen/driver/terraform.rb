@@ -257,12 +257,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     )
   end
 
-  # Retrieves the Terraform state outputs.
+  # Retrieves the Terraform state outputs for a Kitchen instance by selecting the test workspace and fetching the
+  # outputs.
   #
   # @raise [::Kitchen::Terraform::Error] if the retrieval fails.
   # @return [void]
-  # @yieldparam output [::String] the state output.
+  # @yieldparam output [::Hash] the state output.
   def retrieve_outputs(&block)
+    run_workspace_select_instance
     ::Kitchen::Terraform::Command::Output.run(
       options: {
         cwd: config_root_module_directory, live_stream: logger, timeout: config_command_timeout,
