@@ -21,6 +21,7 @@ require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
+require "support/kitchen/terraform/config_attribute/validation_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
 require "support/kitchen/terraform/config_attribute/lock_examples"
@@ -40,6 +41,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
       backend_configurations: {
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
+      },
+      validation_configurations: {
+        "check-variables": "true"
       },
       color: false,
       kitchen_root: kitchen_root,
@@ -143,6 +147,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::ValidationConfigurations"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
 

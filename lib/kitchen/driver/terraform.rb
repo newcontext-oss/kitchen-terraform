@@ -18,6 +18,7 @@ require "kitchen"
 require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/config_attribute/backend_configurations"
+require "kitchen/terraform/config_attribute/validation_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
 require "kitchen/terraform/config_attribute/lock"
@@ -191,6 +192,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
+  include ::Kitchen::Terraform::ConfigAttribute::ValidationConfigurations
+
   include ::Kitchen::Terraform::ConfigAttribute::Color
 
   include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
@@ -330,7 +333,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def apply_run_validate
     ::Kitchen::Terraform::ShellOut.run(
       command: "validate " \
-      "-check-variables=true " \
+      "#{validation_configurations_flags} " \
       "#{color_flag} " \
       "#{variables_flags} " \
       "#{variable_files_flags}",
@@ -346,6 +349,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def backend_configurations_flags
     config_backend_configurations.map do |key, value|
       "-backend-config=\"#{key}=#{value}\""
+    end.join " "
+  end
+
+  # api private
+  def validation_configurations_flags
+    config_validation_configurations.map do |key, value|
+      "-#{key}=#{value}"
     end.join " "
   end
 

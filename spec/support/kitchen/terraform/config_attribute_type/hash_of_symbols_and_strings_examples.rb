@@ -17,7 +17,7 @@
 require "support/kitchen/terraform/config_attribute_context"
 
 ::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings" do |attribute:|
+  .shared_examples "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings" do |attribute:, default_value:|
     include_context(
       "Kitchen::Terraform::ConfigAttribute",
       attribute: attribute
@@ -25,7 +25,7 @@ require "support/kitchen/terraform/config_attribute_context"
       context "when the config omits #{attribute.inspect}" do
         it_behaves_like(
           "a default value is used",
-          default_value: {}
+          default_value: default_value
         )
       end
 

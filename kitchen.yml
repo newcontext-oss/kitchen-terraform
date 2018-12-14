@@ -35,6 +35,7 @@ suites:
       - default
     driver:
       root_module_directory: test/terraform/attributes
+      validation_configurations: {}
     verifier:
       systems:
         - name: default

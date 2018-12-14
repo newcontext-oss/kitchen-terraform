@@ -17,10 +17,10 @@
 require "support/kitchen/terraform/config_attribute_type/hash_of_symbols_and_strings_examples"
 
 ::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::Variables" do
+  .shared_examples "Kitchen::Terraform::ConfigAttribute::ValidationConfigurations" do
     include_context(
       "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings",
-      attribute: :variables,
-      default_value: {}
+      attribute: :validation_configurations,
+      default_value: {"check-variables": "true"}
     )
   end

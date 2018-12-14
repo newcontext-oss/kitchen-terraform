@@ -20,6 +20,7 @@ require "support/kitchen/terraform/config_attribute_type/hash_of_symbols_and_str
   .shared_examples "Kitchen::Terraform::ConfigAttribute::BackendConfigurations" do
     include_context(
       "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings",
-      attribute: :backend_configurations
+      attribute: :backend_configurations,
+      default_value: {}
     )
   end
