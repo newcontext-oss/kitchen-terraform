@@ -135,6 +135,10 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::BackendConfigurations}
 #
+# ==== validation_configurations
+#
+# {include:Kitchen::Terraform::ConfigAttribute::ValidationConfigurations}
+#
 # ==== color
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Color}

@@ -25,7 +25,7 @@ require "kitchen/terraform/config_attribute_type/hash_of_symbols_and_strings"
 # Example::
 #   _
 #     validation_configurations:
-#       check-variables: true
+#       check-variables: "true"
 module ::Kitchen::Terraform::ConfigAttribute::ValidationConfigurations
   ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings
     .apply(
