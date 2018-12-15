@@ -3,7 +3,7 @@
 namespace :test do
   begin
     require "rspec/core/rake_task"
-    ::RSpec::Core::RakeTask.new :spec
+    ::RSpec::Core::RakeTask.new :rspec
   rescue ::LoadError
     puts "The gem named rspec is not available"
   end
@@ -17,4 +17,4 @@ namespace :test do
   end
 end
 
-task default: "test:spec"
+task default: "test:rspec"
