@@ -8,7 +8,7 @@ notifications:
 jobs:
   include:
   - stage: Unit Tests
-    name: Ruby 2.3 on Ubuntu 14.04
+    name: Ruby 2.3 on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.3.4
@@ -25,7 +25,7 @@ jobs:
     cache:
       directories:
       - ruby-2.3/vendor/bundle
-  - name: Ruby 2.4 with Code Climate on Ubuntu 14.04
+  - name: Ruby 2.4 with Code Climate on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.4.1
@@ -50,7 +50,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Ruby 2.5 on Ubuntu 14.04
+  - name: Ruby 2.5 on Ubuntu
     dist: trusty
     language: ruby
     rvm: '2.5'
@@ -66,7 +66,7 @@ jobs:
     cache:
       directories:
       - vendor/bundle
-  - stage: Integration Tests on Ubuntu 14.04
+  - stage: Integration Tests on Ubuntu
     name: Terraform 0.11.4
     dist: trusty
     language: ruby
