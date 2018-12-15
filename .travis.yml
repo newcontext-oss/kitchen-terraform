@@ -625,7 +625,6 @@ jobs:
       directories:
       - vendor/bundle
   - stage: Deploy to RubyGems
-    if: branch = master
     dist: trusty
     language: ruby
     rvm: 2.4.1
