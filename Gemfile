@@ -5,7 +5,7 @@ ruby "~> 2.5"
 source "https://rubygems.org/" do
   gemspec
 
-  group :kitchen do
+  group :backend_ssh do
     gem "bcrypt_pbkdf", "~> 1.0"
     gem "rbnacl", "~> 4.0"
     gem "rbnacl-libsodium", "~> 1.0"
