@@ -72,8 +72,8 @@ jobs:
     cache:
       directories:
       - vendor/bundle
-  - stage: Integration Tests on Ubuntu
-    name: Terraform 0.11.4
+  - stage: Integration Tests
+    name: Terraform 0.11.4 on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.4.1
@@ -105,7 +105,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.5
+  - name: Terraform 0.11.5 on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.4.1
@@ -137,7 +137,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.6
+  - name: Terraform 0.11.6 on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.4.1
@@ -169,7 +169,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.7
+  - name: Terraform 0.11.7 on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.4.1
@@ -201,7 +201,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.8
+  - name: Terraform 0.11.8 on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.4.1
@@ -233,7 +233,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.9
+  - name: Terraform 0.11.9 on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.4.1
@@ -265,7 +265,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.10
+  - name: Terraform 0.11.10 on Ubuntu
     dist: trusty
     language: ruby
     rvm: 2.4.1
@@ -297,8 +297,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - stage: Integration Tests on MacOS
-    name: Terraform 0.11.4
+  - name: Terraform 0.11.4 on MacOS
     os: osx
     language: ruby
     rvm: 2.4.3
@@ -325,7 +324,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.5
+  - name: Terraform 0.11.5 on MacOS
     os: osx
     language: ruby
     rvm: 2.4.3
@@ -352,7 +351,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.6
+  - name: Terraform 0.11.6 on MacOS
     os: osx
     language: ruby
     rvm: 2.4.3
@@ -379,7 +378,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.7
+  - name: Terraform 0.11.7 on MacOS
     os: osx
     language: ruby
     rvm: 2.4.3
@@ -406,7 +405,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.8
+  - name: Terraform 0.11.8 on MacOS
     os: osx
     language: ruby
     rvm: 2.4.3
@@ -433,7 +432,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.9
+  - name: Terraform 0.11.9 on MacOS
     os: osx
     language: ruby
     rvm: 2.4.3
@@ -460,7 +459,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - name: Terraform 0.11.10
+  - name: Terraform 0.11.10 on MacOS
     os: osx
     language: ruby
     rvm: 2.4.3
@@ -487,8 +486,7 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
-  - stage: Integration Tests on Windows
-    name: Terraform 0.11.4
+  - name: Terraform 0.11.4 on Windows
     os: windows
     language: shell
     before_install:
@@ -511,7 +509,7 @@ jobs:
     cache:
       directories:
       - vendor/bundle
-  - name: Terraform 0.11.5
+  - name: Terraform 0.11.5 on Windows
     os: windows
     language: shell
     before_install:
@@ -534,7 +532,7 @@ jobs:
     cache:
       directories:
       - vendor/bundle
-  - name: Terraform 0.11.6
+  - name: Terraform 0.11.6 on Windows
     os: windows
     language: shell
     before_install:
@@ -557,7 +555,7 @@ jobs:
     cache:
       directories:
       - vendor/bundle
-  - name: Terraform 0.11.7
+  - name: Terraform 0.11.7 on Windows
     os: windows
     language: shell
     before_install:
@@ -580,7 +578,7 @@ jobs:
     cache:
       directories:
       - vendor/bundle
-  - name: Terraform 0.11.8
+  - name: Terraform 0.11.8 on Windows
     os: windows
     language: shell
     before_install:
@@ -603,7 +601,7 @@ jobs:
     cache:
       directories:
       - vendor/bundle
-  - name: Terraform 0.11.9
+  - name: Terraform 0.11.9 on Windows
     os: windows
     language: shell
     before_install:
