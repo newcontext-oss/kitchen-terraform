@@ -26,26 +26,42 @@ module Test
         def define
           super
           namespace "kitchen" do
-            desc "Run orchestrated test instances with remote backends"
-            task "orchestrated-with-remote-backends": [
-              "test:kitchen:attributes-default",
-              "test:kitchen:backend-ssh-default",
-              "test:kitchen:plug-ins-default",
-              "test:kitchen:variables-default",
-              "test:kitchen:workspace-both",
-            ]
-            desc "Run orchestrated test instances without remote backends"
-            task "orchestrated-without-remote-backends": [
-              "test:kitchen:attributes-default",
-              "test:kitchen:plug-ins-default",
-              "test:kitchen:variables-default",
-              "test:kitchen:workspace-both",
-            ]
-            desc "Run workspace test instances"
-            task "workspace-both" do
-              config.instances.get_all(/workspace/).each(&:converge).each(&:verify).each(&:destroy)
-            end
+            define_orchestrated_with_remote_backends
+            define_orchestrated_without_remote_backends
+            define_workspace_both
           end
+        end
+
+        def define_orchestrated_with_remote_backends
+          desc "Run orchestrated test instances with remote backends"
+          task "orchestrated-with-remote-backends": [
+            "test:kitchen:attributes-default",
+            "test:kitchen:backend-ssh-default",
+            "test:kitchen:plug-ins-default",
+            "test:kitchen:variables-default",
+            "test:kitchen:workspace-both",
+          ]
+        end
+
+        def define_orchestrated_without_remote_backends
+          desc "Run orchestrated test instances without remote backends"
+          task "orchestrated-without-remote-backends": [
+                 "test:kitchen:attributes-default",
+                 "test:kitchen:plug-ins-default",
+                 "test:kitchen:variables-default",
+                 "test:kitchen:workspace-both",
+               ]
+        end
+
+        def define_workspace_both
+          desc "Run workspace test instances"
+          task "workspace-both" do
+            workspace_workflow
+          end
+        end
+
+        def workspace_workflow
+          config.instances.get_all(/workspace/).each(&:converge).each(&:verify).each(&:destroy)
         end
       end
     end
