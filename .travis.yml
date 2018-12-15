@@ -300,7 +300,7 @@ jobs:
     - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
@@ -326,7 +326,7 @@ jobs:
     - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
@@ -352,7 +352,7 @@ jobs:
     - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
@@ -378,7 +378,7 @@ jobs:
     - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
@@ -404,7 +404,7 @@ jobs:
     - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
@@ -430,7 +430,7 @@ jobs:
     - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
@@ -456,7 +456,7 @@ jobs:
     - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
@@ -479,7 +479,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.4
@@ -501,7 +501,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.5
@@ -523,7 +523,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.6
@@ -545,7 +545,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.7
@@ -567,7 +567,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.8
@@ -589,7 +589,7 @@ jobs:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
     - bundle config --local jobs $(nproc --ignore=1)
-    - bundle config --local without development
+    - bundle config --local without development:kitchen
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.9
