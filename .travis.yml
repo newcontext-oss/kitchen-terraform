@@ -100,8 +100,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
-      test:kitchen:variables-default test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-with-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -132,8 +131,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
-      test:kitchen:variables-default test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-with-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -164,8 +162,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
-      test:kitchen:variables-default test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-with-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -196,8 +193,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
-      test:kitchen:variables-default test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-with-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -228,8 +224,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
-      test:kitchen:variables-default test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-with-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -260,8 +255,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
-      test:kitchen:variables-default test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-with-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -292,8 +286,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
-      test:kitchen:variables-default test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-with-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -319,8 +312,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
-      test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-without-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -346,8 +338,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
-      test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-without-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -373,8 +364,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
-      test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-without-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -400,8 +390,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
-      test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-without-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -427,8 +416,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
-      test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-without-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -454,8 +442,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
-      test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-without-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -481,8 +468,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
-      test:kitchen:workspace-both
+    - bundle exec rake test:kitchen:orchestrated-without-remote-backends
     cache:
       directories:
       - ruby-2.4/vendor/bundle
@@ -504,8 +490,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-default' 'test:kitchen:plug-ins-default' \
-      'test:kitchen:variables-default' 'test:kitchen:workspace-both'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
     cache:
       directories:
       - vendor/bundle
@@ -527,8 +512,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-default' 'test:kitchen:plug-ins-default' \
-      'test:kitchen:variables-default' 'test:kitchen:workspace-both'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
     cache:
       directories:
       - vendor/bundle
@@ -550,8 +534,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-default' 'test:kitchen:plug-ins-default' \
-      'test:kitchen:variables-default' 'test:kitchen:workspace-both'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
     cache:
       directories:
       - vendor/bundle
@@ -573,8 +556,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-default' 'test:kitchen:plug-ins-default' \
-      'test:kitchen:variables-default' 'test:kitchen:workspace-both'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
     cache:
       directories:
       - vendor/bundle
@@ -596,8 +578,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-default' 'test:kitchen:plug-ins-default' \
-      'test:kitchen:variables-default' 'test:kitchen:workspace-both'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
     cache:
       directories:
       - vendor/bundle
@@ -619,8 +600,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_windows_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-default' 'test:kitchen:plug-ins-default' \
-      'test:kitchen:variables-default' 'test:kitchen:workspace-both'"
+    - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
     cache:
       directories:
       - vendor/bundle

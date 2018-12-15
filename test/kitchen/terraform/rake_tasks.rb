@@ -26,6 +26,21 @@ module Test
         def define
           super
           namespace "kitchen" do
+            desc "Run orchestrated test instances with remote backends"
+            task "orchestrated-with-remote-backends": [
+              "test:kitchen:attributes-default",
+              "test:kitchen:backend-ssh-default",
+              "test:kitchen:plug-ins-default",
+              "test:kitchen:variables-default",
+              "test:kitchen:workspace-both",
+            ]
+            desc "Run orchestrated test instances without remote backends"
+            task "orchestrated-without-remote-backends": [
+              "test:kitchen:attributes-default",
+              "test:kitchen:plug-ins-default",
+              "test:kitchen:variables-default",
+              "test:kitchen:workspace-both",
+            ]
             desc "Run workspace test instances"
             task "workspace-both" do
               config.instances.get_all(/workspace/).each(&:converge).each(&:verify).each(&:destroy)
