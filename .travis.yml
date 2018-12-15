@@ -18,6 +18,7 @@ jobs:
     - bundle config --local gemfile ruby-2.3/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local without kitchen
     install:
     - bundle install
     script:
@@ -37,6 +38,7 @@ jobs:
     - bundle config --local gemfile ruby-2.4/Gemfile
     - bundle config --local deployment true
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local without kitchen
     install:
     - bundle install
     before_script:
@@ -59,6 +61,7 @@ jobs:
       --version="~> 1.17"
     - bundle config --local deployment true
     - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local without kitchen
     install:
     - bundle install
     script:
