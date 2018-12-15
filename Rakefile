@@ -8,8 +8,8 @@ namespace :test do
     puts "The gem named rspec is not available"
   end
   begin
-    require "kitchen/rake_tasks"
-    ::Kitchen::RakeTasks.new
+    require_relative "test/kitchen/terraform/rake_tasks"
+    ::Test::Kitchen::Terraform::RakeTasks.new
   rescue ::Kitchen::UserError
     puts "Terraform is not available; omitting Kitchen tasks"
   rescue ::LoadError

@@ -1,0 +1,6 @@
+---
+name: workspace
+attributes:
+  - name: workspace
+    type: string
+    required: true

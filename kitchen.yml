@@ -6,11 +6,33 @@ provisioner:
 verifier:
   name: terraform
 platforms:
-  - name: local
+  - name: default
+  - name: one
+    driver:
+      root_module_directory: test/terraform/workspace
+      variables:
+        workspace: one
+    verifier:
+      systems:
+        - name: one
+          backend: local
+          controls:
+            - workspace one
+  - name: two
+    driver:
+      root_module_directory: test/terraform/workspace
+      variables:
+        workspace: two
+    verifier:
+      systems:
+        - name: two
+          backend: local
+          controls:
+            - workspace two
 suites:
   - name: attributes
     includes:
-      - local
+      - default
     driver:
       root_module_directory: test/terraform/attributes
     verifier:
@@ -41,6 +63,8 @@ suites:
           controls:
             - precedence
   - name: backend-ssh
+    includes:
+      - default
     driver:
       root_module_directory: test/terraform/backend-ssh
     verifier:
@@ -67,6 +91,8 @@ suites:
           shell_options: -x
           user: root
   - name: plug-ins
+    includes:
+      - default
     driver:
       plugin_directory: test/terraform/Plug Ins/Plug In Directory
       root_module_directory: test/terraform/Plug Ins
@@ -76,7 +102,7 @@ suites:
           backend: local
   - name: variables
     includes:
-      - local
+      - default
     driver:
       root_module_directory: test/terraform/variables
       variable_files:
@@ -95,3 +121,7 @@ suites:
           backend: local
           controls:
             - variables
+  - name: workspace
+    includes:
+      - one
+      - two
