@@ -100,7 +100,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
       test:kitchen:variables-default test:kitchen:workspace-both
     cache:
       directories:
@@ -132,7 +132,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
       test:kitchen:variables-default test:kitchen:workspace-both
     cache:
       directories:
@@ -164,7 +164,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
       test:kitchen:variables-default test:kitchen:workspace-both
     cache:
       directories:
@@ -196,7 +196,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
       test:kitchen:variables-default test:kitchen:workspace-both
     cache:
       directories:
@@ -228,7 +228,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
       test:kitchen:variables-default test:kitchen:workspace-both
     cache:
       directories:
@@ -260,7 +260,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
       test:kitchen:variables-default test:kitchen:workspace-both
     cache:
       directories:
@@ -292,7 +292,7 @@ jobs:
     before_script:
     - chmod go-rw test/terraform/backend-ssh/id_ed25519
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:backend-ssh-default test:kitchen:plug-ins-default\
       test:kitchen:variables-default test:kitchen:workspace-both
     cache:
       directories:
@@ -319,7 +319,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
       test:kitchen:workspace-both
     cache:
       directories:
@@ -346,7 +346,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
       test:kitchen:workspace-both
     cache:
       directories:
@@ -373,7 +373,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
       test:kitchen:workspace-both
     cache:
       directories:
@@ -400,7 +400,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
       test:kitchen:workspace-both
     cache:
       directories:
@@ -427,7 +427,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
       test:kitchen:workspace-both
     cache:
       directories:
@@ -454,7 +454,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
       test:kitchen:workspace-both
     cache:
       directories:
@@ -481,7 +481,7 @@ jobs:
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
       -d test/terraform/Plug\ Ins/Plug\ In\ Directory
     script:
-    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default \
+    - bundle exec rake test:kitchen:attributes-default test:kitchen:plug-ins-default test:kitchen:variables-default\
       test:kitchen:workspace-both
     cache:
       directories:
