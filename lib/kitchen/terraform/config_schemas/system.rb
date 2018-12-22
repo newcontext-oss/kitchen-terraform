@@ -239,7 +239,7 @@ module Kitchen
       # identity files) for {https://linux.die.net/man/1/ssh Secure Shell (SSH) authentication} with hosts in the
       # Terraform state.
       #
-      # The +key_files+ key must be used in combination with +backend: ssh+.
+      # The +key_files+ key must be used in combination with <tt>backend: ssh</tt>.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
