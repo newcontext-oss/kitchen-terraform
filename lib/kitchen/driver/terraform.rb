@@ -278,9 +278,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::UserError] if the version is not supported.
   # @return [void]
   def verify_dependencies
-    logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify(
-      version: ::Kitchen::Terraform::Command::Version.run(working_directory: ::Dir.pwd, timeout: 600),
-    )
+    @version = ::Kitchen::Terraform::Command::Version.run working_directory: ::Dir.pwd, timeout: 600
+    logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify version: @version
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::UserError, error.message
   end
