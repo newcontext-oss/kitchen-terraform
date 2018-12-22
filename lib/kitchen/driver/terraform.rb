@@ -28,6 +28,7 @@ require "kitchen/terraform/config_attribute/plugin_directory"
 require "kitchen/terraform/config_attribute/root_module_directory"
 require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
+require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
 require "shellwords"
@@ -171,6 +172,10 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Variables}
 #
+# ==== verify_version
+#
+# {include:Kitchen::Terraform::ConfigAttribute::VerifyVersion}
+#
 # @example Describe the create command
 #   kitchen help create
 # @example Create a Test Kitchen instance
@@ -209,6 +214,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
 
   include ::Kitchen::Terraform::ConfigAttribute::Variables
+
+  include ::Kitchen::Terraform::ConfigAttribute::VerifyVersion
 
   include ::Kitchen::Terraform::Configurable
 
@@ -273,13 +280,17 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     )
   end
 
-  # Verifies that the Terraform version available to the driver is supported.
+  # Verifies support for the available version of Terraform.
   #
   # @raise [::Kitchen::UserError] if the version is not supported.
   # @return [void]
   def verify_dependencies
     @version = ::Kitchen::Terraform::Command::Version.run working_directory: ::Dir.pwd, timeout: 600
-    logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify version: @version
+    if config_verify_version
+      logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify version: @version
+    else
+      logger.warn "Verification of support for the available version of Terraform is disabled"
+    end
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::UserError, error.message
   end

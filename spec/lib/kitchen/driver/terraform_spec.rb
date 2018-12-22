@@ -31,6 +31,7 @@ require "support/kitchen/terraform/config_attribute/plugin_directory_examples"
 require "support/kitchen/terraform/config_attribute/root_module_directory_examples"
 require "support/kitchen/terraform/config_attribute/variable_files_examples"
 require "support/kitchen/terraform/config_attribute/variables_examples"
+require "support/kitchen/terraform/config_attribute/verify_version_examples"
 require "support/kitchen/terraform/configurable_examples"
 require "support/kitchen/terraform/result_in_failure_matcher"
 require "support/kitchen/terraform/result_in_success_matcher"
@@ -55,6 +56,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
+      verify_version: verify_version,
     }
   end
 
@@ -81,6 +83,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :shell_out do
     class_double(::Kitchen::Terraform::ShellOut).as_stubbed_const
+  end
+
+  let :verify_version do
+    true
   end
 
   def shell_out_run_failure(command:, message: "mocked `terraform` failure", working_directory: kitchen_root)
@@ -167,6 +173,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::VariableFiles"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Variables"
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::VerifyVersion"
 
   it_behaves_like "Kitchen::Terraform::Configurable"
 
@@ -725,7 +733,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         ).and_return ::Kitchen::Terraform::Command::Version.new version_return_value
       end
 
-      context "when the value of the `terraform version` result is not supported" do
+      context "when the value of the `terraform version` result is not supported and verification is enabled" do
         let :version_return_value do
           "Terraform v0.11.3"
         end
@@ -734,6 +742,22 @@ require "support/kitchen/terraform/result_in_success_matcher"
           expect do
             subject.verify_dependencies
           end.to raise_error ::Kitchen::UserError, /not supported/
+        end
+      end
+
+      context "when the value of the `terraform version` result is not supported and verification is disabled" do
+        let :verify_version do
+          false
+        end
+
+        let :version_return_value do
+          "Terraform v0.11.3"
+        end
+
+        specify "should result in success" do
+          expect do
+            subject.verify_dependencies
+          end.not_to raise_error
         end
       end
 
