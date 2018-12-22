@@ -16,12 +16,13 @@
 
 require "kitchen"
 require "kitchen/terraform/error"
+require "rubygems"
 
 module Kitchen
   module Terraform
     module Command
       # Version is the class of objects which represent the <tt>terraform version</tt> command.
-      class Version
+      class Version < ::Gem::Version
         extend ::Kitchen::ShellOut
 
         class << self
@@ -32,7 +33,7 @@ module Kitchen
           # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
           # @return [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the command.
           def run(timeout:, working_directory:)
-            new output: run_command(
+            new run_command(
               "terraform version",
               cwd: working_directory,
               environment: {
@@ -41,16 +42,10 @@ module Kitchen
                 "TF_WARN_OUTPUT_ERRORS" => "true",
               },
               timeout: timeout,
-            )
+            ).slice(/v(\d+\.\d+\.\d+)/, 1)
           rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
             raise ::Kitchen::Terraform::Error, error.message
           end
-        end
-
-        private
-
-        def initialize(output:)
-          @output = output
         end
       end
     end

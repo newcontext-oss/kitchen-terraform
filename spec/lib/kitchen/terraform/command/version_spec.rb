@@ -28,6 +28,10 @@ require "kitchen/terraform/command/version"
     end
 
     describe "running `terraform version`" do
+      before do
+        allow(described_class).to receive(:run_command).and_return "Terraform v0.11.10"
+      end
+
       specify "should run `terraform version` in the provided working directory" do
         expect(described_class).to receive(:run_command).with(
           "terraform version",
@@ -98,7 +102,7 @@ require "kitchen/terraform/command/version"
 
     describe "initializing an instance" do
       before do
-        allow(described_class).to receive(:run_command).and_return "output"
+        allow(described_class).to receive(:run_command).and_return "Terraform v1.2.3"
       end
 
       specify "should run `terraform version` and return an instance" do
@@ -106,6 +110,16 @@ require "kitchen/terraform/command/version"
           be_a(::Kitchen::Terraform::Command::Version)
         )
       end
+
+      specify "should run `terraform version` and initialize the instance with the output" do
+        expect(described_class.run(timeout: timeout, working_directory: working_directory).version).to eq "1.2.3"
+      end
+    end
+  end
+
+  describe ".superclass" do
+    specify "should be Gem::Version" do
+      expect(described_class.superclass).to be ::Gem::Version
     end
   end
 end
