@@ -8,6 +8,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.2.0] - 2018-12-22
+
 ### Added
 
 - The driver gained a `:verify_version` configuration attribute which
@@ -576,7 +578,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.1.1...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.2.0...HEAD
+[4.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.1.1...v4.2.0
 [4.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.6...v4.1.0
 [4.0.6]: https://github.com/newcontext/kitchen-terraform/compare/v4.0.5...v4.0.6
