@@ -8,6 +8,12 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- The driver gained a `:verify_version` configuration attribute which
+  toggles verification of support for the available Terraform version.
+  This feature allows unsupported versions of Terraform to be used.
+
 ## [4.1.1] - 2018-12-13
 
 ### Fixed
