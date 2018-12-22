@@ -23,6 +23,7 @@ module Kitchen
     module Command
       # Version is the class of objects which represent the <tt>terraform version</tt> command.
       class Version < ::Gem::Version
+        extend ::Kitchen::Logging
         extend ::Kitchen::ShellOut
 
         class << self
@@ -45,6 +46,12 @@ module Kitchen
             )
           rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
             raise ::Kitchen::Terraform::Error, error.message
+          end
+
+          private
+
+          def logger
+            ::Kitchen.logger
           end
         end
 
