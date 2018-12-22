@@ -140,20 +140,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
       )
   end
 
-  shared_examples "the `terraform workspace <kitchen-instance>` subcommand results in success" do
-    let :subcommand do
-      "select"
-    end
-
-    before do
-      shell_out_run_success command: "workspace #{subcommand} kitchen-terraform-test-suite-test-platform"
-    end
-
-    it do
-      is_expected.to_not raise_error
-    end
-  end
-
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
@@ -324,9 +310,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   describe "#create" do
     subject do
-      lambda do
-        described_instance.create({})
-      end
+      described_instance
     end
 
     before do
@@ -335,20 +319,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform init` results in failure" do
       before do
-        shell_out_run_failure(
-          command: /init/,
-          message: "mocked `terraform init` failure",
-        )
+        shell_out_run_failure command: /init/, message: "mocked `terraform init` failure"
       end
 
-      it do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::ActionFailed,
-              "mocked `terraform init` failure"
-            )
-          )
+      specify "should result in an action failed error with the failed command output" do
+        expect do
+          subject.create({})
+        end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform init` failure"
       end
     end
 
@@ -389,37 +366,43 @@ require "support/kitchen/terraform/result_in_success_matcher"
             )
           end
 
-          it do
-            is_expected
-              .to(
-                raise_error(
-                  ::Kitchen::ActionFailed,
-                  "mocked `terraform workspace new <kitchen-instance>` failure"
-                )
-              )
+          specify "should result in an action failed error with the failed command output" do
+            expect do
+              subject.create({})
+            end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace new <kitchen-instance>` failure"
           end
         end
 
         context "when `terraform workspace new <kitchen-instance>` results in success" do
-          it_behaves_like "the `terraform workspace <kitchen-instance>` subcommand results in success" do
-            let :subcommand do
-              "new"
-            end
+          before do
+            shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
+          end
+
+          specify "should result in success" do
+            expect do
+              subject.create({})
+            end.not_to raise_error
           end
         end
       end
 
       context "when `terraform workspace select <kitchen-instance>` results in success" do
-        it_behaves_like "the `terraform workspace <kitchen-instance>` subcommand results in success"
+        before do
+          shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
+        end
+
+        specify "should result in success" do
+          expect do
+            subject.create({})
+          end.not_to raise_error
+        end
       end
     end
   end
 
   describe "#destroy" do
     subject do
-      lambda do
-        described_instance.destroy({})
-      end
+      described_instance
     end
 
     before do
@@ -428,20 +411,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform init` results in failure" do
       before do
-        shell_out_run_failure(
-          command: /init/,
-          message: "mocked `terraform init` failure",
-        )
+        shell_out_run_failure command: /init/, message: "mocked `terraform init` failure"
       end
 
-      it do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::ActionFailed,
-              "mocked `terraform init` failure"
-            )
-          )
+      specify "should result in an action failed error with the failed command output" do
+        expect do
+          subject.destroy({})
+        end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform init` failure"
       end
     end
 
@@ -481,14 +457,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
             )
           end
 
-          it do
-            is_expected
-              .to(
-                raise_error(
-                  ::Kitchen::ActionFailed,
-                  "mocked `terraform workspace new <kitchen-instance>` failure"
-                )
-              )
+          specify "should result in an action failed error with the failed command output" do
+            expect do
+              subject.destroy({})
+            end.to raise_error(
+              ::Kitchen::ActionFailed,
+              "mocked `terraform workspace new <kitchen-instance>` failure"
+            )
           end
         end
       end
@@ -500,20 +475,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform destroy` results in failure" do
           before do
-            shell_out_run_failure(
-              command: /destroy/,
-              message: "mocked `terraform destroy` failure",
-            )
+            shell_out_run_failure command: /destroy/, message: "mocked `terraform destroy` failure"
           end
 
-          it do
-            is_expected
-              .to(
-                raise_error(
-                  ::Kitchen::ActionFailed,
-                  "mocked `terraform destroy` failure"
-                )
-              )
+          specify "should result in an action failed error with the failed command output" do
+            expect do
+              subject.destroy({})
+            end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform destroy` failure"
           end
         end
 
@@ -543,14 +511,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
               )
             end
 
-            it do
-              is_expected
-                .to(
-                  raise_error(
-                    ::Kitchen::ActionFailed,
-                    "mocked `terraform workspace select default` failure"
-                  )
-                )
+            specify "should result in an action failed error with the failed command output" do
+              expect do
+                subject.destroy({})
+              end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace select default` failure"
             end
           end
 
@@ -567,22 +531,25 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 )
               end
 
-              it do
-                is_expected
-                  .to(
-                    raise_error(
-                      ::Kitchen::ActionFailed,
-                      "mocked `terraform workspace delete <kitchen-instance>` failure"
-                    )
-                  )
+              specify "should result in an action failed error with the failed command output" do
+                expect do
+                  subject.destroy({})
+                end.to raise_error(
+                  ::Kitchen::ActionFailed,
+                  "mocked `terraform workspace delete <kitchen-instance>` failure"
+                )
               end
             end
 
             context "when `terraform workspace delete <kitchen-instance>` results in success" do
-              it_behaves_like "the `terraform workspace <kitchen-instance>` subcommand results in success" do
-                let :subcommand do
-                  "delete"
-                end
+              before do
+                shell_out_run_success command: "workspace delete kitchen-terraform-test-suite-test-platform"
+              end
+
+              specify "should result in success" do
+                expect do
+                  subject.destroy({})
+                end.not_to raise_error
               end
             end
           end
