@@ -15,53 +15,48 @@
 # limitations under the License.
 
 require "kitchen/terraform/client_version_verifier"
+require "kitchen/terraform/command/version"
 
-::RSpec
-  .describe ::Kitchen::Terraform::ClientVersionVerifier do
-    describe "#verify" do
-      subject do
-        lambda do
-          described_class
-            .new
-            .verify(version_output: "Terraform v#{version}")
+::RSpec.describe ::Kitchen::Terraform::ClientVersionVerifier do
+  describe "#verify" do
+    shared_examples "the version is unsupported" do
+      specify "should result in failure with a message which provides a remedy for the lack of support" do
+        expect do
+          subject.verify version: version
+        end.to result_in_failure.with_message "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
+      end
+    end
+
+    shared_examples "the version is supported" do
+      specify "should result in success with a message indicating support" do
+        expect do
+          subject.verify version: version
+        end.to result_in_success.with_message "Terraform v#{version} is supported"
+      end
+    end
+
+    context "when the version is 0.11.3" do
+      it_behaves_like "the version is unsupported" do
+        let :version do
+          ::Kitchen::Terraform::Command::Version.new "Terraform v0.11.3"
         end
       end
+    end
 
-      shared_examples "the version is unsupported" do
-        it do
-          is_expected
-            .to result_in_failure.with_message "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
+    context "when the version is 0.11.4" do
+      it_behaves_like "the version is supported" do
+        let :version do
+          ::Kitchen::Terraform::Command::Version.new "Terraform v0.11.4"
         end
       end
+    end
 
-      shared_examples "the version is supported" do
-        it do
-          is_expected.to result_in_success.with_message "Terraform v#{version} is supported"
-        end
-      end
-
-      context "when the version is 0.11.3" do
-        it_behaves_like "the version is unsupported" do
-          let :version do
-            "0.11.3"
-          end
-        end
-      end
-
-      context "when the version is 0.11.4" do
-        it_behaves_like "the version is supported" do
-          let :version do
-            "0.11.4"
-          end
-        end
-      end
-
-      context "when the version is 0.12.0" do
-        it_behaves_like "the version is unsupported" do
-          let :version do
-            "0.12.0"
-          end
+    context "when the version is 0.12.0" do
+      it_behaves_like "the version is unsupported" do
+        let :version do
+          ::Kitchen::Terraform::Command::Version.new "Terraform v0.12.0"
         end
       end
     end
   end
+end

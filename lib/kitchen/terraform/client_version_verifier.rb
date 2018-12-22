@@ -27,38 +27,19 @@ class ::Kitchen::Terraform::ClientVersionVerifier
   # @param version_output [::String] the Terraform Client version subcommand output.
   # @raise [::Kitchen::Terraform::Error] if the version is not supported.
   # @return [::String] a confirmation that the version is supported.
-  def verify(version_output:)
-    ::Gem::Version
-      .new(
-        version_output
-          .slice(
-            /v(\d+\.\d+\.\d+)/,
-            1
-          )
-      )
-      .tap do |version|
-        requirement
-          .satisfied_by? version or
-          raise(
-            ::Kitchen::Terraform::Error,
-            "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
-          )
+  def verify(version:)
+    @requirement.satisfied_by? version or raise(
+      ::Kitchen::Terraform::Error,
+      "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
+    )
 
-        return "Terraform v#{version} is supported"
-      end
+    return "Terraform v#{version} is supported"
   end
 
   private
 
-  attr_reader :requirement
-
   # @api private
   def initialize
-    @requirement =
-      ::Gem::Requirement
-        .new(
-          ">= 0.11.4",
-          "< 0.12.0"
-        )
+    @requirement = ::Gem::Requirement.new ">= 0.11.4", "< 0.12.0"
   end
 end

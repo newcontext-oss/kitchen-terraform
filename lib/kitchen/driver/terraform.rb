@@ -17,6 +17,7 @@
 require "kitchen"
 require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/command/output"
+require "kitchen/terraform/command/version"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
@@ -278,14 +279,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [void]
   def verify_dependencies
     logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify(
-      version_output: ::Kitchen::Terraform::ShellOut.run(
-        command: "version",
-        options: {
-          cwd: ::Dir.pwd,
-          live_stream: logger,
-          timeout: 600,
-        },
-      ),
+      version: ::Kitchen::Terraform::Command::Version.run(working_directory: ::Dir.pwd, timeout: 600),
     )
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::UserError, error.message

@@ -42,10 +42,16 @@ module Kitchen
                 "TF_WARN_OUTPUT_ERRORS" => "true",
               },
               timeout: timeout,
-            ).slice(/v(\d+\.\d+\.\d+)/, 1)
+            )
           rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
             raise ::Kitchen::Terraform::Error, error.message
           end
+        end
+
+        private
+
+        def initialize(version)
+          super version.slice(/Terraform v(\d+\.\d+\.\d+)/, 1)
         end
       end
     end

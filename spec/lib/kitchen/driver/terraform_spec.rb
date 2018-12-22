@@ -18,6 +18,7 @@ require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/client_version_verifier"
+require "kitchen/terraform/command/version"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
@@ -35,6 +36,10 @@ require "support/kitchen/terraform/result_in_failure_matcher"
 require "support/kitchen/terraform/result_in_success_matcher"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
+  let :command_timeout do
+    1234
+  end
+
   let :config do
     {
       backend_configurations: {
@@ -42,6 +47,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
       color: false,
+      command_timeout: command_timeout,
       kitchen_root: kitchen_root,
       plugin_directory: "/Arbitrary Directory/Plugin Directory",
       variable_files: ["/Arbitrary Directory/Variable File.tfvars"],
@@ -86,7 +92,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: working_directory,
               live_stream: kitchen_logger,
-              timeout: 600,
+              timeout: command_timeout,
             },
           )
           .and_raise(
@@ -105,7 +111,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: working_directory,
               live_stream: kitchen_logger,
-              timeout: 600,
+              timeout: command_timeout,
             },
           )
           .and_return(return_value)
@@ -121,7 +127,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: kitchen_root,
               live_stream: kitchen_logger,
-              timeout: 600,
+              timeout: command_timeout,
             },
           )
           .and_yield(standard_output: standard_output)
@@ -693,38 +699,30 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   describe "#verify_dependencies" do
     subject do
-      lambda do
-        described_instance.verify_dependencies
-      end
+      described_instance
     end
 
     context "when `terraform version` results in failure" do
       before do
-        shell_out_run_failure(
-          command: "version",
-          message: "mocked `terraform version` failure",
+        allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(
+          timeout: 600,
           working_directory: ::Dir.pwd,
-        )
+        ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform version` failure"
       end
 
-      it do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::UserError,
-              "mocked `terraform version` failure"
-            )
-          )
+      specify "should result in a user error with the failure message" do
+        expect do
+          subject.verify_dependencies
+        end.to raise_error ::Kitchen::UserError, "mocked `terraform version` failure"
       end
     end
 
     context "when `terraform version` results in success" do
       before do
-        shell_out_run_success(
-          command: "version",
-          return_value: version_return_value,
+        allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(
+          timeout: 600,
           working_directory: ::Dir.pwd,
-        )
+        ).and_return ::Kitchen::Terraform::Command::Version.new version_return_value
       end
 
       context "when the value of the `terraform version` result is not supported" do
@@ -732,14 +730,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "Terraform v0.11.3"
         end
 
-        it do
-          is_expected
-            .to(
-              raise_error(
-                ::Kitchen::UserError,
-                /not supported/
-              )
-            )
+        specify "should result in a user error with the message from the client version verifier" do
+          expect do
+            subject.verify_dependencies
+          end.to raise_error ::Kitchen::UserError, /not supported/
         end
       end
 
@@ -748,8 +742,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
           "Terraform v0.11.4"
         end
 
-        it do
-          is_expected.to_not raise_error
+        specify "should result in success" do
+          expect do
+            subject.verify_dependencies
+          end.to_not raise_error
         end
       end
     end
