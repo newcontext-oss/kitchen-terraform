@@ -29,11 +29,10 @@ module Kitchen
         class << self
           # The command is run by shelling out in an environment which is optimized for automating Terraform.
           #
-          # @param timout [::Integer] the value of the command timeout.
           # @param working_directory [::String] the directory in which to run the command.
           # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
           # @return [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the command.
-          def run(timeout:, working_directory:)
+          def run(working_directory:)
             new run_command(
               "terraform version",
               cwd: working_directory,
@@ -42,7 +41,6 @@ module Kitchen
                 "TF_IN_AUTOMATION" => "true",
                 "TF_WARN_OUTPUT_ERRORS" => "true",
               },
-              timeout: timeout,
             )
           rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
             raise ::Kitchen::Terraform::Error, error.message

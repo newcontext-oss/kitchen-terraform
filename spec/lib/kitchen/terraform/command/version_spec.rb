@@ -19,10 +19,6 @@ require "kitchen/terraform/command/version"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Version do
   describe ".run" do
-    let :timeout do
-      1234
-    end
-
     let :working_directory do
       "/working/directory"
     end
@@ -60,15 +56,8 @@ require "kitchen/terraform/command/version"
         )
       end
 
-      specify "should run `terraform version` within the provided timeout" do
-        expect(described_class).to receive(:run_command).with(
-          "terraform version",
-          including(timeout: timeout),
-        )
-      end
-
       after do
-        described_class.run timeout: timeout, working_directory: working_directory
+        described_class.run working_directory: working_directory
       end
     end
 
@@ -81,7 +70,7 @@ require "kitchen/terraform/command/version"
 
       specify "should result in failure with the failed command output" do
         expect do
-          described_class.run timeout: timeout, working_directory: working_directory
+          described_class.run working_directory: working_directory
         end.to result_in_failure.with_message "shell command failed"
       end
     end
@@ -95,7 +84,7 @@ require "kitchen/terraform/command/version"
 
       specify "should result in failure with the unexpected error message" do
         expect do
-          described_class.run timeout: timeout, working_directory: working_directory
+          described_class.run working_directory: working_directory
         end.to result_in_failure.with_message "unexpected error"
       end
     end
@@ -106,13 +95,13 @@ require "kitchen/terraform/command/version"
       end
 
       specify "should run `terraform version` and return an instance" do
-        expect(described_class.run(timeout: timeout, working_directory: working_directory)).to(
+        expect(described_class.run(working_directory: working_directory)).to(
           be_a(::Kitchen::Terraform::Command::Version)
         )
       end
 
       specify "should run `terraform version` and initialize the instance with the output" do
-        expect(described_class.run(timeout: timeout, working_directory: working_directory).version).to eq "1.2.3"
+        expect(described_class.run(working_directory: working_directory).version).to eq "1.2.3"
       end
     end
   end
