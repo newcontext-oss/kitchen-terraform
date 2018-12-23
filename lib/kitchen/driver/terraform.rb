@@ -32,6 +32,7 @@ require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
 require "shellwords"
+require "tty/which"
 
 # This namespace is defined by Kitchen.
 #
@@ -280,19 +281,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     )
   end
 
-  # Verifies support for the available version of Terraform.
+  # Verifies that the Terraform CLI is on the PATH.
   #
-  # @raise [::Kitchen::UserError] if the version is not supported.
+  # @raise [::Kitchen::UserError] if the Terraform CLI is not available.
   # @return [void]
   def verify_dependencies
-    @version = ::Kitchen::Terraform::Command::Version.run working_directory: ::Dir.pwd, timeout: 600
-    if config_verify_version
-      logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify version: @version
-    else
-      logger.warn "Verification of support for the available version of Terraform is disabled"
+    if !::TTY::Which.exist? "terraform"
+      raise ::Kitchen::UserError, "The Terraform CLI was not found on the PATH"
     end
-  rescue ::Kitchen::Terraform::Error => error
-    raise ::Kitchen::UserError, error.message
   end
 
   private

@@ -89,6 +89,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
     true
   end
 
+  shared_context "Terraform CLI available" do
+    before do
+      allow(::TTY::Which).to receive(:exist?).with("terraform").and_return true
+    end
+  end
+
   def shell_out_run_failure(command:, message: "mocked `terraform` failure", working_directory: kitchen_root)
     allow(shell_out)
       .to(
@@ -184,6 +190,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
         described_instance.apply &block
       end
     end
+
+    include_context "Terraform CLI available"
 
     before do
       described_instance.finalize_config! kitchen_instance
@@ -313,6 +321,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance
     end
 
+    include_context "Terraform CLI available"
+
     before do
       described_instance.finalize_config! kitchen_instance
     end
@@ -404,6 +414,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
     subject do
       described_instance
     end
+
+    include_context "Terraform CLI available"
 
     before do
       described_instance.finalize_config! kitchen_instance
@@ -677,67 +689,23 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance
     end
 
-    context "when `terraform version` results in failure" do
+    context "when the Terraform CLI is not found on the PATH" do
       before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(
-          timeout: 600,
-          working_directory: ::Dir.pwd,
-        ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform version` failure"
+        allow(::TTY::Which).to receive(:exist?).with("terraform").and_return false
       end
 
-      specify "should result in a user error with the failure message" do
+      specify "should result in a user error which indicates the CLI was not found on the PATH" do
         expect do
           subject.verify_dependencies
-        end.to raise_error ::Kitchen::UserError, "mocked `terraform version` failure"
+        end.to raise_error ::Kitchen::UserError, "The Terraform CLI was not found on the PATH"
       end
     end
 
-    context "when `terraform version` results in success" do
-      before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(
-          timeout: 600,
-          working_directory: ::Dir.pwd,
-        ).and_return ::Kitchen::Terraform::Command::Version.new version_return_value
-      end
-
-      context "when the value of the `terraform version` result is not supported and verification is enabled" do
-        let :version_return_value do
-          "Terraform v0.11.3"
-        end
-
-        specify "should result in a user error with the message from the client version verifier" do
-          expect do
-            subject.verify_dependencies
-          end.to raise_error ::Kitchen::UserError, /not supported/
-        end
-      end
-
-      context "when the value of the `terraform version` result is not supported and verification is disabled" do
-        let :verify_version do
-          false
-        end
-
-        let :version_return_value do
-          "Terraform v0.11.3"
-        end
-
-        specify "should result in success" do
-          expect do
-            subject.verify_dependencies
-          end.not_to raise_error
-        end
-      end
-
-      context "when the value of the `terraform version` result is supported" do
-        let :version_return_value do
-          "Terraform v0.11.4"
-        end
-
-        specify "should result in success" do
-          expect do
-            subject.verify_dependencies
-          end.to_not raise_error
-        end
+    context "when the Terraform CLI is found on the PATH" do
+      specify "should not result in an error" do
+        expect do
+          subject.verify_dependencies
+        end.not_to raise_error
       end
     end
   end
