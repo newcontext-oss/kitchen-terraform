@@ -867,6 +867,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     context "when the Terraform CLI is found on the PATH" do
+      include_context "Terraform CLI available"
+
       specify "should not result in an error" do
         expect do
           subject.verify_dependencies
