@@ -226,6 +226,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::Terraform::Error] if one of the steps fails.
   # @return [void]
   def apply(&block)
+    verify_version
     run_workspace_select_instance
     apply_run_get
     apply_run_validate
@@ -238,13 +239,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def create(_state)
+    verify_version
     create_run_init
     run_workspace_select_instance
   rescue ::Kitchen::Terraform::Error => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
+    raise ::Kitchen::ActionFailed, error.message
   end
 
   # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
@@ -254,16 +253,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def destroy(_state)
+    verify_version
     destroy_run_init
     run_workspace_select_instance
     destroy_run_destroy
     destroy_run_workspace_select_default
     destroy_run_workspace_delete_instance
   rescue ::Kitchen::Terraform::Error => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
+    raise ::Kitchen::ActionFailed, error.message
   end
 
   # Retrieves the Terraform state outputs for a Kitchen instance by selecting the test workspace and fetching the
@@ -508,6 +505,16 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     config_variables.map do |key, value|
       "-var=\"#{key}=#{value}\""
     end.join " "
+  end
+
+  def verify_version
+    if config_verify_version
+      logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify(
+        version: ::Kitchen::Terraform::Command::Version.run(working_directory: ::Dir.pwd),
+      )
+    else
+      logger.warn "Verification of support for the available version of Terraform is disabled"
+    end
   end
 
   def workspace_name
