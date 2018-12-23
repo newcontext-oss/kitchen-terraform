@@ -7,6 +7,7 @@ PATH
       inspec (~> 3.0)
       mixlib-shellout (~> 2.2)
       test-kitchen (~> 1.23)
+      tty-which (~> 0.4.0)
 
 GEM
   remote: https://rubygems.org/
@@ -434,6 +435,7 @@ GEM
       pastel (~> 0.7.2)
       strings (~> 0.1.0)
       tty-screen (~> 0.6.4)
+    tty-which (0.4.0)
     typhoeus (0.8.0)
       ethon (>= 0.8.0)
     tzinfo (1.2.5)
