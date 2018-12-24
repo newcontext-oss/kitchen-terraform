@@ -1,6 +1,4 @@
-branches:
- only:
- - master
+if: type != push or branch = master
 before_cache:
 - bundle clean
 git:
