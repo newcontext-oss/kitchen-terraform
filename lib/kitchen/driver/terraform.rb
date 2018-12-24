@@ -223,7 +223,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # Applies changes to the state by selecting the test workspace, updating the dependency modules, validating the root
   # module, and applying the state changes.
   #
-  # @raise [::Kitchen::Terraform::Error] if one of the steps fails.
+  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def apply(&block)
     verify_version
@@ -231,6 +231,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     apply_run_get
     apply_run_validate
     apply_run_apply
+  rescue ::Kitchen::Terraform::Error => error
+    raise ::Kitchen::ActionFailed, error.message
   end
 
   # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
@@ -266,7 +268,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # Retrieves the Terraform state outputs for a Kitchen instance by selecting the test workspace and fetching the
   # outputs.
   #
-  # @raise [::Kitchen::Terraform::Error] if the retrieval fails.
+  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   # @yieldparam output [::Hash] the state output.
   def retrieve_outputs(&block)
@@ -276,6 +278,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         cwd: config_root_module_directory, live_stream: logger, timeout: config_command_timeout,
       }, &block
     )
+  rescue ::Kitchen::Terraform::Error => error
+    raise ::Kitchen::ActionFailed, error.message
   end
 
   # Verifies that the Terraform CLI is on the PATH.

@@ -90,10 +90,5 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   def call(_state)
     instance.driver.apply
-  rescue ::Kitchen::Terraform::Error => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
   end
 end

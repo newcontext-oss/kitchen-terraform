@@ -62,14 +62,7 @@ require "support/kitchen/terraform/configurable_examples"
     describe "error handling" do
       context "when the driver create action is a failure" do
         before do
-          allow(driver)
-            .to(
-              receive(:apply)
-                .and_raise(
-                  ::Kitchen::Terraform::Error,
-                  "mocked Driver#create failure"
-                )
-            )
+          allow(driver).to receive(:apply).and_raise ::Kitchen::ActionFailed, "mocked Driver#create failure"
         end
 
         it do
