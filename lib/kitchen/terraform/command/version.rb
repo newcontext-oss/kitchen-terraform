@@ -50,8 +50,6 @@ module Kitchen
             raise ::Kitchen::Terraform::Error, error.message
           end
 
-          private
-
           def logger
             ::Kitchen.logger
           end

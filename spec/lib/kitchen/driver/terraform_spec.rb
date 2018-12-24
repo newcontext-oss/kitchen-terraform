@@ -49,7 +49,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       color: false,
       command_timeout: command_timeout,
       kitchen_root: kitchen_root,
-      plugin_directory: "/Arbitrary Directory/Plugin Directory",
+      plugin_directory: plugin_directory,
       variable_files: ["/Arbitrary Directory/Variable File.tfvars"],
       variables: {
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
@@ -78,6 +78,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :kitchen_root do
     "/kitchen/root"
+  end
+
+  let :plugin_directory do
+    "/Arbitrary Directory/Plugin Directory"
   end
 
   let :shell_out do
@@ -315,6 +319,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
               )
             end
+
+            specify "should result in success" do
+              expect do
+                subject.apply
+              end.not_to raise_error
+            end
           end
         end
       end
@@ -414,7 +424,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
             "-get=true " \
             "-get-plugins=true " \
-            "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
+            "-plugin-dir=\"#{plugin_directory}\" " \
             "-verify-plugins=true",
           )
         end
@@ -499,6 +509,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     include_context "Terraform CLI available"
+
+    let :plugin_directory do
+      nil
+    end
 
     before do
       described_instance.finalize_config! kitchen_instance
@@ -614,7 +628,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
             "-get=true " \
             "-get-plugins=true " \
-            "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
             "-verify-plugins=true",
           )
         end

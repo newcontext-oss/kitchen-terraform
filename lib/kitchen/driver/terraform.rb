@@ -373,7 +373,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "#{backend_configurations_flags} " \
       "-get=true " \
       "-get-plugins=true " \
-      "#{plugin_directory_flag} " \
+      "#{plugin_directory_flag}" \
       "-verify-plugins=true",
       options: {
         cwd: config_root_module_directory,
@@ -417,7 +417,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "#{backend_configurations_flags} " \
       "-get=true " \
       "-get-plugins=true " \
-      "#{plugin_directory_flag} " \
+      "#{plugin_directory_flag}" \
       "-verify-plugins=true",
       options: {
         cwd: config_root_module_directory,
@@ -469,15 +469,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def plugin_directory_flag
     if config_plugin_directory
-      "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}\""
+      "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}\" "
     else
       ""
     end
-  end
-
-  # @api private
-  def root_module_directory
-    ::Shellwords.escape config_root_module_directory
   end
 
   # @api private

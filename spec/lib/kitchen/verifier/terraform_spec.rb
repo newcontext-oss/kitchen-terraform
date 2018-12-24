@@ -25,20 +25,73 @@ require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
   let :config do
-    {color: false,
-     systems: [{attrs_outputs: {attribute_name: "output_name"}, attrs: ["attrs.yml"], backend: "backend",
-                backend_cache: false, bastion_host: "bastion_host", bastion_port: 5678, bastion_user: "bastion_user",
-                controls: ["control"], enable_password: "enable_password", hosts_output: "hosts",
-                key_files: ["first_key_file", "second_key_file"], name: "a-system", password: "password", path: "path",
-                port: 1234, proxy_command: "proxy_command", reporter: ["reporter"], self_signed: false, shell: false,
-                shell_command: "/bin/shell", shell_options: "--option=value", sudo: false, sudo_command: "/bin/sudo",
-                sudo_options: "--option=value", sudo_password: "sudo_password", show_progress: false, ssl: false,
-                user: "user", vendor_cache: "vendor_cache"}],
-     test_base_path: "/test/base/path"}
+    {
+      color: false,
+      systems: [
+        {
+          attrs_outputs: {attribute_name: "output_name"},
+          attrs: ["attrs.yml"],
+          backend: "backend",
+          backend_cache: false,
+          bastion_host: "bastion_host",
+          bastion_port: 5678,
+          bastion_user: "bastion_user",
+          controls: ["control"],
+          enable_password: "enable_password",
+          hosts_output: "hosts",
+          key_files: ["first_key_file", "second_key_file"],
+          name: "a-system-with-hosts",
+          password: "password",
+          path: "path",
+          port: 1234,
+          proxy_command: "proxy_command",
+          reporter: ["reporter"],
+          self_signed: false,
+          shell: false,
+          shell_command: "/bin/shell",
+          shell_options: "--option=value",
+          sudo: false,
+          sudo_command: "/bin/sudo",
+          sudo_options: "--option=value",
+          sudo_password: "sudo_password",
+          show_progress: false,
+          ssl: false,
+          user: "user",
+          vendor_cache: "vendor_cache",
+        },
+        {
+          name: "a-system-without-hosts",
+          backend: "backend",
+        },
+      ],
+      test_base_path: "/test/base/path",
+    }
   end
 
   let :described_instance do
     described_class.new config
+  end
+
+  let :driver do
+    ::Kitchen::Driver::Terraform.new
+  end
+
+  let :kitchen_instance do
+    ::Kitchen::Instance.new(
+      driver: driver,
+      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+      logger: logger,
+      platform: ::Kitchen::Platform.new(name: "test-platform"),
+      provisioner: ::Kitchen::Provisioner::Base.new,
+      state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
+      suite: ::Kitchen::Suite.new(name: "test-suite"),
+      transport: ::Kitchen::Transport::Ssh.new,
+      verifier: described_instance,
+    )
+  end
+
+  let :logger do
+    ::Kitchen::Logger.new
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
@@ -49,39 +102,23 @@ require "support/kitchen/terraform/configurable_examples"
 
   describe "#call" do
     subject do
-      lambda do
-        described_instance.call({})
-      end
-    end
-
-    let :driver do
-      ::Kitchen::Driver::Terraform.new
-    end
-
-    let :kitchen_instance do
-      ::Kitchen::Instance.new(
-        driver: driver,
-        lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
-        logger: logger,
-        platform: ::Kitchen::Platform.new(name: "test-platform"),
-        provisioner: ::Kitchen::Provisioner::Base.new,
-        state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
-        suite: ::Kitchen::Suite.new(name: "test-suite"),
-        transport: ssh_transport,
-        verifier: described_instance,
-      )
-    end
-
-    let :logger do
-      ::Kitchen::Logger.new
-    end
-
-    let :ssh_transport do
-      ::Kitchen::Transport::Ssh.new
+      described_instance
     end
 
     before do
       described_instance.finalize_config! kitchen_instance
+    end
+
+    context "when the Terraform outputs are in an unexpected format" do
+      before do
+        allow(driver).to receive(:retrieve_outputs).and_yield outputs: {"output_name": {"amount": "output_value"}}
+      end
+
+      specify "sholud raise an action failed error indicating the unexpected format" do
+        expect do
+          subject.call({})
+        end.to raise_error ::Kitchen::ActionFailed, "Preparing to resolve attrs failed\nkey not found: \"value\""
+      end
     end
 
     context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
@@ -90,9 +127,11 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       specify "should raise an action failed error indicating the missing output" do
-        is_expected.to raise_error(
+        expect do
+          subject.call({})
+        end.to raise_error(
           ::Kitchen::ActionFailed,
-          "Resolving the attrs of system a-system failed\nkey not found: \"output_name\""
+          "Resolving the attrs of system a-system-with-hosts failed\nkey not found: \"output_name\""
         )
       end
     end
@@ -103,9 +142,11 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       specify "should raise an action failed error indicating the missing :hosts_output key" do
-        is_expected.to raise_error(
+        expect do
+          subject.call({})
+        end.to raise_error(
           ::Kitchen::ActionFailed,
-          "Resolving the hosts of system a-system failed\nkey not found: \"hosts\""
+          "Resolving the hosts of system a-system-with-hosts failed\nkey not found: \"hosts\""
         )
       end
     end
@@ -135,7 +176,7 @@ require "support/kitchen/terraform/configurable_examples"
     shared_context "Inspec::Runner" do
       include_context "Inspec::Runner instance"
 
-      let :runner_options do
+      let :runner_options_with_hosts do
         {
           "color" => false,
           "compression" => false,
@@ -182,8 +223,30 @@ require "support/kitchen/terraform/configurable_examples"
         }
       end
 
+      let :runner_options_without_hosts do
+        {
+          "color" => false,
+          "compression" => false,
+          "compression_level" => 0,
+          "connection_retries" => 5,
+          "connection_retry_sleep" => 1,
+          "connection_timeout" => 15,
+          "distinct_exit" => false,
+          "keepalive" => true,
+          "keepalive_interval" => 60,
+          "max_wait_until_ready" => 600,
+          "sudo" => false,
+          "sudo_command" => "sudo -E",
+          "sudo_options" => "",
+          attributes: {"hosts" => "host", "output_name" => "output_value"},
+          backend: "backend",
+          logger: logger,
+        }
+      end
+
       before do
-        allow(::Inspec::Runner).to receive(:new).with(runner_options).and_return(runner)
+        allow(::Inspec::Runner).to receive(:new).with(runner_options_with_hosts).and_return(runner)
+        allow(::Inspec::Runner).to receive(:new).with(runner_options_without_hosts).and_return(runner)
       end
     end
 
@@ -202,7 +265,25 @@ require "support/kitchen/terraform/configurable_examples"
         end
 
         it "does raise an error" do
-          is_expected.to raise_error ::Kitchen::ActionFailed, "InSpec Runner exited with 1"
+          expect do
+            subject.call({})
+          end.to raise_error ::Kitchen::ActionFailed, "InSpec Runner exited with 1"
+        end
+      end
+
+      context "when the InSpec runner raises an error" do
+        let :error_message do
+          "mocked InSpec error"
+        end
+
+        before do
+          allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
+        end
+
+        specify "should raise an action failed error with the runner error message" do
+          expect do
+            subject.call({})
+          end.to raise_error ::Kitchen::ActionFailed, "Executing InSpec failed\n#{error_message}"
         end
       end
 
@@ -212,8 +293,42 @@ require "support/kitchen/terraform/configurable_examples"
         end
 
         it "does not raise an error" do
-          is_expected.to_not raise_error
+          expect do
+            subject.call({})
+          end.to_not raise_error
         end
+      end
+    end
+  end
+
+  describe "#doctor" do
+    subject do
+      described_instance
+    end
+
+    let :kitchen_state do
+      {}
+    end
+
+    specify "should return false" do
+      expect(subject.doctor(kitchen_state)).to be_falsey
+    end
+  end
+
+  describe "#load_needed_dependencies!" do
+    context "when the inspec gem is not available" do
+      let :error_message do
+        "mocked LoadError"
+      end
+
+      before do
+        allow(subject).to receive(:require).with("kitchen/terraform/inspec").and_raise ::LoadError, error_message
+      end
+
+      specify "should raise a client error" do
+        expect do
+          subject.finalize_config! kitchen_instance
+        end.to raise_error ::Kitchen::ClientError, error_message
       end
     end
   end

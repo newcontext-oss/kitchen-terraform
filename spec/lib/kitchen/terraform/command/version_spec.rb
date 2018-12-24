@@ -97,6 +97,12 @@ require "kitchen/terraform/command/version"
     end
   end
 
+  describe ".logger" do
+    specify "should return the Kitchen logger" do
+      expect(described_class.logger).to be ::Kitchen.logger
+    end
+  end
+
   describe ".superclass" do
     specify "should be Gem::Version" do
       expect(described_class.superclass).to be ::Gem::Version

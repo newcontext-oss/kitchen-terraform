@@ -78,10 +78,6 @@ require "rubygems"
   end
 
   describe ".temporarily_override" do
-    let :target do
-      ::String.new
-    end
-
     specify "should override the current version with the provided version before control is yielded" do
       expect do |block|
         subject.temporarily_override version: "0.0.0" do
