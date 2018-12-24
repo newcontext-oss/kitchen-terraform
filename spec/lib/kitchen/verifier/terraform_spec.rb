@@ -114,7 +114,7 @@ require "support/kitchen/terraform/configurable_examples"
         allow(driver).to receive(:retrieve_outputs).and_yield outputs: {"output_name": {"amount": "output_value"}}
       end
 
-      specify "sholud raise an action failed error indicating the unexpected format" do
+      specify "should raise an action failed error indicating the unexpected format" do
         expect do
           subject.call({})
         end.to raise_error ::Kitchen::ActionFailed, "Preparing to resolve attrs failed\nkey not found: \"value\""
