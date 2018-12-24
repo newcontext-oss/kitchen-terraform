@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/config_attribute/backend_configurations"
@@ -31,6 +30,7 @@ require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
+require "kitchen/terraform/verify_version"
 require "shellwords"
 require "tty/which"
 
@@ -513,9 +513,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   def verify_version
     if config_verify_version
-      logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify(
-        version: ::Kitchen::Terraform::Command::Version.run,
-      )
+      ::Kitchen::Terraform::VerifyVersion.call
     else
       logger.warn "Verification of support for the available version of Terraform is disabled"
     end

@@ -15,31 +15,25 @@
 # limitations under the License.
 
 require "kitchen/terraform"
+require "kitchen/terraform/command/version"
 require "kitchen/terraform/error"
 require "rubygems"
 
 # Verifies that the output of the Terraform version command indicates a supported version of Terraform.
 #
 # Supported:: Terraform version >= 0.11.4, < 0.12.0.
-class ::Kitchen::Terraform::ClientVersionVerifier
-  # Verifies output from the Terraform version command against the support version.
-  #
-  # @param version_output [::String] the Terraform Client version subcommand output.
-  # @raise [::Kitchen::Terraform::Error] if the version is not supported.
-  # @return [::String] a confirmation that the version is supported.
-  def verify(version:)
-    @requirement.satisfied_by? version or raise(
-      ::Kitchen::Terraform::Error,
-      "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
-    )
-
-    return "Terraform v#{version} is supported"
-  end
-
-  private
-
-  # @api private
-  def initialize
-    @requirement = ::Gem::Requirement.new ">= 0.11.4", "< 0.12.0"
+module ::Kitchen::Terraform::VerifyVersion
+  class << self
+    # Runs the function.
+    #
+    # @raise [::Kitchen::Terraform::Error] if the version is not supported or `terraform version` fails.
+    # @return [void]
+    def call
+      ::Kitchen::Terraform::Command::Version.run do |version:|
+        if !::Gem::Requirement.new(">= 0.11.4", "< 0.12.0").satisfied_by? version
+          raise ::Kitchen::Terraform::Error, "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
+        end
+      end
+    end
   end
 end

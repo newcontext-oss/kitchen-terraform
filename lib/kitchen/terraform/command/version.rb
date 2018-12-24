@@ -31,15 +31,21 @@ module Kitchen
           #
           # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
           # @return [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the command.
+          # @yieldparam version [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the
+          #   command.
           def run
-            new run_command(
-              "terraform version",
-              environment: {
-                "LC_ALL" => nil,
-                "TF_IN_AUTOMATION" => "true",
-                "TF_WARN_OUTPUT_ERRORS" => "true",
-              },
-            )
+            new(
+              run_command(
+                "terraform version",
+                environment: {
+                  "LC_ALL" => nil,
+                  "TF_IN_AUTOMATION" => "true",
+                  "TF_WARN_OUTPUT_ERRORS" => "true",
+                },
+              )
+            ).tap do |version|
+              yield version: version
+            end
           rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
             raise ::Kitchen::Terraform::Error, error.message
           end

@@ -17,10 +17,9 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
-require "kitchen/terraform/client_version_verifier"
-require "kitchen/terraform/command/version"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
+require "kitchen/terraform/verify_version"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
@@ -95,35 +94,21 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
   end
 
-  shared_examples "the action fails if `terraform version` fails" do
+  shared_examples "the action fails if the Terraform version is unsupported" do
+    let :error_message do
+      "mocked VerifyVersion failure"
+    end
+
     before do
-      allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_raise(
-        ::Kitchen::Terraform::Error, "mocked `terraform version` failure"
+      allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise(
+        ::Kitchen::Terraform::Error, error_message
       )
     end
 
     specify "should result in an action failed error with the failed command output" do
       expect do
         action
-      end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform version` failure"
-    end
-  end
-
-  shared_examples "the action fails if the Terraform version is unsupported" do
-    before do
-      allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_return(
-        ::Kitchen::Terraform::Command::Version.new version_return_value
-      )
-    end
-
-    let :version_return_value do
-      "Terraform v0.11.3"
-    end
-
-    specify "should result in an action failed error with the message from the client version verifier" do
-      expect do
-        action
-      end.to raise_error ::Kitchen::ActionFailed, /not supported/
+      end.to raise_error ::Kitchen::ActionFailed, error_message
     end
   end
 
@@ -368,58 +353,30 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    context "when `terraform version` results in failure" do
-      before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_raise(
-          ::Kitchen::Terraform::Error, "mocked `terraform version` failure"
-        )
-      end
-
-      specify "should result in an action failed error with the failed command output" do
-        expect do
-          subject.apply
-        end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform version` failure"
+    it_behaves_like "the action fails if the Terraform version is unsupported" do
+      let :action do
+        subject.apply
       end
     end
 
-    context "when `terraform version` results in success" do
+    context "when the Terraform version is unsupported but verification is disabled" do
+      let :verify_version do
+        false
+      end
+
       before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_return(
-          ::Kitchen::Terraform::Command::Version.new version_return_value
-        )
+        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
       end
 
-      context "when the value of the `terraform version` result is not supported and verification is enabled" do
-        let :version_return_value do
-          "Terraform v0.11.3"
-        end
+      it_behaves_like "it selects the instance workspace and generates the state"
+    end
 
-        specify "should result in an action failed error with the failed verification message" do
-          expect do
-            subject.apply
-          end.to raise_error ::Kitchen::ActionFailed, /not supported/
-        end
+    context "when the Terraform version is supported" do
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
       end
 
-      context "when the value of the `terraform version` result is not supported and verification is disabled" do
-        let :verify_version do
-          false
-        end
-
-        let :version_return_value do
-          "Terraform v0.11.3"
-        end
-
-        it_behaves_like "it selects the instance workspace and generates the state"
-      end
-
-      context "when the value of the `terraform version` result is supported" do
-        let :version_return_value do
-          "Terraform v0.11.4"
-        end
-
-        it_behaves_like "it selects the instance workspace and generates the state"
-      end
+      it_behaves_like "it selects the instance workspace and generates the state"
     end
   end
 
@@ -503,7 +460,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    it_behaves_like "the action fails if `terraform version` fails" do
+    it_behaves_like "the action fails if the Terraform version is unsupported" do
       let :action do
         subject.create({})
       end
@@ -515,32 +472,24 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    context "when `terraform version` results in success" do
+    context "when the Terraform version is unsupported but verification is disabled" do
+      let :verify_version do
+        false
+      end
+
       before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_return(
-          ::Kitchen::Terraform::Command::Version.new version_return_value
-        )
+        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
       end
 
-      context "when the value of the `terraform version` result is not supported and verification is disabled" do
-        let :verify_version do
-          false
-        end
+      it_behaves_like "it initializes the root module and selects the instance workspace"
+    end
 
-        let :version_return_value do
-          "Terraform v0.11.3"
-        end
-
-        it_behaves_like "it initializes the root module and selects the instance workspace"
+    context "when the Terraform version is supported" do
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
       end
 
-      context "when the value of the `terraform version` result is supported" do
-        let :version_return_value do
-          "Terraform v0.11.4"
-        end
-
-        it_behaves_like "it initializes the root module and selects the instance workspace"
-      end
+      it_behaves_like "it initializes the root module and selects the instance workspace"
     end
   end
 
@@ -556,6 +505,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     shared_examples "it destroys the state" do
+      let :action do
+        subject.destroy({})
+      end
+
       context "when `terraform destroy` results in failure" do
         before do
           shell_out_run_failure command: /destroy/, message: "mocked `terraform destroy` failure"
@@ -563,7 +516,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         specify "should result in an action failed error with the failed command output" do
           expect do
-            subject.destroy({})
+            action
           end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform destroy` failure"
         end
       end
@@ -596,7 +549,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           specify "should result in an action failed error with the failed command output" do
             expect do
-              subject.destroy({})
+              action
             end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace select default` failure"
           end
         end
@@ -616,7 +569,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
             specify "should result in an action failed error with the failed command output" do
               expect do
-                subject.destroy({})
+                action
               end.to raise_error(
                 ::Kitchen::ActionFailed,
                 "mocked `terraform workspace delete <kitchen-instance>` failure"
@@ -631,7 +584,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
             specify "should result in success" do
               expect do
-                subject.destroy({})
+                action
               end.not_to raise_error
             end
           end
@@ -694,7 +647,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    it_behaves_like "the action fails if `terraform version` fails" do
+    it_behaves_like "the action fails if the Terraform version is unsupported" do
       let :action do
         subject.destroy({})
       end
@@ -706,32 +659,24 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    context "when `terraform version` results in success" do
+    context "when the Terraform version is unsupported but verification is disabled" do
+      let :verify_version do
+        false
+      end
+
       before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_return(
-          ::Kitchen::Terraform::Command::Version.new version_return_value
-        )
+        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
       end
 
-      context "when the value of the `terraform version` result is not supported and verification is disabled" do
-        let :verify_version do
-          false
-        end
+      it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
+    end
 
-        let :version_return_value do
-          "Terraform v0.11.3"
-        end
-
-        it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
+    context "when the Terraform version is supported" do
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
       end
 
-      context "when the value of the `terraform version` result is supported" do
-        let :version_return_value do
-          "Terraform v0.11.4"
-        end
-
-        it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
-      end
+      it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
     end
   end
 

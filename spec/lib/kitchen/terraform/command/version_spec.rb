@@ -46,7 +46,7 @@ require "kitchen/terraform/command/version"
       end
 
       after do
-        described_class.run
+        described_class.run do |version:| end
       end
     end
 
@@ -84,11 +84,15 @@ require "kitchen/terraform/command/version"
       end
 
       specify "should run `terraform version` and return an instance" do
-        expect(described_class.run).to be_a ::Kitchen::Terraform::Command::Version
+        expect do |block|
+          described_class.run(&block)
+        end.to yield_with_args version: kind_of(::Kitchen::Terraform::Command::Version)
       end
 
       specify "should run `terraform version` and initialize the instance with the output" do
-        expect(described_class.run.version).to eq "1.2.3"
+        expect(
+          described_class.run do |version:| end.version
+        ).to eq "1.2.3"
       end
     end
   end
