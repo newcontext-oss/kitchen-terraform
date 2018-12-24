@@ -228,9 +228,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def apply(&block)
     verify_version
     run_workspace_select_instance
-    apply_run_get
-    apply_run_validate
-    apply_run_apply
+    apply_run
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::ActionFailed, error.message
   end
@@ -293,6 +291,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   private
+
+  def apply_run
+    apply_run_get
+    apply_run_validate
+    apply_run_apply
+  end
 
   # @api private
   def apply_run_apply
