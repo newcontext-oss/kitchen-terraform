@@ -15,8 +15,8 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/command/output"
+require "kitchen/terraform/command/version"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
@@ -27,9 +27,12 @@ require "kitchen/terraform/config_attribute/plugin_directory"
 require "kitchen/terraform/config_attribute/root_module_directory"
 require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
+require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
+require "kitchen/terraform/verify_version"
 require "shellwords"
+require "tty/which"
 
 # This namespace is defined by Kitchen.
 #
@@ -170,6 +173,10 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Variables}
 #
+# ==== verify_version
+#
+# {include:Kitchen::Terraform::ConfigAttribute::VerifyVersion}
+#
 # @example Describe the create command
 #   kitchen help create
 # @example Create a Test Kitchen instance
@@ -209,18 +216,21 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   include ::Kitchen::Terraform::ConfigAttribute::Variables
 
+  include ::Kitchen::Terraform::ConfigAttribute::VerifyVersion
+
   include ::Kitchen::Terraform::Configurable
 
   # Applies changes to the state by selecting the test workspace, updating the dependency modules, validating the root
   # module, and applying the state changes.
   #
-  # @raise [::Kitchen::Terraform::Error] if one of the steps fails.
+  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def apply(&block)
+    verify_version
     run_workspace_select_instance
-    apply_run_get
-    apply_run_validate
-    apply_run_apply
+    apply_run
+  rescue ::Kitchen::Terraform::Error => error
+    raise ::Kitchen::ActionFailed, error.message
   end
 
   # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
@@ -229,13 +239,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def create(_state)
+    verify_version
     create_run_init
     run_workspace_select_instance
   rescue ::Kitchen::Terraform::Error => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
+    raise ::Kitchen::ActionFailed, error.message
   end
 
   # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
@@ -245,22 +253,20 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def destroy(_state)
+    verify_version
     destroy_run_init
     run_workspace_select_instance
     destroy_run_destroy
     destroy_run_workspace_select_default
     destroy_run_workspace_delete_instance
   rescue ::Kitchen::Terraform::Error => error
-    raise(
-      ::Kitchen::ActionFailed,
-      error.message
-    )
+    raise ::Kitchen::ActionFailed, error.message
   end
 
   # Retrieves the Terraform state outputs for a Kitchen instance by selecting the test workspace and fetching the
   # outputs.
   #
-  # @raise [::Kitchen::Terraform::Error] if the retrieval fails.
+  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   # @yieldparam output [::Hash] the state output.
   def retrieve_outputs(&block)
@@ -270,28 +276,27 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         cwd: config_root_module_directory, live_stream: logger, timeout: config_command_timeout,
       }, &block
     )
+  rescue ::Kitchen::Terraform::Error => error
+    raise ::Kitchen::ActionFailed, error.message
   end
 
-  # Verifies that the Terraform version available to the driver is supported.
+  # Verifies that the Terraform CLI is on the PATH.
   #
-  # @raise [::Kitchen::UserError] if the version is not supported.
+  # @raise [::Kitchen::UserError] if the Terraform CLI is not available.
   # @return [void]
   def verify_dependencies
-    logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify(
-      version_output: ::Kitchen::Terraform::ShellOut.run(
-        command: "version",
-        options: {
-          cwd: ::Dir.pwd,
-          live_stream: logger,
-          timeout: 600,
-        },
-      ),
-    )
-  rescue ::Kitchen::Terraform::Error => error
-    raise ::Kitchen::UserError, error.message
+    if !::TTY::Which.exist? "terraform"
+      raise ::Kitchen::UserError, "The Terraform CLI was not found on the PATH"
+    end
   end
 
   private
+
+  def apply_run
+    apply_run_get
+    apply_run_validate
+    apply_run_apply
+  end
 
   # @api private
   def apply_run_apply
@@ -508,6 +513,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     config_variables.map do |key, value|
       "-var=\"#{key}=#{value}\""
     end.join " "
+  end
+
+  def verify_version
+    if config_verify_version
+      ::Kitchen::Terraform::VerifyVersion.call
+    else
+      logger.warn "Verification of support for the available version of Terraform is disabled"
+    end
   end
 
   def workspace_name

@@ -17,9 +17,9 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
-require "kitchen/terraform/client_version_verifier"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
+require "kitchen/terraform/verify_version"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
@@ -30,11 +30,16 @@ require "support/kitchen/terraform/config_attribute/plugin_directory_examples"
 require "support/kitchen/terraform/config_attribute/root_module_directory_examples"
 require "support/kitchen/terraform/config_attribute/variable_files_examples"
 require "support/kitchen/terraform/config_attribute/variables_examples"
+require "support/kitchen/terraform/config_attribute/verify_version_examples"
 require "support/kitchen/terraform/configurable_examples"
 require "support/kitchen/terraform/result_in_failure_matcher"
 require "support/kitchen/terraform/result_in_success_matcher"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
+  let :command_timeout do
+    1234
+  end
+
   let :config do
     {
       backend_configurations: {
@@ -42,6 +47,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
       color: false,
+      command_timeout: command_timeout,
       kitchen_root: kitchen_root,
       plugin_directory: "/Arbitrary Directory/Plugin Directory",
       variable_files: ["/Arbitrary Directory/Variable File.tfvars"],
@@ -49,6 +55,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
+      verify_version: verify_version,
     }
   end
 
@@ -77,6 +84,65 @@ require "support/kitchen/terraform/result_in_success_matcher"
     class_double(::Kitchen::Terraform::ShellOut).as_stubbed_const
   end
 
+  let :verify_version do
+    true
+  end
+
+  shared_context "Terraform CLI available" do
+    before do
+      allow(::TTY::Which).to receive(:exist?).with("terraform").and_return true
+    end
+  end
+
+  shared_examples "the action fails if the Terraform version is unsupported" do
+    let :error_message do
+      "mocked VerifyVersion failure"
+    end
+
+    before do
+      allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise(
+        ::Kitchen::Terraform::Error, error_message
+      )
+    end
+
+    specify "should result in an action failed error with the failed command output" do
+      expect do
+        action
+      end.to raise_error ::Kitchen::ActionFailed, error_message
+    end
+  end
+
+  shared_examples "the action fails if the Terraform root module can not be initialized" do
+    before do
+      shell_out_run_failure command: /init/, message: "mocked `terraform init` failure"
+    end
+
+    specify "should result in an action failed error with the failed command output" do
+      expect do
+        action
+      end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform init` failure"
+    end
+  end
+
+  shared_examples "the action fails if the Terraform workspace can not be selected or created" do
+    before do
+      shell_out_run_failure(
+        command: "workspace select kitchen-terraform-test-suite-test-platform",
+        message: "mocked `terraform workspace select <kitchen-instance>` failure",
+      )
+      shell_out_run_failure(
+        command: "workspace new kitchen-terraform-test-suite-test-platform",
+        message: "mocked `terraform workspace new <kitchen-instance>` failure",
+      )
+    end
+
+    specify "should result in an action failed error with the failed command output" do
+      expect do
+        action
+      end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace new <kitchen-instance>` failure"
+    end
+  end
+
   def shell_out_run_failure(command:, message: "mocked `terraform` failure", working_directory: kitchen_root)
     allow(shell_out)
       .to(
@@ -86,7 +152,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: working_directory,
               live_stream: kitchen_logger,
-              timeout: 600,
+              timeout: command_timeout,
             },
           )
           .and_raise(
@@ -105,7 +171,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: working_directory,
               live_stream: kitchen_logger,
-              timeout: 600,
+              timeout: command_timeout,
             },
           )
           .and_return(return_value)
@@ -121,25 +187,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: kitchen_root,
               live_stream: kitchen_logger,
-              timeout: 600,
+              timeout: command_timeout,
             },
           )
           .and_yield(standard_output: standard_output)
       )
-  end
-
-  shared_examples "the `terraform workspace <kitchen-instance>` subcommand results in success" do
-    let :subcommand do
-      "select"
-    end
-
-    before do
-      shell_out_run_success command: "workspace #{subcommand} kitchen-terraform-test-suite-test-platform"
-    end
-
-    it do
-      is_expected.to_not raise_error
-    end
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
@@ -162,6 +214,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Variables"
 
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::VerifyVersion"
+
   it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe ".serial_actions" do
@@ -180,10 +234,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   describe "#apply" do
     subject do
-      lambda do |block = lambda do end|
-        described_instance.apply &block
-      end
+      described_instance
     end
+
+    include_context "Terraform CLI available"
 
     before do
       described_instance.finalize_config! kitchen_instance
@@ -192,14 +246,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
     shared_examples "terraform: get; validate; apply" do
       context "when `terraform get` results in failure" do
         before do
-          shell_out_run_failure(
-            command: /get/,
-            message: "mocked `terraform get` failure",
-          )
+          shell_out_run_failure command: /get/, message: "mocked `terraform get` failure"
         end
 
-        it do
-          is_expected.to result_in_failure.with_message "mocked `terraform get` failure"
+        specify "should result in an action failed error with the failed command output" do
+          expect do
+            subject.apply
+          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform get` failure"
         end
       end
 
@@ -210,14 +263,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform validate` results in failure" do
           before do
-            shell_out_run_failure(
-              command: /validate/,
-              message: "mocked `terraform validate` failure",
-            )
+            shell_out_run_failure command: /validate/, message: "mocked `terraform validate` failure"
           end
 
-          it do
-            is_expected.to result_in_failure.with_message "mocked `terraform validate` failure"
+          specify "should result in an action failed error with the failed command output" do
+            expect do
+              subject.apply
+            end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform validate` failure"
           end
         end
 
@@ -236,14 +288,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           context "when `terraform apply` results in failure" do
             before do
-              shell_out_run_failure(
-                command: /apply/,
-                message: "mocked `terraform apply` failure",
-              )
+              shell_out_run_failure command: /apply/, message: "mocked `terraform apply` failure"
             end
 
-            it do
-              is_expected.to result_in_failure.with_message "mocked `terraform apply` failure"
+            specify "should result in an action failed error with the failed command output" do
+              expect do
+                subject.apply
+              end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform apply` failure"
             end
           end
 
@@ -269,94 +320,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    context "when `terraform workspace select <kitchen-instance>` results in failure" do
-      before do
-        shell_out_run_failure(
-          command: "workspace select kitchen-terraform-test-suite-test-platform",
-          message: "mocked `terraform workspace select <kitchen-instance>` failure",
-        )
-      end
-
-      context "when `terraform workspace new <kitchen-instance>` results in failure" do
-        before do
-          shell_out_run_failure(
-            command: "workspace new kitchen-terraform-test-suite-test-platform",
-            message: "mocked `terraform workspace new <kitchen-instance>` failure",
-          )
+    shared_examples "it selects the instance workspace and generates the state" do
+      it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
+        let :action do
+          subject.apply
         end
-
-        it do
-          is_expected.to result_in_failure.with_message "mocked `terraform workspace new <kitchen-instance>` failure"
-        end
-      end
-
-      context "when `terraform workspace new <kitchen-instance>` results in success" do
-        before do
-          shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
-        end
-
-        it_behaves_like "terraform: get; validate; apply"
-      end
-    end
-
-    context "when `terraform workspace select <kitchen-instance>` results in success" do
-      before do
-        shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
-      end
-
-      it_behaves_like "terraform: get; validate; apply"
-    end
-  end
-
-  describe "#create" do
-    subject do
-      lambda do
-        described_instance.create({})
-      end
-    end
-
-    before do
-      described_instance.finalize_config! kitchen_instance
-    end
-
-    context "when `terraform init` results in failure" do
-      before do
-        shell_out_run_failure(
-          command: /init/,
-          message: "mocked `terraform init` failure",
-        )
-      end
-
-      it do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::ActionFailed,
-              "mocked `terraform init` failure"
-            )
-          )
-      end
-    end
-
-    context "when `terraform init` results in success" do
-      before do
-        shell_out_run_success(
-          command: "init " \
-          "-input=false " \
-          "-lock=true " \
-          "-lock-timeout=0s " \
-          "-no-color " \
-          "-upgrade " \
-          "-force-copy " \
-          "-backend=true " \
-          "-backend-config=\"string=\\\"A String\\\"\" " \
-          "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
-          "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-          "-get=true " \
-          "-get-plugins=true " \
-          "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
-          "-verify-plugins=true",
-        )
       end
 
       context "when `terraform workspace select <kitchen-instance>` results in failure" do
@@ -365,117 +333,14 @@ require "support/kitchen/terraform/result_in_success_matcher"
             command: "workspace select kitchen-terraform-test-suite-test-platform",
             message: "mocked `terraform workspace select <kitchen-instance>` failure",
           )
-        end
-
-        context "when `terraform workspace new <kitchen-instance>` results in failure" do
-          before do
-            shell_out_run_failure(
-              command: "workspace new kitchen-terraform-test-suite-test-platform",
-              message: "mocked `terraform workspace new <kitchen-instance>` failure",
-            )
-          end
-
-          it do
-            is_expected
-              .to(
-                raise_error(
-                  ::Kitchen::ActionFailed,
-                  "mocked `terraform workspace new <kitchen-instance>` failure"
-                )
-              )
-          end
         end
 
         context "when `terraform workspace new <kitchen-instance>` results in success" do
-          it_behaves_like "the `terraform workspace <kitchen-instance>` subcommand results in success" do
-            let :subcommand do
-              "new"
-            end
-          end
-        end
-      end
-
-      context "when `terraform workspace select <kitchen-instance>` results in success" do
-        it_behaves_like "the `terraform workspace <kitchen-instance>` subcommand results in success"
-      end
-    end
-  end
-
-  describe "#destroy" do
-    subject do
-      lambda do
-        described_instance.destroy({})
-      end
-    end
-
-    before do
-      described_instance.finalize_config! kitchen_instance
-    end
-
-    context "when `terraform init` results in failure" do
-      before do
-        shell_out_run_failure(
-          command: /init/,
-          message: "mocked `terraform init` failure",
-        )
-      end
-
-      it do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::ActionFailed,
-              "mocked `terraform init` failure"
-            )
-          )
-      end
-    end
-
-    context "when `terraform init` results in success" do
-      before do
-        shell_out_run_success(
-          command: "init " \
-          "-input=false " \
-          "-lock=true " \
-          "-lock-timeout=0s " \
-          "-no-color " \
-          "-force-copy " \
-          "-backend=true " \
-          "-backend-config=\"string=\\\"A String\\\"\" " \
-          "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
-          "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-          "-get=true " \
-          "-get-plugins=true " \
-          "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
-          "-verify-plugins=true",
-        )
-      end
-
-      context "when `terraform workspace select <kitchen-instance>` results in failure" do
-        before do
-          shell_out_run_failure(
-            command: "workspace select kitchen-terraform-test-suite-test-platform",
-            message: "mocked `terraform workspace select <kitchen-instance>` failure",
-          )
-        end
-
-        context "when `terraform workspace new <kitchen-instance>` results in failure" do
           before do
-            shell_out_run_failure(
-              command: "workspace new kitchen-terraform-test-suite-test-platform",
-              message: "mocked `terraform workspace new <kitchen-instance>` failure",
-            )
+            shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
           end
 
-          it do
-            is_expected
-              .to(
-                raise_error(
-                  ::Kitchen::ActionFailed,
-                  "mocked `terraform workspace new <kitchen-instance>` failure"
-                )
-              )
-          end
+          it_behaves_like "terraform: get; validate; apply"
         end
       end
 
@@ -484,96 +349,334 @@ require "support/kitchen/terraform/result_in_success_matcher"
           shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
         end
 
-        context "when `terraform destroy` results in failure" do
-          before do
-            shell_out_run_failure(
-              command: /destroy/,
-              message: "mocked `terraform destroy` failure",
-            )
-          end
+        it_behaves_like "terraform: get; validate; apply"
+      end
+    end
 
-          it do
-            is_expected
-              .to(
-                raise_error(
-                  ::Kitchen::ActionFailed,
-                  "mocked `terraform destroy` failure"
-                )
-              )
+    it_behaves_like "the action fails if the Terraform version is unsupported" do
+      let :action do
+        subject.apply
+      end
+    end
+
+    context "when the Terraform version is unsupported but verification is disabled" do
+      let :verify_version do
+        false
+      end
+
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
+      end
+
+      it_behaves_like "it selects the instance workspace and generates the state"
+    end
+
+    context "when the Terraform version is supported" do
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
+      end
+
+      it_behaves_like "it selects the instance workspace and generates the state"
+    end
+  end
+
+  describe "#create" do
+    subject do
+      described_instance
+    end
+
+    include_context "Terraform CLI available"
+
+    before do
+      described_instance.finalize_config! kitchen_instance
+    end
+
+    shared_examples "it initializes the root module and selects the instance workspace" do
+      it_behaves_like "the action fails if the Terraform root module can not be initialized" do
+        let :action do
+          subject.create({})
+        end
+      end
+
+      context "when `terraform init` results in success" do
+        before do
+          shell_out_run_success(
+            command: "init " \
+            "-input=false " \
+            "-lock=true " \
+            "-lock-timeout=0s " \
+            "-no-color " \
+            "-upgrade " \
+            "-force-copy " \
+            "-backend=true " \
+            "-backend-config=\"string=\\\"A String\\\"\" " \
+            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
+            "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+            "-get=true " \
+            "-get-plugins=true " \
+            "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
+            "-verify-plugins=true",
+          )
+        end
+
+        it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
+          let :action do
+            subject.create({})
           end
         end
 
-        context "when `terraform destroy` results in success" do
+        context "when `terraform workspace select <kitchen-instance>` results in failure" do
           before do
-            shell_out_run_success(
-              command: "destroy " \
-              "-auto-approve " \
-              "-lock=true " \
-              "-lock-timeout=0s " \
-              "-input=false " \
-              "-no-color " \
-              "-parallelism=10 " \
-              "-refresh=true " \
-              "-var=\"string=\\\"A String\\\"\" " \
-              "-var=\"map={ key = \\\"A Value\\\" }\" " \
-              "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-              "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
+            shell_out_run_failure(
+              command: "workspace select kitchen-terraform-test-suite-test-platform",
+              message: "mocked `terraform workspace select <kitchen-instance>` failure",
             )
           end
 
-          context "when `terraform select default` results in failure" do
+          context "when `terraform workspace new <kitchen-instance>` results in success" do
+            before do
+              shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
+            end
+
+            specify "should result in success" do
+              expect do
+                subject.create({})
+              end.not_to raise_error
+            end
+          end
+        end
+
+        context "when `terraform workspace select <kitchen-instance>` results in success" do
+          before do
+            shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
+          end
+
+          specify "should result in success" do
+            expect do
+              subject.create({})
+            end.not_to raise_error
+          end
+        end
+      end
+    end
+
+    it_behaves_like "the action fails if the Terraform version is unsupported" do
+      let :action do
+        subject.create({})
+      end
+    end
+
+    it_behaves_like "the action fails if the Terraform version is unsupported" do
+      let :action do
+        subject.create({})
+      end
+    end
+
+    context "when the Terraform version is unsupported but verification is disabled" do
+      let :verify_version do
+        false
+      end
+
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
+      end
+
+      it_behaves_like "it initializes the root module and selects the instance workspace"
+    end
+
+    context "when the Terraform version is supported" do
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
+      end
+
+      it_behaves_like "it initializes the root module and selects the instance workspace"
+    end
+  end
+
+  describe "#destroy" do
+    subject do
+      described_instance
+    end
+
+    include_context "Terraform CLI available"
+
+    before do
+      described_instance.finalize_config! kitchen_instance
+    end
+
+    shared_examples "it destroys the state" do
+      let :action do
+        subject.destroy({})
+      end
+
+      context "when `terraform destroy` results in failure" do
+        before do
+          shell_out_run_failure command: /destroy/, message: "mocked `terraform destroy` failure"
+        end
+
+        specify "should result in an action failed error with the failed command output" do
+          expect do
+            action
+          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform destroy` failure"
+        end
+      end
+
+      context "when `terraform destroy` results in success" do
+        before do
+          shell_out_run_success(
+            command: "destroy " \
+            "-auto-approve " \
+            "-lock=true " \
+            "-lock-timeout=0s " \
+            "-input=false " \
+            "-no-color " \
+            "-parallelism=10 " \
+            "-refresh=true " \
+            "-var=\"string=\\\"A String\\\"\" " \
+            "-var=\"map={ key = \\\"A Value\\\" }\" " \
+            "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+            "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
+          )
+        end
+
+        context "when `terraform select default` results in failure" do
+          before do
+            shell_out_run_failure(
+              command: "workspace select default",
+              message: "mocked `terraform workspace select default` failure",
+            )
+          end
+
+          specify "should result in an action failed error with the failed command output" do
+            expect do
+              action
+            end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace select default` failure"
+          end
+        end
+
+        context "when `terraform workspace select default` results in success" do
+          before do
+            shell_out_run_success command: "workspace select default"
+          end
+
+          context "when `terraform workspace delete <kitchen-instance>` results in failure" do
             before do
               shell_out_run_failure(
-                command: "workspace select default",
-                message: "mocked `terraform workspace select default` failure",
+                command: "workspace delete kitchen-terraform-test-suite-test-platform",
+                message: "mocked `terraform workspace delete <kitchen-instance>` failure",
               )
             end
 
-            it do
-              is_expected
-                .to(
-                  raise_error(
-                    ::Kitchen::ActionFailed,
-                    "mocked `terraform workspace select default` failure"
-                  )
-                )
+            specify "should result in an action failed error with the failed command output" do
+              expect do
+                action
+              end.to raise_error(
+                ::Kitchen::ActionFailed,
+                "mocked `terraform workspace delete <kitchen-instance>` failure"
+              )
             end
           end
 
-          context "when `terraform workspace select default` results in success" do
+          context "when `terraform workspace delete <kitchen-instance>` results in success" do
             before do
-              shell_out_run_success command: "workspace select default"
+              shell_out_run_success command: "workspace delete kitchen-terraform-test-suite-test-platform"
             end
 
-            context "when `terraform workspace delete <kitchen-instance>` results in failure" do
-              before do
-                shell_out_run_failure(
-                  command: "workspace delete kitchen-terraform-test-suite-test-platform",
-                  message: "mocked `terraform workspace delete <kitchen-instance>` failure",
-                )
-              end
-
-              it do
-                is_expected
-                  .to(
-                    raise_error(
-                      ::Kitchen::ActionFailed,
-                      "mocked `terraform workspace delete <kitchen-instance>` failure"
-                    )
-                  )
-              end
-            end
-
-            context "when `terraform workspace delete <kitchen-instance>` results in success" do
-              it_behaves_like "the `terraform workspace <kitchen-instance>` subcommand results in success" do
-                let :subcommand do
-                  "delete"
-                end
-              end
+            specify "should result in success" do
+              expect do
+                action
+              end.not_to raise_error
             end
           end
         end
       end
+    end
+
+    shared_examples "it initializes the root module, selects the instance workspace, and destroys the state" do
+      it_behaves_like "the action fails if the Terraform root module can not be initialized" do
+        let :action do
+          subject.destroy({})
+        end
+      end
+
+      context "when `terraform init` results in success" do
+        before do
+          shell_out_run_success(
+            command: "init " \
+            "-input=false " \
+            "-lock=true " \
+            "-lock-timeout=0s " \
+            "-no-color " \
+            "-force-copy " \
+            "-backend=true " \
+            "-backend-config=\"string=\\\"A String\\\"\" " \
+            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
+            "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+            "-get=true " \
+            "-get-plugins=true " \
+            "-plugin-dir=\"/Arbitrary Directory/Plugin Directory\" " \
+            "-verify-plugins=true",
+          )
+        end
+
+        it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
+          let :action do
+            subject.destroy({})
+          end
+        end
+
+        context "when the Terraform workspace is created" do
+          before do
+            shell_out_run_failure(
+              command: "workspace select kitchen-terraform-test-suite-test-platform",
+              message: "mocked `terraform workspace select <kitchen-instance>` failure",
+            )
+            shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
+          end
+
+          it_behaves_like "it destroys the state"
+        end
+
+        context "when `terraform workspace select <kitchen-instance>` results in success" do
+          before do
+            shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
+          end
+
+          it_behaves_like "it destroys the state"
+        end
+      end
+    end
+
+    it_behaves_like "the action fails if the Terraform version is unsupported" do
+      let :action do
+        subject.destroy({})
+      end
+    end
+
+    it_behaves_like "the action fails if the Terraform version is unsupported" do
+      let :action do
+        subject.destroy({})
+      end
+    end
+
+    context "when the Terraform version is unsupported but verification is disabled" do
+      let :verify_version do
+        false
+      end
+
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
+      end
+
+      it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
+    end
+
+    context "when the Terraform version is supported" do
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
+      end
+
+      it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
     end
   end
 
@@ -604,10 +707,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
           shell_out_run_failure command: "output -json", message: "mocked `terraform output` failure"
         end
 
-        specify "should result in failure with the command failure message" do
+        specify "should result in an action failed error with the failed command output" do
           expect do
             subject.retrieve_outputs
-          end.to result_in_failure.with_message "mocked `terraform output` failure"
+          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform output` failure"
         end
       end
 
@@ -621,10 +724,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "not valid JSON"
           end
 
-          specify "should result in failure with a message which indicates the output is not valid JSON" do
+          specify "should result in an action failed error with a message indicating the output is not valid JSON" do
             expect do
               subject.retrieve_outputs
-            end.to result_in_failure.with_message(/Parsing Terraform output as JSON failed:/)
+            end.to raise_error ::Kitchen::ActionFailed, /Parsing Terraform output as JSON failed:/
           end
         end
 
@@ -650,27 +753,18 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
+    it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
+      let :action do
+        subject.retrieve_outputs
+      end
+    end
+
     context "when `terraform workspace select <kitchen-instance>` results in failure" do
       before do
         shell_out_run_failure(
           command: "workspace select kitchen-terraform-test-suite-test-platform",
           message: "mocked `terraform workspace select <kitchen-instance>` failure",
         )
-      end
-
-      context "when `terraform workspace new <kitchen-instance>` results in failure" do
-        before do
-          shell_out_run_failure(
-            command: "workspace new kitchen-terraform-test-suite-test-platform",
-            message: "mocked `terraform workspace new <kitchen-instance>` failure",
-          )
-        end
-
-        specify "should result in failure with the command failure message" do
-          expect do
-            subject.retrieve_outputs
-          end.to result_in_failure.with_message "mocked `terraform workspace new <kitchen-instance>` failure"
-        end
       end
 
       context "when `terraform workspace new <kitchen-instance>` results in success" do
@@ -693,64 +787,28 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   describe "#verify_dependencies" do
     subject do
-      lambda do
-        described_instance.verify_dependencies
+      described_instance
+    end
+
+    context "when the Terraform CLI is not found on the PATH" do
+      before do
+        allow(::TTY::Which).to receive(:exist?).with("terraform").and_return false
+      end
+
+      specify "should result in a user error which indicates the CLI was not found on the PATH" do
+        expect do
+          subject.verify_dependencies
+        end.to raise_error ::Kitchen::UserError, "The Terraform CLI was not found on the PATH"
       end
     end
 
-    context "when `terraform version` results in failure" do
-      before do
-        shell_out_run_failure(
-          command: "version",
-          message: "mocked `terraform version` failure",
-          working_directory: ::Dir.pwd,
-        )
-      end
+    context "when the Terraform CLI is found on the PATH" do
+      include_context "Terraform CLI available"
 
-      it do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::UserError,
-              "mocked `terraform version` failure"
-            )
-          )
-      end
-    end
-
-    context "when `terraform version` results in success" do
-      before do
-        shell_out_run_success(
-          command: "version",
-          return_value: version_return_value,
-          working_directory: ::Dir.pwd,
-        )
-      end
-
-      context "when the value of the `terraform version` result is not supported" do
-        let :version_return_value do
-          "Terraform v0.11.3"
-        end
-
-        it do
-          is_expected
-            .to(
-              raise_error(
-                ::Kitchen::UserError,
-                /not supported/
-              )
-            )
-        end
-      end
-
-      context "when the value of the `terraform version` result is supported" do
-        let :version_return_value do
-          "Terraform v0.11.4"
-        end
-
-        it do
-          is_expected.to_not raise_error
-        end
+      specify "should not result in an error" do
+        expect do
+          subject.verify_dependencies
+        end.not_to raise_error
       end
     end
   end

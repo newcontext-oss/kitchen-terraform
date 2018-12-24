@@ -16,6 +16,6 @@
 
 require "support/kitchen/terraform/config_schemas/boolean_examples"
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Lock" do
-  it_behaves_like "Kitchen::Terraform::ConfigSchemas::Boolean", attribute: :lock
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::VerifyVersion" do
+  it_behaves_like "Kitchen::Terraform::ConfigSchemas::Boolean", attribute: :verify_version
 end
