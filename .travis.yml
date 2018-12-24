@@ -1,6 +1,4 @@
-branches:
- only:
- - master
+if: type != push or branch = master
 before_cache:
 - bundle clean
 git:
@@ -290,6 +288,38 @@ jobs:
     cache:
       directories:
       - ruby-2.4/vendor/bundle
+  - name: Terraform 0.11.11 on Ubuntu
+    dist: trusty
+    language: ruby
+    rvm: 2.4.1
+    services:
+    - docker
+    before_install:
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
+    - bundle config --local gemfile ruby-2.4/Gemfile
+    - bundle config --local deployment true
+    - bundle config --local jobs $(nproc --ignore=1)
+    - bundle config --local without development
+    install:
+    - bundle install
+    - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
+    - sha256sum terraform_0.11.11_linux_amd64.zip |
+      grep 94504f4a67bad612b5c8e3a4b7ce6ca2772b3c1559630dfd71e9c519e3d6149c
+    - unzip terraform_0.11.11_linux_amd64.zip -d "$HOME"/bin
+    - curl --remote-name --silent
+      https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
+    - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip |
+      grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
+    - unzip terraform-provider-local_1.1.0_linux_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    before_script:
+    - chmod go-rw test/terraform/backend-ssh/id_ed25519
+    script:
+    - bundle exec rake test:kitchen:orchestrated-with-remote-backends
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
   - name: Terraform 0.11.4 on MacOS
     os: osx
     language: ruby
@@ -460,8 +490,34 @@ jobs:
     install:
     - bundle install
     - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force 
-      https://raw.githubusercontent.com/Homebrew/homebrew-core/49017817fb34b76fdc81f33665fdd7661fe5e558/Formula/terraform.rb
+      https://raw.githubusercontent.com/Homebrew/homebrew-core/f5437e5774b9a19840e55c5712c5bd8a4d6600a9/Formula/terraform.rb
     - curl --remote-name --silent 
+      https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
+    - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
+      grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
+    - unzip terraform-provider-local_1.1.0_darwin_amd64.zip
+      -d test/terraform/Plug\ Ins/Plug\ In\ Directory
+    script:
+    - bundle exec rake test:kitchen:orchestrated-without-remote-backends
+    cache:
+      directories:
+      - ruby-2.4/vendor/bundle
+  - name: Terraform 0.11.11 on MacOS
+    os: osx
+    language: ruby
+    rvm: 2.4.3
+    before_install:
+    - gem install bundler --conservative --minimal-deps --no-document
+      --version="~> 1.17"
+    - bundle config --local gemfile ruby-2.4/Gemfile
+    - bundle config --local deployment true
+    - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
+    - bundle config --local without backend_ssh:development
+    install:
+    - bundle install
+    - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force
+      https://raw.githubusercontent.com/Homebrew/homebrew-core/2ca059380136e88b14760dd80c54665a2fa18d7f/Formula/terraform.rb
+    - curl --remote-name --silent
       https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip |
       grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
