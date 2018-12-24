@@ -35,15 +35,15 @@ require "kitchen/terraform/verify_version"
       end
     end
 
+    before do
+      allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield(
+        version: ::Kitchen::Terraform::Command::Version.new(version),
+      )
+    end
+
     context "when the version is 0.11.3" do
       let :version do
         "Terraform v0.11.3"
-      end
-
-      before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield(
-          version: ::Kitchen::Terraform::Command::Version.new(version),
-        )
       end
 
       it_behaves_like "the version is unsupported"
@@ -54,24 +54,12 @@ require "kitchen/terraform/verify_version"
         "Terraform v0.11.4"
       end
 
-      before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield(
-          version: ::Kitchen::Terraform::Command::Version.new(version),
-        )
-      end
-
       it_behaves_like "the version is supported"
     end
 
     context "when the version is 0.12.0" do
       let :version do
         "Terraform v0.12.0"
-      end
-
-      before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield(
-          version: ::Kitchen::Terraform::Command::Version.new(version),
-        )
       end
 
       it_behaves_like "the version is unsupported"
