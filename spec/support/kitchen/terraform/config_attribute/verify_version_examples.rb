@@ -14,20 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
+require "support/kitchen/terraform/config_schemas/boolean_examples"
 
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::VerifyVersion" do
-  include_context "Kitchen::Terraform::ConfigAttribute", attribute: :verify_version do
-    context "when the config omits :verify_version" do
-      it_behaves_like "a default value is used", default_value: true
-    end
-
-    context "when the config associates :verify_version with a nonboolean" do
-      it_behaves_like "the value is invalid", error_message: /verify_version.*must be boolean/, value: "abc"
-    end
-
-    context "when the config associates :verify_version with a boolean" do
-      it_behaves_like "the value is valid", value: false
-    end
-  end
+  it_behaves_like "Kitchen::Terraform::ConfigSchemas::Boolean", attribute: :verify_version
 end
