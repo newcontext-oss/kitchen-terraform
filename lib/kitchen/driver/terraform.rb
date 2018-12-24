@@ -514,7 +514,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def verify_version
     if config_verify_version
       logger.warn ::Kitchen::Terraform::ClientVersionVerifier.new.verify(
-        version: ::Kitchen::Terraform::Command::Version.run(working_directory: ::Dir.pwd),
+        version: ::Kitchen::Terraform::Command::Version.run,
       )
     else
       logger.warn "Verification of support for the available version of Terraform is disabled"

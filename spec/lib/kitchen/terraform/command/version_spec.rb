@@ -19,20 +19,9 @@ require "kitchen/terraform/command/version"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Version do
   describe ".run" do
-    let :working_directory do
-      "/working/directory"
-    end
-
     describe "running `terraform version`" do
       before do
         allow(described_class).to receive(:run_command).and_return "Terraform v0.11.10"
-      end
-
-      specify "should run `terraform version` in the provided working directory" do
-        expect(described_class).to receive(:run_command).with(
-          "terraform version",
-          including(cwd: working_directory),
-        )
       end
 
       specify "should run `terraform version` in an environment which preserves the locale of the parent environment" do
@@ -57,7 +46,7 @@ require "kitchen/terraform/command/version"
       end
 
       after do
-        described_class.run working_directory: working_directory
+        described_class.run
       end
     end
 
@@ -70,7 +59,7 @@ require "kitchen/terraform/command/version"
 
       specify "should result in failure with the failed command output" do
         expect do
-          described_class.run working_directory: working_directory
+          described_class.run
         end.to result_in_failure.with_message "shell command failed"
       end
     end
@@ -84,7 +73,7 @@ require "kitchen/terraform/command/version"
 
       specify "should result in failure with the unexpected error message" do
         expect do
-          described_class.run working_directory: working_directory
+          described_class.run
         end.to result_in_failure.with_message "unexpected error"
       end
     end
@@ -95,13 +84,11 @@ require "kitchen/terraform/command/version"
       end
 
       specify "should run `terraform version` and return an instance" do
-        expect(described_class.run(working_directory: working_directory)).to(
-          be_a(::Kitchen::Terraform::Command::Version)
-        )
+        expect(described_class.run).to be_a ::Kitchen::Terraform::Command::Version
       end
 
       specify "should run `terraform version` and initialize the instance with the output" do
-        expect(described_class.run(working_directory: working_directory).version).to eq "1.2.3"
+        expect(described_class.run.version).to eq "1.2.3"
       end
     end
   end

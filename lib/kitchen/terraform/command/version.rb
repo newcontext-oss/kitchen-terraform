@@ -29,13 +29,11 @@ module Kitchen
         class << self
           # The command is run by shelling out in an environment which is optimized for automating Terraform.
           #
-          # @param working_directory [::String] the directory in which to run the command.
           # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
           # @return [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the command.
-          def run(working_directory:)
+          def run
             new run_command(
               "terraform version",
-              cwd: working_directory,
               environment: {
                 "LC_ALL" => nil,
                 "TF_IN_AUTOMATION" => "true",

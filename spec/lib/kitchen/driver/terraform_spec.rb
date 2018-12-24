@@ -97,7 +97,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   shared_examples "the action fails if `terraform version` fails" do
     before do
-      allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(working_directory: ::Dir.pwd).and_raise(
+      allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_raise(
         ::Kitchen::Terraform::Error, "mocked `terraform version` failure"
       )
     end
@@ -111,7 +111,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   shared_examples "the action fails if the Terraform version is unsupported" do
     before do
-      allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(working_directory: ::Dir.pwd).and_return(
+      allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_return(
         ::Kitchen::Terraform::Command::Version.new version_return_value
       )
     end
@@ -370,7 +370,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform version` results in failure" do
       before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(working_directory: ::Dir.pwd).and_raise(
+        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_raise(
           ::Kitchen::Terraform::Error, "mocked `terraform version` failure"
         )
       end
@@ -384,7 +384,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform version` results in success" do
       before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(working_directory: ::Dir.pwd).and_return(
+        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_return(
           ::Kitchen::Terraform::Command::Version.new version_return_value
         )
       end
@@ -517,7 +517,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform version` results in success" do
       before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(working_directory: ::Dir.pwd).and_return(
+        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_return(
           ::Kitchen::Terraform::Command::Version.new version_return_value
         )
       end
@@ -708,7 +708,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform version` results in success" do
       before do
-        allow(::Kitchen::Terraform::Command::Version).to receive(:run).with(working_directory: ::Dir.pwd).and_return(
+        allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_return(
           ::Kitchen::Terraform::Command::Version.new version_return_value
         )
       end
