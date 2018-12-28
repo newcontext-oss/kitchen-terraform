@@ -674,6 +674,7 @@ jobs:
     before_deploy:
     - echo $rubygems_private_key_password |
       gpg --decrypt --output certs/gem-private_key.pem --passphrase-fd 0 certs/gem-private_key.pem.gpg
+    - sha256sum certs/gem-private_key.pem | grep 5b92dfbfccbc596ae7cf62847830f931449a2859aac254e3727256b17686178f
     - gem cert --add certs/gem-public_cert.pem
     deploy:
       provider: rubygems
