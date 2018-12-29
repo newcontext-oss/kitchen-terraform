@@ -8,13 +8,15 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
-## [4.2.0] - 2018-12-24
+## [4.2.0] - 2018-12-29
 
 ### Added
 
 - The driver gained a `:verify_version` configuration attribute which
   toggles verification of support for the available Terraform version.
   This feature allows unsupported versions of Terraform to be used.
+
+- The gem supports Ruby v2.6.
 
 ## [4.1.1] - 2018-12-13
 

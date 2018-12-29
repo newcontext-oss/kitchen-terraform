@@ -43,7 +43,7 @@ require "rubygems"
   specification.add_runtime_dependency "test-kitchen", "~> 1.23"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
-  specification.required_ruby_version = [">= 2.3", "< 2.6"]
+  specification.required_ruby_version = [">= 2.3", "< 2.7"]
   specification.requirements = ["Terraform >= 0.11.4, < 0.12.0"]
   specification.signing_key = "certs/gem-private_key.pem"
 end
