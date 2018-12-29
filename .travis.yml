@@ -551,6 +551,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
+    - bundle config --local gemfile ruby-2.5/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without backend_ssh:development
     install:
@@ -573,6 +574,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
+    - bundle config --local gemfile ruby-2.5/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without backend_ssh:development
     install:
@@ -595,6 +597,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
+    - bundle config --local gemfile ruby-2.5/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without backend_ssh:development
     install:
@@ -617,6 +620,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
+    - bundle config --local gemfile ruby-2.5/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without backend_ssh:development
     install:
@@ -639,6 +643,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
+    - bundle config --local gemfile ruby-2.5/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without backend_ssh:development
     install:
@@ -661,6 +666,7 @@ jobs:
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
+    - bundle config --local gemfile ruby-2.5/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without backend_ssh:development
     install:
