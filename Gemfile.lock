@@ -1,3 +1,16 @@
+GIT
+  remote: https://github.com/travis-ci/gh
+  revision: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
+  ref: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
+  specs:
+    gh (0.15.1)
+      addressable (~> 2.4)
+      backports
+      faraday (~> 0.8)
+      multi_json (~> 1.0)
+      net-http-persistent (~> 2.9)
+      net-http-pipeline
+
 PATH
   remote: .
   specs:
@@ -109,13 +122,6 @@ GEM
       docile (~> 1.1)
     ffi (1.9.25)
     formatador (0.2.5)
-    gh (0.15.1)
-      addressable (~> 2.4.0)
-      backports
-      faraday (~> 0.8)
-      multi_json (~> 1.0)
-      net-http-persistent (~> 2.9)
-      net-http-pipeline
     google-api-client (0.23.9)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (>= 0.5, < 0.7.0)
@@ -472,6 +478,7 @@ PLATFORMS
 
 DEPENDENCIES
   bcrypt_pbkdf (~> 1.0)!
+  gh!
   guard (~> 2.14)!
   guard-bundler (~> 2.1)!
   guard-rspec (~> 4.7)!
