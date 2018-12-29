@@ -688,7 +688,7 @@ jobs:
     language: ruby
     rvm: 2.4.1
     env:
-      secure: PhZRRoGjzKgORiT05zfCz72dcAuz9h/syPz5sQ+G0gxUsLAfjhTXtpscZtE9HZlFnMxD0nAIiPmy5BfNq9AALd5l/m/mkXQjVAPhNXK23NVIt8CRkCdMUqLimSfo1T0DK6GXYYqLfr+EmTUEjNlZWhaJb10yigIiyutaVfME/MQkCTwkouEpBc4KkEacj93A1tfCZYwfU3F9SC193RAggAIGUD3Ljw8wJMHH+GNogSTM9TpSHT3u98rbLILPO8uVsFdlxkxu83mBLELgx2MHlbruhGglA4YBcSjxRGGCLOgPBawoptK/BBKQ7cYMl1bXSCFGFO1LGDtftndLyLyzWJ7Z8x+lok44p9VoNyqG1kgmGosSRUCnH+qiPtN6ZAA/puLxdCUwOg+/ARql+cUJPf2uuoxE5QWlgG9VbyZD4JTpI6W8/6jjFh3lEljONIw0QgoAvmV3F2osQBjVP7ImRzLJYAkNIQ2HvcfPG0V/8kvRdhskBEJnDEnDS/23aJQImemm86IeIvSMxH4aWXe3OrZtxjUO61oDz0Dx8m0M3WpcM5Ck0DS8xA9Xfr6pGTwsrwo58tq4hxn3sy0g8SsF85wRAr9sfwBfK+F3Lb2lnyO/bOUNtuBxrBGYjKEmPXV64nf4jBZRlpovhP2qLfKNPd7DwxSQVHE8K9N0qbPDxbA=
+      - secure: WUn5OAyb8Y2F0myhs0ZEq5lg1yI7fvJVqFxSU/7BhoV7OTVNxJkUbCf0XNjgr8LQjAu/awVuLZfDncytbinqy/k8UOQqZpsdQXmHU+FsYnEVTcRGnI24NQzkPof3PI1cTjJAAXfYhoF04hGtNFxUHR3dMFXYJdIAfjsKxoxhTBqmjUF0eprRTy7F4YQuV3c8k3gf1ANJV4fzUspknp5Uy8IkKUbBKNgQ+WUJbE9RWRfxE3CbXmChJl1Z0Ozt3HDZ6UGIY04uGs/+W4gznnddX5vD5CdOZ5eDg0zdMgbzCyyHlZuwH3RW1qWk5ec0873/5CsUTJaLho5dwpqtgQg5dzkvr2xt3jsOWNduYnbtoSdSt+NN6khvLrrBInEUDhrmEU/OsIx0Eh8HHRVx1o44vPaFoXamBxuJc/gM16v46FuEGnvuDPImkrKx2TLIbLaatyYeSuOIO88yRjw5SEU+YpUpVCx6eBMXMF0JTNimH06qip+74GoCByc78ckYj3CC21HP8R8+6jahITrRR7Nv4pOHsSxBD/YBeSMJ/5jwAVFKY43DN0AGiH1NJGYZCJx72gdcGFfavHxjlQPbd04Sqy2WUPTkbeiAr39TJsPfHX+5feMrMLk0c+Yf9Slcf2tkItAn3nO7ZILR/W1BNUX3d7OlDHDlmf9XkvodKgRLCXk=
     before_install:
     - gem install bundler --conservative --minimal-deps --no-document
       --version="~> 1.17"
@@ -696,9 +696,9 @@ jobs:
     script: true
     cache: false
     before_deploy:
-    - echo $rubygems_private_key_password |
-      gpg --decrypt --output certs/gem-private_key.pem --passphrase-fd 0 certs/gem-private_key.pem.gpg
-    - sha256sum certs/gem-private_key.pem | grep 5b92dfbfccbc596ae7cf62847830f931449a2859aac254e3727256b17686178f
+    - echo $rubygems_private_key_password | gpg --output certs/gem-private_key.pem
+      --passphrase-fd 0 certs/gem-private_key.pem.gpg
+    - sha256sum certs/gem-private_key.pem | grep 7fd21648141c38cbfa08e3a7c16746c97811c750a0be727f737700fea0b4cebf
     - gem cert --add certs/gem-public_cert.pem
     deploy:
       provider: rubygems
