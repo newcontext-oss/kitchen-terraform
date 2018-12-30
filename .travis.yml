@@ -160,7 +160,7 @@ jobs:
     - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
     cache:
       directories:
-      - vendor/bundle
+      - ruby-2.5/vendor/bundle
   - stage: Deploy to RubyGems
     dist: trusty
     language: ruby
