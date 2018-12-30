@@ -156,6 +156,7 @@ jobs:
     install:
     - echo $rubygems_api_key_password | gpg --output ~/.gem/credentials --passphrase-fd
       0 rubygems/credentials.gpg
+    - chmod 0600 ~/.gem/credentials
     script: true
     cache: false
     before_deploy:
