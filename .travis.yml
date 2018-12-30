@@ -29,6 +29,7 @@ jobs:
   - name: Ruby 2.4 with Code Climate on Ubuntu
     dist: trusty
     language: ruby
+    rvm: 2.4.1
     env:
     - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     before_install:
