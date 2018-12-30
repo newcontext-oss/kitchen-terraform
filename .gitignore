@@ -20,6 +20,7 @@ coverage/
 doc/
 examples/*/Gemfile.lock
 examples/*/test/assets
+rubygems/credentials
 terraform_*/
 terraform.tfstate.d/
 test/terraform/Plug Ins/Plug In Directory/
