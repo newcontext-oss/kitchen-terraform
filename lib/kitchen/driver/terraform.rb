@@ -17,6 +17,7 @@
 require "kitchen"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/version"
+require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
@@ -481,13 +482,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       timeout: config_command_timeout,
     )
   rescue ::Kitchen::Terraform::Error
-    ::Kitchen::Terraform::ShellOut.run(
-      command: "workspace new #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+    ::Kitchen::Terraform::Command::WorkspaceNew.run(
+      directory: config_root_module_directory,
+      name: workspace_name,
+      timeout: config_command_timeout,
     )
   end
 
