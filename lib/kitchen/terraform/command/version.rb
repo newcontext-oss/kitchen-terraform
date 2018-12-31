@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/error"
+require "kitchen/terraform/shell_out_nu"
 require "rubygems"
 
 module Kitchen
@@ -23,35 +23,19 @@ module Kitchen
     module Command
       # Version is the class of objects which represent the <tt>terraform version</tt> command.
       class Version < ::Gem::Version
-        extend ::Kitchen::Logging
-        extend ::Kitchen::ShellOut
-
         class << self
-          # The command is run by shelling out in an environment which is optimized for automating Terraform.
+          # Initializes an instance by running `terraform version`.
           #
           # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
-          # @return [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the command.
+          # @return [self]
           # @yieldparam version [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the
           #   command.
           def run
-            new(
-              run_command(
-                "terraform version",
-                environment: {
-                  "LC_ALL" => nil,
-                  "TF_IN_AUTOMATION" => "true",
-                  "TF_WARN_OUTPUT_ERRORS" => "true",
-                },
-              )
-            ).tap do |version|
-              yield version: version
+            ::Kitchen::Terraform::ShellOutNu.run command: "terraform version" do |output:|
+              yield version: new(output)
             end
-          rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
-            raise ::Kitchen::Terraform::Error, error.message
-          end
 
-          def logger
-            ::Kitchen.logger
+            self
           end
         end
 
