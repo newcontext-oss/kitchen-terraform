@@ -17,6 +17,7 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/error"
@@ -262,11 +263,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
     shared_examples "terraform: get; validate; apply" do
       context "when `terraform get` results in failure" do
         before do
-          shell_out_run_failure(
-            command: /get/,
-            message: "mocked `terraform get` failure",
-            working_directory: config_root_module_directory,
-          )
+          allow(::Kitchen::Terraform::Command::Get).to receive(:run).with(
+            directory: config_root_module_directory,
+            timeout: config_command_timeout,
+          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform get` failure"
         end
 
         specify "should result in an action failed error with the failed command output" do
@@ -278,7 +278,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform get` results in success" do
         before do
-          shell_out_run_success command: "get -update", working_directory: config_root_module_directory
+          allow(::Kitchen::Terraform::Command::Get).to receive(:run).with(
+            directory: config_root_module_directory,
+            timeout: config_command_timeout,
+          )
         end
 
         context "when `terraform validate` results in failure" do
