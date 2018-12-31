@@ -92,6 +92,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
     class_double(::Kitchen::Terraform::ShellOut).as_stubbed_const
   end
 
+  let :instance_workspace_name do
+    "kitchen-terraform-test-suite-test-platform"
   end
 
   shared_context "Terraform CLI available" do
@@ -137,12 +139,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
   shared_examples "the action fails if the Terraform workspace can not be selected or created" do
     before do
       shell_out_run_failure(
-        command: "workspace select kitchen-terraform-test-suite-test-platform",
+        command: "workspace select #{instance_workspace_name}",
         message: "mocked `terraform workspace select <kitchen-instance>` failure",
         working_directory: config_root_module_directory,
       )
       shell_out_run_failure(
-        command: "workspace new kitchen-terraform-test-suite-test-platform",
+        command: "workspace new #{instance_workspace_name}",
         message: "mocked `terraform workspace new <kitchen-instance>` failure",
         working_directory: config_root_module_directory,
       )
@@ -362,7 +364,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform workspace select <kitchen-instance>` results in failure" do
         before do
           shell_out_run_failure(
-            command: "workspace select kitchen-terraform-test-suite-test-platform",
+            command: "workspace select #{instance_workspace_name}",
             message: "mocked `terraform workspace select <kitchen-instance>` failure",
             working_directory: config_root_module_directory,
           )
@@ -370,8 +372,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform workspace new <kitchen-instance>` results in success" do
           before do
-            shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
+            shell_out_run_success(
+              command: "workspace new #{instance_workspace_name}",
               working_directory: config_root_module_directory,
+            )
           end
 
           it_behaves_like "terraform: get; validate; apply"
@@ -380,8 +384,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform workspace select <kitchen-instance>` results in success" do
         before do
-          shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
+          shell_out_run_success(
+            command: "workspace select #{instance_workspace_name}",
             working_directory: config_root_module_directory,
+          )
         end
 
         it_behaves_like "terraform: get; validate; apply"
@@ -464,7 +470,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         context "when `terraform workspace select <kitchen-instance>` results in failure" do
           before do
             shell_out_run_failure(
-              command: "workspace select kitchen-terraform-test-suite-test-platform",
+              command: "workspace select #{instance_workspace_name}",
               message: "mocked `terraform workspace select <kitchen-instance>` failure",
               working_directory: config_root_module_directory,
             )
@@ -472,8 +478,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           context "when `terraform workspace new <kitchen-instance>` results in success" do
             before do
-              shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
+              shell_out_run_success(
+                command: "workspace new #{instance_workspace_name}",
                 working_directory: config_root_module_directory,
+              )
             end
 
             specify "should result in success" do
@@ -486,8 +494,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform workspace select <kitchen-instance>` results in success" do
           before do
-            shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
+            shell_out_run_success(
+              command: "workspace select #{instance_workspace_name}",
               working_directory: config_root_module_directory,
+            )
           end
 
           specify "should result in success" do
@@ -605,14 +615,16 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform workspace select default` results in success" do
           before do
-            shell_out_run_success command: "workspace select default"
+            shell_out_run_success(
+              command: "workspace select default",
               working_directory: config_root_module_directory,
+            )
           end
 
           context "when `terraform workspace delete <kitchen-instance>` results in failure" do
             before do
               shell_out_run_failure(
-                command: "workspace delete kitchen-terraform-test-suite-test-platform",
+                command: "workspace delete #{instance_workspace_name}",
                 message: "mocked `terraform workspace delete <kitchen-instance>` failure",
                 working_directory: config_root_module_directory,
               )
@@ -630,8 +642,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           context "when `terraform workspace delete <kitchen-instance>` results in success" do
             before do
-              shell_out_run_success command: "workspace delete kitchen-terraform-test-suite-test-platform"
+              shell_out_run_success(
+                command: "workspace delete #{instance_workspace_name}",
                 working_directory: config_root_module_directory,
+              )
             end
 
             specify "should result in success" do
@@ -680,13 +694,14 @@ require "support/kitchen/terraform/result_in_success_matcher"
         context "when the Terraform workspace is created" do
           before do
             shell_out_run_failure(
-              command: "workspace select kitchen-terraform-test-suite-test-platform",
+              command: "workspace select #{instance_workspace_name}",
               message: "mocked `terraform workspace select <kitchen-instance>` failure",
               working_directory: config_root_module_directory,
             )
+            shell_out_run_success(
+              command: "workspace new #{instance_workspace_name}",
               working_directory: config_root_module_directory,
             )
-            shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
           end
 
           it_behaves_like "it destroys the state"
@@ -694,8 +709,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform workspace select <kitchen-instance>` results in success" do
           before do
-            shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
+            shell_out_run_success(
+              command: "workspace select #{instance_workspace_name}",
               working_directory: config_root_module_directory,
+            )
           end
 
           it_behaves_like "it destroys the state"
@@ -830,7 +847,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
     context "when `terraform workspace select <kitchen-instance>` results in failure" do
       before do
         shell_out_run_failure(
-          command: "workspace select kitchen-terraform-test-suite-test-platform",
+          command: "workspace select #{instance_workspace_name}",
           message: "mocked `terraform workspace select <kitchen-instance>` failure",
           working_directory: config_root_module_directory,
         )
@@ -838,8 +855,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform workspace new <kitchen-instance>` results in success" do
         before do
-          shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
+          shell_out_run_success(
+            command: "workspace new #{instance_workspace_name}",
             working_directory: config_root_module_directory,
+          )
         end
 
         it_behaves_like "`terraform output` is run"
@@ -848,8 +867,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform workspace select <kitchen-instance>` results in success" do
       before do
-        shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
+        shell_out_run_success(
+          command: "workspace select #{instance_workspace_name}",
           working_directory: config_root_module_directory,
+        )
       end
 
       it_behaves_like "`terraform output` is run"
