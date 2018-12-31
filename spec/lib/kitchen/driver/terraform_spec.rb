@@ -51,7 +51,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
-      verify_version: verify_version,
+      verify_version: config_verify_version,
     }
   end
 
@@ -65,6 +65,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :config_plugin_directory do
     "/Arbitrary Directory/Plugin Directory"
+  end
+
+  let :config_verify_version do
+    true
   end
 
   let :described_instance do
@@ -88,8 +92,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
     class_double(::Kitchen::Terraform::ShellOut).as_stubbed_const
   end
 
-  let :verify_version do
-    true
   end
 
   shared_context "Terraform CLI available" do
@@ -393,7 +395,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     context "when the Terraform version is unsupported but verification is disabled" do
-      let :verify_version do
+      let :config_verify_version do
         false
       end
 
@@ -510,7 +512,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     context "when the Terraform version is unsupported but verification is disabled" do
-      let :verify_version do
+      let :config_verify_version do
         false
       end
 
@@ -714,7 +716,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     context "when the Terraform version is unsupported but verification is disabled" do
-      let :verify_version do
+      let :config_verify_version do
         false
       end
 
