@@ -17,6 +17,7 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
@@ -579,6 +580,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
 
       context "when `terraform destroy` results in success" do
+        let :default_workspace_name do
+          "default"
+        end
+
         before do
           shell_out_run_success(
             command: "destroy " \
@@ -599,11 +604,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform select default` results in failure" do
           before do
-            shell_out_run_failure(
-              command: "workspace select default",
-              message: "mocked `terraform workspace select default` failure",
-              working_directory: config_root_module_directory,
-            )
+            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+              directory: config_root_module_directory,
+              name: default_workspace_name,
+              timeout: config_command_timeout,
+            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select default` failure"
           end
 
           specify "should result in an action failed error with the failed command output" do
@@ -615,9 +620,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform workspace select default` results in success" do
           before do
-            shell_out_run_success(
-              command: "workspace select default",
-              working_directory: config_root_module_directory,
+            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+              directory: config_root_module_directory,
+              name: default_workspace_name,
+              timeout: config_command_timeout,
             )
           end
 

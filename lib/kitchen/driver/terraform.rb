@@ -17,6 +17,7 @@
 require "kitchen"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/version"
+require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
@@ -441,13 +442,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_workspace_select_default
-    ::Kitchen::Terraform::ShellOut.run(
-      command: "workspace select default",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+    ::Kitchen::Terraform::Command::WorkspaceSelect.run(
+      directory: config_root_module_directory,
+      name: "default",
+      timeout: config_command_timeout,
     )
   end
 
