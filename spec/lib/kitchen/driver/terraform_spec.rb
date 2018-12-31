@@ -36,10 +36,6 @@ require "support/kitchen/terraform/result_in_failure_matcher"
 require "support/kitchen/terraform/result_in_success_matcher"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
-  let :command_timeout do
-    1234
-  end
-
   let :config do
     {
       backend_configurations: {
@@ -47,9 +43,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
       color: false,
-      command_timeout: command_timeout,
       kitchen_root: kitchen_root,
       plugin_directory: plugin_directory,
+      command_timeout: config_command_timeout,
       variable_files: ["/Arbitrary Directory/Variable File.tfvars"],
       variables: {
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
@@ -57,6 +53,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
       },
       verify_version: verify_version,
     }
+  end
+
+  let :config_command_timeout do
+    1234
   end
 
   let :described_instance do
@@ -156,7 +156,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: working_directory,
               live_stream: kitchen_logger,
-              timeout: command_timeout,
+              timeout: config_command_timeout,
             },
           )
           .and_raise(
@@ -175,23 +175,23 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: working_directory,
               live_stream: kitchen_logger,
-              timeout: command_timeout,
+              timeout: config_command_timeout,
             },
           )
           .and_return(return_value)
       )
   end
 
-  def shell_out_run_yield(command:, standard_output: "mocked `terraform` success")
+  def shell_out_run_yield(command:, standard_output: "mocked `terraform` success", working_directory:)
     allow(shell_out)
       .to(
         receive(:run)
           .with(
             command: command,
             options: {
-              cwd: kitchen_root,
+              cwd: working_directory,
               live_stream: kitchen_logger,
-              timeout: command_timeout,
+              timeout: config_command_timeout,
             },
           )
           .and_yield(standard_output: standard_output)
