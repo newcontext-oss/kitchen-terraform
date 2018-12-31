@@ -18,6 +18,7 @@ require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/command/get"
+require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/error"
@@ -637,11 +638,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           context "when `terraform workspace delete <kitchen-instance>` results in failure" do
             before do
-              shell_out_run_failure(
-                command: "workspace delete #{instance_workspace_name}",
-                message: "mocked `terraform workspace delete <kitchen-instance>` failure",
-                working_directory: config_root_module_directory,
-              )
+              allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:run).with(
+                directory: config_root_module_directory,
+                name: instance_workspace_name,
+                timeout: config_command_timeout,
+              ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace delete <kitchen-instance>` failure"
             end
 
             specify "should result in an action failed error with the failed command output" do
@@ -656,9 +657,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           context "when `terraform workspace delete <kitchen-instance>` results in success" do
             before do
-              shell_out_run_success(
-                command: "workspace delete #{instance_workspace_name}",
-                working_directory: config_root_module_directory,
+              allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:run).with(
+                directory: config_root_module_directory,
+                name: instance_workspace_name,
+                timeout: config_command_timeout,
               )
             end
 

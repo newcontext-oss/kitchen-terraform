@@ -18,6 +18,7 @@ require "kitchen"
 require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/version"
+require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/config_attribute/backend_configurations"
@@ -428,13 +429,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_workspace_delete_instance
-    ::Kitchen::Terraform::ShellOut.run(
-      command: "workspace delete #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+    ::Kitchen::Terraform::Command::WorkspaceDelete.run(
+      directory: config_root_module_directory,
+      name: workspace_name,
+      timeout: config_command_timeout,
     )
   end
 
