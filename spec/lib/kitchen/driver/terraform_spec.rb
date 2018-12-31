@@ -139,11 +139,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   shared_examples "the action fails if the Terraform workspace can not be selected or created" do
     before do
-      shell_out_run_failure(
-        command: "workspace select #{instance_workspace_name}",
-        message: "mocked `terraform workspace select <kitchen-instance>` failure",
-        working_directory: config_root_module_directory,
-      )
+      allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+        directory: config_root_module_directory,
+        name: instance_workspace_name,
+        timeout: config_command_timeout,
+      ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
       shell_out_run_failure(
         command: "workspace new #{instance_workspace_name}",
         message: "mocked `terraform workspace new <kitchen-instance>` failure",
@@ -364,11 +364,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform workspace select <kitchen-instance>` results in failure" do
         before do
-          shell_out_run_failure(
-            command: "workspace select #{instance_workspace_name}",
-            message: "mocked `terraform workspace select <kitchen-instance>` failure",
-            working_directory: config_root_module_directory,
-          )
+          allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+            directory: config_root_module_directory,
+            name: instance_workspace_name,
+            timeout: config_command_timeout,
+          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
         end
 
         context "when `terraform workspace new <kitchen-instance>` results in success" do
@@ -385,9 +385,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform workspace select <kitchen-instance>` results in success" do
         before do
-          shell_out_run_success(
-            command: "workspace select #{instance_workspace_name}",
-            working_directory: config_root_module_directory,
+          allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+            directory: config_root_module_directory,
+            name: instance_workspace_name,
+            timeout: config_command_timeout,
           )
         end
 
@@ -470,11 +471,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform workspace select <kitchen-instance>` results in failure" do
           before do
-            shell_out_run_failure(
-              command: "workspace select #{instance_workspace_name}",
-              message: "mocked `terraform workspace select <kitchen-instance>` failure",
-              working_directory: config_root_module_directory,
-            )
+            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+              directory: config_root_module_directory,
+              name: instance_workspace_name,
+              timeout: config_command_timeout,
+            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
           end
 
           context "when `terraform workspace new <kitchen-instance>` results in success" do
@@ -495,9 +496,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform workspace select <kitchen-instance>` results in success" do
           before do
-            shell_out_run_success(
-              command: "workspace select #{instance_workspace_name}",
-              working_directory: config_root_module_directory,
+            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+              directory: config_root_module_directory,
+              name: instance_workspace_name,
+              timeout: config_command_timeout,
             )
           end
 
@@ -699,11 +701,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when the Terraform workspace is created" do
           before do
-            shell_out_run_failure(
-              command: "workspace select #{instance_workspace_name}",
-              message: "mocked `terraform workspace select <kitchen-instance>` failure",
-              working_directory: config_root_module_directory,
-            )
+            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+              directory: config_root_module_directory,
+              name: instance_workspace_name,
+              timeout: config_command_timeout,
+            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
             shell_out_run_success(
               command: "workspace new #{instance_workspace_name}",
               working_directory: config_root_module_directory,
@@ -715,9 +717,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform workspace select <kitchen-instance>` results in success" do
           before do
-            shell_out_run_success(
-              command: "workspace select #{instance_workspace_name}",
-              working_directory: config_root_module_directory,
+            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+              directory: config_root_module_directory,
+              name: instance_workspace_name,
+              timeout: config_command_timeout,
             )
           end
 
@@ -852,11 +855,11 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform workspace select <kitchen-instance>` results in failure" do
       before do
-        shell_out_run_failure(
-          command: "workspace select #{instance_workspace_name}",
-          message: "mocked `terraform workspace select <kitchen-instance>` failure",
-          working_directory: config_root_module_directory,
-        )
+        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+          directory: config_root_module_directory,
+          name: instance_workspace_name,
+          timeout: config_command_timeout,
+        ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
       end
 
       context "when `terraform workspace new <kitchen-instance>` results in success" do
@@ -873,9 +876,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     context "when `terraform workspace select <kitchen-instance>` results in success" do
       before do
-        shell_out_run_success(
-          command: "workspace select #{instance_workspace_name}",
-          working_directory: config_root_module_directory,
+        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+          directory: config_root_module_directory,
+          name: instance_workspace_name,
+          timeout: config_command_timeout,
         )
       end
 

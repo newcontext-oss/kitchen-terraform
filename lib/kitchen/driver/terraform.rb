@@ -475,13 +475,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def run_workspace_select_instance
-    ::Kitchen::Terraform::ShellOut.run(
-      command: "workspace select #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+    ::Kitchen::Terraform::Command::WorkspaceSelect.run(
+      directory: config_root_module_directory,
+      name: workspace_name,
+      timeout: config_command_timeout,
     )
   rescue ::Kitchen::Terraform::Error
     ::Kitchen::Terraform::ShellOut.run(
