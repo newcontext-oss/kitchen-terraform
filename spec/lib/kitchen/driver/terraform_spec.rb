@@ -43,8 +43,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
       color: false,
-      plugin_directory: plugin_directory,
       command_timeout: config_command_timeout,
+      plugin_directory: config_plugin_directory,
       root_module_directory: config_root_module_directory,
       variable_files: ["/Arbitrary Directory/Variable File.tfvars"],
       variables: {
@@ -63,6 +63,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
     "/root-module-directory"
   end
 
+  let :config_plugin_directory do
+    "/Arbitrary Directory/Plugin Directory"
+  end
+
   let :described_instance do
     described_class.new config
   end
@@ -78,10 +82,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :kitchen_logger do
     described_instance.send :logger
-  end
-
-  let :plugin_directory do
-    "/Arbitrary Directory/Plugin Directory"
   end
 
   let :shell_out do
@@ -447,7 +447,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
             "-get=true " \
             "-get-plugins=true " \
-            "-plugin-dir=\"#{plugin_directory}\" " \
+            "-plugin-dir=\"#{config_plugin_directory}\" " \
             "-verify-plugins=true",
             working_directory: config_root_module_directory,
           )
@@ -537,7 +537,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
     include_context "Terraform CLI available"
 
-    let :plugin_directory do
+    let :config_plugin_directory do
       nil
     end
 
