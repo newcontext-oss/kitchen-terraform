@@ -47,6 +47,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       color: config_color,
       command_timeout: config_command_timeout,
       lock: config_lock,
+      lock_timeout: config_lock_timeout,
       plugin_directory: config_plugin_directory,
       root_module_directory: config_root_module_directory,
       variable_files: config_variable_files,
@@ -65,6 +66,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :config_color do
     false
+  end
+
+  let :config_lock_timeout do
+    1234
   end
 
   let :config_command_timeout do
@@ -358,8 +363,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
             before do
               shell_out_run_success(
                 command: "apply " \
-                "-lock-timeout=0s " \
                 "-lock=false " \
+                "-lock-timeout=1234s " \
                 "-input=false " \
                 "-auto-approve=true " \
                 "-no-color " \
@@ -475,8 +480,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
           shell_out_run_success(
             command: "init " \
             "-input=false " \
-            "-lock-timeout=0s " \
             "-lock=false " \
+            "-lock-timeout=1234s " \
             "-no-color " \
             "-upgrade " \
             "-force-copy " \
@@ -620,8 +625,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
           shell_out_run_success(
             command: "destroy " \
             "-auto-approve " \
-            "-lock-timeout=0s " \
             "-lock=false " \
+            "-lock-timeout=1234s " \
             "-input=false " \
             "-no-color " \
             "-parallelism=10 " \
@@ -709,8 +714,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
           shell_out_run_success(
             command: "init " \
             "-input=false " \
-            "-lock-timeout=0s " \
             "-lock=false " \
+            "-lock-timeout=1234s " \
             "-no-color " \
             "-force-copy " \
             "-backend=true " \
