@@ -43,10 +43,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 ::RSpec.describe ::Kitchen::Driver::Terraform do
   let :config do
     {
-      backend_configurations: {
-        string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
-        list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
-      },
+      backend_configurations: config_backend_configurations,
       color: config_color,
       command_timeout: config_command_timeout,
       plugin_directory: config_plugin_directory,
@@ -54,6 +51,14 @@ require "support/kitchen/terraform/result_in_success_matcher"
       variable_files: config_variable_files,
       variables: config_variables,
       verify_version: config_verify_version,
+    }
+  end
+
+  let :config_backend_configurations do
+    {
+      list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
+      map: "{ key = \\\"A Value\\\" }",
+      string: "\\\"A String\\\"",
     }
   end
 
@@ -471,9 +476,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "-upgrade " \
             "-force-copy " \
             "-backend=true " \
-            "-backend-config=\"string=\\\"A String\\\"\" " \
-            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
             "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
+            "-backend-config=\"string=\\\"A String\\\"\" " \
             "-get=true " \
             "-get-plugins=true " \
             "-plugin-dir=\"#{config_plugin_directory}\" " \
@@ -704,9 +709,9 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "-no-color " \
             "-force-copy " \
             "-backend=true " \
-            "-backend-config=\"string=\\\"A String\\\"\" " \
-            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
             "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
+            "-backend-config=\"string=\\\"A String\\\"\" " \
             "-get=true " \
             "-get-plugins=true " \
             "-verify-plugins=true",
