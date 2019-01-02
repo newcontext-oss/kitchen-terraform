@@ -17,6 +17,7 @@
 require "kitchen"
 require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/output"
+require "kitchen/terraform/command/validate"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
@@ -333,17 +334,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def apply_run_validate
-    ::Kitchen::Terraform::ShellOut.run(
-      command: "validate " \
-      "-check-variables=true " \
-      "#{color_flag} " \
-      "#{variables_flags} " \
-      "#{variable_files_flags}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+    ::Kitchen::Terraform::Command::Validate.run(
+      color: config_color,
+      directory: config_root_module_directory,
+      timeout: config_command_timeout,
+      variable_files: config_variable_files,
+      variables: config_variables,
     )
   end
 

@@ -18,6 +18,7 @@ require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/command/get"
+require "kitchen/terraform/command/validate"
 require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
@@ -300,11 +301,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform validate` results in failure" do
           before do
-            shell_out_run_failure(
-              command: /validate/,
-              message: "mocked `terraform validate` failure",
-              working_directory: config_root_module_directory,
-            )
+            allow(::Kitchen::Terraform::Command::Validate).to receive(:run).with(
+              color: config_color,
+              directory: config_root_module_directory,
+              variable_files: config_variable_files,
+              variables: config_variables,
+              timeout: config_command_timeout,
+            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform validate` failure"
           end
 
           specify "should result in an action failed error with the failed command output" do
@@ -316,15 +319,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform validate` results in success" do
           before do
-            shell_out_run_success(
-              command: "validate " \
-              "-check-variables=true " \
-              "-no-color " \
-              "-var=\"string=\\\"A String\\\"\" " \
-              "-var=\"map={ key = \\\"A Value\\\" }\" " \
-              "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-              "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
-              working_directory: config_root_module_directory,
+            allow(::Kitchen::Terraform::Command::Validate).to receive(:run).with(
+              color: config_color,
+              directory: config_root_module_directory,
+              variable_files: config_variable_files,
+              variables: config_variables,
+              timeout: config_command_timeout,
             )
           end
 
