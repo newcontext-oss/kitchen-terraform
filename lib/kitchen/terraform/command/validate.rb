@@ -39,11 +39,7 @@ module Kitchen
           # @yieldparam validate [::Kitchen::Terraform::Command::Validate] an instance initialized with the output of
           #   the command.
           def run(options)
-            new(
-              color: options.fetch(:color),
-              variable_files: options.fetch(:variable_files),
-              variables: options.fetch(:variables),
-            ).tap do |validate|
+            new(options).tap do |validate|
               ::Kitchen::Terraform::ShellOutNu.run(
                 command: validate,
                 directory: options.fetch(:directory),
@@ -81,10 +77,10 @@ module Kitchen
 
         private
 
-        def initialize(color:, variable_files:, variables:)
-          @color = color
-          @variable_files = variable_files
-          @variables = variables
+        def initialize(options)
+          @color = options.fetch :color
+          @variable_files = options.fetch :variable_files
+          @variables = options.fetch :variables
         end
       end
     end
