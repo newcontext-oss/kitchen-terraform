@@ -50,11 +50,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
       command_timeout: config_command_timeout,
       plugin_directory: config_plugin_directory,
       root_module_directory: config_root_module_directory,
-      variables: {
-        string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
-        list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
-      },
       variable_files: config_variable_files,
+      variables: config_variables,
       verify_version: config_verify_version,
     }
   end
@@ -77,6 +74,14 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :config_variable_files do
     ["/Arbitrary Directory/Variable File.tfvars"]
+  end
+
+  let :config_variables do
+    {
+      string: "\\\"A String\\\"",
+      map: "{ key = \\\"A Value\\\" }",
+      list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
+    }
   end
 
   let :config_verify_version do
