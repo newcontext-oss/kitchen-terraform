@@ -46,7 +46,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
-      color: false,
+      color: config_color,
       command_timeout: config_command_timeout,
       plugin_directory: config_plugin_directory,
       root_module_directory: config_root_module_directory,
@@ -57,6 +57,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
       },
       verify_version: config_verify_version,
     }
+  end
+
+  let :config_color do
+    false
   end
 
   let :config_command_timeout do
