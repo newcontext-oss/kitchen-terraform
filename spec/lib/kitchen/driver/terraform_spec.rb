@@ -153,22 +153,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
   end
 
-  shared_examples "the action fails if the Terraform root module can not be initialized" do
-    before do
-      shell_out_run_failure(
-        command: /init/,
-        message: "mocked `terraform init` failure",
-        working_directory: config_root_module_directory,
-      )
-    end
-
-    specify "should result in an action failed error with the failed command output" do
-      expect do
-        action
-      end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform init` failure"
-    end
-  end
-
   shared_examples "the action fails if the Terraform workspace can not be selected or created" do
     before do
       allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
@@ -469,31 +453,38 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     shared_examples "it initializes the root module and selects the instance workspace" do
-      it_behaves_like "the action fails if the Terraform root module can not be initialized" do
-        let :action do
-          subject.create({})
+      context "when `terraform init` results in failure" do
+        before do
+          allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
+            backend_configurations: config_backend_configurations,
+            color: config_color,
+            directory: config_root_module_directory,
+            lock: config_lock,
+            lock_timeout: config_lock_timeout,
+            plugin_dir: config_plugin_directory,
+            timeout: config_command_timeout,
+            upgrade: true,
+          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform init` failure"
+        end
+
+        specify "should result in an action failed error with the failed command output" do
+          expect do
+            subject.create({})
+          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform init` failure"
         end
       end
 
       context "when `terraform init` results in success" do
         before do
-          shell_out_run_success(
-            command: "init " \
-            "-input=false " \
-            "-lock=false " \
-            "-lock-timeout=1234s " \
-            "-no-color " \
-            "-upgrade " \
-            "-force-copy " \
-            "-backend=true " \
-            "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
-            "-backend-config=\"string=\\\"A String\\\"\" " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "-plugin-dir=\"#{config_plugin_directory}\" " \
-            "-verify-plugins=true",
-            working_directory: config_root_module_directory,
+          allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
+            backend_configurations: config_backend_configurations,
+            color: config_color,
+            directory: config_root_module_directory,
+            lock: config_lock,
+            lock_timeout: config_lock_timeout,
+            plugin_dir: config_plugin_directory,
+            timeout: config_command_timeout,
+            upgrade: true,
           )
         end
 
@@ -703,29 +694,36 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     shared_examples "it initializes the root module, selects the instance workspace, and destroys the state" do
-      it_behaves_like "the action fails if the Terraform root module can not be initialized" do
-        let :action do
-          subject.destroy({})
+      context "when `terraform init` results in failure" do
+        before do
+          allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
+            backend_configurations: config_backend_configurations,
+            color: config_color,
+            directory: config_root_module_directory,
+            lock: config_lock,
+            lock_timeout: config_lock_timeout,
+            plugin_dir: config_plugin_directory,
+            timeout: config_command_timeout,
+          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform init` failure"
+        end
+
+        specify "should result in an action failed error with the failed command output" do
+          expect do
+            subject.destroy({})
+          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform init` failure"
         end
       end
 
       context "when `terraform init` results in success" do
         before do
-          shell_out_run_success(
-            command: "init " \
-            "-input=false " \
-            "-lock=false " \
-            "-lock-timeout=1234s " \
-            "-no-color " \
-            "-force-copy " \
-            "-backend=true " \
-            "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
-            "-backend-config=\"string=\\\"A String\\\"\" " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "-verify-plugins=true",
-            working_directory: config_root_module_directory,
+          allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
+            backend_configurations: config_backend_configurations,
+            color: config_color,
+            directory: config_root_module_directory,
+            lock: config_lock,
+            lock_timeout: config_lock_timeout,
+            plugin_dir: config_plugin_directory,
+            timeout: config_command_timeout,
           )
         end
 

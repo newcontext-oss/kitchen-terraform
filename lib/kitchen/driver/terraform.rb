@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/command/get"
+require "kitchen/terraform/command/init"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/validate"
 require "kitchen/terraform/command/version"
@@ -357,25 +358,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def create_run_init
-    ::Kitchen::Terraform::ShellOut.run(
-      command: "init " \
-      "-input=false " \
-      "#{lock_flag} " \
-      "#{lock_timeout_flag} " \
-      "#{color_flag} " \
-      "-upgrade " \
-      "-force-copy " \
-      "-backend=true " \
-      "#{backend_configurations_flags} " \
-      "-get=true " \
-      "-get-plugins=true " \
-      "#{plugin_directory_flag}" \
-      "-verify-plugins=true",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+    ::Kitchen::Terraform::Command::Init.run(
+      backend_configurations: config_backend_configurations,
+      color: config_color,
+      directory: config_root_module_directory,
+      lock: config_lock,
+      lock_timeout: config_lock_timeout,
+      plugin_dir: config_plugin_directory,
+      timeout: config_command_timeout,
+      upgrade: true,
     )
   end
 
@@ -402,24 +393,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_init
-    ::Kitchen::Terraform::ShellOut.run(
-      command: "init " \
-      "-input=false " \
-      "#{lock_flag} " \
-      "#{lock_timeout_flag} " \
-      "#{color_flag} " \
-      "-force-copy " \
-      "-backend=true " \
-      "#{backend_configurations_flags} " \
-      "-get=true " \
-      "-get-plugins=true " \
-      "#{plugin_directory_flag}" \
-      "-verify-plugins=true",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+    ::Kitchen::Terraform::Command::Init.run(
+      backend_configurations: config_backend_configurations,
+      color: config_color,
+      directory: config_root_module_directory,
+      lock: config_lock,
+      lock_timeout: config_lock_timeout,
+      plugin_dir: config_plugin_directory,
+      timeout: config_command_timeout,
     )
   end
 
