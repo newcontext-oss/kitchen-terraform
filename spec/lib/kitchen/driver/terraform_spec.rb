@@ -48,6 +48,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       command_timeout: config_command_timeout,
       lock: config_lock,
       lock_timeout: config_lock_timeout,
+      parallelism: config_parallelism,
       plugin_directory: config_plugin_directory,
       root_module_directory: config_root_module_directory,
       variable_files: config_variable_files,
@@ -82,6 +83,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :config_root_module_directory do
     "/root-module-directory"
+  end
+
+  let :config_parallelism do
+    1234
   end
 
   let :config_plugin_directory do
@@ -620,7 +625,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "-lock-timeout=1234s " \
             "-input=false " \
             "-no-color " \
-            "-parallelism=10 " \
+            "-parallelism=#{config_parallelism} " \
             "-refresh=true " \
             "-var=\"string=\\\"A String\\\"\" " \
             "-var=\"map={ key = \\\"A Value\\\" }\" " \
