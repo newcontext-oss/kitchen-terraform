@@ -18,7 +18,7 @@ require "kitchen/terraform/command/version"
 require "kitchen/terraform/verify_version"
 
 ::RSpec.describe ::Kitchen::Terraform::VerifyVersion do
-  describe "#call" do
+  describe ".call" do
     let :version do
       ::Kitchen::Terraform::Command::Version.new
     end
