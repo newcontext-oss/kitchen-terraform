@@ -17,6 +17,7 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/change_workspace"
 require "kitchen/terraform/command/apply"
 require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command/get"
@@ -156,24 +157,19 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
   end
 
-  shared_examples "the action fails if the Terraform workspace can not be selected or created" do
+  shared_examples "the action fails if the Terraform workspace can not be changed" do
     before do
-      allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+      allow(::Kitchen::Terraform::ChangeWorkspace).to receive(:call).with(
         directory: config_root_module_directory,
         name: instance_workspace_name,
         timeout: config_command_timeout,
-      ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
-      allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:run).with(
-        directory: config_root_module_directory,
-        name: instance_workspace_name,
-        timeout: config_command_timeout,
-      ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace new <kitchen-instance>` failure"
+      ).and_raise ::Kitchen::Terraform::Error, "mocked changing workspace failure"
     end
 
-    specify "should result in an action failed error with the failed command output" do
+    specify "should raise an action failed error with the failed command output" do
       expect do
         action
-      end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace new <kitchen-instance>` failure"
+      end.to raise_error ::Kitchen::ActionFailed, "mocked changing workspace failure"
     end
   end
 
@@ -226,143 +222,117 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance.finalize_config! kitchen_instance
     end
 
-    shared_examples "terraform: get; validate; apply" do
-      context "when `terraform get` results in failure" do
-        before do
-          allow(::Kitchen::Terraform::Command::Get).to receive(:run).with(
-            directory: config_root_module_directory,
-            timeout: config_command_timeout,
-          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform get` failure"
-        end
-
-        specify "should result in an action failed error with the failed command output" do
-          expect do
-            subject.apply
-          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform get` failure"
-        end
-      end
-
-      context "when `terraform get` results in success" do
-        before do
-          allow(::Kitchen::Terraform::Command::Get).to receive(:run).with(
-            directory: config_root_module_directory,
-            timeout: config_command_timeout,
-          )
-        end
-
-        context "when `terraform validate` results in failure" do
-          before do
-            allow(::Kitchen::Terraform::Command::Validate).to receive(:run).with(
-              color: config_color,
-              directory: config_root_module_directory,
-              variable_files: config_variable_files,
-              variables: config_variables,
-              timeout: config_command_timeout,
-            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform validate` failure"
-          end
-
-          specify "should result in an action failed error with the failed command output" do
-            expect do
-              subject.apply
-            end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform validate` failure"
-          end
-        end
-
-        context "when `terraform validate` results in success" do
-          before do
-            allow(::Kitchen::Terraform::Command::Validate).to receive(:run).with(
-              color: config_color,
-              directory: config_root_module_directory,
-              variable_files: config_variable_files,
-              variables: config_variables,
-              timeout: config_command_timeout,
-            )
-          end
-
-          context "when `terraform apply` results in failure" do
-            before do
-              allow(::Kitchen::Terraform::Command::Apply).to receive(:run).with(
-                color: config_color,
-                directory: config_root_module_directory,
-                lock: config_lock,
-                lock_timeout: config_lock_timeout,
-                parallelism: config_parallelism,
-                timeout: config_command_timeout,
-                variable_files: config_variable_files,
-                variables: config_variables,
-              ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform apply` failure"
-            end
-
-            specify "should result in an action failed error with the failed command output" do
-              expect do
-                subject.apply
-              end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform apply` failure"
-            end
-          end
-
-          context "when `terraform apply` results in success" do
-            before do
-              allow(::Kitchen::Terraform::Command::Apply).to receive(:run).with(
-                color: config_color,
-                directory: config_root_module_directory,
-                lock: config_lock,
-                lock_timeout: config_lock_timeout,
-                parallelism: config_parallelism,
-                timeout: config_command_timeout,
-                variable_files: config_variable_files,
-                variables: config_variables,
-              )
-            end
-
-            specify "should result in success" do
-              expect do
-                subject.apply
-              end.not_to raise_error
-            end
-          end
-        end
-      end
-    end
-
-    shared_examples "it selects the instance workspace and generates the state" do
-      it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
+    shared_examples "it changes to the instance workspace and generates the state" do
+      it_behaves_like "the action fails if the Terraform workspace can not be changed" do
         let :action do
           subject.apply
         end
       end
 
-      context "when `terraform workspace select <kitchen-instance>` results in failure" do
+      context "when the workspace can be change" do
         before do
-          allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
-            directory: config_root_module_directory,
-            name: instance_workspace_name,
-            timeout: config_command_timeout,
-          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
-        end
-
-        context "when `terraform workspace new <kitchen-instance>` results in success" do
-          before do
-            allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:run).with(
-              directory: config_root_module_directory,
-              name: instance_workspace_name,
-              timeout: config_command_timeout,
-            )
-          end
-
-          it_behaves_like "terraform: get; validate; apply"
-        end
-      end
-
-      context "when `terraform workspace select <kitchen-instance>` results in success" do
-        before do
-          allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+          allow(::Kitchen::Terraform::ChangeWorkspace).to receive(:call).with(
             directory: config_root_module_directory,
             name: instance_workspace_name,
             timeout: config_command_timeout,
           )
         end
 
-        it_behaves_like "terraform: get; validate; apply"
+        context "when `terraform get` results in failure" do
+          before do
+            allow(::Kitchen::Terraform::Command::Get).to receive(:run).with(
+              directory: config_root_module_directory,
+              timeout: config_command_timeout,
+            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform get` failure"
+          end
+
+          specify "should result in an action failed error with the failed command output" do
+            expect do
+              subject.apply
+            end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform get` failure"
+          end
+        end
+
+        context "when `terraform get` results in success" do
+          before do
+            allow(::Kitchen::Terraform::Command::Get).to receive(:run).with(
+              directory: config_root_module_directory,
+              timeout: config_command_timeout,
+            )
+          end
+
+          context "when `terraform validate` results in failure" do
+            before do
+              allow(::Kitchen::Terraform::Command::Validate).to receive(:run).with(
+                color: config_color,
+                directory: config_root_module_directory,
+                variable_files: config_variable_files,
+                variables: config_variables,
+                timeout: config_command_timeout,
+              ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform validate` failure"
+            end
+
+            specify "should result in an action failed error with the failed command output" do
+              expect do
+                subject.apply
+              end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform validate` failure"
+            end
+          end
+
+          context "when `terraform validate` results in success" do
+            before do
+              allow(::Kitchen::Terraform::Command::Validate).to receive(:run).with(
+                color: config_color,
+                directory: config_root_module_directory,
+                variable_files: config_variable_files,
+                variables: config_variables,
+                timeout: config_command_timeout,
+              )
+            end
+
+            context "when `terraform apply` results in failure" do
+              before do
+                allow(::Kitchen::Terraform::Command::Apply).to receive(:run).with(
+                  color: config_color,
+                  directory: config_root_module_directory,
+                  lock: config_lock,
+                  lock_timeout: config_lock_timeout,
+                  parallelism: config_parallelism,
+                  timeout: config_command_timeout,
+                  variable_files: config_variable_files,
+                  variables: config_variables,
+                ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform apply` failure"
+              end
+
+              specify "should result in an action failed error with the failed command output" do
+                expect do
+                  subject.apply
+                end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform apply` failure"
+              end
+            end
+
+            context "when `terraform apply` results in success" do
+              before do
+                allow(::Kitchen::Terraform::Command::Apply).to receive(:run).with(
+                  color: config_color,
+                  directory: config_root_module_directory,
+                  lock: config_lock,
+                  lock_timeout: config_lock_timeout,
+                  parallelism: config_parallelism,
+                  timeout: config_command_timeout,
+                  variable_files: config_variable_files,
+                  variables: config_variables,
+                )
+              end
+
+              specify "should result in success" do
+                expect do
+                  subject.apply
+                end.not_to raise_error
+              end
+            end
+          end
+        end
       end
     end
 
@@ -381,7 +351,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
       end
 
-      it_behaves_like "it selects the instance workspace and generates the state"
+      it_behaves_like "it changes to the instance workspace and generates the state"
     end
 
     context "when the Terraform version is supported" do
@@ -389,7 +359,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         allow(::Kitchen::Terraform::VerifyVersion).to receive :call
       end
 
-      it_behaves_like "it selects the instance workspace and generates the state"
+      it_behaves_like "it changes to the instance workspace and generates the state"
     end
   end
 
@@ -440,41 +410,15 @@ require "support/kitchen/terraform/result_in_success_matcher"
           )
         end
 
-        it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
+        it_behaves_like "the action fails if the Terraform workspace can not be changed" do
           let :action do
             subject.create({})
           end
         end
 
-        context "when `terraform workspace select <kitchen-instance>` results in failure" do
+        context "when the workspace can be changed" do
           before do
-            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
-              directory: config_root_module_directory,
-              name: instance_workspace_name,
-              timeout: config_command_timeout,
-            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
-          end
-
-          context "when `terraform workspace new <kitchen-instance>` results in success" do
-            before do
-              allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:run).with(
-                directory: config_root_module_directory,
-                name: instance_workspace_name,
-                timeout: config_command_timeout,
-              )
-            end
-
-            specify "should result in success" do
-              expect do
-                subject.create({})
-              end.not_to raise_error
-            end
-          end
-        end
-
-        context "when `terraform workspace select <kitchen-instance>` results in success" do
-          before do
-            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+            allow(::Kitchen::Terraform::ChangeWorkspace).to receive(:call).with(
               directory: config_root_module_directory,
               name: instance_workspace_name,
               timeout: config_command_timeout,
@@ -538,113 +482,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance.finalize_config! kitchen_instance
     end
 
-    shared_examples "it destroys the state" do
-      let :action do
-        subject.destroy({})
-      end
-
-      context "when `terraform destroy` results in failure" do
-        before do
-          allow(::Kitchen::Terraform::Command::Destroy).to receive(:run).with(
-            color: config_color,
-            directory: config_root_module_directory,
-            lock: config_lock,
-            lock_timeout: config_lock_timeout,
-            parallelism: config_parallelism,
-            timeout: config_command_timeout,
-            variable_files: config_variable_files,
-            variables: config_variables,
-          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform destroy` failure"
-        end
-
-        specify "should result in an action failed error with the failed command output" do
-          expect do
-            action
-          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform destroy` failure"
-        end
-      end
-
-      context "when `terraform destroy` results in success" do
-        let :default_workspace_name do
-          "default"
-        end
-
-        before do
-          allow(::Kitchen::Terraform::Command::Destroy).to receive(:run).with(
-            color: config_color,
-            directory: config_root_module_directory,
-            lock: config_lock,
-            lock_timeout: config_lock_timeout,
-            parallelism: config_parallelism,
-            timeout: config_command_timeout,
-            variable_files: config_variable_files,
-            variables: config_variables,
-          )
-        end
-
-        context "when `terraform select default` results in failure" do
-          before do
-            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
-              directory: config_root_module_directory,
-              name: default_workspace_name,
-              timeout: config_command_timeout,
-            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select default` failure"
-          end
-
-          specify "should result in an action failed error with the failed command output" do
-            expect do
-              action
-            end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace select default` failure"
-          end
-        end
-
-        context "when `terraform workspace select default` results in success" do
-          before do
-            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
-              directory: config_root_module_directory,
-              name: default_workspace_name,
-              timeout: config_command_timeout,
-            )
-          end
-
-          context "when `terraform workspace delete <kitchen-instance>` results in failure" do
-            before do
-              allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:run).with(
-                directory: config_root_module_directory,
-                name: instance_workspace_name,
-                timeout: config_command_timeout,
-              ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace delete <kitchen-instance>` failure"
-            end
-
-            specify "should result in an action failed error with the failed command output" do
-              expect do
-                action
-              end.to raise_error(
-                ::Kitchen::ActionFailed,
-                "mocked `terraform workspace delete <kitchen-instance>` failure"
-              )
-            end
-          end
-
-          context "when `terraform workspace delete <kitchen-instance>` results in success" do
-            before do
-              allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:run).with(
-                directory: config_root_module_directory,
-                name: instance_workspace_name,
-                timeout: config_command_timeout,
-              )
-            end
-
-            specify "should result in success" do
-              expect do
-                action
-              end.not_to raise_error
-            end
-          end
-        end
-      end
-    end
-
     shared_examples "it initializes the root module, selects the instance workspace, and destroys the state" do
       context "when `terraform init` results in failure" do
         before do
@@ -681,39 +518,125 @@ require "support/kitchen/terraform/result_in_success_matcher"
           )
         end
 
-        it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
+        it_behaves_like "the action fails if the Terraform workspace can not be changed" do
           let :action do
             subject.destroy({})
           end
         end
 
-        context "when the Terraform workspace is created" do
+        context "when the workspace can be changed" do
           before do
-            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
-              directory: config_root_module_directory,
-              name: instance_workspace_name,
-              timeout: config_command_timeout,
-            ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
-            allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:run).with(
+            allow(::Kitchen::Terraform::ChangeWorkspace).to receive(:call).with(
               directory: config_root_module_directory,
               name: instance_workspace_name,
               timeout: config_command_timeout,
             )
           end
 
-          it_behaves_like "it destroys the state"
-        end
-
-        context "when `terraform workspace select <kitchen-instance>` results in success" do
-          before do
-            allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
-              directory: config_root_module_directory,
-              name: instance_workspace_name,
-              timeout: config_command_timeout,
-            )
+          let :action do
+            subject.destroy({})
           end
 
-          it_behaves_like "it destroys the state"
+          context "when `terraform destroy` results in failure" do
+            before do
+              allow(::Kitchen::Terraform::Command::Destroy).to receive(:run).with(
+                color: config_color,
+                directory: config_root_module_directory,
+                lock: config_lock,
+                lock_timeout: config_lock_timeout,
+                parallelism: config_parallelism,
+                timeout: config_command_timeout,
+                variable_files: config_variable_files,
+                variables: config_variables,
+              ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform destroy` failure"
+            end
+
+            specify "should result in an action failed error with the failed command output" do
+              expect do
+                action
+              end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform destroy` failure"
+            end
+          end
+
+          context "when `terraform destroy` results in success" do
+            let :default_workspace_name do
+              "default"
+            end
+
+            before do
+              allow(::Kitchen::Terraform::Command::Destroy).to receive(:run).with(
+                color: config_color,
+                directory: config_root_module_directory,
+                lock: config_lock,
+                lock_timeout: config_lock_timeout,
+                parallelism: config_parallelism,
+                timeout: config_command_timeout,
+                variable_files: config_variable_files,
+                variables: config_variables,
+              )
+            end
+
+            context "when `terraform select default` results in failure" do
+              before do
+                allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+                  directory: config_root_module_directory,
+                  name: default_workspace_name,
+                  timeout: config_command_timeout,
+                ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select default` failure"
+              end
+
+              specify "should result in an action failed error with the failed command output" do
+                expect do
+                  action
+                end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace select default` failure"
+              end
+            end
+
+            context "when `terraform workspace select default` results in success" do
+              before do
+                allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+                  directory: config_root_module_directory,
+                  name: default_workspace_name,
+                  timeout: config_command_timeout,
+                )
+              end
+
+              context "when `terraform workspace delete <kitchen-instance>` results in failure" do
+                before do
+                  allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:run).with(
+                    directory: config_root_module_directory,
+                    name: instance_workspace_name,
+                    timeout: config_command_timeout,
+                  ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace delete <kitchen-instance>` failure"
+                end
+
+                specify "should result in an action failed error with the failed command output" do
+                  expect do
+                    action
+                  end.to raise_error(
+                    ::Kitchen::ActionFailed,
+                    "mocked `terraform workspace delete <kitchen-instance>` failure"
+                  )
+                end
+              end
+
+              context "when `terraform workspace delete <kitchen-instance>` results in success" do
+                before do
+                  allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:run).with(
+                    directory: config_root_module_directory,
+                    name: instance_workspace_name,
+                    timeout: config_command_timeout,
+                  )
+                end
+
+                specify "should result in success" do
+                  expect do
+                    action
+                  end.not_to raise_error
+                end
+              end
+            end
+          end
         end
       end
     end
@@ -760,7 +683,21 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance.finalize_config! kitchen_instance
     end
 
-    shared_examples "`terraform output` is run" do
+    it_behaves_like "the action fails if the Terraform workspace can not be changed" do
+      let :action do
+        subject.retrieve_outputs
+      end
+    end
+
+    context "when the workspace can be changed" do
+      before do
+        allow(::Kitchen::Terraform::ChangeWorkspace).to receive(:call).with(
+          directory: config_root_module_directory,
+          name: instance_workspace_name,
+          timeout: config_command_timeout,
+        )
+      end
+
       context "when the command results in failure not due to no outputs defined" do
         before do
           allow(::Kitchen::Terraform::Command::Output).to receive(:run).with(
@@ -805,46 +742,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
           )
         end
       end
-    end
-
-    it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
-      let :action do
-        subject.retrieve_outputs
-      end
-    end
-
-    context "when `terraform workspace select <kitchen-instance>` results in failure" do
-      before do
-        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
-          directory: config_root_module_directory,
-          name: instance_workspace_name,
-          timeout: config_command_timeout,
-        ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
-      end
-
-      context "when `terraform workspace new <kitchen-instance>` results in success" do
-        before do
-          allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:run).with(
-            directory: config_root_module_directory,
-            name: instance_workspace_name,
-            timeout: config_command_timeout,
-          )
-        end
-
-        it_behaves_like "`terraform output` is run"
-      end
-    end
-
-    context "when `terraform workspace select <kitchen-instance>` results in success" do
-      before do
-        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
-          directory: config_root_module_directory,
-          name: instance_workspace_name,
-          timeout: config_command_timeout,
-        )
-      end
-
-      it_behaves_like "`terraform output` is run"
     end
   end
 

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/change_workspace"
 require "kitchen/terraform/command/apply"
 require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command/get"
@@ -402,13 +403,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def run_workspace_select_instance
-    ::Kitchen::Terraform::Command::WorkspaceSelect.run(
-      directory: config_root_module_directory,
-      name: workspace_name,
-      timeout: config_command_timeout,
-    )
-  rescue ::Kitchen::Terraform::Error
-    ::Kitchen::Terraform::Command::WorkspaceNew.run(
+    ::Kitchen::Terraform::ChangeWorkspace.call(
       directory: config_root_module_directory,
       name: workspace_name,
       timeout: config_command_timeout,
