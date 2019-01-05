@@ -38,7 +38,7 @@ module Kitchen
                 directory: directory,
                 timeout: timeout,
               )
-              yield workspace_delete: workspace_delete
+              yield workspace_delete: workspace_delete if block_given?
             end
 
             self

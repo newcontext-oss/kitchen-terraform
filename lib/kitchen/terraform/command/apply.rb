@@ -52,7 +52,7 @@ module Kitchen
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),
               )
-              yield apply: apply
+              yield apply: apply if block_given?
             end
 
             self

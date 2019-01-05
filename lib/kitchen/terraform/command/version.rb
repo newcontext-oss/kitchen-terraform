@@ -32,7 +32,7 @@ module Kitchen
           #   command.
           def run
             ::Kitchen::Terraform::ShellOut.run command: "terraform version" do |output:|
-              yield version: new(output)
+              yield version: new(output) if block_given?
             end
 
             self

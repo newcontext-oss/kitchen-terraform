@@ -38,7 +38,7 @@ module Kitchen
                 timeout: timeout,
               )
 
-              yield get: get
+              yield get: get if block_given?
             end
 
             self

@@ -38,7 +38,7 @@ module Kitchen
           def run(color:, directory:, timeout:)
             new(color: color).tap do |output|
               shell_out directory: directory, output: output, timeout: timeout
-              yield output: output
+              yield output: output if block_given?
             end
 
             self

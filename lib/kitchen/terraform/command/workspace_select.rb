@@ -38,7 +38,7 @@ module Kitchen
                 directory: directory,
                 timeout: timeout,
               )
-              yield workspace_select: workspace_select
+              yield workspace_select: workspace_select if block_given?
             end
 
             self

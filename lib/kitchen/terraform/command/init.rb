@@ -51,7 +51,7 @@ module Kitchen
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),
               )
-              yield init: init
+              yield init: init if block_given?
             end
 
             self

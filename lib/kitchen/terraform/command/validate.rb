@@ -45,7 +45,7 @@ module Kitchen
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),
               )
-              yield validate: validate
+              yield validate: validate if block_given?
             end
 
             self
