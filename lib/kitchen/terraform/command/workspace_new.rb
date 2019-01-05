@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 module Kitchen
   module Terraform
@@ -33,7 +33,7 @@ module Kitchen
           # output of the command.
           def run(directory:, name:, timeout:)
             new(name: name).tap do |workspace_new|
-              ::Kitchen::Terraform::ShellOutNu.run(
+              ::Kitchen::Terraform::ShellOut.run(
                 command: workspace_new,
                 directory: directory,
                 timeout: timeout,

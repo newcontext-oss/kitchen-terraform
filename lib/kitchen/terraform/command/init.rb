@@ -21,7 +21,7 @@ require "kitchen/terraform/command_flag/lock_timeout"
 require "kitchen/terraform/command_flag/lock"
 require "kitchen/terraform/command_flag/plugin_dir"
 require "kitchen/terraform/command_flag/upgrade"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 module Kitchen
   module Terraform
@@ -46,7 +46,7 @@ module Kitchen
           #   command.
           def run(options)
             new(options).tap do |init|
-              ::Kitchen::Terraform::ShellOutNu.run(
+              ::Kitchen::Terraform::ShellOut.run(
                 command: init,
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),

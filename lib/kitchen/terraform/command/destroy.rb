@@ -21,7 +21,7 @@ require "kitchen/terraform/command_flag/lock"
 require "kitchen/terraform/command_flag/parallelism"
 require "kitchen/terraform/command_flag/variable_files"
 require "kitchen/terraform/command_flag/variables"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 module Kitchen
   module Terraform
@@ -47,7 +47,7 @@ module Kitchen
           #   command.
           def run(options)
             new(options).tap do |destroy|
-              ::Kitchen::Terraform::ShellOutNu.run(
+              ::Kitchen::Terraform::ShellOut.run(
                 command: destroy,
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),

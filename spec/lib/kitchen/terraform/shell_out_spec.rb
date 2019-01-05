@@ -16,219 +16,116 @@
 
 require "kitchen"
 require "kitchen/terraform/shell_out"
-require "mixlib/shellout"
 
-::RSpec
-  .describe ::Kitchen::Terraform::ShellOut do
-    describe ".run" do
-      subject do
-        proc do
-          described_class
-            .run(
-              command: "command",
-              options:
-                {
-                  cwd: "/working/directory",
-                  live_stream: logger,
-                  timeout: duration
-                }
-            )
+::RSpec.describe ::Kitchen::Terraform::ShellOut do
+  describe ".logger" do
+    specify "should return the Kitchen logger" do
+      expect(described_class.logger).to be ::Kitchen.logger
+    end
+  end
+
+  describe ".run" do
+    let :command do
+      Class.new do
+        def store(output:)
+          output
         end
+
+        def to_s
+          "command"
+        end
+      end.new
+    end
+
+    let :command_string do
+      "command"
+    end
+
+    describe "the default arguments" do
+      specify "should include the current working directory" do
+        expect(described_class).to receive(:run_command).with command_string, including(cwd: ::Dir.pwd)
       end
 
-      let :duration do
-        1234
+      specify "should include a 60,000 second timeout" do
+        expect(described_class).to receive(:run_command).with command_string, including(timeout: 60_000)
       end
 
-      let :environment do
-        {"TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1"}
+      after do
+        described_class.run command: command
+      end
+    end
+
+    describe "the environment" do
+      specify "should preserve the locale of the parent environment" do
+        expect(described_class).to receive(:run_command).with(
+          command_string,
+          including(environment: including("LC_ALL" => nil)),
+        )
       end
 
-      let :logger do
-        ::Kitchen::Logger.new
+      specify "should optimize Terraform for automation" do
+        expect(described_class).to receive(:run_command).with(
+          command_string,
+          including(environment: including("TF_IN_AUTOMATION" => "1")),
+        )
       end
 
-      context "when an invalid command option is sent to the shell out constructor" do
-        before do
-          allow(::Mixlib::ShellOut)
-            .to(
-              receive(:new)
-                .with(
-                  "terraform command",
-                  cwd: "/working/directory",
-                  environment: environment,
-                  live_stream: logger,
-                  timeout: duration
-                )
-                .and_raise(
-                  ::Mixlib::ShellOut::InvalidCommandOption,
-                  "invalid command option"
-                )
-            )
-        end
-
-        it do
-          is_expected.to result_in_failure.with_message matching "invalid command option"
-        end
+      specify "should treat Terraform output errors as warnings" do
+        expect(described_class).to receive(:run_command).with(
+          command_string,
+          including(environment: including("TF_WARN_OUTPUT_ERRORS" => "1")),
+        )
       end
 
-      shared_context "when an error occurs" do
-        def mock_run_command(original, *arguments)
-          original
-            .call(*arguments)
-            .tap do |shell_out|
-              allow(shell_out)
-                .to(
-                  receive(:run_command)
-                    .and_raise(
-                      error_class,
-                      "mocked error"
-                    )
-                )
-            end
-        end
+      after do
+        described_class.run command: command
+      end
+    end
 
-        let :new_arguments do
-          [
-            "terraform command",
-            {
-              cwd: "/working/directory",
-              environment: environment,
-              live_stream: logger,
-              timeout: duration
-            }
-          ]
-        end
-
-        before do
-          allow(::Mixlib::ShellOut)
-            .to(
-              receive(:new)
-                .with(*new_arguments)
-                .and_wrap_original(&method(:mock_run_command))
-            )
-        end
+    describe "a command failure" do
+      before do
+        allow(described_class).to receive(:run_command).with(command_string, kind_of(::Hash)).and_raise(
+          ::Kitchen::ShellOut::ShellCommandFailed, "shell command failed"
+        )
       end
 
-      context "when a permissions error occurs" do
-        include_context "when an error occurs"
+      specify "should result in failure with the failed command output" do
+        expect do
+          described_class.run command: command
+        end.to result_in_failure.with_message "shell command failed"
+      end
+    end
 
-        let :error_class do
-          ::Errno::EACCES
-        end
-
-        it do
-          is_expected
-            .to result_in_failure.with_message "Running command resulted in failure: Permission denied - mocked error"
-        end
+    describe "an unexpected error" do
+      before do
+        allow(described_class).to receive(:run_command).with(command_string, kind_of(::Hash)).and_raise(
+          ::StandardError.new("unexpected error").extend(::Kitchen::Error)
+        )
       end
 
-      context "when an entry error occurs" do
-        include_context "when an error occurs"
+      specify "should result in failure with the unexpected error message" do
+        expect do
+          described_class.run command: command
+        end.to result_in_failure.with_message "unexpected error"
+      end
+    end
 
-        let :error_class do
-          ::Errno::ENOENT
-        end
-
-        it do
-          is_expected
-            .to(
-              result_in_failure
-                .with_message("Running command resulted in failure: No such file or directory - mocked error")
-            )
-        end
+    describe "the output" do
+      let :output do
+        "output"
       end
 
-      context "when a timeout error occurs" do
-        include_context "when an error occurs"
-
-        let :error_class do
-          ::Mixlib::ShellOut::CommandTimeout
-        end
-
-        it do
-          is_expected.to result_in_failure.with_message "Running command resulted in failure: mocked error"
-        end
+      before do
+        allow(described_class).to receive(:run_command).with(command_string, kind_of(::Hash)).and_return output
       end
 
-      context "when the command exits with a nonzero value" do
-        before do
-          allow(::Mixlib::ShellOut)
-            .to(
-              receive(:new)
-                .with(
-                  "terraform command",
-                  cwd: "/working/directory",
-                  environment: environment,
-                  live_stream: logger,
-                  timeout: duration
-                )
-                .and_wrap_original do |original, *arguments|
-                  original
-                    .call(*arguments)
-                    .tap do |shell_out|
-                      allow(shell_out).to receive(:exitstatus).and_return 1
-
-                      allow(shell_out).to receive(:run_command).and_return shell_out
-
-                      allow(shell_out).to receive(:stderr).and_return "stderr"
-
-                      allow(shell_out).to receive(:stdout).and_return "stdout"
-                    end
-                end
-            )
-        end
-
-        it do
-          is_expected
-            .to(
-              result_in_failure
-                .with_message(
-                  matching(
-                    "Running command resulted in failure: Expected process to exit with \\[0\\], but received '1'"
-                  )
-                )
-            )
-        end
-
-        it do
-          is_expected.to result_in_failure.with_message matching "stdout"
-        end
-
-        it do
-          is_expected.to result_in_failure.with_message matching "stderr"
-        end
+      specify "should be stored in the command" do
+        expect(command).to receive(:store).with output: output
       end
 
-      context "when the command exits with a zero value" do
-        before do
-          allow(::Mixlib::ShellOut)
-            .to(
-              receive(:new)
-                .with(
-                  "terraform command",
-                  cwd: "/working/directory",
-                  environment: environment,
-                  live_stream: logger,
-                  timeout: duration
-                )
-                .and_wrap_original do |original, *arguments|
-                  original
-                    .call(*arguments)
-                    .tap do |shell_out|
-                      allow(shell_out).to receive(:exitstatus).and_return 0
-
-                      allow(shell_out).to receive(:run_command).and_return shell_out
-
-                      allow(shell_out).to receive(:stdout).and_return "stdout"
-                    end
-                end
-            )
-        end
-
-        it do
-          is_expected.to result_in_success.with_message "stdout"
-        end
+      after do
+        described_class.run command: command
       end
     end
   end
+end

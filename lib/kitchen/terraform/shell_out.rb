@@ -14,75 +14,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
+require "kitchen"
 require "kitchen/terraform/error"
 require "mixlib/shellout"
 
-# Terraform commands are run by shelling out and using the
-# {https://www.terraform.io/docs/commands/index.html command-line interface}, which is assumed to be present in the
-# {https://en.wikipedia.org/wiki/PATH_(variable) PATH} of the user. The shell out environment includes the
-# TF_IN_AUTOMATION environment variable as specified by the
-# {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
-module ::Kitchen::Terraform::ShellOut
-  # Runs a Terraform command.
-  #
-  # @option options [::String] :cwd the directory in which to run the command.
-  # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
-  #   command.
-  # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
-  # @param command [::String] the command to run.
-  # @param options [::Hash] options which adjust the execution of the command.
-  # @raise [::Kitchen::Terraform::Error] if running the command fails.
-  # @return [::String] the standard output from running the command.
-  # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
-  # @yieldparam standard_output [::String] the standard output from running the command.
-  def self.run(command:, options:, &block)
-    block ||=
-      lambda do |standard_output:|
-        standard_output
-      end
+module Kitchen
+  module Terraform
+    # Terraform commands are run by shelling out and using the
+    # {https://www.terraform.io/docs/commands/index.html command-line interface}, which is assumed to be present in the
+    # {https://en.wikipedia.org/wiki/PATH_(variable) PATH} of the user. The shell out environment includes the
+    # TF_IN_AUTOMATION environment variable as specified by the
+    # {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
+    module ShellOut
+      extend ::Kitchen::Logging
+      extend ::Kitchen::ShellOut
 
-    run_shell_out(
-      command: command,
-      options: options,
-      &block
-    )
-  rescue ::Errno::EACCES,
-         ::Errno::ENOENT,
-         ::Mixlib::ShellOut::InvalidCommandOption,
-         ::Mixlib::ShellOut::CommandTimeout,
-         ::Mixlib::ShellOut::ShellCommandFailed => error
-    handle error: error
-  end
+      class << self
+        def logger
+          ::Kitchen.logger
+        end
 
-  private_class_method
-
-  # @api private
-  def self.handle(error:)
-    raise(
-      ::Kitchen::Terraform::Error,
-      "Running command resulted in failure: #{error.message}"
-    )
-  end
-
-  # @api private
-  def self.run_shell_out(command:, options:)
-    yield(
-      standard_output:
-        ::Mixlib::ShellOut
-          .new(
-            "terraform #{command}",
-            options.merge(environment: {"TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1"})
+        # Runs a Terraform command.
+        #
+        # @param command [::String] the command to run.
+        # @param directory [::String] the directory in which to run the command.
+        # @param timeout [::Integer] the maximum duration in seconds to run the command.
+        # @raise [::Kitchen::Terraform::Error] if running the command fails.
+        # @return [self]
+        # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
+        # @yieldparam output [::String] the output from running the command.
+        def run(command:, directory: ::Dir.pwd, timeout: 60_000)
+          command.store output: String(
+            run_command(
+              command.to_s,
+              cwd: directory,
+              environment: {
+                "LC_ALL" => nil,
+                "TF_IN_AUTOMATION" => "1",
+                "TF_WARN_OUTPUT_ERRORS" => "1",
+              },
+              timeout: timeout,
+            )
           )
-          .tap do |shell_out|
-            shell_out
-              .live_stream
-              .warn "Running command `#{shell_out.command}` in directory #{shell_out.cwd}"
-
-            shell_out.run_command
-            shell_out.error!
-          end
-          .stdout
-    )
+        rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
+          raise ::Kitchen::Terraform::Error, error.message
+        end
+      end
+    end
   end
 end

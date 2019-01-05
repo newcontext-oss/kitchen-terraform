@@ -16,7 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/command/output"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Output do
   let :color do
@@ -41,7 +41,7 @@ require "kitchen/terraform/shell_out_nu"
     end
 
     before do
-      allow(::Kitchen::Terraform::ShellOutNu).to receive(:run_command).with(
+      allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
         "terraform output -json -no-color",
         cwd: directory,
         environment: kind_of(::Hash),
@@ -52,7 +52,7 @@ require "kitchen/terraform/shell_out_nu"
     context "when the command fails due to no outputs defined" do
       before do
         output.store output: "{}"
-        allow(::Kitchen::Terraform::ShellOutNu).to receive(:run_command).with(
+        allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
           "terraform output -json -no-color",
           cwd: directory,
           environment: kind_of(::Hash),
@@ -79,7 +79,7 @@ require "kitchen/terraform/shell_out_nu"
 
       before do
         output.store output: "{}"
-        allow(::Kitchen::Terraform::ShellOutNu).to receive(:run_command).with(
+        allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
           "terraform output -json -no-color",
           cwd: directory,
           environment: kind_of(::Hash),

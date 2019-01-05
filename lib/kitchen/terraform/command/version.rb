@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 require "rubygems"
 
 module Kitchen
@@ -31,7 +31,7 @@ module Kitchen
           # @yieldparam version [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the
           #   command.
           def run
-            ::Kitchen::Terraform::ShellOutNu.run command: "terraform version" do |output:|
+            ::Kitchen::Terraform::ShellOut.run command: "terraform version" do |output:|
               yield version: new(output)
             end
 

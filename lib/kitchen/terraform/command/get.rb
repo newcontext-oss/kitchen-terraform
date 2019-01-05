@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 module Kitchen
   module Terraform
@@ -32,7 +32,7 @@ module Kitchen
           # @yieldparam get [::Kitchen::Terraform::Command::Get] an instance initialized with the output of the command.
           def run(directory:, timeout:)
             new.tap do |get|
-              ::Kitchen::Terraform::ShellOutNu.run(
+              ::Kitchen::Terraform::ShellOut.run(
                 command: get,
                 directory: directory,
                 timeout: timeout,

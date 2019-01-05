@@ -18,7 +18,7 @@ require "kitchen"
 require "kitchen/terraform/command_flag/color"
 require "kitchen/terraform/command_flag/variable_files"
 require "kitchen/terraform/command_flag/variables"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 module Kitchen
   module Terraform
@@ -40,7 +40,7 @@ module Kitchen
           #   the command.
           def run(options)
             new(options).tap do |validate|
-              ::Kitchen::Terraform::ShellOutNu.run(
+              ::Kitchen::Terraform::ShellOut.run(
                 command: validate,
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),

@@ -18,7 +18,7 @@ require "json"
 require "kitchen"
 require "kitchen/terraform/command_flag/color"
 require "kitchen/terraform/error"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 module Kitchen
   module Terraform
@@ -47,7 +47,7 @@ module Kitchen
           private
 
           def shell_out(directory:, output:, timeout:)
-            ::Kitchen::Terraform::ShellOutNu.run command: output, directory: directory, timeout: timeout
+            ::Kitchen::Terraform::ShellOut.run command: output, directory: directory, timeout: timeout
           rescue ::Kitchen::Terraform::Error => error
             if /no\\ outputs\\ defined/.match ::Regexp.escape error.message
               output.store output: "{}"

@@ -16,7 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/command/validate"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Validate do
   describe ".run" do
@@ -69,7 +69,7 @@ require "kitchen/terraform/shell_out_nu"
     end
 
     before do
-      allow(::Kitchen::Terraform::ShellOutNu).to receive(:run_command).with(
+      allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
         "terraform validate " \
         "-check-variables=true " \
         "-no-color " \

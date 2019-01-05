@@ -16,7 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/command/workspace_select"
-require "kitchen/terraform/shell_out_nu"
+require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::WorkspaceSelect do
   describe ".run" do
@@ -41,7 +41,7 @@ require "kitchen/terraform/shell_out_nu"
     end
 
     before do
-      allow(::Kitchen::Terraform::ShellOutNu).to receive(:run_command).with(
+      allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
         "terraform workspace select #{name}",
         cwd: directory,
         environment: kind_of(::Hash),
