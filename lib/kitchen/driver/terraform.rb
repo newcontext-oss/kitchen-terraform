@@ -37,7 +37,6 @@ require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
-require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
 require "shellwords"
 require "tty/which"
@@ -342,18 +341,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   # @api private
-  def backend_configurations_flags
-    config_backend_configurations.map do |key, value|
-      "-backend-config=\"#{key}=#{value}\""
-    end.join " "
-  end
-
-  # api private
-  def color_flag
-    config_color and "" or "-no-color"
-  end
-
-  # @api private
   def create_run_init
     ::Kitchen::Terraform::Command::Init.run(
       backend_configurations: config_backend_configurations,
@@ -413,30 +400,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   # @api private
-  def lock_flag
-    "-lock=#{config_lock}"
-  end
-
-  # @api private
-  def lock_timeout_flag
-    "-lock-timeout=#{config_lock_timeout}s"
-  end
-
-  # @api private
-  def parallelism_flag
-    "-parallelism=#{config_parallelism}"
-  end
-
-  # @api private
-  def plugin_directory_flag
-    if config_plugin_directory
-      "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}\" "
-    else
-      ""
-    end
-  end
-
-  # @api private
   def run_workspace_select_instance
     ::Kitchen::Terraform::Command::WorkspaceSelect.run(
       directory: config_root_module_directory,
@@ -449,20 +412,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       name: workspace_name,
       timeout: config_command_timeout,
     )
-  end
-
-  # @api private
-  def variable_files_flags
-    config_variable_files.map do |path|
-      "-var-file=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit path}\""
-    end.join " "
-  end
-
-  # @api private
-  def variables_flags
-    config_variables.map do |key, value|
-      "-var=\"#{key}=#{value}\""
-    end.join " "
   end
 
   def verify_version

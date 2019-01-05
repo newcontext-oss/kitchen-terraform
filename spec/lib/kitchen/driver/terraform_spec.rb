@@ -26,7 +26,6 @@ require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/error"
-require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
@@ -129,10 +128,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
     described_instance.send :logger
   end
 
-  let :shell_out do
-    class_double(::Kitchen::Terraform::ShellOut).as_stubbed_const
-  end
-
   let :instance_workspace_name do
     "kitchen-terraform-test-suite-test-platform"
   end
@@ -180,57 +175,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
         action
       end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace new <kitchen-instance>` failure"
     end
-  end
-
-  def shell_out_run_failure(command:, message: "mocked `terraform` failure", working_directory:)
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: working_directory,
-              live_stream: kitchen_logger,
-              timeout: config_command_timeout,
-            },
-          )
-          .and_raise(
-            ::Kitchen::Terraform::Error,
-            message
-          )
-      )
-  end
-
-  def shell_out_run_success(command:, return_value: "mocked `terraform` success", working_directory:)
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: working_directory,
-              live_stream: kitchen_logger,
-              timeout: config_command_timeout,
-            },
-          )
-          .and_return(return_value)
-      )
-  end
-
-  def shell_out_run_yield(command:, standard_output: "mocked `terraform` success", working_directory:)
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: working_directory,
-              live_stream: kitchen_logger,
-              timeout: config_command_timeout,
-            },
-          )
-          .and_yield(standard_output: standard_output)
-      )
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
