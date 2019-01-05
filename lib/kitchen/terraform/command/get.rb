@@ -50,7 +50,7 @@ module Kitchen
         end
 
         def store(output:)
-          @output = String output
+          @output = output
 
           self
         end

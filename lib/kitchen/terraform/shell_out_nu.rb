@@ -44,15 +44,17 @@ module Kitchen
         # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
         # @yieldparam output [::String] the output from running the command.
         def run(command:, directory: ::Dir.pwd, timeout: 60_000)
-          command.store output: run_command(
-            command.to_s,
-            cwd: directory,
-            environment: {
-              "LC_ALL" => nil,
-              "TF_IN_AUTOMATION" => "1",
-              "TF_WARN_OUTPUT_ERRORS" => "1",
-            },
-            timeout: timeout,
+          command.store output: String(
+            run_command(
+              command.to_s,
+              cwd: directory,
+              environment: {
+                "LC_ALL" => nil,
+                "TF_IN_AUTOMATION" => "1",
+                "TF_WARN_OUTPUT_ERRORS" => "1",
+              },
+              timeout: timeout,
+            )
           )
         rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
           raise ::Kitchen::Terraform::Error, error.message
