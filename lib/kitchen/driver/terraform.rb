@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/command/apply"
+require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/init"
 require "kitchen/terraform/command/output"
@@ -366,22 +367,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_destroy
-    ::Kitchen::Terraform::ShellOut.run(
-      command: "destroy " \
-      "-auto-approve " \
-      "#{lock_flag} " \
-      "#{lock_timeout_flag} " \
-      "-input=false " \
-      "#{color_flag} " \
-      "#{parallelism_flag} " \
-      "-refresh=true " \
-      "#{variables_flags} " \
-      "#{variable_files_flags}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+    ::Kitchen::Terraform::Command::Destroy.run(
+      color: config_color,
+      directory: config_root_module_directory,
+      lock_timeout: config_lock_timeout,
+      lock: config_lock,
+      parallelism: config_parallelism,
+      timeout: config_command_timeout,
+      variable_files: config_variable_files,
+      variables: config_variables,
     )
   end
 

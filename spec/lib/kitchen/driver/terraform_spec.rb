@@ -18,6 +18,7 @@ require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/command/apply"
+require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/validate"
 require "kitchen/terraform/command/workspace_delete"
@@ -599,11 +600,16 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform destroy` results in failure" do
         before do
-          shell_out_run_failure(
-            command: /destroy/,
-            message: "mocked `terraform destroy` failure",
-            working_directory: config_root_module_directory,
-          )
+          allow(::Kitchen::Terraform::Command::Destroy).to receive(:run).with(
+            color: config_color,
+            directory: config_root_module_directory,
+            lock: config_lock,
+            lock_timeout: config_lock_timeout,
+            parallelism: config_parallelism,
+            timeout: config_command_timeout,
+            variable_files: config_variable_files,
+            variables: config_variables,
+          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform destroy` failure"
         end
 
         specify "should result in an action failed error with the failed command output" do
@@ -619,20 +625,15 @@ require "support/kitchen/terraform/result_in_success_matcher"
         end
 
         before do
-          shell_out_run_success(
-            command: "destroy " \
-            "-auto-approve " \
-            "-lock=false " \
-            "-lock-timeout=1234s " \
-            "-input=false " \
-            "-no-color " \
-            "-parallelism=#{config_parallelism} " \
-            "-refresh=true " \
-            "-var=\"string=\\\"A String\\\"\" " \
-            "-var=\"map={ key = \\\"A Value\\\" }\" " \
-            "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-            "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
-            working_directory: config_root_module_directory,
+          allow(::Kitchen::Terraform::Command::Destroy).to receive(:run).with(
+            color: config_color,
+            directory: config_root_module_directory,
+            lock: config_lock,
+            lock_timeout: config_lock_timeout,
+            parallelism: config_parallelism,
+            timeout: config_command_timeout,
+            variable_files: config_variable_files,
+            variables: config_variables,
           )
         end
 
