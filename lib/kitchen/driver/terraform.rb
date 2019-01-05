@@ -378,6 +378,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       lock_timeout: config_lock_timeout,
       plugin_dir: config_plugin_directory,
       timeout: config_command_timeout,
+      upgrade: false,
     )
   end
 

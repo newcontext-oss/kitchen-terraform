@@ -656,6 +656,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             lock_timeout: config_lock_timeout,
             plugin_dir: config_plugin_directory,
             timeout: config_command_timeout,
+            upgrade: false,
           ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform init` failure"
         end
 
@@ -676,6 +677,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             lock_timeout: config_lock_timeout,
             plugin_dir: config_plugin_directory,
             timeout: config_command_timeout,
+            upgrade: false,
           )
         end
 
