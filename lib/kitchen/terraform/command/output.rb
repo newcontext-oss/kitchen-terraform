@@ -72,7 +72,7 @@ module Kitchen
 
           self
         rescue ::JSON::ParserError => error
-          raise ::Kitchen::Terraform::Error, "Parsing Terraform output as JSON failed: #{error.message}"
+          raise ::Kitchen::Terraform::Error, "Failed to parse Terraform outputs as JSON: #{error.message}"
         end
 
         def to_s
