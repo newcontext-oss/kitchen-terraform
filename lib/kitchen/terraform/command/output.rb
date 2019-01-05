@@ -15,60 +15,71 @@
 # limitations under the License.
 
 require "json"
-require "kitchen"
-require "kitchen/terraform/command"
+require "kitchen/terraform/command_flag/color"
 require "kitchen/terraform/error"
-require "kitchen/terraform/shell_out"
+require "kitchen/terraform/shell_out_nu"
 
-# Behaviour to run the `terraform output` command.
-module ::Kitchen::Terraform::Command::Output
-  class << self
-    # Runs the command with JSON foramtting.
-    #
-    # @option options [::String] :cwd the directory in which to run the command.
-    # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
-    #   command.
-    # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
-    # @param options [::Hash] options which adjust the execution of the command.
-    # @yieldparam output [::Hash] the standard output of the command parsed as JSON.
-    def run(options:, &block)
-      run_shell_out(
-        options: options,
-        &block
-      )
-    rescue ::JSON::ParserError => error
-      handle_json_parser error: error
-    rescue ::Kitchen::Terraform::Error => error
-      handle_kitchen_terraform(
-        error: error,
-        &block
-      )
-    end
+module Kitchen
+  module Terraform
+    module Command
+      # Output is the class of objects which represent the <tt>terraform output</tt> command.
+      class Output
+        class << self
+          # Initializes an instance by running <tt>terraform output</tt>.
+          #
+          # @param color [true, false] a toggle for colored output.
+          # @param directory [::String] the directory in which to run the command.
+          # @param timeout [::Integer] the maximum duration in seconds to run the command.
+          # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
+          # @return [self]
+          # @yieldparam output [::Kitchen::Terraform::Command::Destroy] an instance initialized with the output of the
+          #   command.
+          def run(color:, directory:, timeout:)
+            new(color: color).tap do |output|
+              shell_out directory: directory, output: output, timeout: timeout
+              yield output: output
+            end
 
-    private
+            self
+          end
 
-    # @api private
-    def handle_json_parser(error:)
-      raise(
-        ::Kitchen::Terraform::Error,
-        "Parsing Terraform output as JSON failed: #{error.message}"
-      )
-    end
+          private
 
-    # @api private
-    def handle_kitchen_terraform(error:)
-      /no\\ outputs\\ defined/.match ::Regexp.escape error.to_s or raise error
-      yield outputs: {}
-    end
+          def shell_out(directory:, output:, timeout:)
+            ::Kitchen::Terraform::ShellOutNu.run command: output, directory: directory, timeout: timeout
+          rescue ::Kitchen::Terraform::Error => error
+            if /no\\ outputs\\ defined/.match ::Regexp.escape error.message
+              output.store output: "{}"
+            else
+              raise error
+            end
+          end
+        end
 
-    # @api private
-    def run_shell_out(options:)
-      ::Kitchen::Terraform::ShellOut
-        .run(
-          command: "output -json",
-          options: options,
-        ) do |standard_output:|
-        yield outputs: ::JSON.parse(standard_output)
+        def ==(output)
+          to_s == output.to_s
+        end
+
+        def store(output:)
+          @output = ::JSON.parse output
+
+          self
+        rescue ::JSON::ParserError => error
+          raise ::Kitchen::Terraform::Error, "Parsing Terraform output as JSON failed: #{error.message}"
+        end
+
+        def to_s
+          ::Kitchen::Terraform::CommandFlag::Color.new(
+            command: ::String.new("terraform output -json"),
+            color: @color,
+          ).to_s
+        end
+
+        private
+
+        def initialize(color:)
+          @color = color
+        end
       end
     end
   end
