@@ -138,7 +138,7 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform outputs omits the value of the :hosts_output key" do
       before do
-        allow(driver).to receive(:retrieve_outputs).and_yield outputs: {"output_name": {"value": "output value"}}
+        allow(driver).to receive(:retrieve_outputs).and_yield outputs: {"output_name" => {"value" => "output value"}}
       end
 
       specify "should raise an action failed error indicating the missing :hosts_output key" do

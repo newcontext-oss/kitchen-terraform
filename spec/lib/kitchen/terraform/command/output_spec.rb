@@ -19,11 +19,11 @@ require "kitchen/terraform/command/output"
 require "kitchen/terraform/shell_out_nu"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Output do
-  describe ".run" do
-    let :color do
-      false
-    end
+  let :color do
+    false
+  end
 
+  describe ".run" do
     let :command_output do
       "{\"key\":\"value\"}"
     end
@@ -52,12 +52,28 @@ require "kitchen/terraform/shell_out_nu"
     specify "should yield the result of running `terraform output`" do
       expect do |block|
         described_class.run(
-          color: false,
+          color: color,
           directory: directory,
           timeout: timeout,
           &block
         )
       end.to yield_with_args output: output
+    end
+  end
+
+  describe "#retrieve_outputs" do
+    subject do
+      described_class.new color: color
+    end
+
+    before do
+      subject.store output: ::JSON.dump({key: "value"})
+    end
+
+    specify "should yield the outputs" do
+      expect do |block|
+        subject.retrieve_outputs(&block)
+      end.to yield_with_args outputs: {"key" => "value"}
     end
   end
 end

@@ -20,6 +20,7 @@ require "kitchen/driver/terraform"
 require "kitchen/terraform/command/apply"
 require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command/get"
+require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/validate"
 require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
@@ -814,29 +815,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     shared_examples "`terraform output` is run" do
-      context "when the command results in failure due to no outputs defined" do
-        before do
-          shell_out_run_failure(
-            command: "output -json",
-            message: "no outputs defined",
-            working_directory: config_root_module_directory,
-          )
-        end
-
-        specify "should ignore the failure and yield an empty hash" do
-          expect do |block|
-            subject.retrieve_outputs(&block)
-          end.to yield_with_args outputs: {}
-        end
-      end
-
       context "when the command results in failure not due to no outputs defined" do
         before do
-          shell_out_run_failure(
-            command: "output -json",
-            message: "mocked `terraform output` failure",
-            working_directory: config_root_module_directory,
-          )
+          allow(::Kitchen::Terraform::Command::Output).to receive(:run).with(
+            color: config_color,
+            directory: config_root_module_directory,
+            timeout: config_command_timeout,
+          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform output` failure"
         end
 
         specify "should result in an action failed error with the failed command output" do
@@ -847,44 +832,31 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
 
       context "when the command results in success" do
+        let :output do
+          ::Kitchen::Terraform::Command::Output.new color: config_color
+        end
+
         before do
-          shell_out_run_yield(
-            command: "output -json",
-            standard_output: terraform_output_value,
-            working_directory: config_root_module_directory,
-          )
+          output.store output: ::JSON.dump({output_name: {sensitive: false, type: "list", value: ["output_value_1"]}})
+          allow(::Kitchen::Terraform::Command::Output).to receive(:run).with(
+            color: config_color,
+            directory: config_root_module_directory,
+            timeout: config_command_timeout,
+          ).and_yield output: output
         end
 
-        context "when the value of the command result is not valid JSON" do
-          let :terraform_output_value do
-            "not valid JSON"
-          end
-
-          specify "should result in an action failed error with a message indicating the output is not valid JSON" do
-            expect do
-              subject.retrieve_outputs
-            end.to raise_error ::Kitchen::ActionFailed, /Parsing Terraform output as JSON failed:/
-          end
-        end
-
-        context "when the value of the command result is valid JSON" do
-          let :terraform_output_value do
-            ::JSON.dump value_as_hash
-          end
-
-          let :value_as_hash do
-            {output_name: {sensitive: false, type: "list", value: ["output_value_1"]}}
-          end
-
-          specify "should yield the hash which results from processing the output as JSON" do
-            expect do |block|
-              subject.retrieve_outputs(&block)
-            end.to yield_with_args(
-              outputs: {
-                "output_name" => {"sensitive" => false, "type" => "list", "value" => ["output_value_1"]},
+        specify "should yield the hash which results from processing the output as JSON" do
+          expect do |block|
+            subject.retrieve_outputs(&block)
+          end.to yield_with_args(
+            outputs: {
+              "output_name" => {
+                "sensitive" => false,
+                "type" => "list",
+                "value" => ["output_value_1"],
               },
-            )
-          end
+            },
+          )
         end
       end
     end

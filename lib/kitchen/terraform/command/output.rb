@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "json"
+require "kitchen"
 require "kitchen/terraform/command_flag/color"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out_nu"
@@ -60,8 +61,14 @@ module Kitchen
           to_s == output.to_s
         end
 
+        def retrieve_outputs
+          yield outputs: @output
+
+          self
+        end
+
         def store(output:)
-          @output = ::JSON.parse output
+          @output = ::Kitchen::Util.stringified_hash ::JSON.parse output
 
           self
         rescue ::JSON::ParserError => error

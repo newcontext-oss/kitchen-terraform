@@ -134,7 +134,7 @@ module Kitchen
 
       def load_outputs
         instance.driver.retrieve_outputs do |outputs:|
-          @outputs.replace ::Kitchen::Util.stringified_hash outputs
+          @outputs.replace outputs
         end
       end
 

@@ -280,10 +280,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def retrieve_outputs(&block)
     run_workspace_select_instance
     ::Kitchen::Terraform::Command::Output.run(
-      options: {
-        cwd: config_root_module_directory, live_stream: logger, timeout: config_command_timeout,
-      }, &block
-    )
+      color: config_color,
+      directory: config_root_module_directory,
+      timeout: config_command_timeout,
+    ) do |output:|
+      output.retrieve_outputs(&block)
+    end
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::ActionFailed, error.message
   end
