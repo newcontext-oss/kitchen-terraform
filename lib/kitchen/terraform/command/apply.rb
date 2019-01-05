@@ -18,6 +18,7 @@ require "kitchen"
 require "kitchen/terraform/command_flag/color"
 require "kitchen/terraform/command_flag/lock_timeout"
 require "kitchen/terraform/command_flag/lock"
+require "kitchen/terraform/command_flag/parallelism"
 require "kitchen/terraform/command_flag/variable_files"
 require "kitchen/terraform/command_flag/variables"
 require "kitchen/terraform/shell_out_nu"
@@ -35,6 +36,8 @@ module Kitchen
           # @option options [::String] :directory the directory in which to run the command.
           # @option options [true, false] :lock a toggle for locking the state.
           # @option options [::Integer] :lock_timeout the maximum duration in seconds to wait for the lock.
+          # @option options [::Integer] :parallelism the maximum number of concurrent operations to perform while
+          # running the command.
           # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
           # @option options [::Array<::String>] :variable_files files containing variables for the configuration.
           # @option options [::Hash{::String => ::String}] :variables varibales for the configuration.
@@ -69,20 +72,23 @@ module Kitchen
         def to_s
           ::Kitchen::Terraform::CommandFlag::VariableFiles.new(
             command: ::Kitchen::Terraform::CommandFlag::Variables.new(
-              command: ::Kitchen::Terraform::CommandFlag::LockTimeout.new(
-                command: ::Kitchen::Terraform::CommandFlag::Lock.new(
-                  command: ::Kitchen::Terraform::CommandFlag::Color.new(
-                    command: ::String.new(
-                      "terraform apply " \
-                      "-auto-approve=true " \
-                      "-input=false " \
-                      "-refresh=true"
+              command: ::Kitchen::Terraform::CommandFlag::Parallelism.new(
+                command: ::Kitchen::Terraform::CommandFlag::LockTimeout.new(
+                  command: ::Kitchen::Terraform::CommandFlag::Lock.new(
+                    command: ::Kitchen::Terraform::CommandFlag::Color.new(
+                      command: ::String.new(
+                        "terraform apply " \
+                        "-auto-approve " \
+                        "-input=false " \
+                        "-refresh=true"
+                      ),
+                      color: @color,
                     ),
-                    color: @color,
+                    lock: @lock,
                   ),
-                  lock: @lock,
+                  lock_timeout: @lock_timeout,
                 ),
-                lock_timeout: @lock_timeout,
+                parallelism: @parallelism,
               ),
               variables: @variables,
             ),
@@ -96,6 +102,7 @@ module Kitchen
           @color = options.fetch :color
           @lock = options.fetch :lock
           @lock_timeout = options.fetch :lock_timeout
+          @parallelism = options.fetch :parallelism
           @variable_files = options.fetch :variable_files
           @variables = options.fetch :variables
         end

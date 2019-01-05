@@ -26,6 +26,7 @@ require "kitchen/terraform/shell_out_nu"
         directory: directory,
         lock_timeout: lock_timeout,
         lock: lock,
+        parallelism: parallelism,
         timeout: timeout,
         variable_files: variable_files,
         variables: variables,
@@ -46,6 +47,10 @@ require "kitchen/terraform/shell_out_nu"
 
     let :output do
       "output"
+    end
+
+    let :parallelism do
+      1234
     end
 
     let :timeout do
@@ -83,12 +88,13 @@ require "kitchen/terraform/shell_out_nu"
     before do
       allow(::Kitchen::Terraform::ShellOutNu).to receive(:run_command).with(
         "terraform apply " \
-        "-auto-approve=true " \
+        "-auto-approve " \
         "-input=false " \
         "-refresh=true " \
         "-no-color " \
         "-lock=#{lock} " \
         "-lock-timeout=#{lock_timeout} " \
+        "-parallelism=#{parallelism} " \
         "-var=\"list=#{variables_list}\" " \
         "-var=\"map=#{variables_map}\" " \
         "-var=\"string=#{variables_string}\" " \
@@ -107,6 +113,7 @@ require "kitchen/terraform/shell_out_nu"
           directory: directory,
           lock_timeout: lock_timeout,
           lock: lock,
+          parallelism: parallelism,
           timeout: timeout,
           variable_files: variable_files,
           variables: variables,
