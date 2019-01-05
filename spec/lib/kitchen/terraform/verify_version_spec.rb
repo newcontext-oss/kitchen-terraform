@@ -19,11 +19,17 @@ require "kitchen/terraform/verify_version"
 
 ::RSpec.describe ::Kitchen::Terraform::VerifyVersion do
   describe "#call" do
+    let :version do
+      ::Kitchen::Terraform::Command::Version.new
+    end
+
     shared_examples "the version is unsupported" do
       specify "should result in failure with a message which provides a remedy for the lack of support" do
         expect do
           described_class.call
-        end.to result_in_failure.with_message "#{version} is not supported; install Terraform ~> v0.11.4"
+        end.to result_in_failure.with_message(
+          "The installed version of Terraform is not supported; install Terraform ~> v0.11.4"
+        )
       end
     end
 
@@ -36,13 +42,12 @@ require "kitchen/terraform/verify_version"
     end
 
     before do
-      allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield(
-        version: ::Kitchen::Terraform::Command::Version.new(version),
-      )
+      version.store output: output
+      allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield version: version
     end
 
     context "when the version is 0.11.3" do
-      let :version do
+      let :output do
         "Terraform v0.11.3"
       end
 
@@ -50,7 +55,7 @@ require "kitchen/terraform/verify_version"
     end
 
     context "when the version is 0.11.4" do
-      let :version do
+      let :output do
         "Terraform v0.11.4"
       end
 
@@ -58,7 +63,7 @@ require "kitchen/terraform/verify_version"
     end
 
     context "when the version is 0.12.0" do
-      let :version do
+      let :output do
         "Terraform v0.12.0"
       end
 

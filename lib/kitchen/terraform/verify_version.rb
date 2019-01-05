@@ -17,7 +17,6 @@
 require "kitchen/terraform"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/error"
-require "rubygems"
 
 # Verifies that the output of the Terraform version command indicates a supported version of Terraform.
 #
@@ -30,9 +29,14 @@ module ::Kitchen::Terraform::VerifyVersion
     # @return [void]
     def call
       ::Kitchen::Terraform::Command::Version.run do |version:|
-        if !::Gem::Requirement.new(">= 0.11.4", "< 0.12.0").satisfied_by? version
-          raise ::Kitchen::Terraform::Error, "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
+        version.if_satisfies requirement: [">= 0.11.4", "< 0.12.0"] do
+          return
         end
+
+        raise(
+          ::Kitchen::Terraform::Error,
+          "The installed version of Terraform is not supported; install Terraform ~> v0.11.4"
+        )
       end
     end
   end

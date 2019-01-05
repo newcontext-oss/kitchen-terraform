@@ -24,22 +24,23 @@ require "kitchen/terraform/shell_out"
       "Terraform v1.2.3"
     end
 
+    let :version do
+      described_class.new
+    end
+
     before do
-      allow(::Kitchen::Terraform::ShellOut).to receive(:run).with(command: "terraform version").and_yield(
-        output: output,
-      )
+      allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
+        "terraform version",
+        cwd: ::Dir.pwd,
+        environment: kind_of(::Hash),
+        timeout: 60_000,
+      ).and_return output
     end
 
     specify "should yield the result of running `terraform version`" do
       expect do |block|
         described_class.run(&block)
-      end.to yield_with_args version: described_class.new(output)
-    end
-  end
-
-  describe ".superclass" do
-    specify "should be Gem::Version" do
-      expect(described_class.superclass).to be ::Gem::Version
+      end.to yield_with_args version: version
     end
   end
 end

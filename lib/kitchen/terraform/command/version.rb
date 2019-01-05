@@ -22,7 +22,7 @@ module Kitchen
   module Terraform
     module Command
       # Version is the class of objects which represent the <tt>terraform version</tt> command.
-      class Version < ::Gem::Version
+      class Version
         class << self
           # Initializes an instance by running `terraform version`.
           #
@@ -31,18 +31,39 @@ module Kitchen
           # @yieldparam version [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the
           #   command.
           def run
-            ::Kitchen::Terraform::ShellOut.run command: "terraform version" do |output:|
-              yield version: new(output) if block_given?
+            new.tap do |version|
+              ::Kitchen::Terraform::ShellOut.run command: version
+              yield version: version if block_given?
             end
 
             self
           end
         end
 
+        def ==(version)
+          to_s == version.to_s
+        end
+
+        def if_satisfies(requirement:)
+          yield if ::Gem::Requirement.new(requirement).satisfied_by? @output
+
+          self
+        end
+
+        def store(output:)
+          @output = ::Gem::Version.new output.slice(/Terraform v(\d+\.\d+\.\d+)/, 1)
+
+          self
+        end
+
+        def to_s
+          "terraform version"
+        end
+
         private
 
-        def initialize(version)
-          super version.slice(/Terraform v(\d+\.\d+\.\d+)/, 1)
+        def initialize
+          @output = ::Gem::Version.new "0.0.0"
         end
       end
     end
