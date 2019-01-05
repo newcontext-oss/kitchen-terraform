@@ -58,7 +58,7 @@ end
 #     -lock=<lock> \
 #     -lock-timeout=<lock_timeout>s \
 #     -input=false \
-#     -auto-approve=true \
+#     -auto-approve \
 #     [-no-color] \
 #     -parallelism=<parallelism> \
 #     -refresh=true \
