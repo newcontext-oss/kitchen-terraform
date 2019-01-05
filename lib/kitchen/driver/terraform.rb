@@ -343,7 +343,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def create_run_init
     ::Kitchen::Terraform::Command::Init.run(
-      backend_configurations: config_backend_configurations,
+      backend_config: config_backend_configurations,
       color: config_color,
       directory: config_root_module_directory,
       lock: config_lock,
@@ -371,7 +371,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def destroy_run_init
     ::Kitchen::Terraform::Command::Init.run(
-      backend_configurations: config_backend_configurations,
+      backend_config: config_backend_configurations,
       color: config_color,
       directory: config_root_module_directory,
       lock: config_lock,

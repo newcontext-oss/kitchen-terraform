@@ -408,7 +408,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform init` results in failure" do
         before do
           allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
-            backend_configurations: config_backend_configurations,
+            backend_config: config_backend_configurations,
             color: config_color,
             directory: config_root_module_directory,
             lock: config_lock,
@@ -429,7 +429,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform init` results in success" do
         before do
           allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
-            backend_configurations: config_backend_configurations,
+            backend_config: config_backend_configurations,
             color: config_color,
             directory: config_root_module_directory,
             lock: config_lock,
@@ -649,7 +649,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform init` results in failure" do
         before do
           allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
-            backend_configurations: config_backend_configurations,
+            backend_config: config_backend_configurations,
             color: config_color,
             directory: config_root_module_directory,
             lock: config_lock,
@@ -669,7 +669,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform init` results in success" do
         before do
           allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
-            backend_configurations: config_backend_configurations,
+            backend_config: config_backend_configurations,
             color: config_color,
             directory: config_root_module_directory,
             lock: config_lock,
