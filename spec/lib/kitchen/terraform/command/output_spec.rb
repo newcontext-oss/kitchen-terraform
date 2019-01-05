@@ -96,7 +96,7 @@ require "kitchen/terraform/shell_out"
           )
         end.to raise_error(
           ::Kitchen::Terraform::Error,
-          "Failed to parse Terraform outputs as JSON: 767: unexpected token at '#{command_output}'"
+          /Failed to parse Terraform outputs as JSON: .* unexpected token at '#{command_output}'/
         )
       end
     end
