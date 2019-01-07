@@ -24,7 +24,7 @@ require "kitchen/terraform/shell_out"
     end
   end
 
-  describe ".run" do
+  describe ".call" do
     let :command do
       Class.new do
         def store(output:)
@@ -51,7 +51,7 @@ require "kitchen/terraform/shell_out"
       end
 
       after do
-        described_class.run command: command
+        described_class.call command: command
       end
     end
 
@@ -78,7 +78,7 @@ require "kitchen/terraform/shell_out"
       end
 
       after do
-        described_class.run command: command
+        described_class.call command: command
       end
     end
 
@@ -91,7 +91,7 @@ require "kitchen/terraform/shell_out"
 
       specify "should result in failure with the failed command output" do
         expect do
-          described_class.run command: command
+          described_class.call command: command
         end.to result_in_failure.with_message "shell command failed"
       end
     end
@@ -105,7 +105,7 @@ require "kitchen/terraform/shell_out"
 
       specify "should result in failure with the unexpected error message" do
         expect do
-          described_class.run command: command
+          described_class.call command: command
         end.to result_in_failure.with_message "unexpected error"
       end
     end
@@ -124,7 +124,7 @@ require "kitchen/terraform/shell_out"
       end
 
       after do
-        described_class.run command: command
+        described_class.call command: command
       end
     end
   end

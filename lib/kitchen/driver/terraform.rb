@@ -279,7 +279,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @yieldparam output [::Hash] the state output.
   def retrieve_outputs(&block)
     run_workspace_select_instance
-    ::Kitchen::Terraform::Command::Output.run(
+    ::Kitchen::Terraform::Command::Output.call(
       color: config_color,
       directory: config_root_module_directory,
       timeout: config_command_timeout,
@@ -310,7 +310,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def apply_run_apply
-    ::Kitchen::Terraform::Command::Apply.run(
+    ::Kitchen::Terraform::Command::Apply.call(
       color: config_color,
       directory: config_root_module_directory,
       lock_timeout: config_lock_timeout,
@@ -324,7 +324,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def apply_run_get
-    ::Kitchen::Terraform::Command::Get.run(
+    ::Kitchen::Terraform::Command::Get.call(
       directory: config_root_module_directory,
       timeout: config_command_timeout,
     )
@@ -332,7 +332,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def apply_run_validate
-    ::Kitchen::Terraform::Command::Validate.run(
+    ::Kitchen::Terraform::Command::Validate.call(
       color: config_color,
       directory: config_root_module_directory,
       timeout: config_command_timeout,
@@ -343,7 +343,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def create_run_init
-    ::Kitchen::Terraform::Command::Init.run(
+    ::Kitchen::Terraform::Command::Init.call(
       backend_config: config_backend_configurations,
       color: config_color,
       directory: config_root_module_directory,
@@ -357,7 +357,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_destroy
-    ::Kitchen::Terraform::Command::Destroy.run(
+    ::Kitchen::Terraform::Command::Destroy.call(
       color: config_color,
       directory: config_root_module_directory,
       lock_timeout: config_lock_timeout,
@@ -371,7 +371,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_init
-    ::Kitchen::Terraform::Command::Init.run(
+    ::Kitchen::Terraform::Command::Init.call(
       backend_config: config_backend_configurations,
       color: config_color,
       directory: config_root_module_directory,
@@ -385,7 +385,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_workspace_delete_instance
-    ::Kitchen::Terraform::Command::WorkspaceDelete.run(
+    ::Kitchen::Terraform::Command::WorkspaceDelete.call(
       directory: config_root_module_directory,
       name: workspace_name,
       timeout: config_command_timeout,
@@ -394,7 +394,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def destroy_run_workspace_select_default
-    ::Kitchen::Terraform::Command::WorkspaceSelect.run(
+    ::Kitchen::Terraform::Command::WorkspaceSelect.call(
       directory: config_root_module_directory,
       name: "default",
       timeout: config_command_timeout,

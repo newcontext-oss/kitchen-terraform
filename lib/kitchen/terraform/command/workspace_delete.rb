@@ -31,9 +31,9 @@ module Kitchen
           # @return [self]
           # @yieldparam workspace_delete [::Kitchen::Terraform::Command::WorkspaceDelete] an instance initialized with
           #   the output of the command.
-          def run(directory:, name:, timeout:)
+          def call(directory:, name:, timeout:)
             new(name: name).tap do |workspace_delete|
-              ::Kitchen::Terraform::ShellOut.run(
+              ::Kitchen::Terraform::ShellOut.call(
                 command: workspace_delete,
                 directory: directory,
                 timeout: timeout,

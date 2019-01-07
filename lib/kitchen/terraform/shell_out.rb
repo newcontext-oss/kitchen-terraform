@@ -43,7 +43,7 @@ module Kitchen
         # @return [self]
         # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
         # @yieldparam output [::String] the output from running the command.
-        def run(command:, directory: ::Dir.pwd, timeout: 60_000)
+        def call(command:, directory: ::Dir.pwd, timeout: 60_000)
           command.store output: String(
             run_command(
               command.to_s,

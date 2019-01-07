@@ -31,9 +31,9 @@ module Kitchen
           # @return [self]
           # @yieldparam workspace_select [::Kitchen::Terraform::Command::WorkspaceSelect] an instance initialized with
           #   the output of the command.
-          def run(directory:, name:, timeout:)
+          def call(directory:, name:, timeout:)
             new(name: name).tap do |workspace_select|
-              ::Kitchen::Terraform::ShellOut.run(
+              ::Kitchen::Terraform::ShellOut.call(
                 command: workspace_select,
                 directory: directory,
                 timeout: timeout,

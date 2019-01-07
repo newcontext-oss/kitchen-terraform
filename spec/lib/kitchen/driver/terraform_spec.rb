@@ -240,7 +240,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform get` results in failure" do
           before do
-            allow(::Kitchen::Terraform::Command::Get).to receive(:run).with(
+            allow(::Kitchen::Terraform::Command::Get).to receive(:call).with(
               directory: config_root_module_directory,
               timeout: config_command_timeout,
             ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform get` failure"
@@ -255,7 +255,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         context "when `terraform get` results in success" do
           before do
-            allow(::Kitchen::Terraform::Command::Get).to receive(:run).with(
+            allow(::Kitchen::Terraform::Command::Get).to receive(:call).with(
               directory: config_root_module_directory,
               timeout: config_command_timeout,
             )
@@ -263,7 +263,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           context "when `terraform validate` results in failure" do
             before do
-              allow(::Kitchen::Terraform::Command::Validate).to receive(:run).with(
+              allow(::Kitchen::Terraform::Command::Validate).to receive(:call).with(
                 color: config_color,
                 directory: config_root_module_directory,
                 variable_files: config_variable_files,
@@ -281,7 +281,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           context "when `terraform validate` results in success" do
             before do
-              allow(::Kitchen::Terraform::Command::Validate).to receive(:run).with(
+              allow(::Kitchen::Terraform::Command::Validate).to receive(:call).with(
                 color: config_color,
                 directory: config_root_module_directory,
                 variable_files: config_variable_files,
@@ -292,7 +292,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
             context "when `terraform apply` results in failure" do
               before do
-                allow(::Kitchen::Terraform::Command::Apply).to receive(:run).with(
+                allow(::Kitchen::Terraform::Command::Apply).to receive(:call).with(
                   color: config_color,
                   directory: config_root_module_directory,
                   lock: config_lock,
@@ -313,7 +313,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
             context "when `terraform apply` results in success" do
               before do
-                allow(::Kitchen::Terraform::Command::Apply).to receive(:run).with(
+                allow(::Kitchen::Terraform::Command::Apply).to receive(:call).with(
                   color: config_color,
                   directory: config_root_module_directory,
                   lock: config_lock,
@@ -377,7 +377,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
     shared_examples "it initializes the root module and selects the instance workspace" do
       context "when `terraform init` results in failure" do
         before do
-          allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
+          allow(::Kitchen::Terraform::Command::Init).to receive(:call).with(
             backend_config: config_backend_configurations,
             color: config_color,
             directory: config_root_module_directory,
@@ -398,7 +398,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform init` results in success" do
         before do
-          allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
+          allow(::Kitchen::Terraform::Command::Init).to receive(:call).with(
             backend_config: config_backend_configurations,
             color: config_color,
             directory: config_root_module_directory,
@@ -485,7 +485,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
     shared_examples "it initializes the root module, selects the instance workspace, and destroys the state" do
       context "when `terraform init` results in failure" do
         before do
-          allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
+          allow(::Kitchen::Terraform::Command::Init).to receive(:call).with(
             backend_config: config_backend_configurations,
             color: config_color,
             directory: config_root_module_directory,
@@ -506,7 +506,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform init` results in success" do
         before do
-          allow(::Kitchen::Terraform::Command::Init).to receive(:run).with(
+          allow(::Kitchen::Terraform::Command::Init).to receive(:call).with(
             backend_config: config_backend_configurations,
             color: config_color,
             directory: config_root_module_directory,
@@ -539,7 +539,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
           context "when `terraform destroy` results in failure" do
             before do
-              allow(::Kitchen::Terraform::Command::Destroy).to receive(:run).with(
+              allow(::Kitchen::Terraform::Command::Destroy).to receive(:call).with(
                 color: config_color,
                 directory: config_root_module_directory,
                 lock: config_lock,
@@ -564,7 +564,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             end
 
             before do
-              allow(::Kitchen::Terraform::Command::Destroy).to receive(:run).with(
+              allow(::Kitchen::Terraform::Command::Destroy).to receive(:call).with(
                 color: config_color,
                 directory: config_root_module_directory,
                 lock: config_lock,
@@ -578,7 +578,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
             context "when `terraform select default` results in failure" do
               before do
-                allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+                allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:call).with(
                   directory: config_root_module_directory,
                   name: default_workspace_name,
                   timeout: config_command_timeout,
@@ -594,7 +594,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
             context "when `terraform workspace select default` results in success" do
               before do
-                allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+                allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:call).with(
                   directory: config_root_module_directory,
                   name: default_workspace_name,
                   timeout: config_command_timeout,
@@ -603,7 +603,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
               context "when `terraform workspace delete <kitchen-instance>` results in failure" do
                 before do
-                  allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:run).with(
+                  allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:call).with(
                     directory: config_root_module_directory,
                     name: instance_workspace_name,
                     timeout: config_command_timeout,
@@ -622,7 +622,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
               context "when `terraform workspace delete <kitchen-instance>` results in success" do
                 before do
-                  allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:run).with(
+                  allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:call).with(
                     directory: config_root_module_directory,
                     name: instance_workspace_name,
                     timeout: config_command_timeout,
@@ -700,7 +700,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when the command results in failure not due to no outputs defined" do
         before do
-          allow(::Kitchen::Terraform::Command::Output).to receive(:run).with(
+          allow(::Kitchen::Terraform::Command::Output).to receive(:call).with(
             color: config_color,
             directory: config_root_module_directory,
             timeout: config_command_timeout,
@@ -721,7 +721,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
         before do
           output.store output: ::JSON.dump({output_name: {sensitive: false, type: "list", value: ["output_value_1"]}})
-          allow(::Kitchen::Terraform::Command::Output).to receive(:run).with(
+          allow(::Kitchen::Terraform::Command::Output).to receive(:call).with(
             color: config_color,
             directory: config_root_module_directory,
             timeout: config_command_timeout,

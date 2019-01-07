@@ -19,7 +19,7 @@ require "kitchen/terraform/command/version"
 require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Version do
-  describe ".run" do
+  describe ".call" do
     let :output do
       "Terraform v1.2.3"
     end
@@ -39,7 +39,7 @@ require "kitchen/terraform/shell_out"
 
     specify "should yield the result of running `terraform version`" do
       expect do |block|
-        described_class.run(&block)
+        described_class.call(&block)
       end.to yield_with_args version: version
     end
   end

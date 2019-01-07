@@ -43,7 +43,7 @@ require "kitchen/terraform/verify_version"
 
     before do
       version.store output: output
-      allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield version: version
+      allow(::Kitchen::Terraform::Command::Version).to receive(:call).and_yield version: version
     end
 
     context "when the version is 0.11.3" do

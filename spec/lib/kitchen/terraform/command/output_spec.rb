@@ -23,7 +23,7 @@ require "kitchen/terraform/shell_out"
     false
   end
 
-  describe ".run" do
+  describe ".call" do
     let :command_output do
       "{\"key\":\"value\"}"
     end
@@ -62,7 +62,7 @@ require "kitchen/terraform/shell_out"
 
       specify "should yield the result of running `terraform output` with no outputs defined" do
         expect do |block|
-          described_class.run(
+          described_class.call(
             color: color,
             directory: directory,
             timeout: timeout,
@@ -89,7 +89,7 @@ require "kitchen/terraform/shell_out"
 
       specify "should raise an error" do
         expect do
-          described_class.run(
+          described_class.call(
             color: color,
             directory: directory,
             timeout: timeout,
@@ -103,7 +103,7 @@ require "kitchen/terraform/shell_out"
 
     specify "should yield the result of running `terraform output`" do
       expect do |block|
-        described_class.run(
+        described_class.call(
           color: color,
           directory: directory,
           timeout: timeout,

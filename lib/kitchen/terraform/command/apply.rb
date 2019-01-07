@@ -45,9 +45,9 @@ module Kitchen
           # @return [self]
           # @yieldparam apply [::Kitchen::Terraform::Command::Apply] an instance initialized with the output of the
           #   command.
-          def run(options)
+          def call(options)
             new(options).tap do |apply|
-              ::Kitchen::Terraform::ShellOut.run(
+              ::Kitchen::Terraform::ShellOut.call(
                 command: apply,
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),

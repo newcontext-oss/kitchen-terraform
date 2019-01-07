@@ -30,7 +30,7 @@ module Kitchen
         # @raise [::Kitchen::Terraform::Error] if the result of running both commands is a failure.
         # @return [self]
         def call(directory:, name:, timeout:)
-          ::Kitchen::Terraform::Command::WorkspaceSelect.run(
+          ::Kitchen::Terraform::Command::WorkspaceSelect.call(
             directory: directory,
             name: name,
             timeout: timeout,
@@ -38,7 +38,7 @@ module Kitchen
 
           self
         rescue ::Kitchen::Terraform::Error
-          ::Kitchen::Terraform::Command::WorkspaceNew.run(
+          ::Kitchen::Terraform::Command::WorkspaceNew.call(
             directory: directory,
             name: name,
             timeout: timeout,

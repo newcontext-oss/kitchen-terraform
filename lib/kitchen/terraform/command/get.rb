@@ -30,9 +30,9 @@ module Kitchen
           # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
           # @return [self]
           # @yieldparam get [::Kitchen::Terraform::Command::Get] an instance initialized with the output of the command.
-          def run(directory:, timeout:)
+          def call(directory:, timeout:)
             new.tap do |get|
-              ::Kitchen::Terraform::ShellOut.run(
+              ::Kitchen::Terraform::ShellOut.call(
                 command: get,
                 directory: directory,
                 timeout: timeout,

@@ -19,7 +19,7 @@ require "kitchen/terraform/command/get"
 require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Get do
-  describe ".run" do
+  describe ".call" do
     let :directory do
       "/directory"
     end
@@ -47,7 +47,7 @@ require "kitchen/terraform/shell_out"
 
     specify "should yield the result of running `terraform get`" do
       expect do |block|
-        described_class.run directory: directory, timeout: timeout, &block
+        described_class.call directory: directory, timeout: timeout, &block
       end.to yield_with_args get: get
     end
   end

@@ -19,7 +19,7 @@ require "kitchen/terraform/command/init"
 require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Init do
-  describe ".run" do
+  describe ".call" do
     let :backend_config do
       {list: backend_config_list, map: backend_config_map, string: backend_config_string}
     end
@@ -102,7 +102,7 @@ require "kitchen/terraform/shell_out"
 
     specify "should yield the result of running `terraform init`" do
       expect do |block|
-        described_class.run(
+        described_class.call(
           backend_config: backend_config,
           color: false,
           directory: directory,

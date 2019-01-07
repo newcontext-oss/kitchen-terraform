@@ -28,7 +28,7 @@ module ::Kitchen::Terraform::VerifyVersion
     # @raise [::Kitchen::Terraform::Error] if the version is not supported or `terraform version` fails.
     # @return [void]
     def call
-      ::Kitchen::Terraform::Command::Version.run do |version:|
+      ::Kitchen::Terraform::Command::Version.call do |version:|
         version.if_satisfies requirement: [">= 0.11.4", "< 0.12.0"] do
           return
         end

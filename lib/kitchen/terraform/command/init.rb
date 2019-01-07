@@ -44,9 +44,9 @@ module Kitchen
           # @return [self]
           # @yieldparam init [::Kitchen::Terraform::Command::Init] an instance initialized with the output of the
           #   command.
-          def run(options)
+          def call(options)
             new(options).tap do |init|
-              ::Kitchen::Terraform::ShellOut.run(
+              ::Kitchen::Terraform::ShellOut.call(
                 command: init,
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),

@@ -38,12 +38,12 @@ require "kitchen/terraform/change_workspace"
       end
 
       before do
-        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:call).with(
           directory: directory,
           name: name,
           timeout: timeout,
         ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
-        allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:run).with(
+        allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:call).with(
           directory: directory,
           name: name,
           timeout: timeout,
@@ -59,12 +59,12 @@ require "kitchen/terraform/change_workspace"
 
     context "when the workspace can not be selected but can be created" do
       before do
-        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:call).with(
           directory: directory,
           name: name,
           timeout: timeout,
         ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform workspace select <kitchen-instance>` failure"
-        allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:run).with(
+        allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:call).with(
           directory: directory,
           name: name,
           timeout: timeout,
@@ -80,7 +80,7 @@ require "kitchen/terraform/change_workspace"
 
     context "when the workspace can be selected" do
       before do
-        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:run).with(
+        allow(::Kitchen::Terraform::Command::WorkspaceSelect).to receive(:call).with(
           directory: directory,
           name: name,
           timeout: timeout,

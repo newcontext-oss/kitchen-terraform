@@ -45,9 +45,9 @@ module Kitchen
           # @return [self]
           # @yieldparam destroy [::Kitchen::Terraform::Command::Destroy] an instance initialized with the output of the
           #   command.
-          def run(options)
+          def call(options)
             new(options).tap do |destroy|
-              ::Kitchen::Terraform::ShellOut.run(
+              ::Kitchen::Terraform::ShellOut.call(
                 command: destroy,
                 directory: options.fetch(:directory),
                 timeout: options.fetch(:timeout),

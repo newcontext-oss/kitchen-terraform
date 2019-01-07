@@ -31,9 +31,9 @@ module Kitchen
           # @return [self]
           # @yieldparam workspace_new [::Kitchen::Terraform::Command::WorkspaceNew] an instance initialized with the
           # output of the command.
-          def run(directory:, name:, timeout:)
+          def call(directory:, name:, timeout:)
             new(name: name).tap do |workspace_new|
-              ::Kitchen::Terraform::ShellOut.run(
+              ::Kitchen::Terraform::ShellOut.call(
                 command: workspace_new,
                 directory: directory,
                 timeout: timeout,

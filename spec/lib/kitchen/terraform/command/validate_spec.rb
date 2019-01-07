@@ -19,7 +19,7 @@ require "kitchen/terraform/command/validate"
 require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Validate do
-  describe ".run" do
+  describe ".call" do
     let :directory do
       "/directory"
     end
@@ -86,7 +86,7 @@ require "kitchen/terraform/shell_out"
 
     specify "should yield the result of running `terraform validate`" do
       expect do |block|
-        described_class.run(
+        described_class.call(
           color: false,
           directory: directory,
           variable_files: variable_files,

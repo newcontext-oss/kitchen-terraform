@@ -19,7 +19,7 @@ require "kitchen/terraform/command/apply"
 require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Apply do
-  describe ".run" do
+  describe ".call" do
     let :apply do
       described_class.new(
         color: false,
@@ -108,7 +108,7 @@ require "kitchen/terraform/shell_out"
 
     specify "should yield the result of running `terraform apply`" do
       expect do |block|
-        described_class.run(
+        described_class.call(
           color: false,
           directory: directory,
           lock_timeout: lock_timeout,

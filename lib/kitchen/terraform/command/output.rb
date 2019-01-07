@@ -35,7 +35,7 @@ module Kitchen
           # @return [self]
           # @yieldparam output [::Kitchen::Terraform::Command::Destroy] an instance initialized with the output of the
           #   command.
-          def run(color:, directory:, timeout:)
+          def call(color:, directory:, timeout:)
             new(color: color).tap do |output|
               shell_out directory: directory, output: output, timeout: timeout
               yield output: output if block_given?
@@ -47,7 +47,7 @@ module Kitchen
           private
 
           def shell_out(directory:, output:, timeout:)
-            ::Kitchen::Terraform::ShellOut.run command: output, directory: directory, timeout: timeout
+            ::Kitchen::Terraform::ShellOut.call command: output, directory: directory, timeout: timeout
           rescue ::Kitchen::Terraform::Error => error
             if /no\\ outputs\\ defined/.match ::Regexp.escape error.message
               output.store output: "{}"
