@@ -246,7 +246,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
-  def create(_state)
+  def create(_state = {})
     verify_version
     create_run_init
     run_workspace_select_instance
@@ -260,7 +260,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @param _state [::Hash] the mutable instance and driver state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
-  def destroy(_state)
+  def destroy(_state = {})
     verify_version
     destroy_run_init
     run_workspace_select_instance
