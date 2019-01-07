@@ -4,14 +4,14 @@ plugins:
   bundler-audit:
     enabled: false
   duplication:
-    enabled: true
+    enabled: false
     config:
       languages:
         - "ruby"
   fixme:
     enabled: true
   flog:
-    enabled: true
+    enabled: false
   markdownlint:
     enabled: true
   reek:
@@ -22,5 +22,6 @@ exclude_patterns:
   - "doc/"
   - "docs/"
   - "examples/"
+  - "spec/"
   - "test/integration"
   - "website/"
