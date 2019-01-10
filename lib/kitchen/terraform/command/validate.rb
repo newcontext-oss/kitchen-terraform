@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/command_flag/check_variables"
 require "kitchen/terraform/command_flag/color"
 require "kitchen/terraform/command_flag/variable_files"
 require "kitchen/terraform/command_flag/variables"
@@ -29,6 +30,8 @@ module Kitchen
           # Initializes an instance by running `terraform validate`.
           #
           # @param options [::Hash] the command options.
+          # @option options [true, false] :check_variables a toggle for checking variables provided to the
+          #   configuration.
           # @option options [true, false] :color a toggle for colored output.
           # @option options [::String] :directory the directory in which to run the command.
           # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
@@ -66,8 +69,11 @@ module Kitchen
           ::Kitchen::Terraform::CommandFlag::Variables.new(
             command: ::Kitchen::Terraform::CommandFlag::VariableFiles.new(
               command: ::Kitchen::Terraform::CommandFlag::Color.new(
-                command: "terraform validate -check-variables=true",
-                color: @color,
+                command: ::Kitchen::Terraform::CommandFlag::CheckVariables.new(
+                  command: "terraform validate",
+                  check_variables: @color,
+                ),
+                color: @check_variables,
               ),
               variable_files: @variable_files,
             ),
@@ -78,6 +84,7 @@ module Kitchen
         private
 
         def initialize(options)
+          @check_variables = options.fetch :check_variables
           @color = options.fetch :color
           @variable_files = options.fetch :variable_files
           @variables = options.fetch :variables

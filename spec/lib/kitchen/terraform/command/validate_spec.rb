@@ -20,6 +20,10 @@ require "kitchen/terraform/shell_out"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Validate do
   describe ".call" do
+    let :check_variables do
+      false
+    end
+
     let :directory do
       "/directory"
     end
@@ -33,7 +37,12 @@ require "kitchen/terraform/shell_out"
     end
 
     let :validate do
-      described_class.new color: false, variable_files: variable_files, variables: variables
+      described_class.new(
+        check_variables: check_variables,
+        color: false,
+        variable_files: variable_files,
+        variables: variables,
+      )
     end
 
     let :variable_file_one do
@@ -71,7 +80,7 @@ require "kitchen/terraform/shell_out"
     before do
       allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
         "terraform validate " \
-        "-check-variables=true " \
+        "-check-variables=#{check_variables} " \
         "-no-color " \
         "-var-file=\"#{variable_file_one}\" " \
         "-var-file=\"#{variable_file_two}\" " \
@@ -87,6 +96,7 @@ require "kitchen/terraform/shell_out"
     specify "should yield the result of running `terraform validate`" do
       expect do |block|
         described_class.call(
+          check_variables: check_variables,
           color: false,
           directory: directory,
           variable_files: variable_files,
