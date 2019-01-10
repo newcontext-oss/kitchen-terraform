@@ -25,7 +25,7 @@ module Kitchen
           if @color
             @command.to_s
           else
-            @command.to_s.concat " -no-color"
+            "#{@command} -no-color"
           end
         end
 

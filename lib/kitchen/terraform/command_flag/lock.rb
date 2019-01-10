@@ -22,7 +22,7 @@ module Kitchen
       # Lock provides logic to handle the `-lock` flag.
       class Lock
         def to_s
-          @command.to_s.concat " -lock=#{@lock}"
+          "#{@command} -lock=#{@lock}"
         end
 
         private

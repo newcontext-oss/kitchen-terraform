@@ -23,7 +23,7 @@ module Kitchen
       class Variables
         def to_s
           @variables.inject @command.to_s do |command, (name, value)|
-            command.concat " -var=\"#{name}=#{value}\""
+            "#{command} -var=\"#{name}=#{value}\""
           end
         end
 

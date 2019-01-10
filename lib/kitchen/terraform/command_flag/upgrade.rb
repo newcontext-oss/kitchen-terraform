@@ -23,7 +23,7 @@ module Kitchen
       class Upgrade
         def to_s
           if @upgrade
-            @command.to_s.concat " -upgrade"
+            "#{@command} -upgrade"
           else
             @command.to_s
           end

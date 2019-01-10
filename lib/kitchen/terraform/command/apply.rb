@@ -76,12 +76,10 @@ module Kitchen
                 command: ::Kitchen::Terraform::CommandFlag::LockTimeout.new(
                   command: ::Kitchen::Terraform::CommandFlag::Lock.new(
                     command: ::Kitchen::Terraform::CommandFlag::Color.new(
-                      command: ::String.new(
-                        "terraform apply " \
-                        "-auto-approve " \
-                        "-input=false " \
-                        "-refresh=true"
-                      ),
+                      command: "terraform apply " \
+                      "-auto-approve " \
+                      "-input=false " \
+                      "-refresh=true",
                       color: @color,
                     ),
                     lock: @lock,

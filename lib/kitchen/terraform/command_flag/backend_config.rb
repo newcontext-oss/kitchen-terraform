@@ -23,7 +23,7 @@ module Kitchen
       class BackendConfig
         def to_s
           @backend_config.inject @command.to_s do |command, (name, value)|
-            command.concat " -backend-config=\"#{name}=#{value}\""
+            "#{command} -backend-config=\"#{name}=#{value}\""
           end
         end
 

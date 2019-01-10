@@ -75,15 +75,13 @@ module Kitchen
                 command: ::Kitchen::Terraform::CommandFlag::Color.new(
                   command: ::Kitchen::Terraform::CommandFlag::LockTimeout.new(
                     command: ::Kitchen::Terraform::CommandFlag::Lock.new(
-                      command: ::String.new(
-                        "terraform init " \
-                        "-input=false " \
-                        "-force-copy " \
-                        "-backend=true " \
-                        "-get=true " \
-                        "-get-plugins=true " \
-                        "-verify-plugins=true"
-                      ),
+                      command: "terraform init " \
+                      "-input=false " \
+                      "-force-copy " \
+                      "-backend=true " \
+                      "-get=true " \
+                      "-get-plugins=true " \
+                      "-verify-plugins=true",
                       lock: @lock,
                     ),
                     lock_timeout: @lock_timeout,

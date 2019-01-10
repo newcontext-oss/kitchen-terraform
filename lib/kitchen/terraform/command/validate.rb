@@ -66,7 +66,7 @@ module Kitchen
           ::Kitchen::Terraform::CommandFlag::Variables.new(
             command: ::Kitchen::Terraform::CommandFlag::VariableFiles.new(
               command: ::Kitchen::Terraform::CommandFlag::Color.new(
-                command: ::String.new("terraform validate -check-variables=true"),
+                command: "terraform validate -check-variables=true",
                 color: @color,
               ),
               variable_files: @variable_files,

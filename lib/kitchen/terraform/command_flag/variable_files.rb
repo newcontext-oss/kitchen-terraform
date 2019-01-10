@@ -24,7 +24,7 @@ module Kitchen
       class VariableFiles
         def to_s
           @variable_files.inject @command.to_s do |command, variable_file|
-            command.concat " -var-file=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit variable_file}\""
+            "#{command} -var-file=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit variable_file}\""
           end
         end
 

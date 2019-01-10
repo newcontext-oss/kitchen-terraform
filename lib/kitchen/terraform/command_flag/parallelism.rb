@@ -22,7 +22,7 @@ module Kitchen
       # Parallelism provides logic to handle the `-parallelism` flag.
       class Parallelism
         def to_s
-          @command.to_s.concat " -parallelism=#{@parallelism}"
+          "#{@command} -parallelism=#{@parallelism}"
         end
 
         private

@@ -77,7 +77,7 @@ module Kitchen
 
         def to_s
           ::Kitchen::Terraform::CommandFlag::Color.new(
-            command: ::String.new("terraform output -json"),
+            command: "terraform output -json",
             color: @color,
           ).to_s
         end

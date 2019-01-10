@@ -22,7 +22,7 @@ module Kitchen
       # LockTimeout provides logic to handle the `-lock-timeout` flag.
       class LockTimeout
         def to_s
-          @command.to_s.concat " -lock-timeout=#{@lock_timeout}"
+          "#{@command} -lock-timeout=#{@lock_timeout}"
         end
 
         private

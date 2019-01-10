@@ -24,7 +24,7 @@ module Kitchen
       class PluginDir
         def to_s
           if @plugin_dir
-            @command.to_s.concat " -plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit @plugin_dir}\""
+            "#{@command} -plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit @plugin_dir}\""
           else
             @command.to_s
           end
