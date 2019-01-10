@@ -29,6 +29,7 @@ require "kitchen/terraform/shell_out"
     end
 
     before do
+      version.store output: output
       allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
         "terraform version",
         cwd: ::Dir.pwd,
@@ -41,6 +42,14 @@ require "kitchen/terraform/shell_out"
       expect do |block|
         described_class.call(&block)
       end.to yield_with_args version: version
+    end
+
+    specify "should cache the first result" do
+      described_class.call do |version:|
+        expect do |block|
+          described_class.call(&block)
+        end.to yield_with_args version: equal(version)
+      end
     end
   end
 end

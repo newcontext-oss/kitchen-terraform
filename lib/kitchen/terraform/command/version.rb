@@ -31,12 +31,17 @@ module Kitchen
           # @yieldparam version [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the
           #   command.
           def call
-            new.tap do |version|
-              ::Kitchen::Terraform::ShellOut.call command: version
-              yield version: version if block_given?
-            end
+            yield version: version if block_given?
 
             self
+          end
+
+          private
+
+          def version
+            @version ||= new.tap do |new_version|
+              ::Kitchen::Terraform::ShellOut.call command: new_version
+            end
           end
         end
 
