@@ -71,7 +71,6 @@ require "kitchen/terraform/shell_out"
     before do
       allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
         "terraform validate " \
-        "-check-variables=true " \
         "-no-color " \
         "-var-file=\"#{variable_file_one}\" " \
         "-var-file=\"#{variable_file_two}\" " \
