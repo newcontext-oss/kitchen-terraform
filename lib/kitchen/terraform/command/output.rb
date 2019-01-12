@@ -74,16 +74,16 @@ module Kitchen
         end
 
         def to_s
-          ::Kitchen::Terraform::CommandFlag::Color.new(
-            command: "terraform output -json",
-            color: @color,
-          ).to_s
+          @command.to_s
         end
 
         private
 
         def initialize(color:)
-          @color = color
+          @command = ::Kitchen::Terraform::CommandFlag::Color.new(
+            command: "terraform output -json",
+            color: color,
+          )
           @output = ""
         end
 

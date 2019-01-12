@@ -63,24 +63,22 @@ module Kitchen
         end
 
         def to_s
-          ::Kitchen::Terraform::CommandFlag::Variables.new(
-            command: ::Kitchen::Terraform::CommandFlag::VariableFiles.new(
-              command: ::Kitchen::Terraform::CommandFlag::Color.new(
-                command: "terraform validate",
-                color: @color,
-              ),
-              variable_files: @variable_files,
-            ),
-            variables: @variables,
-          ).to_s
+          @command.to_s
         end
 
         private
 
         def initialize(options)
-          @color = options.fetch :color
-          @variable_files = options.fetch :variable_files
-          @variables = options.fetch :variables
+          @command = ::Kitchen::Terraform::CommandFlag::Variables.new(
+            command: ::Kitchen::Terraform::CommandFlag::VariableFiles.new(
+              command: ::Kitchen::Terraform::CommandFlag::Color.new(
+                command: "terraform validate",
+                color: options.fetch(:color),
+              ),
+              variable_files: options.fetch(:variable_files),
+            ),
+            variables: options.fetch(:variables),
+          )
         end
       end
     end

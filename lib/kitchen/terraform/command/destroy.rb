@@ -70,36 +70,31 @@ module Kitchen
         end
 
         def to_s
-          ::Kitchen::Terraform::CommandFlag::VariableFiles.new(
+          @command.to_s
+        end
+
+        private
+
+        def initialize(options)
+          @command = ::Kitchen::Terraform::CommandFlag::VariableFiles.new(
             command: ::Kitchen::Terraform::CommandFlag::Variables.new(
               command: ::Kitchen::Terraform::CommandFlag::Parallelism.new(
                 command: ::Kitchen::Terraform::CommandFlag::LockTimeout.new(
                   command: ::Kitchen::Terraform::CommandFlag::Lock.new(
                     command: ::Kitchen::Terraform::CommandFlag::Color.new(
                       command: "terraform destroy -auto-approve -input=false -refresh=true",
-                      color: @color,
+                      color: options.fetch(:color),
                     ),
-                    lock: @lock,
+                    lock: options.fetch(:lock),
                   ),
-                  lock_timeout: @lock_timeout,
+                  lock_timeout: options.fetch(:lock_timeout),
                 ),
-                parallelism: @parallelism,
+                parallelism: options.fetch(:parallelism),
               ),
-              variables: @variables,
+              variables: options.fetch(:variables),
             ),
-            variable_files: @variable_files,
-          ).to_s
-        end
-
-        private
-
-        def initialize(options)
-          @color = options.fetch :color
-          @lock = options.fetch :lock
-          @lock_timeout = options.fetch :lock_timeout
-          @parallelism = options.fetch :parallelism
-          @variable_files = options.fetch :variable_files
-          @variables = options.fetch :variables
+            variable_files: options.fetch(:variable_files),
+          )
         end
       end
     end

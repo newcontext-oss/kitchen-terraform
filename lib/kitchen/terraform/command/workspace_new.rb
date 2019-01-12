@@ -56,13 +56,13 @@ module Kitchen
         end
 
         def to_s
-          "terraform workspace new #{@name}"
+          @command.to_s
         end
 
         private
 
         def initialize(name:)
-          @name = name
+          @command = "terraform workspace new #{name}"
         end
       end
     end

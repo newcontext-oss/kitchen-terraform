@@ -69,7 +69,13 @@ module Kitchen
         end
 
         def to_s
-          ::Kitchen::Terraform::CommandFlag::PluginDir.new(
+          @command.to_s
+        end
+
+        private
+
+        def initialize(options)
+          @command = ::Kitchen::Terraform::CommandFlag::PluginDir.new(
             command: ::Kitchen::Terraform::CommandFlag::BackendConfig.new(
               command: ::Kitchen::Terraform::CommandFlag::Upgrade.new(
                 command: ::Kitchen::Terraform::CommandFlag::Color.new(
@@ -82,29 +88,18 @@ module Kitchen
                       "-get=true " \
                       "-get-plugins=true " \
                       "-verify-plugins=true",
-                      lock: @lock,
+                      lock: options.fetch(:lock),
                     ),
-                    lock_timeout: @lock_timeout,
+                    lock_timeout: options.fetch(:lock_timeout),
                   ),
-                  color: @color,
+                  color: options.fetch(:color),
                 ),
-                upgrade: @upgrade,
+                upgrade: options.fetch(:upgrade),
               ),
-              backend_config: @backend_config,
+              backend_config: options.fetch(:backend_config),
             ),
-            plugin_dir: @plugin_dir,
-          ).to_s
-        end
-
-        private
-
-        def initialize(options)
-          @backend_config = options.fetch :backend_config
-          @color = options.fetch :color
-          @lock = options.fetch :lock
-          @lock_timeout = options.fetch :lock_timeout
-          @plugin_dir = options.fetch :plugin_dir
-          @upgrade = options.fetch :upgrade
+            plugin_dir: options.fetch(:plugin_dir),
+          )
         end
       end
     end
