@@ -113,8 +113,8 @@ jobs:
     install:
     - bundle install
     - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_darwin_amd64.zip
-    - shasum --algorithm 256 terraform_0.11.8_linux_amd64.zip | grep 98c168b06e8b4058c66e044e3744d49956ce7bc3664dc1679a33f8fffc84564d
-    - unzip terraform_0.11.8_linux_amd64.zip -d "$HOME"/bin
+    - shasum --algorithm 256 terraform_0.11.8_darwin_amd64.zip | grep 98c168b06e8b4058c66e044e3744d49956ce7bc3664dc1679a33f8fffc84564d
+    - unzip terraform_0.11.8_darwin_amd64.zip -d "$HOME"/bin
     - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
     - shasum --algorithm 256 terraform-provider-local_1.1.0_darwin_amd64.zip | grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
     - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\
