@@ -62,17 +62,15 @@ module Kitchen
         end
 
         def retrieve_outputs
-          yield outputs: @output
+          yield outputs: outputs
 
           self
         end
 
         def store(output:)
-          @output = ::Kitchen::Util.stringified_hash ::JSON.parse output
+          @output = output
 
           self
-        rescue ::JSON::ParserError => error
-          raise ::Kitchen::Terraform::Error, "Failed to parse Terraform outputs as JSON: #{error.message}"
         end
 
         def to_s
@@ -86,6 +84,13 @@ module Kitchen
 
         def initialize(color:)
           @color = color
+          @output = ""
+        end
+
+        def outputs
+          ::Kitchen::Util.stringified_hash ::JSON.parse @output
+        rescue ::JSON::ParserError => error
+          raise ::Kitchen::Terraform::Error, "Failed to parse Terraform outputs as JSON: #{error.message}"
         end
       end
     end

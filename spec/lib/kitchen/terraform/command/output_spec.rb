@@ -24,8 +24,8 @@ require "kitchen/terraform/shell_out"
   end
 
   describe ".call" do
-    let :command_output do
-      "{\"key\":\"value\"}"
+    let :command do
+      described_class.new color: color
     end
 
     let :directory do
@@ -36,22 +36,9 @@ require "kitchen/terraform/shell_out"
       1234
     end
 
-    let :output do
-      described_class.new color: color
-    end
-
-    before do
-      allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
-        "terraform output -json -no-color",
-        cwd: directory,
-        environment: kind_of(::Hash),
-        timeout: timeout,
-      ).and_return command_output
-    end
-
     context "when the command fails due to no outputs defined" do
       before do
-        output.store output: "{}"
+        command.store output: "{}"
         allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
           "terraform output -json -no-color",
           cwd: directory,
@@ -68,17 +55,17 @@ require "kitchen/terraform/shell_out"
             timeout: timeout,
             &block
           )
-        end.to yield_with_args output: output
+        end.to yield_with_args output: command
       end
     end
 
-    context "when the command returns unexpected output" do
+    context "when the command does not fail" do
       let :command_output do
-        "THIS IS NOT JSON"
+        ::JSON.dump key: "value"
       end
 
       before do
-        output.store output: "{}"
+        command.store output: command_output
         allow(::Kitchen::Terraform::ShellOut).to receive(:run_command).with(
           "terraform output -json -no-color",
           cwd: directory,
@@ -87,29 +74,16 @@ require "kitchen/terraform/shell_out"
         ).and_return command_output
       end
 
-      specify "should raise an error" do
-        expect do
+      specify "should yield the result of running `terraform output`" do
+        expect do |block|
           described_class.call(
             color: color,
             directory: directory,
             timeout: timeout,
+            &block
           )
-        end.to raise_error(
-          ::Kitchen::Terraform::Error,
-          /Failed to parse Terraform outputs as JSON: .* unexpected token at '#{command_output}'/
-        )
+        end.to yield_with_args output: command
       end
-    end
-
-    specify "should yield the result of running `terraform output`" do
-      expect do |block|
-        described_class.call(
-          color: color,
-          directory: directory,
-          timeout: timeout,
-          &block
-        )
-      end.to yield_with_args output: output
     end
   end
 
@@ -119,13 +93,33 @@ require "kitchen/terraform/shell_out"
     end
 
     before do
-      subject.store output: ::JSON.dump({key: "value"})
+      subject.store output: command_output
     end
 
-    specify "should yield the outputs" do
-      expect do |block|
-        subject.retrieve_outputs(&block)
-      end.to yield_with_args outputs: {"key" => "value"}
+    context "when the outputs are not parsable as JSON" do
+      let :command_output do
+        "THIS IS NOT JSON"
+      end
+
+      specify "should raise an error" do
+        expect do
+          subject.retrieve_outputs
+        end.to raise_error(
+          ::Kitchen::Terraform::Error,
+          /Failed to parse Terraform outputs as JSON: .* unexpected token at '#{command_output}'/
+        )
+      end
+    end
+
+    context "when the outputs are parsable as JSON" do
+      let :command_output do
+        ::JSON.dump key: "value"
+      end
+      specify "should yield the outputs" do
+        expect do |block|
+          subject.retrieve_outputs(&block)
+        end.to yield_with_args outputs: {"key" => "value"}
+      end
     end
   end
 end
