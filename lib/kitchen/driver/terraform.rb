@@ -335,7 +335,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def apply_run_validate
     ::Kitchen::Terraform::ShellOut.run(
       command: "validate " \
-
       "#{color_flag} " \
       "#{variables_flags} " \
       "#{variable_files_flags}",
