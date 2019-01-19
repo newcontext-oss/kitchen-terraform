@@ -281,7 +281,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
           before do
             shell_out_run_success(
               command: "validate " \
-              "-check-variables=true " \
               "-no-color " \
               "-var=\"string=\\\"A String\\\"\" " \
               "-var=\"map={ key = \\\"A Value\\\" }\" " \

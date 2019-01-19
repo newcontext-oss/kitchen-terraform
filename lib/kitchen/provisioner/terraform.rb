@@ -46,7 +46,7 @@ end
 # ===== Validating the Terraform Root Module
 #
 #   terraform validate \
-#     -check-variables=true \
+
 #     [-no-color] \
 #     [-var=<variables.first>...] \
 #     [-var-file=<variable_files.first>...] \
