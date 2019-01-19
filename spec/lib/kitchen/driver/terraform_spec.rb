@@ -524,7 +524,15 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform destroy` results in failure" do
         before do
-          shell_out_run_failure command: /destroy/, message: "mocked `terraform destroy` failure"
+          allow(shell_out).to receive(:run).with(
+            command: /destroy/,
+            options: {
+              cwd: kitchen_root,
+              environment: {"TF_WARN_OUTPUT_ERRORS" => "true"},
+              live_stream: kitchen_logger,
+              timeout: command_timeout,
+            },
+          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform destroy` failure"
         end
 
         specify "should result in an action failed error with the failed command output" do
@@ -536,7 +544,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
       context "when `terraform destroy` results in success" do
         before do
-          shell_out_run_success(
+          allow(shell_out).to receive(:run).with(
             command: "destroy " \
             "-auto-approve " \
             "-lock=true " \
@@ -549,7 +557,13 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "-var=\"map={ key = \\\"A Value\\\" }\" " \
             "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
             "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
-          )
+            options: {
+              cwd: kitchen_root,
+              environment: {"TF_WARN_OUTPUT_ERRORS" => "true"},
+              live_stream: kitchen_logger,
+              timeout: command_timeout,
+            },
+          ).and_return "mocked `terraform` success"
         end
 
         context "when `terraform select default` results in failure" do
