@@ -131,7 +131,6 @@ jobs:
     - bundle config --local gemfile ruby-2.5/Gemfile
     - bundle config --local jobs $(nproc --ignore=1)
     - bundle config --local without backend_ssh:development
-    - choco config set cacheLocation "$(pwd)"/chocolatey
     install:
     - bundle install
     - choco install terraform --confirm --no-progress --version=0.11.4
@@ -144,7 +143,6 @@ jobs:
     cache:
       directories:
       - ruby-2.5/vendor/bundle
-      - chocolatey
   - stage: Deploy to RubyGems
     dist: trusty
     language: ruby
