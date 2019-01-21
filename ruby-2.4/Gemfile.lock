@@ -14,7 +14,7 @@ GIT
 PATH
   remote: ..
   specs:
-    kitchen-terraform (4.2.1)
+    kitchen-terraform (4.3.0)
       dry-types (~> 0.9)
       dry-validation (~> 0.10)
       inspec (~> 3.0)

@@ -31,6 +31,7 @@ module ::Kitchen::Terraform::ShellOut
   #   command.
   # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
   # @param command [::String] the command to run.
+  # @option options [::Hash] :environment environment variables to define when running the command.
   # @param options [::Hash] options which adjust the execution of the command.
   # @raise [::Kitchen::Terraform::Error] if running the command fails.
   # @return [::String] the standard output from running the command.
@@ -67,22 +68,19 @@ module ::Kitchen::Terraform::ShellOut
 
   # @api private
   def self.run_shell_out(command:, options:)
-    yield(
-      standard_output:
-        ::Mixlib::ShellOut
-          .new(
+    yield(standard_output: ::Mixlib::ShellOut.new(
             "terraform #{command}",
-            options.merge(environment: {"TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1"})
-          )
-          .tap do |shell_out|
-            shell_out
-              .live_stream
-              .warn "Running command `#{shell_out.command}` in directory #{shell_out.cwd}"
-
+            options.merge(
+              environment: {"TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1"}.merge(
+                options.fetch(:environment) do
+                  {}
+                end
+              ),
+            )
+          ).tap do |shell_out|
+            shell_out.live_stream.warn "Running command `#{shell_out.command}` in directory #{shell_out.cwd}"
             shell_out.run_command
             shell_out.error!
-          end
-          .stdout
-    )
+          end.stdout)
   end
 end
