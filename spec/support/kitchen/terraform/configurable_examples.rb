@@ -39,20 +39,29 @@ require "support/kitchen/instance_context"
     end
   end
 
-  describe "#finalize_config" do
+  describe "#expand_paths!" do
     subject do
       described_instance
     end
 
-    include_context "Kitchen::Instance"
-
-    after do
-      described_instance.finalize_config! instance
+    context "when #validate_config! has not been called" do
+      specify "should call #validate_config!" do
+        is_expected.to receive :validate_config!
+      end
     end
 
-    specify "should call #validate_config! before calling #expand_paths!" do
-      is_expected.to receive(:validate_config!).ordered
-      is_expected.to receive(:expand_paths!).ordered
+    context "when #validate_config! has been called" do
+      before do
+        subject.instance_variable_set :@validate_config_called, true
+      end
+
+      specify "should not call #validate_config!" do
+        is_expected.not_to receive :validate_config!
+      end
+    end
+
+    after do
+      subject.send :expand_paths!
     end
   end
 end
