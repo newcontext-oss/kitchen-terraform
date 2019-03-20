@@ -17,10 +17,13 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/config_predicates/pathname_of_executable_file"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
+require "pathname"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
+require "support/kitchen/terraform/config_attribute/client_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
 require "support/kitchen/terraform/config_attribute/lock_examples"
@@ -46,6 +49,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
+      client: config_client,
       color: false,
       command_timeout: command_timeout,
       kitchen_root: kitchen_root,
@@ -57,6 +61,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
       },
       verify_version: verify_version,
     }
+  end
+
+  let :config_client do
+    "client"
   end
 
   let :described_instance do
@@ -93,8 +101,15 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   shared_context "Terraform CLI available" do
+    let :pathname do
+      instance_double ::Pathname
+    end
+
     before do
-      allow(::TTY::Which).to receive(:exist?).with("terraform").and_return true
+      allow(Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:Pathname).with(
+        config_client
+      ).and_return pathname
+      allow(pathname).to receive(:executable?).and_return true
     end
   end
 
@@ -200,6 +215,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
 
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Client"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
@@ -712,8 +728,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance
     end
 
+    include_context "Terraform CLI available"
+
     before do
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
     shared_examples "`terraform output` is run" do

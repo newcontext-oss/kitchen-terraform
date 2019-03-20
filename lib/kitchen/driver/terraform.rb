@@ -18,6 +18,7 @@ require "kitchen"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/config_attribute/backend_configurations"
+require "kitchen/terraform/config_attribute/client"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
 require "kitchen/terraform/config_attribute/lock"
@@ -198,6 +199,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
+  include ::Kitchen::Terraform::ConfigAttribute::Client
+
   include ::Kitchen::Terraform::ConfigAttribute::Color
 
   include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
@@ -278,16 +281,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     )
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::ActionFailed, error.message
-  end
-
-  # Verifies that the Terraform CLI is on the PATH.
-  #
-  # @raise [::Kitchen::UserError] if the Terraform CLI is not available.
-  # @return [void]
-  def verify_dependencies
-    if !::TTY::Which.exist? "terraform"
-      raise ::Kitchen::UserError, "The Terraform CLI was not found on the PATH"
-    end
   end
 
   private
