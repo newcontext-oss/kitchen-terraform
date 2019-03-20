@@ -14,56 +14,82 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
-
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::VariableFiles" do
-  include_context(
-    "Kitchen::Terraform::ConfigAttribute",
-    attribute: :variable_files,
-  ) do
-    context "when the config omits :variable_files" do
-      it_behaves_like(
-        "a default value is used",
-        default_value: [],
-      )
+  let :attribute do
+    :variable_files
+  end
+
+  context "when the config omits :variable_files" do
+    subject do
+      described_class.new
     end
 
-    context "when the config associates :variable_files with a nonarray" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /variable_files.*must be an array/,
-        value: "abc",
-      )
+    before do
+      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
     end
 
-    context "when the config associates :variable_files with an empty array" do
-      it_behaves_like(
-        "the value is valid",
-        value: [],
-      )
+    specify "should associate :variables_files with an empty array" do
+      expect(subject[attribute]).to eq []
+    end
+  end
+
+  context "when the config associates :variable_files with a nonarray" do
+    subject do
+      described_class.new attribute => "abc"
     end
 
-    context "when the config associates :variable_files with an array which includes a nonstring" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /variable_files.*0.*must be a string/,
-        value: [123],
-      )
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /variable_files.*must be an array/
+    end
+  end
+
+  context "when the config associates :variable_files with an empty array" do
+    subject do
+      described_class.new attribute => []
     end
 
-    context "when the config associates :variable_files with an array which includes an empty string" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /variable_files.*0.*must be filled/,
-        value: [""],
-      )
+    specify "should not raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.not_to raise_error
+    end
+  end
+
+  context "when the config associates :variable_files with an array which includes a nonstring" do
+    subject do
+      described_class.new attribute => [123]
     end
 
-    context "when the config associates :variable_files with an array which includes a nonempty string" do
-      it_behaves_like(
-        "the value is valid",
-        value: ["abc"],
-      )
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /variable_files.*0.*must be a string/
+    end
+  end
+
+  context "when the config associates :variable_files with an array which includes an empty string" do
+    subject do
+      described_class.new attribute => [""]
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /variable_files.*0.*must be filled/
+    end
+  end
+
+  context "when the config associates :variable_files with an array which includes a nonempty string" do
+    subject do
+      described_class.new attribute => ["abc"]
+    end
+
+    specify "should not raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.not_to raise_error
     end
   end
 end

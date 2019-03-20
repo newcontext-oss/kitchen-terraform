@@ -14,12 +14,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/string_examples"
-
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::RootModuleDirectory" do
-  include_context(
-    "Kitchen::Terraform::ConfigSchemas::String",
-    attribute: :root_module_directory,
-    default_value: "kitchen_root",
-  )
+  let :attribute do
+    :root_module_directory
+  end
+
+  context "when the config omits :root_module_directory" do
+    subject do
+      described_class.new
+    end
+
+    before do
+      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+    end
+
+    specify "should associate :root_module_directory with the pathname of the current directory" do
+      expect(subject[attribute]).to eq "."
+    end
+  end
+
+  context "when the config associates :root_module_directory with a nonstring" do
+    subject do
+      described_class.new attribute => 123
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /#{attribute}.*must be a string/
+    end
+  end
+
+  context "when the config associates :root_module_directory with an empty string" do
+    subject do
+      described_class.new attribute => ""
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /#{attribute}.*must be filled/
+    end
+  end
+
+  context "when the config associates :root_module_directory with a nonempty string" do
+    subject do
+      described_class.new attribute => "abc"
+    end
+
+    specify "should not raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.not_to raise_error
+    end
+  end
 end

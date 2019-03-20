@@ -14,50 +14,64 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
-
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Color" do
-  include_context(
-    "Kitchen::Terraform::ConfigAttribute",
-    attribute: :color,
-  ) do
-    context "when the config omits :color" do
-      context "when the Test Kitchen process is not associated with a terminal device" do
-        before do
-          allow(::Kitchen).to receive(:tty?).with(no_args).and_return false
-        end
+  let :attribute do
+    :color
+  end
 
-        it_behaves_like(
-          "a default value is used",
-          default_value: false,
-        )
+  context "when the config omits :color" do
+    context "when the Test Kitchen process is not associated with a terminal device" do
+      subject do
+        described_class.new
       end
 
-      context "when the Test Kitchen process is associated with a terminal device" do
-        before do
-          allow(::Kitchen).to receive(:tty?).with(no_args).and_return true
-        end
+      before do
+        allow(::Kitchen).to receive(:tty?).with(no_args).and_return false
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end
 
-        it_behaves_like(
-          "a default value is used",
-          default_value: true,
-        )
+      specify "should associate :color with false" do
+        expect(subject[attribute]).to be false
       end
     end
 
-    context "when the config associates :color with a nonboolean" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /color.*must be boolean/,
-        value: "abc",
-      )
+    context "when the Test Kitchen process is associated with a terminal device" do
+      subject do
+        described_class.new
+      end
+
+      before do
+        allow(::Kitchen).to receive(:tty?).with(no_args).and_return true
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end
+
+      specify "should associate :color with true" do
+        expect(subject[attribute]).to be true
+      end
+    end
+  end
+
+  context "when the config associates :color with a nonboolean" do
+    subject do
+      described_class.new attribute => "abc"
     end
 
-    context "when the config associates :color with a boolean" do
-      it_behaves_like(
-        "the value is valid",
-        value: false,
-      )
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /color.*must be boolean/
+    end
+  end
+
+  context "when the config associates :color with a boolean" do
+    subject do
+      described_class.new attribute => false
+    end
+
+    specify "should not raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.not_to raise_error
     end
   end
 end
