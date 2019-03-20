@@ -200,9 +200,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
 
-  it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Lock"
 
