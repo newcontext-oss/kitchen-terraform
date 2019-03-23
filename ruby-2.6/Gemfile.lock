@@ -15,7 +15,7 @@ PATH
   remote: .
   specs:
     kitchen-terraform (4.3.0)
-      dry-types (~> 0.9)
+      dry-types (~> 0.14.0)
       dry-validation (= 0.13.0)
       inspec (~> 3.0)
       mixlib-shellout (~> 2.2)
@@ -86,11 +86,11 @@ GEM
       dry-container (~> 0.2, >= 0.2.6)
       dry-core (~> 0.2)
       dry-equalizer (~> 0.2)
-    dry-types (0.15.0)
+    dry-types (0.14.0)
       concurrent-ruby (~> 1.0)
       dry-container (~> 0.3)
       dry-core (~> 0.4, >= 0.4.4)
-      dry-equalizer (~> 0.2, >= 0.2.2)
+      dry-equalizer (~> 0.2)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 0.5, >= 0.5)
     dry-validation (0.13.0)
