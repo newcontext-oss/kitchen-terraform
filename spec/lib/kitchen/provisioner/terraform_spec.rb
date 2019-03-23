@@ -37,16 +37,11 @@ require "support/kitchen/terraform/configurable_examples"
 
   describe "#call" do
     let :driver do
-      ::Kitchen::Driver::Terraform.new
+      instance_double ::Kitchen::Driver::Terraform
     end
 
     let :kitchen_instance do
-      ::Kitchen::Instance.new driver: driver, lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
-                              logger: ::Kitchen::Logger.new, platform: ::Kitchen::Platform.new(name: "test-platform"),
-                              provisioner: described_instance,
-                              state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
-                              suite: ::Kitchen::Suite.new(name: "test-suite"),
-                              transport: ::Kitchen::Transport::Base.new, verifier: ::Kitchen::Verifier::Base.new
+      instance_double ::Kitchen::Instance
     end
 
     let :kitchen_state do
@@ -54,6 +49,7 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     before do
+      allow(kitchen_instance).to receive(:driver).and_return driver
       subject.finalize_config! kitchen_instance
     end
 
