@@ -71,7 +71,7 @@ jobs:
         directories:
           - ruby-2.6/vendor/bundle
     - stage: Integration Tests
-      name: Terraform 0.11.11 on Ubuntu
+      name: Terraform 0.11.13 on Ubuntu
       dist: trusty
       language: ruby
       rvm: 2.4.1
@@ -86,12 +86,12 @@ jobs:
         - bundle config --local without development
       install:
         - bundle install
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip
-        - sha256sum terraform_0.11.11_linux_amd64.zip | grep 94504f4a67bad612b5c8e3a4b7ce6ca2772b3c1559630dfd71e9c519e3d6149c
-        - unzip terraform_0.11.11_linux_amd64.zip -d "$HOME"/bin
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_linux_amd64.zip
-        - sha256sum terraform-provider-local_1.1.0_linux_amd64.zip | grep b8786e14e8a04f52cccdf204a5ebc1d3754e5ac848d330561ac55d4d28434d00
-        - unzip terraform-provider-local_1.1.0_linux_amd64.zip -d test/terraform/Plug\
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip
+        - sha256sum terraform_0.11.13_linux_amd64.zip | grep 5925cd4d81e7d8f42a0054df2aafd66e2ab7408dbed2bd748f0022cfe592f8d2
+        - unzip terraform_0.11.13_linux_amd64.zip -d "$HOME"/bin
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_linux_amd64.zip
+        - sha256sum terraform-provider-local_1.2.0_linux_amd64.zip | grep e8bd3d1730ce34aa93dbba837740110a3df190c862e78024d1e3b36bd3de3b21
+        - unzip terraform-provider-local_1.2.0_linux_amd64.zip -d test/terraform/Plug\
           Ins/Plug\ In\ Directory
       before_script:
         - chmod go-rw test/terraform/backend-ssh/id_ed25519
@@ -114,9 +114,9 @@ jobs:
       install:
         - bundle install
         - HOMEBREW_NO_AUTO_UPDATE=1 brew install --force https://raw.githubusercontent.com/Homebrew/homebrew-core/3507fce2ba1f36cc371fe888fd093bf5aa79981d/Formula/terraform.rb
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_darwin_amd64.zip
-        - shasum -a 256 terraform-provider-local_1.1.0_darwin_amd64.zip | grep f3ffa4528a735cb78ac5e48c9480205e87a4da4dfbd7100ac1f68b3764dd9a1b
-        - unzip terraform-provider-local_1.1.0_darwin_amd64.zip -d test/terraform/Plug\
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_darwin_amd64.zip
+        - shasum -a 256 terraform-provider-local_1.2.0_darwin_amd64.zip | grep 1781aeca782710861ff3f167e14919b30be91ddd038e72fea029f3d9298843e5
+        - unzip terraform-provider-local_1.2.0_darwin_amd64.zip -d test/terraform/Plug\
           Ins/Plug\ In\ Directory
       script:
         - bundle exec rake test:kitchen:orchestrated-without-remote-backends
@@ -135,9 +135,9 @@ jobs:
       install:
         - bundle install
         - choco install terraform --confirm --no-progress --version=0.11.4
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.1.0/terraform-provider-local_1.1.0_windows_amd64.zip
-        - sha256sum terraform-provider-local_1.1.0_windows_amd64.zip | grep 8379fe33db3ef9746238a29ceae2c4e62198be0f51ab646c56296993eb019645
-        - unzip terraform-provider-local_1.1.0_windows_amd64.zip -d test/terraform/Plug\
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_windows_amd64.zip
+        - sha256sum terraform-provider-local_1.2.0_windows_amd64.zip | grep 3b31fd13626d7fe095862eecaf311c81d73789512a9450f4bd204c10d72b4b84
+        - unzip terraform-provider-local_1.2.0_windows_amd64.zip -d test/terraform/Plug\
           Ins/Plug\ In\ Directory
       script:
         - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
