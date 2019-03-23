@@ -32,11 +32,9 @@ module ::Kitchen::Terraform::ConfigAttribute::Color
   ::Kitchen::Terraform::ConfigAttribute
     .new(
       attribute: :color,
-      default_value:
-        lambda do
-          ::Kitchen.tty?
-        end,
-      schema: ::Kitchen::Terraform::ConfigSchemas::Boolean
-    )
-    .apply config_attribute: self
+      default_value: lambda do
+        ::Kitchen.tty?
+      end,
+      schema: ::Kitchen::Terraform::ConfigSchemas::Boolean,
+    ).apply config_attribute: self
 end

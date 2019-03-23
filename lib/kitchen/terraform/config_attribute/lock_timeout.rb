@@ -29,9 +29,8 @@ module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
     .apply(
       attribute: :lock_timeout,
       config_attribute: self,
-      default_value:
-        lambda do
-          0
-        end
+      default_value: lambda do
+        0
+      end,
     )
 end

@@ -31,7 +31,7 @@ require "kitchen/terraform/config_schemas/systems"
     end
 
     specify "the value may be an array which includes hashes" do
-      expect(subject.call(value: [123]).errors).to contain_exactly [:value, {0 => ["must be a hash"]}]
+      expect(subject.call(value: [123]).errors).to contain_exactly [:value, { 0 => ["must be a hash"] }]
     end
   end
 end

@@ -16,11 +16,10 @@
 
 require "support/kitchen/terraform/config_schemas/string_examples"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::RootModuleDirectory" do
-    include_context(
-      "Kitchen::Terraform::ConfigSchemas::String",
-      attribute: :root_module_directory,
-      default_value: "kitchen_root"
-    )
-  end
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::RootModuleDirectory" do
+  include_context(
+    "Kitchen::Terraform::ConfigSchemas::String",
+    attribute: :root_module_directory,
+    default_value: "kitchen_root",
+  )
+end

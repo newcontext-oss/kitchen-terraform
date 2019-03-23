@@ -42,7 +42,7 @@ class ::Kitchen::Terraform::FilePathConfigAttributeDefiner
       ::Kitchen::Terraform::ConfigAttributeDefiner
         .new(
           attribute: attribute,
-          schema: schema
+          schema: schema,
         )
   end
 end

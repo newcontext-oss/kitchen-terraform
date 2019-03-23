@@ -22,7 +22,7 @@ require "kitchen/verifier/terraform"
 
 ::RSpec.shared_context "Kitchen::Instance" do
   let :default_config do
-    {kitchen_root: kitchen_root}
+    { kitchen_root: kitchen_root }
   end
 
   let :driver do

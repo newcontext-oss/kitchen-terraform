@@ -16,11 +16,10 @@
 
 require "support/kitchen/terraform/config_attribute_type/integer_examples"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::LockTimeout" do
-    include_context(
-      "Kitchen::Terraform::ConfigAttributeType::Integer",
-      attribute: :lock_timeout,
-      default_value: 0
-    )
-  end
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::LockTimeout" do
+  include_context(
+    "Kitchen::Terraform::ConfigAttributeType::Integer",
+    attribute: :lock_timeout,
+    default_value: 0,
+  )
+end

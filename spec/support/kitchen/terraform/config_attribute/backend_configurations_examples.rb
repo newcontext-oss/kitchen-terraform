@@ -16,10 +16,9 @@
 
 require "support/kitchen/terraform/config_attribute_type/hash_of_symbols_and_strings_examples"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::BackendConfigurations" do
-    include_context(
-      "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings",
-      attribute: :backend_configurations
-    )
-  end
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::BackendConfigurations" do
+  include_context(
+    "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings",
+    attribute: :backend_configurations,
+  )
+end

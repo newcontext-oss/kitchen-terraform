@@ -23,20 +23,17 @@ class ::Kitchen::Terraform::ConfigAttributeDefiner
   # @param plugin_class [::Kitchen::Configurable] a plugin class.
   # @return [void]
   def define(plugin_class:)
-    plugin_class
-      .required_config @attribute do |_attribute, value, _plugin|
-        process(
-          messages:
-            @schema
-              .call(value: value)
-              .messages,
-          plugin_class: plugin_class
-        )
-      end
-    plugin_class
-      .default_config @attribute do |plugin|
-        plugin.send "config_#{@attribute}_default_value"
-      end
+    plugin_class.required_config @attribute do |_attribute, value, _plugin|
+      process(
+        messages: @schema
+          .call(value: value)
+          .messages,
+        plugin_class: plugin_class,
+      )
+    end
+    plugin_class.default_config @attribute do |plugin|
+      plugin.send "config_#{@attribute}_default_value"
+    end
   end
 
   private

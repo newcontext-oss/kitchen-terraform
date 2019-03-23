@@ -35,16 +35,14 @@ module ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings
       .new(
         attribute: attribute,
         default_value: default_value,
-        schema:
-          ::Dry::Validation
-            .Schema do
-              configure do
-                extend ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
-              end
-              required(:value).value :hash_of_symbols_and_strings?
-            end
-      )
-      .apply config_attribute: config_attribute
+        schema: ::Dry::Validation
+          .Schema do
+          configure do
+            extend ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
+          end
+          required(:value).value :hash_of_symbols_and_strings?
+        end,
+      ).apply config_attribute: config_attribute
 
     self
   end

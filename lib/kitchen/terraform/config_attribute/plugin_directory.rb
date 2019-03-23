@@ -38,9 +38,8 @@ module ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
     ::Kitchen::Terraform::FilePathConfigAttributeDefiner
       .new(
         attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::OptionalString
-      )
-      .define plugin_class: plugin_class
+        schema: ::Kitchen::Terraform::ConfigSchemas::OptionalString,
+      ).define plugin_class: plugin_class
   end
 
   # @return [::Symbol] the symbol corresponding to this attribute.

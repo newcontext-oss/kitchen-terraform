@@ -28,11 +28,9 @@ module ::Kitchen::Terraform::ConfigAttribute::Lock
   ::Kitchen::Terraform::ConfigAttribute
     .new(
       attribute: :lock,
-      default_value:
-        lambda do
-          true
-        end,
-      schema: ::Kitchen::Terraform::ConfigSchemas::Boolean
-    )
-    .apply config_attribute: self
+      default_value: lambda do
+        true
+      end,
+      schema: ::Kitchen::Terraform::ConfigSchemas::Boolean,
+    ).apply config_attribute: self
 end

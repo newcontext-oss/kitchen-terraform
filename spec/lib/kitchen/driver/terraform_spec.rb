@@ -528,7 +528,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             command: /destroy/,
             options: {
               cwd: kitchen_root,
-              environment: {"TF_WARN_OUTPUT_ERRORS" => "true"},
+              environment: { "TF_WARN_OUTPUT_ERRORS" => "true" },
               live_stream: kitchen_logger,
               timeout: command_timeout,
             },
@@ -559,7 +559,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
             options: {
               cwd: kitchen_root,
-              environment: {"TF_WARN_OUTPUT_ERRORS" => "true"},
+              environment: { "TF_WARN_OUTPUT_ERRORS" => "true" },
               live_stream: kitchen_logger,
               timeout: command_timeout,
             },
@@ -763,7 +763,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
           end
 
           let :value_as_hash do
-            {output_name: {sensitive: false, type: "list", value: ["output_value_1"]}}
+            { output_name: { sensitive: false, type: "list", value: ["output_value_1"] } }
           end
 
           specify "should yield the hash which results from processing the output as JSON" do
@@ -771,7 +771,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
               subject.retrieve_outputs(&block)
             end.to yield_with_args(
               outputs: {
-                "output_name" => {"sensitive" => false, "type" => "list", "value" => ["output_value_1"]},
+                "output_name" => { "sensitive" => false, "type" => "list", "value" => ["output_value_1"] },
               },
             )
           end

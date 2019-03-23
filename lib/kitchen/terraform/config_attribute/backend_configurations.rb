@@ -33,9 +33,8 @@ module ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
     .apply(
       attribute: :backend_configurations,
       config_attribute: self,
-      default_value:
-        lambda do
-          {}
-        end
+      default_value: lambda do
+        {}
+      end,
     )
 end

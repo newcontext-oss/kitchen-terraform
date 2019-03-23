@@ -16,11 +16,10 @@
 
 require "support/kitchen/terraform/config_attribute_type/integer_examples"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::Parallelism" do
-    include_context(
-      "Kitchen::Terraform::ConfigAttributeType::Integer",
-      attribute: :parallelism,
-      default_value: 10
-    )
-  end
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Parallelism" do
+  include_context(
+    "Kitchen::Terraform::ConfigAttributeType::Integer",
+    attribute: :parallelism,
+    default_value: 10,
+  )
+end

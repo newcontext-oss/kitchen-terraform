@@ -36,9 +36,8 @@ module ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
     ::Kitchen::Terraform::FilePathConfigAttributeDefiner
       .new(
         attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::String
-      )
-      .define plugin_class: plugin_class
+        schema: ::Kitchen::Terraform::ConfigSchemas::String,
+      ).define plugin_class: plugin_class
   end
 
   # @return [::Symbol] the symbol corresponding to the attribute.

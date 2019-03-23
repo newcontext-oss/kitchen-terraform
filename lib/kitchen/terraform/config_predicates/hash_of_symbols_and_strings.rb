@@ -50,8 +50,8 @@ module ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
   def self.all_symbols?(keys:)
     keys
       .all? do |key|
-        key.kind_of? ::Symbol
-      end
+      key.kind_of? ::Symbol
+    end
   end
 
   # If all values are strings then the result is +true+; else the result is +false+.
@@ -62,8 +62,8 @@ module ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
   def self.all_strings?(values:)
     values
       .all? do |value|
-        value.kind_of? ::String
-      end
+      value.kind_of? ::String
+    end
   end
 
   private
@@ -73,9 +73,9 @@ module ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
       .merge(
         en: {
           errors: {
-            hash_of_symbols_and_strings?: "must be a hash which includes only symbol keys and string values"
-          }
-        }
+            hash_of_symbols_and_strings?: "must be a hash which includes only symbol keys and string values",
+          },
+        },
       )
   end
 end

@@ -21,7 +21,7 @@ require "mixlib/shellout"
 ::RSpec.describe ::Kitchen::Terraform::ShellOut do
   describe ".run" do
     let :complete_environment do
-      {"TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1", "FOO" => "bar"}
+      { "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1", "FOO" => "bar" }
     end
 
     let :duration do
@@ -29,7 +29,7 @@ require "mixlib/shellout"
     end
 
     let :extra_environment do
-      {"FOO" => "bar"}
+      { "FOO" => "bar" }
     end
 
     let :logger do
