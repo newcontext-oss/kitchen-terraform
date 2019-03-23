@@ -21,23 +21,21 @@ require "kitchen/terraform/error"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Provisioner::Terraform do
+  subject do
+    described_class.new config
+  end
+
   let :config do
     {}
   end
 
-  let :described_instance do
-    described_class.new config
+  it_behaves_like "Kitchen::Terraform::Configurable" do
+    let :described_instance do
+      described_class.new config
+    end
   end
 
-  it_behaves_like "Kitchen::Terraform::Configurable"
-
   describe "#call" do
-    subject do
-      lambda do
-        described_instance.call kitchen_state
-      end
-    end
-
     let :driver do
       ::Kitchen::Driver::Terraform.new
     end
@@ -56,7 +54,7 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     before do
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
     describe "error handling" do
@@ -65,14 +63,10 @@ require "support/kitchen/terraform/configurable_examples"
           allow(driver).to receive(:apply).and_raise ::Kitchen::ActionFailed, "mocked Driver#create failure"
         end
 
-        it do
-          is_expected
-            .to(
-              raise_error(
-                ::Kitchen::ActionFailed,
-                "mocked Driver#create failure"
-              )
-            )
+        specify "should raise a Kitchen::ActionFailed" do
+          expect do
+            subject.call kitchen_state
+          end.to raise_error ::Kitchen::ActionFailed, "mocked Driver#create failure"
         end
       end
 
@@ -81,8 +75,10 @@ require "support/kitchen/terraform/configurable_examples"
           allow(driver).to receive :apply
         end
 
-        it do
-          is_expected.to_not raise_error
+        specify "should not raise an error" do
+          expect do
+            subject.call kitchen_state
+          end.to_not raise_error
         end
       end
     end
