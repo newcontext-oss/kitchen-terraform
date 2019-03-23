@@ -23,9 +23,9 @@ require "kitchen/terraform/config_schemas"
 ::Kitchen::Terraform::ConfigSchemas::OptionalString =
   ::Dry::Validation
     .Schema do
-      required(:value)
-        .maybe(
-          :str?,
-          :filled?
-        )
-    end
+    required(:value)
+      .maybe(
+        :str?,
+        :filled?
+      )
+  end

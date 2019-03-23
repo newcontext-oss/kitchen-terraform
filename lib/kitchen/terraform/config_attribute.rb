@@ -55,25 +55,22 @@ class ::Kitchen::Terraform::ConfigAttribute
   def define_singleton_included
     local_schema = schema
 
-    config_attribute
-      .define_singleton_method :included do |plugin_class|
-        ::Kitchen::Terraform::ConfigAttributeDefiner
-          .new(
-            attribute: self,
-            schema: local_schema
-          )
-          .define plugin_class: plugin_class
-      end
+    config_attribute.define_singleton_method :included do |plugin_class|
+      ::Kitchen::Terraform::ConfigAttributeDefiner
+        .new(
+          attribute: self,
+          schema: local_schema,
+        ).define plugin_class: plugin_class
+    end
   end
 
   # @api private
   def define_singleton_to_sym
     local_attribute = attribute
 
-    config_attribute
-      .define_singleton_method :to_sym do
-        local_attribute
-      end
+    config_attribute.define_singleton_method :to_sym do
+      local_attribute
+    end
 
     config_attribute.extend ::Kitchen::Terraform::ConfigAttributeCacher
   end

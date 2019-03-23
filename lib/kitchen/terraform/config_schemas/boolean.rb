@@ -23,5 +23,5 @@ require "kitchen/terraform/config_schemas"
 ::Kitchen::Terraform::ConfigSchemas::Boolean =
   ::Dry::Validation
     .Schema do
-      required(:value).filled :bool?
-    end
+    required(:value).filled :bool?
+  end

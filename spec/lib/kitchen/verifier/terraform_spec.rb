@@ -29,7 +29,7 @@ require "support/kitchen/terraform/configurable_examples"
       color: false,
       systems: [
         {
-          attrs_outputs: {attribute_name: "output_name"},
+          attrs_outputs: { attribute_name: "output_name" },
           attrs: ["attrs.yml"],
           backend: "backend",
           backend_cache: false,
@@ -111,7 +111,7 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform outputs are in an unexpected format" do
       before do
-        allow(driver).to receive(:retrieve_outputs).and_yield outputs: {"output_name": {"amount": "output_value"}}
+        allow(driver).to receive(:retrieve_outputs).and_yield outputs: { "output_name": { "amount": "output_value" } }
       end
 
       specify "should raise an action failed error indicating the unexpected format" do
@@ -138,7 +138,7 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform outputs omits the value of the :hosts_output key" do
       before do
-        allow(driver).to receive(:retrieve_outputs).and_yield outputs: {"output_name": {"value": "output value"}}
+        allow(driver).to receive(:retrieve_outputs).and_yield outputs: { "output_name": { "value": "output value" } }
       end
 
       specify "should raise an action failed error indicating the missing :hosts_output key" do
@@ -192,7 +192,7 @@ require "support/kitchen/terraform/configurable_examples"
           "sudo" => false,
           "sudo_command" => "sudo -E",
           "sudo_options" => "",
-          attributes: {"attribute_name" => "output_value", "hosts" => "host", "output_name" => "output_value"},
+          attributes: { "attribute_name" => "output_value", "hosts" => "host", "output_name" => "output_value" },
           attrs: ["attrs.yml"],
           backend: "backend",
           backend_cache: false,
@@ -238,7 +238,7 @@ require "support/kitchen/terraform/configurable_examples"
           "sudo" => false,
           "sudo_command" => "sudo -E",
           "sudo_options" => "",
-          attributes: {"hosts" => "host", "output_name" => "output_value"},
+          attributes: { "hosts" => "host", "output_name" => "output_value" },
           backend: "backend",
           logger: logger,
         }
@@ -255,7 +255,7 @@ require "support/kitchen/terraform/configurable_examples"
 
       before do
         allow(driver).to receive(:retrieve_outputs).and_yield(
-          outputs: {"output_name" => {"value" => "output_value"}, "hosts" => {"value" => "host"}},
+          outputs: { "output_name" => { "value" => "output_value" }, "hosts" => { "value" => "host" } },
         )
       end
 

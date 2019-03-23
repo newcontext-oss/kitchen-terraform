@@ -28,9 +28,8 @@ module ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
     .apply(
       attribute: :command_timeout,
       config_attribute: self,
-      default_value:
-        lambda do
-          600
-        end
+      default_value: lambda do
+        600
+      end,
     )
 end

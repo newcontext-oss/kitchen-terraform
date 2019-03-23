@@ -16,49 +16,48 @@
 
 require "support/kitchen/terraform/config_attribute_context"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::Color" do
-    include_context(
-      "Kitchen::Terraform::ConfigAttribute",
-      attribute: :color
-    ) do
-      context "when the config omits :color" do
-        context "when the Test Kitchen process is not associated with a terminal device" do
-          before do
-            allow(::Kitchen).to receive(:tty?).with(no_args).and_return false
-          end
-
-          it_behaves_like(
-            "a default value is used",
-            default_value: false
-          )
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Color" do
+  include_context(
+    "Kitchen::Terraform::ConfigAttribute",
+    attribute: :color,
+  ) do
+    context "when the config omits :color" do
+      context "when the Test Kitchen process is not associated with a terminal device" do
+        before do
+          allow(::Kitchen).to receive(:tty?).with(no_args).and_return false
         end
 
-        context "when the Test Kitchen process is associated with a terminal device" do
-          before do
-            allow(::Kitchen).to receive(:tty?).with(no_args).and_return true
-          end
-
-          it_behaves_like(
-            "a default value is used",
-            default_value: true
-          )
-        end
-      end
-
-      context "when the config associates :color with a nonboolean" do
         it_behaves_like(
-          "the value is invalid",
-          error_message: /color.*must be boolean/,
-          value: "abc"
+          "a default value is used",
+          default_value: false,
         )
       end
 
-      context "when the config associates :color with a boolean" do
+      context "when the Test Kitchen process is associated with a terminal device" do
+        before do
+          allow(::Kitchen).to receive(:tty?).with(no_args).and_return true
+        end
+
         it_behaves_like(
-          "the value is valid",
-          value: false
+          "a default value is used",
+          default_value: true,
         )
       end
     end
+
+    context "when the config associates :color with a nonboolean" do
+      it_behaves_like(
+        "the value is invalid",
+        error_message: /color.*must be boolean/,
+        value: "abc",
+      )
+    end
+
+    context "when the config associates :color with a boolean" do
+      it_behaves_like(
+        "the value is valid",
+        value: false,
+      )
+    end
   end
+end

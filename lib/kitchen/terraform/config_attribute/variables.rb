@@ -31,9 +31,8 @@ module ::Kitchen::Terraform::ConfigAttribute::Variables
     .apply(
       attribute: :variables,
       config_attribute: self,
-      default_value:
-        lambda do
-          {}
-        end
+      default_value: lambda do
+        {}
+      end,
     )
 end

@@ -16,16 +16,15 @@
 
 require "support/kitchen/terraform/config_attribute_context"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigSchemas::String" do |attribute:, default_value:|
+::RSpec.shared_examples "Kitchen::Terraform::ConfigSchemas::String" do |attribute:, default_value:|
   include_context(
     "Kitchen::Terraform::ConfigAttribute",
-    attribute: attribute
+    attribute: attribute,
   ) do
     context "when the config omits #{attribute.inspect}" do
       it_behaves_like(
         "a default value is used",
-        default_value: default_value
+        default_value: default_value,
       )
     end
 
@@ -33,7 +32,7 @@ require "support/kitchen/terraform/config_attribute_context"
       it_behaves_like(
         "the value is invalid",
         error_message: /#{attribute}.*must be a string/,
-        value: 123
+        value: 123,
       )
     end
 
@@ -41,14 +40,14 @@ require "support/kitchen/terraform/config_attribute_context"
       it_behaves_like(
         "the value is invalid",
         error_message: /#{attribute}.*must be filled/,
-        value: ""
+        value: "",
       )
     end
 
     context "when the config associates #{attribute.inspect} with a nonempty string" do
       it_behaves_like(
         "the value is valid",
-        value: "abc"
+        value: "abc",
       )
     end
   end

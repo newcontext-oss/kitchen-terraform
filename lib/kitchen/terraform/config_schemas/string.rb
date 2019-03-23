@@ -22,5 +22,5 @@ require "kitchen/terraform/config_schemas"
 ::Kitchen::Terraform::ConfigSchemas::String =
   ::Dry::Validation
     .Schema do
-      required(:value).filled :str?
-    end
+    required(:value).filled :str?
+  end

@@ -23,7 +23,7 @@ require "kitchen/terraform/config_schemas/system"
 
   shared_examples "a string" do
     specify "the input must associate the attribute with a string" do
-      expect(subject.call({attribute => 123}).errors).to include attribute => ["must be a string"]
+      expect(subject.call({ attribute => 123 }).errors).to include attribute => ["must be a string"]
     end
 
     specify "the input must associate the attribute with a nonempty string" do
@@ -49,11 +49,11 @@ require "kitchen/terraform/config_schemas/system"
     end
 
     specify "the input must associate the attribute with an array which includes strings" do
-      expect(subject.call(attribute => [123]).errors).to include attribute => {0 => ["must be a string"]}
+      expect(subject.call(attribute => [123]).errors).to include attribute => { 0 => ["must be a string"] }
     end
 
     specify "the input must associate the attribute with an array which includes nonempty strings" do
-      expect(subject.call(attribute => [""]).errors).to include attribute => {0 => ["must be filled"]}
+      expect(subject.call(attribute => [""]).errors).to include attribute => { 0 => ["must be filled"] }
     end
   end
 
@@ -73,7 +73,7 @@ require "kitchen/terraform/config_schemas/system"
     end
 
     specify "the input must associate the attribute with an integer" do
-      expect(subject.call({attribute => "abc"}).errors).to include attribute => ["must be an integer"]
+      expect(subject.call({ attribute => "abc" }).errors).to include attribute => ["must be an integer"]
     end
   end
 

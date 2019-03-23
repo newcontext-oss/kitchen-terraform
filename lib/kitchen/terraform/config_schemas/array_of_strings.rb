@@ -23,9 +23,9 @@ require "kitchen/terraform/config_schemas"
 ::Kitchen::Terraform::ConfigSchemas::ArrayOfStrings =
   ::Dry::Validation
     .Schema do
-      required(:value)
-        .each(
-          :filled?,
-          :str?
-        )
-    end
+    required(:value)
+      .each(
+        :filled?,
+        :str?
+      )
+  end

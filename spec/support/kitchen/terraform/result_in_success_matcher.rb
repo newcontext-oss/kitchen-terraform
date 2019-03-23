@@ -14,30 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec::Matchers
-  .define :result_in_success do
-    supports_block_expectations
+::RSpec::Matchers.define :result_in_success do
+  supports_block_expectations
 
-    chain(
-      :with_message,
-      :message
+  chain(
+    :with_message,
+    :message
+  )
+
+  match notify_expectation_failures: true do |actual|
+    actual_message = nil
+    call_actual =
+      proc do
+        actual_message = actual.call
+      end
+
+    expect(call_actual).to_not raise_error
+    values_match?(
+      message,
+      actual_message
     )
-
-    match notify_expectation_failures: true do |actual|
-      actual_message = nil
-      call_actual =
-        proc do
-          actual_message = actual.call
-        end
-
-      expect(call_actual).to_not raise_error
-      values_match?(
-        message,
-        actual_message
-      )
-    end
-
-    failure_message do |actual|
-      "expected #{actual} to result in a success with the message #{message.inspect}"
-    end
   end
+
+  failure_message do |actual|
+    "expected #{actual} to result in a success with the message #{message.inspect}"
+  end
+end

@@ -34,13 +34,11 @@ module ::Kitchen::Terraform::ConfigAttributeType::Integer
       .new(
         attribute: attribute,
         default_value: default_value,
-        schema:
-          ::Dry::Validation
-            .Schema do
-              required(:value).filled :int?
-            end
-      )
-      .apply config_attribute: config_attribute
+        schema: ::Dry::Validation
+          .Schema do
+          required(:value).filled :int?
+        end,
+      ).apply config_attribute: config_attribute
 
     self
   end

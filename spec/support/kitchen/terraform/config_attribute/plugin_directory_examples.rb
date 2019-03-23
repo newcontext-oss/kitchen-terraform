@@ -16,40 +16,39 @@
 
 require "support/kitchen/terraform/config_attribute_context"
 
-::RSpec
-  .shared_examples "Kitchen::Terraform::ConfigAttribute::PluginDirectory" do
-    include_context(
-      "Kitchen::Terraform::ConfigAttribute",
-      attribute: :plugin_directory
-    ) do
-      context "when the config omits :plugin_directory" do
-        it_behaves_like(
-          "a default value is used",
-          default_value: nil
-        )
-      end
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::PluginDirectory" do
+  include_context(
+    "Kitchen::Terraform::ConfigAttribute",
+    attribute: :plugin_directory,
+  ) do
+    context "when the config omits :plugin_directory" do
+      it_behaves_like(
+        "a default value is used",
+        default_value: nil,
+      )
+    end
 
-      context "when the config associates :plugin_directory with a nonstring" do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /plugin_directory.*must be a string/,
-          value: 123
-        )
-      end
+    context "when the config associates :plugin_directory with a nonstring" do
+      it_behaves_like(
+        "the value is invalid",
+        error_message: /plugin_directory.*must be a string/,
+        value: 123,
+      )
+    end
 
-      context "when the config associates :plugin_directory with an empty string" do
-        it_behaves_like(
-          "the value is invalid",
-          error_message: /plugin_directory.*must be filled/,
-          value: ""
-        )
-      end
+    context "when the config associates :plugin_directory with an empty string" do
+      it_behaves_like(
+        "the value is invalid",
+        error_message: /plugin_directory.*must be filled/,
+        value: "",
+      )
+    end
 
-      context "when the config associates :plugin_directory with a nonempty string" do
-        it_behaves_like(
-          "the value is valid",
-          value: "abc"
-        )
-      end
+    context "when the config associates :plugin_directory with a nonempty string" do
+      it_behaves_like(
+        "the value is valid",
+        value: "abc",
+      )
     end
   end
+end

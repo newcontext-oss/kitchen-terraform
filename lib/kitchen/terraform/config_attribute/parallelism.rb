@@ -29,9 +29,8 @@ module ::Kitchen::Terraform::ConfigAttribute::Parallelism
     .apply(
       attribute: :parallelism,
       config_attribute: self,
-      default_value:
-        lambda do
-          10
-        end
+      default_value: lambda do
+        10
+      end,
     )
 end
