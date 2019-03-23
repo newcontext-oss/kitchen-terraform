@@ -3,7 +3,7 @@
 ruby "~> 2.6"
 
 source "https://rubygems.org/" do
-  gemspec
+  gemspec path: ".."
 
   group :backend_ssh do
     gem "bcrypt_pbkdf", "~> 1.0"

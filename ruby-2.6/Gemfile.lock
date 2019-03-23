@@ -12,7 +12,7 @@ GIT
       net-http-pipeline
 
 PATH
-  remote: .
+  remote: ..
   specs:
     kitchen-terraform (4.3.0)
       dry-types (~> 0.14.0)
