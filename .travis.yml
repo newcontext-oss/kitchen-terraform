@@ -134,7 +134,6 @@ jobs:
         - bundle config --local without backend_ssh:development
       install:
         - choco install msys2
-        - choco install make
         - bundle install
         - choco install terraform --confirm --no-progress --version=0.11.4
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_windows_amd64.zip
