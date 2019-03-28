@@ -829,32 +829,4 @@ require "support/kitchen/terraform/result_in_success_matcher"
       it_behaves_like "`terraform output` is run"
     end
   end
-
-  describe "#verify_dependencies" do
-    subject do
-      described_instance
-    end
-
-    context "when the Terraform CLI is not found on the PATH" do
-      before do
-        allow(::TTY::Which).to receive(:exist?).with("terraform").and_return false
-      end
-
-      specify "should result in a user error which indicates the CLI was not found on the PATH" do
-        expect do
-          subject.verify_dependencies
-        end.to raise_error ::Kitchen::UserError, "The Terraform CLI was not found on the PATH"
-      end
-    end
-
-    context "when the Terraform CLI is found on the PATH" do
-      include_context "Terraform CLI available"
-
-      specify "should not result in an error" do
-        expect do
-          subject.verify_dependencies
-        end.not_to raise_error
-      end
-    end
-  end
 end

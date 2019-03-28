@@ -33,7 +33,6 @@ require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
 require "shellwords"
-require "tty/which"
 
 # This namespace is defined by Kitchen.
 #
