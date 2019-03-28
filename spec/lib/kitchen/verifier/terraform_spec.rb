@@ -84,6 +84,14 @@ require "support/kitchen/terraform/configurable_examples"
     ::Kitchen::Logger.new
   end
 
+  let :transport do
+    ::Kitchen::Transport::Ssh.new
+  end
+
+  before do
+    allow(kitchen_instance).to receive(:transport).and_return transport
+  end
+
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Systems"
