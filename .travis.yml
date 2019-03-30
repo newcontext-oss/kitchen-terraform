@@ -96,7 +96,11 @@ jobs:
       before_script:
         - chmod go-rw test/terraform/backend-ssh/id_ed25519
       script:
-        - bundle exec rake test:kitchen:orchestrated-with-remote-backends
+        - bundle exec rake test:kitchen:attributes-linux
+        - bundle exec rake test:kitchen:backend-ssh-linux
+        - bundle exec rake test:kitchen:plug-ins-linux
+        - bundle exec rake test:kitchen:variables-linux
+        - bundle exec rake test:kitchen:workspaces-linux
       cache:
         directories:
           - ruby-2.4/vendor/bundle
@@ -119,7 +123,10 @@ jobs:
         - unzip terraform-provider-local_1.2.0_darwin_amd64.zip -d test/terraform/Plug\
           Ins/Plug\ In\ Directory
       script:
-        - bundle exec rake test:kitchen:orchestrated-without-remote-backends
+        - bundle exec rake test:kitchen:attributes-osx
+        - bundle exec rake test:kitchen:plug-ins-osx
+        - bundle exec rake test:kitchen:variables-osx
+        - bundle exec rake test:kitchen:workspaces-osx
       cache:
         directories:
           - ruby-2.4/vendor/bundle
@@ -140,7 +147,10 @@ jobs:
         - unzip terraform-provider-local_1.2.0_windows_amd64.zip -d test/terraform/Plug\
           Ins/Plug\ In\ Directory
       script:
-        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:orchestrated-without-remote-backends'"
+        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-windows'"
+        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:plug-ins-windows'"
+        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:variables-windows'"
+        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:workspaces-windows'"
       cache:
         directories:
           - ruby-2.5/vendor/bundle

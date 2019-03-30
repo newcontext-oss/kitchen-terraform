@@ -26,42 +26,19 @@ module Test
         def define
           super
           namespace "kitchen" do
-            define_orchestrated_with_remote_backends
-            define_orchestrated_without_remote_backends
-            define_workspace_both
+            define_workspaces
           end
         end
 
-        def define_orchestrated_with_remote_backends
-          desc "Run orchestrated test instances with remote backends"
-          task "orchestrated-with-remote-backends": [
-            "test:kitchen:attributes-default",
-            "test:kitchen:backend-ssh-default",
-            "test:kitchen:plug-ins-default",
-            "test:kitchen:variables-default",
-            "test:kitchen:workspace-both",
-          ]
-        end
-
-        def define_orchestrated_without_remote_backends
-          desc "Run orchestrated test instances without remote backends"
-          task "orchestrated-without-remote-backends": [
-                 "test:kitchen:attributes-default",
-                 "test:kitchen:plug-ins-default",
-                 "test:kitchen:variables-default",
-                 "test:kitchen:workspace-both",
-               ]
-        end
-
-        def define_workspace_both
-          desc "Run workspace test instances"
-          task "workspace-both" do
-            workspace_workflow
+        def define_workspaces
+          config.instances.get_all(/workspace/).group_by do |instance|
+            instance.platform.name
+          end.each_pair do |platform_name, instances|
+            desc "Run #{platform_name} test instances"
+            task "workspaces-#{platform_name}" do
+              instances.each_entry(&:converge).each_entry(&:verify).each_entry(&:destroy)
+            end
           end
-        end
-
-        def workspace_workflow
-          config.instances.get_all(/workspace/).each(&:converge).each(&:verify).each(&:destroy)
         end
       end
     end
