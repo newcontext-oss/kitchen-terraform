@@ -16,7 +16,6 @@
 
 require "kitchen"
 require "kitchen/driver/terraform"
-require "support/kitchen/instance_context"
 
 ::RSpec.shared_examples "Kitchen::Terraform::Configurable" do
   describe "@api_version" do

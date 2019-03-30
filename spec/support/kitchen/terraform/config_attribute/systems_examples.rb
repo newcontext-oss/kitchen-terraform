@@ -14,13 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
-
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Systems" do
-  include_context "Kitchen::Terraform::ConfigAttribute", attribute: :systems do
-    describe "the basic schema" do
-      context "when the config omits :systems" do
-        it_behaves_like "a default value is used", default_value: []
+  describe "the basic schema" do
+    context "when the config omits :systems" do
+      subject do
+        described_class.new kitchen_root: "kitchen_root"
+      end
+
+      before do
+        allow(subject).to receive :load_needed_dependencies!
+        subject.finalize_config! kitchen_instance
+      end
+
+      specify "should associate :systems with an empty array" do
+        expect(subject[:systems]).to match []
       end
     end
   end

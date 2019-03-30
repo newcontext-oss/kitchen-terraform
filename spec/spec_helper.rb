@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "support/coverage"
-require "support/helpers"
 require "support/kitchen/terraform/result_in_failure_matcher"
 require "support/kitchen/terraform/result_in_success_matcher"
 
@@ -30,8 +29,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   configuration.fail_fast = true
-
-  configuration.include ::Helpers
 
   configuration.mock_with :rspec do |mocks|
     mocks.verify_doubled_constant_names = true
