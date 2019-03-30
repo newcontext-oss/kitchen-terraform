@@ -16,6 +16,11 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
   the pathname to the Terraform client; refer to the
   [Terraform Driver documentation][terraform-driver] for more details.
 
+### Fixed
+
+- The verifier lost legacy code which was implicity coupled to the SSH
+  transport and integrated with InSpec in undocumented ways.
+
 ## [4.3.0] - 2019-01-20
 
 ### Changed
