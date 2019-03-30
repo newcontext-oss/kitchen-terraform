@@ -25,6 +25,13 @@ module Kitchen
       # This module must be declared as providing predicates and extended in a schema's configuration in order to be
       # used.
       module PathnameOfExecutableFile
+        class << self
+          def executable_pathname?(value:)
+            Pathname(value).executable?
+          rescue
+            false
+          end
+        end
         # A callback to configure an extending schema with this predicate.
         #
         # @param schema [::Dry::Validation::Schema] the schema to be configured.
@@ -38,9 +45,7 @@ module Kitchen
         include ::Dry::Logic::Predicates
 
         predicate :pathname_of_executable_file? do |value|
-          Pathname(value).executable?
-        rescue
-          false
+          executable_pathname? value: value
         end
 
         private
