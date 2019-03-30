@@ -40,7 +40,7 @@ require "mixlib/shellout"
       before do
         allow(::Mixlib::ShellOut).to(
           receive(:new).with(
-            "terraform command",
+            "client command",
             cwd: "/working/directory",
             environment: complete_environment,
             live_stream: logger,
@@ -52,6 +52,7 @@ require "mixlib/shellout"
       specify "should raise an error with the invalid command option error message" do
         expect do
           described_class.run(
+            client: "client",
             command: "command",
             options: {
               cwd: "/working/directory",
@@ -73,7 +74,7 @@ require "mixlib/shellout"
 
       let :new_arguments do
         [
-          "terraform command",
+          "client command",
           {
             cwd: "/working/directory",
             environment: complete_environment,
@@ -98,6 +99,7 @@ require "mixlib/shellout"
       specify "should raise an error with the permissions error message" do
         expect do
           described_class.run(
+            client: "client",
             command: "command",
             options: {
               cwd: "/working/directory",
@@ -120,6 +122,7 @@ require "mixlib/shellout"
       specify "should raise an error with the entry error message" do
         expect do
           described_class.run(
+            client: "client",
             command: "command",
             options: {
               cwd: "/working/directory",
@@ -144,6 +147,7 @@ require "mixlib/shellout"
       specify "should raise an error with the timeout error message" do
         expect do
           described_class.run(
+            client: "client",
             command: "command",
             options: {
               cwd: "/working/directory",
@@ -160,7 +164,7 @@ require "mixlib/shellout"
       before do
         allow(::Mixlib::ShellOut).to(
           receive(:new).with(
-            "terraform command",
+            "client command",
             cwd: "/working/directory",
             environment: complete_environment,
             live_stream: logger,
@@ -179,6 +183,7 @@ require "mixlib/shellout"
       specify "should raise an error with the nonzero value message" do
         expect do
           described_class.run(
+            client: "client",
             command: "command",
             options: {
               cwd: "/working/directory",
@@ -195,6 +200,7 @@ require "mixlib/shellout"
       specify "should raise an error with the stdout" do
         expect do
           described_class.run(
+            client: "client",
             command: "command",
             options: {
               cwd: "/working/directory",
@@ -209,6 +215,7 @@ require "mixlib/shellout"
       specify "should raise an error with the stderr" do
         expect do
           described_class.run(
+            client: "client",
             command: "command",
             options: {
               cwd: "/working/directory",
@@ -225,7 +232,7 @@ require "mixlib/shellout"
       before do
         allow(::Mixlib::ShellOut).to(
           receive(:new).with(
-            "terraform command",
+            "client command",
             cwd: "/working/directory",
             environment: complete_environment,
             live_stream: logger,
@@ -243,6 +250,7 @@ require "mixlib/shellout"
       specify "should yield the stdout" do
         expect do
           described_class.run(
+            client: "client",
             command: "command",
             options: {
               cwd: "/working/directory",

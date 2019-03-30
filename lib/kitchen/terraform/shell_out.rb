@@ -26,28 +26,24 @@ require "mixlib/shellout"
 module ::Kitchen::Terraform::ShellOut
   # Runs a Terraform command.
   #
-  # @option options [::String] :cwd the directory in which to run the command.
+  # @option options [::Hash] :environment environment variables to define when running the command.
+  # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
   # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
   #   command.
-  # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
+  # @option options [::String] :cwd the directory in which to run the command.
+  # @param client [::String] the pathname of the Terraform client.
   # @param command [::String] the command to run.
-  # @option options [::Hash] :environment environment variables to define when running the command.
   # @param options [::Hash] options which adjust the execution of the command.
   # @raise [::Kitchen::Terraform::Error] if running the command fails.
   # @return [::String] the standard output from running the command.
   # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
   # @yieldparam standard_output [::String] the standard output from running the command.
-  def self.run(command:, options:, &block)
-    block ||=
-      lambda do |standard_output:|
-        standard_output
-      end
+  def self.run(client:, command:, options:, &block)
+    block ||= lambda do |standard_output:|
+      standard_output
+    end
 
-    run_shell_out(
-      command: command,
-      options: options,
-      &block
-    )
+    run_shell_out client: client, command: command, options: options, &block
   rescue ::Errno::EACCES,
          ::Errno::ENOENT,
          ::Mixlib::ShellOut::InvalidCommandOption,
@@ -67,9 +63,9 @@ module ::Kitchen::Terraform::ShellOut
   end
 
   # @api private
-  def self.run_shell_out(command:, options:)
+  def self.run_shell_out(client:, command:, options:)
     yield(standard_output: ::Mixlib::ShellOut.new(
-            "terraform #{command}",
+            "#{client} #{command}",
             options.merge(
               environment: { "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" }.merge(
                 options.fetch(:environment) do

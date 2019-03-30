@@ -163,54 +163,27 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   def shell_out_run_failure(command:, message: "mocked `terraform` failure", working_directory: kitchen_root)
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: working_directory,
-              live_stream: kitchen_logger,
-              timeout: command_timeout,
-            },
-          )
-          .and_raise(
-            ::Kitchen::Terraform::Error,
-            message
-          )
-      )
+    allow(shell_out).to receive(:run).with(
+      client: config_client,
+      command: command,
+      options: { cwd: working_directory, live_stream: kitchen_logger, timeout: command_timeout },
+    ).and_raise ::Kitchen::Terraform::Error, message
   end
 
   def shell_out_run_success(command:, return_value: "mocked `terraform` success", working_directory: kitchen_root)
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: working_directory,
-              live_stream: kitchen_logger,
-              timeout: command_timeout,
-            },
-          )
-          .and_return(return_value)
-      )
+    allow(shell_out).to receive(:run).with(
+      client: config_client,
+      command: command,
+      options: { cwd: working_directory, live_stream: kitchen_logger, timeout: command_timeout },
+    ).and_return return_value
   end
 
   def shell_out_run_yield(command:, standard_output: "mocked `terraform` success")
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: kitchen_root,
-              live_stream: kitchen_logger,
-              timeout: command_timeout,
-            },
-          )
-          .and_yield(standard_output: standard_output)
-      )
+    allow(shell_out).to receive(:run).with(
+      client: config_client,
+      command: command,
+      options: { cwd: kitchen_root, live_stream: kitchen_logger, timeout: command_timeout },
+    ).and_yield standard_output: standard_output
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
@@ -542,6 +515,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform destroy` results in failure" do
         before do
           allow(shell_out).to receive(:run).with(
+            client: config_client,
             command: /destroy/,
             options: {
               cwd: kitchen_root,
@@ -562,6 +536,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform destroy` results in success" do
         before do
           allow(shell_out).to receive(:run).with(
+            client: config_client,
             command: "destroy " \
             "-auto-approve " \
             "-lock=true " \
