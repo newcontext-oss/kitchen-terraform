@@ -89,6 +89,7 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   before do
+    allow(kitchen_instance).to receive(:logger).and_return logger
     allow(kitchen_instance).to receive(:transport).and_return transport
   end
 
@@ -105,7 +106,6 @@ require "support/kitchen/terraform/configurable_examples"
 
     before do
       allow(kitchen_instance).to receive(:driver).and_return driver
-      allow(kitchen_instance).to receive(:logger).and_return logger
       described_instance.finalize_config! kitchen_instance
     end
 
@@ -185,19 +185,8 @@ require "support/kitchen/terraform/configurable_examples"
       let :runner_options_with_hosts do
         {
           "color" => false,
-          "compression" => false,
-          "compression_level" => 0,
-          "connection_retries" => 5,
-          "connection_retry_sleep" => 1,
-          "connection_timeout" => 15,
           "distinct_exit" => false,
-          "keepalive" => true,
-          "keepalive_interval" => 60,
-          "max_wait_until_ready" => 600,
           "reporter" => ["reporter"],
-          "sudo" => false,
-          "sudo_command" => "sudo -E",
-          "sudo_options" => "",
           attributes: { "attribute_name" => "output_value", "hosts" => "host", "output_name" => "output_value" },
           attrs: ["attrs.yml"],
           backend: "backend",
@@ -232,18 +221,7 @@ require "support/kitchen/terraform/configurable_examples"
       let :runner_options_without_hosts do
         {
           "color" => false,
-          "compression" => false,
-          "compression_level" => 0,
-          "connection_retries" => 5,
-          "connection_retry_sleep" => 1,
-          "connection_timeout" => 15,
           "distinct_exit" => false,
-          "keepalive" => true,
-          "keepalive_interval" => 60,
-          "max_wait_until_ready" => 600,
-          "sudo" => false,
-          "sudo_command" => "sudo -E",
-          "sudo_options" => "",
           attributes: { "hosts" => "host", "output_name" => "output_value" },
           backend: "backend",
           logger: logger,
