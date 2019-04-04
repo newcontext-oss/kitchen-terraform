@@ -8,7 +8,11 @@ verifier:
 platforms:
   - name: linux
   - name: osx
+    driver:
+      client: ./terragrunt_darwin_amd64
   - name: windows
+    driver:
+      client: ./terraform.exe
 suites:
   - name: attributes
     driver:
