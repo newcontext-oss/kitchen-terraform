@@ -14,10 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_attribute_cacher"
-require "kitchen/terraform/config_attribute_definer"
 require "kitchen/terraform/config_attribute_type/pathname_of_executable_file"
-require "tty/which"
 
 module Kitchen
   module Terraform
@@ -33,20 +30,15 @@ module Kitchen
       #
       # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
       # Required:: False
-      # Default:: The pathname of the Terraform client on the PATH.
+      # Default:: <code>terraform</code>
       # Example:: <code>client: /usr/local/bin/terraform</code>
       # Example:: <code>client: ./bin/terraform</code>
       # Example:: <code>client: terraform</code>
       #
       # @abstract It must be included by a plugin class in order to be used.
       module Client
-        ::Kitchen::Terraform::ConfigAttributeType::PathnameOfExecutableFile.apply(
-          attribute: :client,
-          config_attribute: self,
-          default_value: lambda do
-            ::TTY::Which.which "terraform"
-          end,
-        )
+        ::Kitchen::Terraform::ConfigAttributeType::PathnameOfExecutableFile
+          .apply(attribute: :client, config_attribute: self, default_value: "terraform")
       end
     end
   end

@@ -17,7 +17,7 @@
 require "dry-validation"
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_type"
-require "kitchen/terraform/config_predicates/pathname_of_executable_file"
+require "kitchen/terraform/config_schemas/pathname_of_executable_file"
 
 module Kitchen
   module Terraform
@@ -34,13 +34,10 @@ module Kitchen
         def self.apply(attribute:, config_attribute:, default_value:)
           ::Kitchen::Terraform::ConfigAttribute.new(
             attribute: attribute,
-            default_value: default_value,
-            schema: ::Dry::Validation.Schema do
-              configure do
-                extend ::Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile
-              end
-              required(:value).value :pathname_of_executable_file?
+            default_value: lambda do
+              default_value
             end,
+            schema: ::Kitchen::Terraform::ConfigSchemas::PathnameOfExecutableFile,
           ).apply config_attribute: config_attribute
 
           self

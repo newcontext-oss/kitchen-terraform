@@ -16,6 +16,7 @@
 
 require "dry/logic"
 require "pathname"
+require "tty/which"
 
 module Kitchen
   module Terraform
@@ -26,20 +27,22 @@ module Kitchen
       # used.
       module PathnameOfExecutableFile
         class << self
+          # @return [true,false] is the value a pathname of an executable file or on the PATH?
           def executable_pathname?(value:)
-            Pathname(value).executable?
+            Pathname(value).executable? || ::TTY::Which.exist?(value)
           rescue
             false
           end
-        end
-        # A callback to configure an extending schema with this predicate.
-        #
-        # @param schema [::Dry::Validation::Schema] the schema to be configured.
-        # @return [self]
-        def self.extended(schema)
-          schema.predicates self
 
-          self
+          # A callback to configure an extending schema with this predicate.
+          #
+          # @param schema [::Dry::Validation::Schema] the schema to be configured.
+          # @return [self]
+          def extended(schema)
+            schema.predicates self
+
+            self
+          end
         end
 
         include ::Dry::Logic::Predicates

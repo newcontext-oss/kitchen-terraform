@@ -16,15 +16,10 @@
 
 require "kitchen/terraform/config_predicates/pathname_of_executable_file"
 require "pathname"
-require "tty/which"
 
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Client" do
   let :attribute do
     :client
-  end
-
-  let :pathname do
-    instance_double ::Pathname
   end
 
   context "when the config omits :client" do
@@ -33,22 +28,17 @@ require "tty/which"
     end
 
     let :value do
-      "/usr/local/bin/terraform"
+      "terraform"
     end
 
     before do
-      allow(::TTY::Which).to receive(:which).with("terraform").and_return value
-      allow(Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:Pathname).with(
-        value
-      ).and_return pathname
-      allow(pathname).to receive(:executable?).and_return true
+      allow(::Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:executable_pathname?).with(
+        value: value,
+      ).and_return true
       described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
     end
 
-    specify(
-      "should associate :client with the pathname of the executable file named 'terraform' found in the " \
-      "directories of the PATH"
-    ) do
+    specify "should associate :client with 'terraform'" do
       expect(subject[attribute]).to eq value
     end
   end
@@ -70,12 +60,16 @@ require "tty/which"
       described_class.new kitchen_root: "kitchen_root", attribute => value
     end
 
+    let :pathname do
+      instance_double ::Pathname
+    end
+
     let :value do
       "./nonexecutable"
     end
 
     before do
-      allow(Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:Pathname).with(
+      allow(::Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:Pathname).with(
         value
       ).and_return pathname
       allow(pathname).to receive(:executable?).and_return false
@@ -91,6 +85,10 @@ require "tty/which"
   context "when the config associates :client with the pathname of an executable file" do
     subject do
       described_class.new kitchen_root: "kitchen_root", attribute => value
+    end
+
+    let :pathname do
+      instance_double ::Pathname
     end
 
     let :value do
