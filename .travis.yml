@@ -120,7 +120,7 @@ jobs:
         - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.8/terraform_0.11.8_darwin_amd64.zip
         - shasum -a 256 terraform_0.11.8_darwin_amd64.zip | grep 98c168b06e8b4058c66e044e3744d49956ce7bc3664dc1679a33f8fffc84564d
         - unzip terraform_0.11.8_darwin_amd64.zip -d "$HOME"/bin
-        - curl --remote-name --silent https://github.com/gruntwork-io/terragrunt/releases/download/v0.18.3/terragrunt_darwin_amd64
+        - curl --location --remote-name --silent https://github.com/gruntwork-io/terragrunt/releases/download/v0.18.3/terragrunt_darwin_amd64
         - shasum -a 256 terragrunt_darwin_amd64 | grep 3781f3a5152483ed8a79f0d6cbb9c6da8bb8e55fb1c026f6060c9cdaca45435f
         - chmod +x terragrunt_darwin_amd64
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_darwin_amd64.zip
