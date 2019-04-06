@@ -18,6 +18,7 @@ require "kitchen"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/config_attribute/backend_configurations"
+require "kitchen/terraform/config_attribute/client"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
 require "kitchen/terraform/config_attribute/lock"
@@ -32,7 +33,6 @@ require "kitchen/terraform/configurable"
 require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
 require "shellwords"
-require "tty/which"
 
 # This namespace is defined by Kitchen.
 #
@@ -198,6 +198,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
+  include ::Kitchen::Terraform::ConfigAttribute::Client
+
   include ::Kitchen::Terraform::ConfigAttribute::Color
 
   include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
@@ -272,22 +274,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def retrieve_outputs(&block)
     run_workspace_select_instance
     ::Kitchen::Terraform::Command::Output.run(
+      client: config_client,
       options: {
         cwd: config_root_module_directory, live_stream: logger, timeout: config_command_timeout,
       }, &block
     )
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::ActionFailed, error.message
-  end
-
-  # Verifies that the Terraform CLI is on the PATH.
-  #
-  # @raise [::Kitchen::UserError] if the Terraform CLI is not available.
-  # @return [void]
-  def verify_dependencies
-    if !::TTY::Which.exist? "terraform"
-      raise ::Kitchen::UserError, "The Terraform CLI was not found on the PATH"
-    end
   end
 
   private
@@ -301,6 +294,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def apply_run_apply
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "apply " \
       "#{lock_flag} " \
       "#{lock_timeout_flag} " \
@@ -322,6 +316,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def apply_run_get
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "get -update",
       options: {
         cwd: config_root_module_directory,
@@ -334,6 +329,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def apply_run_validate
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "validate " \
       "#{color_flag} " \
       "#{variables_flags} " \
@@ -361,6 +357,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def create_run_init
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "init " \
       "-input=false " \
       "#{lock_flag} " \
@@ -385,6 +382,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def destroy_run_destroy
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "destroy " \
       "-auto-approve " \
       "#{lock_flag} " \
@@ -407,6 +405,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def destroy_run_init
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "init " \
       "-input=false " \
       "#{lock_flag} " \
@@ -430,6 +429,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def destroy_run_workspace_delete_instance
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "workspace delete #{workspace_name}",
       options: {
         cwd: config_root_module_directory,
@@ -442,6 +442,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def destroy_run_workspace_select_default
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "workspace select default",
       options: {
         cwd: config_root_module_directory,
@@ -478,6 +479,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def run_workspace_select_instance
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "workspace select #{workspace_name}",
       options: {
         cwd: config_root_module_directory,
@@ -487,6 +489,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     )
   rescue ::Kitchen::Terraform::Error
     ::Kitchen::Terraform::ShellOut.run(
+      client: config_client,
       command: "workspace new #{workspace_name}",
       options: {
         cwd: config_root_module_directory,

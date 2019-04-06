@@ -14,56 +14,87 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
-
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings" do |attribute:|
-  include_context(
-    "Kitchen::Terraform::ConfigAttribute",
-    attribute: attribute,
-  ) do
-    context "when the config omits #{attribute.inspect}" do
-      it_behaves_like(
-        "a default value is used",
-        default_value: {},
-      )
+  context "when the config omits #{attribute.inspect}" do
+    subject do
+      described_class.new kitchen_root: "kitchen_root"
     end
 
-    context "when the config associates #{attribute.inspect} with a nonhash" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /#{attribute}.*must be a hash which includes only symbol keys and string values/,
-        value: [],
-      )
+    before do
+      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
     end
 
-    context "when the config associates #{attribute.inspect} with a an empty hash" do
-      it_behaves_like(
-        "the value is valid",
-        value: {},
-      )
+    specify "should associate #{attribute.inspect} with an empty hash" do
+      expect(subject[attribute]).to eq({})
+    end
+  end
+
+  context "when the config associates #{attribute.inspect} with a nonhash" do
+    subject do
+      described_class.new kitchen_root: "kitchen_root", attribute => []
     end
 
-    context "when the config associates #{attribute.inspect} with a hash which has nonsymbol keys" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /#{attribute}.*must be a hash which includes only symbol keys and string values/,
-        value: { "key" => "value" },
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error(
+        ::Kitchen::UserError,
+        /#{attribute}.*must be a hash which includes only symbol keys and string values/
       )
     end
+  end
 
-    context "when the config associates #{attribute.inspect} with a hash which has nonstring values" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /#{attribute}.*must be a hash which includes only symbol keys and string values/,
-        value: { key: :value },
-      )
+  context "when the config associates #{attribute.inspect} with a an empty hash" do
+    subject do
+      described_class.new kitchen_root: "kitchen_root", attribute => {}
     end
 
-    context "when the config associates #{attribute.inspect} with a hash which has symobl keys and string values" do
-      it_behaves_like(
-        "the value is valid",
-        value: { key: "value" },
+    specify "should not raise an error" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.not_to raise_error
+    end
+  end
+
+  context "when the config associates #{attribute.inspect} with a hash which has nonsymbol keys" do
+    subject do
+      described_class.new kitchen_root: "kitchen_root", attribute => { "key" => "value" }
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error(
+        ::Kitchen::UserError,
+        /#{attribute}.*must be a hash which includes only symbol keys and string values/
       )
+    end
+  end
+
+  context "when the config associates #{attribute.inspect} with a hash which has nonstring values" do
+    subject do
+      described_class.new kitchen_root: "kitchen_root", attribute => { key: :value }
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error(
+        ::Kitchen::UserError,
+        /#{attribute}.*must be a hash which includes only symbol keys and string values/
+      )
+    end
+  end
+
+  context "when the config associates #{attribute.inspect} with a hash which has symobl keys and string values" do
+    subject do
+      described_class.new kitchen_root: "kitchen_root", attribute => { key: "value" }
+    end
+
+    specify "should not raise an error" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.not_to raise_error
     end
   end
 end

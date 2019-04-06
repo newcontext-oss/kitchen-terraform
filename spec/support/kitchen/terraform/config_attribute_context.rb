@@ -14,70 +14,57 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/instance_context"
+require "kitchen/instance"
 
 ::RSpec.shared_context "Kitchen::Terraform::ConfigAttribute" do |attribute:|
-  include_context "Kitchen::Instance"
-
-  shared_context "value validation" do |value:|
-    let :plugin do
-      described_class
-        .new(
-          kitchen_root: "kitchen_root",
-          attribute => value,
-        )
-    end
-
-    subject do
-      lambda do
-        plugin.finalize_config! instance
-      end
-    end
+  let :kitchen_instance do
+    instance_double ::Kitchen::Instance
   end
 
   shared_examples "the value is invalid" do |error_message:, value:|
-    include_context(
-      "value validation",
-      value: value,
-    ) do
-      it "raises a user error" do
-        is_expected
-          .to(
-            raise_error(
-              ::Kitchen::UserError,
-              error_message
-            )
-          )
-      end
+    subject do
+      described_class.new kitchen_root: "kitchen_root", attribute => value
+    end
+
+    before do
+      allow(subject).to receive :load_needed_dependencies!
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        subject.finalize_config! kitchen_instance
+      end.to raise_error ::Kitchen::UserError, error_message
     end
   end
 
   shared_examples "the value is valid" do |value:|
-    include_context(
-      "value validation",
-      value: value,
-    ) do
-      it "does not raise an error" do
-        is_expected.to_not raise_error
-      end
+    subject do
+      described_class.new kitchen_root: "kitchen_root", attribute => value
+    end
+
+    before do
+      allow(subject).to receive :load_needed_dependencies!
+    end
+
+    specify "should not raise an error" do
+      expect do
+        subject.finalize_config! kitchen_instance
+      end.to_not raise_error
     end
   end
 
   shared_examples "a default value is used" do |default_value:|
-    let :plugin do
+    subject do
       described_class.new kitchen_root: "kitchen_root"
     end
 
     before do
-      plugin.finalize_config! instance
+      allow(subject).to receive :load_needed_dependencies!
+      subject.finalize_config! kitchen_instance
     end
 
-    subject do
-      plugin[attribute]
-    end
-
-    it "associates :#{attribute} with #{default_value}" do
-      is_expected.to match default_value
+    specify "should associate :#{attribute} with #{default_value}" do
+      expect(subject[attribute]).to match default_value
     end
   end
 end

@@ -14,41 +14,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
-
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::PluginDirectory" do
-  include_context(
-    "Kitchen::Terraform::ConfigAttribute",
-    attribute: :plugin_directory,
-  ) do
-    context "when the config omits :plugin_directory" do
-      it_behaves_like(
-        "a default value is used",
-        default_value: nil,
-      )
+  let :attribute do
+    :plugin_directory
+  end
+
+  context "when the config omits :plugin_directory" do
+    subject do
+      described_class.new
     end
 
-    context "when the config associates :plugin_directory with a nonstring" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /plugin_directory.*must be a string/,
-        value: 123,
-      )
+    before do
+      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
     end
 
-    context "when the config associates :plugin_directory with an empty string" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /plugin_directory.*must be filled/,
-        value: "",
-      )
+    specify "should associate :plugin_directory with nil" do
+      expect(subject[attribute]).to be nil
+    end
+  end
+
+  context "when the config associates :plugin_directory with a nonstring" do
+    subject do
+      described_class.new attribute => 123
     end
 
-    context "when the config associates :plugin_directory with a nonempty string" do
-      it_behaves_like(
-        "the value is valid",
-        value: "abc",
-      )
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /plugin_directory.*must be a string/
+    end
+  end
+
+  context "when the config associates :plugin_directory with an empty string" do
+    subject do
+      described_class.new attribute => ""
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /plugin_directory.*must be filled/
+    end
+  end
+
+  context "when the config associates :plugin_directory with a nonempty string" do
+    subject do
+      described_class.new attribute => "abc"
+    end
+
+    specify "should not raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.not_to raise_error
     end
   end
 end

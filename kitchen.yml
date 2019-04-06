@@ -6,33 +6,15 @@ provisioner:
 verifier:
   name: terraform
 platforms:
-  - name: default
-  - name: one
+  - name: linux
+  - name: osx
     driver:
-      root_module_directory: test/terraform/workspace
-      variables:
-        workspace: one
-    verifier:
-      systems:
-        - name: one
-          backend: local
-          controls:
-            - workspace one
-  - name: two
+      client: ./terragrunt_darwin_amd64
+  - name: windows
     driver:
-      root_module_directory: test/terraform/workspace
-      variables:
-        workspace: two
-    verifier:
-      systems:
-        - name: two
-          backend: local
-          controls:
-            - workspace two
+      client: ./terraform.exe
 suites:
   - name: attributes
-    includes:
-      - default
     driver:
       root_module_directory: test/terraform/attributes
     verifier:
@@ -63,8 +45,9 @@ suites:
           controls:
             - precedence
   - name: backend-ssh
-    includes:
-      - default
+    excludes:
+      - osx
+      - windows
     driver:
       root_module_directory: test/terraform/backend-ssh
     verifier:
@@ -91,8 +74,6 @@ suites:
           shell_options: -x
           user: root
   - name: plug-ins
-    includes:
-      - default
     driver:
       plugin_directory: test/terraform/Plug Ins/Plug In Directory
       root_module_directory: test/terraform/Plug Ins
@@ -101,8 +82,6 @@ suites:
         - name: default
           backend: local
   - name: variables
-    includes:
-      - default
     driver:
       root_module_directory: test/terraform/variables
       variable_files:
@@ -121,7 +100,25 @@ suites:
           backend: local
           controls:
             - variables
-  - name: workspace
-    includes:
-      - one
-      - two
+  - name: workspace-one
+    driver:
+      root_module_directory: test/terraform/workspace
+      variables:
+        workspace: one
+    verifier:
+      systems:
+        - name: one
+          backend: local
+          controls:
+            - workspace one
+  - name: workspace-two
+    driver:
+      root_module_directory: test/terraform/workspace
+      variables:
+        workspace: two
+    verifier:
+      systems:
+        - name: two
+          backend: local
+          controls:
+            - workspace two

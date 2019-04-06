@@ -20,7 +20,9 @@ require "kitchen/driver/terraform"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
+require "pathname"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
+require "support/kitchen/terraform/config_attribute/client_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/command_timeout_examples"
 require "support/kitchen/terraform/config_attribute/lock_examples"
@@ -46,6 +48,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
         string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
+      client: config_client,
       color: false,
       command_timeout: command_timeout,
       kitchen_root: kitchen_root,
@@ -57,6 +60,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
       },
       verify_version: verify_version,
     }
+  end
+
+  let :config_client do
+    allow(::TTY::Which).to receive(:exist?).with("client").and_return true
+
+    "client"
   end
 
   let :described_instance do
@@ -90,12 +99,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :verify_version do
     true
-  end
-
-  shared_context "Terraform CLI available" do
-    before do
-      allow(::TTY::Which).to receive(:exist?).with("terraform").and_return true
-    end
   end
 
   shared_examples "the action fails if the Terraform version is unsupported" do
@@ -148,61 +151,36 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   def shell_out_run_failure(command:, message: "mocked `terraform` failure", working_directory: kitchen_root)
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: working_directory,
-              live_stream: kitchen_logger,
-              timeout: command_timeout,
-            },
-          )
-          .and_raise(
-            ::Kitchen::Terraform::Error,
-            message
-          )
-      )
+    allow(shell_out).to receive(:run).with(
+      client: config_client,
+      command: command,
+      options: { cwd: working_directory, live_stream: kitchen_logger, timeout: command_timeout },
+    ).and_raise ::Kitchen::Terraform::Error, message
   end
 
   def shell_out_run_success(command:, return_value: "mocked `terraform` success", working_directory: kitchen_root)
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: working_directory,
-              live_stream: kitchen_logger,
-              timeout: command_timeout,
-            },
-          )
-          .and_return(return_value)
-      )
+    allow(shell_out).to receive(:run).with(
+      client: config_client,
+      command: command,
+      options: { cwd: working_directory, live_stream: kitchen_logger, timeout: command_timeout },
+    ).and_return return_value
   end
 
   def shell_out_run_yield(command:, standard_output: "mocked `terraform` success")
-    allow(shell_out)
-      .to(
-        receive(:run)
-          .with(
-            command: command,
-            options: {
-              cwd: kitchen_root,
-              live_stream: kitchen_logger,
-              timeout: command_timeout,
-            },
-          )
-          .and_yield(standard_output: standard_output)
-      )
+    allow(shell_out).to receive(:run).with(
+      client: config_client,
+      command: command,
+      options: { cwd: kitchen_root, live_stream: kitchen_logger, timeout: command_timeout },
+    ).and_yield standard_output: standard_output
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
 
-  it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::Client"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Lock"
 
@@ -240,8 +218,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
     subject do
       described_instance
     end
-
-    include_context "Terraform CLI available"
 
     before do
       described_instance.finalize_config! kitchen_instance
@@ -394,8 +370,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance
     end
 
-    include_context "Terraform CLI available"
-
     before do
       described_instance.finalize_config! kitchen_instance
     end
@@ -507,8 +481,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance
     end
 
-    include_context "Terraform CLI available"
-
     let :plugin_directory do
       nil
     end
@@ -525,6 +497,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform destroy` results in failure" do
         before do
           allow(shell_out).to receive(:run).with(
+            client: config_client,
             command: /destroy/,
             options: {
               cwd: kitchen_root,
@@ -545,6 +518,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       context "when `terraform destroy` results in success" do
         before do
           allow(shell_out).to receive(:run).with(
+            client: config_client,
             command: "destroy " \
             "-auto-approve " \
             "-lock=true " \
@@ -712,7 +686,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
 
     before do
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
     shared_examples "`terraform output` is run" do
@@ -808,34 +782,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
 
       it_behaves_like "`terraform output` is run"
-    end
-  end
-
-  describe "#verify_dependencies" do
-    subject do
-      described_instance
-    end
-
-    context "when the Terraform CLI is not found on the PATH" do
-      before do
-        allow(::TTY::Which).to receive(:exist?).with("terraform").and_return false
-      end
-
-      specify "should result in a user error which indicates the CLI was not found on the PATH" do
-        expect do
-          subject.verify_dependencies
-        end.to raise_error ::Kitchen::UserError, "The Terraform CLI was not found on the PATH"
-      end
-    end
-
-    context "when the Terraform CLI is found on the PATH" do
-      include_context "Terraform CLI available"
-
-      specify "should not result in an error" do
-        expect do
-          subject.verify_dependencies
-        end.not_to raise_error
-      end
     end
   end
 end

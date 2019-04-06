@@ -73,25 +73,24 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   let :driver do
-    ::Kitchen::Driver::Terraform.new
+    instance_double ::Kitchen::Driver::Terraform
   end
 
   let :kitchen_instance do
-    ::Kitchen::Instance.new(
-      driver: driver,
-      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
-      logger: logger,
-      platform: ::Kitchen::Platform.new(name: "test-platform"),
-      provisioner: ::Kitchen::Provisioner::Base.new,
-      state_file: ::Kitchen::StateFile.new("/kitchen/root", "test-suite-test-platform"),
-      suite: ::Kitchen::Suite.new(name: "test-suite"),
-      transport: ::Kitchen::Transport::Ssh.new,
-      verifier: described_instance,
-    )
+    instance_double ::Kitchen::Instance
   end
 
   let :logger do
     ::Kitchen::Logger.new
+  end
+
+  let :transport do
+    ::Kitchen::Transport::Ssh.new
+  end
+
+  before do
+    allow(kitchen_instance).to receive(:logger).and_return logger
+    allow(kitchen_instance).to receive(:transport).and_return transport
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
@@ -106,6 +105,7 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     before do
+      allow(kitchen_instance).to receive(:driver).and_return driver
       described_instance.finalize_config! kitchen_instance
     end
 
@@ -164,11 +164,17 @@ require "support/kitchen/terraform/configurable_examples"
     shared_context "Inspec::Runner instance" do
       include_context "Inspec::Profile"
 
+      let :kitchen_suite do
+        instance_double ::Kitchen::Suite
+      end
+
       let :runner do
         instance_double ::Inspec::Runner
       end
 
       before do
+        allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
+        allow(kitchen_suite).to receive(:name).and_return "test-suite"
         allow(runner).to receive(:add_target).with(path: "/test/base/path/test-suite").and_return([profile])
       end
     end
@@ -179,19 +185,8 @@ require "support/kitchen/terraform/configurable_examples"
       let :runner_options_with_hosts do
         {
           "color" => false,
-          "compression" => false,
-          "compression_level" => 0,
-          "connection_retries" => 5,
-          "connection_retry_sleep" => 1,
-          "connection_timeout" => 15,
           "distinct_exit" => false,
-          "keepalive" => true,
-          "keepalive_interval" => 60,
-          "max_wait_until_ready" => 600,
           "reporter" => ["reporter"],
-          "sudo" => false,
-          "sudo_command" => "sudo -E",
-          "sudo_options" => "",
           attributes: { "attribute_name" => "output_value", "hosts" => "host", "output_name" => "output_value" },
           attrs: ["attrs.yml"],
           backend: "backend",
@@ -226,18 +221,7 @@ require "support/kitchen/terraform/configurable_examples"
       let :runner_options_without_hosts do
         {
           "color" => false,
-          "compression" => false,
-          "compression_level" => 0,
-          "connection_retries" => 5,
-          "connection_retry_sleep" => 1,
-          "connection_timeout" => 15,
           "distinct_exit" => false,
-          "keepalive" => true,
-          "keepalive_interval" => 60,
-          "max_wait_until_ready" => 600,
-          "sudo" => false,
-          "sudo_command" => "sudo -E",
-          "sudo_options" => "",
           attributes: { "hosts" => "host", "output_name" => "output_value" },
           backend: "backend",
           logger: logger,

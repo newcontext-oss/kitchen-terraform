@@ -8,6 +8,19 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.4.0] - 2019-03-30
+
+### Added
+
+- The driver gained a `client` configuration attribute which contains
+  the pathname to the Terraform client; refer to the
+  [Terraform Driver documentation][terraform-driver] for more details.
+
+### Fixed
+
+- The verifier lost legacy code which was implicity coupled to the SSH
+  transport and integrated with InSpec in undocumented ways.
+
 ## [4.3.0] - 2019-01-20
 
 ### Changed
@@ -596,7 +609,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.3.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.4.0...HEAD
+[4.4.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.3.0...v4.4.0
 [4.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.2.1...v4.3.0
 [4.2.1]: https://github.com/newcontext/kitchen-terraform/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.1.1...v4.2.0
@@ -653,4 +667,5 @@ Gandalf the Free-As-In-Beer
 [code climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
 [travis ci build plan]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [terraform-issue-17655]: https://github.com/hashicorp/terraform/issues/17655
+[terraform-driver]: https://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Driver/Terraform
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform

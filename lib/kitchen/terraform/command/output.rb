@@ -29,13 +29,11 @@ module ::Kitchen::Terraform::Command::Output
     # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
     #   command.
     # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
+    # @param client [::String] the pathname of the Terraform client.
     # @param options [::Hash] options which adjust the execution of the command.
     # @yieldparam output [::Hash] the standard output of the command parsed as JSON.
-    def run(options:, &block)
-      run_shell_out(
-        options: options,
-        &block
-      )
+    def run(client:, options:, &block)
+      run_shell_out client: client, options: options, &block
     rescue ::JSON::ParserError => error
       handle_json_parser error: error
     rescue ::Kitchen::Terraform::Error => error
@@ -62,12 +60,8 @@ module ::Kitchen::Terraform::Command::Output
     end
 
     # @api private
-    def run_shell_out(options:)
-      ::Kitchen::Terraform::ShellOut
-        .run(
-          command: "output -json",
-          options: options,
-        ) do |standard_output:|
+    def run_shell_out(client:, options:)
+      ::Kitchen::Terraform::ShellOut.run client: client, command: "output -json", options: options do |standard_output:|
         yield outputs: ::JSON.parse(standard_output)
       end
     end

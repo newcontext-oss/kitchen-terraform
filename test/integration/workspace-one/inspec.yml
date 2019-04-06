@@ -1,0 +1,5 @@
+---
+name: workspace-one
+depends:
+  - name: workspace
+    path: test/integration/workspace

@@ -14,33 +14,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_context"
-
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttributeType::Integer" do |attribute:, default_value:|
-  include_context(
-    "Kitchen::Terraform::ConfigAttribute",
-    attribute: attribute,
-  ) do
-    context "when the config omits #{attribute.inspect}" do
-      it_behaves_like(
-        "a default value is used",
-        default_value: default_value,
-      )
+  context "when the config omits #{attribute.inspect}" do
+    subject do
+      described_class.new
     end
 
-    context "when the config associates #{attribute.inspect} with a noninteger" do
-      it_behaves_like(
-        "the value is invalid",
-        error_message: /#{attribute}.*must be an integer/,
-        value: "abc",
-      )
+    before do
+      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
     end
 
-    context "when the config associates #{attribute.inspect} with an integer" do
-      it_behaves_like(
-        "the value is valid",
-        value: 123,
-      )
+    specify "should associate #{attribute.inspect} with #{default_value}" do
+      expect(subject[attribute]).to eq default_value
+    end
+  end
+
+  context "when the config associates #{attribute.inspect} with a noninteger" do
+    subject do
+      described_class.new attribute => "abc"
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /#{attribute}.*must be an integer/
+    end
+  end
+
+  context "when the config associates #{attribute.inspect} with an integer" do
+    subject do
+      described_class.new attribute => 123
+    end
+
+    specify "should not raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.not_to raise_error
     end
   end
 end

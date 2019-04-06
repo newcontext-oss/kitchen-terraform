@@ -106,31 +106,12 @@ module Kitchen
       # @return [self]
       def finalize_config!(kitchen_instance)
         super kitchen_instance
-        configure_inspec_connection_options
-        configure_inspec_miscellaneous_options
+        @inspec_options.merge! "color" => config_color
+
+        self
       end
 
       private
-
-      def configure_inspec_connection_options
-        @inspec_options.merge! transport_connection_options
-
-        @inspec_options
-          .store(
-            "connection_timeout",
-            @inspec_options.delete("timeout")
-          )
-      end
-
-      def configure_inspec_miscellaneous_options
-        @inspec_options.merge!(
-          "color" => config_color,
-          "distinct_exit" => false,
-          "sudo" => false,
-          "sudo_command" => "sudo -E",
-          "sudo_options" => "",
-        )
-      end
 
       def load_outputs
         instance.driver.retrieve_outputs do |outputs:|
@@ -140,12 +121,8 @@ module Kitchen
 
       def initialize(configuration = {})
         init_config configuration
-        @inspec_options = {}
+        @inspec_options = { "distinct_exit" => false }
         @outputs = {}
-        @transport_attributes = [
-          :compression, :compression_level, :connection_retries, :connection_retry_sleep, :connection_timeout,
-          :keepalive, :keepalive_interval, :max_wait_until_ready,
-        ]
       end
 
       def inspec_profile_path
@@ -174,16 +151,6 @@ module Kitchen
 
       def system_inspec_options(system:)
         ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: @inspec_options.dup
-      end
-
-      def transport_connection_options
-        ::Kitchen::Util.stringified_hash(
-          instance.transport.diagnose.select do |key|
-            @transport_attributes.include? key
-          end.tap do |options|
-            options.store :timeout, options.fetch(:connection_timeout)
-          end
-        )
       end
 
       def verify(system:)
