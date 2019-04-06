@@ -8,7 +8,7 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
-## [4.4.0] - 2019-03-30
+## [4.4.0] - 2019-04-06
 
 ### Added
 
