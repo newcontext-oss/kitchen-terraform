@@ -146,7 +146,7 @@ jobs:
         - bundle config --local without backend_ssh:development
       install:
         - bundle install
-        - curl --remote-name --silent
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_windows_amd64.zip
         - sha256sum terraform_0.11.4_windows_amd64.zip | grep a762b329798b872f44df3b5db33122469a3cf1ad28c1915fee17605ec8245508
         - unzip terraform_0.11.4_windows_amd64.zip
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_windows_amd64.zip
