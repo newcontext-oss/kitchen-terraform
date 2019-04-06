@@ -14,9 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_predicates/pathname_of_executable_file"
-require "pathname"
-
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Client" do
   let :attribute do
     :client
@@ -24,88 +21,79 @@ require "pathname"
 
   context "when the config omits :client" do
     subject do
-      described_class.new kitchen_root: "kitchen_root"
-    end
-
-    let :value do
-      "terraform"
+      described_class.new
     end
 
     before do
-      allow(::Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:executable_pathname?).with(
-        value: value,
-      ).and_return true
       described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
     end
 
-    specify "should associate :client with 'terraform'" do
+    specify "should associate :client with terraform" do
+      expect(subject[attribute]).to eq "terraform"
+    end
+  end
+
+  context "when the config associates :client with a nonstring" do
+    subject do
+      described_class.new attribute => 123
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /client.*must be a string/
+    end
+  end
+
+  context "when the config associates :client with an empty string" do
+    subject do
+      described_class.new attribute => ""
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /client.*must be filled/
+    end
+  end
+
+  context "when the config associates :client with a pathname which is not on the PATH" do
+    subject do
+      described_class.new attribute => value, kitchen_root: "/kitchen-root"
+    end
+
+    let :value do
+      "abc"
+    end
+
+    before do
+      allow(::TTY::Which).to receive(:exist?).with(value).and_return false
+      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      subject.send :expand_paths!
+    end
+
+    specify "should expand the pathname" do
+      expect(subject[attribute]).to eq "/kitchen-root/abc"
+    end
+  end
+
+  context "when the config associates :client with a pathname which is on the PATH" do
+    subject do
+      described_class.new attribute => value, kitchen_root: "/kitchen-root"
+    end
+
+    let :value do
+      "abc"
+    end
+
+    before do
+      allow(::TTY::Which).to receive(:exist?).with(value).and_return true
+      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      subject.send :expand_paths!
+    end
+
+    specify "should not expand the pathname" do
       expect(subject[attribute]).to eq value
-    end
-  end
-
-  context "when the config associates :client with an invalid pathname" do
-    subject do
-      described_class.new kitchen_root: "kitchen_root", attribute => 123
-    end
-
-    specify "should raise a Kitchen::UserError" do
-      expect do
-        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      end.to raise_error ::Kitchen::UserError, /client.*must be a valid pathname of an executable file/
-    end
-  end
-
-  context "when the config associates :client with the pathname of a nonexecutable file" do
-    subject do
-      described_class.new kitchen_root: "kitchen_root", attribute => value
-    end
-
-    let :pathname do
-      instance_double ::Pathname
-    end
-
-    let :value do
-      "./nonexecutable"
-    end
-
-    before do
-      allow(::Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:Pathname).with(
-        value
-      ).and_return pathname
-      allow(pathname).to receive(:executable?).and_return false
-    end
-
-    specify "should raise a Kitchen::UserError" do
-      expect do
-        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      end.to raise_error ::Kitchen::UserError, /client.*must be a valid pathname of an executable file/
-    end
-  end
-
-  context "when the config associates :client with the pathname of an executable file" do
-    subject do
-      described_class.new kitchen_root: "kitchen_root", attribute => value
-    end
-
-    let :pathname do
-      instance_double ::Pathname
-    end
-
-    let :value do
-      "./executable"
-    end
-
-    before do
-      allow(Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:Pathname).with(
-        value
-      ).and_return pathname
-      allow(pathname).to receive(:executable?).and_return true
-    end
-
-    specify "should not raise an error" do
-      expect do
-        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      end.to_not raise_error
     end
   end
 end

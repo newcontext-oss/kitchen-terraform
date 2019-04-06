@@ -17,7 +17,6 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
-require "kitchen/terraform/config_predicates/pathname_of_executable_file"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
@@ -64,6 +63,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   let :config_client do
+    allow(::TTY::Which).to receive(:exist?).with("client").and_return true
+
     "client"
   end
 
@@ -98,19 +99,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   let :verify_version do
     true
-  end
-
-  shared_context "Terraform CLI available" do
-    let :pathname do
-      instance_double ::Pathname
-    end
-
-    before do
-      allow(Kitchen::Terraform::ConfigPredicates::PathnameOfExecutableFile).to receive(:Pathname).with(
-        config_client
-      ).and_return pathname
-      allow(pathname).to receive(:executable?).and_return true
-    end
   end
 
   shared_examples "the action fails if the Terraform version is unsupported" do
@@ -230,8 +218,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
     subject do
       described_instance
     end
-
-    include_context "Terraform CLI available"
 
     before do
       described_instance.finalize_config! kitchen_instance
@@ -384,8 +370,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
       described_instance
     end
 
-    include_context "Terraform CLI available"
-
     before do
       described_instance.finalize_config! kitchen_instance
     end
@@ -496,8 +480,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
     subject do
       described_instance
     end
-
-    include_context "Terraform CLI available"
 
     let :plugin_directory do
       nil
@@ -702,8 +684,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
     subject do
       described_instance
     end
-
-    include_context "Terraform CLI available"
 
     before do
       subject.finalize_config! kitchen_instance

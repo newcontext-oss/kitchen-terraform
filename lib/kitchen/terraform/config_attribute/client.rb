@@ -14,7 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_attribute_type/pathname_of_executable_file"
+require "kitchen/terraform/config_attribute_cacher"
+require "kitchen/terraform/config_schemas/string"
+require "kitchen/terraform/config_attribute_definer"
+require "tty/which"
 
 module Kitchen
   module Terraform
@@ -37,8 +40,29 @@ module Kitchen
       #
       # @abstract It must be included by a plugin class in order to be used.
       module Client
-        ::Kitchen::Terraform::ConfigAttributeType::PathnameOfExecutableFile
-          .apply(attribute: :client, config_attribute: self, default_value: "terraform")
+        class << self
+          def included(plugin_class)
+            ::Kitchen::Terraform::ConfigAttributeDefiner.new(
+              attribute: self,
+              schema: ::Kitchen::Terraform::ConfigSchemas::String,
+            ).define plugin_class: plugin_class
+            plugin_class.expand_path_for to_sym do |plugin|
+              !::TTY::Which.exist? plugin[to_sym]
+            end
+          end
+
+          # @return [::Symbol] the symbol corresponding to this attribute.
+          def to_sym
+            :client
+          end
+        end
+
+        extend ::Kitchen::Terraform::ConfigAttributeCacher
+
+        # @return [::String] </code>"terraform"</code>
+        def config_client_default_value
+          "terraform"
+        end
       end
     end
   end
