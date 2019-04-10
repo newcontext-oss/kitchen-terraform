@@ -3,7 +3,8 @@ output "first_output" {
 }
 
 output "second_output" {
-  value = "Second Output"
+  value     = "Second Output"
+  sensitive = true
 }
 
 output "third_output" {
