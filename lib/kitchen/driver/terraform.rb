@@ -30,6 +30,7 @@ require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
+require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
 require "shellwords"
@@ -275,15 +276,16 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     run_workspace_select_instance
     ::Kitchen::Terraform::Command::Output.run(
       client: config_client,
-      options: {
-        cwd: config_root_module_directory, live_stream: logger, timeout: config_command_timeout,
-      }, &block
+      options: {cwd: config_root_module_directory,  live_stream: @debug_logger,  timeout: config_command_timeout},
+      &block
     )
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::ActionFailed, error.message
   end
 
   private
+
+  attr_accessor :debug_logger
 
   def apply_run
     apply_run_get
@@ -450,6 +452,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         timeout: config_command_timeout,
       },
     )
+  end
+
+  def initialize(config = {})
+    super
+    self.debug_logger = ::Kitchen::Terraform::DebugLogger.new logger
   end
 
   # @api private

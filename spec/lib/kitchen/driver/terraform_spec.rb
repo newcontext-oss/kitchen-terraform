@@ -17,6 +17,7 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "kitchen/terraform/verify_version"
@@ -164,14 +165,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
       command: command,
       options: { cwd: working_directory, live_stream: kitchen_logger, timeout: command_timeout },
     ).and_return return_value
-  end
-
-  def shell_out_run_yield(command:, standard_output: "mocked `terraform` success")
-    allow(shell_out).to receive(:run).with(
-      client: config_client,
-      command: command,
-      options: { cwd: kitchen_root, live_stream: kitchen_logger, timeout: command_timeout },
-    ).and_yield standard_output: standard_output
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::BackendConfigurations"
@@ -682,17 +675,30 @@ require "support/kitchen/terraform/result_in_success_matcher"
 
   describe "#retrieve_outputs" do
     subject do
-      described_instance
+      described_class.new config
+    end
+
+    let :debug_logger do
+      instance_double ::Kitchen::Terraform::DebugLogger
     end
 
     before do
       subject.finalize_config! kitchen_instance
+      subject.send :debug_logger=, debug_logger
     end
 
     shared_examples "`terraform output` is run" do
       context "when the command results in failure due to no outputs defined" do
         before do
-          shell_out_run_failure command: "output -json", message: "no outputs defined"
+          allow(shell_out).to receive(:run).with(
+            client: config_client,
+            command: "output -json",
+            options: {
+              cwd: kitchen_root,
+              live_stream: debug_logger,
+              timeout: command_timeout
+            },
+          ).and_raise ::Kitchen::Terraform::Error, "no outputs defined"
         end
 
         specify "should ignore the failure and yield an empty hash" do
@@ -703,20 +709,36 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
 
       context "when the command results in failure not due to no outputs defined" do
+        let :error_message do
+          "mocked `terraform output` failure"
+        end
+
         before do
-          shell_out_run_failure command: "output -json", message: "mocked `terraform output` failure"
+          allow(shell_out).to receive(:run).with(
+            client: config_client,
+            command: "output -json",
+            options: {
+              cwd: kitchen_root,
+              live_stream: debug_logger,
+              timeout: command_timeout
+            },
+          ).and_raise ::Kitchen::Terraform::Error, error_message
         end
 
         specify "should result in an action failed error with the failed command output" do
           expect do
             subject.retrieve_outputs
-          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform output` failure"
+          end.to raise_error ::Kitchen::ActionFailed, error_message
         end
       end
 
       context "when the command results in success" do
         before do
-          shell_out_run_yield command: "output -json", standard_output: terraform_output_value
+          allow(shell_out).to receive(:run).with(
+            client: config_client,
+            command: "output -json",
+            options: { cwd: kitchen_root, live_stream: debug_logger, timeout: command_timeout },
+          ).and_yield standard_output: terraform_output_value
         end
 
         context "when the value of the command result is not valid JSON" do
