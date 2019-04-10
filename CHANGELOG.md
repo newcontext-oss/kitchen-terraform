@@ -8,6 +8,15 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.5.0] - 2019-04-10
+
+### Changed
+
+- The output of `terraform output` is logged at the debug level to
+  prevent sensitive output values from being printed by default. This
+  output can be viewed by enabling the debug log level. For example:
+  `kitchen converge INSTANCE --log-level=debug`
+
 ## [4.4.0] - 2019-04-06
 
 ### Added
