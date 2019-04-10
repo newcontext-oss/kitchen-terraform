@@ -20,6 +20,7 @@ require "kitchen/driver/terraform"
 require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
+require "support/kitchen/terraform/config_attribute/fail_fast_examples"
 require "support/kitchen/terraform/config_attribute/systems_examples"
 require "support/kitchen/terraform/configurable_examples"
 
@@ -94,7 +95,7 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
-
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::FailFast"
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Systems"
 
   it_behaves_like "Kitchen::Terraform::Configurable"

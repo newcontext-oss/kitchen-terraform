@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/config_attribute/color"
+require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/systems"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
@@ -59,6 +60,10 @@ module Kitchen
     #
     # {include:Kitchen::Terraform::ConfigAttribute::Color}
     #
+    # ==== fail_fast
+    #
+    # {include:Kitchen::Terraform::ConfigAttribute::FailFast}
+    #
     # ==== systems
     #
     # {include:Kitchen::Terraform::ConfigAttribute::Systems}
@@ -71,6 +76,7 @@ module Kitchen
       include ::Kitchen::Configurable
       include ::Kitchen::Logging
       include ::Kitchen::Terraform::ConfigAttribute::Color
+      include ::Kitchen::Terraform::ConfigAttribute::FailFast
       include ::Kitchen::Terraform::ConfigAttribute::Systems
       include ::Kitchen::Terraform::Configurable
       @api_version = 2
