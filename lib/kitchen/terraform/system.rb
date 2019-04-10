@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/terraform/error"
 require "kitchen/terraform/inspec_with_hosts"
 require "kitchen/terraform/inspec_without_hosts"
 
@@ -101,6 +102,8 @@ module Kitchen
           .exec(system: self)
 
         self
+      rescue ::Kitchen::Terraform::Error => error
+        raise ::Kitchen::Terraform::Error, "#{to_s}: #{error.message}"
       end
 
       private

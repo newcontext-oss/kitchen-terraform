@@ -93,6 +93,9 @@ module Kitchen
         config_systems.each do |system|
           verify system: system
         end
+        if !@error_messages.empty?
+          raise ::Kitchen::ActionFailed, @error_messages.join("\n\n")
+        end
       rescue ::Kitchen::Terraform::Error => error
         raise ::Kitchen::ActionFailed, error.message
       end
@@ -119,6 +122,14 @@ module Kitchen
 
       private
 
+      def handle_error(message:)
+        if config_fail_fast
+          raise ::Kitchen::Terraform::Error, message
+        else
+          @error_messages.push message
+        end
+      end
+
       def load_outputs
         instance.driver.retrieve_outputs do |outputs:|
           @outputs.replace ::Kitchen::Util.stringified_hash outputs
@@ -127,6 +138,7 @@ module Kitchen
 
       def initialize(configuration = {})
         init_config configuration
+        @error_messages = []
         @inspec_options = { "distinct_exit" => false }
         @outputs = {}
       end
@@ -165,6 +177,8 @@ module Kitchen
           .resolve_attrs(system_attrs_resolver: system_attrs_resolver)
           .resolve_hosts(system_hosts_resolver: system_hosts_resolver)
           .verify(inspec_options: system_inspec_options(system: system), inspec_profile_path: inspec_profile_path)
+      rescue ::Kitchen::Terraform::Error => error
+        handle_error message: error.message
       end
     end
   end
