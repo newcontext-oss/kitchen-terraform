@@ -5,6 +5,7 @@ provisioner:
   name: terraform
 verifier:
   name: terraform
+  fail_fast: false
 platforms:
   - name: linux
   - name: osx
