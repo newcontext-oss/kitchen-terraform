@@ -276,7 +276,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     run_workspace_select_instance
     ::Kitchen::Terraform::Command::Output.run(
       client: config_client,
-      options: {cwd: config_root_module_directory,  live_stream: @debug_logger,  timeout: config_command_timeout},
+      options: {cwd: config_root_module_directory,  live_stream: debug_logger,  timeout: config_command_timeout},
       &block
     )
   rescue ::Kitchen::Terraform::Error => error
