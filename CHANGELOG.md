@@ -8,6 +8,14 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.6.0] - 2019-04-10
+
+### Added
+
+- The verifier gained a `fail_fast` attribute which toggles fail fast
+  behaviour when verifying systems; refer to the updated
+  [Terraform Verifier documentation][terraform-verifier] for more details.
+
 ## [4.5.0] - 2019-04-10
 
 ### Changed
