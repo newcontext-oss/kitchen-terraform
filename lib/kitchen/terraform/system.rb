@@ -69,18 +69,21 @@ module Kitchen
       # @param inspec_profile_path [::String] the path to the profile which InSpec will execute.
       # @return [self]
       def verify(inspec_options:, inspec_profile_path:, outputs:)
-        resolve_attrs outputs: outputs
-        resolve_hosts outputs: outputs
-        inspec.new(options: options_with_attributes(options: inspec_options), profile_path: inspec_profile_path).exec(
-          system: self
-        )
+        resolve outputs: outputs
+        execute_inspec options: inspec_options, profile_path: inspec_profile_path
 
         self
       rescue => error
-        raise ::Kitchen::Terraform::Error, "#{to_s}: #{error.message}"
+        raise ::Kitchen::Terraform::Error, "#{self}: #{error.message}"
       end
 
       private
+
+      def execute_inspec(options:, profile_path:)
+        inspec.new(options: options_with_attributes(options: options), profile_path: profile_path).exec(
+          system: self
+        )
+      end
 
       def initialize(mapping:)
         @attributes = {}
@@ -103,6 +106,11 @@ module Kitchen
 
       def options_with_attributes(options:)
         options.merge attributes: @attributes
+      end
+
+      def resolve(outputs:)
+        resolve_attrs outputs: outputs
+        resolve_hosts outputs: outputs
       end
 
       def resolve_attrs(outputs:)
