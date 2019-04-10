@@ -110,8 +110,14 @@ require "support/kitchen/terraform/configurable_examples"
       described_instance
     end
 
+    let :kitchen_suite do
+      instance_double ::Kitchen::Suite
+    end
+
     before do
       allow(kitchen_instance).to receive(:driver).and_return driver
+      allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
+      allow(kitchen_suite).to receive(:name).and_return "test-suite"
       described_instance.finalize_config! kitchen_instance
     end
 
@@ -123,7 +129,10 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error indicating the unexpected format" do
         expect do
           subject.call({})
-        end.to raise_error ::Kitchen::ActionFailed, "Preparing to resolve attrs failed\nkey not found: \"value\""
+        end.to raise_error(
+          ::Kitchen::ActionFailed,
+          "a-system-with-hosts: Preparing to resolve attrs failed\nkey not found: \"value\""
+        )
       end
     end
 
@@ -170,17 +179,11 @@ require "support/kitchen/terraform/configurable_examples"
     shared_context "Inspec::Runner instance" do
       include_context "Inspec::Profile"
 
-      let :kitchen_suite do
-        instance_double ::Kitchen::Suite
-      end
-
       let :runner do
         instance_double ::Inspec::Runner
       end
 
       before do
-        allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
-        allow(kitchen_suite).to receive(:name).and_return "test-suite"
         allow(runner).to receive(:add_target).with(path: "/test/base/path/test-suite").and_return([profile])
       end
     end
@@ -295,7 +298,7 @@ require "support/kitchen/terraform/configurable_examples"
             end.to raise_error(
               ::Kitchen::ActionFailed,
               "a-system-with-hosts: InSpec Runner exited with 1\n\na-system-without-hosts: InSpec Runner exited with 1"
-              )
+            )
           end
         end
 

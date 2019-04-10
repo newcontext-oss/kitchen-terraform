@@ -29,7 +29,7 @@ module Kitchen
       def resolve(hosts_output:, system:)
         system.add_hosts hosts: @outputs.fetch(hosts_output).fetch("value")
       rescue ::KeyError => key_error
-        raise ::Kitchen::Terraform::Error, "#{system}: Resolving hosts failed\n#{key_error}"
+        raise ::Kitchen::Terraform::Error, "Resolving hosts failed\n#{key_error}"
       end
 
       private

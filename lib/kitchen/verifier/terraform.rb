@@ -21,8 +21,6 @@ require "kitchen/terraform/config_attribute/systems"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
 require "kitchen/terraform/inspec_options_mapper"
-require "kitchen/terraform/system_attrs_resolver"
-require "kitchen/terraform/system_hosts_resolver"
 
 module Kitchen
   # This namespace is defined by Kitchen.
@@ -90,9 +88,7 @@ module Kitchen
       # @return [void]
       def call(_kitchen_state)
         load_outputs
-        config_systems.each do |system|
-          verify system: system
-        end
+        verify_systems
         if !@error_messages.empty?
           raise ::Kitchen::ActionFailed, @error_messages.join("\n\n")
         end
@@ -159,26 +155,24 @@ module Kitchen
         raise ::Kitchen::ClientError, load_error.message
       end
 
-      def system_attrs_resolver
-        @system_attrs_resolver ||= ::Kitchen::Terraform::SystemAttrsResolver.new outputs: @outputs
-      end
-
-      def system_hosts_resolver
-        @system_hosts_resolver ||= ::Kitchen::Terraform::SystemHostsResolver.new outputs: @outputs
-      end
-
       def system_inspec_options(system:)
         ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: @inspec_options.dup
       end
 
       def verify(system:)
-        ::Kitchen::Terraform::System
-          .new(mapping: system)
-          .resolve_attrs(system_attrs_resolver: system_attrs_resolver)
-          .resolve_hosts(system_hosts_resolver: system_hosts_resolver)
-          .verify(inspec_options: system_inspec_options(system: system), inspec_profile_path: inspec_profile_path)
-      rescue ::Kitchen::Terraform::Error => error
+        ::Kitchen::Terraform::System.new(mapping: system).verify(
+          inspec_options: system_inspec_options(system: system),
+          inspec_profile_path: inspec_profile_path,
+          outputs: @outputs
+        )
+      rescue => error
         handle_error message: error.message
+      end
+
+      def verify_systems
+        config_systems.each do |system|
+          verify system: system
+        end
       end
     end
   end
