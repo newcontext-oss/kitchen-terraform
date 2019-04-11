@@ -122,6 +122,7 @@ module Kitchen
         if config_fail_fast
           raise ::Kitchen::Terraform::Error, message
         else
+          logger.error message
           @error_messages.push message
         end
       end
