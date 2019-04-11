@@ -64,6 +64,7 @@ require "support/kitchen/terraform/configurable_examples"
         {
           name: "a-system-without-hosts",
           backend: "backend",
+          profile_locations: ["remote://profile"]
         },
       ],
       test_base_path: "/test/base/path",
@@ -166,30 +167,13 @@ require "support/kitchen/terraform/configurable_examples"
       end
     end
 
-    shared_context "Inspec::Profile" do
-      let :profile do
-        instance_double ::Inspec::Profile
-      end
-
-      before do
-        allow(profile).to receive(:name).and_return "profile-name"
-      end
-    end
-
-    shared_context "Inspec::Runner instance" do
-      include_context "Inspec::Profile"
-
+    context "when the Terraform outputs do include the configured :hosts_output key" do
       let :runner do
-        instance_double ::Inspec::Runner
+        instance_double(::Inspec::Runner).tap do |runner|
+          allow(runner).to receive(:add_target).with "/test/base/path/test-suite"
+          allow(runner).to receive(:add_target).with "remote://profile"
+        end
       end
-
-      before do
-        allow(runner).to receive(:add_target).with(path: "/test/base/path/test-suite").and_return([profile])
-      end
-    end
-
-    shared_context "Inspec::Runner" do
-      include_context "Inspec::Runner instance"
 
       let :runner_options_with_hosts do
         {
@@ -240,13 +224,6 @@ require "support/kitchen/terraform/configurable_examples"
       before do
         allow(::Inspec::Runner).to receive(:new).with(runner_options_with_hosts).and_return(runner)
         allow(::Inspec::Runner).to receive(:new).with(runner_options_without_hosts).and_return(runner)
-      end
-    end
-
-    context "when the Terraform outputs do include the configured :hosts_output key" do
-      include_context "Inspec::Runner"
-
-      before do
         allow(driver).to receive(:retrieve_outputs).and_yield(
           outputs: { "output_name" => { "value" => "output_value" }, "hosts" => { "value" => "host" } },
         )

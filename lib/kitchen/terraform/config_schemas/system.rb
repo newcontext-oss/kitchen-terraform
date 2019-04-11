@@ -24,8 +24,9 @@ module Kitchen
       # against a system in the Terraform state.
       #
       # All systems within the same {https://kitchen.ci/docs/getting-started/adding-suite Kitchen suite} are tested
-      # using the same {https://www.inspec.io/docs/reference/profiles/ InSpec profile}. The profile must be implemented
-      # in the directory located at `<Kitchen root>/test/integration/<suite name>`.
+      # using the same {https://www.inspec.io/docs/reference/profiles/ InSpec profile} by default. The profile must be
+      # implemented in the directory located at `<Kitchen root>/test/integration/<suite name>`. This behaviour can be
+      # overridden with the <code>profile_locations</code> key.
       #
       # The values of all {https://www.terraform.io/docs/configuration/outputs.html Terraform outputs} are associated
       # with equivalently named
@@ -66,7 +67,7 @@ module Kitchen
       # ===== Optional Keys
       #
       # The following keys may be included by any system to alter the behaviour of InSpec. Any key which is omitted
-      # will be associated with a default value as defined by InSpec.
+      # will be associated with a default value as defined by InSpec except where otherwise noted.
       #
       # ====== attrs
       #
@@ -296,6 +297,27 @@ module Kitchen
       #       - name: a system
       #         backend: ssh
       #         port: 1234
+      #
+      # ====== profile_locations
+      #
+      # The value of the <code>profile_locations</code> key is a sequence of scalars which is used to locate
+      # {https://www.inspec.io/docs/reference/profiles/ InSpec profiles} containing the controls to be executed against
+      # the system.
+      #
+      # The default value contains a single scalar which assumes that a profile exists locally for the associated
+      # {https://kitchen.ci/docs/getting-started/adding-suite Kitchen suite} at
+      # <code><KITCHEN ROOT>/test/integration/<KITCHEN SUITE NAME></code>.
+      #
+      # <em>Example kitchen.yml</em>
+      #   verifier:
+      #     name: terraform
+      #     systems:
+      #       - name: a system
+      #         backend: local
+      #         profile_locations:
+      #           - supermarket://username/linux-baseline
+      #           - /path/to/profile
+      #           - /path/to/a_test.rb
       #
       # ====== proxy_command
       #
@@ -535,6 +557,7 @@ module Kitchen
         optional(:password).filled :str?
         optional(:path).filled :str?
         optional(:port).value :int?
+        optional(:profile_locations).each :filled?, :str?
         optional(:proxy_command).filled :str?
         optional(:reporter).each(:filled?, :str?)
         optional(:self_signed).value :bool?

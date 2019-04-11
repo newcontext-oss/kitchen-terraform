@@ -26,18 +26,19 @@ module Kitchen
       # @return [void]
       def exec(system:)
         ::Kitchen::Terraform::InSpec
-          .new(options: options, profile_path: profile_path).info(message: "Verifying #{system}").exec
+          .new(options: options, profile_locations: profile_locations).info(message: "#{system}: Verifying").exec
       end
 
       private
 
-      attr_accessor :options, :profile_path
+      attr_accessor :options, :profile_locations
 
       # @param options [::Hash] options for execution.
-      # @param profile_path [::String] the path to the InSpec profile which contains the controls to be executed.
-      def initialize(options:, profile_path:)
+      # @param profile_locations [::Array<::String>] the locations of the InSpec profiles which contain the controls to
+      #   be executed.
+      def initialize(options:, profile_locations:)
         self.options = options
-        self.profile_path = profile_path
+        self.profile_locations = profile_locations
       end
     end
   end

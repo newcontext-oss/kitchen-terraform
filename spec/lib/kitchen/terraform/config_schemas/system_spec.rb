@@ -190,6 +190,14 @@ require "kitchen/terraform/config_schemas/system"
       it_behaves_like "an optional array of strings"
     end
 
+    describe ":profile_locations" do
+      let :attribute do
+        :profile_locations
+      end
+
+      it_behaves_like "an optional array of strings"
+    end
+
     describe ":password" do
       let :attribute do
         :password
