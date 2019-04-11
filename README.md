@@ -7,8 +7,9 @@
 [![Gem downloads total][gem-downloads-total-shield]][kitchen-terraform-gem]
 
 [![Build status][build-status-shield]][build-status]
-[![Test coverage][test-coverage-shield]][test-coverage]
+[![Code coverage][code-coverage-shield]][code-coverage]
 [![Maintainability][maintainability-shield]][maintainability]
+[![Technical debt][technical-debt-shield]][technical-debt]
 [![Dependencies][hakiri-shield]][hakiri]
 
 [![Gitter chat][gitter-shield]][gitter]
@@ -355,12 +356,14 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 
 <!-- Markdown links and image definitions -->
 
-[build-status-shield]: https://img.shields.io/travis/newcontext-oss/kitchen-terraform.svg
+[build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
 [build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [bundler-getting-started]: https://bundler.io/#getting-started
 [bundler-in-depth]: https://bundler.io/gemfile.html
 [bundler]: https://bundler.io/index.html#getting-started
 [changelog]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CHANGELOG.md
+[code-coverage-shield]: https://img.shields.io/codeclimate/coverage/newcontext-oss/kitchen-terraform.svg
+[code-coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
 [contributing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md
 [docker]: https://www.docker.com/
 [docker-community-edition]: https://store.docker.com/editions/community/docker-ce-server-ubuntu
@@ -377,8 +380,8 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
-[maintainability-shield]: https://api.codeclimate.com/v1/badges/73d4a2280a30e680bac4/maintainability
-[maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/maintainability
+[maintainability-shield]: https://img.shields.io/codeclimate/maintainability-percentage/newcontext-oss/kitchen-terraform.svg
+[maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
 [new-context-github]: https://github.com/newcontext
 [new-context-linkedin]: https://www.linkedin.com/company/-new-context-
 [new-context-twitter]: https://twitter.com/newcontext
@@ -390,14 +393,14 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [ruby-installation]: https://www.ruby-lang.org/en/documentation/installation/
 [ruby]: https://www.ruby-lang.org/en/
 [rubygems-installing-gems]: http://guides.rubygems.org/rubygems-basics/#rubygems-installing-gems
+[technical-debt-shield]: https://img.shields.io/codeclimate/tech-debt/newcontext-oss/kitchen-terraform.svg
+[technical-debt]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
 [terraform-cli]: https://www.terraform.io/docs/commands/index.html
 [terraform-driver]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Driver/Terraform
 [terraform-install]: https://www.terraform.io/intro/getting-started/install.html
 [terraform-provisioner]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Provisioner/Terraform
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
-[test-coverage-shield]: https://api.codeclimate.com/v1/badges/73d4a2280a30e680bac4/test_coverage
-[test-coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/test_coverage
 [test-kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [test-kitchen]: http://kitchen.ci/index.html
 [tfenv]: https://github.com/kamatama41/tfenv
