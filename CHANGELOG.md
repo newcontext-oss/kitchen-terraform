@@ -8,6 +8,19 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.7.0] - 2019-04-11
+
+### Added
+
+- The verifier systems gained a `profile_locations` attribute which
+  enables overriding the default InSpec profile location of
+  `test/integration/<KITCHEN SUITE NAME>`; refer to the updated
+  [Terraform Verifier documentation][terraform-verifier] for more details.
+
+### Changed
+
+- Errors are logged when they are queued while `fail_fast` is disabled.
+
 ## [4.6.0] - 2019-04-11
 
 ### Added
@@ -626,7 +639,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.6.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.7.0...HEAD
+[4.7.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.6.0...v4.7.0
 [4.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.5.0...v4.6.0
 [4.5.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.4.0...v4.5.0
 [4.4.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.3.0...v4.4.0
