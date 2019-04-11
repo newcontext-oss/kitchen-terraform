@@ -40,6 +40,7 @@ module Kitchen
 
       # #exec executes InSpec.
       #
+      # @raise [::Kitchen::Terraform::Error] if executing InSpec fails.
       # @return [self]
       def exec
         @runner.run.tap do |exit_code|

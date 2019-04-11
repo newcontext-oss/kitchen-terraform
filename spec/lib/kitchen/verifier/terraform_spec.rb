@@ -20,6 +20,7 @@ require "kitchen/driver/terraform"
 require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
+require "support/kitchen/terraform/config_attribute/fail_fast_examples"
 require "support/kitchen/terraform/config_attribute/systems_examples"
 require "support/kitchen/terraform/configurable_examples"
 
@@ -27,6 +28,7 @@ require "support/kitchen/terraform/configurable_examples"
   let :config do
     {
       color: false,
+      fail_fast: config_fail_fast,
       systems: [
         {
           attrs_outputs: { attribute_name: "output_name" },
@@ -68,6 +70,10 @@ require "support/kitchen/terraform/configurable_examples"
     }
   end
 
+  let :config_fail_fast do
+    true
+  end
+
   let :described_instance do
     described_class.new config
   end
@@ -94,7 +100,7 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
-
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::FailFast"
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Systems"
 
   it_behaves_like "Kitchen::Terraform::Configurable"
@@ -104,8 +110,14 @@ require "support/kitchen/terraform/configurable_examples"
       described_instance
     end
 
+    let :kitchen_suite do
+      instance_double ::Kitchen::Suite
+    end
+
     before do
       allow(kitchen_instance).to receive(:driver).and_return driver
+      allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
+      allow(kitchen_suite).to receive(:name).and_return "test-suite"
       described_instance.finalize_config! kitchen_instance
     end
 
@@ -117,7 +129,10 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error indicating the unexpected format" do
         expect do
           subject.call({})
-        end.to raise_error ::Kitchen::ActionFailed, "Preparing to resolve attrs failed\nkey not found: \"value\""
+        end.to raise_error(
+          ::Kitchen::ActionFailed,
+          "a-system-with-hosts: Preparing to resolve attrs failed\nkey not found: \"value\""
+        )
       end
     end
 
@@ -131,7 +146,7 @@ require "support/kitchen/terraform/configurable_examples"
           subject.call({})
         end.to raise_error(
           ::Kitchen::ActionFailed,
-          "Resolving the attrs of system a-system-with-hosts failed\nkey not found: \"output_name\""
+          "a-system-with-hosts: Resolving attrs failed\nkey not found: \"output_name\""
         )
       end
     end
@@ -146,7 +161,7 @@ require "support/kitchen/terraform/configurable_examples"
           subject.call({})
         end.to raise_error(
           ::Kitchen::ActionFailed,
-          "Resolving the hosts of system a-system-with-hosts failed\nkey not found: \"hosts\""
+          "a-system-with-hosts: Resolving hosts failed\nkey not found: \"hosts\""
         )
       end
     end
@@ -164,17 +179,11 @@ require "support/kitchen/terraform/configurable_examples"
     shared_context "Inspec::Runner instance" do
       include_context "Inspec::Profile"
 
-      let :kitchen_suite do
-        instance_double ::Kitchen::Suite
-      end
-
       let :runner do
         instance_double ::Inspec::Runner
       end
 
       before do
-        allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
-        allow(kitchen_suite).to receive(:name).and_return "test-suite"
         allow(runner).to receive(:add_target).with(path: "/test/base/path/test-suite").and_return([profile])
       end
     end
@@ -243,31 +252,74 @@ require "support/kitchen/terraform/configurable_examples"
         )
       end
 
-      context "when the InSpec runner returns an exit code other than 0" do
-        before do
-          allow(runner).to receive(:run).with(no_args).and_return(1)
+      context "when fail fast behaviour is enabled" do
+        context "when the InSpec runner returns an exit code other than 0" do
+          before do
+            allow(runner).to receive(:run).with(no_args).and_return(1)
+          end
+
+          it "does raise an error" do
+            expect do
+              subject.call({})
+            end.to raise_error ::Kitchen::ActionFailed, "a-system-with-hosts: InSpec Runner exited with 1"
+          end
         end
 
-        it "does raise an error" do
-          expect do
-            subject.call({})
-          end.to raise_error ::Kitchen::ActionFailed, "InSpec Runner exited with 1"
+        context "when the InSpec runner raises an error" do
+          let :error_message do
+            "mocked InSpec error"
+          end
+
+          before do
+            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
+          end
+
+          specify "should raise an action failed error with the runner error message" do
+            expect do
+              subject.call({})
+            end.to raise_error ::Kitchen::ActionFailed, "a-system-with-hosts: Executing InSpec failed\n#{error_message}"
+          end
         end
       end
 
-      context "when the InSpec runner raises an error" do
-        let :error_message do
-          "mocked InSpec error"
+      context "when fail fast behaviour is disabled" do
+        let :config_fail_fast do
+          false
         end
 
-        before do
-          allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
+        context "when the InSpec runner returns an exit code other than 0 multiple times" do
+          before do
+            allow(runner).to receive(:run).with(no_args).and_return 1
+          end
+
+          it "does raise all errors" do
+            expect do
+              subject.call({})
+            end.to raise_error(
+              ::Kitchen::ActionFailed,
+              "a-system-with-hosts: InSpec Runner exited with 1\n\na-system-without-hosts: InSpec Runner exited with 1"
+            )
+          end
         end
 
-        specify "should raise an action failed error with the runner error message" do
-          expect do
-            subject.call({})
-          end.to raise_error ::Kitchen::ActionFailed, "Executing InSpec failed\n#{error_message}"
+        context "when the InSpec runner raises an error multiple times" do
+          let :error_message do
+            "mocked InSpec error"
+          end
+
+          before do
+            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
+          end
+
+          specify "should raise an action failed error with the runner error message" do
+            expect do
+              subject.call({})
+            end.to raise_error(
+              ::Kitchen::ActionFailed,
+              "a-system-with-hosts: Executing InSpec failed\n#{error_message}\n\n" \
+              "a-system-without-hosts: Executing InSpec failed\n#{error_message}"
+            )
+          end
         end
       end
 

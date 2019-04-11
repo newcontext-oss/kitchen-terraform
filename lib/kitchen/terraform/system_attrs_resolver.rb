@@ -34,8 +34,7 @@ module Kitchen
 
         self
       rescue ::KeyError => key_error
-        raise ::Kitchen::Terraform::Error,
-              "Resolving the attrs of system #{system} failed\n#{key_error}"
+        raise ::Kitchen::Terraform::Error, "Resolving attrs failed\n#{key_error}"
       end
 
       private
