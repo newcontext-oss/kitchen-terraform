@@ -690,7 +690,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
     specify "should yield the variables config attribute" do
       expect do |block|
         subject.retrieve_inputs(&block)
-      end.to yield_with_args config_variables
+      end.to yield_with_args inputs: config_variables
     end
   end
 

@@ -87,8 +87,7 @@ module Kitchen
       # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def call(_kitchen_state)
-        load_outputs
-        load_inputs
+        load_variables
         verify_systems
         if !@error_messages.empty?
           raise ::Kitchen::ActionFailed, @error_messages.join("\n\n")
@@ -128,15 +127,11 @@ module Kitchen
         end
       end
 
-      def load_inputs
-        instance.driver.retrieve_inputs do |inputs:|
-          @inputs.replace inputs
-        end
-      end
-
-      def load_outputs
+      def load_variables
         instance.driver.retrieve_outputs do |outputs:|
           @outputs.replace outputs
+        end.retrieve_inputs do |inputs:|
+          @inputs.replace inputs
         end
       end
 
