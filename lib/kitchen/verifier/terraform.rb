@@ -105,17 +105,6 @@ module Kitchen
         false
       end
 
-      # finalize_config! configures InSpec options which remain consistent between systems.
-      #
-      # @param kitchen_instance [::Kitchen::Instance] an associated Kitchen instance.
-      # @return [self]
-      def finalize_config!(kitchen_instance)
-        super kitchen_instance
-        @inspec_options.merge! "color" => config_color
-
-        self
-      end
-
       private
 
       def handle_error(message:)
@@ -139,7 +128,6 @@ module Kitchen
         init_config configuration
         @error_messages = []
         @inputs = {}
-        @inspec_options = { "distinct_exit" => false }
         @outputs = {}
       end
 
@@ -156,7 +144,8 @@ module Kitchen
       end
 
       def system_inspec_options(system:)
-        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: @inspec_options.dup
+        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system)
+          .map(options: { "color" => config_color, "distinct_exit" => false })
       end
 
       def verify(system:)
