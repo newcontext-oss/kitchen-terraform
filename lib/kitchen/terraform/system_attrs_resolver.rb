@@ -43,15 +43,15 @@ module Kitchen
       #
       # @param outputs [#to_hash] the outputs of the Terraform state under test.
       def initialize(inputs:, outputs:)
-        @inputs = inputs.transform_keys do |key|
-          "input_#{key}"
-        end
-        @outputs = Hash[outputs].transform_values do |value|
-          value.fetch("value")
-        end
-        @outputs.merge!(@outputs.transform_keys do |key|
-          "output_#{key}"
-        end)
+        @inputs = inputs.map do |key, value|
+          ["input_#{key}", value]
+        end.to_h
+        @outputs = Hash[outputs].map do |key, value|
+          [key, value.fetch("value")]
+        end.to_h
+        @outputs.merge!(@outputs.map do |key, value|
+          ["output_#{key}", value]
+        end.to_h)
       rescue ::KeyError => key_error
         raise ::Kitchen::Terraform::Error, "Preparing to resolve attrs failed\n#{key_error}"
       end
