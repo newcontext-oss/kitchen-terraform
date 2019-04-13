@@ -1,5 +1,6 @@
 ---
-name: workspace-two
-depends:
+name: workspace two
+attributes:
   - name: workspace
-    path: test/integration/workspace
+    type: string
+    required: true

@@ -1,5 +1,6 @@
 ---
-name: workspace-one
-depends:
+name: workspace one
+attributes:
   - name: workspace
-    path: test/integration/workspace
+    type: string
+    required: true

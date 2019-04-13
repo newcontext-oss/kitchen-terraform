@@ -112,8 +112,6 @@ suites:
       systems:
         - name: one
           backend: local
-          controls:
-            - workspace one
   - name: workspace-two
     driver:
       root_module_directory: test/terraform/workspace
@@ -123,5 +121,3 @@ suites:
       systems:
         - name: two
           backend: local
-          controls:
-            - workspace two
