@@ -83,7 +83,7 @@ module Kitchen
       def execute_inspec(options:)
         inspec.new(
           options: options_with_attributes(options: options),
-          profile_locations: @mapping.fetch(:profile_locations)
+          profile_locations: @mapping.fetch(:profile_locations),
         ).exec(system: self)
       end
 

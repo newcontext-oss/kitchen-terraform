@@ -717,7 +717,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: kitchen_root,
               live_stream: debug_logger,
-              timeout: command_timeout
+              timeout: command_timeout,
             },
           ).and_raise ::Kitchen::Terraform::Error, "no outputs defined"
         end
@@ -741,7 +741,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: kitchen_root,
               live_stream: debug_logger,
-              timeout: command_timeout
+              timeout: command_timeout,
             },
           ).and_raise ::Kitchen::Terraform::Error, error_message
         end

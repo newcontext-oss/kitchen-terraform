@@ -64,7 +64,7 @@ require "support/kitchen/terraform/configurable_examples"
         {
           name: "a-system-without-hosts",
           backend: "backend",
-          profile_locations: ["remote://profile"]
+          profile_locations: ["remote://profile"],
         },
       ],
       test_base_path: "/test/base/path",
