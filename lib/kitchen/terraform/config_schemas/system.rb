@@ -32,7 +32,7 @@ module Kitchen
       # with equivalently named
       # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes}.
       #
-      # The keys of a system mapping correlate to the options of the
+      # The keys of a system mapping correlate to the arguments and the options of the
       # {https://www.inspec.io/docs/reference/cli/#exec +inspec exec+} command-line interface subcomamand.
       #
       # ===== Required Keys
@@ -302,7 +302,7 @@ module Kitchen
       #
       # The value of the <code>profile_locations</code> key is a sequence of scalars which is used to locate
       # {https://www.inspec.io/docs/reference/profiles/ InSpec profiles} containing the controls to be executed against
-      # the system.
+      # the system. This key corresponds to the LOCATIONS argument of <code>inspec exec</code>.
       #
       # The default value contains a single scalar which assumes that a profile exists locally for the associated
       # {https://kitchen.ci/docs/getting-started/adding-suite Kitchen suite} at
