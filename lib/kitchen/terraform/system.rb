@@ -66,11 +66,10 @@ module Kitchen
       # #verify verifies the system by executing InSpec.
       #
       # @param inspec_options [::Hash] the options to be passed to InSpec.
-      # @param inspec_profile_path [::String] the path to the profile which InSpec will execute.
       # @return [self]
-      def verify(inspec_options:, inspec_profile_path:, outputs:)
+      def verify(inspec_options:, outputs:)
         resolve outputs: outputs
-        execute_inspec options: inspec_options, profile_path: inspec_profile_path
+        execute_inspec options: inspec_options
 
         self
       rescue => error
@@ -79,10 +78,11 @@ module Kitchen
 
       private
 
-      def execute_inspec(options:, profile_path:)
-        inspec.new(options: options_with_attributes(options: options), profile_path: profile_path).exec(
-          system: self
-        )
+      def execute_inspec(options:)
+        inspec.new(
+          options: options_with_attributes(options: options),
+          profile_locations: @mapping.fetch(:profile_locations)
+        ).exec(system: self)
       end
 
       def initialize(mapping:)

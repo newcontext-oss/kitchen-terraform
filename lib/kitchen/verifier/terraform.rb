@@ -122,6 +122,7 @@ module Kitchen
         if config_fail_fast
           raise ::Kitchen::Terraform::Error, message
         else
+          logger.error message
           @error_messages.push message
         end
       end
@@ -139,9 +140,6 @@ module Kitchen
         @outputs = {}
       end
 
-      def inspec_profile_path
-        @inspec_profile_path ||= ::File.join config.fetch(:test_base_path), instance.suite.name
-      end
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
       #
@@ -160,11 +158,9 @@ module Kitchen
       end
 
       def verify(system:)
-        ::Kitchen::Terraform::System.new(mapping: system).verify(
-          inspec_options: system_inspec_options(system: system),
-          inspec_profile_path: inspec_profile_path,
-          outputs: @outputs
-        )
+        ::Kitchen::Terraform::System.new(
+          mapping: {profile_locations: [::File.join(config.fetch(:test_base_path), instance.suite.name)]}.merge(system)
+        ).verify(inspec_options: system_inspec_options(system: system), outputs: @outputs)
       rescue => error
         handle_error message: error.message
       end

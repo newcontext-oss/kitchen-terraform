@@ -29,20 +29,21 @@ module Kitchen
       def exec(system:)
         system.each_host do |host:|
           ::Kitchen::Terraform::InSpec
-            .new(options: options.merge(host: host), profile_path: profile_path)
-            .info(message: "Verifying host #{host} of #{system}").exec
+            .new(options: options.merge(host: host), profile_locations: profile_locations)
+            .info(message: "#{system}: Verifying host #{host}").exec
         end
       end
 
       private
 
-      attr_accessor :options, :profile_path
+      attr_accessor :options, :profile_locations
 
       # @param options [::Hash] options for execution.
-      # @param profile_path [::String] the path to the InSpec profile which contains the controls to be executed.
-      def initialize(options:, profile_path:)
+      # @param profile_locations [::Array<::String>] the locations of the InSpec profiles which contain the controls to
+      #   be executed.
+      def initialize(options:, profile_locations:)
         self.options = options
-        self.profile_path = profile_path
+        self.profile_locations = profile_locations
       end
     end
   end
