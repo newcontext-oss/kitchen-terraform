@@ -15,7 +15,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 - The verifier systems gained a `profile_locations` attribute which
   enables overriding the default InSpec profile location of
   `test/integration/<KITCHEN SUITE NAME>`; refer to the updated
-  [Terraform Verifier documentation][terraform-verifier] for more details.
+  [Terraform Verifier documentation][terraform-verifier] for more
+  details.
 
 ### Changed
 
