@@ -21,10 +21,14 @@ module Kitchen
   module Terraform
     module ConfigSchemas
       # A system is a mapping which is used to configure the execution of {https://www.inspec.io/docs/ InSpec tests}
-      # against a system in the Terraform state.
+      # against a system in the Terraform state. The keys of a system mapping correlate to the arguments and the
+      # options of the {https://www.inspec.io/docs/reference/cli/#exec +inspec exec+} command-line interface
+      # subcomamand.
       #
-      # All systems within the same {https://kitchen.ci/docs/getting-started/adding-suite Kitchen suite} are tested
-      # using the same {https://www.inspec.io/docs/reference/profiles/ InSpec profile} by default. The profile must be
+      # ===== InSpec Profiles
+      #
+      # All systems within the same {https://kitchen.ci/docs/getting-started/adding-suite Kitchen suite} are by default
+      # tested using the same {https://www.inspec.io/docs/reference/profiles/ InSpec profile}. The profile must be
       # implemented in the directory located at `<Kitchen root>/test/integration/<suite name>`. This behaviour can be
       # overridden with the <code>profile_locations</code> key.
       #
@@ -35,10 +39,10 @@ module Kitchen
       # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes}, prefixed with
       # <code>input_</code> or <code>output_</code>, respectively. The values of the output variables are also
       # associated with equivalently named profile attributes without any prefixes for backward compatibility. Output
-      # variable associations can be overridden with the <code>attrs_outputs</code> key.
-      #
-      # The keys of a system mapping correlate to the arguments and the options of the
-      # {https://www.inspec.io/docs/reference/cli/#exec +inspec exec+} command-line interface subcomamand.
+      # variable associations can be overridden with the <code>attrs_outputs</code> key. For example, the value of an
+      # input variable named `test` will be associated with an attribute named `input_test`, and the value of an output
+      # variable named `test` will be associated with an attribute named `output_test` as well as an attribute named
+      # `test`.
       #
       # ===== Required Keys
       #
