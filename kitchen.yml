@@ -18,6 +18,8 @@ suites:
   - name: attributes
     driver:
       root_module_directory: test/terraform/attributes
+      variables:
+        passthrough: value
     verifier:
       systems:
         - name: default
@@ -43,6 +45,7 @@ suites:
           attrs_outputs:
             first_output: second_output
             second_output: third_output
+            output_third_output: first_output
           controls:
             - precedence
   - name: backend-ssh
