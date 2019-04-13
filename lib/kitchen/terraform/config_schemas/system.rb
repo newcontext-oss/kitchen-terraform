@@ -28,9 +28,14 @@ module Kitchen
       # implemented in the directory located at `<Kitchen root>/test/integration/<suite name>`. This behaviour can be
       # overridden with the <code>profile_locations</code> key.
       #
-      # The values of all {https://www.terraform.io/docs/configuration/outputs.html Terraform outputs} are associated
-      # with equivalently named
-      # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes}.
+      # The values of any {https://www.terraform.io/docs/configuration/variables.html Terraform input variables}
+      # configured with the driver's <code>variables</code> attribute and the values of any
+      # {https://www.terraform.io/docs/configuration/outputs.html Terraform output variables} which exist in the
+      # Terraform state are associated with equivalently named
+      # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes}, prefixed with
+      # <code>input_</code> or <code>output_</code>, respectively. The values of the output variables are also
+      # associated with equivalently named profile attributes without any prefixes for backward compatibility. Output
+      # variable associations can be overridden with the <code>attrs_outputs</code> key.
       #
       # The keys of a system mapping correlate to the arguments and the options of the
       # {https://www.inspec.io/docs/reference/cli/#exec +inspec exec+} command-line interface subcomamand.
