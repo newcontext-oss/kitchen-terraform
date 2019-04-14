@@ -65,10 +65,12 @@ module Kitchen
 
       # #verify verifies the system by executing InSpec.
       #
+      # @param inputs [::Hash] the Terraform input variables to be utilized as InSpec profile attributes.
       # @param inspec_options [::Hash] the options to be passed to InSpec.
+      # @param outputs [::Hash] the Terraform output variables to be utilized as InSpec profile attributes.
       # @return [self]
-      def verify(inspec_options:, outputs:)
-        resolve outputs: outputs
+      def verify(inputs:, inspec_options:, outputs:)
+        resolve inputs: inputs, outputs: outputs
         execute_inspec options: inspec_options
 
         self
@@ -81,7 +83,7 @@ module Kitchen
       def execute_inspec(options:)
         inspec.new(
           options: options_with_attributes(options: options),
-          profile_locations: @mapping.fetch(:profile_locations)
+          profile_locations: @mapping.fetch(:profile_locations),
         ).exec(system: self)
       end
 
@@ -108,16 +110,16 @@ module Kitchen
         options.merge attributes: @attributes
       end
 
-      def resolve(outputs:)
-        resolve_attrs outputs: outputs
+      def resolve(inputs:, outputs:)
+        resolve_attrs inputs: inputs, outputs: outputs
         resolve_hosts outputs: outputs
       end
 
-      def resolve_attrs(outputs:)
-        ::Kitchen::Terraform::SystemAttrsResolver.new(outputs: outputs).resolve(
+      def resolve_attrs(inputs:, outputs:)
+        ::Kitchen::Terraform::SystemAttrsResolver.new(inputs: inputs, outputs: outputs).resolve(
           attrs_outputs_keys: @attrs_outputs.keys,
           attrs_outputs_values: @attrs_outputs.values,
-          system: self
+          system: self,
         )
 
         self

@@ -87,7 +87,7 @@ module Kitchen
       # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def call(_kitchen_state)
-        load_outputs
+        load_variables
         verify_systems
         if !@error_messages.empty?
           raise ::Kitchen::ActionFailed, @error_messages.join("\n\n")
@@ -105,17 +105,6 @@ module Kitchen
         false
       end
 
-      # finalize_config! configures InSpec options which remain consistent between systems.
-      #
-      # @param kitchen_instance [::Kitchen::Instance] an associated Kitchen instance.
-      # @return [self]
-      def finalize_config!(kitchen_instance)
-        super kitchen_instance
-        @inspec_options.merge! "color" => config_color
-
-        self
-      end
-
       private
 
       def handle_error(message:)
@@ -127,19 +116,20 @@ module Kitchen
         end
       end
 
-      def load_outputs
+      def load_variables
         instance.driver.retrieve_outputs do |outputs:|
-          @outputs.replace ::Kitchen::Util.stringified_hash outputs
+          @outputs.replace outputs
+        end.retrieve_inputs do |inputs:|
+          @inputs.replace inputs
         end
       end
 
       def initialize(configuration = {})
         init_config configuration
         @error_messages = []
-        @inspec_options = { "distinct_exit" => false }
+        @inputs = {}
         @outputs = {}
       end
-
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
       #
@@ -154,13 +144,15 @@ module Kitchen
       end
 
       def system_inspec_options(system:)
-        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system).map options: @inspec_options.dup
+        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system)
+          .map(options: { "color" => config_color, "distinct_exit" => false })
       end
 
       def verify(system:)
         ::Kitchen::Terraform::System.new(
-          mapping: {profile_locations: [::File.join(config.fetch(:test_base_path), instance.suite.name)]}.merge(system)
-        ).verify(inspec_options: system_inspec_options(system: system), outputs: @outputs)
+          mapping: { profile_locations: [::File.join(config.fetch(:test_base_path), instance.suite.name)] }
+            .merge(system),
+        ).verify(inputs: @inputs, inspec_options: system_inspec_options(system: system), outputs: @outputs)
       rescue => error
         handle_error message: error.message
       end

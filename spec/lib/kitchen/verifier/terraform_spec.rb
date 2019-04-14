@@ -64,7 +64,7 @@ require "support/kitchen/terraform/configurable_examples"
         {
           name: "a-system-without-hosts",
           backend: "backend",
-          profile_locations: ["remote://profile"]
+          profile_locations: ["remote://profile"],
         },
       ],
       test_base_path: "/test/base/path",
@@ -117,6 +117,7 @@ require "support/kitchen/terraform/configurable_examples"
 
     before do
       allow(kitchen_instance).to receive(:driver).and_return driver
+      allow(driver).to receive(:retrieve_inputs).and_yield inputs: { "variable" => "input_value" }
       allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
       allow(kitchen_suite).to receive(:name).and_return "test-suite"
       described_instance.finalize_config! kitchen_instance
@@ -124,7 +125,11 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform outputs are in an unexpected format" do
       before do
-        allow(driver).to receive(:retrieve_outputs).and_yield outputs: { "output_name": { "amount": "output_value" } }
+        allow(driver).to(receive(:retrieve_outputs) do |&block|
+          block.call outputs: { "output_name" => { "amount" => "output_value" } }
+
+          driver
+        end)
       end
 
       specify "should raise an action failed error indicating the unexpected format" do
@@ -139,7 +144,11 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
       before do
-        allow(driver).to receive(:retrieve_outputs).and_yield outputs: {}
+        allow(driver).to(receive(:retrieve_outputs) do |&block|
+          block.call outputs: {}
+
+          driver
+        end)
       end
 
       specify "should raise an action failed error indicating the missing output" do
@@ -154,7 +163,11 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform outputs omits the value of the :hosts_output key" do
       before do
-        allow(driver).to receive(:retrieve_outputs).and_yield outputs: { "output_name": { "value": "output value" } }
+        allow(driver).to(receive(:retrieve_outputs) do |&block|
+          block.call outputs: { "output_name" => { "value" => "output value" } }
+
+          driver
+        end)
       end
 
       specify "should raise an action failed error indicating the missing :hosts_output key" do
@@ -180,7 +193,14 @@ require "support/kitchen/terraform/configurable_examples"
           "color" => false,
           "distinct_exit" => false,
           "reporter" => ["reporter"],
-          attributes: { "attribute_name" => "output_value", "hosts" => "host", "output_name" => "output_value" },
+          attributes: {
+            "attribute_name" => "output_value",
+            "hosts" => "host",
+            "input_variable" => "input_value",
+            "output_hosts" => "host",
+            "output_name" => "output_value",
+            "output_output_name" => "output_value",
+          },
           attrs: ["attrs.yml"],
           backend: "backend",
           backend_cache: false,
@@ -215,7 +235,13 @@ require "support/kitchen/terraform/configurable_examples"
         {
           "color" => false,
           "distinct_exit" => false,
-          attributes: { "hosts" => "host", "output_name" => "output_value" },
+          attributes: {
+            "hosts" => "host",
+            "input_variable" => "input_value",
+            "output_hosts" => "host",
+            "output_name" => "output_value",
+            "output_output_name" => "output_value",
+          },
           backend: "backend",
           logger: logger,
         }
@@ -224,9 +250,11 @@ require "support/kitchen/terraform/configurable_examples"
       before do
         allow(::Inspec::Runner).to receive(:new).with(runner_options_with_hosts).and_return(runner)
         allow(::Inspec::Runner).to receive(:new).with(runner_options_without_hosts).and_return(runner)
-        allow(driver).to receive(:retrieve_outputs).and_yield(
-          outputs: { "output_name" => { "value" => "output_value" }, "hosts" => { "value" => "host" } },
-        )
+        allow(driver).to(receive(:retrieve_outputs) do |&block|
+          block.call outputs: { "output_name" => { "value" => "output_value" }, "hosts" => { "value" => "host" } }
+
+          driver
+        end)
       end
 
       context "when fail fast behaviour is enabled" do

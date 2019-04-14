@@ -8,6 +8,24 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.8.0] - 2019-04-14
+
+### Added
+
+- The verifier exposes input variables configured through the
+  `variables` attribute as InSpec profile attributes prefixed with
+  `input_`; refer to the updated
+  [Terraform Verifier documentation][terraform-verifier] for more
+  details.
+
+### Changed
+
+- The verifier exposes output variables as InSpec profile attributes
+  prefixed with `output_`, though the unprefixed variety of attributes
+  are still available for backward compatibility; refer to the updated
+  [Terraform Verifier documentation][terraform-verifier] for more
+  details.
+
 ## [4.7.0] - 2019-04-13
 
 ### Added
@@ -640,7 +658,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.7.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.0...HEAD
+[4.8.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.7.0...v4.8.0
 [4.7.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.6.0...v4.7.0
 [4.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.5.0...v4.6.0
 [4.5.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.4.0...v4.5.0

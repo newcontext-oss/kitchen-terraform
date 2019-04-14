@@ -1,2 +1,6 @@
 ---
 name: variables
+attributes:
+  - name: output_root_module_directory
+    type: string
+    required: true

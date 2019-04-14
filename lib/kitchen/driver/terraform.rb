@@ -266,19 +266,31 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     raise ::Kitchen::ActionFailed, error.message
   end
 
+  # Retrieves the Terraform input variables for a Kitchen instance provided by the configuration.
+  #
+  # @return [self]
+  # @yieldparam inputs [::Hash] the input variables.
+  def retrieve_inputs
+    yield inputs: config_variables
+
+    self
+  end
+
   # Retrieves the Terraform state outputs for a Kitchen instance by selecting the test workspace and fetching the
   # outputs.
   #
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [void]
-  # @yieldparam output [::Hash] the state output.
+  # @return [self]
+  # @yieldparam outputs [::Hash] the state output.
   def retrieve_outputs(&block)
     run_workspace_select_instance
     ::Kitchen::Terraform::Command::Output.run(
       client: config_client,
-      options: {cwd: config_root_module_directory,  live_stream: debug_logger,  timeout: config_command_timeout},
+      options: { cwd: config_root_module_directory, live_stream: debug_logger, timeout: config_command_timeout },
       &block
     )
+
+    self
   rescue ::Kitchen::Terraform::Error => error
     raise ::Kitchen::ActionFailed, error.message
   end

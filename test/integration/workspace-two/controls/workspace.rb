@@ -15,7 +15,7 @@
 # limitations under the License.
 
 control "workspace" do
-  describe attribute "workspace" do
+  describe attribute("input_workspace") do
     it { should eq "two" }
   end
 end

@@ -1,6 +1,6 @@
 ---
 name: workspace one
 attributes:
-  - name: workspace
+  - name: input_workspace
     type: string
     required: true

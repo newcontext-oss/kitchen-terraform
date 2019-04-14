@@ -55,10 +55,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       kitchen_root: kitchen_root,
       plugin_directory: plugin_directory,
       variable_files: ["/Arbitrary Directory/Variable File.tfvars"],
-      variables: {
-        string: "\\\"A String\\\"", map: "{ key = \\\"A Value\\\" }",
-        list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
-      },
+      variables: config_variables,
       verify_version: verify_version,
     }
   end
@@ -67,6 +64,14 @@ require "support/kitchen/terraform/result_in_success_matcher"
     allow(::TTY::Which).to receive(:exist?).with("client").and_return true
 
     "client"
+  end
+
+  let :config_variables do
+    {
+      string: "\\\"A String\\\"",
+      map: "{ key = \\\"A Value\\\" }",
+      list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
+    }
   end
 
   let :described_instance do
@@ -673,6 +678,22 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
   end
 
+  describe "#retrieve_inputs" do
+    subject do
+      described_class.new config
+    end
+
+    before do
+      subject.finalize_config! kitchen_instance
+    end
+
+    specify "should yield the variables config attribute" do
+      expect do |block|
+        subject.retrieve_inputs(&block)
+      end.to yield_with_args inputs: config_variables
+    end
+  end
+
   describe "#retrieve_outputs" do
     subject do
       described_class.new config
@@ -696,7 +717,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: kitchen_root,
               live_stream: debug_logger,
-              timeout: command_timeout
+              timeout: command_timeout,
             },
           ).and_raise ::Kitchen::Terraform::Error, "no outputs defined"
         end
@@ -720,7 +741,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
             options: {
               cwd: kitchen_root,
               live_stream: debug_logger,
-              timeout: command_timeout
+              timeout: command_timeout,
             },
           ).and_raise ::Kitchen::Terraform::Error, error_message
         end

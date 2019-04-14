@@ -28,9 +28,9 @@ module Kitchen
       # @param system [::Kitchen::Terraform::System] the system.
       # @raise [::Kitchen::Terraform::Error] if the fetching the value of the output fails.
       def resolve(attrs_outputs_keys:, attrs_outputs_values:, system:)
-        system.add_attrs attrs: @outputs.merge(
-          attrs_outputs_keys.lazy.map(&:to_s).zip(@outputs.fetch_values(*attrs_outputs_values)).to_h
-        )
+        system.add_attrs(attrs: @inputs.merge(@outputs.merge(
+                           attrs_outputs_keys.lazy.map(&:to_s).zip(@outputs.fetch_values(*attrs_outputs_values)).to_h
+                         )))
 
         self
       rescue ::KeyError => key_error
@@ -42,12 +42,16 @@ module Kitchen
       # #initialize prepares the instance to be used.
       #
       # @param outputs [#to_hash] the outputs of the Terraform state under test.
-      def initialize(outputs:)
-        @outputs = Hash[outputs].inject({}) do |hash, (key, value)|
-          hash.store key, value.fetch("value")
-
-          hash
-        end
+      def initialize(inputs:, outputs:)
+        @inputs = inputs.map do |key, value|
+          ["input_#{key}", value]
+        end.to_h
+        @outputs = Hash[outputs].map do |key, value|
+          [key, value.fetch("value")]
+        end.to_h
+        @outputs.merge!(@outputs.map do |key, value|
+          ["output_#{key}", value]
+        end.to_h)
       rescue ::KeyError => key_error
         raise ::Kitchen::Terraform::Error, "Preparing to resolve attrs failed\n#{key_error}"
       end

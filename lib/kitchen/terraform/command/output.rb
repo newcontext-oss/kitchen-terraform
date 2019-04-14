@@ -62,7 +62,7 @@ module ::Kitchen::Terraform::Command::Output
     # @api private
     def run_shell_out(client:, options:)
       ::Kitchen::Terraform::ShellOut.run client: client, command: "output -json", options: options do |standard_output:|
-        yield outputs: ::JSON.parse(standard_output)
+        yield outputs: ::Kitchen::Util.stringified_hash(::JSON.parse(standard_output))
       end
     end
   end
