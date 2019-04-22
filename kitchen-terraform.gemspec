@@ -41,7 +41,7 @@ require "rubygems"
   specification.add_runtime_dependency "inspec", "~> 3.0"
   specification.add_runtime_dependency "json", "~> 2.1.0"
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
-  specification.add_runtime_dependency "test-kitchen", "~> 1.23"
+  specification.add_runtime_dependency "test-kitchen", "~> 2.1"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
   specification.required_ruby_version = [">= 2.3", "< 2.7"]
