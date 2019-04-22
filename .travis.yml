@@ -68,7 +68,7 @@ jobs:
         directories:
           - ruby-2.6/vendor/bundle
     - stage: Integration Tests
-      name: Terraform 0.11.13 with Terragrunt 0.18.3 on Ubuntu
+      name: Terraform 0.11.13 on Ubuntu
       dist: trusty
       language: ruby
       rvm: 2.4.1
