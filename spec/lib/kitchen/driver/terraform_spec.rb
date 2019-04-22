@@ -678,6 +678,20 @@ require "support/kitchen/terraform/result_in_success_matcher"
     end
   end
 
+  describe "#doctor" do
+    subject do
+      described_class.new config
+    end
+
+    before do
+      subject.finalize_config! kitchen_instance
+    end
+
+    specify "should return false" do
+      expect(subject.doctor({})).to be false
+    end
+  end
+
   describe "#retrieve_inputs" do
     subject do
       described_class.new config

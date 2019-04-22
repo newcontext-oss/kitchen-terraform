@@ -265,6 +265,14 @@ module Kitchen
         raise ::Kitchen::ActionFailed, error.message
       end
 
+      # This method checks the system and configuration for common errors.
+      #
+      # @param _state [::Hash] the mutable instance state.
+      # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
+      def doctor(_state)
+        false
+      end
+
       # Retrieves the Terraform input variables for a Kitchen instance provided by the configuration.
       #
       # @return [self]

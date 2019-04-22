@@ -96,12 +96,22 @@ module Kitchen
         raise ::Kitchen::ActionFailed, error.message
       end
 
-      # doctor checks the system and configuration for common errors.
+      # This method checks the system and configuration for common errors.
       #
-      # @param _kitchen_state [::Hash] the mutable Kitchen instance state.
+      # @param _state [::Hash] the mutable instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
-      # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/verifier/base.rb#L85-L91
-      def doctor(_kitchen_state)
+      def doctor(_state)
+        if config_systems.empty?
+          logger.warn(
+            "The 'systems' attribute is empty. At least one system must be configured in order to test " \
+            "infrastructure. See " \
+            "https://www.rubydoc.info/gems/kitchen-terraform/Kitchen/Verifier/Terraform#label-systems for more " \
+            "information."
+          )
+
+          return true
+        end
+
         false
       end
 

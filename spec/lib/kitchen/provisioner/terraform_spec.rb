@@ -79,4 +79,32 @@ require "support/kitchen/terraform/configurable_examples"
       end
     end
   end
+
+  describe "#doctor" do
+    subject do
+      described_class.new config
+    end
+
+    let :kitchen_instance do
+      ::Kitchen::Instance.new(
+        driver: ::Kitchen::Driver::Base.new,
+        lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+        logger: ::Kitchen::Logger.new,
+        platform: ::Kitchen::Platform.new(name: "test-platform"),
+        provisioner: subject,
+        state_file: ::Kitchen::StateFile.new("/kitchen", "test-suite-test-platform"),
+        suite: ::Kitchen::Suite.new(name: "test-suite"),
+        transport: ::Kitchen::Transport::Base.new,
+        verifier: ::Kitchen::Verifier::Base.new,
+      )
+    end
+
+    before do
+      subject.finalize_config! kitchen_instance
+    end
+
+    specify "should return false" do
+      expect(subject.doctor({})).to be false
+    end
+  end
 end

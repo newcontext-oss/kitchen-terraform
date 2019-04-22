@@ -344,15 +344,41 @@ require "support/kitchen/terraform/configurable_examples"
 
   describe "#doctor" do
     subject do
-      described_instance
+      described_class.new config
     end
 
-    let :kitchen_state do
-      {}
+    let :kitchen_instance do
+      ::Kitchen::Instance.new(
+        driver: ::Kitchen::Driver::Base.new,
+        lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+        logger: ::Kitchen::Logger.new,
+        platform: ::Kitchen::Platform.new(name: "test-platform"),
+        provisioner: ::Kitchen::Provisioner::Base.new,
+        state_file: ::Kitchen::StateFile.new("/kitchen", "test-suite-test-platform"),
+        suite: ::Kitchen::Suite.new(name: "test-suite"),
+        transport: ::Kitchen::Transport::Base.new,
+        verifier: subject,
+      )
     end
 
-    specify "should return false" do
-      expect(subject.doctor(kitchen_state)).to be_falsey
+    before do
+      subject.finalize_config! kitchen_instance
+    end
+
+    context "when the value of the systems attribute is empty" do
+      let :config do
+        { systems: [] }
+      end
+
+      specify "should return true" do
+        expect(subject.doctor({})).to be true
+      end
+    end
+
+    context "when no issues are detected" do
+      specify "should return false" do
+        expect(subject.doctor({})).to be false
+      end
     end
   end
 

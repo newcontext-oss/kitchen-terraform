@@ -91,6 +91,13 @@ module Kitchen
         instance.driver.apply
       end
 
+      # This method checks the system and configuration for common errors.
+      #
+      # @param _state [::Hash] the mutable instance state.
+      # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
+      def doctor(_state)
+        false
+      end
     end
   end
 end
