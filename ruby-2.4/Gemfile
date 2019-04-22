@@ -5,11 +5,6 @@ ruby "~> 2.4"
 source "https://rubygems.org/" do
   gemspec path: "../"
 
-  group :backend_ssh do
-    gem "rbnacl", "~> 4.0"
-    gem "rbnacl-libsodium", "~> 1.0"
-  end
-
   group :development do
     gem "gh", git: "https://github.com/travis-ci/gh", ref: "38fb339510ff9ae67cb08c6df7698f4c393f5a44"
   end
