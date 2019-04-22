@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- `kitchen doctor` is supported; an empty `systems` value triggers a
+  warning.
+
 ## [4.8.0] - 2019-04-14
 
 ### Added
