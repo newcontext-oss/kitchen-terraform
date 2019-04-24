@@ -51,6 +51,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
       },
       client: config_client,
       color: false,
+      target: "A String",
       command_timeout: command_timeout,
       kitchen_root: kitchen_root,
       plugin_directory: plugin_directory,
@@ -286,6 +287,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
                 "-no-color " \
                 "-parallelism=10 " \
                 "-refresh=true " \
+                "-target=\"A String\" " \
                 "-var=\"string=\\\"A String\\\"\" " \
                 "-var=\"map={ key = \\\"A Value\\\" }\" " \
                 "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \

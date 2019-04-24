@@ -87,6 +87,16 @@ suites:
       systems:
         - name: default
           backend: local
+  - name: target
+    driver:
+      root_module_directory: test/terraform/target
+      target: local_file.file_1
+    verifier:
+      systems:
+        - name: target
+          backend: local
+          controls:
+            - target
   - name: variables
     driver:
       root_module_directory: test/terraform/variables

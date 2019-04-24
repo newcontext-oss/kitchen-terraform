@@ -26,6 +26,7 @@ require "kitchen/terraform/config_attribute/lock_timeout"
 require "kitchen/terraform/config_attribute/parallelism"
 require "kitchen/terraform/config_attribute/plugin_directory"
 require "kitchen/terraform/config_attribute/root_module_directory"
+require "kitchen/terraform/config_attribute/target"
 require "kitchen/terraform/config_attribute/variable_files"
 require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/config_attribute/verify_version"
@@ -166,6 +167,10 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::RootModuleDirectory}
 #
+# ==== target
+#
+# {include:Kitchen::Terraform::ConfigAttribute::Target}
+#
 # ==== variable_files
 #
 # {include:Kitchen::Terraform::ConfigAttribute::VariableFiles}
@@ -214,6 +219,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   include ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
 
   include ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
+
+  include ::Kitchen::Terraform::ConfigAttribute::Target
 
   include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
 
@@ -317,6 +324,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "#{color_flag} " \
       "#{parallelism_flag} " \
       "-refresh=true " \
+      "#{target_flag}" \
       "#{variables_flags} " \
       "#{variable_files_flags}",
       options: {
@@ -490,6 +498,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def plugin_directory_flag
     if config_plugin_directory
       "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}\" "
+    else
+      ""
+    end
+  end
+
+  def target_flag
+    if config_target
+      "-target=\"#{config_target}\" "
     else
       ""
     end
