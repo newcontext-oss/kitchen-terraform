@@ -18,21 +18,27 @@ require "kitchen"
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_schemas/boolean"
 
-# This attribute toggles fail fast behaviour when verifying systems.
-#
-# If fail fast behaviour is enabled then Kitchen will halt on the first error raised by a system during verification;
-# else errors raised by systems will be queued until all systems have attempted verification.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
-# Required:: False
-# Default:: <code>true</code>
-# Example:: <code>fail_fast: false</code>
-module ::Kitchen::Terraform::ConfigAttribute::FailFast
-  ::Kitchen::Terraform::ConfigAttribute.new(
-      attribute: :fail_fast,
-      default_value: lambda do
-        true
-      end,
-      schema: ::Kitchen::Terraform::ConfigSchemas::Boolean,
-    ).apply config_attribute: self
+module Kitchen
+  module Terraform
+    class ConfigAttribute
+      # This attribute toggles fail fast behaviour when verifying systems.
+      #
+      # If fail fast behaviour is enabled then Kitchen will halt on the first error raised by a system during
+      # verification; else errors raised by systems will be queued until all systems have attempted verification.
+      #
+      # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
+      # Required:: False
+      # Default:: <code>true</code>
+      # Example:: <code>fail_fast: false</code>
+      module FailFast
+        ::Kitchen::Terraform::ConfigAttribute.new(
+          attribute: :fail_fast,
+          default_value: lambda do
+            true
+          end,
+          schema: ::Kitchen::Terraform::ConfigSchemas::Boolean,
+        ).apply config_attribute: self
+      end
+    end
+  end
 end

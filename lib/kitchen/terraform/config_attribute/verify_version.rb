@@ -18,18 +18,25 @@ require "kitchen"
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_schemas/boolean"
 
-# This attribute toggles verification of support for the available Terraform version.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
-# Required:: False
-# Default:: +true+
-# Example:: <tt>lock: false</tt>
-module ::Kitchen::Terraform::ConfigAttribute::VerifyVersion
-  ::Kitchen::Terraform::ConfigAttribute.new(
-    attribute: :verify_version,
-    default_value: lambda do
-      true
-    end,
-    schema: ::Kitchen::Terraform::ConfigSchemas::Boolean,
-  ).apply config_attribute: self
+module Kitchen
+  module Terraform
+    class ConfigAttribute
+      # This attribute toggles verification of support for the version of the Terraform client specified by the
+      # <code>client</code> attribute.
+      #
+      # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}
+      # Required:: False
+      # Default:: </code>true</code>
+      # Example:: <code>verify_version: false</code>
+      module VerifyVersion
+        ::Kitchen::Terraform::ConfigAttribute.new(
+          attribute: :verify_version,
+          default_value: lambda do
+            true
+          end,
+          schema: ::Kitchen::Terraform::ConfigSchemas::Boolean,
+        ).apply config_attribute: self
+      end
+    end
+  end
 end

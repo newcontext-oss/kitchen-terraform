@@ -17,20 +17,25 @@
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_type/integer"
 
-# This attribute controls the number of seconds that Terraform will wait for a lock on the state to be obtained during
-# {https://www.terraform.io/docs/state/locking.html operations related to state}.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803828 Integer}
-# Required:: False
-# Default:: +0+
-# Example:: <code>lock_timeout: 10</code>
-module ::Kitchen::Terraform::ConfigAttribute::LockTimeout
-  ::Kitchen::Terraform::ConfigAttributeType::Integer
-    .apply(
-      attribute: :lock_timeout,
-      config_attribute: self,
-      default_value: lambda do
-        0
-      end,
-    )
+module Kitchen
+  module Terraform
+    class ConfigAttribute
+      # This attribute controls the number of seconds that Terraform will wait for a lock on the state to be obtained
+      # during {https://www.terraform.io/docs/state/locking.html operations related to state}.
+      #
+      # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803828 Integer}
+      # Required:: False
+      # Default:: +0+
+      # Example:: <code>lock_timeout: 10</code>
+      module LockTimeout
+        ::Kitchen::Terraform::ConfigAttributeType::Integer.apply(
+          attribute: :lock_timeout,
+          config_attribute: self,
+          default_value: lambda do
+            0
+          end,
+        )
+      end
+    end
+  end
 end

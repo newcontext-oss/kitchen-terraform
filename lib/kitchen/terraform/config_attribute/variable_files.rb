@@ -19,40 +19,46 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_schemas/array_of_strings"
 require "kitchen/terraform/file_path_config_attribute_definer"
 
-# This attribute comprises paths to
-# {https://www.terraform.io/docs/configuration/variables.html#variable-files Terraform variable files}.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
-# Required:: False
-# Example::
-#   _
-#     variable_files:
-#       - /path/to/first/variable/file
-#       - /path/to/second/variable/file
-#
-# @abstract It must be included by a plugin class in order to be used.
-module ::Kitchen::Terraform::ConfigAttribute::VariableFiles
-  # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
-  #
-  # @param plugin_class [::Kitchen::Configurable] A plugin class.
-  # @return [void]
-  def self.included(plugin_class)
-    ::Kitchen::Terraform::FilePathConfigAttributeDefiner
-      .new(
-        attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::ArrayOfStrings,
-      ).define plugin_class: plugin_class
-  end
+module Kitchen
+  module Terraform
+    class ConfigAttribute
+      # This attribute comprises paths to
+      # {https://www.terraform.io/docs/configuration/variables.html#variable-files Terraform variable files}.
+      #
+      # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760118 Sequence of scalars}
+      # Required:: False
+      # Example::
+      #   _
+      #     variable_files:
+      #       - /path/to/first/variable/file
+      #       - /path/to/second/variable/file
+      module VariableFiles
+        class << self
+          # A callback to define the configuration attribute which is invoked when this module is included in a plugin
+          # class.
+          #
+          # @param plugin_class [::Kitchen::Configurable] A plugin class.
+          # @return [void]
+          def included(plugin_class)
+            ::Kitchen::Terraform::FilePathConfigAttributeDefiner.new(
+              attribute: self,
+              schema: ::Kitchen::Terraform::ConfigSchemas::ArrayOfStrings,
+            ).define plugin_class: plugin_class
+          end
 
-  # @return [::Symbol] the symbol corresponding to this attribute.
-  def self.to_sym
-    :variable_files
-  end
+          # @return [::Symbol] the symbol corresponding to this attribute.
+          def to_sym
+            :variable_files
+          end
+        end
 
-  extend ::Kitchen::Terraform::ConfigAttributeCacher
+        extend ::Kitchen::Terraform::ConfigAttributeCacher
 
-  # @return [::Array] an empty array.
-  def config_variable_files_default_value
-    []
+        # @return [::Array] an empty array.
+        def config_variable_files_default_value
+          []
+        end
+      end
+    end
   end
 end
