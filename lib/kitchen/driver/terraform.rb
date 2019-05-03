@@ -138,6 +138,10 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::BackendConfigurations}
 #
+# ==== client
+#
+# {include:Kitchen::Terraform::ConfigAttribute::Client}
+#
 # ==== color
 #
 # {include:Kitchen::Terraform::ConfigAttribute::Color}
