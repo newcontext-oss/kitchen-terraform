@@ -19,36 +19,42 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_schemas/string"
 require "kitchen/terraform/file_path_config_attribute_definer"
 
-# This attribute contains the path to the directory which contains the root Terraform module to be tested.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
-# Required:: False
-# Default:: The {https://en.wikipedia.org/wiki/Working_directory working directory} of the Test Kitchen process.
-# Example:: <code>root_module_directory: /path/to/terraform/root/module/directory</code>
-#
-# @abstract It must be included by a plugin class in order to be used.
-module ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
-  # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
-  #
-  # @param plugin_class [::Kitchen::Configurable] A plugin class.
-  # @return [void]
-  def self.included(plugin_class)
-    ::Kitchen::Terraform::FilePathConfigAttributeDefiner
-      .new(
-        attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::String,
-      ).define plugin_class: plugin_class
-  end
+module Kitchen
+  module Terraform
+    class ConfigAttribute
+      # This attribute contains the path to the directory which contains the root Terraform module to be tested.
+      #
+      # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+      # Required:: False
+      # Default:: The {https://en.wikipedia.org/wiki/Working_directory working directory} of the Test Kitchen process.
+      # Example:: <code>root_module_directory: /path/to/terraform/root/module/directory</code>
+      module RootModuleDirectory
+        class << self
+          # A callback to define the configuration attribute which is invoked when this module is included in a plugin
+          # class.
+          #
+          # @param plugin_class [::Kitchen::Configurable] A plugin class.
+          # @return [void]
+          def included(plugin_class)
+            ::Kitchen::Terraform::FilePathConfigAttributeDefiner.new(
+              attribute: self,
+              schema: ::Kitchen::Terraform::ConfigSchemas::String,
+            ).define plugin_class: plugin_class
+          end
 
-  # @return [::Symbol] the symbol corresponding to the attribute.
-  def self.to_sym
-    :root_module_directory
-  end
+          # @return [::Symbol] the symbol corresponding to the attribute.
+          def to_sym
+            :root_module_directory
+          end
+        end
 
-  extend ::Kitchen::Terraform::ConfigAttributeCacher
+        extend ::Kitchen::Terraform::ConfigAttributeCacher
 
-  # @return [::String] the working directory of the Test Kitchen process.
-  def config_root_module_directory_default_value
-    "."
+        # @return [::String] the working directory of the Test Kitchen process.
+        def config_root_module_directory_default_value
+          "."
+        end
+      end
+    end
   end
 end

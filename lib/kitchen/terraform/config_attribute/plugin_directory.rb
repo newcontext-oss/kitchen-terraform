@@ -19,38 +19,45 @@ require "kitchen/terraform/config_attribute_cacher"
 require "kitchen/terraform/config_schemas/optional_string"
 require "kitchen/terraform/file_path_config_attribute_definer"
 
-# This attribute contains the path to the directory which contains
-# {https://www.terraform.io/docs/commands/init.html#plugin-installation customized Terraform provider plugins} to
-# install in place of the official Terraform provider plugins.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
-# Required:: False
-# Default:: There is no default value because any value will disable the normal Terraform plugin retrieval process.
-# Example:: <code>plugin_directory: /path/to/terraform/plugins</code>
-#
-# @abstract It must be included by a plugin class in order to be used.
-module ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
-  # A callback to define the configuration attribute which is invoked when this module is included in a plugin class.
-  #
-  # @param plugin_class [::Kitchen::Configurable] A plugin class.
-  # @return [void]
-  def self.included(plugin_class)
-    ::Kitchen::Terraform::FilePathConfigAttributeDefiner
-      .new(
-        attribute: self,
-        schema: ::Kitchen::Terraform::ConfigSchemas::OptionalString,
-      ).define plugin_class: plugin_class
-  end
+module Kitchen
+  module Terraform
+    class ConfigAttribute
+      # This attribute contains the path to the directory which contains
+      # {https://www.terraform.io/docs/commands/init.html#plugin-installation customized Terraform provider plugins} to
+      # install in place of the official Terraform provider plugins.
+      #
+      # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760844 Scalar}
+      # Required:: False
+      # Default:: There is no default value because any value will disable the normal Terraform plugin retrieval
+      #           process.
+      # Example:: <code>plugin_directory: /path/to/terraform/plugins</code>
+      module PluginDirectory
+        class << self
+          # A callback to define the configuration attribute which is invoked when this module is included in a plugin
+          # class.
+          #
+          # @param plugin_class [::Kitchen::Configurable] A plugin class.
+          # @return [void]
+          def included(plugin_class)
+            ::Kitchen::Terraform::FilePathConfigAttributeDefiner.new(
+              attribute: self,
+              schema: ::Kitchen::Terraform::ConfigSchemas::OptionalString,
+            ).define plugin_class: plugin_class
+          end
 
-  # @return [::Symbol] the symbol corresponding to this attribute.
-  def self.to_sym
-    :plugin_directory
-  end
+          # @return [::Symbol] the symbol corresponding to this attribute.
+          def to_sym
+            :plugin_directory
+          end
+        end
 
-  extend ::Kitchen::Terraform::ConfigAttributeCacher
+        extend ::Kitchen::Terraform::ConfigAttributeCacher
 
-  # @return [nil]
-  def config_plugin_directory_default_value
-    nil
+        # @return [nil]
+        def config_plugin_directory_default_value
+          nil
+        end
+      end
+    end
   end
 end

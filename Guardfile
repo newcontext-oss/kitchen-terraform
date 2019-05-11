@@ -18,6 +18,7 @@ group :red_green_refactor, halt_on_fail: true do
       :rspec,
       all_after_pass: true,
       all_on_start: true,
+      bundler_env: :inherit,
       cmd: "bundle exec rspec",
       failure_mode: :focus,
     ) do

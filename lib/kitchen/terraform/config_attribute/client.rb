@@ -37,8 +37,6 @@ module Kitchen
       # Example:: <code>client: /usr/local/bin/terraform</code>
       # Example:: <code>client: ./bin/terraform</code>
       # Example:: <code>client: terraform</code>
-      #
-      # @abstract It must be included by a plugin class in order to be used.
       module Client
         class << self
           def included(plugin_class)

@@ -17,22 +17,27 @@
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_type/hash_of_symbols_and_strings"
 
-# This attribute comprises {https://www.terraform.io/docs/configuration/variables.html Terraform variables}.
-#
-# Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760142 Mapping of scalars to scalars}
-# Required:: False
-# Example::
-#   _
-#     variables:
-#       image: image-1234
-#       zone: zone-5
-module ::Kitchen::Terraform::ConfigAttribute::Variables
-  ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings
-    .apply(
-      attribute: :variables,
-      config_attribute: self,
-      default_value: lambda do
-        {}
-      end,
-    )
+module Kitchen
+  module Terraform
+    class ConfigAttribute
+      # This attribute comprises {https://www.terraform.io/docs/configuration/variables.html Terraform variables}.
+      #
+      # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2760142 Mapping of scalars to scalars}
+      # Required:: False
+      # Example::
+      #   _
+      #     variables:
+      #       image: image-1234
+      #       zone: zone-5
+      module Variables
+        ::Kitchen::Terraform::ConfigAttributeType::HashOfSymbolsAndStrings.apply(
+          attribute: :variables,
+          config_attribute: self,
+          default_value: lambda do
+            {}
+          end,
+        )
+      end
+    end
+  end
 end

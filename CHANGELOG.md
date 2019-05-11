@@ -8,6 +8,14 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [4.8.1] - 2019-05-11
+
+### Fixed
+
+- Added a reference to the `client` attribute in the driver
+  documentation.
+- Corrected the attribute name in the `verify_version` example.
+
 ## [4.8.0] - 2019-04-14
 
 ### Added
@@ -658,7 +666,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.1...HEAD
+[4.8.1]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.0...v4.8.1
 [4.8.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.7.0...v4.8.0
 [4.7.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.6.0...v4.7.0
 [4.6.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.5.0...v4.6.0
