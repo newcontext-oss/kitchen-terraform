@@ -455,7 +455,7 @@ GEM
       execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.6)
+    unf_ext (0.0.7.5)
     unicode-display_width (1.6.0)
     unicode_utils (1.4.0)
     websocket (1.2.8)
@@ -504,6 +504,7 @@ DEPENDENCIES
   rspec (~> 3.4)!
   simplecov (~> 0.16.1)!
   travis (~> 1.8)!
+  unf_ext (= 0.0.7.5)!
   yard (~> 0.9)!
 
 RUBY VERSION

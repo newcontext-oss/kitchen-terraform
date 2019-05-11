@@ -31,5 +31,6 @@ source "https://rubygems.org/" do
 
   group :test do
     gem "rake", "~> 12.3"
+    gem "unf_ext", "= 0.0.7.5"
   end
 end
