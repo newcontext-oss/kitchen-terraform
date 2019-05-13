@@ -13,7 +13,6 @@
 **/.terraform/
 **/inspec.lock
 **/terraform.tfstate
-bin/
 build/
 certs/gem-private_key.pem
 coverage/
@@ -27,3 +26,4 @@ test/terraform/Plug Ins/Plug In Directory/
 tmp/
 vendor/
 /.bundle
+
