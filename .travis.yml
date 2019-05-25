@@ -7,11 +7,11 @@ notifications:
     - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
 jobs:
   include:
-    - stage: Unit Tests
-      name: Ruby 2.3 on Ubuntu
-      dist: trusty
+    - stage: Tests
+      name: Unit Tests with Ruby 2.3 on Ubuntu
+      dist: xenial
       language: ruby
-      rvm: 2.3.4
+      rvm: 2.3.8
       before_install:
         - gem install bundler --conservative --minimal-deps --no-document --version="~>
           2.0"
@@ -26,16 +26,16 @@ jobs:
       cache:
         directories:
           - ruby-2.3/vendor/bundle
-    - name: Ruby 2.4 with Code Climate on Ubuntu
-      dist: trusty
+    - name: Unit Tests with Ruby 2.5 and Code Climate on Ubuntu
+      dist: xenial
       language: ruby
-      rvm: 2.4.1
+      rvm: 2.5.3
       env:
         - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
       before_install:
         - gem install bundler --conservative --minimal-deps --no-document --version="~>
           2.0"
-        - bundle config --local gemfile ruby-2.4/Gemfile
+        - bundle config --local gemfile ruby-2.5/Gemfile
         - bundle config --local deployment true
         - bundle config --local jobs $(nproc --ignore=1)
         - bundle config --local without backend_ssh
@@ -51,11 +51,11 @@ jobs:
       after_script: "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
       cache:
         directories:
-          - ruby-2.4/vendor/bundle
-    - name: Ruby 2.6 on Ubuntu
-      dist: trusty
+          - ruby-2.5/vendor/bundle
+    - name: Unit Tests with Ruby 2.6 on Ubuntu
+      dist: xenial
       language: ruby
-      rvm: "2.6"
+      rvm: 2.6.3
       before_install:
         - gem install bundler --conservative --minimal-deps --no-document --version="~>
           2.0"
@@ -70,25 +70,24 @@ jobs:
       cache:
         directories:
           - ruby-2.6/vendor/bundle
-    - stage: Integration Tests
-      name: Terraform 0.11.14 on Ubuntu
-      dist: trusty
+    - name: Integration Tests with Terraform 0.11.4 on Ubuntu
+      dist: xenial
       language: ruby
-      rvm: 2.4.1
+      rvm: 2.5.3
       services:
         - docker
       before_install:
         - gem install bundler --conservative --minimal-deps --no-document --version="~>
           2.0"
-        - bundle config --local gemfile ruby-2.4/Gemfile
+        - bundle config --local gemfile ruby-2.5/Gemfile
         - bundle config --local deployment true
         - bundle config --local jobs $(nproc --ignore=1)
         - bundle config --local without development
       install:
         - bundle install
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip
-        - sha256sum terraform_0.11.14_linux_amd64.zip | grep 9b9a4492738c69077b079e595f5b2a9ef1bc4e8fb5596610f69a6f322a8af8dd
-        - unzip terraform_0.11.14_linux_amd64.zip -d "$HOME/bin"
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
+        - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
+        - unzip terraform_0.11.4_linux_amd64.zip -d "$HOME/bin"
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_linux_amd64.zip
         - sha256sum terraform-provider-local_1.2.2_linux_amd64.zip | grep 149e7fd6e51fe9f24a11d30b6034deefdece04f0272ced832a6803d1e2bfa37d
         - unzip terraform-provider-local_1.2.2_linux_amd64.zip -d test/terraform/Plug\
@@ -103,11 +102,12 @@ jobs:
         - bundle exec rake test:kitchen:workspaces-linux
       cache:
         directories:
-          - ruby-2.4/vendor/bundle
-    - name: Terraform 0.12.0 with Terragrunt 0.18.6 on MacOS
+          - ruby-2.5/vendor/bundle
+    - name: Integration Tests with Terraform 0.12.0 and Terragrunt 0.18.6 on MacOS
       os: osx
+      osx_image: xcode10.2
       language: ruby
-      rvm: 2.4.3
+      rvm: 2.4.5
       before_install:
         - gem install bundler --conservative --minimal-deps --no-document --version="~>
           2.0"
@@ -135,7 +135,7 @@ jobs:
       cache:
         directories:
           - ruby-2.4/vendor/bundle
-    - name: Terraform 0.11.4 on Windows
+    - name: Integration Tests with Terraform 0.11.14 on Windows
       os: windows
       language: shell
       before_install:
@@ -146,9 +146,9 @@ jobs:
         - bundle config --local without backend_ssh:development
       install:
         - bundle install
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_windows_amd64.zip
-        - sha256sum terraform_0.11.4_windows_amd64.zip | grep a762b329798b872f44df3b5db33122469a3cf1ad28c1915fee17605ec8245508
-        - unzip terraform_0.11.4_windows_amd64.zip
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_windows_amd64.zip
+        - sha256sum terraform_0.11.14_windows_amd64.zip | grep bfec66e2ad079a1fab6101c19617a82ef79357dc1b92ddca80901bb8d5312dc0
+        - unzip terraform_0.11.14_windows_amd64.zip
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_windows_amd64.zip
         - sha256sum terraform-provider-local_1.2.2_windows_amd64.zip | grep 109262576075cd1ccf77079497beab27de5051bb9ed3a07760a8400c4ef54925
         - unzip terraform-provider-local_1.2.2_windows_amd64.zip -d test/terraform/Plug\
@@ -162,9 +162,9 @@ jobs:
         directories:
           - ruby-2.5/vendor/bundle
     - stage: Deploy to RubyGems
-      dist: trusty
+      dist: xenial
       language: ruby
-      rvm: 2.4.1
+      rvm: 2.5.3
       env:
         - secure: WUn5OAyb8Y2F0myhs0ZEq5lg1yI7fvJVqFxSU/7BhoV7OTVNxJkUbCf0XNjgr8LQjAu/awVuLZfDncytbinqy/k8UOQqZpsdQXmHU+FsYnEVTcRGnI24NQzkPof3PI1cTjJAAXfYhoF04hGtNFxUHR3dMFXYJdIAfjsKxoxhTBqmjUF0eprRTy7F4YQuV3c8k3gf1ANJV4fzUspknp5Uy8IkKUbBKNgQ+WUJbE9RWRfxE3CbXmChJl1Z0Ozt3HDZ6UGIY04uGs/+W4gznnddX5vD5CdOZ5eDg0zdMgbzCyyHlZuwH3RW1qWk5ec0873/5CsUTJaLho5dwpqtgQg5dzkvr2xt3jsOWNduYnbtoSdSt+NN6khvLrrBInEUDhrmEU/OsIx0Eh8HHRVx1o44vPaFoXamBxuJc/gM16v46FuEGnvuDPImkrKx2TLIbLaatyYeSuOIO88yRjw5SEU+YpUpVCx6eBMXMF0JTNimH06qip+74GoCByc78ckYj3CC21HP8R8+6jahITrRR7Nv4pOHsSxBD/YBeSMJ/5jwAVFKY43DN0AGiH1NJGYZCJx72gdcGFfavHxjlQPbd04Sqy2WUPTkbeiAr39TJsPfHX+5feMrMLk0c+Yf9Slcf2tkItAn3nO7ZILR/W1BNUX3d7OlDHDlmf9XkvodKgRLCXk=
         - secure: BQD3quxFwkMat8deVbm4ynf1+7uG9xlVJoubCGjw26ZlcvclEC6bvBkkSKJBfnts599exjZI+03K3NC/zLj1l+frSVWtsuCN03oT1YtAiNqzodVpbOWGYhU3q67yN17KDa29AfglnVyCbB5PZAY1nt7ANJ0BWN5yDPiMky9EYRpzzh8dDixGJ7dG2T7JxvdsxZ5JRGTIk/MJQF4vcCar3ixxOUU9rv50jCk/pcHHNcHoIyiGTU4mue/YYTTfGuKtThIfheJGw5/1HnqYwKWCc3eHH0H0pN2H9p6lGLas1XqIg3Sv+98eoWNEQUjzgMdTFdbPSmi9NagxCCc9wuAKdZpdl8grTlO/2Rowd9orbGlPOhyQQ0thsqEhho0/YFxPPxU57T3pzXHm8N7+Qkyhwnko1M+ntu7e8ogVcV5s7S8Ro75ipTw9Jwn9R5k9EwGcSDggoNCScF0MbpsjH7cl54FtppitpsaMKQmVh215uPdrnhBU1epjg0dRhhuumiDQvSwqhWswFlZt/P4PZD6TM9nQpbyL94+m/+If2sn5le/IYssZRazw2qXsw/d3PNhx23BN4hLvOdRK2tHDtPSRBvC6n63SoQXeuXLbc0Ezkw3NWvN657CUJzOWvA2d1OKysggr9UlQ9CnF5ZHhy7zXy288q8fyQTO4fRwCpvwgexo=
