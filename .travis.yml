@@ -70,7 +70,7 @@ jobs:
       cache:
         directories:
           - ruby-2.6/vendor/bundle
-    - name: Integration Tests with Terraform 0.11.14 on Ubuntu
+    - name: Integration Tests with Terraform 0.11.4 on Ubuntu
       dist: xenial
       language: ruby
       rvm: 2.5.3
@@ -85,9 +85,9 @@ jobs:
         - bundle config --local without development
       install:
         - bundle install
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip
-        - sha256sum terraform_0.11.14_linux_amd64.zip | grep 9b9a4492738c69077b079e595f5b2a9ef1bc4e8fb5596610f69a6f322a8af8dd
-        - unzip terraform_0.11.14_linux_amd64.zip -d "$HOME/bin"
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
+        - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
+        - unzip terraform_0.11.4_linux_amd64.zip -d "$HOME/bin"
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_linux_amd64.zip
         - sha256sum terraform-provider-local_1.2.2_linux_amd64.zip | grep 149e7fd6e51fe9f24a11d30b6034deefdece04f0272ced832a6803d1e2bfa37d
         - unzip terraform-provider-local_1.2.2_linux_amd64.zip -d test/terraform/Plug\
@@ -135,7 +135,7 @@ jobs:
       cache:
         directories:
           - ruby-2.4/vendor/bundle
-    - name: Integration Tests with Terraform 0.11.4 on Windows
+    - name: Integration Tests with Terraform 0.11.14 on Windows
       os: windows
       language: shell
       before_install:
@@ -146,9 +146,9 @@ jobs:
         - bundle config --local without backend_ssh:development
       install:
         - bundle install
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_windows_amd64.zip
-        - sha256sum terraform_0.11.4_windows_amd64.zip | grep a762b329798b872f44df3b5db33122469a3cf1ad28c1915fee17605ec8245508
-        - unzip terraform_0.11.4_windows_amd64.zip
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_windows_amd64.zip
+        - sha256sum terraform_0.11.14_windows_amd64.zip | grep bfec66e2ad079a1fab6101c19617a82ef79357dc1b92ddca80901bb8d5312dc0
+        - unzip terraform_0.11.14_windows_amd64.zip
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_windows_amd64.zip
         - sha256sum terraform-provider-local_1.2.2_windows_amd64.zip | grep 109262576075cd1ccf77079497beab27de5051bb9ed3a07760a8400c4ef54925
         - unzip terraform-provider-local_1.2.2_windows_amd64.zip -d test/terraform/Plug\
