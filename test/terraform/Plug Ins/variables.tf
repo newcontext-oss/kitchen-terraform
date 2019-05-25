@@ -12,15 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-terraform {
-  required_version = ">= 0.11.4, < 0.13.0"
-}
-
-provider "local" {
-  version = "~> 1.2"
-}
-
-resource "local_file" "static_file" {
-  content  = "abc"
-  filename = "${path.cwd}/static_file.txt"
+variable "terragrunt" {
+  description = "Terragrunt configuration."
+  type        = "map"
 }

@@ -1,3 +1,21 @@
+# Copyright 2016 New Context Services, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+terraform {
+  required_version = ">= 0.11.4, < 0.12.0"
+}
+
 provider "docker" {
   version = "~> 1.1"
 }
@@ -37,7 +55,7 @@ resource "docker_container" "host" {
   }
 
   upload {
-    content = "${file("${path.module}/id_ed25519.pub")}"
+    content = "${file("${path.cwd}/id_ed25519.pub")}"
     file    = "/root/.ssh/authorized_keys"
   }
 }
@@ -58,7 +76,7 @@ resource "docker_container" "bastion_host" {
   }
 
   upload {
-    content = "${file("${path.module}/id_ed25519.pub")}"
+    content = "${file("${path.cwd}/id_ed25519.pub")}"
     file    = "/root/.ssh/authorized_keys"
   }
 }
