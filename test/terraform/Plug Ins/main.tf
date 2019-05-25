@@ -17,7 +17,7 @@ terraform {
 }
 
 provider "local" {
-  version = "~> 1.1"
+  version = "~> 1.2"
 }
 
 resource "local_file" "static_file" {
