@@ -7,8 +7,8 @@ notifications:
     - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
 jobs:
   include:
-    - stage: Unit Tests
-      name: Ruby 2.3 on Ubuntu
+    - stage: Tests
+      name: Unit Tests with Ruby 2.3 on Ubuntu
       dist: xenial
       language: ruby
       rvm: 2.3.8
@@ -26,7 +26,7 @@ jobs:
       cache:
         directories:
           - ruby-2.3/vendor/bundle
-    - name: Ruby 2.5 with Code Climate on Ubuntu
+    - name: Unit Tests with Ruby 2.5 and Code Climate on Ubuntu
       dist: xenial
       language: ruby
       rvm: 2.5.3
@@ -52,7 +52,7 @@ jobs:
       cache:
         directories:
           - ruby-2.5/vendor/bundle
-    - name: Ruby 2.6 on Ubuntu
+    - name: Unit Tests with Ruby 2.6 on Ubuntu
       dist: xenial
       language: ruby
       rvm: 2.6.3
@@ -70,8 +70,7 @@ jobs:
       cache:
         directories:
           - ruby-2.6/vendor/bundle
-    - stage: Integration Tests
-      name: Terraform 0.11.14 on Ubuntu
+    - name: Integration Tests with Terraform 0.11.14 on Ubuntu
       dist: xenial
       language: ruby
       rvm: 2.5.3
@@ -104,7 +103,7 @@ jobs:
       cache:
         directories:
           - ruby-2.5/vendor/bundle
-    - name: Terraform 0.12.0 with Terragrunt 0.18.6 on MacOS
+    - name: Integration Tests with Terraform 0.12.0 and Terragrunt 0.18.6 on MacOS
       os: osx
       osx_image: xcode10.2
       language: ruby
@@ -136,7 +135,7 @@ jobs:
       cache:
         directories:
           - ruby-2.4/vendor/bundle
-    - name: Terraform 0.11.4 on Windows
+    - name: Integration Tests with Terraform 0.11.4 on Windows
       os: windows
       language: shell
       before_install:
