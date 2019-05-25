@@ -36,15 +36,14 @@ require "rubygems"
   specification.add_development_dependency "simplecov", "~> 0.16.1"
   specification.add_development_dependency "travis", "~> 1.8"
   specification.add_development_dependency "yard", "~> 0.9"
-  specification.add_runtime_dependency "dry-types", "~> 0.14.0"
-  specification.add_runtime_dependency "dry-validation", "= 0.13.0"
   specification.add_runtime_dependency "inspec", "~> 3.0"
+  specification.add_runtime_dependency "dry-validation", "~> 0.13"
   specification.add_runtime_dependency "json", "~> 2.1.0"
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
   specification.add_runtime_dependency "test-kitchen", "~> 1.23"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
-  specification.required_ruby_version = [">= 2.3", "< 2.7"]
+  specification.required_ruby_version = [">= 2.4", "< 2.7"]
   specification.requirements = ["Terraform >= v0.11.4, < v0.13.0"]
   specification.signing_key = "certs/gem-private_key.pem" if $PROGRAM_NAME =~ /gem\z/
 end

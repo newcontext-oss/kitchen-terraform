@@ -49,7 +49,7 @@ Installation instructions can be found in the
 
 Kitchen-Terraform aims to support all versions of Ruby that are in
 ["normal" or "security" maintenance][ruby-branches], which is currently
-the interval of `>= 2.3, <= 2.6`.
+the interval of `>= 2.4, < 2.7`.
 
 [rbenv] can be used to manage versions of Ruby on the system.
 

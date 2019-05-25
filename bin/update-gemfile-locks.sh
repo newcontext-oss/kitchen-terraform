@@ -3,7 +3,7 @@
 set -e
 source /usr/local/share/chruby/chruby.sh
 set +x
-for RUBY in ruby-2.6 ruby-2.5 ruby-2.4 ruby-2.3
+for RUBY in ruby-2.6 ruby-2.5 ruby-2.4
 do
   chruby "$RUBY"
   ruby --version
@@ -16,4 +16,3 @@ do
   fi
   set +x
 done
-
