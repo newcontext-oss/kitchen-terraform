@@ -8,11 +8,13 @@ do
   chruby "$RUBY"
   ruby --version
   set -x
+  export BUNDLE_GEMFILE="$RUBY"/Gemfile
   if [ -e "$RUBY"/Gemfile.lock ]
   then
-    bundle update --gemfile "$RUBY"/Gemfile
+    bundle update
+    bundle clean
   else
-    bundle install --gemfile "$RUBY"/Gemfile
+    bundle install
   fi
   set +x
 done
