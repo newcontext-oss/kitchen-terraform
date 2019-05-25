@@ -9,7 +9,7 @@ jobs:
   include:
     - stage: Unit Tests
       name: Ruby 2.3 on Ubuntu
-      dist: trusty
+      dist: xenial
       language: ruby
       rvm: 2.3.4
       before_install:
@@ -26,16 +26,16 @@ jobs:
       cache:
         directories:
           - ruby-2.3/vendor/bundle
-    - name: Ruby 2.4 with Code Climate on Ubuntu
-      dist: trusty
+    - name: Ruby 2.5 with Code Climate on Ubuntu
+      dist: xenial
       language: ruby
-      rvm: 2.4.1
+      rvm: 2.5.3
       env:
         - CC_TEST_REPORTER_ID=7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
       before_install:
         - gem install bundler --conservative --minimal-deps --no-document --version="~>
           2.0"
-        - bundle config --local gemfile ruby-2.4/Gemfile
+        - bundle config --local gemfile ruby-2.5/Gemfile
         - bundle config --local deployment true
         - bundle config --local jobs $(nproc --ignore=1)
         - bundle config --local without backend_ssh
@@ -51,9 +51,9 @@ jobs:
       after_script: "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
       cache:
         directories:
-          - ruby-2.4/vendor/bundle
+          - ruby-2.5/vendor/bundle
     - name: Ruby 2.6 on Ubuntu
-      dist: trusty
+      dist: xenial
       language: ruby
       rvm: "2.6"
       before_install:
@@ -72,15 +72,15 @@ jobs:
           - ruby-2.6/vendor/bundle
     - stage: Integration Tests
       name: Terraform 0.11.14 on Ubuntu
-      dist: trusty
+      dist: xenial
       language: ruby
-      rvm: 2.4.1
+      rvm: 2.5.3
       services:
         - docker
       before_install:
         - gem install bundler --conservative --minimal-deps --no-document --version="~>
           2.0"
-        - bundle config --local gemfile ruby-2.4/Gemfile
+        - bundle config --local gemfile ruby-2.5/Gemfile
         - bundle config --local deployment true
         - bundle config --local jobs $(nproc --ignore=1)
         - bundle config --local without development
@@ -103,7 +103,7 @@ jobs:
         - bundle exec rake test:kitchen:workspaces-linux
       cache:
         directories:
-          - ruby-2.4/vendor/bundle
+          - ruby-2.5/vendor/bundle
     - name: Terraform 0.12.0 with Terragrunt 0.18.6 on MacOS
       os: osx
       language: ruby
@@ -162,9 +162,9 @@ jobs:
         directories:
           - ruby-2.5/vendor/bundle
     - stage: Deploy to RubyGems
-      dist: trusty
+      dist: xenial
       language: ruby
-      rvm: 2.4.1
+      rvm: 2.5.3
       env:
         - secure: WUn5OAyb8Y2F0myhs0ZEq5lg1yI7fvJVqFxSU/7BhoV7OTVNxJkUbCf0XNjgr8LQjAu/awVuLZfDncytbinqy/k8UOQqZpsdQXmHU+FsYnEVTcRGnI24NQzkPof3PI1cTjJAAXfYhoF04hGtNFxUHR3dMFXYJdIAfjsKxoxhTBqmjUF0eprRTy7F4YQuV3c8k3gf1ANJV4fzUspknp5Uy8IkKUbBKNgQ+WUJbE9RWRfxE3CbXmChJl1Z0Ozt3HDZ6UGIY04uGs/+W4gznnddX5vD5CdOZ5eDg0zdMgbzCyyHlZuwH3RW1qWk5ec0873/5CsUTJaLho5dwpqtgQg5dzkvr2xt3jsOWNduYnbtoSdSt+NN6khvLrrBInEUDhrmEU/OsIx0Eh8HHRVx1o44vPaFoXamBxuJc/gM16v46FuEGnvuDPImkrKx2TLIbLaatyYeSuOIO88yRjw5SEU+YpUpVCx6eBMXMF0JTNimH06qip+74GoCByc78ckYj3CC21HP8R8+6jahITrRR7Nv4pOHsSxBD/YBeSMJ/5jwAVFKY43DN0AGiH1NJGYZCJx72gdcGFfavHxjlQPbd04Sqy2WUPTkbeiAr39TJsPfHX+5feMrMLk0c+Yf9Slcf2tkItAn3nO7ZILR/W1BNUX3d7OlDHDlmf9XkvodKgRLCXk=
         - secure: BQD3quxFwkMat8deVbm4ynf1+7uG9xlVJoubCGjw26ZlcvclEC6bvBkkSKJBfnts599exjZI+03K3NC/zLj1l+frSVWtsuCN03oT1YtAiNqzodVpbOWGYhU3q67yN17KDa29AfglnVyCbB5PZAY1nt7ANJ0BWN5yDPiMky9EYRpzzh8dDixGJ7dG2T7JxvdsxZ5JRGTIk/MJQF4vcCar3ixxOUU9rv50jCk/pcHHNcHoIyiGTU4mue/YYTTfGuKtThIfheJGw5/1HnqYwKWCc3eHH0H0pN2H9p6lGLas1XqIg3Sv+98eoWNEQUjzgMdTFdbPSmi9NagxCCc9wuAKdZpdl8grTlO/2Rowd9orbGlPOhyQQ0thsqEhho0/YFxPPxU57T3pzXHm8N7+Qkyhwnko1M+ntu7e8ogVcV5s7S8Ro75ipTw9Jwn9R5k9EwGcSDggoNCScF0MbpsjH7cl54FtppitpsaMKQmVh215uPdrnhBU1epjg0dRhhuumiDQvSwqhWswFlZt/P4PZD6TM9nQpbyL94+m/+If2sn5le/IYssZRazw2qXsw/d3PNhx23BN4hLvOdRK2tHDtPSRBvC6n63SoQXeuXLbc0Ezkw3NWvN657CUJzOWvA2d1OKysggr9UlQ9CnF5ZHhy7zXy288q8fyQTO4fRwCpvwgexo=
