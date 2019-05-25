@@ -22,5 +22,5 @@ provider "local" {
 
 resource "local_file" "static_file" {
   content  = "abc"
-  filename = "${path.module}/static_file.txt"
+  filename = "${path.cwd}/static_file.txt"
 }
