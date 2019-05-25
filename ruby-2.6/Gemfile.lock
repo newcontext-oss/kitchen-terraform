@@ -15,10 +15,13 @@ PATH
   remote: ..
   specs:
     kitchen-terraform (4.9.0)
+      bcrypt_pbkdf (~> 1.0)
       dry-validation (~> 0.13)
       inspec (~> 3.0)
       json (~> 2.1.0)
       mixlib-shellout (~> 2.2)
+      rbnacl (~> 4.0)
+      rbnacl-libsodium (~> 1.0)
       test-kitchen (~> 1.23)
       tty-which (~> 0.4.0)
 
@@ -483,7 +486,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bcrypt_pbkdf (~> 1.0)!
   gh!
   guard (~> 2.14)!
   guard-bundler (~> 2.1)!
@@ -499,8 +501,6 @@ DEPENDENCIES
   pry (~> 0.10)!
   pry-coolline (~> 0.2)!
   rake (~> 12.3)!
-  rbnacl (~> 4.0)!
-  rbnacl-libsodium (~> 1.0)!
   rspec (~> 3.4)!
   simplecov (~> 0.16.1)!
   travis (~> 1.8)!
