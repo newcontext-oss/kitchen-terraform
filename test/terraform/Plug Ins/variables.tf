@@ -16,7 +16,3 @@ variable "terragrunt" {
   description = "Terragrunt configuration."
   type        = "map"
 }
-
-variable "workspace" {
-  description = "The name of the workspace."
-}
