@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen/terraform/command/version"
+require "kitchen/terraform/error"
 require "kitchen/terraform/verify_version"
 
 ::RSpec.describe ::Kitchen::Terraform::VerifyVersion do
@@ -23,7 +24,10 @@ require "kitchen/terraform/verify_version"
       specify "should result in failure with a message which provides a remedy for the lack of support" do
         expect do
           described_class.call
-        end.to result_in_failure.with_message "#{version} is not supported; install Terraform ~> v0.11.4"
+        end.to raise_error(
+          ::Kitchen::Terraform::Error,
+          "#{version} is not supported; supported versions are in the range of >= v0.11.4, < v0.13.0"
+        )
       end
     end
 
@@ -60,6 +64,14 @@ require "kitchen/terraform/verify_version"
     context "when the version is 0.12.0" do
       let :version do
         "Terraform v0.12.0"
+      end
+
+      it_behaves_like "the version is supported"
+    end
+
+    context "when the version is 0.13.0" do
+      let :version do
+        "Terraform v0.13.0"
       end
 
       it_behaves_like "the version is unsupported"

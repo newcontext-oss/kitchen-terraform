@@ -30,8 +30,11 @@ module ::Kitchen::Terraform::VerifyVersion
     # @return [void]
     def call
       ::Kitchen::Terraform::Command::Version.run do |version:|
-        if !::Gem::Requirement.new(">= 0.11.4", "< 0.12.0").satisfied_by? version
-          raise ::Kitchen::Terraform::Error, "Terraform v#{version} is not supported; install Terraform ~> v0.11.4"
+        if !::Gem::Requirement.new(">= 0.11.4", "< 0.13.0").satisfied_by? version
+          raise(
+            ::Kitchen::Terraform::Error,
+            "Terraform v#{version} is not supported; supported versions are in the range of >= v0.11.4, < v0.13.0"
+          )
         end
       end
     end
