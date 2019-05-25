@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry-validation"
+require "dry/validation"
 require "kitchen/terraform/config_schemas"
 
 # A validation schema for a configuration attribute which is a boolean.
