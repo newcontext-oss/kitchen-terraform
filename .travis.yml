@@ -11,7 +11,7 @@ jobs:
       name: Ruby 2.3 on Ubuntu
       dist: xenial
       language: ruby
-      rvm: 2.3.4
+      rvm: 2.3.8
       before_install:
         - gem install bundler --conservative --minimal-deps --no-document --version="~>
           2.0"
