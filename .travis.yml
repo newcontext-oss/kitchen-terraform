@@ -89,9 +89,9 @@ jobs:
         - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip
         - sha256sum terraform_0.11.14_linux_amd64.zip | grep 9b9a4492738c69077b079e595f5b2a9ef1bc4e8fb5596610f69a6f322a8af8dd
         - unzip terraform_0.11.14_linux_amd64.zip -d "$HOME/bin"
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_linux_amd64.zip
-        - sha256sum terraform-provider-local_1.2.0_linux_amd64.zip | grep e8bd3d1730ce34aa93dbba837740110a3df190c862e78024d1e3b36bd3de3b21
-        - unzip terraform-provider-local_1.2.0_linux_amd64.zip -d test/terraform/Plug\
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_linux_amd64.zip
+        - sha256sum terraform-provider-local_1.2.2_linux_amd64.zip | grep 149e7fd6e51fe9f24a11d30b6034deefdece04f0272ced832a6803d1e2bfa37d
+        - unzip terraform-provider-local_1.2.2_linux_amd64.zip -d test/terraform/Plug\
           Ins/Plug\ In\ Directory
       before_script:
         - chmod go-rw test/terraform/backend-ssh/id_ed25519
@@ -123,9 +123,9 @@ jobs:
         - curl --location --remote-name --silent https://github.com/gruntwork-io/terragrunt/releases/download/v0.18.6/terragrunt_darwin_amd64
         - shasum -a 256 terragrunt_darwin_amd64 | grep 234327294a07c312e7bc279ea749a653218c37d2d0b51c5cf2076fcf82dc298a
         - chmod +x terragrunt_darwin_amd64
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_darwin_amd64.zip
-        - shasum -a 256 terraform-provider-local_1.2.0_darwin_amd64.zip | grep 1781aeca782710861ff3f167e14919b30be91ddd038e72fea029f3d9298843e5
-        - unzip terraform-provider-local_1.2.0_darwin_amd64.zip -d test/terraform/Plug\
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_darwin_amd64.zip
+        - shasum -a 256 terraform-provider-local_1.2.2_darwin_amd64.zip | grep 2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
+        - unzip terraform-provider-local_1.2.2_darwin_amd64.zip -d test/terraform/Plug\
           Ins/Plug\ In\ Directory
       script:
         - bundle exec rake test:kitchen:attributes-osx
@@ -149,9 +149,9 @@ jobs:
         - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_windows_amd64.zip
         - sha256sum terraform_0.11.4_windows_amd64.zip | grep a762b329798b872f44df3b5db33122469a3cf1ad28c1915fee17605ec8245508
         - unzip terraform_0.11.4_windows_amd64.zip
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.0/terraform-provider-local_1.2.0_windows_amd64.zip
-        - sha256sum terraform-provider-local_1.2.0_windows_amd64.zip | grep 3b31fd13626d7fe095862eecaf311c81d73789512a9450f4bd204c10d72b4b84
-        - unzip terraform-provider-local_1.2.0_windows_amd64.zip -d test/terraform/Plug\
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_windows_amd64.zip
+        - sha256sum terraform-provider-local_1.2.2_windows_amd64.zip | grep 109262576075cd1ccf77079497beab27de5051bb9ed3a07760a8400c4ef54925
+        - unzip terraform-provider-local_1.2.2_windows_amd64.zip -d test/terraform/Plug\
           Ins/Plug\ In\ Directory
       script:
         - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-windows'"
