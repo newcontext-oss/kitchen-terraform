@@ -8,6 +8,13 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Support for InSpec v4: this version of InSpce prioritizes profile
+  attributes configured through `systems.x.attrs_outputs` and Terraform
+  output associations over profile attributes configured through files
+  specified with `systems.x.attrs`.
+
 ## [4.9.0] - 2019-05-27
 
 ### Added
