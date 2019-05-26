@@ -1,8 +1,6 @@
 ---
 name: attributes
 attributes:
-  # first_output is not listed here because it is accessed using a deprecated API which does not require declaring the
-  # attribute
   - name: input_passthrough
     type: string
     required: true
@@ -15,9 +13,14 @@ attributes:
   - name: output_third_output
     type: string
     required: true
+  - name: first_output
+    type: string
   - name: second_output
     type: string
     required: true
   - name: third_output
+    type: string
+    required: true
+  - name: undefined_output
     type: string
     required: true
