@@ -1,25 +1,27 @@
 # frozen_string_literal: true
 
-static_terraform_output = attribute(
-  "static_terraform_output",
-  description: "The Terraform configuration under test must define an " \
-  "equivalently named output",
-)
-
-customized_inspec_attribute = attribute(
-  "customized_inspec_attribute",
-  description: "The Test Kitchen configuration must map this attribute to the " \
-  "'static_terraform_output' output",
-)
+# Copyright 2016 New Context Services, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 control "inspec_attributes" do
   desc "A demonstration of how InSpec attributes are mapped to Terraform outputs"
 
-  describe static_terraform_output do
+  describe attribute("static_terraform_output") do
     it { should eq "static terraform output" }
   end
 
-  describe customized_inspec_attribute do
+  describe attribute("customized_inspec_attribute") do
     it { should eq "static terraform output" }
   end
 end

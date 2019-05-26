@@ -260,6 +260,27 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">name</span><span class="pi">:</span> <span class="s">extensive_suite</span>
 <span class="na">title</span><span class="pi">:</span> <span class="s">Extensive Kitchen-Terraform</span>
 <span class="na">version</span><span class="pi">:</span> <span class="s">0.1.0</span>
+<span class="na">attributes</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">static_terraform_output</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">The Terraform configuration under test must define an equivalently named output</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">customized_inspec_attribute</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">The Test Kitchen configuration must map this attribute to the 'static_terraform_output' output</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">instances_ami_operating_system</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">The Terraform configuration under test must define the equivalently named output</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">reachable_other_host_ip_address</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">The Terraform configuration under test must define the equivalently named output</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">terraform_state</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+    <span class="na">required</span><span class="pi">:</span> <span class="no">true</span>
+    <span class="na">description</span><span class="pi">:</span> <span class="s">The Terraform configuration under test must define the equivalently named output</span>
 
 </code></pre></div>          <br><br>
           Populate the InSpec attributes control,
@@ -272,26 +293,28 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">static_terraform_output</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
-  <span class="s2">"static_terraform_output"</span><span class="p">,</span>
-  <span class="ss">description: </span><span class="s2">"The Terraform configuration under test must define an "</span> <span class="p">\</span>
-  <span class="s2">"equivalently named output"</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">customized_inspec_attribute</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
-  <span class="s2">"customized_inspec_attribute"</span><span class="p">,</span>
-  <span class="ss">description: </span><span class="s2">"The Test Kitchen configuration must map this attribute to the "</span> <span class="p">\</span>
-  <span class="s2">"'static_terraform_output' output"</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1"># Copyright 2016 New Context Services, Inc.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
 
 <span class="n">control</span> <span class="s2">"inspec_attributes"</span> <span class="k">do</span>
   <span class="n">desc</span> <span class="s2">"A demonstration of how InSpec attributes are mapped to Terraform outputs"</span>
 
-  <span class="n">describe</span> <span class="n">static_terraform_output</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="n">attribute</span><span class="p">(</span><span class="s2">"static_terraform_output"</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">eq</span> <span class="s2">"static terraform output"</span> <span class="p">}</span>
   <span class="k">end</span>
 
-  <span class="n">describe</span> <span class="n">customized_inspec_attribute</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="n">attribute</span><span class="p">(</span><span class="s2">"customized_inspec_attribute"</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">eq</span> <span class="s2">"static terraform output"</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -307,17 +330,25 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">instances_ami_operating_system_name</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
-  <span class="s2">"instances_ami_operating_system_name"</span><span class="p">,</span>
-  <span class="ss">description: </span><span class="s2">"The Terraform configuration under test must define the "</span> <span class="p">\</span>
-  <span class="s2">"equivalently named output"</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1"># Copyright 2016 New Context Services, Inc.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
 
 <span class="n">control</span> <span class="s2">"operating_system"</span> <span class="k">do</span>
   <span class="n">desc</span> <span class="s2">"Verifies the name of the operating system on the targeted host"</span>
 
   <span class="n">describe</span> <span class="n">os</span><span class="p">.</span><span class="nf">name</span> <span class="k">do</span>
-    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">eq</span> <span class="n">instances_ami_operating_system_name</span> <span class="p">}</span>
+    <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">eq</span> <span class="n">attribute</span><span class="p">(</span><span class="s2">"instances_ami_operating_system_name"</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
@@ -332,16 +363,24 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">reachable_other_host_ip_address</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
-  <span class="s2">"reachable_other_host_ip_address"</span><span class="p">,</span>
-  <span class="ss">description: </span><span class="s2">"The Terraform configuration under test must define the "</span> <span class="p">\</span>
-  <span class="s2">"equivalently named output"</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1"># Copyright 2016 New Context Services, Inc.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
 
 <span class="n">control</span> <span class="s2">"reachable_other_host"</span> <span class="k">do</span>
   <span class="n">desc</span> <span class="s2">"Verifies that the other host is reachable from the current host"</span>
 
-  <span class="n">describe</span> <span class="n">host</span> <span class="n">reachable_other_host_ip_address</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="n">host</span> <span class="n">attribute</span><span class="p">(</span><span class="s2">"reachable_other_host_ip_address"</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">be_reachable</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -357,16 +396,24 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
           , to match the following example.
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">terraform_state</span> <span class="o">=</span> <span class="n">attribute</span><span class="p">(</span>
-  <span class="s2">"terraform_state"</span><span class="p">,</span>
-  <span class="ss">description: </span><span class="s2">"The Terraform configuration under test must define the "</span> <span class="p">\</span>
-  <span class="s2">"equivalently named output"</span><span class="p">,</span>
-<span class="p">).</span><span class="nf">chomp</span>
+<span class="c1"># Copyright 2016 New Context Services, Inc.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the "License");</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#     http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
 
 <span class="n">control</span> <span class="s2">"state_file"</span> <span class="k">do</span>
   <span class="n">desc</span> <span class="s2">"Verifies that the Terraform state file can be used in InSpec controls"</span>
 
-  <span class="n">describe</span> <span class="n">json</span><span class="p">(</span><span class="n">terraform_state</span><span class="p">).</span><span class="nf">terraform_version</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="n">json</span><span class="p">(</span><span class="n">attribute</span><span class="p">(</span><span class="s2">"terraform_state"</span><span class="p">).</span><span class="nf">chomp</span><span class="p">).</span><span class="nf">terraform_version</span> <span class="k">do</span>
     <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">match</span> <span class="sr">/\d+\.\d+\.\d+/</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>
