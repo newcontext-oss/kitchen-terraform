@@ -126,6 +126,7 @@ module Kitchen
 
       def initialize(configuration = {})
         init_config configuration
+        @inspec_options_mapper = ::Kitchen::Terraform::InSpecOptionsMapper.new
         @error_messages = []
         @inputs = {}
         @outputs = {}
@@ -144,8 +145,7 @@ module Kitchen
       end
 
       def system_inspec_options(system:)
-        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system)
-          .map(options: { "color" => config_color, "distinct_exit" => false })
+        @inspec_options_mapper.map(options: { "color" => config_color, "distinct_exit" => false }, system: system)
       end
 
       def verify(system:)
