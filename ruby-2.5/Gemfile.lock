@@ -14,7 +14,7 @@ GIT
 PATH
   remote: ..
   specs:
-    kitchen-terraform (4.8.1)
+    kitchen-terraform (4.9.0)
       dry-types (~> 0.14.0)
       dry-validation (= 0.13.0)
       inspec (~> 3.0)
@@ -319,7 +319,7 @@ GEM
       method_source (~> 0.9.0)
     pry-coolline (0.2.5)
       coolline (~> 0.5)
-    public_suffix (3.0.3)
+    public_suffix (3.1.0)
     pusher-client (0.6.2)
       json
       websocket (~> 1.0)
