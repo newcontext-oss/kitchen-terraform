@@ -84,6 +84,7 @@ jobs:
         - bundle config --local jobs $(nproc --ignore=1)
         - bundle config --local without development
       install:
+        - sudo apt-get --yes install libsodium18
         - bundle install
         - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
         - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
