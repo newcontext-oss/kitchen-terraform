@@ -21,7 +21,6 @@ PATH
       json (~> 2.1.0)
       mixlib-shellout (~> 2.2)
       rbnacl (~> 4.0)
-      rbnacl-libsodium (~> 1.0)
       test-kitchen (~> 1.23)
       tty-which (~> 0.4.0)
 
@@ -387,8 +386,6 @@ GEM
       ffi (~> 1.0)
     rbnacl (4.0.2)
       ffi
-    rbnacl-libsodium (1.0.16)
-      rbnacl (>= 3.0.1)
     representable (3.0.4)
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
