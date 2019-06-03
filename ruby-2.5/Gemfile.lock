@@ -520,7 +520,7 @@ GEM
       pastel (~> 0.7.2)
       strings (~> 0.1.0)
       tty-screen (~> 0.6.4)
-    tty-which (0.4.0)
+    tty-which (0.4.1)
     typhoeus (0.8.0)
       ethon (>= 0.8.0)
     tzinfo (1.2.5)
