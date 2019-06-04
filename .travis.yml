@@ -142,6 +142,7 @@ jobs:
         - bundle config --local gemfile ruby-2.5/Gemfile
         - bundle config --local jobs $(nproc --ignore=1)
         - bundle config --local without development
+        - bundle config --local force_ruby_platform true
       install:
         - bundle install
         - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_windows_amd64.zip
