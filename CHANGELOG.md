@@ -8,6 +8,16 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [5.0.0] - 2019-06-06
+
+### Changed
+
+- The supported version of InSpec is 4. This version changes the
+  priority of profile attributes configurations:
+  1. `systems.x.attrs_outputs`
+  1. the default association of attributes to Terraform outputs
+  1. `systems.x.attrs`
+
 ## [4.9.0] - 2019-05-27
 
 ### Added
@@ -672,7 +682,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v4.9.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.0.0...HEAD
+[5.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.9.0...v5.0.0
 [4.9.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.1...v4.9.0
 [4.8.1]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.0...v4.8.1
 [4.8.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.7.0...v4.8.0

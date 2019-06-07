@@ -26,12 +26,6 @@ suites:
           backend: local
           controls:
             - default
-        - name: attrs
-          backend: local
-          attrs:
-            - test/integration/attributes/Attribute File.yml
-          controls:
-            - attrs
         - name: attrs_outputs
           backend: local
           attrs_outputs:

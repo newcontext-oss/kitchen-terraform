@@ -15,7 +15,11 @@
 # limitations under the License.
 
 control "workspace" do
-  describe attribute("input_workspace") do
+  describe "attribute(\"input_workspace\")" do
+    subject do
+      attribute("input_workspace")
+    end
+
     it { should eq "one" }
   end
 end

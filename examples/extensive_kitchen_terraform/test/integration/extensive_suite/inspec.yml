@@ -1,3 +1,24 @@
 name: extensive_suite
 title: Extensive Kitchen-Terraform
 version: 0.1.0
+attributes:
+  - name: static_terraform_output
+    type: string
+    required: true
+    description: The Terraform configuration under test must define an equivalently named output
+  - name: customized_inspec_attribute
+    type: string
+    required: true
+    description: The Test Kitchen configuration must map this attribute to the 'static_terraform_output' output
+  - name: instances_ami_operating_system
+    type: string
+    required: true
+    description: The Terraform configuration under test must define the equivalently named output
+  - name: reachable_other_host_ip_address
+    type: string
+    required: true
+    description: The Terraform configuration under test must define the equivalently named output
+  - name: terraform_state
+    type: string
+    required: true
+    description: The Terraform configuration under test must define the equivalently named output

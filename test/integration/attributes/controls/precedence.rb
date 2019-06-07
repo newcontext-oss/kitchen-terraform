@@ -1,41 +1,84 @@
 # frozen_string_literal: true
 
-# NOTE: this syntax should be valid until inspec v4.0.0
-first_output = attribute("first_output", {})
-second_output = attribute("second_output")
+# Copyright 2016 New Context Services, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 control "precedence" do
   title "precedence"
   desc "Tests to validate the precedence of overriding system attributes."
 
-  describe attribute("output_first_output") do
+  describe "attribute(\"output_first_output\")" do
+    subject do
+      attribute("output_first_output")
+    end
+
     it { should eq "First Output" }
-    it { should_not eq first_output }
   end
 
-  describe first_output do
+  describe "attribute(\"first_output\")" do
+    subject do
+      attribute("first_output")
+    end
+
+    it { should eq "Second Output" }
+  end
+
+  describe "attribute(\"output_second_output\")" do
+    subject do
+      attribute("output_second_output")
+    end
+
+    it { should eq "Second Output" }
+  end
+
+  describe "attribute(\"second_output\")" do
+    subject do
+      attribute("second_output")
+    end
+
+    it { should eq "Third Output" }
+  end
+
+  describe "attribute(\"output_third_output\")" do
+    subject do
+      attribute("output_third_output")
+    end
+
+    it { should eq "First Output" }
+  end
+
+  describe "attribute(\"third_output\")" do
+    subject do
+      attribute("third_output")
+    end
+
+    it { should eq "Third Output" }
+  end
+
+  describe "attribute(\"undefined_output\")" do
+    subject do
+      attribute("undefined_output")
+    end
+
     it { should eq "From Attributes File" }
   end
 
-  describe attribute("output_second_output") do
-    it { should eq "Second Output" }
-    it { should_not eq second_output }
-  end
+  describe "attribute(\"input_passthrough\")" do
+    subject do
+      attribute("input_passthrough")
+    end
 
-  describe second_output do
-    it { should eq "Third Output" }
-  end
-
-  describe attribute("output_third_output") do
-    it { should eq "First Output" }
-    it { should_not eq attribute("third_output") }
-  end
-
-  describe attribute("third_output") do
-    it { should eq "Third Output" }
-  end
-
-  describe attribute("input_passthrough") do
     it { should eq "value" }
   end
 end

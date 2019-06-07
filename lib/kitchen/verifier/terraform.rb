@@ -79,6 +79,8 @@ module Kitchen
       include ::Kitchen::Terraform::Configurable
       @api_version = 2
 
+      attr_reader :inputs, :outputs
+
       # The verifier enumerates through each host of each system and verifies the associated InSpec controls.
       #
       # @example
@@ -89,8 +91,8 @@ module Kitchen
       def call(_kitchen_state)
         load_variables
         verify_systems
-        if !@error_messages.empty?
-          raise ::Kitchen::ActionFailed, @error_messages.join("\n\n")
+        if !error_messages.empty?
+          raise ::Kitchen::ActionFailed, error_messages.join("\n\n")
         end
       rescue ::Kitchen::Terraform::Error => error
         raise ::Kitchen::ActionFailed, error.message
@@ -107,28 +109,32 @@ module Kitchen
 
       private
 
+      attr_accessor :inspec_options_mapper, :error_messages
+      attr_writer :inputs, :outputs
+
       def handle_error(message:)
         if config_fail_fast
           raise ::Kitchen::Terraform::Error, message
         else
           logger.error message
-          @error_messages.push message
+          error_messages.push message
         end
       end
 
       def load_variables
         instance.driver.retrieve_outputs do |outputs:|
-          @outputs.replace outputs
+          self.outputs.replace outputs
         end.retrieve_inputs do |inputs:|
-          @inputs.replace inputs
+          self.inputs.replace inputs
         end
       end
 
       def initialize(configuration = {})
         init_config configuration
-        @error_messages = []
-        @inputs = {}
-        @outputs = {}
+        self.inspec_options_mapper = ::Kitchen::Terraform::InSpecOptionsMapper.new
+        self.error_messages = []
+        self.inputs = {}
+        self.outputs = {}
       end
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
@@ -144,15 +150,14 @@ module Kitchen
       end
 
       def system_inspec_options(system:)
-        ::Kitchen::Terraform::InSpecOptionsMapper.new(system: system)
-          .map(options: { "color" => config_color, "distinct_exit" => false })
+        inspec_options_mapper.map(options: { "color" => config_color, "distinct_exit" => false }, system: system)
       end
 
       def verify(system:)
         ::Kitchen::Terraform::System.new(
           mapping: { profile_locations: [::File.join(config.fetch(:test_base_path), instance.suite.name)] }
             .merge(system),
-        ).verify(inputs: @inputs, inspec_options: system_inspec_options(system: system), outputs: @outputs)
+        ).verify(inputs: inputs, inspec_options: system_inspec_options(system: system), outputs: outputs)
       rescue => error
         handle_error message: error.message
       end

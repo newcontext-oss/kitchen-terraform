@@ -3,17 +3,18 @@
 set -e
 source /usr/local/share/chruby/chruby.sh
 set +x
-for RUBY in ruby-2.6 ruby-2.5 ruby-2.4 ruby-2.3
+for RUBY in ruby-2.6 ruby-2.5 ruby-2.4
 do
   chruby "$RUBY"
   ruby --version
   set -x
+  export BUNDLE_GEMFILE="$RUBY"/Gemfile
   if [ -e "$RUBY"/Gemfile.lock ]
   then
-    bundle update --gemfile "$RUBY"/Gemfile
+    bundle update
+    bundle clean
   else
-    bundle install --gemfile "$RUBY"/Gemfile
+    bundle install
   fi
   set +x
 done
-

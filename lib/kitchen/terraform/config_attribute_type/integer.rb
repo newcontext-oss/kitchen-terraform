@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry-validation"
+require "dry/validation"
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_type"
 
