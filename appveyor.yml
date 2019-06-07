@@ -19,8 +19,8 @@ install:
   - sha256sum terraform-provider-local_1.2.2_windows_amd64.zip | grep 109262576075cd1ccf77079497beab27de5051bb9ed3a07760a8400c4ef54925
   - unzip terraform-provider-local_1.2.2_windows_amd64.zip -d "test\terraform\Plug Ins\Plug In Directory"
 platform: x64
-configuration: Integration Tests with Terraform 0.11.14 on Windows
-build: off
+configuration: Release
+build: "off"
 before_test:
   - ruby -v
   - gem -v
