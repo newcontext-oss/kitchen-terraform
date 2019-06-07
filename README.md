@@ -6,7 +6,8 @@
 [![Gem downloads version][gem-downloads-version-shield]][kitchen-terraform-gem]
 [![Gem downloads total][gem-downloads-total-shield]][kitchen-terraform-gem]
 
-[![Build status][build-status-shield]][build-status]
+[![Travis CI Build status][travis-build-status-shield]][travis-build-status]
+[![AppVeyor Build status][appveyor-build-status-shield]][appveyor-build-status]
 [![Code coverage][code-coverage-shield]][code-coverage]
 [![Maintainability][maintainability-shield]][maintainability]
 [![Technical debt][technical-debt-shield]][technical-debt]
@@ -356,8 +357,8 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 
 <!-- Markdown links and image definitions -->
 
-[build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
-[build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
+[appveyor-build-status-shield]: https://ci.appveyor.com/api/projects/status/8d7t014gij5grk5r/branch/master?svg=true
+[appveyor-build-status]: https://ci.appveyor.com/project/aaron-lane/kitchen-terraform/branch/master
 [bundler-getting-started]: https://bundler.io/#getting-started
 [bundler-in-depth]: https://bundler.io/gemfile.html
 [bundler]: https://bundler.io/index.html#getting-started
@@ -404,3 +405,5 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [test-kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [test-kitchen]: http://kitchen.ci/index.html
 [tfenv]: https://github.com/kamatama41/tfenv
+[travis-build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
+[travis-build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform

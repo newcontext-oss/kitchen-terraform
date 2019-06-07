@@ -133,32 +133,6 @@ jobs:
       cache:
         directories:
           - ruby-2.4/vendor/bundle
-    - name: Integration Tests with Terraform 0.11.14 on Windows
-      os: windows
-      language: shell
-      before_install:
-        - gem install bundler --conservative --minimal-deps --no-document --version="~>
-          2.0"
-        - bundle config --local gemfile ruby-2.5/Gemfile
-        - bundle config --local jobs $(nproc --ignore=1)
-        - bundle config --local without development
-      install:
-        - bundle install
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_windows_amd64.zip
-        - sha256sum terraform_0.11.14_windows_amd64.zip | grep bfec66e2ad079a1fab6101c19617a82ef79357dc1b92ddca80901bb8d5312dc0
-        - unzip terraform_0.11.14_windows_amd64.zip
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_windows_amd64.zip
-        - sha256sum terraform-provider-local_1.2.2_windows_amd64.zip | grep 109262576075cd1ccf77079497beab27de5051bb9ed3a07760a8400c4ef54925
-        - unzip terraform-provider-local_1.2.2_windows_amd64.zip -d test/terraform/Plug\
-          Ins/Plug\ In\ Directory
-      script:
-        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:attributes-windows'"
-        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:plug-ins-windows'"
-        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:variables-windows'"
-        - powershell -command "& 'bundle' 'exec' 'rake' 'test:kitchen:workspaces-windows'"
-      cache:
-        directories:
-          - ruby-2.5/vendor/bundle
     - stage: Deploy to RubyGems
       dist: xenial
       language: ruby
