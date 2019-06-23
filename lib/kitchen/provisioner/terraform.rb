@@ -80,6 +80,22 @@ end
 #   kitchen converge default-ubuntu
 # @version 2
 class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
+  UNSUPPORTED_BASE_ATTRIBUTES = [
+    :command_prefix,
+    :downloads,
+    :http_proxy,
+    :https_proxy,
+    :ftp_proxy,
+    :max_retries,
+    :root_path,
+    :retry_on_exit_code,
+    :sudo,
+    :sudo_command,
+    :wait_for_retry,
+  ]
+  defaults.delete_if do |key|
+    UNSUPPORTED_BASE_ATTRIBUTES.include? key
+  end
   kitchen_provisioner_api_version 2
 
   include ::Kitchen::Terraform::Configurable

@@ -71,6 +71,19 @@ module Kitchen
     # This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
     # :reek:MissingSafeMethod { exclude: [ finalize_config!, load_needed_dependencies! ] }
     class Terraform < ::Kitchen::Verifier::Base
+      UNSUPPORTED_BASE_ATTRIBUTES = [
+        :chef_omnibus_root,
+        :command_prefix,
+        :http_proxy,
+        :https_proxy,
+        :ftp_proxy,
+        :root_path,
+        :sudo,
+        :sudo_command,
+      ]
+      defaults.delete_if do |key|
+        UNSUPPORTED_BASE_ATTRIBUTES.include? key
+      end
       include ::Kitchen::Terraform::ConfigAttribute::Color
       include ::Kitchen::Terraform::ConfigAttribute::FailFast
       include ::Kitchen::Terraform::ConfigAttribute::Systems
