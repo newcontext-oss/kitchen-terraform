@@ -70,14 +70,12 @@ module Kitchen
     #
     # This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
     # :reek:MissingSafeMethod { exclude: [ finalize_config!, load_needed_dependencies! ] }
-    class Terraform
-      include ::Kitchen::Configurable
-      include ::Kitchen::Logging
+    class Terraform < ::Kitchen::Verifier::Base
       include ::Kitchen::Terraform::ConfigAttribute::Color
       include ::Kitchen::Terraform::ConfigAttribute::FailFast
       include ::Kitchen::Terraform::ConfigAttribute::Systems
       include ::Kitchen::Terraform::Configurable
-      @api_version = 2
+      kitchen_verifier_api_version 2
 
       attr_reader :inputs, :outputs
 
