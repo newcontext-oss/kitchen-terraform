@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Fixed
+
+- Default values for unsupported configuration attributes inherited from the base Kitchen plugins were removed.
+
 ## [5.0.0] - 2019-06-06
 
 ### Changed
