@@ -25,7 +25,11 @@ variable "map" {
   type = "map"
 }
 
-variable "list" {
+variable "list_of_strings" {
+  type = "list"
+}
+
+variable "list_of_maps" {
   type = "list"
 }
 

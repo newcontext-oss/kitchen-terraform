@@ -89,7 +89,8 @@ suites:
       variables:
         string: 'A String'
         map: '{ key = \"A Value\" }'
-        list: '[ \"Element One\", \"Element Two\" ]'
+        list_of_strings: '[ \"Element One\", \"Element Two\" ]'
+        list_of_maps: '[ { key = \"A List Of Maps Value\" } ]'
     verifier:
       systems:
         - name: variable_files
