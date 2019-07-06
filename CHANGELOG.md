@@ -8,9 +8,17 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [5.1.0] - 2019-07-06
+
+### Changed
+
+- InSpec 3 is supported again. It must be explicitly pinned in the
+  `Gemfile`, like `gem "inspec", "~> 3.0"`.
+
 ### Fixed
 
-- Default values for unsupported configuration attributes inherited from the base Kitchen plugins were removed.
+- Default values for unsupported configuration attributes inherited
+  from the base Kitchen plugins were removed.
 
 ## [5.0.0] - 2019-06-06
 
@@ -686,7 +694,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.0.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.0...HEAD
+[5.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.9.0...v5.0.0
 [4.9.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.1...v4.9.0
 [4.8.1]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.0...v4.8.1
