@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "rubygems"
+
 control "precedence" do
   title "precedence"
   desc "Tests to validate the precedence of overriding system attributes."
@@ -31,7 +33,15 @@ control "precedence" do
       attribute("first_output")
     end
 
-    it { should eq "Second Output" }
+    if ::Gem::Requirement.new("~> 3.0").satisfied_by? ::Gem::Version.new ::Inspec::VERSION
+      it "should eq \"From Attributes File\" in InSpec 3" do
+        should eq "From Attributes File"
+      end
+    else
+      it "should eq \"Second Output\" in InSpec 4" do
+        should eq "Second Output"
+      end
+    end
   end
 
   describe "attribute(\"output_second_output\")" do
