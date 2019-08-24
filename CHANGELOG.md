@@ -8,6 +8,15 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [5.1.1] - 2019-08-24
+
+### Fixed
+
+- RbNaCl was removed from the gem dependencies to solve for an
+  unexpected compatibility issue with InSpec's GCP transport [#351].
+  Installation instructions were linked in the README for
+  configurations which may require this gem.
+
 ## [5.1.0] - 2019-07-06
 
 ### Changed
@@ -694,7 +703,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.1...HEAD
+[5.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.0...v5.1.1
 [5.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.9.0...v5.0.0
 [4.9.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.8.1...v4.9.0
@@ -762,3 +772,4 @@ Gandalf the Free-As-In-Beer
 [terraform-issue-17655]: https://github.com/hashicorp/terraform/issues/17655
 [terraform-driver]: https://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Driver/Terraform
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
+[#351]: https://github.com/newcontext-oss/kitchen-terraform/issues/351
