@@ -2,8 +2,6 @@ version: "{branch}-{build}"
 skip_commits:
   message: /\[skip ci\]/
 skip_branch_with_pr: true
-cache:
-  - ruby-2.5/vendor/bundle
 platform: x64
 configuration: Release
 build: off
@@ -18,6 +16,8 @@ for:
   - matrix:
       only:
         - image: Ubuntu
+    cache:
+      - ruby-2.6/vendor/bundle
     install:
       - rvm use 2.6.3
       - gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
@@ -43,6 +43,8 @@ for:
   - matrix:
       only:
         - image: Visual Studio 2017
+    cache:
+      - ruby-2.5/vendor/bundle
     install:
       - set PATH=C:\Ruby25-x64\bin;%PATH%
       - gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
