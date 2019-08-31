@@ -115,6 +115,16 @@ conflicts.
 More information can be found in the
 [RubyGems: Installing Gems][rubygems-installing-gems] article.
 
+#### Extra Dependencies
+
+The RbNaCl gem may need to be [installed][rbnacl-installation] in order
+to use Ed25519-type SSH keys to connect to systems with the SSH backend.
+This gem implicitly depends on the system package libsodium, and its
+presence when libsodium is not installed causes unexpected errors when
+loading InSpec transport plugins like GCP, so it is not included by
+default to reduce the burden on users whom do not require support for
+Ed25519-type SSH keys.
+
 ## Usage
 
 ### Configuration
@@ -388,6 +398,7 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [new-context-twitter]: https://twitter.com/newcontext
 [new-context]: https://newcontext.com/
 [rbenv]: https://github.com/rbenv/rbenv
+[rbnacl-installation]: https://github.com/crypto-rb/rbnacl/tree/v4.0.2#installation
 [ruby-branches]: https://www.ruby-lang.org/en/downloads/branches/
 [ruby-gem-documentation]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/
 [ruby-gems-what-is]: http://guides.rubygems.org/ruby-gems-what-is/index.html

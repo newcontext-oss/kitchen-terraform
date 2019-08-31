@@ -40,7 +40,6 @@ require "rubygems"
   specification.add_runtime_dependency "inspec", ">= 3", "< 5"
   specification.add_runtime_dependency "json", "~> 2.2"
   specification.add_runtime_dependency "mixlib-shellout", "~> 2.2"
-  specification.add_runtime_dependency "rbnacl", "~> 4.0"
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
 
