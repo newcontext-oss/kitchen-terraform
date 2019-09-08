@@ -35,8 +35,6 @@ require "support/kitchen/terraform/config_attribute/variable_files_examples"
 require "support/kitchen/terraform/config_attribute/variables_examples"
 require "support/kitchen/terraform/config_attribute/verify_version_examples"
 require "support/kitchen/terraform/configurable_examples"
-require "support/kitchen/terraform/result_in_failure_matcher"
-require "support/kitchen/terraform/result_in_success_matcher"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
   subject do

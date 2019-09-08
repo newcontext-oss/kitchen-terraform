@@ -29,11 +29,7 @@ require "support/kitchen/terraform/configurable_examples"
     {}
   end
 
-  it_behaves_like "Kitchen::Terraform::Configurable" do
-    let :described_instance do
-      described_class.new config
-    end
-  end
+  it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call" do
     let :driver do

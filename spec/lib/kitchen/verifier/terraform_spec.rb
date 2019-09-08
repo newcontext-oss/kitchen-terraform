@@ -25,6 +25,10 @@ require "support/kitchen/terraform/config_attribute/systems_examples"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
+  subject do
+    described_class.new config
+  end
+
   let :config do
     {
       color: false,
@@ -75,10 +79,6 @@ require "support/kitchen/terraform/configurable_examples"
     true
   end
 
-  let :described_instance do
-    described_class.new config
-  end
-
   let :driver do
     instance_double ::Kitchen::Driver::Terraform
   end
@@ -107,10 +107,6 @@ require "support/kitchen/terraform/configurable_examples"
   it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call" do
-    subject do
-      described_instance
-    end
-
     let :kitchen_suite do
       instance_double ::Kitchen::Suite
     end
@@ -120,7 +116,7 @@ require "support/kitchen/terraform/configurable_examples"
       allow(driver).to receive(:retrieve_inputs).and_yield inputs: { "variable" => "input_value" }
       allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
       allow(kitchen_suite).to receive(:name).and_return "test-suite"
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
     context "when the Terraform outputs are in an unexpected format" do
