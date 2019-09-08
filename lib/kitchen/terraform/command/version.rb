@@ -46,8 +46,8 @@ module Kitchen
             ).tap do |version|
               yield version: version
             end
-          rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
-            raise ::Kitchen::Terraform::Error, error.message
+          rescue => error
+            raise
           end
 
           def logger

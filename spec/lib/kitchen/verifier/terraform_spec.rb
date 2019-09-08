@@ -343,10 +343,6 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#doctor" do
-    subject do
-      described_instance
-    end
-
     let :kitchen_state do
       {}
     end

@@ -60,7 +60,7 @@ require "kitchen/terraform/command/version"
       specify "should result in failure with the failed command output" do
         expect do
           described_class.run
-        end.to result_in_failure.with_message "shell command failed"
+        end.to raise_error ::Kitchen::ShellOut::ShellCommandFailed, "shell command failed"
       end
     end
 
@@ -74,7 +74,7 @@ require "kitchen/terraform/command/version"
       specify "should result in failure with the unexpected error message" do
         expect do
           described_class.run
-        end.to result_in_failure.with_message "unexpected error"
+        end.to raise_error ::Kitchen::Error, "unexpected error"
       end
     end
 

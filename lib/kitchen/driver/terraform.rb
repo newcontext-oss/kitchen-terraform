@@ -32,7 +32,8 @@ require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/shell_out"
-require "kitchen/terraform/verify_version"
+require "kitchen/terraform/version_verifier_factory"
+require "rubygems"
 require "shellwords"
 
 # This namespace is defined by Kitchen.
@@ -236,7 +237,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     verify_version
     run_workspace_select_instance
     apply_run
-  rescue ::Kitchen::Terraform::Error => error
+  rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end
 
@@ -249,7 +250,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     verify_version
     create_run_init
     run_workspace_select_instance
-  rescue ::Kitchen::Terraform::Error => error
+  rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end
 
@@ -266,7 +267,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     destroy_run_destroy
     destroy_run_workspace_select_default
     destroy_run_workspace_delete_instance
-  rescue ::Kitchen::Terraform::Error => error
+  rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end
 
@@ -287,6 +288,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @return [self]
   # @yieldparam outputs [::Hash] the state output.
   def retrieve_outputs(&block)
+    verify_version
     run_workspace_select_instance
     ::Kitchen::Terraform::Command::Output.run(
       client: config_client,
@@ -295,13 +297,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     )
 
     self
-  rescue ::Kitchen::Terraform::Error => error
+  rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end
 
   private
 
-  attr_accessor :debug_logger
+  attr_accessor :debug_logger, :version_requirement
 
   def apply_run
     apply_run_get
@@ -473,6 +475,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def initialize(config = {})
     super
     self.debug_logger = ::Kitchen::Terraform::DebugLogger.new logger
+    self.version_requirement = ::Gem::Requirement.new(">= 0.11.4", "< 0.13.0")
   end
 
   # @api private
@@ -537,11 +540,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   def verify_version
-    if config_verify_version
-      ::Kitchen::Terraform::VerifyVersion.call
-    else
-      logger.warn "Verification of support for the available version of Terraform is disabled"
+    logger.banner "Starting verification of the Terraform client version."
+    ::Kitchen::Terraform::Command::Version.run do |version:|
+      ::Kitchen::Terraform::VersionVerifierFactory.new(strict: config_verify_version)
+        .build(logger: logger, version_requirement: version_requirement).verify version: version
     end
+    logger.banner "Finished verification of the Terraform client version."
   end
 
   def workspace_name

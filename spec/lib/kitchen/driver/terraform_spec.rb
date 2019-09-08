@@ -20,8 +20,8 @@ require "kitchen/driver/terraform"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
-require "kitchen/terraform/verify_version"
 require "pathname"
+require "rubygems"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/client_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
@@ -39,6 +39,10 @@ require "support/kitchen/terraform/result_in_failure_matcher"
 require "support/kitchen/terraform/result_in_success_matcher"
 
 ::RSpec.describe ::Kitchen::Driver::Terraform do
+  subject do
+    described_class.new config
+  end
+
   let :command_timeout do
     1234
   end
@@ -74,12 +78,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
     }
   end
 
-  let :described_instance do
-    described_class.new config
-  end
-
   let :kitchen_instance do
-    ::Kitchen::Instance.new driver: described_instance, lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+    ::Kitchen::Instance.new driver: subject, lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
                             logger: kitchen_logger, platform: ::Kitchen::Platform.new(name: "test-platform"),
                             provisioner: ::Kitchen::Provisioner::Base.new,
                             state_file: ::Kitchen::StateFile.new(kitchen_root, "test-suite-test-platform"),
@@ -88,7 +88,7 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   let :kitchen_logger do
-    described_instance.send :logger
+    subject.send :logger
   end
 
   let :kitchen_root do
@@ -107,22 +107,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
     true
   end
 
-  shared_examples "the action fails if the Terraform version is unsupported" do
-    let :error_message do
-      "mocked VerifyVersion failure"
-    end
-
-    before do
-      allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise(
-        ::Kitchen::Terraform::Error, error_message
-      )
-    end
-
-    specify "should result in an action failed error with the failed command output" do
-      expect do
-        action
-      end.to raise_error ::Kitchen::ActionFailed, error_message
-    end
+  before do
+    allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield version: ::Gem::Version.create("0.12.0")
   end
 
   shared_examples "the action fails if the Terraform root module can not be initialized" do
@@ -213,12 +199,8 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   describe "#apply" do
-    subject do
-      described_instance
-    end
-
     before do
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
     shared_examples "terraform: get; validate; apply" do
@@ -336,40 +318,12 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    it_behaves_like "the action fails if the Terraform version is unsupported" do
-      let :action do
-        subject.apply
-      end
-    end
-
-    context "when the Terraform version is unsupported but verification is disabled" do
-      let :verify_version do
-        false
-      end
-
-      before do
-        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
-      end
-
-      it_behaves_like "it selects the instance workspace and generates the state"
-    end
-
-    context "when the Terraform version is supported" do
-      before do
-        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
-      end
-
-      it_behaves_like "it selects the instance workspace and generates the state"
-    end
+    it_behaves_like "it selects the instance workspace and generates the state"
   end
 
   describe "#create" do
-    subject do
-      described_instance
-    end
-
     before do
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
     shared_examples "it initializes the root module and selects the instance workspace" do
@@ -441,50 +395,16 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    it_behaves_like "the action fails if the Terraform version is unsupported" do
-      let :action do
-        subject.create({})
-      end
-    end
-
-    it_behaves_like "the action fails if the Terraform version is unsupported" do
-      let :action do
-        subject.create({})
-      end
-    end
-
-    context "when the Terraform version is unsupported but verification is disabled" do
-      let :verify_version do
-        false
-      end
-
-      before do
-        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
-      end
-
-      it_behaves_like "it initializes the root module and selects the instance workspace"
-    end
-
-    context "when the Terraform version is supported" do
-      before do
-        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
-      end
-
-      it_behaves_like "it initializes the root module and selects the instance workspace"
-    end
+    it_behaves_like "it initializes the root module and selects the instance workspace"
   end
 
   describe "#destroy" do
-    subject do
-      described_instance
-    end
-
     let :plugin_directory do
       nil
     end
 
     before do
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
     shared_examples "it destroys the state" do
@@ -645,44 +565,10 @@ require "support/kitchen/terraform/result_in_success_matcher"
       end
     end
 
-    it_behaves_like "the action fails if the Terraform version is unsupported" do
-      let :action do
-        subject.destroy({})
-      end
-    end
-
-    it_behaves_like "the action fails if the Terraform version is unsupported" do
-      let :action do
-        subject.destroy({})
-      end
-    end
-
-    context "when the Terraform version is unsupported but verification is disabled" do
-      let :verify_version do
-        false
-      end
-
-      before do
-        allow(::Kitchen::Terraform::VerifyVersion).to receive(:call).and_raise ::Kitchen::Terraform::Error
-      end
-
-      it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
-    end
-
-    context "when the Terraform version is supported" do
-      before do
-        allow(::Kitchen::Terraform::VerifyVersion).to receive :call
-      end
-
-      it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
-    end
+    it_behaves_like "it initializes the root module, selects the instance workspace, and destroys the state"
   end
 
   describe "#retrieve_inputs" do
-    subject do
-      described_class.new config
-    end
-
     before do
       subject.finalize_config! kitchen_instance
     end
@@ -695,10 +581,6 @@ require "support/kitchen/terraform/result_in_success_matcher"
   end
 
   describe "#retrieve_outputs" do
-    subject do
-      described_class.new config
-    end
-
     let :debug_logger do
       instance_double ::Kitchen::Terraform::DebugLogger
     end
