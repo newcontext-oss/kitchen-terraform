@@ -21,11 +21,11 @@ for:
     install:
       - rvm use 2.6.3
       - gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
-      - bundle config --local gemfile ruby-2.6/Gemfile
+      - bundle config --local gemfile ruby-2.6/gems.rb
       - bundle config --local deployment true
       - bundle config --local jobs $(nproc --ignore=1)
       - bundle config --local without development
-      - bundle install
+      - bundle install --clean --frozen
       - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
       - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
       - unzip terraform_0.11.4_linux_amd64.zip -d "$HOME/bin"
@@ -35,11 +35,11 @@ for:
         Ins/Plug\ In\ Directory
     test_script:
       - chmod go-rw test/terraform/backend-ssh/id_ed25519
-      - bundle exec rake test:kitchen:attributes-linux
-      - bundle exec rake test:kitchen:backend-ssh-linux
-      - bundle exec rake test:kitchen:plug-ins-linux
-      - bundle exec rake test:kitchen:variables-linux
-      - bundle exec rake test:kitchen:workspaces-linux
+      - ./ruby-2.6/bin/rake test:kitchen:attributes-linux
+      - ./ruby-2.6/bin/rake test:kitchen:backend-ssh-linux
+      - ./ruby-2.6/bin/rake test:kitchen:plug-ins-linux
+      - ./ruby-2.6/bin/rake test:kitchen:variables-linux
+      - ./ruby-2.6/bin/rake test:kitchen:workspaces-linux
   - matrix:
       only:
         - image: Visual Studio 2017
@@ -48,10 +48,10 @@ for:
     install:
       - set PATH=C:\Ruby25-x64\bin;%PATH%
       - gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
-      - bundle config --local gemfile ruby-2.5/Gemfile
+      - bundle config --local gemfile ruby-2.5/gems.rb
       - bundle config --local jobs $(nproc --ignore=1)
       - bundle config --local without development
-      - bundle install
+      - bundle install --clean --frozen
       - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_windows_amd64.zip
       - sha256sum terraform_0.11.14_windows_amd64.zip | grep bfec66e2ad079a1fab6101c19617a82ef79357dc1b92ddca80901bb8d5312dc0
       - unzip terraform_0.11.14_windows_amd64.zip
@@ -59,7 +59,7 @@ for:
       - sha256sum terraform-provider-local_1.2.2_windows_amd64.zip | grep 109262576075cd1ccf77079497beab27de5051bb9ed3a07760a8400c4ef54925
       - unzip terraform-provider-local_1.2.2_windows_amd64.zip -d "test\terraform\Plug Ins\Plug In Directory"
     test_script:
-      - bundle exec rake test:kitchen:attributes-windows
-      - bundle exec rake test:kitchen:plug-ins-windows
-      - bundle exec rake test:kitchen:variables-windows
-      - bundle exec rake test:kitchen:workspaces-windows
+      - ruby ./ruby-2.5/bin/rake test:kitchen:attributes-windows
+      - ruby ./ruby-2.5/bin/rake test:kitchen:plug-ins-windows
+      - ruby ./ruby-2.5/bin/rake test:kitchen:variables-windows
+      - ruby ./ruby-2.5/bin/rake test:kitchen:workspaces-windows
