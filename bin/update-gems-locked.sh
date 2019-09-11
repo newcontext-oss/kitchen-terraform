@@ -6,15 +6,16 @@ set +x
 for RUBY in ruby-2.6 ruby-2.5 ruby-2.4
 do
   chruby "$RUBY"
+  pushd "$RUBY"
   ruby --version
   set -x
-  export BUNDLE_GEMFILE="$RUBY"/Gemfile
-  if [ -e "$RUBY"/Gemfile.lock ]
+  if [ -e gems.locked ]
   then
-    bundle update
-    bundle clean
+    bundle update --all
   else
     bundle install
   fi
+  bundle binstubs guard middleman-cli rake rspec-core test-kitchen yard
   set +x
+  popd
 done
