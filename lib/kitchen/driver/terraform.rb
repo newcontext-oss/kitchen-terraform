@@ -232,11 +232,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # module, and applying the state changes.
   #
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [void]
+  # @return [self]
   def apply(&block)
     verify_version
     run_workspace_select_instance
     apply_run
+
+    self
   rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end

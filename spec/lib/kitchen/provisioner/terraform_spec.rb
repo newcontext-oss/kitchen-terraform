@@ -46,6 +46,16 @@ require "support/kitchen/terraform/configurable_examples"
 
     before do
       allow(kitchen_instance).to receive(:driver).and_return driver
+      allow(driver).to(receive(:retrieve_inputs) do |&block|
+        block.call inputs: { "variable" => "input_value" }
+
+        driver
+      end)
+      allow(driver).to(receive(:retrieve_outputs) do |&block|
+        block.call outputs: { "output_name" => { "value" => "output_value" } }
+
+        driver
+      end)
       subject.finalize_config! kitchen_instance
     end
 
@@ -64,13 +74,16 @@ require "support/kitchen/terraform/configurable_examples"
 
       context "when the driver create action is a success" do
         before do
-          allow(driver).to receive :apply
+          allow(driver).to receive(:apply).and_return driver
+          subject.call kitchen_state
         end
 
-        specify "should not raise an error" do
-          expect do
-            subject.call kitchen_state
-          end.to_not raise_error
+        specify "should store inputs in the state" do
+          expect(kitchen_state.fetch("kitchen-terraform.inputs")).to eq "variable" => "input_value"
+        end
+
+        specify "should store outputs in the state" do
+          expect(kitchen_state.fetch("kitchen-terraform.outputs")).to eq "output_name" => { "value" => "output_value" }
         end
       end
     end

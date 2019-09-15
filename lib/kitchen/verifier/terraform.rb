@@ -96,11 +96,12 @@ module Kitchen
       #
       # @example
       #   `kitchen verify suite-name`
-      # @param _kitchen_state [::Hash] the mutable instance and verifier state.
+      # @param state [::Hash] the mutable instance and verifier state.
       # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
-      def call(_kitchen_state)
-        load_variables
+      def call(state)
+        self.inputs.replace state.fetch "kitchen-terraform.inputs"
+        self.outputs.replace state.fetch "kitchen-terraform.outputs"
         verify_systems
         if !error_messages.empty?
           raise ::Kitchen::ActionFailed, error_messages.join("\n\n")
@@ -129,14 +130,6 @@ module Kitchen
         else
           logger.error message
           error_messages.push message
-        end
-      end
-
-      def load_variables
-        instance.driver.retrieve_outputs do |outputs:|
-          self.outputs.replace outputs
-        end.retrieve_inputs do |inputs:|
-          self.inputs.replace inputs
         end
       end
 
