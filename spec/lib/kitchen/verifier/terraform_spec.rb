@@ -17,6 +17,8 @@
 require "inspec"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/variables_manager"
+require "kitchen/terraform/outputs_manager"
 require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
@@ -107,6 +109,10 @@ require "support/kitchen/terraform/configurable_examples"
   it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call" do
+    let :kitchen_instance_state do
+      {}
+    end
+
     let :kitchen_suite do
       instance_double ::Kitchen::Suite
     end
@@ -119,16 +125,20 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     context "when the Terraform outputs are in an unexpected format" do
-      let :state do
-        {
-          "kitchen-terraform.inputs" => { "variable" => "input_value" },
-          "kitchen-terraform.outputs" => { "output_name" => { "amount" => "output_value" } },
-        }
+      before do
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { "variable" => "input_value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { "output_name" => { "amount" => "output value" } },
+          state: kitchen_instance_state,
+        )
       end
 
       specify "should raise an action failed error indicating the unexpected format" do
         expect do
-          subject.call state
+          subject.call kitchen_instance_state
         end.to raise_error(
           ::Kitchen::ActionFailed,
           "a-system-with-hosts: Preparing to resolve attrs failed\nkey not found: \"value\""
@@ -137,16 +147,20 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
-      let :state do
-        {
-          "kitchen-terraform.inputs" => { "variable" => "input_value" },
-          "kitchen-terraform.outputs" => {},
-        }
+      before do
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { "variable" => "input_value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: {},
+          state: kitchen_instance_state,
+        )
       end
 
       specify "should raise an action failed error indicating the missing output" do
         expect do
-          subject.call state
+          subject.call kitchen_instance_state
         end.to raise_error(
           ::Kitchen::ActionFailed,
           "a-system-with-hosts: Resolving attrs failed\nkey not found: \"output_name\""
@@ -155,16 +169,20 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     context "when the Terraform outputs omits the value of the :hosts_output key" do
-      let :state do
-        {
-          "kitchen-terraform.inputs" => { "variable" => "input_value" },
-          "kitchen-terraform.outputs" => { "output_name" => { "value" => "output value" } },
-        }
+      before do
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { "variable" => "input_value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { "output_name" => { "value" => "output value" } },
+          state: kitchen_instance_state,
+        )
       end
 
       specify "should raise an action failed error indicating the missing :hosts_output key" do
         expect do
-          subject.call state
+          subject.call kitchen_instance_state
         end.to raise_error(
           ::Kitchen::ActionFailed,
           "a-system-with-hosts: Resolving hosts failed\nkey not found: \"hosts\""
@@ -239,16 +257,15 @@ require "support/kitchen/terraform/configurable_examples"
         }
       end
 
-      let :state do
-        {
-          "kitchen-terraform.inputs" => { "variable" => "input_value" },
-          "kitchen-terraform.outputs" => {
-            "output_name" => { "value" => "output_value" }, "hosts" => { "value" => "host" },
-          },
-        }
-      end
-
       before do
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { "variable" => "input_value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { "hosts" => { "value" => "host" }, "output_name" => { "value" => "output_value" } },
+          state: kitchen_instance_state,
+        )
         allow(::Inspec::Runner).to receive(:new).with(runner_options_with_hosts).and_return(runner)
         allow(::Inspec::Runner).to receive(:new).with(runner_options_without_hosts).and_return(runner)
       end
@@ -261,7 +278,7 @@ require "support/kitchen/terraform/configurable_examples"
 
           it "does raise an error" do
             expect do
-              subject.call state
+              subject.call kitchen_instance_state
             end.to raise_error ::Kitchen::ActionFailed, "a-system-with-hosts: InSpec Runner exited with 1"
           end
         end
@@ -277,7 +294,7 @@ require "support/kitchen/terraform/configurable_examples"
 
           specify "should raise an action failed error with the runner error message" do
             expect do
-              subject.call state
+              subject.call kitchen_instance_state
             end.to raise_error ::Kitchen::ActionFailed, "a-system-with-hosts: Executing InSpec failed\n#{error_message}"
           end
         end
@@ -295,7 +312,7 @@ require "support/kitchen/terraform/configurable_examples"
 
           it "does raise all errors" do
             expect do
-              subject.call state
+              subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
               "a-system-with-hosts: InSpec Runner exited with 1\n\na-system-without-hosts: InSpec Runner exited with 1"
@@ -314,7 +331,7 @@ require "support/kitchen/terraform/configurable_examples"
 
           specify "should raise an action failed error with the runner error message" do
             expect do
-              subject.call state
+              subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
               "a-system-with-hosts: Executing InSpec failed\n#{error_message}\n\n" \
@@ -331,7 +348,7 @@ require "support/kitchen/terraform/configurable_examples"
 
         it "does not raise an error" do
           expect do
-            subject.call state
+            subject.call kitchen_instance_state
           end.to_not raise_error
         end
       end
@@ -339,12 +356,12 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#doctor" do
-    let :kitchen_state do
+    let :kitchen_instance_state do
       {}
     end
 
     specify "should return false" do
-      expect(subject.doctor(kitchen_state)).to be_falsey
+      expect(subject.doctor(kitchen_instance_state)).to be_falsey
     end
   end
 

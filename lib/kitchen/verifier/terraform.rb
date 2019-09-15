@@ -20,6 +20,7 @@ require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/systems"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/error"
+require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/inspec_options_mapper"
 
 module Kitchen
@@ -100,22 +101,21 @@ module Kitchen
       # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def call(state)
-        self.inputs.replace state.fetch "kitchen-terraform.inputs"
-        self.outputs.replace state.fetch "kitchen-terraform.outputs"
+        load_variables_outputs state: state
         verify_systems
         if !error_messages.empty?
           raise ::Kitchen::ActionFailed, error_messages.join("\n\n")
         end
-      rescue ::Kitchen::Terraform::Error => error
+      rescue => error
         raise ::Kitchen::ActionFailed, error.message
       end
 
       # doctor checks the system and configuration for common errors.
       #
-      # @param _kitchen_state [::Hash] the mutable Kitchen instance state.
+      # @param _state [::Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
       # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/verifier/base.rb#L85-L91
-      def doctor(_kitchen_state)
+      def doctor(_state)
         false
       end
 
@@ -141,6 +141,12 @@ module Kitchen
         self.outputs = {}
       end
 
+      def load_variables(state:)
+        logger.banner "Starting retrieval of Terraform input variables from the Kitchen instance state."
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).load variables: inputs, state: state
+        logger.banner "Finished retrieval of Terraform input variables from the Kitchen instance state."
+      end
+
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
       #
       # @raise [::Kitchen::ClientError] if loading the InSpec libraries fails.
@@ -151,6 +157,17 @@ module Kitchen
         ::Kitchen::Terraform::InSpec.logger = logger
       rescue ::LoadError => load_error
         raise ::Kitchen::ClientError, load_error.message
+      end
+
+      def load_outputs(state:)
+        logger.banner "Starting retrieval of Terraform output values from the Kitchen instance state."
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).load outputs: outputs, state: state
+        logger.banner "Finished retrieval of Terraform output values from the Kitchen instance state."
+      end
+
+      def load_variables_outputs(state:)
+        load_variables state: state
+        load_outputs state: state
       end
 
       def system_inspec_options(system:)

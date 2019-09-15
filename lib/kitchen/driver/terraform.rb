@@ -233,10 +233,16 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [self]
+  # @yieldparam outputs [::Hash] the state output.
   def apply(&block)
     verify_version
     run_workspace_select_instance
     apply_run
+    ::Kitchen::Terraform::Command::Output.run(
+      client: config_client,
+      options: { cwd: config_root_module_directory, live_stream: debug_logger, timeout: config_command_timeout },
+      &block
+    )
 
     self
   rescue => error
@@ -277,30 +283,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   #
   # @return [self]
   # @yieldparam inputs [::Hash] the input variables.
-  def retrieve_inputs
-    yield inputs: config_variables
+  def retrieve_variables
+    yield variables: config_variables
 
     self
-  end
-
-  # Retrieves the Terraform state outputs for a Kitchen instance by selecting the test workspace and fetching the
-  # outputs.
-  #
-  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [self]
-  # @yieldparam outputs [::Hash] the state output.
-  def retrieve_outputs(&block)
-    verify_version
-    run_workspace_select_instance
-    ::Kitchen::Terraform::Command::Output.run(
-      client: config_client,
-      options: { cwd: config_root_module_directory, live_stream: debug_logger, timeout: config_command_timeout },
-      &block
-    )
-
-    self
-  rescue => error
-    raise ::Kitchen::ActionFailed, error.message
   end
 
   private
