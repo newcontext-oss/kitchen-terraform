@@ -175,10 +175,13 @@ module Kitchen
       end
 
       def verify(system:)
+        logger.banner "Starting verification of the '#{system.fetch(:name)}' system."
         ::Kitchen::Terraform::System.new(
+          logger: logger,
           mapping: { profile_locations: [::File.join(config.fetch(:test_base_path), instance.suite.name)] }
             .merge(system),
         ).verify(inputs: inputs, inspec_options: system_inspec_options(system: system), outputs: outputs)
+        logger.banner "Finished verification of the '#{system.fetch(:name)}' system."
       rescue => error
         handle_error message: error.message
       end

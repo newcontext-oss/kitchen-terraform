@@ -127,29 +127,26 @@ require "support/kitchen/terraform/configurable_examples"
     context "when the Terraform outputs are in an unexpected format" do
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { "variable" => "input_value" },
+          variables: { variable: "input_value" },
           state: kitchen_instance_state,
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { "output_name" => { "amount" => "output value" } },
+          outputs: { output_name: { amount: "output_value" } },
           state: kitchen_instance_state,
         )
       end
 
-      specify "should raise an action failed error indicating the unexpected format" do
+      specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error(
-          ::Kitchen::ActionFailed,
-          "a-system-with-hosts: Preparing to resolve attrs failed\nkey not found: \"value\""
-        )
+        end.to raise_error ::Kitchen::ActionFailed, "Failed resolution of attributes."
       end
     end
 
     context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { "variable" => "input_value" },
+          variables: { variable: "input_value" },
           state: kitchen_instance_state,
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
@@ -158,35 +155,29 @@ require "support/kitchen/terraform/configurable_examples"
         )
       end
 
-      specify "should raise an action failed error indicating the missing output" do
+      specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error(
-          ::Kitchen::ActionFailed,
-          "a-system-with-hosts: Resolving attrs failed\nkey not found: \"output_name\""
-        )
+        end.to raise_error ::Kitchen::ActionFailed, "Failed resolution of attributes."
       end
     end
 
     context "when the Terraform outputs omits the value of the :hosts_output key" do
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { "variable" => "input_value" },
+          variables: { variable: "input_value" },
           state: kitchen_instance_state,
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { "output_name" => { "value" => "output value" } },
+          outputs: { output_name: { value: "output value" } },
           state: kitchen_instance_state,
         )
       end
 
-      specify "should raise an action failed error indicating the missing :hosts_output key" do
+      specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error(
-          ::Kitchen::ActionFailed,
-          "a-system-with-hosts: Resolving hosts failed\nkey not found: \"hosts\""
-        )
+        end.to raise_error ::Kitchen::ActionFailed, "Failed resolution of hosts."
       end
     end
 
@@ -259,11 +250,11 @@ require "support/kitchen/terraform/configurable_examples"
 
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { "variable" => "input_value" },
+          variables: { variable: "input_value" },
           state: kitchen_instance_state,
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { "hosts" => { "value" => "host" }, "output_name" => { "value" => "output_value" } },
+          outputs: { hosts: { value: "host" }, output_name: { value: "output_value" } },
           state: kitchen_instance_state,
         )
         allow(::Inspec::Runner).to receive(:new).with(runner_options_with_hosts).and_return(runner)
@@ -279,7 +270,7 @@ require "support/kitchen/terraform/configurable_examples"
           it "does raise an error" do
             expect do
               subject.call kitchen_instance_state
-            end.to raise_error ::Kitchen::ActionFailed, "a-system-with-hosts: InSpec Runner exited with 1"
+            end.to raise_error ::Kitchen::ActionFailed, "InSpec Runner exited with 1"
           end
         end
 
@@ -292,10 +283,10 @@ require "support/kitchen/terraform/configurable_examples"
             allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
           end
 
-          specify "should raise an action failed error with the runner error message" do
+          specify "should raise an action failed error" do
             expect do
               subject.call kitchen_instance_state
-            end.to raise_error ::Kitchen::ActionFailed, "a-system-with-hosts: Executing InSpec failed\n#{error_message}"
+            end.to raise_error ::Kitchen::ActionFailed, "Executing InSpec failed\n#{error_message}"
           end
         end
       end
@@ -315,7 +306,7 @@ require "support/kitchen/terraform/configurable_examples"
               subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
-              "a-system-with-hosts: InSpec Runner exited with 1\n\na-system-without-hosts: InSpec Runner exited with 1"
+              "InSpec Runner exited with 1\n\nInSpec Runner exited with 1"
             )
           end
         end
@@ -329,13 +320,13 @@ require "support/kitchen/terraform/configurable_examples"
             allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
           end
 
-          specify "should raise an action failed error with the runner error message" do
+          specify "should raise an action failed error" do
             expect do
               subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
-              "a-system-with-hosts: Executing InSpec failed\n#{error_message}\n\n" \
-              "a-system-without-hosts: Executing InSpec failed\n#{error_message}"
+              "Executing InSpec failed\n#{error_message}\n\n" \
+              "Executing InSpec failed\n#{error_message}"
             )
           end
         end

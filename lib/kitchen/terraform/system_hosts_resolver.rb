@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
-require "kitchen/terraform/error"
+require "kitchen"
 
 module Kitchen
   module Terraform
@@ -27,17 +26,21 @@ module Kitchen
       # @param system [::Kitchen::Terraform::System] the system.
       # @raise [::Kitchen::Terraform::Error] if the fetching the value of the output fails.
       def resolve(hosts_output:, system:)
-        system.add_hosts hosts: @outputs.fetch(hosts_output).fetch("value")
+        system.add_hosts hosts: @outputs.fetch(hosts_output.to_sym).fetch(:value)
       rescue ::KeyError => key_error
-        raise ::Kitchen::Terraform::Error, "Resolving hosts failed\n#{key_error}"
+        @logger.error(
+          "The key '#{hosts_output}' was not found in the Terraform outputs of the Kitchen instance state. This " \
+          "error could indicate that the wrong key was provided or that the Kitchen instance state was modified " \
+          "after `kitchen converge` was executed."
+        )
+
+        raise ::Kitchen::ClientError, "Failed resolution of hosts."
       end
 
       private
 
-      # #initialize prepares the instance to be used.
-      #
-      # @param outputs [#to_hash] the outputs of the Terraform state under test.
-      def initialize(outputs:)
+      def initialize(logger:, outputs:)
+        @logger = logger
         @outputs = Hash[outputs]
       end
     end

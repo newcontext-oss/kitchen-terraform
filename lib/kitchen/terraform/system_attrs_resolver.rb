@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
-require "kitchen/terraform/error"
+require "kitchen"
 
 module Kitchen
   module Terraform
@@ -28,32 +27,53 @@ module Kitchen
       # @param system [::Kitchen::Terraform::System] the system.
       # @raise [::Kitchen::Terraform::Error] if the fetching the value of the output fails.
       def resolve(attrs_outputs_keys:, attrs_outputs_values:, system:)
-        system.add_attrs(attrs: @inputs.merge(@outputs.merge(
-                           attrs_outputs_keys.lazy.map(&:to_s).zip(@outputs.fetch_values(*attrs_outputs_values)).to_h
-                         )))
+        system.add_attrs(
+          attrs: resolved_inputs.merge(
+            resolved_outputs.merge(
+              attrs_outputs_keys.lazy.map(&:to_s).zip(resolved_outputs.fetch_values(*attrs_outputs_values)).to_h
+            )
+          ),
+        )
 
         self
       rescue ::KeyError => key_error
-        raise ::Kitchen::Terraform::Error, "Resolving attrs failed\n#{key_error}"
+        @logger.error(key_error)
+
+        raise ::Kitchen::ClientError, "Failed resolution of attributes."
       end
 
       private
 
-      # #initialize prepares the instance to be used.
-      #
-      # @param outputs [#to_hash] the outputs of the Terraform state under test.
-      def initialize(inputs:, outputs:)
-        @inputs = inputs.map do |key, value|
+      def initialize(inputs:, logger:, outputs:)
+        @inputs = Hash[inputs]
+        @logger = logger
+        @outputs = Hash[outputs]
+      end
+
+      def resolved_inputs
+        @inputs.map do |key, value|
           ["input_#{key}", value]
         end.to_h
-        @outputs = Hash[outputs].map do |key, value|
-          [key, value.fetch("value")]
-        end.to_h
-        @outputs.merge!(@outputs.map do |key, value|
+      end
+
+      def resolved_outputs
+        @resolved_outputs ||= @outputs.map do |key, value|
+          [key.to_s, value]
+        end.to_h.merge(@outputs.map do |key, value|
           ["output_#{key}", value]
-        end.to_h)
-      rescue ::KeyError => key_error
-        raise ::Kitchen::Terraform::Error, "Preparing to resolve attrs failed\n#{key_error}"
+        end.to_h).map do |key, value|
+          begin
+            [key, value.fetch(:value)]
+          rescue ::KeyError => key_error
+            @logger.error(
+              "The key 'value' was not found in the '#{key}' output in the Kitchen instance state. This error could " \
+              "indicate that the Kitchen instance state was modified after `kitchen converge` was executed or that " \
+              "the format of `terraform output -json` has changed."
+            )
+
+            raise ::Kitchen::ClientError, "Failed resolution of attributes."
+          end
+        end.to_h
       end
     end
   end

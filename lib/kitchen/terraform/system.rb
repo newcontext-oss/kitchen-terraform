@@ -56,13 +56,6 @@ module Kitchen
         self
       end
 
-      # #to_s returns a string representation of the system.
-      #
-      # @return [::String] the name of the system.
-      def to_s
-        @mapping.fetch :name
-      end
-
       # #verify verifies the system by executing InSpec.
       #
       # @param inputs [::Hash] the Terraform input variables to be utilized as InSpec profile attributes.
@@ -74,8 +67,6 @@ module Kitchen
         execute_inspec options: inspec_options
 
         self
-      rescue => error
-        raise ::Kitchen::Terraform::Error, "#{self}: #{error.message}"
       end
 
       private
@@ -87,7 +78,7 @@ module Kitchen
         ).exec(system: self)
       end
 
-      def initialize(mapping:)
+      def initialize(logger:, mapping:)
         @attributes = {}
         @attrs_outputs = mapping.fetch :attrs_outputs do
           {}
@@ -95,6 +86,7 @@ module Kitchen
         @hosts = mapping.fetch :hosts do
           []
         end
+        @logger = logger
         @mapping = mapping
       end
 
@@ -112,28 +104,28 @@ module Kitchen
 
       def resolve(inputs:, outputs:)
         resolve_attrs inputs: inputs, outputs: outputs
-        resolve_hosts outputs: outputs
+        resolve_hosts outputs: outputs if @mapping.key? :hosts_output
       end
 
       def resolve_attrs(inputs:, outputs:)
-        ::Kitchen::Terraform::SystemAttrsResolver.new(inputs: inputs, outputs: outputs).resolve(
+        @logger.info "Starting resolution of attributes."
+        ::Kitchen::Terraform::SystemAttrsResolver.new(inputs: inputs, logger: @logger, outputs: outputs).resolve(
           attrs_outputs_keys: @attrs_outputs.keys,
           attrs_outputs_values: @attrs_outputs.values,
           system: self,
         )
+        @logger.info "Finished resolution of attributes."
 
         self
       end
 
       def resolve_hosts(outputs:)
-        if !@mapping.key? :hosts_output
-          return self
-        end
-
-        ::Kitchen::Terraform::SystemHostsResolver.new(outputs: outputs).resolve(
+        @logger.info "Starting resolution of hosts."
+        ::Kitchen::Terraform::SystemHostsResolver.new(logger: @logger, outputs: outputs).resolve(
           hosts_output: @mapping.fetch(:hosts_output),
           system: self,
         )
+        @logger.info "Finished resolution of hosts."
 
         self
       end
