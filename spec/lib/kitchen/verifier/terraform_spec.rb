@@ -69,6 +69,7 @@ require "support/kitchen/terraform/configurable_examples"
         },
         {
           name: "a-system-without-hosts",
+          attrs_outputs: { attribute_name: "output_name" },
           backend: "backend",
           profile_locations: ["remote://profile"],
         },
@@ -127,11 +128,11 @@ require "support/kitchen/terraform/configurable_examples"
     context "when the Terraform outputs are in an unexpected format" do
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input_value" },
+          variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { output_name: { amount: "output_value" } },
+          outputs: { hosts: { amount: "host" }, output_name: { amount: "output value" } },
           state: kitchen_instance_state,
         )
       end
@@ -139,18 +140,18 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Failed resolution of attributes."
+        end.to raise_error ::Kitchen::ActionFailed, "Failed resolution of hosts."
       end
     end
 
     context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input_value" },
+          variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: {},
+          outputs: { hosts: { value: "host" } },
           state: kitchen_instance_state,
         )
       end
@@ -165,7 +166,7 @@ require "support/kitchen/terraform/configurable_examples"
     context "when the Terraform outputs omits the value of the :hosts_output key" do
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input_value" },
+          variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
@@ -181,7 +182,7 @@ require "support/kitchen/terraform/configurable_examples"
       end
     end
 
-    context "when the Terraform outputs do include the configured :hosts_output key" do
+    context "when the Terraform outputs are correctly formatted and match the configuration" do
       let :runner do
         instance_double(::Inspec::Runner).tap do |runner|
           allow(runner).to receive(:add_target).with "/test/base/path/test-suite"
@@ -195,12 +196,12 @@ require "support/kitchen/terraform/configurable_examples"
           "distinct_exit" => false,
           "reporter" => ["reporter"],
           attributes: {
-            "attribute_name" => "output_value",
+            "attribute_name" => "output value",
             "hosts" => "host",
-            "input_variable" => "input_value",
+            "input_variable" => "input value",
             "output_hosts" => "host",
-            "output_name" => "output_value",
-            "output_output_name" => "output_value",
+            "output_name" => "output value",
+            "output_output_name" => "output value",
           },
           backend_cache: false,
           backend: "backend",
@@ -237,11 +238,12 @@ require "support/kitchen/terraform/configurable_examples"
           "color" => false,
           "distinct_exit" => false,
           attributes: {
+            "attribute_name" => "output value",
             "hosts" => "host",
-            "input_variable" => "input_value",
+            "input_variable" => "input value",
             "output_hosts" => "host",
-            "output_name" => "output_value",
-            "output_output_name" => "output_value",
+            "output_name" => "output value",
+            "output_output_name" => "output value",
           },
           backend: "backend",
           logger: logger,
@@ -250,11 +252,11 @@ require "support/kitchen/terraform/configurable_examples"
 
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input_value" },
+          variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { hosts: { value: "host" }, output_name: { value: "output_value" } },
+          outputs: { hosts: { value: "host" }, output_name: { value: "output value" } },
           state: kitchen_instance_state,
         )
         allow(::Inspec::Runner).to receive(:new).with(runner_options_with_hosts).and_return(runner)

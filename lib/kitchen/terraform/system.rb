@@ -17,33 +17,14 @@
 require "kitchen/terraform/error"
 require "kitchen/terraform/inspec_with_hosts"
 require "kitchen/terraform/inspec_without_hosts"
-require "kitchen/terraform/system_attrs_resolver"
+require "kitchen/terraform/system_attrs_inputs_resolver"
+require "kitchen/terraform/system_attrs_outputs_resolver"
 require "kitchen/terraform/system_hosts_resolver"
 
 module Kitchen
   module Terraform
     # System is the class of objects which are verified by the Terraform Verifier.
     class System
-      # #add_attrs adds attributes to the system.
-      #
-      # @param attrs [#to_hash] the attributes to be added.
-      # @return [self]
-      def add_attrs(attrs:)
-        @attributes = @attributes.merge Hash attrs
-
-        self
-      end
-
-      # #add_hosts adds hosts to the system.
-      #
-      # @param hosts [#to_arr,#to_a] the hosts to be added.
-      # @return [self]
-      def add_hosts(hosts:)
-        @hosts = @hosts.+ Array hosts
-
-        self
-      end
-
       # #each_host enumerates each host of the system.
       #
       # @yieldparam host [::String] the next host.
@@ -63,29 +44,25 @@ module Kitchen
       # @param outputs [::Hash] the Terraform output variables to be utilized as InSpec profile attributes.
       # @return [self]
       def verify(inputs:, inspec_options:, outputs:)
-        resolve inputs: inputs, outputs: outputs
-        execute_inspec options: inspec_options
+        @logger.info "Starting verification of the '#{name}' system."
+        resolve inputs: inputs, outputs: outputs do |attrs:|
+          inspec.new(options: inspec_options.merge(attributes: attrs), profile_locations: @mapping.fetch(:profile_locations))
+            .exec(system: self)
+        end
+        @logger.info "Finished verification of the '#{name}' system."
 
         self
       end
 
       private
 
-      def execute_inspec(options:)
-        inspec.new(
-          options: options_with_attributes(options: options),
-          profile_locations: @mapping.fetch(:profile_locations),
-        ).exec(system: self)
-      end
-
       def initialize(logger:, mapping:)
-        @attributes = {}
         @attrs_outputs = mapping.fetch :attrs_outputs do
           {}
-        end
+        end.dup
         @hosts = mapping.fetch :hosts do
           []
-        end
+        end.dup
         @logger = logger
         @mapping = mapping
       end
@@ -98,34 +75,26 @@ module Kitchen
         end
       end
 
-      def options_with_attributes(options:)
-        options.merge attributes: @attributes
+      def name
+        @mapping.fetch :name
       end
 
-      def resolve(inputs:, outputs:)
-        resolve_attrs inputs: inputs, outputs: outputs
+      def resolve(inputs:, outputs:, &block)
         resolve_hosts outputs: outputs if @mapping.key? :hosts_output
+        resolve_attrs inputs: inputs, outputs: outputs, &block
       end
 
-      def resolve_attrs(inputs:, outputs:)
-        @logger.info "Starting resolution of attributes."
-        ::Kitchen::Terraform::SystemAttrsResolver.new(inputs: inputs, logger: @logger, outputs: outputs).resolve(
-          attrs_outputs_keys: @attrs_outputs.keys,
-          attrs_outputs_values: @attrs_outputs.values,
-          system: self,
-        )
-        @logger.info "Finished resolution of attributes."
-
-        self
+      def resolve_attrs(inputs:, outputs:, &block)
+        ::Kitchen::Terraform::SystemAttrsInputsResolver.new(attrs: {}).resolve inputs: inputs do |attrs:|
+          ::Kitchen::Terraform::SystemAttrsOutputsResolver.new(attrs: attrs, logger: @logger).resolve(attrs_outputs: @attrs_outputs, outputs: outputs, &block)
+        end
       end
 
       def resolve_hosts(outputs:)
-        @logger.info "Starting resolution of hosts."
         ::Kitchen::Terraform::SystemHostsResolver.new(logger: @logger, outputs: outputs).resolve(
+          hosts: @hosts,
           hosts_output: @mapping.fetch(:hosts_output),
-          system: self,
         )
-        @logger.info "Finished resolution of hosts."
 
         self
       end
