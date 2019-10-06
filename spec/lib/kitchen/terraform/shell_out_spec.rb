@@ -61,7 +61,10 @@ require "mixlib/shellout"
               timeout: duration,
             },
           )
-        end.to result_in_failure.with_message matching "invalid command option"
+        end.to raise_error(
+          ::Kitchen::TransientFailure,
+          "Running command resulted in failure: invalid command option"
+        )
       end
     end
 
@@ -108,7 +111,10 @@ require "mixlib/shellout"
               timeout: duration,
             },
           )
-        end.to result_in_failure.with_message "Running command resulted in failure: Permission denied - mocked error"
+        end.to raise_error(
+          ::Kitchen::TransientFailure,
+          "Running command resulted in failure: Permission denied - mocked error"
+        )
       end
     end
 
@@ -131,7 +137,8 @@ require "mixlib/shellout"
               timeout: duration,
             },
           )
-        end.to result_in_failure.with_message(
+        end.to raise_error(
+          ::Kitchen::TransientFailure,
           "Running command resulted in failure: No such file or directory - mocked error"
         )
       end
@@ -156,7 +163,10 @@ require "mixlib/shellout"
               timeout: duration,
             },
           )
-        end.to result_in_failure.with_message "Running command resulted in failure: mocked error"
+        end.to raise_error(
+          ::Kitchen::TransientFailure,
+          "Running command resulted in failure: mocked error"
+        )
       end
     end
 
@@ -192,7 +202,8 @@ require "mixlib/shellout"
               timeout: duration,
             },
           )
-        end.to result_in_failure.with_message(
+        end.to raise_error(
+          ::Kitchen::TransientFailure,
           matching("Running command resulted in failure: Expected process to exit with \\[0\\], but received '1'")
         )
       end
@@ -209,7 +220,10 @@ require "mixlib/shellout"
               timeout: duration,
             },
           )
-        end.to result_in_failure.with_message matching "stdout"
+        end.to raise_error(
+          ::Kitchen::TransientFailure,
+          matching("STDOUT: stdout")
+        )
       end
 
       specify "should raise an error with the stderr" do
@@ -224,7 +238,10 @@ require "mixlib/shellout"
               timeout: duration,
             },
           )
-        end.to result_in_failure.with_message matching "stderr"
+        end.to raise_error(
+          ::Kitchen::TransientFailure,
+          matching("STDERR: stderr")
+        )
       end
     end
 
