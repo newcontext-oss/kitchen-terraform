@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/error"
 require "kitchen/terraform/inspec"
 
 module Kitchen
@@ -24,7 +23,8 @@ module Kitchen
     class InSpecWithHosts
       # exec executes the InSpec controls of an InSpec profile.
       #
-      # @raise [::Kitchen::Terraform::Error] if the execution of the InSpec controls fails.
+      # @raise [::Kitchen::TransientFailure] if the InSpec Runner exits with a non-zero exit code.
+      # @raise [::Kitchen::ClientError] if the execution of the InSpec controls fails.
       # @return [void]
       def exec(system:)
         system.each_host do |host:|

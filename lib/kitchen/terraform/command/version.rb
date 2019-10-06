@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/error"
 require "rubygems"
 
 module Kitchen
@@ -29,7 +28,7 @@ module Kitchen
         class << self
           # The command is run by shelling out in an environment which is optimized for automating Terraform.
           #
-          # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
+          # @raise [::Kitchen::TransientFailure] if the result of running the command is a failure.
           # @return [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the command.
           # @yieldparam version [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the
           #   command.

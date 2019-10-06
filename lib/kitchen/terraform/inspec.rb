@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "inspec"
-require "kitchen/terraform/error"
 require "train"
 
 module Kitchen
@@ -40,18 +39,19 @@ module Kitchen
 
       # #exec executes InSpec.
       #
-      # @raise [::Kitchen::Terraform::Error] if executing InSpec fails.
+      # @raise [::Kitchen::TransientFailure] if the InSpec Runner exits with a non-zero exit code.
+      # @raise [::Kitchen::ClientError] if executing InSpec fails.
       # @return [self]
       def exec
         @runner.run.tap do |exit_code|
           if 0 != exit_code
-            raise ::Kitchen::Terraform::Error, "InSpec Runner exited with #{exit_code}"
+            raise ::Kitchen::TransientFailure, "InSpec Runner exited with #{exit_code}"
           end
         end
 
         self
       rescue ::ArgumentError, ::RuntimeError, ::Train::UserError => error
-        raise ::Kitchen::Terraform::Error, "Executing InSpec failed\n#{error.message}"
+        raise ::Kitchen::ClientError, "Executing InSpec failed\n#{error.message}"
       end
 
       # #info logs an information message using the InSpec logger.

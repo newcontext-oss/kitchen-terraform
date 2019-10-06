@@ -16,7 +16,6 @@
 
 require "kitchen"
 require "kitchen/terraform/configurable"
-require "kitchen/terraform/error"
 require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/outputs_manager"
 

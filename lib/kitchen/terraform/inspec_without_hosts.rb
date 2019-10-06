@@ -22,7 +22,8 @@ module Kitchen
     class InSpecWithoutHosts
       # exec executes the InSpec controls of an InSpec profile.
       #
-      # @raise [::Kitchen::Terraform::Error] if the execution of the InSpec controls fails.
+      # @raise [::Kitchen::TransientFailure] if the InSpec Runner exits with a non-zero exit code.
+      # @raise [::Kitchen::ClientError] if the execution of the InSpec controls fails.
       # @return [void]
       def exec(system:)
         ::Kitchen::Terraform::InSpec

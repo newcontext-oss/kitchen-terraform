@@ -19,7 +19,6 @@ require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/systems"
 require "kitchen/terraform/configurable"
-require "kitchen/terraform/error"
 require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/inspec_options_mapper"
 
@@ -126,7 +125,7 @@ module Kitchen
 
       def handle_error(message:)
         if config_fail_fast
-          raise ::Kitchen::Terraform::Error, message
+          raise ::Kitchen::ActionFailed, message
         else
           logger.error message
           error_messages.push message

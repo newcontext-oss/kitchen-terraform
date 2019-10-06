@@ -16,53 +16,56 @@
 
 require "json"
 require "kitchen"
-require "kitchen/terraform/command"
-require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 
-# Behaviour to run the `terraform output` command.
-module ::Kitchen::Terraform::Command::Output
-  class << self
-    # Runs the command with JSON foramtting.
-    #
-    # @option options [::String] :cwd the directory in which to run the command.
-    # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
-    #   command.
-    # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
-    # @param client [::String] the pathname of the Terraform client.
-    # @param options [::Hash] options which adjust the execution of the command.
-    # @yieldparam output [::Hash] the standard output of the command parsed as JSON.
-    def run(client:, options:, &block)
-      run_shell_out client: client, options: options, &block
-    rescue ::JSON::ParserError => error
-      handle_json_parser error: error
-    rescue ::Kitchen::Terraform::Error => error
-      handle_kitchen_terraform(
-        error: error,
-        &block
-      )
-    end
+module Kitchen
+  module Terraform
+    module Command
+      # Behaviour to run the `terraform output` command.
+      module Output
+        class << self
+          # Runs the command with JSON foramtting.
+          #
+          # @option options [::String] :cwd the directory in which to run the command.
+          # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
+          #   command.
+          # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
+          # @param client [::String] the pathname of the Terraform client.
+          # @param options [::Hash] options which adjust the execution of the command.
+          # @yieldparam output [::Hash] the standard output of the command parsed as JSON.
+          def run(client:, options:, &block)
+            run_shell_out client: client, options: options, &block
+          rescue ::JSON::ParserError => error
+            handle_json_parser error: error
+          rescue ::Kitchen::TransientFailure => error
+            handle_kitchen_transient_failure error: error, &block
+          end
 
-    private
+          private
 
-    # @api private
-    def handle_json_parser(error:)
-      raise(
-        ::Kitchen::Terraform::Error,
-        "Parsing Terraform output as JSON failed: #{error.message}"
-      )
-    end
+          # @api private
+          def handle_json_parser(error:)
+            raise(
+              ::Kitchen::ClientError,
+              "Parsing Terraform output as JSON failed: #{error.message}"
+            )
+          end
 
-    # @api private
-    def handle_kitchen_terraform(error:)
-      /no\\ outputs\\ defined/.match ::Regexp.escape error.to_s or raise error
-      yield outputs: {}
-    end
+          # @api private
+          def handle_kitchen_transient_failure(error:)
+            /no\\ outputs\\ defined/.match ::Regexp.escape error.to_s or raise error
+            yield outputs: {}
+          end
 
-    # @api private
-    def run_shell_out(client:, options:)
-      ::Kitchen::Terraform::ShellOut.run client: client, command: "output -json", options: options do |standard_output:|
-        yield outputs: ::Kitchen::Util.stringified_hash(::JSON.parse(standard_output))
+          # @api private
+          def run_shell_out(client:, options:)
+            ::Kitchen::Terraform::ShellOut.run(
+              client: client, command: "output -json", options: options
+            ) do |standard_output:|
+              yield outputs: ::Kitchen::Util.stringified_hash(::JSON.parse(standard_output))
+            end
+          end
+        end
       end
     end
   end

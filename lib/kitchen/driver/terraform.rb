@@ -501,7 +501,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         timeout: config_command_timeout,
       },
     )
-  rescue ::Kitchen::Terraform::Error
+  rescue ::Kitchen::TransientFailure
     ::Kitchen::Terraform::ShellOut.run(
       client: config_client,
       command: "workspace new #{workspace_name}",

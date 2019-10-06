@@ -35,7 +35,7 @@ module Kitchen
       # @param client [::String] the pathname of the Terraform client.
       # @param command [::String] the command to run.
       # @param options [::Hash] options which adjust the execution of the command.
-      # @raise [::Kitchen::Terraform::Error] if running the command fails.
+      # @raise [::Kitchen::TransientFailure] if running the command fails.
       # @return [::String] the standard output from running the command.
       # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
       # @yieldparam standard_output [::String] the standard output from running the command.

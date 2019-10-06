@@ -17,7 +17,6 @@
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/provisioner/terraform"
-require "kitchen/terraform/error"
 require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/outputs_manager"
 require "support/kitchen/terraform/configurable_examples"

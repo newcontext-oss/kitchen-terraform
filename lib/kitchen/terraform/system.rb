@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/error"
 require "kitchen/terraform/inspec_with_hosts"
 require "kitchen/terraform/inspec_without_hosts"
 require "kitchen/terraform/system_attrs_inputs_resolver"

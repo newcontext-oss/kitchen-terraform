@@ -18,7 +18,6 @@ require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/debug_logger"
-require "kitchen/terraform/error"
 require "kitchen/terraform/shell_out"
 require "pathname"
 require "rubygems"
@@ -145,7 +144,7 @@ require "support/kitchen/terraform/configurable_examples"
       client: config_client,
       command: command,
       options: { cwd: working_directory, live_stream: kitchen_logger, timeout: command_timeout },
-    ).and_raise ::Kitchen::Terraform::Error, message
+    ).and_raise ::Kitchen::TransientFailure, message
   end
 
   def shell_out_run_success(command:, return_value: "mocked `terraform` success", working_directory: kitchen_root)
@@ -288,7 +287,7 @@ require "support/kitchen/terraform/configurable_examples"
                     live_stream: debug_logger,
                     timeout: command_timeout,
                   },
-                ).and_raise ::Kitchen::Terraform::Error, "no outputs defined"
+                ).and_raise ::Kitchen::TransientFailure, "no outputs defined"
               end
 
               specify "should ignore the failure and yield an empty hash" do
@@ -312,7 +311,7 @@ require "support/kitchen/terraform/configurable_examples"
                     live_stream: debug_logger,
                     timeout: command_timeout,
                   },
-                ).and_raise ::Kitchen::Terraform::Error, error_message
+                ).and_raise ::Kitchen::TransientFailure, error_message
               end
 
               specify "should result in an action failed error with the failed command output" do
@@ -502,7 +501,7 @@ require "support/kitchen/terraform/configurable_examples"
               live_stream: kitchen_logger,
               timeout: command_timeout,
             },
-          ).and_raise ::Kitchen::Terraform::Error, "mocked `terraform destroy` failure"
+          ).and_raise ::Kitchen::TransientFailure, "mocked `terraform destroy` failure"
         end
 
         specify "should result in an action failed error with the failed command output" do
