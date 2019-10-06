@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "support/coverage"
-require "support/kitchen/terraform/result_in_success_matcher"
 
 ::RSpec.configure do |configuration|
   configuration.color = true

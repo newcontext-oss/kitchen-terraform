@@ -265,7 +265,7 @@ require "mixlib/shellout"
       end
 
       specify "should yield the stdout" do
-        expect do
+        expect do |block|
           described_class.run(
             client: "client",
             command: "command",
@@ -275,8 +275,9 @@ require "mixlib/shellout"
               live_stream: logger,
               timeout: duration,
             },
+            &block
           )
-        end.to result_in_success.with_message "stdout"
+        end.to yield_with_args standard_output: "stdout"
       end
     end
   end
