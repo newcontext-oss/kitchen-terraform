@@ -19,7 +19,7 @@ require "kitchen"
 module Kitchen
   module Terraform
     # SystemAttrsInputsResolver is the class of objects which resolve for systems the attributes derived from Terraform
-    # input variables.
+    # variables.
     class SystemAttrsInputsResolver
       def resolve(inputs:)
         inputs.each_pair do |input_name, input_value|

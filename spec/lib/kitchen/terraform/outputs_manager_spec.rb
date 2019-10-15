@@ -43,7 +43,7 @@ require "kitchen/terraform/outputs_manager"
         )
       end
 
-      specify "it should load the output values" do
+      specify "it should load the outputs" do
         expect(outputs).to eq "key" => "value"
       end
     end

@@ -19,7 +19,7 @@ require "kitchen"
 module Kitchen
   module Terraform
     # SystemAttrsOutputsResolver is the class of objects which resolve for systems the attrs which are derived from
-    # Terraform output values.
+    # Terraform outputs.
     class SystemAttrsOutputsResolver
       def resolve(attrs_outputs:, outputs:)
         outputs.each_pair do |output_name, output_body|

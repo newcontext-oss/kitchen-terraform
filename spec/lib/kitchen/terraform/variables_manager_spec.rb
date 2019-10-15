@@ -43,7 +43,7 @@ require "kitchen/terraform/variables_manager"
         )
       end
 
-      specify "it should load the input variables" do
+      specify "it should load the variables" do
         expect(variables).to eq "key" => "value"
       end
     end

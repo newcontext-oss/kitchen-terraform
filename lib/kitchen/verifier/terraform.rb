@@ -71,6 +71,8 @@ module Kitchen
     # This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
     # :reek:MissingSafeMethod { exclude: [ finalize_config!, load_needed_dependencies! ] }
     class Terraform < ::Kitchen::Verifier::Base
+      # UNSUPPORTED_BASE_ATTRIBUTES is the list of attributes inherited from
+      # Kitchen::Verifier::Base which are not supported by Kitchen::Verifier::Terraform.
       UNSUPPORTED_BASE_ATTRIBUTES = [
         :chef_omnibus_root,
         :command_prefix,
@@ -141,9 +143,9 @@ module Kitchen
       end
 
       def load_variables(state:)
-        logger.banner "Starting retrieval of Terraform input variables from the Kitchen instance state."
+        logger.banner "Starting retrieval of Terraform variables from the Kitchen instance state."
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).load variables: inputs, state: state
-        logger.banner "Finished retrieval of Terraform input variables from the Kitchen instance state."
+        logger.banner "Finished retrieval of Terraform variables from the Kitchen instance state."
       end
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
@@ -159,9 +161,9 @@ module Kitchen
       end
 
       def load_outputs(state:)
-        logger.banner "Starting retrieval of Terraform output values from the Kitchen instance state."
+        logger.banner "Starting retrieval of Terraform outputs from the Kitchen instance state."
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).load outputs: outputs, state: state
-        logger.banner "Finished retrieval of Terraform output values from the Kitchen instance state."
+        logger.banner "Finished retrieval of Terraform outputs from the Kitchen instance state."
       end
 
       def load_variables_outputs(state:)

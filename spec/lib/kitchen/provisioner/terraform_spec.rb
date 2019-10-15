@@ -104,11 +104,11 @@ require "support/kitchen/terraform/configurable_examples"
             .load(outputs: outputs, state: kitchen_instance_state)
         end
 
-        specify "should store input variables in the Kitchen instance state" do
+        specify "should store variables in the Kitchen instance state" do
           expect(variables).to eq "variable" => "input_value"
         end
 
-        specify "should store output variables in the Kitchen instance state" do
+        specify "should store outputs in the Kitchen instance state" do
           expect(outputs).to eq "output_name" => { "value" => "output_value" }
         end
       end

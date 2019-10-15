@@ -38,9 +38,9 @@ module Kitchen
 
       # #verify verifies the system by executing InSpec.
       #
-      # @param inputs [::Hash] the Terraform input variables to be utilized as InSpec profile attributes.
+      # @param inputs [::Hash] the Terraform variables to be utilized as InSpec profile attributes.
       # @param inspec_options [::Hash] the options to be passed to InSpec.
-      # @param outputs [::Hash] the Terraform output variables to be utilized as InSpec profile attributes.
+      # @param outputs [::Hash] the Terraform outputs to be utilized as InSpec profile attributes.
       # @return [self]
       def verify(inputs:, inspec_options:, outputs:)
         @logger.info "Starting verification of the '#{name}' system."

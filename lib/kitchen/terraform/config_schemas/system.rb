@@ -32,17 +32,16 @@ module Kitchen
       # implemented in the directory located at `<Kitchen root>/test/integration/<suite name>`. This behaviour can be
       # overridden with the <code>profile_locations</code> key.
       #
-      # The values of any {https://www.terraform.io/docs/configuration/variables.html Terraform input variables}
-      # configured with the driver's <code>variables</code> attribute and the values of any
-      # {https://www.terraform.io/docs/configuration/outputs.html Terraform output variables} which exist in the
-      # Terraform state are associated with equivalently named
+      # The values of any {https://www.terraform.io/docs/configuration/variables.html Terraform variables} configured
+      # with the driver's <code>variables</code> attribute and the values of any
+      # {https://www.terraform.io/docs/configuration/outputs.html Terraform outputs} which exist in the Terraform state
+      # are associated with equivalently named
       # {https://www.inspec.io/docs/reference/profiles/#profile-attributes InSpec profile attributes}, prefixed with
-      # <code>input_</code> or <code>output_</code>, respectively. The values of the output variables are also
-      # associated with equivalently named profile attributes without any prefixes for backward compatibility. Output
-      # variable associations can be overridden with the <code>attrs_outputs</code> key. For example, the value of an
-      # input variable named `test` will be associated with an attribute named `input_test`, and the value of an output
-      # variable named `test` will be associated with an attribute named `output_test` as well as an attribute named
-      # `test`.
+      # <code>input_</code> or <code>output_</code>, respectively. The values of the outputs are also associated with
+      # equivalently named profile attributes without any prefixes for backward compatibility. Output associations can
+      # be overridden with the <code>attrs_outputs</code> key. For example, the value of a variable named `test` will
+      # be associated with an attribute named `input_test`, and the value of an output named `test` will be associated
+      # with an attribute named `output_test` as well as an attribute named `test`.
       #
       # ===== Required Keys
       #
