@@ -81,6 +81,8 @@ end
 #   kitchen converge default-ubuntu
 # @version 2
 class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
+  # UNSUPPORTED_BASE_ATTRIBUTES is the list of attributes inherited from
+  # Kitchen::Provisioner::Base which are not supported by Kitchen::Provisioner::Terraform.
   UNSUPPORTED_BASE_ATTRIBUTES = [
     :command_prefix,
     :downloads,

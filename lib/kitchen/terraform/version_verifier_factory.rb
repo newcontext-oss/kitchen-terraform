@@ -20,6 +20,8 @@ module Kitchen
   module Terraform
     # VersionVerifierFactory is the class of objects which build VersionVerifier objects.
     class VersionVerifierFactory
+      # #build creates a strict Kitchen::Terraform::VersionVerifier or a permissive Kitchen::Terraform::VersionVerifier
+      # depending on how the VersionVerifierFactory instance is initialized.
       def build(logger:, version_requirement:)
         if @strict
           ::Kitchen::Terraform::VersionVerifier.strict(

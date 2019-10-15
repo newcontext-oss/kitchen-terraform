@@ -18,6 +18,7 @@ require "kitchen/terraform"
 
 # Kitchen::Terraform::InSpecOptionsMapper maps system configuration attributes to an InSpec options hash.
 class ::Kitchen::Terraform::InSpecOptionsMapper
+  # SYSTEM_ATTRIBUTES_TO_OPTIONS is a mapping of system attributse to InSpec options.
   SYSTEM_ATTRIBUTES_TO_OPTIONS = {
     attrs: :input_file,
     backend_cache: :backend_cache,

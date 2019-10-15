@@ -49,6 +49,7 @@ module Kitchen
             raise
           end
 
+          # @return [::Kitchen::Logger] the common Kitchen logger.
           def logger
             ::Kitchen.logger
           end

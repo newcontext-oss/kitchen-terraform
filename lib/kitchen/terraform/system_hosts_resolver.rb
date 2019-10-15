@@ -18,10 +18,19 @@ require "kitchen"
 
 module Kitchen
   module Terraform
-    # SystemHostsResolver is the class of objects which resolve for systems the hosts which are contained in outputs.
+    # SystemHostsResolver is the class of objects which resolve the hosts of a system which are contained in Terraform
+    # outputs.
     class SystemHostsResolver
+      # #resolve reads the specified Terraform output and stores the value in a list of hosts.
+      #
+      # @param hosts [::Array] the list of hosts.
+      # @param hosts_output [::String] the name of the Terraform output which contains hosts.
+      # @raise [::Kitchen::ClientError] if the specified Terraform output is not found.
+      # @return [self]
       def resolve(hosts:, hosts_output:)
         hosts.concat Array resolved_output(hosts_output: hosts_output).fetch :value
+
+        self
       rescue ::KeyError
         @logger.error(
           "The 'value' key was not found in the '#{hosts_output}' Terraform output of the Kitchen instance " \

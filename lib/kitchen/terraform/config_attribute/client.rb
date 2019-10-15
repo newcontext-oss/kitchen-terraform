@@ -39,6 +39,11 @@ module Kitchen
       # Example:: <code>client: terraform</code>
       module Client
         class << self
+          # .included is a callback to define the configuration attribute which is invoked when this module is included
+          # in a plugin class.
+          #
+          # @param plugin_class [::Kitchen::Configurable] A plugin class.
+          # @return [self]
           def included(plugin_class)
             ::Kitchen::Terraform::ConfigAttributeDefiner.new(
               attribute: self,
@@ -47,6 +52,8 @@ module Kitchen
             plugin_class.expand_path_for to_sym do |plugin|
               !::TTY::Which.exist? plugin[to_sym]
             end
+
+            self
           end
 
           # @return [::Symbol] the symbol corresponding to this attribute.

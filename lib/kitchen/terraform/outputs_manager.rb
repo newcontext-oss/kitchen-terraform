@@ -18,8 +18,13 @@ require "kitchen"
 
 module Kitchen
   module Terraform
-    # OutputsManager manages Terraform output values in the Kitchen instance state.
+    # OutputsManager manages Terraform outputs in the Kitchen instance state.
     class OutputsManager
+      # #load reads the Terraform outputs from the Kitchen instance state and writes them to a container.
+      #
+      # @param outputs [::Hash] the container to which the Terraform outputs will be written.
+      # @param state [::Hash] the Kitchen instance state from which the Terraform outputs will be read.
+      # @return [self]
       def load(outputs:, state:)
         outputs.replace state.fetch @state_key
 
@@ -30,11 +35,16 @@ module Kitchen
           "Kitchen-Terraform provisioner plugin was not used to converge the Kitchen instance."
         )
 
-        raise ::Kitchen::ClientError, "Failed retrieval of Terraform output values from the Kitchen instance state."
+        raise ::Kitchen::ClientError, "Failed retrieval of Terraform outputs from the Kitchen instance state."
       end
 
+      # #save reads the Terraform outputs from container and writes them to the Kitchen instance state.
+      #
+      # @param outputs [::Hash] the container from which the Terraform outputs will be read.
+      # @param state [::Hash] the Kitchen instance state to which the Terraform outputs will be written.
+      # @return [self]
       def save(outputs:, state:)
-        state.store @state_key, outputs
+        state.store @state_key, outputs.dup
 
         self
       end

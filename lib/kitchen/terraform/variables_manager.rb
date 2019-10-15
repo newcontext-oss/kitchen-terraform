@@ -18,8 +18,13 @@ require "kitchen"
 
 module Kitchen
   module Terraform
-    # VariablesManager manages Terraform input variables in the Kitchen instance state.
+    # VariablesManager manages Terraform variables in the Kitchen instance state.
     class VariablesManager
+      # #load reads the Terraform variables from the Kitchen instance state and writes them to a container.
+      #
+      # @param variables [::Hash] the container to which the Terraform variables will be written.
+      # @param state [::Hash] the Kitchen instance state from which the Terraform variables will be read.
+      # @return [self]
       def load(variables:, state:)
         variables.replace state.fetch @state_key
 
@@ -30,9 +35,14 @@ module Kitchen
           "Kitchen-Terraform provisioner plugin was not used to converge the Kitchen instance."
         )
 
-        raise ::Kitchen::ClientError, "Failed retrieval of Terraform input variables from the Kitchen instance state."
+        raise ::Kitchen::ClientError, "Failed retrieval of Terraform variables from the Kitchen instance state."
       end
 
+      # #save reads the Terraform variables from a container and writes them to the Kitchen instance state.
+      #
+      # @param variables [::Hash] the container from which the Terraform variables will be read.
+      # @param state [::Hash] the Kitchen instance state to which the Terraform variables will be written.
+      # @return [self]
       def save(variables:, state:)
         state.store @state_key, variables
 
