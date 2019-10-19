@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "dry/validation"
-require "kitchen/terraform/config_schemas"
 
 module Kitchen
   module Terraform
@@ -580,6 +579,10 @@ module Kitchen
         optional(:sudo_password).filled :str?
         optional(:user).filled :str?
         optional(:vendor_cache).filled :str?
+      end.dup
+
+      System.define_singleton_method :to_s do
+        "Kitchen::Terraform::ConfigSchemas::System"
       end
     end
   end

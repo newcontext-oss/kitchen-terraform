@@ -15,17 +15,24 @@
 # limitations under the License.
 
 require "dry/validation"
-require "kitchen/terraform/config_schemas"
 
-# A validation schema for a configuration attribute which is an array including only strings.
-#
-# @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
-::Kitchen::Terraform::ConfigSchemas::ArrayOfStrings =
-  ::Dry::Validation
-    .Schema do
-    required(:value)
-      .each(
-        :filled?,
-        :str?
-      )
+module Kitchen
+  module Terraform
+    module ConfigSchemas
+      # A validation schema for a configuration attribute which is an array including only strings.
+      #
+      # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
+      ArrayOfStrings = ::Dry::Validation.Schema do
+        required(:value)
+          .each(
+            :filled?,
+            :str?
+          )
+      end.dup
+
+      ArrayOfStrings.define_singleton_method :to_s do
+        "Kitchen::Terraform::ConfigSchemas::ArrayOfStrings"
+      end
+    end
   end
+end

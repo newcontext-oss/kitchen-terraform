@@ -15,12 +15,18 @@
 # limitations under the License.
 
 require "dry/validation"
-require "kitchen/terraform/config_schemas"
 
-# Defines a validation schema for a string.
+module Kitchen
+  module Terraform
+    module ConfigSchemas
+      # Defines a validation schema for a string.
+      String = ::Dry::Validation.Schema do
+        required(:value).filled :str?
+      end.dup
 
-::Kitchen::Terraform::ConfigSchemas::String =
-  ::Dry::Validation
-    .Schema do
-    required(:value).filled :str?
+      String.define_singleton_method :to_s do
+        "Kitchen::Terraform::ConfigSchemas::String"
+      end
+    end
   end
+end

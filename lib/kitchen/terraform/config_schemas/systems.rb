@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "dry/validation"
-require "kitchen/terraform/config_schemas"
 require "kitchen/terraform/config_schemas/system"
 
 module Kitchen
@@ -28,6 +27,10 @@ module Kitchen
         required(:value).each do
           schema ::Kitchen::Terraform::ConfigSchemas::System
         end
+      end.dup
+
+      Systems.define_singleton_method :to_s do
+        "Kitchen::Terraform::ConfigSchemas::Systems"
       end
     end
   end
