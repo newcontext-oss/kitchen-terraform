@@ -24,7 +24,7 @@ source "https://rubygems.org/" do
   end
 
   group :runtime do
-    gem "inspec", ">= 4.18.0"
+    gem "inspec", "~> 3.0"
   end
 
   group :test do
