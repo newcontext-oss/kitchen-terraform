@@ -16,8 +16,8 @@
 
 module Kitchen
   module Terraform
-    # InSpec is the namespace for the classes of objects which execute InSpec.
-    module InSpec
+    # SystemsVerifier is the namespace of the classes of objects which verify systems.
+    module SystemsVerifier
     end
   end
 end

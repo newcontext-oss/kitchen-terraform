@@ -19,8 +19,9 @@ require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/systems"
 require "kitchen/terraform/configurable"
+require "kitchen/terraform/systems_verifier_factory"
+require "kitchen/terraform/outputs_manager"
 require "kitchen/terraform/variables_manager"
-require "kitchen/terraform/inspec_options_mapper"
 
 module Kitchen
   # This namespace is defined by Kitchen.
@@ -92,7 +93,7 @@ module Kitchen
       include ::Kitchen::Terraform::Configurable
       kitchen_verifier_api_version 2
 
-      attr_reader :inputs, :outputs
+      attr_reader :outputs, :variables
 
       # The verifier enumerates through each host of each system and verifies the associated InSpec controls.
       #
@@ -102,11 +103,9 @@ module Kitchen
       # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def call(state)
-        load_variables_outputs state: state
+        load_variables state: state
+        load_outputs state: state
         verify_systems
-        if !error_messages.empty?
-          raise ::Kitchen::ActionFailed, error_messages.join("\n\n")
-        end
       rescue => error
         raise ::Kitchen::ActionFailed, error.message
       end
@@ -122,29 +121,17 @@ module Kitchen
 
       private
 
-      attr_accessor :inspec_options_mapper, :error_messages
-      attr_writer :inputs, :outputs
-
-      def handle_error(message:)
-        if config_fail_fast
-          raise ::Kitchen::ActionFailed, message
-        else
-          logger.error message
-          error_messages.push message
-        end
-      end
+      attr_accessor :outputs, :variables
 
       def initialize(configuration = {})
         init_config configuration
-        self.inspec_options_mapper = ::Kitchen::Terraform::InSpecOptionsMapper.new
-        self.error_messages = []
-        self.inputs = {}
         self.outputs = {}
+        self.variables = {}
       end
 
       def load_variables(state:)
         logger.banner "Starting retrieval of Terraform variables from the Kitchen instance state."
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).load variables: inputs, state: state
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).load variables: variables, state: state
         logger.banner "Finished retrieval of Terraform variables from the Kitchen instance state."
       end
 
@@ -153,9 +140,9 @@ module Kitchen
       # @raise [::Kitchen::ClientError] if loading the InSpec libraries fails.
       # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/configurable.rb#L252-L274
       def load_needed_dependencies!
-        require "kitchen/terraform/inspec"
+        require "kitchen/terraform/inspec_runner"
         require "kitchen/terraform/system"
-        ::Kitchen::Terraform::InSpec.logger = logger
+        ::Kitchen::Terraform::InSpecRunner.logger = logger
       rescue ::LoadError => load_error
         raise ::Kitchen::ClientError, load_error.message
       end
@@ -166,30 +153,29 @@ module Kitchen
         logger.banner "Finished retrieval of Terraform outputs from the Kitchen instance state."
       end
 
-      def load_variables_outputs(state:)
-        load_variables state: state
-        load_outputs state: state
+      def profile_locations
+        @profile_locations ||= [::File.join(config.fetch(:test_base_path), instance.suite.name)]
       end
 
-      def system_inspec_options(system:)
-        inspec_options_mapper.map(options: { "color" => config_color, "distinct_exit" => false }, system: system)
+      def systems
+        @systems ||= config_systems.map do |system|
+          ::Kitchen::Terraform::System.new(
+            configuration_attributes: { color: config_color, profile_locations: profile_locations }.merge(system),
+            logger: logger,
+          )
+        end
       end
 
-      def verify(system:)
-        ::Kitchen::Terraform::System.new(
+      def systems_verifier
+        @systems_verifier ||= ::Kitchen::Terraform::SystemsVerifierFactory.new(fail_fast: config_fail_fast).build(
           logger: logger,
-          mapping: { profile_locations: [::File.join(config.fetch(:test_base_path), instance.suite.name)] }
-            .merge(system),
-        ).verify(inputs: inputs, inspec_options: system_inspec_options(system: system), outputs: outputs)
-      rescue => error
-        handle_error message: error.message
+          systems: systems,
+        )
       end
 
       def verify_systems
         logger.banner "Starting verification of the systems."
-        config_systems.each do |system|
-          verify system: system
-        end
+        systems_verifier.verify outputs: outputs, variables: variables
         logger.banner "Finished verification of the systems."
       end
     end

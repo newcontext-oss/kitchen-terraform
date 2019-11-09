@@ -140,7 +140,7 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Failed resolution of hosts."
+        end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
       end
     end
 
@@ -159,7 +159,7 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Failed resolution of attributes."
+        end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
       end
     end
 
@@ -178,7 +178,7 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Failed resolution of hosts."
+        end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
       end
     end
 
@@ -272,23 +272,19 @@ require "support/kitchen/terraform/configurable_examples"
           it "does raise an error" do
             expect do
               subject.call kitchen_instance_state
-            end.to raise_error ::Kitchen::ActionFailed, "InSpec Runner exited with 1"
+            end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
           end
         end
 
         context "when the InSpec runner raises an error" do
-          let :error_message do
-            "mocked InSpec error"
-          end
-
           before do
-            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
+            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, "mocked InSpec error"
           end
 
           specify "should raise an action failed error" do
             expect do
               subject.call kitchen_instance_state
-            end.to raise_error ::Kitchen::ActionFailed, "Executing InSpec failed\n#{error_message}"
+            end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
           end
         end
       end
@@ -303,32 +299,29 @@ require "support/kitchen/terraform/configurable_examples"
             allow(runner).to receive(:run).with(no_args).and_return 1
           end
 
-          it "does raise all errors" do
+          specify "should raise an ActionFailed with all error messages" do
             expect do
               subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
-              "InSpec Runner exited with 1\n\nInSpec Runner exited with 1"
+              "Verification of the 'a-system-with-hosts' system failed.\n\n" \
+              "Verification of the 'a-system-without-hosts' system failed."
             )
           end
         end
 
         context "when the InSpec runner raises an error multiple times" do
-          let :error_message do
-            "mocked InSpec error"
-          end
-
           before do
-            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
+            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, "mocked InSpec error"
           end
 
-          specify "should raise an action failed error" do
+          specify "should raise an ActionFailed with all error messages" do
             expect do
               subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
-              "Executing InSpec failed\n#{error_message}\n\n" \
-              "Executing InSpec failed\n#{error_message}"
+              "Verification of the 'a-system-with-hosts' system failed.\n\n" \
+              "Verification of the 'a-system-without-hosts' system failed."
             )
           end
         end
@@ -365,7 +358,7 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       before do
-        allow(subject).to receive(:require).with("kitchen/terraform/inspec").and_raise ::LoadError, error_message
+        allow(subject).to receive(:require).with("kitchen/terraform/inspec_runner").and_raise ::LoadError, error_message
       end
 
       specify "should raise a client error" do

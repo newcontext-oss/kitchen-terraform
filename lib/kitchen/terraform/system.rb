@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/inspec_with_hosts"
-require "kitchen/terraform/inspec_without_hosts"
+require "kitchen/terraform/inspec_factory"
+require "kitchen/terraform/inspec_options_factory"
 require "kitchen/terraform/system_attrs_inputs_resolver"
 require "kitchen/terraform/system_attrs_outputs_resolver"
 require "kitchen/terraform/system_hosts_resolver"
@@ -24,75 +24,73 @@ module Kitchen
   module Terraform
     # System is the class of objects which are verified by the Terraform Verifier.
     class System
-      # #each_host enumerates each host of the system.
+      # #initialize prepares a new instance of the class.
       #
-      # @yieldparam host [::String] the next host.
-      # @return [self]
-      def each_host
-        @hosts.each do |host|
-          yield host: host
-        end
+      # @param configuration_attributes [::Hash] a mapping of configuration attributes.
+      # @param logger [::Kitchen::Logger] a logger to log messages.
+      def initialize(configuration_attributes:, logger:)
+        self.attrs_outputs = configuration_attributes.fetch :attrs_outputs do
+          {}
+        end.dup
+        self.configuration_attributes = configuration_attributes
+        self.hosts = configuration_attributes.fetch :hosts do
+          []
+        end.dup
+        self.inspec_options_factory = ::Kitchen::Terraform::InSpecOptionsFactory.new
+        self.logger = logger
+      end
 
-        self
+      # @return [::String] a string representation of the system.
+      def to_s
+        configuration_attributes.fetch(:name).dup
       end
 
       # #verify verifies the system by executing InSpec.
       #
-      # @param inputs [::Hash] the Terraform variables to be utilized as InSpec profile attributes.
-      # @param inspec_options [::Hash] the options to be passed to InSpec.
+      # @param fail_fast [Boolean] a toggle to control the fast or slow failure of InSpec.
       # @param outputs [::Hash] the Terraform outputs to be utilized as InSpec profile attributes.
+      # @param variables [::Hash] the Terraform variables to be utilized as InSpec profile attributes.
       # @return [self]
-      def verify(inputs:, inspec_options:, outputs:)
-        @logger.info "Starting verification of the '#{name}' system."
-        resolve inputs: inputs, outputs: outputs do |attrs:|
-          inspec.new(options: inspec_options.merge(attributes: attrs), profile_locations: @mapping.fetch(:profile_locations))
-            .exec(system: self)
+      def verify(fail_fast:, outputs:, variables:)
+        logger.info "Starting verification of the '#{self}' system."
+        resolve outputs: outputs, variables: variables do |attrs:|
+          ::Kitchen::Terraform::InSpecFactory.new(fail_fast: fail_fast, hosts: hosts).build(
+            logger: logger,
+            options: inspec_options_factory.build(
+              attributes: attrs,
+              system_configuration_attributes: configuration_attributes,
+            ),
+            profile_locations: configuration_attributes.fetch(:profile_locations),
+          ).exec
         end
-        @logger.info "Finished verification of the '#{name}' system."
+        logger.info "Finished verification of the '#{self}' system."
 
         self
       end
 
       private
 
-      def initialize(logger:, mapping:)
-        @attrs_outputs = mapping.fetch :attrs_outputs do
-          {}
-        end.dup
-        @hosts = mapping.fetch :hosts do
-          []
-        end.dup
-        @logger = logger
-        @mapping = mapping
+      attr_accessor :attrs_outputs, :configuration_attributes, :hosts, :inspec_options_factory, :logger
+
+      def resolve(outputs:, variables:, &block)
+        resolve_hosts outputs: outputs if configuration_attributes.key? :hosts_output
+        resolve_attrs outputs: outputs, variables: variables, &block
       end
 
-      def inspec
-        if @hosts.empty?
-          ::Kitchen::Terraform::InSpecWithoutHosts
-        else
-          ::Kitchen::Terraform::InSpecWithHosts
-        end
-      end
-
-      def name
-        @mapping.fetch :name
-      end
-
-      def resolve(inputs:, outputs:, &block)
-        resolve_hosts outputs: outputs if @mapping.key? :hosts_output
-        resolve_attrs inputs: inputs, outputs: outputs, &block
-      end
-
-      def resolve_attrs(inputs:, outputs:, &block)
-        ::Kitchen::Terraform::SystemAttrsInputsResolver.new(attrs: {}).resolve inputs: inputs do |attrs:|
-          ::Kitchen::Terraform::SystemAttrsOutputsResolver.new(attrs: attrs, logger: @logger).resolve(attrs_outputs: @attrs_outputs, outputs: outputs, &block)
+      def resolve_attrs(outputs:, variables:, &block)
+        ::Kitchen::Terraform::SystemAttrsInputsResolver.new(attrs: {}).resolve inputs: variables do |attrs:|
+          ::Kitchen::Terraform::SystemAttrsOutputsResolver.new(attrs: attrs, logger: logger).resolve(
+            attrs_outputs: attrs_outputs,
+            outputs: outputs,
+            &block
+          )
         end
       end
 
       def resolve_hosts(outputs:)
-        ::Kitchen::Terraform::SystemHostsResolver.new(logger: @logger, outputs: outputs).resolve(
-          hosts: @hosts,
-          hosts_output: @mapping.fetch(:hosts_output),
+        ::Kitchen::Terraform::SystemHostsResolver.new(logger: logger, outputs: outputs).resolve(
+          hosts: hosts,
+          hosts_output: configuration_attributes.fetch(:hosts_output),
         )
 
         self
