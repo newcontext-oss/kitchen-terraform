@@ -125,7 +125,7 @@ require "support/kitchen/terraform/configurable_examples"
       subject.finalize_config! kitchen_instance
     end
 
-    context "when the Terraform outputs are in an unexpected format" do
+    context "when the Terraform output mapped to the :hosts key is in an unexpected format" do
       before do
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
           variables: { variable: "input value" },
@@ -152,6 +152,25 @@ require "support/kitchen/terraform/configurable_examples"
         )
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
           outputs: { hosts: { value: "host" } },
+          state: kitchen_instance_state,
+        )
+      end
+
+      specify "should raise an action failed error" do
+        expect do
+          subject.call kitchen_instance_state
+        end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
+      end
+    end
+
+    context "when a Terraform output mapped to a :attrs_outputs key is in an unexpected format" do
+      before do
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { variable: "input value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { hosts: { value: "host" }, output_name: { amount: "output value" } },
           state: kitchen_instance_state,
         )
       end
