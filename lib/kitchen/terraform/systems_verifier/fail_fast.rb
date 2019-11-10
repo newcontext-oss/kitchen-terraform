@@ -51,7 +51,7 @@ module Kitchen
         def verify_or_fail(outputs:, system:, variables:)
           system.verify fail_fast: true, outputs: outputs, variables: variables
         rescue => error
-          logger.error error.message
+          logger.error "Verification of the '#{system}' system experienced an error:\n\t#{error.message}"
 
           raise ::Kitchen::TransientFailure, "Verification of the '#{system}' system failed."
         end

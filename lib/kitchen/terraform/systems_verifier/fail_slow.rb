@@ -55,7 +55,7 @@ module Kitchen
         def verify_and_continue(outputs:, system:, variables:)
           system.verify fail_fast: false, outputs: outputs, variables: variables
         rescue => error
-          logger.error error.message
+          logger.error "Verification of the '#{system}' system experienced an error:\n\t#{error.message}"
           messages.push "Verification of the '#{system}' system failed."
         end
       end

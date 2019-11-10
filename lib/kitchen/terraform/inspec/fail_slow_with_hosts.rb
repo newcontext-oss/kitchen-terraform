@@ -61,7 +61,7 @@ module Kitchen
             profile_locations: profile_locations,
           ).exec
         rescue => error
-          logger.error error.message
+          logger.error "Execution of InSpec against the '#{host}' host experienced an error:\n\t#{error.message}"
           messages.push "Execution of InSpec against the '#{host}' host failed."
         end
       end

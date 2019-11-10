@@ -30,7 +30,7 @@ module Kitchen
 
           self
         rescue => error
-          logger.error error.message
+          logger.error "Execution of InSpec experienced an error:\n\t#{error.message}"
 
           raise ::Kitchen::TransientFailure, "Execution of InSpec failed."
         end
