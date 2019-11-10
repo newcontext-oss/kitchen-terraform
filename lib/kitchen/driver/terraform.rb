@@ -236,13 +236,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @yieldparam outputs [::Hash] the state output.
   def apply(&block)
     verify_version
-    run_workspace_select_instance
-    apply_run
-    ::Kitchen::Terraform::Command::Output.run(
-      client: config_client,
-      options: { cwd: config_root_module_directory, live_stream: debug_logger, timeout: config_command_timeout },
-      &block
-    )
+    apply_run(&block)
 
     self
   rescue => error
@@ -293,10 +287,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   attr_accessor :debug_logger, :version_requirement
 
-  def apply_run
+  def apply_run(&block)
+    run_workspace_select_instance
     apply_run_get
     apply_run_validate
     apply_run_apply
+    apply_run_output(&block)
   end
 
   # @api private
@@ -331,6 +327,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
         live_stream: logger,
         timeout: config_command_timeout,
       },
+    )
+  end
+
+  def apply_run_output(&block)
+    ::Kitchen::Terraform::Command::Output.run(
+      client: config_client,
+      options: { cwd: config_root_module_directory, live_stream: debug_logger, timeout: config_command_timeout },
+      &block
     )
   end
 
