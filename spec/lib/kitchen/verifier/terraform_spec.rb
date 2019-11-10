@@ -17,6 +17,7 @@
 require "inspec"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/inspec_options_factory"
 require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/outputs_manager"
 require "kitchen/transport/ssh"
@@ -214,14 +215,6 @@ require "support/kitchen/terraform/configurable_examples"
           "color" => false,
           "distinct_exit" => false,
           "reporter" => ["reporter"],
-          attributes: {
-            "attribute_name" => "output value",
-            "hosts" => "host",
-            "input_variable" => "input value",
-            "output_hosts" => "host",
-            "output_name" => "output value",
-            "output_output_name" => "output value",
-          },
           backend_cache: false,
           backend: "backend",
           bastion_host: "bastion_host",
@@ -231,6 +224,14 @@ require "support/kitchen/terraform/configurable_examples"
           enable_password: "enable_password",
           host: "host",
           input_file: ["attrs.yml"],
+          ::Kitchen::Terraform::InSpecOptionsFactory.inputs_key => {
+            "attribute_name" => "output value",
+            "hosts" => "host",
+            "input_variable" => "input value",
+            "output_hosts" => "host",
+            "output_name" => "output value",
+            "output_output_name" => "output value",
+          },
           key_files: ["first_key_file", "second_key_file"],
           logger: logger,
           password: "password",
@@ -256,7 +257,8 @@ require "support/kitchen/terraform/configurable_examples"
         {
           "color" => false,
           "distinct_exit" => false,
-          attributes: {
+          backend: "backend",
+          ::Kitchen::Terraform::InSpecOptionsFactory.inputs_key => {
             "attribute_name" => "output value",
             "hosts" => "host",
             "input_variable" => "input value",
@@ -264,7 +266,6 @@ require "support/kitchen/terraform/configurable_examples"
             "output_name" => "output value",
             "output_output_name" => "output value",
           },
-          backend: "backend",
           logger: logger,
         }
       end

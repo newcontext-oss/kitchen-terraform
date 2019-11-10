@@ -14,12 +14,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "inspec"
 require "kitchen/terraform/system_inspec_map"
+require "rubygems"
 
 module Kitchen
   module Terraform
     # InSpecOptionsMapper is the class of objects which build Inspec options.
     class InSpecOptionsFactory
+      class << self
+        # #inputs_key provides a key for InSpec profile inputs which depends on the version of InSpec.
+        #
+        # @return [::Symbol] if the version is less than 4.3.2, :attributes; else, :inputs.
+        def inputs_key
+          if ::Gem::Requirement.new("< 4.3.2").satisfied_by? ::Gem::Version.new ::Inspec::VERSION
+            :attributes
+          else
+            :inputs
+          end
+        end
+      end
+
       # #build creates a mapping of InSpec options. Most key-value pairs are derived from the configuration attributes
       # of a system; some key-value pairs are hard-coded.
       #
@@ -33,7 +48,7 @@ module Kitchen
           options.store system_inspec_map.fetch(attribute_name), attribute_value
         end
 
-        options.merge attributes: attributes
+        options.merge self.class.inputs_key => attributes
       end
 
       private
