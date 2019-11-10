@@ -29,6 +29,7 @@ module Kitchen
       # @param configuration_attributes [::Hash] a mapping of configuration attributes.
       # @param logger [::Kitchen::Logger] a logger to log messages.
       def initialize(configuration_attributes:, logger:)
+        self.attrs = {}
         self.attrs_outputs = configuration_attributes.fetch :attrs_outputs do
           {}
         end.dup
@@ -53,16 +54,15 @@ module Kitchen
       # @return [self]
       def verify(fail_fast:, outputs:, variables:)
         logger.info "Starting verification of the '#{self}' system."
-        resolve outputs: outputs, variables: variables do |attrs:|
-          ::Kitchen::Terraform::InSpecFactory.new(fail_fast: fail_fast, hosts: hosts).build(
-            logger: logger,
-            options: inspec_options_factory.build(
-              attributes: attrs,
-              system_configuration_attributes: configuration_attributes,
-            ),
-            profile_locations: configuration_attributes.fetch(:profile_locations),
-          ).exec
-        end
+        resolve outputs: outputs, variables: variables
+        ::Kitchen::Terraform::InSpecFactory.new(fail_fast: fail_fast, hosts: hosts).build(
+          logger: logger,
+          options: inspec_options_factory.build(
+            attributes: attrs,
+            system_configuration_attributes: configuration_attributes,
+          ),
+          profile_locations: configuration_attributes.fetch(:profile_locations),
+        ).exec
         logger.info "Finished verification of the '#{self}' system."
 
         self
@@ -70,30 +70,18 @@ module Kitchen
 
       private
 
-      attr_accessor :attrs_outputs, :configuration_attributes, :hosts, :inspec_options_factory, :logger
+      attr_accessor :attrs, :attrs_outputs, :configuration_attributes, :hosts, :inspec_options_factory, :logger
 
-      def resolve(outputs:, variables:, &block)
-        resolve_hosts outputs: outputs if configuration_attributes.key? :hosts_output
-        resolve_attrs outputs: outputs, variables: variables, &block
-      end
-
-      def resolve_attrs(outputs:, variables:, &block)
-        ::Kitchen::Terraform::SystemAttrsInputsResolver.new(attrs: {}).resolve inputs: variables do |attrs:|
-          ::Kitchen::Terraform::SystemAttrsOutputsResolver.new(attrs: attrs, logger: logger).resolve(
-            attrs_outputs: attrs_outputs,
-            outputs: outputs,
-            &block
-          )
-        end
-      end
-
-      def resolve_hosts(outputs:)
+      def resolve(outputs:, variables:)
+        ::Kitchen::Terraform::SystemAttrsInputsResolver.new(attrs: attrs).resolve inputs: variables
         ::Kitchen::Terraform::SystemHostsResolver.new(logger: logger, outputs: outputs).resolve(
           hosts: hosts,
           hosts_output: configuration_attributes.fetch(:hosts_output),
+        ) if configuration_attributes.key? :hosts_output
+        ::Kitchen::Terraform::SystemAttrsOutputsResolver.new(attrs: attrs, logger: logger).resolve(
+          attrs_outputs: attrs_outputs,
+          outputs: outputs,
         )
-
-        self
       end
     end
   end

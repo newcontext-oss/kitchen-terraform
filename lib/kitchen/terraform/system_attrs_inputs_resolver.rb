@@ -21,21 +21,28 @@ module Kitchen
     # SystemAttrsInputsResolver is the class of objects which resolve for systems the attributes derived from Terraform
     # variables.
     class SystemAttrsInputsResolver
+      # #initialize prepares a new instance of the class.
+      #
+      # @param attrs [::Hash] a container for attributes.
+      def initialize(attrs:)
+        self.attrs = attrs
+      end
+
+      # #resolve stores the inputs as attributes.
+      #
+      # @param inputs [::Hash<::String, ::String>] the variables to be stored as inputs.
+      # @return self
       def resolve(inputs:)
         inputs.each_pair do |input_name, input_value|
-          @attrs.store "input_#{input_name}", input_value
+          attrs.store "input_#{input_name}", input_value
         end
-
-        yield attrs: @attrs
 
         self
       end
 
       private
 
-      def initialize(attrs:)
-        @attrs = attrs
-      end
+      attr_accessor :attrs
     end
   end
 end

@@ -40,8 +40,6 @@ module Kitchen
         resolve_defaults outputs: outputs
         resolve_configuration attrs_outputs: attrs_outputs
 
-        yield attrs: attrs
-
         self
       end
 
