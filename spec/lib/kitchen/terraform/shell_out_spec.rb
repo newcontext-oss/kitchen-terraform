@@ -20,52 +20,16 @@ require "mixlib/shellout"
 
 ::RSpec.describe ::Kitchen::Terraform::ShellOut do
   describe ".run" do
-    let :complete_environment do
-      { "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1", "FOO" => "bar" }
+    let :environment do
+      { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" }
     end
 
     let :duration do
       1234
     end
 
-    let :extra_environment do
-      { "FOO" => "bar" }
-    end
-
     let :logger do
       ::Kitchen::Logger.new
-    end
-
-    context "when an invalid command option is sent to the shell out constructor" do
-      before do
-        allow(::Mixlib::ShellOut).to(
-          receive(:new).with(
-            "client command",
-            cwd: "/working/directory",
-            environment: complete_environment,
-            live_stream: logger,
-            timeout: duration,
-          ).and_raise(::Mixlib::ShellOut::InvalidCommandOption, "invalid command option")
-        )
-      end
-
-      specify "should raise an error with the invalid command option error message" do
-        expect do
-          described_class.run(
-            client: "client",
-            command: "command",
-            options: {
-              cwd: "/working/directory",
-              environment: extra_environment,
-              live_stream: logger,
-              timeout: duration,
-            },
-          )
-        end.to raise_error(
-          ::Kitchen::TransientFailure,
-          "Running command resulted in failure: invalid command option"
-        )
-      end
     end
 
     shared_context "when an error occurs" do
@@ -80,7 +44,7 @@ require "mixlib/shellout"
           "client command",
           {
             cwd: "/working/directory",
-            environment: complete_environment,
+            environment: environment,
             live_stream: logger,
             timeout: duration,
           },
@@ -92,29 +56,25 @@ require "mixlib/shellout"
       end
     end
 
-    context "when a permissions error occurs" do
+    context "when running the command fails due to unauthorized access to a file or directory" do
       include_context "when an error occurs"
 
       let :error_class do
         ::Errno::EACCES
       end
 
-      specify "should raise an error with the permissions error message" do
+      specify "should raise a transient failure error" do
         expect do
           described_class.run(
             client: "client",
             command: "command",
+            logger: logger,
             options: {
               cwd: "/working/directory",
-              environment: extra_environment,
-              live_stream: logger,
               timeout: duration,
             },
           )
-        end.to raise_error(
-          ::Kitchen::TransientFailure,
-          "Running command resulted in failure: Permission denied - mocked error"
-        )
+        end.to raise_error ::Kitchen::TransientFailure
       end
     end
 
@@ -130,17 +90,13 @@ require "mixlib/shellout"
           described_class.run(
             client: "client",
             command: "command",
+            logger: logger,
             options: {
               cwd: "/working/directory",
-              environment: extra_environment,
-              live_stream: logger,
               timeout: duration,
             },
           )
-        end.to raise_error(
-          ::Kitchen::TransientFailure,
-          "Running command resulted in failure: No such file or directory - mocked error"
-        )
+        end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`."
       end
     end
 
@@ -156,17 +112,13 @@ require "mixlib/shellout"
           described_class.run(
             client: "client",
             command: "command",
+            logger: logger,
             options: {
               cwd: "/working/directory",
-              environment: extra_environment,
-              live_stream: logger,
               timeout: duration,
             },
           )
-        end.to raise_error(
-          ::Kitchen::TransientFailure,
-          "Running command resulted in failure: mocked error"
-        )
+        end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`."
       end
     end
 
@@ -176,7 +128,7 @@ require "mixlib/shellout"
           receive(:new).with(
             "client command",
             cwd: "/working/directory",
-            environment: complete_environment,
+            environment: environment,
             live_stream: logger,
             timeout: duration,
           ).and_wrap_original do |original, *arguments|
@@ -195,17 +147,13 @@ require "mixlib/shellout"
           described_class.run(
             client: "client",
             command: "command",
+            logger: logger,
             options: {
               cwd: "/working/directory",
-              environment: extra_environment,
-              live_stream: logger,
               timeout: duration,
             },
           )
-        end.to raise_error(
-          ::Kitchen::TransientFailure,
-          matching("Running command resulted in failure: Expected process to exit with \\[0\\], but received '1'")
-        )
+        end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`:\n\tstderr"
       end
 
       specify "should raise an error with the stdout" do
@@ -213,17 +161,13 @@ require "mixlib/shellout"
           described_class.run(
             client: "client",
             command: "command",
+            logger: logger,
             options: {
               cwd: "/working/directory",
-              environment: extra_environment,
-              live_stream: logger,
               timeout: duration,
             },
           )
-        end.to raise_error(
-          ::Kitchen::TransientFailure,
-          matching("STDOUT: stdout")
-        )
+        end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`:\n\tstderr"
       end
 
       specify "should raise an error with the stderr" do
@@ -231,17 +175,13 @@ require "mixlib/shellout"
           described_class.run(
             client: "client",
             command: "command",
+            logger: logger,
             options: {
               cwd: "/working/directory",
-              environment: extra_environment,
-              live_stream: logger,
               timeout: duration,
             },
           )
-        end.to raise_error(
-          ::Kitchen::TransientFailure,
-          matching("STDERR: stderr")
-        )
+        end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`:\n\tstderr"
       end
     end
 
@@ -251,7 +191,7 @@ require "mixlib/shellout"
           receive(:new).with(
             "client command",
             cwd: "/working/directory",
-            environment: complete_environment,
+            environment: environment,
             live_stream: logger,
             timeout: duration,
           ).and_wrap_original do |original, *arguments|
@@ -269,10 +209,9 @@ require "mixlib/shellout"
           described_class.run(
             client: "client",
             command: "command",
+            logger: logger,
             options: {
               cwd: "/working/directory",
-              environment: extra_environment,
-              live_stream: logger,
               timeout: duration,
             },
             &block

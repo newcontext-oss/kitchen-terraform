@@ -18,7 +18,7 @@ require "kitchen"
 
 module Kitchen
   module Terraform
-    # VersionVerifierStrategy is the module of objects which provide strategies for VersionVerifiers.
+    # VersionVerifierStrategy is the module of objects which provide strategies for version verification.
     module VersionVerifierStrategy
     end
   end

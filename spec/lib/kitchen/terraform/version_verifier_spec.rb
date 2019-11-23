@@ -15,65 +15,77 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/command/version"
 require "kitchen/terraform/version_verifier"
-require "kitchen/terraform/version_verifier_strategy/permissive"
 require "rubygems"
 
 ::RSpec.describe ::Kitchen::Terraform::VersionVerifier do
-  let :logger do
-    ::Kitchen::Logger.new
-  end
-
-  let :requirement do
-    ::Gem::Requirement.create ">= 0.1.2", "< 3.4.5"
-  end
-
-  describe ".permissive" do
-    specify "should select the permissive strategy" do
-      expect(::Kitchen::Terraform::VersionVerifierStrategy::Permissive).to receive :new
-    end
-
-    after do
-      described_class.permissive logger: logger, requirement: requirement
-    end
-  end
-
-  describe ".strict" do
-    specify "should select the strict strategy" do
-      expect(::Kitchen::Terraform::VersionVerifierStrategy::Strict).to receive :new
-    end
-
-    after do
-      described_class.strict logger: logger, requirement: requirement
-    end
-  end
-
   describe "#verify" do
     subject do
-      described_class.new logger: logger, requirement: requirement, strategy: strategy
+      described_class.new command: command, logger: ::Kitchen::Logger.new
     end
 
-    let :strategy do
-      double "Kitchen::Terraform::VersionVerifyStrategy"
+    let :command do
+      instance_double ::Kitchen::Terraform::Command::Version
+    end
+
+    let :requirement do
+      ::Gem::Requirement.new "~> 1.2.3"
+    end
+
+    context "when running the command fails" do
+      before do
+        allow(command).to receive(:run).and_raise ::Kitchen::TransientFailure, "Failed to run command `terraform version`."
+      end
+
+      specify "should raise an error" do
+        expect do
+          subject.verify requirement: requirement, strict: true
+        end.to raise_error ::Kitchen::TransientFailure, "Failed verification of the Terraform client version."
+      end
     end
 
     context "when the version does not meet the requirement" do
-      specify "should indicate to the strategy that the version is unsupported" do
-        expect(strategy).to receive :unsupported
+      before do
+        allow(command).to receive(:run).and_yield version: ::Gem::Version.new("0.1.2")
       end
 
-      after do
-        subject.verify version: ::Gem::Version.create("6.7.8")
+      context "when strict mode is enabled" do
+        specify "should raise an error" do
+          expect do
+            subject.verify requirement: requirement, strict: true
+          end.to raise_error ::Kitchen::UserError, "Failed verification of the Terraform client version."
+        end
+      end
+
+      context "when strict mode is disabled" do
+        specify "should not raise an error" do
+          expect do
+            subject.verify requirement: requirement, strict: false
+          end.not_to raise_error
+        end
       end
     end
 
     context "when the version does meet the requirement" do
-      specify "should indicate to the strategy that the version is supported" do
-        expect(strategy).to receive :supported
+      before do
+        allow(command).to receive(:run).and_yield version: ::Gem::Version.new("1.2.4")
       end
 
-      after do
-        subject.verify version: ::Gem::Version.create("1.2.3")
+      context "when strict mode is enabeld" do
+        specify "should not raise an error" do
+          expect do
+            subject.verify requirement: requirement, strict: true
+          end.not_to raise_error
+        end
+      end
+
+      context "when strict mode is disabled" do
+        specify "should not raise an error" do
+          expect do
+            subject.verify requirement: requirement, strict: false
+          end.not_to raise_error
+        end
       end
     end
   end

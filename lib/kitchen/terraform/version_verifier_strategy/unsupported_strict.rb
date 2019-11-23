@@ -19,18 +19,15 @@ require "kitchen"
 module Kitchen
   module Terraform
     module VersionVerifierStrategy
-      # Strict is the class of objects which provide a strict strategy for VersionVerifiers.
-      class Strict
-        # #supported informs the user that the version is supported.
-        def supported
-          @logger.info "The Terraform client version is supported."
-
-          self
-        end
-
-        # #unsupported informs the user that the version is not supported and raises an error.
-        def unsupported
-          @logger.error(
+      # UnsupportedStrict is the class of objects which provide a strict strategy for unsupported Terraform client
+      # versions.
+      class UnsupportedStrict
+        # #call informs the user that the version is unsupported and fails the verification.
+        #
+        # @raise [Kitchen::UserError]
+        # @return [void]
+        def call
+          logger.error(
             "The Terraform client version is not supported. Set `driver.verify_version: false` to downgrade this " \
             "error to a warning."
           )
@@ -38,11 +35,17 @@ module Kitchen
           raise ::Kitchen::UserError, "Failed verification of the Terraform client version."
         end
 
+        # #initialize prepares a new instance of the class.
+        #
+        # @param logger [Kitchen::Logger] a logger to log messages.
+        # @return [Kitchen::Terraform::VersionVerifierStrategy::UnsupportedStrict]
+        def initialize(logger:)
+          self.logger = logger
+        end
+
         private
 
-        def initialize(logger:)
-          @logger = logger
-        end
+        attr_accessor :logger
       end
     end
   end

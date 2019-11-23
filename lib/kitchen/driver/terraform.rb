@@ -32,7 +32,7 @@ require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/shell_out"
-require "kitchen/terraform/version_verifier_factory"
+require "kitchen/terraform/version_verifier"
 require "rubygems"
 require "shellwords"
 
@@ -309,11 +309,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "-refresh=true " \
       "#{variables_flags} " \
       "#{variable_files_flags}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -322,20 +319,17 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::ShellOut.run(
       client: config_client,
       command: "get -update",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
   def apply_run_output(&block)
-    ::Kitchen::Terraform::Command::Output.run(
+    ::Kitchen::Terraform::Command::Output.new(
       client: config_client,
-      options: { cwd: config_root_module_directory, live_stream: debug_logger, timeout: config_command_timeout },
-      &block
-    )
+      logger: debug_logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
+    ).run(&block)
   end
 
   # @api private
@@ -346,11 +340,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "#{color_flag} " \
       "#{variables_flags} " \
       "#{variable_files_flags}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -383,11 +374,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "-get-plugins=true " \
       "#{plugin_directory_flag}" \
       "-verify-plugins=true",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -405,12 +393,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "-refresh=true " \
       "#{variables_flags} " \
       "#{variable_files_flags}",
-      options: {
-        cwd: config_root_module_directory,
-        environment: { "TF_WARN_OUTPUT_ERRORS" => "true" },
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -430,11 +414,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "-get-plugins=true " \
       "#{plugin_directory_flag}" \
       "-verify-plugins=true",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -443,11 +424,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::ShellOut.run(
       client: config_client,
       command: "workspace delete #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -456,11 +434,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::ShellOut.run(
       client: config_client,
       command: "workspace select default",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -499,21 +474,15 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     ::Kitchen::Terraform::ShellOut.run(
       client: config_client,
       command: "workspace select #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   rescue ::Kitchen::TransientFailure
     ::Kitchen::Terraform::ShellOut.run(
       client: config_client,
       command: "workspace new #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      logger: logger,
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -532,12 +501,10 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   def verify_version
-    logger.banner "Starting verification of the Terraform client version."
-    ::Kitchen::Terraform::Command::Version.run do |version:|
-      ::Kitchen::Terraform::VersionVerifierFactory.new(strict: config_verify_version)
-        .build(logger: logger, version_requirement: version_requirement).verify version: version
-    end
-    logger.banner "Finished verification of the Terraform client version."
+    ::Kitchen::Terraform::VersionVerifier.new(
+      command: ::Kitchen::Terraform::Command::Version.new(client: config_client, logger: logger),
+      logger: logger,
+    ).verify(requirement: version_requirement, strict: config_verify_version)
   end
 
   def workspace_name

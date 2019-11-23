@@ -24,62 +24,80 @@ module Kitchen
     # {https://en.wikipedia.org/wiki/PATH_(variable) PATH} of the user. The shell out environment includes the
     # TF_IN_AUTOMATION environment variable as specified by the
     # {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
-    module ShellOut
-      # Runs a Terraform command.
-      #
-      # @option options [::Hash] :environment environment variables to define when running the command.
-      # @option options [::Integer] :timeout the maximum duration in seconds to run the command.
-      # @option options [::Kitchen::Logger] :live_stream a Test Kitchen logger to capture the output from running the
-      #   command.
-      # @option options [::String] :cwd the directory in which to run the command.
-      # @param client [::String] the pathname of the Terraform client.
-      # @param command [::String] the command to run.
-      # @param options [::Hash] options which adjust the execution of the command.
-      # @raise [::Kitchen::TransientFailure] if running the command fails.
-      # @return [::String] the standard output from running the command.
-      # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
-      # @yieldparam standard_output [::String] the standard output from running the command.
-      def self.run(client:, command:, options:, &block)
-        block ||= lambda do |standard_output:|
-          standard_output
+    class ShellOut
+      class << self
+        # .run executes a Terraform command.
+        #
+        # @param client [String] the pathname of the Terraform client.
+        # @param command [String] the command to run.
+        # @param logger [Kitchen::Logger] a logger to log messages.
+        # @param options [Hash] options which adjust the execution of the command.
+        # @option options [Integer] :timeout the maximum duration in seconds to run the command.
+        # @option options [String] :cwd the directory in which to run the command.
+        # @raise [Kitchen::TransientFailure] if running the command fails.
+        # @return [self]
+        # @see https://rubygems.org/gems/mixlib-shellout mixlib-shellout
+        # @yieldparam standard_output [String] the standard output from running the command.
+        def run(client:, command:, logger:, options:, &block)
+          block ||= lambda do |standard_output:|
+          end
+
+          new(client: client, command: command, logger: logger, options: options).run(&block)
+
+          self
+        end
+      end
+
+      # @param client [String] the pathname of the Terraform client.
+      # @param command [String] the command to run.
+      # @param logger [Kitchen::Logger] a logger for logging messages.
+      # @param options [Hash] options which adjust the execution of the command.
+      # @option options [Integer] :timeout the maximum duration in seconds to run the command.
+      # @option options [String] :cwd the directory in which to run the command.
+      # @return [Kitchen::Terraform::ShellOut]
+      def initialize(client:, command:, logger:, options:)
+        self.logger = logger
+        self.shell_out = ::Mixlib::ShellOut.new "#{client} #{command}", options.merge(
+          cwd: options.fetch(:cwd) do
+            ::Dir.pwd
+          end,
+          environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" },
+          live_stream: logger,
+        )
+        self.command = shell_out.command
+        self.timeout = shell_out.timeout
+      end
+
+      def run
+        logger.warn(
+          "Running command `#{command}` in directory #{shell_out.cwd} with a timeout of #{timeout} seconds."
+        )
+
+        shell_out.run_command
+        if shell_out.error?
+          logger.warn "Running command `#{command}` returned a non-zero exit code #{shell_out.exitstatus}."
+
+          raise ::Kitchen::TransientFailure, "Failed running command `#{command}`:\n\t#{shell_out.stderr}"
         end
 
-        run_shell_out client: client, command: command, options: options, &block
-      rescue ::Errno::EACCES,
-        ::Errno::ENOENT,
-        ::Mixlib::ShellOut::InvalidCommandOption,
-        ::Mixlib::ShellOut::CommandTimeout,
-        ::Mixlib::ShellOut::ShellCommandFailed => error
-        handle error: error
+        yield standard_output: shell_out.stdout
+      rescue ::Errno::EACCES
+        logger.error "Running command `#{command}` experienced an error due to unauthorized access to a file or directory."
+
+        raise ::Kitchen::TransientFailure, "Failed running command `#{command}`."
+      rescue ::Errno::ENOENT
+        logger.error "Running command `#{command}` experienced an error due to a nonexistent file or directory."
+
+        raise ::Kitchen::TransientFailure, "Failed running command `#{command}`."
+      rescue ::Mixlib::ShellOut::CommandTimeout
+        logger.error "Running command `#{command}` experienced an error due to the execution time exceeding the timeout of #{timeout} seconds."
+
+        raise ::Kitchen::TransientFailure, "Failed running command `#{command}`."
       end
 
-      private_class_method
+      private
 
-      # @api private
-      def self.handle(error:)
-        raise(
-          ::Kitchen::TransientFailure,
-          "Running command resulted in failure: #{error.message}"
-        )
-      end
-
-      # @api private
-      def self.run_shell_out(client:, command:, options:)
-        yield(standard_output: ::Mixlib::ShellOut.new(
-          "#{client} #{command}",
-          options.merge(
-            environment: { "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" }.merge(
-              options.fetch(:environment) do
-                {}
-              end
-            ),
-          )
-        ).tap do |shell_out|
-          shell_out.live_stream.warn "Running command `#{shell_out.command}` in directory #{shell_out.cwd}"
-          shell_out.run_command
-          shell_out.error!
-        end.stdout)
-      end
+      attr_accessor :command, :logger, :shell_out, :timeout
     end
   end
 end

@@ -15,26 +15,18 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/version_verifier_strategy/permissive"
+require "kitchen/terraform/version_verifier_strategy/unsupported_permissive"
 
-::RSpec.describe ::Kitchen::Terraform::VersionVerifierStrategy::Permissive do
-  subject do
-    described_class.new logger: ::Kitchen::Logger.new
-  end
-
-  describe "#supported" do
-    specify "should not raise an error" do
-      expect do
-        subject.supported
-      end.to_not raise_error
+::RSpec.describe ::Kitchen::Terraform::VersionVerifierStrategy::UnsupportedPermissive do
+  describe "#call" do
+    subject do
+      described_class.new logger: ::Kitchen::Logger.new
     end
-  end
 
-  describe "#unsupported" do
     specify "should not raise an error" do
       expect do
-        subject.unsupported
-      end.to_not raise_error
+        subject.call
+      end.not_to raise_error
     end
   end
 end

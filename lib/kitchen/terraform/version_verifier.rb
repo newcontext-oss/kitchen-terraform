@@ -14,50 +14,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/version_verifier_strategy/permissive"
-require "kitchen/terraform/version_verifier_strategy/strict"
+require "kitchen/terraform/version_verifier_strategy_factory"
 
 module Kitchen
   module Terraform
     # VersionVerifier is the class of objects which verify a Terraform client version against a requirement.
     class VersionVerifier
-      class << self
-        # .permissive creates a permissive VersionVerifier.
-        def permissive(logger:, requirement:)
-          new(
+      # #verify verifies a version against the requirement.
+      #
+      # @param requirement [Gem::Requirement] the requirement for version support.
+      # @param strict [Boolean] the toggle of strict or permissive verification.
+      # @return [self]
+      def verify(requirement:, strict:)
+        logger.banner "Starting verification of the Terraform client version."
+        logger.warn "Supported Terraform client versions are in the interval of #{requirement}."
+        command.run do |version:|
+          ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(requirement: requirement, strict: strict).build(
             logger: logger,
-            requirement: requirement,
-            strategy: ::Kitchen::Terraform::VersionVerifierStrategy::Permissive.new(logger: logger),
-          )
+            version: version,
+          ).call
         end
+        logger.banner "Finished verification of the Terraform client version."
 
-        # .strict creates a strict VersionVerifier.
-        def strict(logger:, requirement:)
-          new(
-            logger: logger,
-            requirement: requirement,
-            strategy: ::Kitchen::Terraform::VersionVerifierStrategy::Strict.new(logger: logger),
-          )
-        end
+        self
+      rescue ::Kitchen::TransientFailure => error
+        logger.error error.message
+
+        raise ::Kitchen::TransientFailure, "Failed verification of the Terraform client version."
       end
 
-      # #verify verifies a version against the requirement.
-      def verify(version:)
-        @logger.info "Supported Terraform client versions are in the interval of #{@requirement}."
-        if @requirement.satisfied_by? version
-          @strategy.supported
-        else
-          @strategy.unsupported
-        end
+      # @param command [Kitchen::Terraform::Command::Version] a version command.
+      # @param logger [Kitchen::Logger] a logger to log messages.
+      # @return [Kitchen::Terraform::VersionVerifier]
+      def initialize(command:, logger:)
+        self.command = command
+        self.logger = logger
       end
 
       private
 
-      def initialize(logger:, requirement:, strategy:)
-        @logger = logger
-        @requirement = requirement
-        @strategy = strategy
-      end
+      attr_accessor :command, :logger
     end
   end
 end

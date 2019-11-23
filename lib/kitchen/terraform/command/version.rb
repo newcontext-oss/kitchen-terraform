@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/shell_out"
 require "rubygems"
 
 module Kitchen
@@ -22,44 +23,37 @@ module Kitchen
     module Command
       # Version is the class of objects which represent the <tt>terraform version</tt> command.
       class Version < ::Gem::Version
-        extend ::Kitchen::Logging
-        extend ::Kitchen::ShellOut
-
-        class << self
-          # The command is run by shelling out in an environment which is optimized for automating Terraform.
-          #
-          # @raise [::Kitchen::TransientFailure] if the result of running the command is a failure.
-          # @return [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the command.
-          # @yieldparam version [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the
-          #   command.
-          def run
-            new(
-              run_command(
-                "terraform version",
-                environment: {
-                  "LC_ALL" => nil,
-                  "TF_IN_AUTOMATION" => "true",
-                  "TF_WARN_OUTPUT_ERRORS" => "true",
-                },
-              )
-            ).tap do |version|
-              yield version: version
-            end
-          rescue => error
-            raise
+        # #run executes the command.
+        #
+        # @yieldparam version [Gem::Version] the Terraform client version.
+        # @return [self]
+        # @raise [Kitchen::TransientFailure] if running the command results in failure.
+        def run
+          ::Kitchen::Terraform::ShellOut.run(
+            client: client,
+            command: "version",
+            logger: logger,
+            options: {},
+          ) do |standard_output:|
+            yield version: ::Gem::Version.new(standard_output.slice(/Terraform v(\d+\.\d+\.\d+)/, 1))
           end
+        rescue => error
+          logger.error error.message
 
-          # @return [::Kitchen::Logger] the common Kitchen logger.
-          def logger
-            ::Kitchen.logger
-          end
+          raise ::Kitchen::TransientFailure, "Running command `terraform version` resulted in failure."
+        end
+
+        # @param client [String] the pathname of the Terraform client.
+        # @param logger [Kitchen::Logger] a logger to log messages.
+        # @return [Kitchen::Terraform::Command::Version]
+        def initialize(client:, logger:)
+          self.client = client
+          self.logger = logger
         end
 
         private
 
-        def initialize(version)
-          super version.slice(/Terraform v(\d+\.\d+\.\d+)/, 1)
-        end
+        attr_accessor :client, :logger
       end
     end
   end

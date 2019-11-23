@@ -17,7 +17,9 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/command/version"
 require "kitchen/terraform/debug_logger"
+require "kitchen/terraform/version_verifier"
 require "kitchen/terraform/shell_out"
 require "pathname"
 require "rubygems"
@@ -104,8 +106,19 @@ require "support/kitchen/terraform/configurable_examples"
     true
   end
 
+  let :version_verifier do
+    instance_double ::Kitchen::Terraform::VersionVerifier
+  end
+
   before do
-    allow(::Kitchen::Terraform::Command::Version).to receive(:run).and_yield version: ::Gem::Version.create("0.12.0")
+    allow(::Kitchen::Terraform::VersionVerifier).to receive(:new).with(
+      command: kind_of(::Kitchen::Terraform::Command::Version),
+      logger: kitchen_logger,
+    ).and_return version_verifier
+    allow(version_verifier).to receive(:verify).with(
+      requirement: ::Gem::Requirement.new(">= 0.11.4", "< 0.13.0"),
+      strict: verify_version,
+    )
   end
 
   shared_examples "the action fails if the Terraform root module can not be initialized" do
@@ -143,7 +156,8 @@ require "support/kitchen/terraform/configurable_examples"
     allow(shell_out).to receive(:run).with(
       client: config_client,
       command: command,
-      options: { cwd: working_directory, live_stream: kitchen_logger, timeout: command_timeout },
+      logger: kitchen_logger,
+      options: { cwd: working_directory, timeout: command_timeout },
     ).and_raise ::Kitchen::TransientFailure, message
   end
 
@@ -151,7 +165,8 @@ require "support/kitchen/terraform/configurable_examples"
     allow(shell_out).to receive(:run).with(
       client: config_client,
       command: command,
-      options: { cwd: working_directory, live_stream: kitchen_logger, timeout: command_timeout },
+      logger: kitchen_logger,
+      options: { cwd: working_directory, timeout: command_timeout },
     ).and_return return_value
   end
 
@@ -274,7 +289,7 @@ require "support/kitchen/terraform/configurable_examples"
             end
 
             let :debug_logger do
-              ::Kitchen::Terraform::DebugLogger.new logger: kitchen_logger
+              ::Kitchen::Terraform::DebugLogger.new kitchen_logger
             end
 
             context "when `terraform output` results in failure due to no outputs defined" do
@@ -282,9 +297,9 @@ require "support/kitchen/terraform/configurable_examples"
                 allow(shell_out).to receive(:run).with(
                   client: config_client,
                   command: "output -json",
+                  logger: debug_logger,
                   options: {
                     cwd: kitchen_root,
-                    live_stream: debug_logger,
                     timeout: command_timeout,
                   },
                 ).and_raise ::Kitchen::TransientFailure, "no outputs defined"
@@ -306,9 +321,9 @@ require "support/kitchen/terraform/configurable_examples"
                 allow(shell_out).to receive(:run).with(
                   client: config_client,
                   command: "output -json",
+                  logger: debug_logger,
                   options: {
                     cwd: kitchen_root,
-                    live_stream: debug_logger,
                     timeout: command_timeout,
                   },
                 ).and_raise ::Kitchen::TransientFailure, error_message
@@ -326,7 +341,8 @@ require "support/kitchen/terraform/configurable_examples"
                 allow(shell_out).to receive(:run).with(
                   client: config_client,
                   command: "output -json",
-                  options: { cwd: kitchen_root, live_stream: debug_logger, timeout: command_timeout },
+                  logger: debug_logger,
+                  options: { cwd: kitchen_root, timeout: command_timeout },
                 ).and_yield standard_output: terraform_output_value
               end
 
@@ -338,7 +354,7 @@ require "support/kitchen/terraform/configurable_examples"
                 specify "should result in an action failed error with a message indicating the output is not valid JSON" do
                   expect do
                     subject.apply
-                  end.to raise_error ::Kitchen::ActionFailed, /Parsing Terraform output as JSON failed:/
+                  end.to raise_error ::Kitchen::ActionFailed, /Failed parsing Terraform output as JSON./
                 end
               end
 
@@ -495,10 +511,9 @@ require "support/kitchen/terraform/configurable_examples"
           allow(shell_out).to receive(:run).with(
             client: config_client,
             command: /destroy/,
+            logger: kitchen_logger,
             options: {
               cwd: kitchen_root,
-              environment: { "TF_WARN_OUTPUT_ERRORS" => "true" },
-              live_stream: kitchen_logger,
               timeout: command_timeout,
             },
           ).and_raise ::Kitchen::TransientFailure, "mocked `terraform destroy` failure"
@@ -527,10 +542,9 @@ require "support/kitchen/terraform/configurable_examples"
             "-var=\"map={ key = \\\"A Value\\\" }\" " \
             "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
             "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
+            logger: kitchen_logger,
             options: {
               cwd: kitchen_root,
-              environment: { "TF_WARN_OUTPUT_ERRORS" => "true" },
-              live_stream: kitchen_logger,
               timeout: command_timeout,
             },
           ).and_return "mocked `terraform` success"
