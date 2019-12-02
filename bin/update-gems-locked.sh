@@ -15,7 +15,8 @@ do
   else
     bundle install
   fi
-  bundle binstubs guard middleman-cli rake rspec-core test-kitchen yard
+  bundle clean
+  bundle binstubs bundler guard middleman-cli rake reek rspec-core rufo test-kitchen yard
   set +x
   popd
 done

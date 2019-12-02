@@ -519,6 +519,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bundler (~> 2.0)!
   gh!
   guard (~> 2.14)!
   guard-bundler (~> 2.1)!
