@@ -44,7 +44,7 @@ for:
       only:
         - image: Visual Studio 2017
     cache:
-      - ruby-2.5/vendor/bundle
+      - ruby-2.5/vendor/bundle -> ruby-2.5/gems.locked
     install:
       - set PATH=C:\Ruby25-x64\bin;%PATH%
       - gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
