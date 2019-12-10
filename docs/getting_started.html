@@ -109,8 +109,8 @@
                 Platform Methods
               </h4>
               Mac OS (homebrew):
-<div class="highlight"><pre class="syntax-highlight shell"><code>brew install terraform
-brew install ruby
+<div class="highlight"><pre class="syntax-highlight shell"><code>brew <span class="nb">install </span>terraform
+brew <span class="nb">install </span>ruby
 </code></pre></div>            </div>
             <div class="col-sm">
               <h4 class="display-6" style="font-weight: bolder;">
@@ -125,27 +125,27 @@ brew install ruby
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
           Create module and folder structure by running these commands:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>mkdir <span class="nt">-p</span> my_terraform_module
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">mkdir</span> <span class="nt">-p</span> my_terraform_module
 <span class="nb">cd </span>my_terraform_module
 
-mkdir <span class="nt">-p</span> <span class="nb">test</span>/integration/kt_suite/controls <span class="se">\</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nb">test</span>/integration/kt_suite/controls <span class="se">\</span>
          <span class="nb">test</span>/fixtures/tf_module/
 </code></pre></div>         Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> to install our dependencies.
          <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span><span class="p">,</span> <span class="s2">"~&gt; 4.0"</span>
+  <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span><span class="p">,</span> <span class="s2">"~&gt; 5.1"</span>
 <span class="k">end</span>
 </code></pre></div>         Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
          <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>gem install bundler
-bundle install
+<div class="highlight"><pre class="syntax-highlight shell"><code>gem <span class="nb">install </span>bundler
+bundle <span class="nb">install</span>
 </code></pre></div>          Create the Test Kitchen configuration file, <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> and configure the kitchen-terraform plugins to associate the fixture Terraform module with the InSpec profile.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
 <span class="na">driver</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
   <span class="na">root_module_directory</span><span class="pi">:</span> <span class="s">test/fixtures/tf_module</span>
-  <span class="na">parallelism</span><span class="pi">:</span> <span class="s">4</span>
+  <span class="na">parallelism</span><span class="pi">:</span> <span class="m">4</span>
 
 <span class="na">provisioner</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
@@ -163,7 +163,7 @@ bundle install
 
 <span class="na">suites</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">kt_suite</span>
-</code></pre></div>          Please refer back to this file as we continue to move on, take special note of the root_module_directory, group and control names under verifier and the suite name. Each of these correspond to a folder structure and Inspec control test.
+</code></pre></div>          Please refer back to this file as we continue to move on, take special note of the root_module_directory (test/fixtures/tf_module), control name under verifier (file_check), and the suite name (kt_suite). Each of these correspond to a folder structure and Inspec control test.
         </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add the block of code into it.
@@ -197,7 +197,7 @@ bundle install
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">control</span> <span class="s2">"file_check"</span> <span class="k">do</span>
-  <span class="n">describe</span> <span class="n">file</span><span class="p">(</span><span class="s1">'.kitchen/kitchen-terraform/kt-suite-terraform/foobar'</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="n">file</span><span class="p">(</span><span class="s1">'./test/fixtures/tf_module/foobar'</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">it</span> <span class="p">{</span> <span class="n">should</span> <span class="n">exist</span> <span class="p">}</span>
   <span class="k">end</span>
 <span class="k">end</span>

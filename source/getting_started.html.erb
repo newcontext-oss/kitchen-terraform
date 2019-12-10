@@ -81,7 +81,7 @@ mkdir -p test/integration/kt_suite/controls \
          <br><br>
          <% code("ruby") do %>
 source "https://rubygems.org/" do
-  gem "kitchen-terraform", "~> 4.0"
+  gem "kitchen-terraform", "~> 5.1"
 end
          <% end %>
          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
@@ -116,7 +116,7 @@ platforms:
 suites:
   - name: kt_suite
           <% end %>
-          Please refer back to this file as we continue to move on, take special note of the root_module_directory, group and control names under verifier and the suite name. Each of these correspond to a folder structure and Inspec control test.
+          Please refer back to this file as we continue to move on, take special note of the root_module_directory (test/fixtures/tf_module), control name under verifier (file_check), and the suite name (kt_suite). Each of these correspond to a folder structure and Inspec control test.
         </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> and add the block of code into it.
@@ -159,7 +159,7 @@ name: default
 # frozen_string_literal: true
 
 control "file_check" do
-  describe file('.kitchen/kitchen-terraform/kt-suite-terraform/foobar') do
+  describe file('./test/fixtures/tf_module/foobar') do
     it { should exist }
   end
 end

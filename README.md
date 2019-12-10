@@ -77,7 +77,7 @@ the semantic versioning of the Ruby gem.
 source "https://rubygems.org/" do
   gem(
     "kitchen-terraform",
-    "~> 4.0"
+    "~> 5.1"
   )
 end
 ```
@@ -105,7 +105,7 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 4.0.0
+gem install kitchen-terraform --version 5.1.1
 ```
 
 This approach is not recommended as it requires more effort to install

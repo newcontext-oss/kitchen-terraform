@@ -102,7 +102,7 @@
           <br><hr>
           To setup the repository, run these commands:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>mkdir <span class="nt">-p</span> docker_provider_example/test/integration/example/controls
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">mkdir</span> <span class="nt">-p</span> docker_provider_example/test/integration/example/controls
 <span class="nb">cd </span>docker_provider_example
 </code></pre></div>          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> to install our dependencies.
           <br><br>
@@ -111,8 +111,8 @@
 <span class="k">end</span>
 </code></pre></div>          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>gem install bundler
-bundle install
+<div class="highlight"><pre class="syntax-highlight shell"><code>gem <span class="nb">install </span>bundler
+bundle <span class="nb">install</span>
 </code></pre></div>          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> which brings together the Terraform module code and Inspec controls.
           <br><br>
           <div class="row">
@@ -134,7 +134,7 @@ bundle install
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">container</span>
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
-      <span class="na">port</span><span class="pi">:</span> <span class="s">2222</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="m">2222</span>
       <span class="na">hostnames</span><span class="pi">:</span> <span class="s">hostnames</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">localhost</span>
       <span class="na">controls</span><span class="pi">:</span>
