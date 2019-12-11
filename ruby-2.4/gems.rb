@@ -23,6 +23,10 @@ source "https://rubygems.org/" do
     gem "gh", git: "https://github.com/travis-ci/gh", ref: "38fb339510ff9ae67cb08c6df7698f4c393f5a44"
   end
 
+  group :runtime do
+    gem "inspec", ">= 4.18.0"
+  end
+
   group :test do
     gem "rake", "~> 12.3"
   end
