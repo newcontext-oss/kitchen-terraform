@@ -141,7 +141,7 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
+        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
       end
     end
 
@@ -160,7 +160,7 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
+        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
       end
     end
 
@@ -179,7 +179,7 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
+        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
       end
     end
 
@@ -198,7 +198,7 @@ require "support/kitchen/terraform/configurable_examples"
       specify "should raise an action failed error" do
         expect do
           subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
+        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
       end
     end
 
@@ -292,7 +292,7 @@ require "support/kitchen/terraform/configurable_examples"
           it "does raise an error" do
             expect do
               subject.call kitchen_instance_state
-            end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
+            end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
           end
         end
 
@@ -304,7 +304,7 @@ require "support/kitchen/terraform/configurable_examples"
           specify "should raise an action failed error" do
             expect do
               subject.call kitchen_instance_state
-            end.to raise_error ::Kitchen::ActionFailed, "Verification of the 'a-system-with-hosts' system failed."
+            end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
           end
         end
       end
@@ -324,8 +324,8 @@ require "support/kitchen/terraform/configurable_examples"
               subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
-              "Verification of the 'a-system-with-hosts' system failed.\n\n" \
-              "Verification of the 'a-system-without-hosts' system failed."
+              "Failed verification of the 'a-system-with-hosts' system.\n\n" \
+              "Failed verification of the 'a-system-without-hosts' system."
             )
           end
         end
@@ -340,8 +340,8 @@ require "support/kitchen/terraform/configurable_examples"
               subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
-              "Verification of the 'a-system-with-hosts' system failed.\n\n" \
-              "Verification of the 'a-system-without-hosts' system failed."
+              "Failed verification of the 'a-system-with-hosts' system.\n\n" \
+              "Failed verification of the 'a-system-without-hosts' system."
             )
           end
         end

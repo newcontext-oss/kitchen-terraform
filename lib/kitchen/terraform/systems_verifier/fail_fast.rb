@@ -53,7 +53,7 @@ module Kitchen
         rescue => error
           logger.error "Verification of the '#{system}' system experienced an error:\n\t#{error.message}"
 
-          raise ::Kitchen::TransientFailure, "Verification of the '#{system}' system failed."
+          raise ::Kitchen::TransientFailure, "Failed verification of the '#{system}' system."
         end
       end
     end

@@ -53,7 +53,7 @@ module Kitchen
       # @param variables [::Hash] the Terraform variables to be utilized as InSpec profile attributes.
       # @return [self]
       def verify(fail_fast:, outputs:, variables:)
-        logger.info "Starting verification of the '#{self}' system."
+        logger.warn "Starting verification of the '#{self}' system."
         resolve outputs: outputs, variables: variables
         ::Kitchen::Terraform::InSpecFactory.new(fail_fast: fail_fast, hosts: hosts).build(
           logger: logger,
@@ -63,7 +63,7 @@ module Kitchen
           ),
           profile_locations: configuration_attributes.fetch(:profile_locations),
         ).exec
-        logger.info "Finished verification of the '#{self}' system."
+        logger.warn "Finished verification of the '#{self}' system."
 
         self
       end

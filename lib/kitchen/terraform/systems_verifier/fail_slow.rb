@@ -56,7 +56,7 @@ module Kitchen
           system.verify fail_fast: false, outputs: outputs, variables: variables
         rescue => error
           logger.error "Verification of the '#{system}' system experienced an error:\n\t#{error.message}"
-          messages.push "Verification of the '#{system}' system failed."
+          messages.push "Failed verification of the '#{system}' system."
         end
       end
     end
