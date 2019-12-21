@@ -62,7 +62,7 @@ module Kitchen
           ).exec
         rescue => error
           logger.error "Execution of InSpec against the '#{host}' host experienced an error:\n\t#{error.message}"
-          messages.push "Execution of InSpec against the '#{host}' host failed."
+          messages.push "Failed execution of InSpec against the '#{host}' host."
         end
       end
     end

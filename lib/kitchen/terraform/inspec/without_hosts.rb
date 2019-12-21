@@ -32,7 +32,7 @@ module Kitchen
         rescue => error
           logger.error "Execution of InSpec experienced an error:\n\t#{error.message}"
 
-          raise ::Kitchen::TransientFailure, "Execution of InSpec failed."
+          raise ::Kitchen::TransientFailure, "Failed execution of InSpec."
         end
 
         # #initialize prepares a new instance of the class.
