@@ -58,7 +58,7 @@ module Kitchen
               "that the wrong key was provided."
             )
 
-            raise ::Kitchen::TransientFailure, "Resolution of attributes failed."
+            raise ::Kitchen::TransientFailure, "Failed resolution of attributes."
           end
         end
       end
@@ -73,7 +73,7 @@ module Kitchen
               "This error indicates that the output format of `terraform output -json` is unexpected."
             )
 
-            raise ::Kitchen::TransientFailure, "Resolution of attributes failed."
+            raise ::Kitchen::TransientFailure, "Failed resolution of attributes."
           end
         end
       end
