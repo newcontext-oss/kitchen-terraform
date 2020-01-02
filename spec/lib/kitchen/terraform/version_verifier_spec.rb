@@ -29,31 +29,38 @@ require "rubygems"
       instance_double ::Kitchen::Terraform::Command::Version
     end
 
+    let :options do
+      { cwd: "/root-module-directory" }
+    end
+
     let :requirement do
       ::Gem::Requirement.new "~> 1.2.3"
     end
 
     context "when running the command fails" do
       before do
-        allow(command).to receive(:run).and_raise ::Kitchen::TransientFailure, "Failed to run command `terraform version`."
+        allow(command).to(
+          receive(:run).with(options: options)
+            .and_raise(::Kitchen::TransientFailure, "Failed to run the version command.")
+        )
       end
 
       specify "should raise an error" do
         expect do
-          subject.verify requirement: requirement, strict: true
+          subject.verify options: options, requirement: requirement, strict: true
         end.to raise_error ::Kitchen::TransientFailure, "Failed verification of the Terraform client version."
       end
     end
 
     context "when the version does not meet the requirement" do
       before do
-        allow(command).to receive(:run).and_yield version: ::Gem::Version.new("0.1.2")
+        allow(command).to receive(:run).with(options: options).and_yield version: ::Gem::Version.new("0.1.2")
       end
 
       context "when strict mode is enabled" do
         specify "should raise an error" do
           expect do
-            subject.verify requirement: requirement, strict: true
+            subject.verify options: options, requirement: requirement, strict: true
           end.to raise_error ::Kitchen::UserError, "Failed verification of the Terraform client version."
         end
       end
@@ -61,7 +68,7 @@ require "rubygems"
       context "when strict mode is disabled" do
         specify "should not raise an error" do
           expect do
-            subject.verify requirement: requirement, strict: false
+            subject.verify options: options, requirement: requirement, strict: false
           end.not_to raise_error
         end
       end
@@ -69,13 +76,13 @@ require "rubygems"
 
     context "when the version does meet the requirement" do
       before do
-        allow(command).to receive(:run).and_yield version: ::Gem::Version.new("1.2.4")
+        allow(command).to receive(:run).with(options: options).and_yield version: ::Gem::Version.new("1.2.4")
       end
 
       context "when strict mode is enabeld" do
         specify "should not raise an error" do
           expect do
-            subject.verify requirement: requirement, strict: true
+            subject.verify options: options, requirement: requirement, strict: true
           end.not_to raise_error
         end
       end
@@ -83,7 +90,7 @@ require "rubygems"
       context "when strict mode is disabled" do
         specify "should not raise an error" do
           expect do
-            subject.verify requirement: requirement, strict: false
+            subject.verify options: options, requirement: requirement, strict: false
           end.not_to raise_error
         end
       end

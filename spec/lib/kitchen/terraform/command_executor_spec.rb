@@ -15,21 +15,41 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/shell_out"
+require "kitchen/terraform/command_executor"
 require "mixlib/shellout"
 
-::RSpec.describe ::Kitchen::Terraform::ShellOut do
-  describe ".run" do
+::RSpec.describe ::Kitchen::Terraform::CommandExecutor do
+  describe "#run" do
+    subject do
+      described_class.new client: client, logger: logger
+    end
+
+    let :client do
+      "client"
+    end
+
+    let :client_with_command do
+      "client command"
+    end
+
+    let :command do
+      "command"
+    end
+
     let :environment do
       { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" }
     end
 
-    let :duration do
+    let :timeout do
       1234
     end
 
     let :logger do
       ::Kitchen::Logger.new
+    end
+
+    let :working_directory do
+      "/working-directory"
     end
 
     shared_context "when an error occurs" do
@@ -41,12 +61,12 @@ require "mixlib/shellout"
 
       let :new_arguments do
         [
-          "client command",
+          client_with_command,
           {
-            cwd: "/working/directory",
+            cwd: working_directory,
             environment: environment,
             live_stream: logger,
-            timeout: duration,
+            timeout: timeout,
           },
         ]
       end
@@ -65,13 +85,11 @@ require "mixlib/shellout"
 
       specify "should raise a transient failure error" do
         expect do
-          described_class.run(
-            client: "client",
-            command: "command",
-            logger: logger,
+          subject.run(
+            command: command,
             options: {
-              cwd: "/working/directory",
-              timeout: duration,
+              cwd: working_directory,
+              timeout: timeout,
             },
           )
         end.to raise_error ::Kitchen::TransientFailure
@@ -87,13 +105,11 @@ require "mixlib/shellout"
 
       specify "should raise an error with the entry error message" do
         expect do
-          described_class.run(
-            client: "client",
-            command: "command",
-            logger: logger,
+          subject.run(
+            command: command,
             options: {
-              cwd: "/working/directory",
-              timeout: duration,
+              cwd: working_directory,
+              timeout: timeout,
             },
           )
         end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`."
@@ -109,13 +125,11 @@ require "mixlib/shellout"
 
       specify "should raise an error with the timeout error message" do
         expect do
-          described_class.run(
-            client: "client",
-            command: "command",
-            logger: logger,
+          subject.run(
+            command: command,
             options: {
-              cwd: "/working/directory",
-              timeout: duration,
+              cwd: working_directory,
+              timeout: timeout,
             },
           )
         end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`."
@@ -126,11 +140,11 @@ require "mixlib/shellout"
       before do
         allow(::Mixlib::ShellOut).to(
           receive(:new).with(
-            "client command",
-            cwd: "/working/directory",
+            client_with_command,
+            cwd: working_directory,
             environment: environment,
             live_stream: logger,
-            timeout: duration,
+            timeout: timeout,
           ).and_wrap_original do |original, *arguments|
             original.call(*arguments).tap do |shell_out|
               allow(shell_out).to receive(:exitstatus).and_return 1
@@ -144,13 +158,11 @@ require "mixlib/shellout"
 
       specify "should raise an error with the nonzero value message" do
         expect do
-          described_class.run(
-            client: "client",
-            command: "command",
-            logger: logger,
+          subject.run(
+            command: command,
             options: {
-              cwd: "/working/directory",
-              timeout: duration,
+              cwd: working_directory,
+              timeout: timeout,
             },
           )
         end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`:\n\tstderr"
@@ -158,13 +170,11 @@ require "mixlib/shellout"
 
       specify "should raise an error with the stdout" do
         expect do
-          described_class.run(
-            client: "client",
-            command: "command",
-            logger: logger,
+          subject.run(
+            command: command,
             options: {
-              cwd: "/working/directory",
-              timeout: duration,
+              cwd: working_directory,
+              timeout: timeout,
             },
           )
         end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`:\n\tstderr"
@@ -172,13 +182,11 @@ require "mixlib/shellout"
 
       specify "should raise an error with the stderr" do
         expect do
-          described_class.run(
-            client: "client",
-            command: "command",
-            logger: logger,
+          subject.run(
+            command: command,
             options: {
-              cwd: "/working/directory",
-              timeout: duration,
+              cwd: working_directory,
+              timeout: timeout,
             },
           )
         end.to raise_error ::Kitchen::TransientFailure, "Failed running command `client command`:\n\tstderr"
@@ -189,11 +197,11 @@ require "mixlib/shellout"
       before do
         allow(::Mixlib::ShellOut).to(
           receive(:new).with(
-            "client command",
-            cwd: "/working/directory",
+            client_with_command,
+            cwd: working_directory,
             environment: environment,
             live_stream: logger,
-            timeout: duration,
+            timeout: timeout,
           ).and_wrap_original do |original, *arguments|
             original.call(*arguments).tap do |shell_out|
               allow(shell_out).to receive(:exitstatus).and_return 0
@@ -206,13 +214,11 @@ require "mixlib/shellout"
 
       specify "should yield the stdout" do
         expect do |block|
-          described_class.run(
-            client: "client",
-            command: "command",
-            logger: logger,
+          subject.run(
+            command: command,
             options: {
-              cwd: "/working/directory",
-              timeout: duration,
+              cwd: working_directory,
+              timeout: timeout,
             },
             &block
           )

@@ -20,7 +20,7 @@ require "kitchen/driver/terraform"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/version_verifier"
-require "kitchen/terraform/shell_out"
+require "kitchen/terraform/command_executor"
 require "pathname"
 require "rubygems"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
@@ -99,7 +99,7 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   let :shell_out do
-    class_double(::Kitchen::Terraform::ShellOut).as_stubbed_const
+    instance_double ::Kitchen::Terraform::CommandExecutor
   end
 
   let :verify_version do
@@ -116,9 +116,11 @@ require "support/kitchen/terraform/configurable_examples"
       logger: kitchen_logger,
     ).and_return version_verifier
     allow(version_verifier).to receive(:verify).with(
+      options: { cwd: kitchen_root },
       requirement: ::Gem::Requirement.new(">= 0.11.4", "< 0.13.0"),
       strict: verify_version,
     )
+    allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(client: config_client, logger: kitchen_logger).and_return shell_out
   end
 
   shared_examples "the action fails if the Terraform root module can not be initialized" do
@@ -154,18 +156,14 @@ require "support/kitchen/terraform/configurable_examples"
 
   def shell_out_run_failure(command:, message: "mocked `terraform` failure", working_directory: kitchen_root)
     allow(shell_out).to receive(:run).with(
-      client: config_client,
       command: command,
-      logger: kitchen_logger,
       options: { cwd: working_directory, timeout: command_timeout },
     ).and_raise ::Kitchen::TransientFailure, message
   end
 
   def shell_out_run_success(command:, return_value: "mocked `terraform` success", working_directory: kitchen_root)
     allow(shell_out).to receive(:run).with(
-      client: config_client,
       command: command,
-      logger: kitchen_logger,
       options: { cwd: working_directory, timeout: command_timeout },
     ).and_return return_value
   end
@@ -270,6 +268,10 @@ require "support/kitchen/terraform/configurable_examples"
           end
 
           context "when `terraform apply` results in success" do
+            let :debug_shell_out do
+              instance_double ::Kitchen::Terraform::CommandExecutor
+            end
+
             before do
               shell_out_run_success(
                 command: "apply " \
@@ -285,23 +287,14 @@ require "support/kitchen/terraform/configurable_examples"
                 "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
                 "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
               )
-              subject.send :debug_logger=, debug_logger
-            end
-
-            let :debug_logger do
-              ::Kitchen::Terraform::DebugLogger.new kitchen_logger
+              allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(client: config_client, logger: kind_of(::Kitchen::Terraform::DebugLogger)).and_return debug_shell_out
             end
 
             context "when `terraform output` results in failure due to no outputs defined" do
               before do
-                allow(shell_out).to receive(:run).with(
-                  client: config_client,
+                allow(debug_shell_out).to receive(:run).with(
                   command: "output -json",
-                  logger: debug_logger,
-                  options: {
-                    cwd: kitchen_root,
-                    timeout: command_timeout,
-                  },
+                  options: { cwd: kitchen_root, timeout: command_timeout },
                 ).and_raise ::Kitchen::TransientFailure, "no outputs defined"
               end
 
@@ -318,14 +311,9 @@ require "support/kitchen/terraform/configurable_examples"
               end
 
               before do
-                allow(shell_out).to receive(:run).with(
-                  client: config_client,
+                allow(debug_shell_out).to receive(:run).with(
                   command: "output -json",
-                  logger: debug_logger,
-                  options: {
-                    cwd: kitchen_root,
-                    timeout: command_timeout,
-                  },
+                  options: { cwd: kitchen_root, timeout: command_timeout },
                 ).and_raise ::Kitchen::TransientFailure, error_message
               end
 
@@ -338,10 +326,8 @@ require "support/kitchen/terraform/configurable_examples"
 
             context "when `terraform output` results in success" do
               before do
-                allow(shell_out).to receive(:run).with(
-                  client: config_client,
+                allow(debug_shell_out).to receive(:run).with(
                   command: "output -json",
-                  logger: debug_logger,
                   options: { cwd: kitchen_root, timeout: command_timeout },
                 ).and_yield standard_output: terraform_output_value
               end
@@ -509,13 +495,8 @@ require "support/kitchen/terraform/configurable_examples"
       context "when `terraform destroy` results in failure" do
         before do
           allow(shell_out).to receive(:run).with(
-            client: config_client,
             command: /destroy/,
-            logger: kitchen_logger,
-            options: {
-              cwd: kitchen_root,
-              timeout: command_timeout,
-            },
+            options: { cwd: kitchen_root, timeout: command_timeout },
           ).and_raise ::Kitchen::TransientFailure, "mocked `terraform destroy` failure"
         end
 
@@ -529,7 +510,6 @@ require "support/kitchen/terraform/configurable_examples"
       context "when `terraform destroy` results in success" do
         before do
           allow(shell_out).to receive(:run).with(
-            client: config_client,
             command: "destroy " \
             "-auto-approve " \
             "-lock=true " \
@@ -542,11 +522,7 @@ require "support/kitchen/terraform/configurable_examples"
             "-var=\"map={ key = \\\"A Value\\\" }\" " \
             "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
             "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
-            logger: kitchen_logger,
-            options: {
-              cwd: kitchen_root,
-              timeout: command_timeout,
-            },
+            options: { cwd: kitchen_root, timeout: command_timeout },
           ).and_return "mocked `terraform` success"
         end
 

@@ -16,7 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/command/version"
-require "kitchen/terraform/shell_out"
+require "kitchen/terraform/command_executor"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Version do
   describe "#run" do
@@ -28,40 +28,47 @@ require "kitchen/terraform/shell_out"
       "/usr/local/bin/terraform"
     end
 
+    let :command_executor do
+      instance_double ::Kitchen::Terraform::CommandExecutor
+    end
+
     let :logger do
       ::Kitchen::Logger.new
     end
 
+    let :options do
+      { cwd: "/root-module-directory" }
+    end
+
+    before do
+      allow(::Kitchen::Terraform::CommandExecutor)
+        .to(receive(:new).with(client: client, logger: logger).and_return(command_executor))
+    end
+
     context "when running the command results in success" do
       before do
-        allow(::Kitchen::Terraform::ShellOut).to receive(:run).with(
-          client: client,
-          command: "version",
-          logger: logger,
-          options: {},
-        ).and_yield standard_output: "Terraform v0.11.10"
+        allow(command_executor)
+          .to(receive(:run).with(command: "version", options: options).and_yield(standard_output: "Terraform v0.11.10"))
       end
 
       specify "should yield the version" do
         expect do |block|
-          subject.run(&block)
+          subject.run(options: options, &block)
         end.to yield_with_args version: ::Gem::Version.new("0.11.10")
       end
     end
 
     context "when running the command results in failure" do
       before do
-        allow(::Kitchen::Terraform::ShellOut).to receive(:run).with(
-          client: client,
-          command: "version",
-          logger: logger,
-          options: {},
-        ).and_raise ::Kitchen::ShellOut::ShellCommandFailed, "shell command failed"
+        allow(command_executor).to(
+          receive(:run).with(command: "version", options: options)
+            .and_raise(::Kitchen::ShellOut::ShellCommandFailed, "shell command failed")
+        )
       end
 
       specify "should raise a transient failure error" do
         expect do
-          subject.run
+          subject.run options: options
         end.to raise_error ::Kitchen::TransientFailure
       end
     end

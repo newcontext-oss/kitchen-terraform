@@ -22,25 +22,19 @@ module Kitchen
     class VersionVerifier
       # #verify verifies a version against the requirement.
       #
+      # @param options [Hash] options which adjust the execution of the command.
+      # @option options [Integer] :timeout the maximum duration in seconds to run the command.
+      # @option options [String] :cwd the directory in which to run the command.
       # @param requirement [Gem::Requirement] the requirement for version support.
       # @param strict [Boolean] the toggle of strict or permissive verification.
       # @return [self]
-      def verify(requirement:, strict:)
-        logger.banner "Starting verification of the Terraform client version."
-        logger.warn "Supported Terraform client versions are in the interval of #{requirement}."
-        command.run do |version:|
-          ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(requirement: requirement, strict: strict).build(
-            logger: logger,
-            version: version,
-          ).call
-        end
+      def verify(options:, requirement:, strict:)
+        run_and_invoke_strategy options: options, requirement: requirement, strict: strict
         logger.banner "Finished verification of the Terraform client version."
 
         self
       rescue ::Kitchen::TransientFailure => error
-        logger.error error.message
-
-        raise ::Kitchen::TransientFailure, "Failed verification of the Terraform client version."
+        handle error: error
       end
 
       # @param command [Kitchen::Terraform::Command::Version] a version command.
@@ -54,6 +48,23 @@ module Kitchen
       private
 
       attr_accessor :command, :logger
+
+      def handle(error:)
+        logger.error error.message
+
+        raise ::Kitchen::TransientFailure, "Failed verification of the Terraform client version."
+      end
+
+      def run_and_invoke_strategy(options:, requirement:, strict:)
+        logger.banner "Starting verification of the Terraform client version."
+        logger.warn "Supported Terraform client versions are in the interval of #{requirement}."
+        command.run options: options do |version:|
+          ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(requirement: requirement, strict: strict).build(
+            logger: logger,
+            version: version,
+          ).call
+        end
+      end
     end
   end
 end
