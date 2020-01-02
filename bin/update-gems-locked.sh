@@ -6,7 +6,10 @@ set +x
 for RUBY in ruby-2.6 ruby-2.5 ruby-2.4
 do
   chruby "$RUBY"
-  pushd "$RUBY"
+  if [ "$RUBY" != "ruby-2.6" ]
+  then
+    pushd "$RUBY"
+  fi
   ruby --version
   set -x
   if [ -e gems.locked ]
@@ -16,7 +19,10 @@ do
     bundle install
   fi
   bundle clean
-  bundle binstubs bundler guard middleman-cli rake reek rspec-core rufo test-kitchen yard
+  bundle binstubs --force bundler guard middleman-cli rake reek rspec-core rufo test-kitchen yard
   set +x
-  popd
+  if [ "$RUBY" != "ruby-2.6" ]
+  then
+    popd
+  fi
 done
