@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigSchemas::Boolean" do |attribute:|
+require "kitchen/terraform/config_schemas/boolean"
+
+::RSpec.shared_examples Kitchen::Terraform::ConfigSchemas::Boolean.to_s do |attribute:|
   context "when the config omits #{attribute.inspect}" do
     subject do
       described_class.new
