@@ -15,17 +15,24 @@
 # limitations under the License.
 
 require "dry/validation"
-require "kitchen/terraform/config_schemas"
 
-# A validation schema for a configuration attribute which is an optional string.
-#
-# @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
-::Kitchen::Terraform::ConfigSchemas::OptionalString =
-  ::Dry::Validation
-    .Schema do
-    required(:value)
-      .maybe(
-        :str?,
-        :filled?
-      )
+module Kitchen
+  module Terraform
+    module ConfigSchemas
+      # A validation schema for a configuration attribute which is an optional string.
+      #
+      # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
+      OptionalString = ::Dry::Validation.Schema do
+        required(:value)
+          .maybe(
+            :str?,
+            :filled?
+          )
+      end.dup
+
+      OptionalString.define_singleton_method :to_s do
+        "Kitchen::Terraform::ConfigSchemas::OptionalString"
+      end
+    end
   end
+end

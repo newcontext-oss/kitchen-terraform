@@ -16,7 +16,8 @@
 
 require "kitchen"
 require "kitchen/terraform/configurable"
-require "kitchen/terraform/error"
+require "kitchen/terraform/variables_manager"
+require "kitchen/terraform/outputs_manager"
 
 # This namespace is defined by Kitchen.
 #
@@ -80,6 +81,8 @@ end
 #   kitchen converge default-ubuntu
 # @version 2
 class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
+  # UNSUPPORTED_BASE_ATTRIBUTES is the list of attributes inherited from
+  # Kitchen::Provisioner::Base which are not supported by Kitchen::Provisioner::Terraform.
   UNSUPPORTED_BASE_ATTRIBUTES = [
     :command_prefix,
     :downloads,
@@ -102,9 +105,14 @@ class ::Kitchen::Provisioner::Terraform < ::Kitchen::Provisioner::Base
 
   # Converges a Test Kitchen instance.
   #
-  # @param _state [::Hash] the mutable instance and provisioner state.
+  # @param state [::Hash] the mutable instance and provisioner state.
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  def call(_state)
-    instance.driver.apply
+  def call(state)
+    instance.driver.apply do |outputs:|
+      ::Kitchen::Terraform::OutputsManager.new(logger: logger).save outputs: outputs, state: state
+    end.retrieve_variables do |variables:|
+      ::Kitchen::Terraform::VariablesManager.new(logger: logger)
+        .save(variables: variables, state: state)
+    end
   end
 end

@@ -19,30 +19,18 @@ require "kitchen/driver/terraform"
 
 ::RSpec.shared_examples "Kitchen::Terraform::Configurable" do
   describe "@api_version" do
-    subject do
-      described_class
-    end
-
     specify "should equal 2" do
-      expect(subject.instance_variable_get(:@api_version)).to eq 2
+      expect(described_class.instance_variable_get(:@api_version)).to eq 2
     end
   end
 
   describe "@plugin_version" do
-    subject do
-      described_class
-    end
-
     it "equals the gem version" do
-      expect(subject.instance_variable_get(:@plugin_version)).to eq "5.1.1"
+      expect(described_class.instance_variable_get(:@plugin_version)).to eq "5.1.1"
     end
   end
 
   describe "#expand_paths!" do
-    subject do
-      described_instance
-    end
-
     context "when #validate_config! has not been called" do
       specify "should call #validate_config!" do
         is_expected.to receive :validate_config!

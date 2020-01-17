@@ -14,29 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec::Matchers.define :result_in_success do
-  supports_block_expectations
+require "kitchen"
+require "kitchen/terraform/version_verifier_strategy/unsupported_permissive"
 
-  chain(
-    :with_message,
-    :message
-  )
+::RSpec.describe ::Kitchen::Terraform::VersionVerifierStrategy::UnsupportedPermissive do
+  describe "#call" do
+    subject do
+      described_class.new logger: ::Kitchen::Logger.new
+    end
 
-  match notify_expectation_failures: true do |actual|
-    actual_message = nil
-    call_actual =
-      proc do
-        actual_message = actual.call
-      end
-
-    expect(call_actual).to_not raise_error
-    values_match?(
-      message,
-      actual_message
-    )
-  end
-
-  failure_message do |actual|
-    "expected #{actual} to result in a success with the message #{message.inspect}"
+    specify "should not raise an error" do
+      expect do
+        subject.call
+      end.not_to raise_error
+    end
   end
 end

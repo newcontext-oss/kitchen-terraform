@@ -16,96 +16,61 @@
 
 require "kitchen"
 require "kitchen/terraform/command/version"
+require "kitchen/terraform/command_executor"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Version do
-  describe ".run" do
-    describe "running `terraform version`" do
-      before do
-        allow(described_class).to receive(:run_command).and_return "Terraform v0.11.10"
-      end
-
-      specify "should run `terraform version` in an environment which preserves the locale of the parent environment" do
-        expect(described_class).to receive(:run_command).with(
-          "terraform version",
-          including(environment: including("LC_ALL" => nil)),
-        )
-      end
-
-      specify "should run `terraform version` in an environment which optimizes Terraform for automation" do
-        expect(described_class).to receive(:run_command).with(
-          "terraform version",
-          including(environment: including("TF_IN_AUTOMATION" => "true")),
-        )
-      end
-
-      specify "should run `terraform version` in an environment which treats Terraform output errors as warnings" do
-        expect(described_class).to receive(:run_command).with(
-          "terraform version",
-          including(environment: including("TF_WARN_OUTPUT_ERRORS" => "true")),
-        )
-      end
-
-      after do
-        described_class.run do |version:| end
-      end
+  describe "#run" do
+    subject do
+      described_class.new client: client, logger: logger
     end
 
-    describe "handling the failure of running `terraform version`" do
-      before do
-        allow(described_class).to receive(:run_command).and_raise(
-          ::Kitchen::ShellOut::ShellCommandFailed, "shell command failed"
-        )
-      end
-
-      specify "should result in failure with the failed command output" do
-        expect do
-          described_class.run
-        end.to result_in_failure.with_message "shell command failed"
-      end
+    let :client do
+      "/usr/local/bin/terraform"
     end
 
-    describe "handling an unexpected error" do
-      before do
-        allow(described_class).to receive(:run_command).and_raise(
-          ::StandardError.new("unexpected error").extend(::Kitchen::Error)
-        )
-      end
-
-      specify "should result in failure with the unexpected error message" do
-        expect do
-          described_class.run
-        end.to result_in_failure.with_message "unexpected error"
-      end
+    let :command_executor do
+      instance_double ::Kitchen::Terraform::CommandExecutor
     end
 
-    describe "initializing an instance" do
+    let :logger do
+      ::Kitchen::Logger.new
+    end
+
+    let :options do
+      { cwd: "/root-module-directory" }
+    end
+
+    before do
+      allow(::Kitchen::Terraform::CommandExecutor)
+        .to(receive(:new).with(client: client, logger: logger).and_return(command_executor))
+    end
+
+    context "when running the command results in success" do
       before do
-        allow(described_class).to receive(:run_command).and_return "Terraform v1.2.3"
+        allow(command_executor)
+          .to(receive(:run).with(command: "version", options: options).and_yield(standard_output: "Terraform v0.11.10"))
       end
 
-      specify "should run `terraform version` and return an instance" do
+      specify "should yield the version" do
         expect do |block|
-          described_class.run(&block)
-        end.to yield_with_args version: kind_of(::Kitchen::Terraform::Command::Version)
-      end
-
-      specify "should run `terraform version` and initialize the instance with the output" do
-        expect(
-          described_class.run do |version:| end.version
-        ).to eq "1.2.3"
+          subject.run(options: options, &block)
+        end.to yield_with_args version: ::Gem::Version.new("0.11.10")
       end
     end
-  end
 
-  describe ".logger" do
-    specify "should return the Kitchen logger" do
-      expect(described_class.logger).to be ::Kitchen.logger
-    end
-  end
+    context "when running the command results in failure" do
+      before do
+        allow(command_executor).to(
+          receive(:run).with(command: "version", options: options)
+            .and_raise(::Kitchen::ShellOut::ShellCommandFailed, "shell command failed")
+        )
+      end
 
-  describe ".superclass" do
-    specify "should be Gem::Version" do
-      expect(described_class.superclass).to be ::Gem::Version
+      specify "should raise a transient failure error" do
+        expect do
+          subject.run options: options
+        end.to raise_error ::Kitchen::TransientFailure
+      end
     end
   end
 end

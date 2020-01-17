@@ -21,7 +21,7 @@ require "kitchen/terraform/config_schemas/boolean"
 module Kitchen
   module Terraform
     class ConfigAttribute
-      # This attribute toggles verification of support for the version of the Terraform client specified by the
+      # This attribute toggles strict or permissive verification of support for the version of the Terraform client specified by the
       # <code>client</code> attribute.
       #
       # Type:: {http://www.yaml.org/spec/1.2/spec.html#id2803629 Boolean}

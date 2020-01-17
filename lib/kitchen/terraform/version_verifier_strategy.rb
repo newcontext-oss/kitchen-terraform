@@ -14,27 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/error"
+require "kitchen"
 
-::RSpec::Matchers.define :result_in_failure do
-  supports_block_expectations
-
-  chain(
-    :with_message,
-    :message
-  )
-
-  match notify_expectation_failures: true do |actual|
-    expect(actual)
-      .to(
-        raise_error(
-          ::Kitchen::Terraform::Error,
-          message
-        )
-      )
-  end
-
-  failure_message do |actual|
-    "expected #{actual} to result in a failure with the message #{message.inspect}"
+module Kitchen
+  module Terraform
+    # VersionVerifierStrategy is the module of objects which provide strategies for version verification.
+    module VersionVerifierStrategy
+    end
   end
 end

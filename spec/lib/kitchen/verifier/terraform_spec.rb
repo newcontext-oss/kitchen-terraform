@@ -17,6 +17,9 @@
 require "inspec"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/inspec_options_factory"
+require "kitchen/terraform/variables_manager"
+require "kitchen/terraform/outputs_manager"
 require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
@@ -25,6 +28,10 @@ require "support/kitchen/terraform/config_attribute/systems_examples"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Verifier::Terraform do
+  subject do
+    described_class.new config
+  end
+
   let :config do
     {
       color: false,
@@ -63,6 +70,7 @@ require "support/kitchen/terraform/configurable_examples"
         },
         {
           name: "a-system-without-hosts",
+          attrs_outputs: { attribute_name: "output_name" },
           backend: "backend",
           profile_locations: ["remote://profile"],
         },
@@ -73,10 +81,6 @@ require "support/kitchen/terraform/configurable_examples"
 
   let :config_fail_fast do
     true
-  end
-
-  let :described_instance do
-    described_class.new config
   end
 
   let :driver do
@@ -107,8 +111,8 @@ require "support/kitchen/terraform/configurable_examples"
   it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call" do
-    subject do
-      described_instance
+    let :kitchen_instance_state do
+      {}
     end
 
     let :kitchen_suite do
@@ -117,70 +121,88 @@ require "support/kitchen/terraform/configurable_examples"
 
     before do
       allow(kitchen_instance).to receive(:driver).and_return driver
-      allow(driver).to receive(:retrieve_inputs).and_yield inputs: { "variable" => "input_value" }
       allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
       allow(kitchen_suite).to receive(:name).and_return "test-suite"
-      described_instance.finalize_config! kitchen_instance
+      subject.finalize_config! kitchen_instance
     end
 
-    context "when the Terraform outputs are in an unexpected format" do
+    context "when the Terraform output mapped to the :hosts key is in an unexpected format" do
       before do
-        allow(driver).to(receive(:retrieve_outputs) do |&block|
-          block.call outputs: { "output_name" => { "amount" => "output_value" } }
-
-          driver
-        end)
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { variable: "input value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { hosts: { amount: "host" }, output_name: { amount: "output value" } },
+          state: kitchen_instance_state,
+        )
       end
 
-      specify "should raise an action failed error indicating the unexpected format" do
+      specify "should raise an action failed error" do
         expect do
-          subject.call({})
-        end.to raise_error(
-          ::Kitchen::ActionFailed,
-          "a-system-with-hosts: Preparing to resolve attrs failed\nkey not found: \"value\""
-        )
+          subject.call kitchen_instance_state
+        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
       end
     end
 
     context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
       before do
-        allow(driver).to(receive(:retrieve_outputs) do |&block|
-          block.call outputs: {}
-
-          driver
-        end)
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { variable: "input value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { hosts: { value: "host" } },
+          state: kitchen_instance_state,
+        )
       end
 
-      specify "should raise an action failed error indicating the missing output" do
+      specify "should raise an action failed error" do
         expect do
-          subject.call({})
-        end.to raise_error(
-          ::Kitchen::ActionFailed,
-          "a-system-with-hosts: Resolving attrs failed\nkey not found: \"output_name\""
+          subject.call kitchen_instance_state
+        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
+      end
+    end
+
+    context "when a Terraform output mapped to a :attrs_outputs key is in an unexpected format" do
+      before do
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { variable: "input value" },
+          state: kitchen_instance_state,
         )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { hosts: { value: "host" }, output_name: { amount: "output value" } },
+          state: kitchen_instance_state,
+        )
+      end
+
+      specify "should raise an action failed error" do
+        expect do
+          subject.call kitchen_instance_state
+        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
       end
     end
 
     context "when the Terraform outputs omits the value of the :hosts_output key" do
       before do
-        allow(driver).to(receive(:retrieve_outputs) do |&block|
-          block.call outputs: { "output_name" => { "value" => "output value" } }
-
-          driver
-        end)
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { variable: "input value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { output_name: { value: "output value" } },
+          state: kitchen_instance_state,
+        )
       end
 
-      specify "should raise an action failed error indicating the missing :hosts_output key" do
+      specify "should raise an action failed error" do
         expect do
-          subject.call({})
-        end.to raise_error(
-          ::Kitchen::ActionFailed,
-          "a-system-with-hosts: Resolving hosts failed\nkey not found: \"hosts\""
-        )
+          subject.call kitchen_instance_state
+        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
       end
     end
 
-    context "when the Terraform outputs do include the configured :hosts_output key" do
+    context "when the Terraform outputs are correctly formatted and match the configuration" do
       let :runner do
         instance_double(::Inspec::Runner).tap do |runner|
           allow(runner).to receive(:add_target).with "/test/base/path/test-suite"
@@ -193,14 +215,6 @@ require "support/kitchen/terraform/configurable_examples"
           "color" => false,
           "distinct_exit" => false,
           "reporter" => ["reporter"],
-          attributes: {
-            "attribute_name" => "output_value",
-            "hosts" => "host",
-            "input_variable" => "input_value",
-            "output_hosts" => "host",
-            "output_name" => "output_value",
-            "output_output_name" => "output_value",
-          },
           backend_cache: false,
           backend: "backend",
           bastion_host: "bastion_host",
@@ -210,6 +224,14 @@ require "support/kitchen/terraform/configurable_examples"
           enable_password: "enable_password",
           host: "host",
           input_file: ["attrs.yml"],
+          ::Kitchen::Terraform::InSpecOptionsFactory.inputs_key => {
+            "attribute_name" => "output value",
+            "hosts" => "host",
+            "input_variable" => "input value",
+            "output_hosts" => "host",
+            "output_name" => "output value",
+            "output_output_name" => "output value",
+          },
           key_files: ["first_key_file", "second_key_file"],
           logger: logger,
           password: "password",
@@ -235,26 +257,30 @@ require "support/kitchen/terraform/configurable_examples"
         {
           "color" => false,
           "distinct_exit" => false,
-          attributes: {
-            "hosts" => "host",
-            "input_variable" => "input_value",
-            "output_hosts" => "host",
-            "output_name" => "output_value",
-            "output_output_name" => "output_value",
-          },
           backend: "backend",
+          ::Kitchen::Terraform::InSpecOptionsFactory.inputs_key => {
+            "attribute_name" => "output value",
+            "hosts" => "host",
+            "input_variable" => "input value",
+            "output_hosts" => "host",
+            "output_name" => "output value",
+            "output_output_name" => "output value",
+          },
           logger: logger,
         }
       end
 
       before do
+        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+          variables: { variable: "input value" },
+          state: kitchen_instance_state,
+        )
+        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+          outputs: { hosts: { value: "host" }, output_name: { value: "output value" } },
+          state: kitchen_instance_state,
+        )
         allow(::Inspec::Runner).to receive(:new).with(runner_options_with_hosts).and_return(runner)
         allow(::Inspec::Runner).to receive(:new).with(runner_options_without_hosts).and_return(runner)
-        allow(driver).to(receive(:retrieve_outputs) do |&block|
-          block.call outputs: { "output_name" => { "value" => "output_value" }, "hosts" => { "value" => "host" } }
-
-          driver
-        end)
       end
 
       context "when fail fast behaviour is enabled" do
@@ -265,24 +291,20 @@ require "support/kitchen/terraform/configurable_examples"
 
           it "does raise an error" do
             expect do
-              subject.call({})
-            end.to raise_error ::Kitchen::ActionFailed, "a-system-with-hosts: InSpec Runner exited with 1"
+              subject.call kitchen_instance_state
+            end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
           end
         end
 
         context "when the InSpec runner raises an error" do
-          let :error_message do
-            "mocked InSpec error"
-          end
-
           before do
-            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
+            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, "mocked InSpec error"
           end
 
-          specify "should raise an action failed error with the runner error message" do
+          specify "should raise an action failed error" do
             expect do
-              subject.call({})
-            end.to raise_error ::Kitchen::ActionFailed, "a-system-with-hosts: Executing InSpec failed\n#{error_message}"
+              subject.call kitchen_instance_state
+            end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
           end
         end
       end
@@ -297,32 +319,29 @@ require "support/kitchen/terraform/configurable_examples"
             allow(runner).to receive(:run).with(no_args).and_return 1
           end
 
-          it "does raise all errors" do
+          specify "should raise an ActionFailed with all error messages" do
             expect do
-              subject.call({})
+              subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
-              "a-system-with-hosts: InSpec Runner exited with 1\n\na-system-without-hosts: InSpec Runner exited with 1"
+              "Failed verification of the 'a-system-with-hosts' system.\n\n" \
+              "Failed verification of the 'a-system-without-hosts' system."
             )
           end
         end
 
         context "when the InSpec runner raises an error multiple times" do
-          let :error_message do
-            "mocked InSpec error"
-          end
-
           before do
-            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, error_message
+            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, "mocked InSpec error"
           end
 
-          specify "should raise an action failed error with the runner error message" do
+          specify "should raise an ActionFailed with all error messages" do
             expect do
-              subject.call({})
+              subject.call kitchen_instance_state
             end.to raise_error(
               ::Kitchen::ActionFailed,
-              "a-system-with-hosts: Executing InSpec failed\n#{error_message}\n\n" \
-              "a-system-without-hosts: Executing InSpec failed\n#{error_message}"
+              "Failed verification of the 'a-system-with-hosts' system.\n\n" \
+              "Failed verification of the 'a-system-without-hosts' system."
             )
           end
         end
@@ -335,7 +354,7 @@ require "support/kitchen/terraform/configurable_examples"
 
         it "does not raise an error" do
           expect do
-            subject.call({})
+            subject.call kitchen_instance_state
           end.to_not raise_error
         end
       end
@@ -343,16 +362,12 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#doctor" do
-    subject do
-      described_instance
-    end
-
-    let :kitchen_state do
+    let :kitchen_instance_state do
       {}
     end
 
     specify "should return false" do
-      expect(subject.doctor(kitchen_state)).to be_falsey
+      expect(subject.doctor(kitchen_instance_state)).to be_falsey
     end
   end
 
@@ -363,7 +378,7 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       before do
-        allow(subject).to receive(:require).with("kitchen/terraform/inspec").and_raise ::LoadError, error_message
+        allow(subject).to receive(:require).with("kitchen/terraform/inspec_runner").and_raise ::LoadError, error_message
       end
 
       specify "should raise a client error" do

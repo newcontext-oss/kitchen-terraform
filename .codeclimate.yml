@@ -19,8 +19,15 @@ plugins:
   rubocop:
     enabled: false
 exclude_patterns:
+  - "assets/"
+  - "bin/"
+  - "certs/"
+  - "coverage/"
   - "doc/"
   - "docs/"
   - "examples/"
-  - "test/integration"
-  - "website/"
+  - "ruby-2.4/"
+  - "ruby-2.5/"
+  - "ruby-2.6/"
+  - "rubygems/"
+  - "tmp/"

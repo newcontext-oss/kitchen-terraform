@@ -15,13 +15,20 @@
 # limitations under the License.
 
 require "dry/validation"
-require "kitchen/terraform/config_schemas"
 
-# A validation schema for a configuration attribute which is a boolean.
-#
-# @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
-::Kitchen::Terraform::ConfigSchemas::Boolean =
-  ::Dry::Validation
-    .Schema do
-    required(:value).filled :bool?
+module Kitchen
+  module Terraform
+    module ConfigSchemas
+      # A validation schema for a configuration attribute which is a boolean.
+      #
+      # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
+      Boolean = ::Dry::Validation.Schema do
+        required(:value).filled :bool?
+      end.dup
+
+      Boolean.define_singleton_method :to_s do
+        "Kitchen::Terraform::ConfigSchemas::Boolean"
+      end
+    end
   end
+end

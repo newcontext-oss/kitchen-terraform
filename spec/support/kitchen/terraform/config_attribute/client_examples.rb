@@ -14,48 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "support/kitchen/terraform/config_schemas/string_examples"
+
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Client" do
   let :attribute do
     :client
   end
 
-  context "when the config omits :client" do
-    subject do
-      described_class.new
-    end
-
-    before do
-      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-    end
-
-    specify "should associate :client with terraform" do
-      expect(subject[attribute]).to eq "terraform"
-    end
-  end
-
-  context "when the config associates :client with a nonstring" do
-    subject do
-      described_class.new attribute => 123
-    end
-
-    specify "should raise a Kitchen::UserError" do
-      expect do
-        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      end.to raise_error ::Kitchen::UserError, /client.*must be a string/
-    end
-  end
-
-  context "when the config associates :client with an empty string" do
-    subject do
-      described_class.new attribute => ""
-    end
-
-    specify "should raise a Kitchen::UserError" do
-      expect do
-        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      end.to raise_error ::Kitchen::UserError, /client.*must be filled/
-    end
-  end
+  it_behaves_like "Kitchen::Terraform::ConfigSchemas::String", attribute: :client, default_value: "terraform"
 
   context "when the config associates :client with a pathname which is not on the PATH" do
     subject do

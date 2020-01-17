@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
-
-# This class represents errors that occur while Kitchen-Terraform is executing.
-class ::Kitchen::Terraform::Error < ::StandardError
+module Kitchen
+  module Terraform
+    # SystemsVerifier is the namespace of the classes of objects which verify systems.
+    module SystemsVerifier
+    end
+  end
 end

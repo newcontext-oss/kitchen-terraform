@@ -15,51 +15,46 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/error"
+require "kitchen/terraform/command_executor"
 require "rubygems"
 
 module Kitchen
   module Terraform
     module Command
       # Version is the class of objects which represent the <tt>terraform version</tt> command.
-      class Version < ::Gem::Version
-        extend ::Kitchen::Logging
-        extend ::Kitchen::ShellOut
-
-        class << self
-          # The command is run by shelling out in an environment which is optimized for automating Terraform.
-          #
-          # @raise [::Kitchen::Terraform::Error] if the result of running the command is a failure.
-          # @return [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the command.
-          # @yieldparam version [::Kitchen::Terraform::Command::Version] an instance initialized with the output of the
-          #   command.
-          def run
-            new(
-              run_command(
-                "terraform version",
-                environment: {
-                  "LC_ALL" => nil,
-                  "TF_IN_AUTOMATION" => "true",
-                  "TF_WARN_OUTPUT_ERRORS" => "true",
-                },
-              )
-            ).tap do |version|
-              yield version: version
-            end
-          rescue ::Kitchen::ShellOut::ShellCommandFailed, ::Kitchen::Error => error
-            raise ::Kitchen::Terraform::Error, error.message
+      class Version
+        # #run executes the command.
+        #
+        # @param options [Hash] options which adjust the execution of the command.
+        # @option options [Integer] :timeout the maximum duration in seconds to run the command.
+        # @option options [String] :cwd the directory in which to run the command.
+        # @yieldparam version [Gem::Version] the Terraform client version.
+        # @return [self]
+        # @raise [Kitchen::TransientFailure] if running the command results in failure.
+        def run(options:)
+          command_executor.run(
+            command: "version",
+            options: options,
+          ) do |standard_output:|
+            yield version: ::Gem::Version.new(standard_output.slice(/Terraform v(\d+\.\d+\.\d+)/, 1))
           end
+        rescue => error
+          logger.error error.message
 
-          def logger
-            ::Kitchen.logger
-          end
+          raise ::Kitchen::TransientFailure, "Running the version command resulted in failure."
+        end
+
+        # @param client [String] the pathname of the Terraform client.
+        # @param logger [Kitchen::Logger] a logger to log messages.
+        # @return [Kitchen::Terraform::Command::Version]
+        def initialize(client:, logger:)
+          self.logger = logger
+          self.command_executor = ::Kitchen::Terraform::CommandExecutor.new client: client, logger: logger
         end
 
         private
 
-        def initialize(version)
-          super version.slice(/Terraform v(\d+\.\d+\.\d+)/, 1)
-        end
+        attr_accessor :command_executor, :logger
       end
     end
   end

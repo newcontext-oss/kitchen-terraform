@@ -14,30 +14,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
-require "kitchen/terraform/error"
+require "kitchen"
 
 module Kitchen
   module Terraform
-    # SystemHostsResolver is the class of objects which resolve for systems the hosts which are contained in outputs.
+    # SystemHostsResolver is the class of objects which resolve the hosts of a system which are contained in Terraform
+    # outputs.
     class SystemHostsResolver
-      # #resolve resolves the hosts.
+      # #resolve reads the specified Terraform output and stores the value in a list of hosts.
       #
-      # @param hosts_output [::String] the name of the Terraform output which has a value of hosts for the system.
-      # @param system [::Kitchen::Terraform::System] the system.
-      # @raise [::Kitchen::Terraform::Error] if the fetching the value of the output fails.
-      def resolve(hosts_output:, system:)
-        system.add_hosts hosts: @outputs.fetch(hosts_output).fetch("value")
-      rescue ::KeyError => key_error
-        raise ::Kitchen::Terraform::Error, "Resolving hosts failed\n#{key_error}"
+      # @param hosts [::Array] the list of hosts.
+      # @param hosts_output [::String] the name of the Terraform output which contains hosts.
+      # @raise [::Kitchen::ClientError] if the specified Terraform output is not found.
+      # @return [self]
+      def resolve(hosts:, hosts_output:)
+        hosts.concat Array resolved_output(hosts_output: hosts_output).fetch :value
+
+        self
+      rescue ::KeyError
+        @logger.error(
+          "The 'value' key was not found in the '#{hosts_output}' Terraform output of the Kitchen instance " \
+          "state. This error indicates that the output format of `terraform output -json` is unexpected."
+        )
+
+        raise ::Kitchen::ClientError, "Failed resolution of hosts."
       end
 
       private
 
-      # #initialize prepares the instance to be used.
-      #
-      # @param outputs [#to_hash] the outputs of the Terraform state under test.
-      def initialize(outputs:)
+      def resolved_output(hosts_output:)
+        @outputs.fetch hosts_output.to_sym
+      rescue ::KeyError
+        @logger.error(
+          "The '#{hosts_output}' key was not found in the Terraform outputs of the Kitchen instance state. This " \
+          "error indicates that `kitchen converge` must be executed again to update the Terraform outputs or that " \
+          "the wrong key was provided."
+        )
+
+        raise ::Kitchen::ClientError, "Failed resolution of hosts."
+      end
+
+      def initialize(logger:, outputs:)
+        @logger = logger
         @outputs = Hash[outputs]
       end
     end

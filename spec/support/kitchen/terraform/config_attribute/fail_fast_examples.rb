@@ -20,17 +20,17 @@
   end
 
   context "when the config omits :fail_fast" do
-      subject do
-        described_class.new
-      end
+    subject do
+      described_class.new
+    end
 
-      before do
-        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      end
+    before do
+      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+    end
 
-      specify "should associate :fail_fast with true" do
-        expect(subject[attribute]).to be true
-      end
+    specify "should associate :fail_fast with true" do
+      expect(subject[attribute]).to be true
+    end
   end
 
   context "when the config associates :fail_fast with a nonboolean" do

@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigSchemas::String" do |attribute:, default_value:|
+require "kitchen/terraform/config_schemas/string"
+
+::RSpec.shared_examples Kitchen::Terraform::ConfigSchemas::String.to_s do |attribute:, default_value:|
   context "when the config omits #{attribute.inspect}" do
     subject do
       described_class.new

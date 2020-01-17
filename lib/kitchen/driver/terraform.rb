@@ -31,8 +31,9 @@ require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/debug_logger"
-require "kitchen/terraform/shell_out"
-require "kitchen/terraform/verify_version"
+require "kitchen/terraform/command_executor"
+require "kitchen/terraform/version_verifier"
+require "rubygems"
 require "shellwords"
 
 # This namespace is defined by Kitchen.
@@ -122,7 +123,7 @@ end
 #
 # === Shelling Out
 #
-# {include:Kitchen::Terraform::ShellOut}
+# {include:Kitchen::Terraform::CommandExecutor}
 #
 # === Configuration Attributes
 #
@@ -182,6 +183,11 @@ end
 #
 # {include:Kitchen::Terraform::ConfigAttribute::VerifyVersion}
 #
+# === Ruby Interface
+#
+# This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
+# :reek:MissingSafeMethod { exclude: [ finalize_config! ] }
+#
 # @example Describe the create command
 #   kitchen help create
 # @example Create a Test Kitchen instance
@@ -231,12 +237,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # module, and applying the state changes.
   #
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
-  # @return [void]
+  # @return [self]
+  # @yieldparam outputs [::Hash] the state output.
   def apply(&block)
     verify_version
-    run_workspace_select_instance
-    apply_run
-  rescue ::Kitchen::Terraform::Error => error
+    apply_run(&block)
+
+    self
+  rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end
 
@@ -249,7 +257,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     verify_version
     create_run_init
     run_workspace_select_instance
-  rescue ::Kitchen::Terraform::Error => error
+  rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end
 
@@ -266,53 +274,48 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     destroy_run_destroy
     destroy_run_workspace_select_default
     destroy_run_workspace_delete_instance
-  rescue ::Kitchen::Terraform::Error => error
+  rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end
 
-  # Retrieves the Terraform input variables for a Kitchen instance provided by the configuration.
+  # #finalize_config! invokes the super implementation and then defines the command executor.
   #
+  # @param instance [Kitchen::Instance] an associated instance.
+  # @raise [Kitchen::ClientError] if the instance is nil.
   # @return [self]
-  # @yieldparam inputs [::Hash] the input variables.
-  def retrieve_inputs
-    yield inputs: config_variables
+  # @see Kitchen::Configurable#finalize_config!
+  def finalize_config!(instance)
+    super instance
+    self.command_executor = ::Kitchen::Terraform::CommandExecutor.new client: config_client, logger: logger
 
     self
   end
 
-  # Retrieves the Terraform state outputs for a Kitchen instance by selecting the test workspace and fetching the
-  # outputs.
+  # Retrieves the Terraform variables for a Kitchen instance provided by the configuration.
   #
-  # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [self]
-  # @yieldparam outputs [::Hash] the state output.
-  def retrieve_outputs(&block)
-    run_workspace_select_instance
-    ::Kitchen::Terraform::Command::Output.run(
-      client: config_client,
-      options: { cwd: config_root_module_directory, live_stream: debug_logger, timeout: config_command_timeout },
-      &block
-    )
+  # @yieldparam inputs [::Hash] the variables.
+  def retrieve_variables
+    yield variables: config_variables
 
     self
-  rescue ::Kitchen::Terraform::Error => error
-    raise ::Kitchen::ActionFailed, error.message
   end
 
   private
 
-  attr_accessor :debug_logger
+  attr_accessor :command_executor, :version_requirement
 
-  def apply_run
+  def apply_run(&block)
+    run_workspace_select_instance
     apply_run_get
     apply_run_validate
     apply_run_apply
+    apply_run_output(&block)
   end
 
   # @api private
   def apply_run_apply
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "apply " \
       "#{lock_flag} " \
       "#{lock_timeout_flag} " \
@@ -323,40 +326,33 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "-refresh=true " \
       "#{variables_flags} " \
       "#{variable_files_flags}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
   # @api private
   def apply_run_get
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "get -update",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
+  end
+
+  def apply_run_output(&block)
+    ::Kitchen::Terraform::Command::Output.new(
+      client: config_client,
+      logger: ::Kitchen::Terraform::DebugLogger.new(logger),
+    ).run(options: { cwd: config_root_module_directory, timeout: config_command_timeout }, &block)
   end
 
   # @api private
   def apply_run_validate
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "validate " \
       "#{color_flag} " \
       "#{variables_flags} " \
       "#{variable_files_flags}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -374,8 +370,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def create_run_init
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "init " \
       "-input=false " \
       "#{lock_flag} " \
@@ -389,18 +384,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "-get-plugins=true " \
       "#{plugin_directory_flag}" \
       "-verify-plugins=true",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
   # @api private
   def destroy_run_destroy
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "destroy " \
       "-auto-approve " \
       "#{lock_flag} " \
@@ -411,19 +401,13 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "-refresh=true " \
       "#{variables_flags} " \
       "#{variable_files_flags}",
-      options: {
-        cwd: config_root_module_directory,
-        environment: { "TF_WARN_OUTPUT_ERRORS" => "true" },
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
   # @api private
   def destroy_run_init
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "init " \
       "-input=false " \
       "#{lock_flag} " \
@@ -436,43 +420,29 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
       "-get-plugins=true " \
       "#{plugin_directory_flag}" \
       "-verify-plugins=true",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
   # @api private
   def destroy_run_workspace_delete_instance
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "workspace delete #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
   # @api private
   def destroy_run_workspace_select_default
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "workspace select default",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
   def initialize(config = {})
     super
-    self.debug_logger = ::Kitchen::Terraform::DebugLogger.new logger
+    self.version_requirement = ::Gem::Requirement.new(">= 0.11.4", "< 0.13.0")
   end
 
   # @api private
@@ -501,24 +471,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   # @api private
   def run_workspace_select_instance
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+    command_executor.run(
       command: "workspace select #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
-  rescue ::Kitchen::Terraform::Error
-    ::Kitchen::Terraform::ShellOut.run(
-      client: config_client,
+  rescue ::Kitchen::TransientFailure
+    command_executor.run(
       command: "workspace new #{workspace_name}",
-      options: {
-        cwd: config_root_module_directory,
-        live_stream: logger,
-        timeout: config_command_timeout,
-      },
+      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
     )
   end
 
@@ -537,11 +497,14 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   def verify_version
-    if config_verify_version
-      ::Kitchen::Terraform::VerifyVersion.call
-    else
-      logger.warn "Verification of support for the available version of Terraform is disabled"
-    end
+    ::Kitchen::Terraform::VersionVerifier.new(
+      command: ::Kitchen::Terraform::Command::Version.new(client: config_client, logger: logger),
+      logger: logger,
+    ).verify(
+      options: { cwd: config_root_module_directory },
+      requirement: version_requirement,
+      strict: config_verify_version,
+    )
   end
 
   def workspace_name
