@@ -31,11 +31,19 @@ control "variables" do
     its("content") { should eq "A Value" }
   end
 
-  describe "list.txt" do
+  describe "list_of_strings.txt" do
     subject do
-      file(::File.join(attribute("output_root_module_directory"), "list.txt"))
+      file(::File.join(attribute("output_root_module_directory"), "list_of_strings.txt"))
     end
 
     its("content") { should eq "Element One; Element Two" }
+  end
+
+  describe "list_of_maps.txt" do
+    subject do
+      file(::File.join(attribute("output_root_module_directory"), "list_of_maps.txt"))
+    end
+
+    its("content") { should eq "A List Of Maps Value" }
   end
 end

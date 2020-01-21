@@ -30,9 +30,14 @@ resource "local_file" "map" {
   filename = "${path.cwd}/map.txt"
 }
 
-resource "local_file" "list" {
-  content  = "${join("; ", var.list)}"
-  filename = "${path.cwd}/list.txt"
+resource "local_file" "list_of_strings" {
+  content  = "${join("; ", var.list_of_strings)}"
+  filename = "${path.cwd}/list_of_strings.txt"
+}
+
+resource "local_file" "list_of_maps" {
+  content  = "${lookup(var.list_of_maps[0], "key")}"
+  filename = "${path.cwd}/list_of_maps.txt"
 }
 
 resource "local_file" "variable_file" {
