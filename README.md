@@ -216,7 +216,7 @@ suites:
 
 ```hcl
 provider "docker" {
-  host    = "unix://localhost/var/run/docker.sock"
+  host = "unix:///var/run/docker.sock"
 }
 
 data "docker_registry_image" "ubuntu" {
@@ -224,12 +224,12 @@ data "docker_registry_image" "ubuntu" {
 }
 
 resource "docker_image" "ubuntu" {
-  name          = "${data.docker_registry_image.ubuntu.name}"
+  name          = data.docker_registry_image.ubuntu.name
   pull_triggers = ["${data.docker_registry_image.ubuntu.sha256_digest}"]
 }
 
 resource "docker_container" "ubuntu" {
-  image    = "${docker_image.ubuntu.name}"
+  image    = docker_image.ubuntu.name
   must_run = true
   name     = "ubuntu_container"
 
