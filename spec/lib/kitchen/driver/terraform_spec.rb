@@ -19,6 +19,7 @@ require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/debug_logger"
+require "kitchen/terraform/driver/create"
 require "kitchen/terraform/version_verifier"
 require "kitchen/terraform/command_executor"
 require "pathname"
@@ -94,6 +95,10 @@ require "support/kitchen/terraform/configurable_examples"
     "/kitchen/root"
   end
 
+  let :kitchen_state do
+    {}
+  end
+
   let :plugin_directory do
     "/Arbitrary Directory/Plugin Directory"
   end
@@ -106,8 +111,16 @@ require "support/kitchen/terraform/configurable_examples"
     true
   end
 
+  let :version_requirement do
+    ::Gem::Requirement.new ">= 0.11.4", "< 0.13.0"
+  end
+
   let :version_verifier do
     instance_double ::Kitchen::Terraform::VersionVerifier
+  end
+
+  let :workspace_name do
+    "kitchen-terraform-test-suite-test-platform"
   end
 
   before do
@@ -402,80 +415,24 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#create" do
+    let :create do
+      instance_double ::Kitchen::Terraform::Driver::Create
+    end
+
     before do
+      allow(::Kitchen::Terraform::Driver::Create).to(
+        receive(:new).with(config: config, logger: kitchen_logger).and_return(create)
+      )
       subject.finalize_config! kitchen_instance
     end
 
-    shared_examples "it initializes the root module and selects the instance workspace" do
-      it_behaves_like "the action fails if the Terraform root module can not be initialized" do
-        let :action do
-          subject.create({})
-        end
-      end
-
-      context "when `terraform init` results in success" do
-        before do
-          shell_out_run_success(
-            command: "init " \
-            "-input=false " \
-            "-lock=true " \
-            "-lock-timeout=0s " \
-            "-no-color " \
-            "-upgrade " \
-            "-force-copy " \
-            "-backend=true " \
-            "-backend-config=\"string=\\\"A String\\\"\" " \
-            "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
-            "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "-plugin-dir=\"#{plugin_directory}\" " \
-            "-verify-plugins=true",
-          )
-        end
-
-        it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
-          let :action do
-            subject.create({})
-          end
-        end
-
-        context "when `terraform workspace select <kitchen-instance>` results in failure" do
-          before do
-            shell_out_run_failure(
-              command: "workspace select kitchen-terraform-test-suite-test-platform",
-              message: "mocked `terraform workspace select <kitchen-instance>` failure",
-            )
-          end
-
-          context "when `terraform workspace new <kitchen-instance>` results in success" do
-            before do
-              shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
-            end
-
-            specify "should result in success" do
-              expect do
-                subject.create({})
-              end.not_to raise_error
-            end
-          end
-        end
-
-        context "when `terraform workspace select <kitchen-instance>` results in success" do
-          before do
-            shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
-          end
-
-          specify "should result in success" do
-            expect do
-              subject.create({})
-            end.not_to raise_error
-          end
-        end
-      end
+    specify "should invoke the create strategy" do
+      expect(create).to receive(:call).with workspace_name: workspace_name, version_requirement: version_requirement
     end
 
-    it_behaves_like "it initializes the root module and selects the instance workspace"
+    after do
+      subject.create kitchen_state
+    end
   end
 
   describe "#destroy" do

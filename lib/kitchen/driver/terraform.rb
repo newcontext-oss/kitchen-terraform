@@ -15,14 +15,15 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/client"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/command_timeout"
-require "kitchen/terraform/config_attribute/lock"
 require "kitchen/terraform/config_attribute/lock_timeout"
+require "kitchen/terraform/config_attribute/lock"
 require "kitchen/terraform/config_attribute/parallelism"
 require "kitchen/terraform/config_attribute/plugin_directory"
 require "kitchen/terraform/config_attribute/root_module_directory"
@@ -31,7 +32,7 @@ require "kitchen/terraform/config_attribute/variables"
 require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/debug_logger"
-require "kitchen/terraform/command_executor"
+require "kitchen/terraform/driver/create"
 require "kitchen/terraform/version_verifier"
 require "rubygems"
 require "shellwords"
@@ -254,9 +255,8 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def create(_state)
-    verify_version
-    create_run_init
-    run_workspace_select_instance
+    create_strategy.call workspace_name: workspace_name, version_requirement: version_requirement
+  # TODO only catch Kitchen errors
   rescue => error
     raise ::Kitchen::ActionFailed, error.message
   end
@@ -287,6 +287,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def finalize_config!(instance)
     super instance
     self.command_executor = ::Kitchen::Terraform::CommandExecutor.new client: config_client, logger: logger
+    self.create_strategy = ::Kitchen::Terraform::Driver::Create.new config: config, logger: logger
 
     self
   end
@@ -303,7 +304,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   private
 
-  attr_accessor :command_executor, :version_requirement
+  attr_accessor :command_executor, :create_strategy, :version_requirement
 
   def apply_run(&block)
     run_workspace_select_instance
@@ -369,26 +370,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   # @api private
-  def create_run_init
-    command_executor.run(
-      command: "init " \
-      "-input=false " \
-      "#{lock_flag} " \
-      "#{lock_timeout_flag} " \
-      "#{color_flag} " \
-      "-upgrade " \
-      "-force-copy " \
-      "-backend=true " \
-      "#{backend_configurations_flags} " \
-      "-get=true " \
-      "-get-plugins=true " \
-      "#{plugin_directory_flag}" \
-      "-verify-plugins=true",
-      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
-    )
-  end
-
-  # @api private
   def destroy_run_destroy
     command_executor.run(
       command: "destroy " \
@@ -441,7 +422,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   def initialize(config = {})
-    super
+    super config
     self.version_requirement = ::Gem::Requirement.new(">= 0.11.4", "< 0.13.0")
   end
 
