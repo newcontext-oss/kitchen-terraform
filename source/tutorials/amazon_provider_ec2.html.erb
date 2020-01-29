@@ -133,25 +133,6 @@ provisioner:
 platforms:
   - name: ubuntu
           <% end %>
-          Next, let's add the transport section. This is what will allow Kitchen-Terraform to ssh into your terraform'd instances and run your inspec tests. You will need to include the path to the private key half of your AWS keypair - wherever you keep it on your workstation.
-          <br><br>
-          <% code("yml") do %>
----
-driver:
-  name: terraform
-  variable_files:
-    - testing.tfvars
-
-provisioner:
-  name: terraform
-
-platforms:
-  - name: ubuntu
-
-transport:
-  name: ssh
-  ssh_key: ~/path/to/your/private/aws/key.pem
-          <% end %>
           And now let's add another section, the verifier section. The verifier is what will verify whether your Test Kitchen instances match what is laid out in your inspec files.
           <br><br>
           <% code("yml") do %>
@@ -167,10 +148,6 @@ provisioner:
 platforms:
   - name: ubuntu
 
-transport:
-  name: ssh
-  ssh_key: ~/path/to/your/private/aws/key.pem
-
 verifier:
   name: terraform
   systems:
@@ -178,8 +155,10 @@ verifier:
       controls:
         - operating_system
       backend: ssh
-      hosts_output: public_dns
       user: ubuntu
+      key_files:
+        - ~/path/to/your/private/aws/key.pem
+      hosts_output: public_dns
       reporter:
         - documentation
           <% end %>
@@ -207,12 +186,14 @@ systems:
           <br><br>
                     <% code("yml") do %>
       backend: ssh
-      hosts_output: public_dns
       user: ubuntu
+      key_files:
+        - ~/path/to/your/private/aws/key.pem
+      hosts_output: public_dns
       reporter:
         - documentation
           <% end %>
-          Kitchen-Terraform also needs to know a username and hostnames to ssh run those specs. We have set the hosts_output key to public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit. The user key specifies the username that kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu. Finally the reporter key specifies the InSpec reporters for reporting test output. In this example, we are specifying documentation which shows the tests passed with a small summary at the end.
+          Kitchen-Terraform also needs to know a username, private keys, and hostnames to ssh run those specs. We have set the hosts_output key to public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit. The user key specifies the username that kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu. Finally the reporter key specifies the InSpec reporters for reporting test output. In this example, we are specifying documentation which shows the tests passed with a small summary at the end.
           <br><br>
           And, last, let's add a test suite to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file:
           <br><br>
@@ -229,10 +210,6 @@ provisioner:
 platforms:
   - name: ubuntu
 
-transport:
-  name: ssh
-  ssh_key: ~/path/to/your/private/aws/key.pem
-
 verifier:
   name: terraform
   systems:
@@ -240,8 +217,10 @@ verifier:
       controls:
         - operating_system
       backend: ssh
-      hosts_output: public_dns
       user: ubuntu
+      key_files:
+        - ~/path/to/your/private/aws/key.pem
+      hosts_output: public_dns
       reporter:
         - documentation
 
@@ -407,7 +386,8 @@ bundle exec kitchen verify
           And if it runs successfully, you should see output that includes:
           <br><br>
           <% code("bash") do %>
-Test Summary: 0 successful, 0 failures, 0 skipped
+Finished in 0.002 seconds (files took 2.54 seconds to load)
+0 examples, 0 failures
           <% end %>
           Let's add some tests!
           <br><br>
@@ -433,12 +413,12 @@ bundle exec kitchen verify
           And hey, it passed! You should see output that includes:
           <br><br>
           <% code("bash") do %>
-  ✔  operating_system: Command: `lsb_release -a`
-     ✔  Command: `lsb_release -a` stdout should match /Ubuntu/
+Command: `lsb_release -a`
+  stdout
+    is expected to match /Ubuntu/
 
-
-Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
-Test Summary: 1 successful, 0 failures, 0 skipped
+Finished in 0.23381 seconds (files took 2.62 seconds to load)
+1 example, 0 failures
           <% end %>
           It's nice that it passed...but we still need to make sure that it fails to be certain it tests what we think it tests. Let's try changing our Terraform config to spin up an Amazon Linux System, rather than an Ubuntu system, and make sure that this test fails.
           <br><br>
@@ -516,8 +496,11 @@ verifier:
     - name: default
       controls:
         - operating_system
-      hostnames: public_dns
-      username: ec2-user
+      backend: ssh
+      key_files:
+        - ~/.ssh/ncs-laptop.pem
+      hosts_output: public_dns
+      user: ec2-user
       reporter:
         - documentation
           <% end %>
@@ -529,16 +512,28 @@ bundle exec kitchen verify
           And now we see a test failure:
           <br><br>
           <% code("bash") do %>
-  ×  operating_system: Command: `lsb_release -a`
-     ×  Command: `lsb_release -a` stdout should match /Ubuntu/
-     expected "" to match /Ubuntu/
-     Diff:
-     @@ -1,2 +1,2 @@
-     -/Ubuntu/
-     +""
+Command: `lsb_release -a`
+  stdout
+    is expected to match /Ubuntu/ (FAILED - 1)
 
-Profile Summary: 0 successful controls, 1 control failure, 0 controls skipped
-Test Summary: 0 successful, 1 failure, 0 skipped
+Failures:
+
+  1) Command: `lsb_release -a` stdout is expected to match /Ubuntu/
+     Failure/Error: DEFAULT_FAILURE_NOTIFIER = lambda { |failure, _opts| raise failure }
+
+       expected "" to match /Ubuntu/
+       Diff:
+       @@ -1,2 +1,2 @@
+       -/Ubuntu/
+       +""
+     # ./test/integration/default/controls/operating_system_spec.rb:3:in `block (3 levels) in load_with_context'
+
+Finished in 0.26506 seconds (files took 5.52 seconds to load)
+1 example, 1 failure
+
+Failed examples:
+
+rspec  # Command: `lsb_release -a` stdout is expected to match /Ubuntu/
           <% end %>
           Alright, that means our test is failing when it is supposed to be failing, and passing when it is supposed to pass.
           <br><br>
@@ -552,8 +547,10 @@ verifier:
       controls:
         - operating_system
       backend: ssh
+      key_files:
+        - ~/.ssh/ncs-laptop.pem
       hosts_output: public_dns
-      user: ubuntu
+      user: ec2-user
       reporter:
         - documentation
           <% end %>
