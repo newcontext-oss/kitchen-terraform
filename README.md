@@ -77,7 +77,7 @@ the semantic versioning of the Ruby gem.
 source "https://rubygems.org/" do
   gem(
     "kitchen-terraform",
-    "~> 4.0"
+    "~> 5.1"
   )
 end
 ```
@@ -105,7 +105,7 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 4.0.0
+gem install kitchen-terraform --version 5.1.1
 ```
 
 This approach is not recommended as it requires more effort to install
@@ -183,10 +183,10 @@ hierarchy of files comprising the following blocks.
 ```ruby
 source "https://rubygems.org/"
 
-gem 'kitchen-terraform'
+gem 'kitchen-terraform', '~> 5.1'
 ```
 
-> ./.kitchen.yml (Test Kitchen configuration)
+> ./kitchen.yml (Test Kitchen configuration)
 
 ```yaml
 driver:
@@ -212,11 +212,12 @@ suites:
   - name: example
 ```
 
+Although Kitchen-Terraform supports multiple versions of Terraform, below snippets are compatible with v0.12:
 > ./main.tf
 
 ```hcl
 provider "docker" {
-  host    = "unix://localhost/var/run/docker.sock"
+  host = "unix:///var/run/docker.sock"
 }
 
 data "docker_registry_image" "ubuntu" {
@@ -224,12 +225,12 @@ data "docker_registry_image" "ubuntu" {
 }
 
 resource "docker_image" "ubuntu" {
-  name          = "${data.docker_registry_image.ubuntu.name}"
+  name          = data.docker_registry_image.ubuntu.name
   pull_triggers = ["${data.docker_registry_image.ubuntu.sha256_digest}"]
 }
 
 resource "docker_container" "ubuntu" {
-  image    = "${docker_image.ubuntu.name}"
+  image    = docker_image.ubuntu.name
   must_run = true
   name     = "ubuntu_container"
 
