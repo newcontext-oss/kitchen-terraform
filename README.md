@@ -183,10 +183,10 @@ hierarchy of files comprising the following blocks.
 ```ruby
 source "https://rubygems.org/"
 
-gem 'kitchen-terraform'
+gem 'kitchen-terraform', '~> 5.1'
 ```
 
-> ./.kitchen.yml (Test Kitchen configuration)
+> ./kitchen.yml (Test Kitchen configuration)
 
 ```yaml
 driver:
@@ -212,6 +212,7 @@ suites:
   - name: example
 ```
 
+Although Kitchen-Terraform supports multiple versions of Terraform, below snippets are compatible with v0.12:
 > ./main.tf
 
 ```hcl
