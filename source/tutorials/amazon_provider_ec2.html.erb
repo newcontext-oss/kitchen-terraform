@@ -46,7 +46,7 @@ title: Walk-through with Terraform Amazon Provider
           An AWS Keypair<br>
           Terraform installed<br>
           Bundler installed<br>
-          Ruby 2.3.1<br>
+          Ruby >= 2.4, < 2.7<br>
           The default security group on your account must allow SSH access from your IP address.
           <br><br>
           So let's start building this config from scratch!
@@ -68,14 +68,13 @@ touch main.tf variables.tf output.tf testing.tfvars
           <% code("bash") do %>
 vim Gemfile
           <% end %>
-          Add in the Kitchen-Terraform gem like so:
+          Add in the Kitchen-Terraform gem like below (substituting your Ruby version if necessary):
           <br><br>
           <% code("ruby") do %>
-ruby '2.3.1'
+ruby '2.6.5'
 
 source 'https://rubygems.org/' do
-  gem 'test-kitchen'
-  gem 'kitchen-terraform'
+  gem 'kitchen-terraform', '~> 5.1'
 end
           <% end %>
           Close and save the file then run bundler to install these gems:
@@ -134,25 +133,6 @@ provisioner:
 platforms:
   - name: ubuntu
           <% end %>
-          Next, let's add the transport section. This is what will allow Kitchen-Terraform to ssh into your terraform'd instances and run your inspec tests. You will need to include the path to the private key half of your AWS keypair - wherever you keep it on your workstation.
-          <br><br>
-          <% code("yml") do %>
----
-driver:
-  name: terraform
-  variable_files:
-    - testing.tfvars
-
-provisioner:
-  name: terraform
-
-platforms:
-  - name: ubuntu
-
-transport:
-  name: ssh
-  ssh_key: ~/path/to/your/private/aws/key.pem
-          <% end %>
           And now let's add another section, the verifier section. The verifier is what will verify whether your Test Kitchen instances match what is laid out in your inspec files.
           <br><br>
           <% code("yml") do %>
@@ -168,19 +148,19 @@ provisioner:
 platforms:
   - name: ubuntu
 
-transport:
-  name: ssh
-  ssh_key: ~/path/to/your/private/aws/key.pem
-
 verifier:
   name: terraform
-  format: doc
-  groups:
+  systems:
     - name: default
       controls:
         - operating_system
-      hostnames: public_dns
-      username: ubuntu
+      backend: ssh
+      user: ubuntu
+      key_files:
+        - ~/path/to/your/private/aws/key.pem
+      hosts_output: public_dns
+      reporter:
+        - documentation
           <% end %>
           And let's stop and talk about what we did here - as this is where you will see some of the uniqueness of Kitchen-Terraform.
           <br><br>
@@ -189,25 +169,31 @@ verifier:
           <% code("yml") do %>
 verifier:
   name: terraform
-  format: doc
           <% end %>
-          We have specified that we are using the terraform verifier. We are also using the format type of doc for our controls' output.
+          We have specified that we are using the terraform verifier.
           <br><br>
-          And we have also specified a group of controls.
+          And we have also specified a group of controls:
           <br><br>
           <% code("yml") do %>
-groups:
+systems:
   - name: default
     controls:
       - operating_system
-    hostnames: public_dns
-    username: ubuntu
           <% end %>
-          Our group's name is default, and we expect to find a control file called <p class="font-weight-bold" style="color: #32c850; display: inline;">operating_system_spec.rb</p> within that group.
+          Our system's name is default, and we expect to find a control file called <p class="font-weight-bold" style="color: #32c850; display: inline;">operating_system_spec.rb</p> within that group.
           <br><br>
-          Additionally, Kitchen-Terraform also needs to know what hostnames it needs to ssh into to run our specs. We have specified public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit.
+          Additionally, we have specified the ssh backend. We would like Kitchen-Terraform to ssh into an instance and run the Inspec tests there:
           <br><br>
-          Finally, there is the username - this is the name kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu.
+                    <% code("yml") do %>
+      backend: ssh
+      user: ubuntu
+      key_files:
+        - ~/path/to/your/private/aws/key.pem
+      hosts_output: public_dns
+      reporter:
+        - documentation
+          <% end %>
+          Kitchen-Terraform also needs to know a username, private keys, and hostnames to ssh run those specs. We have set the hosts_output key to public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit. The user key specifies the username that kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu. Finally the reporter key specifies the InSpec reporters for reporting test output. In this example, we are specifying documentation which shows the tests passed with a small summary at the end.
           <br><br>
           And, last, let's add a test suite to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file:
           <br><br>
@@ -224,19 +210,19 @@ provisioner:
 platforms:
   - name: ubuntu
 
-transport:
-  name: ssh
-  ssh_key: ~/path/to/your/private/aws/key.pem
-
 verifier:
   name: terraform
-  format: doc
-  groups:
+  systems:
     - name: default
       controls:
         - operating_system
-      hostnames: public_dns
-      username: ubuntu
+      backend: ssh
+      user: ubuntu
+      key_files:
+        - ~/path/to/your/private/aws/key.pem
+      hosts_output: public_dns
+      reporter:
+        - documentation
 
 suites:
   - name: default
@@ -270,6 +256,7 @@ name: default
 vim main.tf
           <% end %>
           And add this content:
+          Terraform 0.10, 0.11
           <br><br>
           <% code("ruby") do %>
 provider "aws" {
@@ -278,10 +265,51 @@ provider "aws" {
   region = "${var.region}"
 }
 
+resource "aws_security_group" "allow_ssh" {
+  name        = "allow_ssh"
+  description = "Allow SSH inbound traffic"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_instance" "example" {
   ami = "${var.ami}"
   instance_type = "${var.instance_type}"
   key_name = "${var.key_name}"
+  security_groups = "${aws_security_group.allow_ssh.name]"
+}
+          <% end %>
+          Terraform 0.12
+          <br><br>
+          <% code("ruby") do %>
+provider "aws" {
+  access_key = var.access_key
+  secret_key = var.secret_key
+  region     = var.region
+}
+
+resource "aws_security_group" "allow_ssh" {
+  name        = "allow_ssh"
+  description = "Allow SSH inbound traffic"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "example" {
+  ami             = var.ami
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  security_groups = [aws_security_group.allow_ssh.name]
 }
           <% end %>
           Save and close the file. Notice that we used some variable values there? We need to add these into our <p class="font-weight-bold" style="color: #32c850; display: inline;">variables.tf</p> file.
@@ -308,7 +336,7 @@ variable "instance_type" {}
           <% code("bash") do %>
 vim testing.tfvars
           <% end %>
-          And add in this content (substitute in the appropriate values for your AWS account, region, etc.)
+          And add in this content (substitute in the appropriate values for your AWS account, region, etc. key_name will be the existing key pair name already existing in AWS)
           <br><br>
           <% code("ruby") do %>
 access_key = "my_aws_access_key"
@@ -358,6 +386,7 @@ bundle exec kitchen verify
           And if it runs successfully, you should see output that includes:
           <br><br>
           <% code("bash") do %>
+Finished in 0.002 seconds (files took 2.54 seconds to load)
 0 examples, 0 failures
           <% end %>
           Let's add some tests!
@@ -384,9 +413,12 @@ bundle exec kitchen verify
           And hey, it passed! You should see output that includes:
           <br><br>
           <% code("bash") do %>
-Command lsb_release -a
+Command: `lsb_release -a`
   stdout
-    should match /Ubuntu/
+    is expected to match /Ubuntu/
+
+Finished in 0.23381 seconds (files took 2.62 seconds to load)
+1 example, 0 failures
           <% end %>
           It's nice that it passed...but we still need to make sure that it fails to be certain it tests what we think it tests. Let's try changing our Terraform config to spin up an Amazon Linux System, rather than an Ubuntu system, and make sure that this test fails.
           <br><br>
@@ -444,13 +476,14 @@ ERROR -- default-ubuntu: Message: Transport error, can't connect to
           <% code("yml") do %>
 verifier:
   name: terraform
-  format: doc
-  groups:
+  systems:
     - name: default
       controls:
         - operating_system
       hostnames: public_dns
       username: ubuntu
+      reporter:
+        - documentation
           <% end %>
           Notice that the username we have specified for our test is ubuntu - this is fine for an ubuntu instance, but for an Amazon Linux instance, we need to use the ec2-user username
           <br><br>
@@ -459,13 +492,17 @@ verifier:
           <% code("yml") do %>
 verifier:
   name: terraform
-  format: doc
-  groups:
+  systems:
     - name: default
       controls:
         - operating_system
-      hostnames: public_dns
-      username: ec2-user
+      backend: ssh
+      key_files:
+        - ~/.ssh/ncs-laptop.pem
+      hosts_output: public_dns
+      user: ec2-user
+      reporter:
+        - documentation
           <% end %>
           Now try running the tests again:
           <br><br>
@@ -475,14 +512,28 @@ bundle exec kitchen verify
           And now we see a test failure:
           <br><br>
           <% code("bash") do %>
-1) Command lsb_release -a stdout should match /Ubuntu/
-   Failure/Error: DEFAULT_FAILURE_NOTIFIER =
-   lambda { |failure, _opts| raise failure }\
-   expected "" to match /Ubuntu/
-    Diff:
-    @@ -1,2 +1,2 @@
-    -/Ubuntu/
-    +""
+Command: `lsb_release -a`
+  stdout
+    is expected to match /Ubuntu/ (FAILED - 1)
+
+Failures:
+
+  1) Command: `lsb_release -a` stdout is expected to match /Ubuntu/
+     Failure/Error: DEFAULT_FAILURE_NOTIFIER = lambda { |failure, _opts| raise failure }
+
+       expected "" to match /Ubuntu/
+       Diff:
+       @@ -1,2 +1,2 @@
+       -/Ubuntu/
+       +""
+     # ./test/integration/default/controls/operating_system_spec.rb:3:in `block (3 levels) in load_with_context'
+
+Finished in 0.26506 seconds (files took 5.52 seconds to load)
+1 example, 1 failure
+
+Failed examples:
+
+rspec  # Command: `lsb_release -a` stdout is expected to match /Ubuntu/
           <% end %>
           Alright, that means our test is failing when it is supposed to be failing, and passing when it is supposed to pass.
           <br><br>
@@ -491,13 +542,17 @@ bundle exec kitchen verify
           <% code("yml") do %>
 verifier:
   name: terraform
-  format: doc
-  groups:
+  systems:
     - name: default
       controls:
         - operating_system
-      hostnames: public_dns
-      username: ubuntu
+      backend: ssh
+      key_files:
+        - ~/.ssh/ncs-laptop.pem
+      hosts_output: public_dns
+      user: ec2-user
+      reporter:
+        - documentation
           <% end %>
           And open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">testing.tfvars</p> file and switch back to an Ubuntu AMI
           <br><br>

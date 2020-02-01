@@ -218,14 +218,14 @@
           policy like the following example to the IAM users.
           <br></br>
 <div class="highlight"><pre class="syntax-highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="s2">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
-  </span><span class="s2">"Statement"</span><span class="p">:</span><span class="w">
+  </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w">
     </span><span class="p">[</span><span class="w">
       </span><span class="p">{</span><span class="w">
-        </span><span class="s2">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Stmt1469773655000"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
-        </span><span class="s2">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"ec2:*"</span><span class="p">],</span><span class="w">
-        </span><span class="s2">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"*"</span><span class="p">]</span><span class="w">
+        </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Stmt1469773655000"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"ec2:*"</span><span class="p">],</span><span class="w">
+        </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"*"</span><span class="p">]</span><span class="w">
       </span><span class="p">}</span><span class="w">
     </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -242,12 +242,14 @@
           by mimicking the following Bash script.
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
-mkdir <span class="nt">-p</span> <span class="nb">test</span>/integration/extensive_suite/controls
-touch <span class="nb">test</span>/integration/extensive_suite/inspec.yml
-touch <span class="nb">test</span>/integration/extensive_suite/controls/inspec_attributes.rb
-touch <span class="nb">test</span>/integration/extensive_suite/controls/operating_system.rb
-touch <span class="nb">test</span>/integration/extensive_suite/controls/reachable_other_host.rb
-touch <span class="nb">test</span>/integration/extensive_suite/controls/state_file.rb
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nb">test</span>/integration/extensive_suite/controls
+<span class="nb">touch test</span>/integration/extensive_suite/inspec.yml
+<span class="nb">touch test</span>/integration/extensive_suite/centos_attributes.yml
+<span class="nb">touch test</span>/integration/extensive_suite/ubuntu_attributes.yml
+<span class="nb">touch test</span>/integration/extensive_suite/controls/inspec_attributes.rb
+<span class="nb">touch test</span>/integration/extensive_suite/controls/operating_system.rb
+<span class="nb">touch test</span>/integration/extensive_suite/controls/reachable_other_host.rb
+<span class="nb">touch test</span>/integration/extensive_suite/controls/state_file.rb
 
 </code></pre></div>          <br><br>
           Populate the InSpec profile description file,
@@ -353,6 +355,28 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
 <span class="k">end</span>
 
 </code></pre></div>          <br><br>
+          Populate the attributes for the centos test,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/centos_attributes.yml
+          </p>
+          , to match the following example.
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="ss">instances_ami_operating_system_name: </span><span class="n">centos</span>
+
+</code></pre></div>          <br><br>          
+          Populate the attributes for the ubuntu test,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/ubuntu_attributes.yml
+          </p>
+          , to match the following example.
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="ss">instances_ami_operating_system_name: </span><span class="n">ubuntu</span>
+
+</code></pre></div>          <br><br>
           Populate the reachable other host control,
           <p
             class="font-weight-bold"
@@ -431,7 +455,7 @@ touch <span class="nb">test</span>/integration/extensive_suite/controls/state_fi
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#!/bin/bash</span>
 
 <span class="c"># Make a directory to contain the key</span>
-mkdir <span class="nt">-p</span> <span class="nb">test</span>/assets
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nb">test</span>/assets
 
 <span class="c"># Generate a 4096 bit RSA key with a blank passphrase in the directory</span>
 ssh-keygen <span class="se">\</span>
@@ -456,8 +480,8 @@ ssh-keygen <span class="se">\</span>
           Prepare the configuration by mimicking the following Bash script.
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
-mkdir <span class="nt">-p</span> <span class="nb">test</span>/fixtures/wrapper
-touch <span class="nb">test</span>/fixtures/wrapper/main.tf <span class="nb">test</span>/fixtures/wrapper/outputs.tf <span class="se">\</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nb">test</span>/fixtures/wrapper
+<span class="nb">touch test</span>/fixtures/wrapper/main.tf <span class="nb">test</span>/fixtures/wrapper/outputs.tf <span class="se">\</span>
   <span class="nb">test</span>/fixtures/wrapper/variables.tf
 </code></pre></div>          <br><br>
           Populate the variables file,
@@ -555,7 +579,7 @@ ${path.cwd}/terraform.tfstate.d/${terraform.workspace}/terraform.tfstate
           Prepare the module by mimicking the following Bash script.
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
-touch main.tf variables.tf outputs.tf
+<span class="nb">touch </span>main.tf variables.tf outputs.tf
 
 </code></pre></div>          <br><br>
           Populate the variables file,
@@ -895,15 +919,15 @@ The public key material to use for SSH authentication with the instances
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
 <span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span><span class="p">,</span> <span class="s2">"~&gt; 4.0"</span>
+  <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span><span class="p">,</span> <span class="s2">"~&gt; 5.1"</span>
 <span class="k">end</span>
 
 </code></pre></div>          Install the declared Ruby gem dependencies by mimicking the following Bash script.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="c">#! /usr/bin/env bash</span>
 
-gem install bundler
-bundle install
+gem <span class="nb">install </span>bundler
+bundle <span class="nb">install</span>
 
 </code></pre></div>          Test the Terraform module using multiple platforms by mimicking the following Bash script.
           <br><br>
@@ -920,11 +944,11 @@ bundle install
 <span class="c"># Export AWS STS session environment variables</span>
 <span class="k">function </span>export_aws_sts_session <span class="o">{</span>
   drop_aws_sts_session
-  <span class="nv">session</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>aws sts get-session-token <span class="nt">--output</span><span class="o">=</span>json<span class="k">)</span><span class="s2">"</span>
-  <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.AccessKeyId<span class="k">)</span><span class="s2">"</span>
+  <span class="nv">session</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>aws sts get-session-token <span class="nt">--output</span><span class="o">=</span>json<span class="si">)</span><span class="s2">"</span>
+  <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.AccessKeyId<span class="si">)</span><span class="s2">"</span>
   <span class="nv">AWS_DEFAULT_REGION</span><span class="o">=</span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span>
-  <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.SecretAccessKey<span class="k">)</span><span class="s2">"</span>
-  <span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.SessionToken<span class="k">)</span><span class="s2">"</span>
+  <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.SecretAccessKey<span class="si">)</span><span class="s2">"</span>
+  <span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span><span class="nb">echo</span> <span class="nv">$session</span> | jq <span class="nt">-r</span> .Credentials.SessionToken<span class="si">)</span><span class="s2">"</span>
   <span class="nb">export </span>AWS_ACCESS_KEY_ID
   <span class="nb">export </span>AWS_DEFAULT_REGION
   <span class="nb">export </span>AWS_SECRET_ACCESS_KEY

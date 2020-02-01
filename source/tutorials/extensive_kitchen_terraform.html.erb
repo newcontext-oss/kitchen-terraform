@@ -293,6 +293,40 @@ title: Extensive Kitchen-Terraform
 <%= lines %>
           <% end %>
           <br><br>
+          Populate the attributes for the centos test,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/centos_attributes.yml
+          </p>
+          , to match the following example.
+          <%
+            read_example_file(
+              language: "ruby",
+              path: "extensive_kitchen_terraform/test/integration/extensive_suite/centos_attributes.yml"
+            ) do
+          %>
+<%= lines %>
+          <% end %>
+          <br><br>          
+          Populate the attributes for the ubuntu test,
+          <p
+            class="font-weight-bold"
+            style="color: #32c850; display: inline;"
+          >
+            test/integration/extensive_suite/ubuntu_attributes.yml
+          </p>
+          , to match the following example.
+          <%
+            read_example_file(
+              language: "ruby",
+              path: "extensive_kitchen_terraform/test/integration/extensive_suite/ubuntu_attributes.yml"
+            ) do
+          %>
+<%= lines %>
+          <% end %>
+          <br><br>
           Populate the reachable other host control,
           <p
             class="font-weight-bold"

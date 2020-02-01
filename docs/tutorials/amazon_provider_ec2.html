@@ -103,7 +103,7 @@
           An AWS Keypair<br>
           Terraform installed<br>
           Bundler installed<br>
-          Ruby 2.3.1<br>
+          Ruby >= 2.4, < 2.7<br>
           The default security group on your account must allow SSH access from your IP address.
           <br><br>
           So let's start building this config from scratch!
@@ -111,25 +111,24 @@
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
           First, let's create a new directory for our config:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>mkdir tf_aws_cluster
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">mkdir </span>tf_aws_cluster
 <span class="nb">cd </span>tf_aws_cluster
 </code></pre></div>          Now, create some skeleton terraform files:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>touch main.tf variables.tf output.tf testing.tfvars
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">touch </span>main.tf variables.tf output.tf testing.tfvars
 </code></pre></div>          Edit the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p>
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code>vim Gemfile
-</code></pre></div>          Add in the Kitchen-Terraform gem like so:
+</code></pre></div>          Add in the Kitchen-Terraform gem like below (substituting your Ruby version if necessary):
           <br><br>
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">ruby</span> <span class="s1">'2.3.1'</span>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">ruby</span> <span class="s1">'2.6.5'</span>
 
 <span class="n">source</span> <span class="s1">'https://rubygems.org/'</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s1">'test-kitchen'</span>
-  <span class="n">gem</span> <span class="s1">'kitchen-terraform'</span>
+  <span class="n">gem</span> <span class="s1">'kitchen-terraform'</span><span class="p">,</span> <span class="s1">'~&gt; 5.1'</span>
 <span class="k">end</span>
 </code></pre></div>          Close and save the file then run bundler to install these gems:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>bundle install
+<div class="highlight"><pre class="syntax-highlight shell"><code>bundle <span class="nb">install</span>
 </code></pre></div>        </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
           Now let's set up Test Kitchen.
@@ -210,35 +209,39 @@
 
 <span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">format</span><span class="pi">:</span> <span class="s">doc</span>
-  <span class="na">groups</span><span class="pi">:</span>
+  <span class="na">systems</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
-      <span class="na">hostnames</span><span class="pi">:</span> <span class="s">public_dns</span>
-      <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
+      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
+      <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">reporter</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">documentation</span>
 </code></pre></div>          And let's stop and talk about what we did here - as this is where you will see some of the uniqueness of Kitchen-Terraform.
           <br><br>
           With these lines:
           <br><br>
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">format</span><span class="pi">:</span> <span class="s">doc</span>
-</code></pre></div>          We have specified that we are using the terraform verifier. We are also using the format type of doc for our controls' output.
+</code></pre></div>          We have specified that we are using the terraform verifier.
           <br><br>
-          And we have also specified a group of controls.
+          And we have also specified a group of controls:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">groups</span><span class="pi">:</span>
+<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">systems</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
     <span class="na">controls</span><span class="pi">:</span>
       <span class="pi">-</span> <span class="s">operating_system</span>
-    <span class="na">hostnames</span><span class="pi">:</span> <span class="s">public_dns</span>
-    <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
-</code></pre></div>          Our group's name is default, and we expect to find a control file called <p class="font-weight-bold" style="color: #32c850; display: inline;">operating_system_spec.rb</p> within that group.
+</code></pre></div>          Our system's name is default, and we expect to find a control file called <p class="font-weight-bold" style="color: #32c850; display: inline;">operating_system_spec.rb</p> within that group.
           <br><br>
-          Additionally, Kitchen-Terraform also needs to know what hostnames it needs to ssh into to run our specs. We have specified public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit.
+          Additionally, we have specified the ssh backend. We would like Kitchen-Terraform to ssh into an instance and run the Inspec tests there:
           <br><br>
-          Finally, there is the username - this is the name kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu.
+<div class="highlight"><pre class="syntax-highlight yaml"><code>      <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
+      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
+      <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">reporter</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">documentation</span>
+</code></pre></div>          Kitchen-Terraform also needs to know a username and hostnames to ssh run those specs. We have set the hosts_output key to public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit. The user key specifies the username that kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu. Finally the reporter key specifies the InSpec reporters for reporting test output. In this example, we are specifying documentation which shows the tests passed with a small summary at the end.
           <br><br>
           And, last, let's add a test suite to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file:
           <br><br>
@@ -260,13 +263,15 @@
 
 <span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">format</span><span class="pi">:</span> <span class="s">doc</span>
-  <span class="na">groups</span><span class="pi">:</span>
+  <span class="na">systems</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
-      <span class="na">hostnames</span><span class="pi">:</span> <span class="s">public_dns</span>
-      <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
+      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
+      <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">reporter</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">documentation</span>
 
 <span class="na">suites</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
@@ -275,7 +280,7 @@
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
           Now, we have some work to do on our workstation. First, let's set up an inspec directory within our test directories
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>mkdir <span class="nt">-p</span> <span class="nb">test</span>/integration/default/controls
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nb">test</span>/integration/default/controls
 </code></pre></div>          This will be our default group of tests. Now we need to provide a yml file with the name of that group within the group directory. Go ahead and create this:
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code>vim <span class="nb">test</span>/integration/default/inspec.yml
@@ -291,6 +296,7 @@
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code>vim main.tf
 </code></pre></div>          And add this content:
+          Terraform 0.10, 0.11
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
   <span class="n">access_key</span> <span class="o">=</span> <span class="s2">"${var.access_key}"</span>
@@ -298,10 +304,49 @@
   <span class="n">region</span> <span class="o">=</span> <span class="s2">"${var.region}"</span>
 <span class="p">}</span>
 
+<span class="n">resource</span> <span class="s2">"aws_security_group"</span> <span class="s2">"allow_ssh"</span> <span class="p">{</span>
+  <span class="nb">name</span>        <span class="o">=</span> <span class="s2">"allow_ssh"</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"Allow SSH inbound traffic"</span>
+
+  <span class="n">ingress</span> <span class="p">{</span>
+    <span class="n">from_port</span>   <span class="o">=</span> <span class="mi">22</span>
+    <span class="n">to_port</span>     <span class="o">=</span> <span class="mi">22</span>
+    <span class="n">protocol</span>    <span class="o">=</span> <span class="s2">"tcp"</span>
+    <span class="n">cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
 <span class="n">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"example"</span> <span class="p">{</span>
   <span class="n">ami</span> <span class="o">=</span> <span class="s2">"${var.ami}"</span>
   <span class="n">instance_type</span> <span class="o">=</span> <span class="s2">"${var.instance_type}"</span>
   <span class="n">key_name</span> <span class="o">=</span> <span class="s2">"${var.key_name}"</span>
+  <span class="n">security_groups</span> <span class="o">=</span> <span class="s2">"${aws_security_group.allow_ssh.name]"</span>
+<span class="p">}</span>
+</code></pre></div>          Terraform 0.12
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
+  <span class="n">access_key</span> <span class="o">=</span> <span class="n">var</span><span class="p">.</span><span class="nf">access_key</span>
+  <span class="n">secret_key</span> <span class="o">=</span> <span class="n">var</span><span class="p">.</span><span class="nf">secret_key</span>
+  <span class="n">region</span>     <span class="o">=</span> <span class="n">var</span><span class="p">.</span><span class="nf">region</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_security_group"</span> <span class="s2">"allow_ssh"</span> <span class="p">{</span>
+  <span class="nb">name</span>        <span class="o">=</span> <span class="s2">"allow_ssh"</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">"Allow SSH inbound traffic"</span>
+
+  <span class="n">ingress</span> <span class="p">{</span>
+    <span class="n">from_port</span>   <span class="o">=</span> <span class="mi">22</span>
+    <span class="n">to_port</span>     <span class="o">=</span> <span class="mi">22</span>
+    <span class="n">protocol</span>    <span class="o">=</span> <span class="s2">"tcp"</span>
+    <span class="n">cidr_blocks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"example"</span> <span class="p">{</span>
+  <span class="n">ami</span>             <span class="o">=</span> <span class="n">var</span><span class="p">.</span><span class="nf">ami</span>
+  <span class="n">instance_type</span>   <span class="o">=</span> <span class="n">var</span><span class="p">.</span><span class="nf">instance_type</span>
+  <span class="n">key_name</span>        <span class="o">=</span> <span class="n">var</span><span class="p">.</span><span class="nf">key_name</span>
+  <span class="n">security_groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">aws_security_group</span><span class="p">.</span><span class="nf">allow_ssh</span><span class="p">.</span><span class="nf">name</span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>          Save and close the file. Notice that we used some variable values there? We need to add these into our <p class="font-weight-bold" style="color: #32c850; display: inline;">variables.tf</p> file.
           <br><br>
@@ -321,7 +366,7 @@
           Open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">testing.tfvars</p> file:
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code>vim testing.tfvars
-</code></pre></div>          And add in this content (substitute in the appropriate values for your AWS account, region, etc.)
+</code></pre></div>          And add in this content (substitute in the appropriate values for your AWS account, region, etc. key_name will be the existing key pair name already existing in AWS)
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">access_key</span> <span class="o">=</span> <span class="s2">"my_aws_access_key"</span>
 <span class="n">secret_key</span> <span class="o">=</span> <span class="s2">"my_aws_secret_key"</span>
@@ -358,7 +403,7 @@ public_dns <span class="o">=</span> your_aws_instance_public_ip
 <div class="highlight"><pre class="syntax-highlight shell"><code>bundle <span class="nb">exec </span>kitchen verify
 </code></pre></div>          And if it runs successfully, you should see output that includes:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>0 examples, 0 failures
+<div class="highlight"><pre class="syntax-highlight shell"><code>Test Summary: 0 successful, 0 failures, 0 skipped
 </code></pre></div>          Let's add some tests!
           <br><br>
           Open up the file
@@ -376,9 +421,12 @@ end
 <div class="highlight"><pre class="syntax-highlight shell"><code>bundle <span class="nb">exec </span>kitchen verify
 </code></pre></div>          And hey, it passed! You should see output that includes:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>Command lsb_release <span class="nt">-a</span>
-  stdout
-    should match /Ubuntu/
+<div class="highlight"><pre class="syntax-highlight shell"><code>  ✔  operating_system: Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span>
+     ✔  Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span> stdout should match /Ubuntu/
+
+
+Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
+Test Summary: 1 successful, 0 failures, 0 skipped
 </code></pre></div>          It's nice that it passed...but we still need to make sure that it fails to be certain it tests what we think it tests. Let's try changing our Terraform config to spin up an Amazon Linux System, rather than an Ubuntu system, and make sure that this test fails.
           <br><br>
           Go ahead and destroy your current test kitchen instances with:
@@ -418,52 +466,58 @@ ami <span class="o">=</span> <span class="s2">"ami-6869aa05"</span>
           <br><br>
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">format</span><span class="pi">:</span> <span class="s">doc</span>
-  <span class="na">groups</span><span class="pi">:</span>
+  <span class="na">systems</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
       <span class="na">hostnames</span><span class="pi">:</span> <span class="s">public_dns</span>
       <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">reporter</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">documentation</span>
 </code></pre></div>          Notice that the username we have specified for our test is ubuntu - this is fine for an ubuntu instance, but for an Amazon Linux instance, we need to use the ec2-user username
           <br><br>
           So let's go ahead and change that, the verifier section of your <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> should now look like this:
           <br><br>
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">format</span><span class="pi">:</span> <span class="s">doc</span>
-  <span class="na">groups</span><span class="pi">:</span>
+  <span class="na">systems</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
       <span class="na">hostnames</span><span class="pi">:</span> <span class="s">public_dns</span>
       <span class="na">username</span><span class="pi">:</span> <span class="s">ec2-user</span>
+      <span class="na">reporter</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">documentation</span>
 </code></pre></div>          Now try running the tests again:
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code>bundle <span class="nb">exec </span>kitchen verify
 </code></pre></div>          And now we see a test failure:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>1<span class="o">)</span> Command lsb_release <span class="nt">-a</span> stdout should match /Ubuntu/
-   Failure/Error: DEFAULT_FAILURE_NOTIFIER <span class="o">=</span>
-   lambda <span class="o">{</span> |failure, _opts| raise failure <span class="o">}</span><span class="se">\</span>
-   expected <span class="s2">""</span> to match /Ubuntu/
-    Diff:
-    @@ <span class="nt">-1</span>,2 +1,2 @@
-    -/Ubuntu/
-    +<span class="s2">""</span>
+<div class="highlight"><pre class="syntax-highlight shell"><code>  ×  operating_system: Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span>
+     ×  Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span> stdout should match /Ubuntu/
+     expected <span class="s2">""</span> to match /Ubuntu/
+     Diff:
+     @@ <span class="nt">-1</span>,2 +1,2 @@
+     -/Ubuntu/
+     +<span class="s2">""</span>
+
+Profile Summary: 0 successful controls, 1 control failure, 0 controls skipped
+Test Summary: 0 successful, 1 failure, 0 skipped
 </code></pre></div>          Alright, that means our test is failing when it is supposed to be failing, and passing when it is supposed to pass.
           <br><br>
           Open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file and change the username back to ubuntu
           <br><br>
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">format</span><span class="pi">:</span> <span class="s">doc</span>
-  <span class="na">groups</span><span class="pi">:</span>
+  <span class="na">systems</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
-      <span class="na">hostnames</span><span class="pi">:</span> <span class="s">public_dns</span>
-      <span class="na">username</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
+      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
+      <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">reporter</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">documentation</span>
 </code></pre></div>          And open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">testing.tfvars</p> file and switch back to an Ubuntu AMI
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">region</span> <span class="o">=</span> <span class="s2">"us-east-1"</span>
