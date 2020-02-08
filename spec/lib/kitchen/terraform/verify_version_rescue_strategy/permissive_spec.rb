@@ -15,18 +15,24 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/version_verifier_strategy/unsupported_permissive"
+require "kitchen/terraform/verify_version_rescue_strategy/permissive"
 
-::RSpec.describe ::Kitchen::Terraform::VersionVerifierStrategy::UnsupportedPermissive do
+::RSpec.describe ::Kitchen::Terraform::VerifyVersionRescueStrategy::Permissive do
+  subject do
+    described_class.new logger: logger
+  end
+
+  let :logger do
+    ::Kitchen::Logger.new
+  end
+
   describe "#call" do
-    subject do
-      described_class.new logger: ::Kitchen::Logger.new
+    specify "should warn the user that the Terraform client version is unsupported" do
+      expect(logger).to receive :warn
     end
 
-    specify "should not raise an error" do
-      expect do
-        subject.call
-      end.not_to raise_error
+    after do
+      subject.call
     end
   end
 end

@@ -26,19 +26,19 @@ module Kitchen
       class Create
         # #call executes the action.
         #
-        # @param workspace_name [String] the name of the Terraform workspace to select or to create.
-        # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
+        # @raise [Kitchen::ActionFailed] if the action fails.
         # @return [self]
-        def call(workspace_name:, version_requirement:)
-          verify_version.call version_requirement: version_requirement
+        def call
+          verify_version.call
           init.run
           begin
             workspace_select.run workspace_name: workspace_name
-          # TODO improve detection of missing workspace
+            # TODO improve detection of missing workspace
           rescue ::Kitchen::TransientFailure
+            logger.info "Creating nonexistent Terraform workspace #{workspace_name}..."
             workspace_new.run workspace_name: workspace_name
           end
-          
+
           self
         end
 
@@ -46,17 +46,33 @@ module Kitchen
         #
         # @param config [Hash] the configuration of the driver.
         # @param logger [Kitchen::Logger] a logger for logging messages.
+        # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
+        # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @return [Kitchen::Terraform::Driver::Create]
-        def initialize(config:, logger:)
+        def initialize(config:, logger:, version_requirement:, workspace_name:)
+          self.logger = logger
+          self.options = { cwd: config.fetch(:root_module_directory) }
+          self.version_requirement = version_requirement
+          self.workspace_name = workspace_name
           self.init = ::Kitchen::Terraform::Command::Init.new config: config, logger: logger
           self.workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: config, logger: logger
           self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: config, logger: logger
-          self.verify_version = ::Kitchen::Terraform::VerifyVersion.new config: config, logger: logger
+
+          self.verify_version = ::Kitchen::Terraform::VerifyVersion.new config: config, logger: logger, version_requirement: version_requirement
         end
 
         private
 
-        attr_accessor :init, :workspace_new, :workspace_select, :verify_version
+        attr_accessor(
+          :init,
+          :logger,
+          :options,
+          :workspace_new,
+          :workspace_select,
+          :verify_version,
+          :version_requirement,
+          :workspace_name
+        )
       end
     end
   end

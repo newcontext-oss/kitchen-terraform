@@ -14,18 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
+require "kitchen/terraform/unsupported_client_version_error"
 
 module Kitchen
   module Terraform
     module VersionVerifierStrategy
-      # Supported is the class of objects which provide a strategy for supported Terraform client versions.
-      class Supported
-        # #call takes no action.
+      # Unsupported is the class of objects which provide a strategy for unsupported Terraform client versions.
+      class Unsupported
+        # #call fails the verification.
         #
-        # @return [self]
+        # @raise [Kitchen::Terraform::UnsupportedClientVersionError]
+        # @return [void]
         def call
-          self
+          raise ::Kitchen::Terraform::UnsupportedClientVersionError, "The Terraform client version is unsupported."
         end
       end
     end

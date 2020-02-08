@@ -22,11 +22,16 @@ require "rubygems"
 
 ::RSpec.describe ::Kitchen::Terraform::Driver::Create do
   subject do
-    described_class.new config: config, logger: logger
+    described_class.new(
+      config: config,
+      logger: logger,
+      workspace_name: workspace_name,
+      version_requirement: version_requirement,
+    )
   end
 
   let :config do
-    {}
+    { root_module_directory: root_module_directory }
   end
 
   let :init do
@@ -35,6 +40,10 @@ require "rubygems"
 
   let :logger do
     ::Kitchen::Logger.new
+  end
+
+  let :root_module_directory do
+    "/root-module"
   end
 
   let :verify_version do
@@ -65,9 +74,11 @@ require "rubygems"
     allow(::Kitchen::Terraform::Command::WorkspaceSelect).to(
       receive(:new).with(config: config, logger: logger).and_return(workspace_select)
     )
-    allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(config: config, logger: logger).and_return(
-      verify_version
-    )
+    allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
+      config: config,
+      logger: logger,
+      version_requirement: version_requirement,
+    ).and_return verify_version
   end
 
   describe "#call" do
@@ -77,17 +88,17 @@ require "rubygems"
       end
 
       specify "should verify the version, initialize the working directory, and select the workspace" do
-        expect(verify_version).to receive(:call).with(version_requirement: version_requirement).ordered
+        expect(verify_version).to receive(:call).ordered
         expect(init).to receive(:run).ordered
         expect(workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
         expect(workspace_new).not_to receive :run
       end
 
       after do
-        subject.call workspace_name: workspace_name, version_requirement: version_requirement
+        subject.call
       end
     end
-    
+
     context "when the desired workspace does not exist" do
       before do
         allow(workspace_select).to receive(:run).with(workspace_name: workspace_name).and_raise(
@@ -96,14 +107,14 @@ require "rubygems"
       end
 
       specify "should verify the version, initialize the working directory, and select the workspace" do
-        expect(verify_version).to receive(:call).with(version_requirement: version_requirement).ordered
+        expect(verify_version).to receive(:call).ordered
         expect(init).to receive(:run).ordered
         expect(workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
         expect(workspace_new).to receive(:run).with(workspace_name: workspace_name).ordered
       end
 
       after do
-        subject.call workspace_name: workspace_name, version_requirement: version_requirement
+        subject.call
       end
     end
   end

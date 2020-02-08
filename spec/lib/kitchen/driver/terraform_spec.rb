@@ -17,11 +17,11 @@
 require "json"
 require "kitchen"
 require "kitchen/driver/terraform"
+require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/driver/create"
-require "kitchen/terraform/version_verifier"
-require "kitchen/terraform/command_executor"
+require "kitchen/terraform/verify_version"
 require "pathname"
 require "rubygems"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
@@ -115,29 +115,29 @@ require "support/kitchen/terraform/configurable_examples"
     ::Gem::Requirement.new ">= 0.11.4", "< 0.13.0"
   end
 
-  let :version_verifier do
-    instance_double ::Kitchen::Terraform::VersionVerifier
-  end
-
   let :workspace_name do
     "kitchen-terraform-test-suite-test-platform"
   end
 
   before do
-    allow(::Kitchen::Terraform::VersionVerifier).to receive(:new).with(
-      command: kind_of(::Kitchen::Terraform::Command::Version),
+    allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(
+      client: config_client,
       logger: kitchen_logger,
-    ).and_return version_verifier
-    allow(version_verifier).to receive(:verify).with(
-      options: { cwd: kitchen_root },
-      requirement: ::Gem::Requirement.new(">= 0.11.4", "< 0.13.0"),
-      strict: verify_version,
-    )
-    allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(client: config_client, logger: kitchen_logger).and_return shell_out
+    ).and_return shell_out
   end
 
   shared_examples "the action fails if the Terraform root module can not be initialized" do
+    let :verify_version_instance do
+      instance_double ::Kitchen::Terraform::VerifyVersion
+    end
+
     before do
+      allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
+        config: config,
+        logger: kitchen_logger,
+        version_requirement: version_requirement,
+      ).and_return verify_version_instance
+      allow(verify_version_instance).to receive :call
       shell_out_run_failure command: /init/, message: "mocked `terraform init` failure"
     end
 
@@ -149,7 +149,17 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   shared_examples "the action fails if the Terraform workspace can not be selected or created" do
+    let :verify_version_instance do
+      instance_double ::Kitchen::Terraform::VerifyVersion
+    end
+
     before do
+      allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
+        config: config,
+        logger: kitchen_logger,
+        version_requirement: version_requirement,
+      ).and_return verify_version_instance
+      allow(verify_version_instance).to receive :call
       shell_out_run_failure(
         command: "workspace select kitchen-terraform-test-suite-test-platform",
         message: "mocked `terraform workspace select <kitchen-instance>` failure",
@@ -227,6 +237,19 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     shared_examples "Terraform: get; validate; apply; output" do
+      let :verify_version_instance do
+        instance_double ::Kitchen::Terraform::VerifyVersion
+      end
+
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
+          config: config,
+          logger: kitchen_logger,
+          version_requirement: version_requirement,
+        ).and_return verify_version_instance
+        allow(verify_version_instance).to receive :call
+      end
+
       context "when `terraform get` results in failure" do
         before do
           shell_out_run_failure command: /get/, message: "mocked `terraform get` failure"
@@ -421,13 +444,18 @@ require "support/kitchen/terraform/configurable_examples"
 
     before do
       allow(::Kitchen::Terraform::Driver::Create).to(
-        receive(:new).with(config: config, logger: kitchen_logger).and_return(create)
+        receive(:new).with(
+          config: config,
+          logger: kitchen_logger,
+          version_requirement: version_requirement,
+          workspace_name: workspace_name,
+        ).and_return(create)
       )
       subject.finalize_config! kitchen_instance
     end
 
     specify "should invoke the create strategy" do
-      expect(create).to receive(:call).with workspace_name: workspace_name, version_requirement: version_requirement
+      expect(create).to receive :call
     end
 
     after do
@@ -447,6 +475,19 @@ require "support/kitchen/terraform/configurable_examples"
     shared_examples "it destroys the Terraform state" do
       let :action do
         subject.destroy({})
+      end
+
+      let :verify_version_instance do
+        instance_double ::Kitchen::Terraform::VerifyVersion
+      end
+
+      before do
+        allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
+          config: config,
+          logger: kitchen_logger,
+          version_requirement: version_requirement,
+        ).and_return verify_version_instance
+        allow(verify_version_instance).to receive :call
       end
 
       context "when `terraform destroy` results in failure" do

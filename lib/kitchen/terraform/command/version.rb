@@ -38,10 +38,6 @@ module Kitchen
           ) do |standard_output:|
             yield version: ::Gem::Version.new(standard_output.slice(/Terraform v(\d+\.\d+\.\d+)/, 1))
           end
-        rescue => error
-          logger.error error.message
-
-          raise ::Kitchen::TransientFailure, "Running the version command resulted in failure."
         end
 
         # @param client [String] the pathname of the Terraform client.

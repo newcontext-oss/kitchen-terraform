@@ -14,19 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
-require "kitchen/terraform/version_verifier_strategy/unsupported_strict"
+require "kitchen/terraform/unsupported_client_version_error"
+require "kitchen/terraform/version_verifier_strategy/unsupported"
 
-::RSpec.describe ::Kitchen::Terraform::VersionVerifierStrategy::UnsupportedStrict do
+::RSpec.describe ::Kitchen::Terraform::VersionVerifierStrategy::Unsupported do
   describe "#call" do
     subject do
-      described_class.new logger: ::Kitchen::Logger.new
+      described_class.new
     end
 
-    specify "should raise a user error" do
+    specify "should raise an error because the Terraform client version is unsupported" do
       expect do
         subject.call
-      end.to raise_error ::Kitchen::UserError, "Failed verification of the Terraform client version."
+      end.to raise_error ::Kitchen::Terraform::UnsupportedClientVersionError
     end
   end
 end

@@ -15,42 +15,34 @@
 # limitations under the License.
 
 require "kitchen/terraform/version_verifier_strategy/supported"
-require "kitchen/terraform/version_verifier_strategy/unsupported_permissive"
-require "kitchen/terraform/version_verifier_strategy/unsupported_strict"
+require "kitchen/terraform/version_verifier_strategy/unsupported"
 
 module Kitchen
   module Terraform
-    # VersionVerifierStrategyFactory is the class of objects which build strict strategies.
+    # VersionVerifierStrategyFactory is the class of objects which build strategies for instances of VersionVerifier.
     class VersionVerifierStrategyFactory
-      # #build creates a strict strategy for a supported Terraform client version or an unsupported Terraform
-      # client version.
+      # #build creates a strategy.
       #
-      # @param logger [Kitchen::Logger] a logger to log messages.
       # @param version [Gem::Version] the Terraform client version.
       # @return [Kitchen::Terraform::VersionVerifierStrategy::Supported,
-      #   Kitchen::Terraform::VersionVerifierStrategy::Unsupported,
       #   Kitchen::Terraform::VersionVerifierStrategy::Unsupported]
-      def build(logger:, version:)
-        if requirement.satisfied_by? version
-          return ::Kitchen::Terraform::VersionVerifierStrategy::Supported.new logger: logger
-        elsif strict
-          return ::Kitchen::Terraform::VersionVerifierStrategy::UnsupportedStrict.new logger: logger
+      def build(version:)
+        if version_requirement.satisfied_by? version
+          return ::Kitchen::Terraform::VersionVerifierStrategy::Supported.new
         else
-          return ::Kitchen::Terraform::VersionVerifierStrategy::UnsupportedPermissive.new logger: logger
+          return ::Kitchen::Terraform::VersionVerifierStrategy::Unsupported.new
         end
       end
 
-      # @param requirement [Gem::Requirement] the requirement for version support.
-      # @param strict [Boolean] the toggle of strict or permissive verification.
+      # @param version_requirement [Gem::Requirement] the requirement for version support.
       # @return [Kitchen::Terraform::VersionVerifierStrategyFactory]
-      def initialize(requirement:, strict:)
-        self.requirement = requirement
-        self.strict = strict
+      def initialize(version_requirement:)
+        self.version_requirement = version_requirement
       end
 
       private
 
-      attr_accessor :requirement, :strict
+      attr_accessor :version_requirement
     end
   end
 end

@@ -255,10 +255,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def create(_state)
-    create_strategy.call workspace_name: workspace_name, version_requirement: version_requirement
-  # TODO only catch Kitchen errors
-  rescue => error
-    raise ::Kitchen::ActionFailed, error.message
+    create_strategy.call
   end
 
   # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
@@ -287,7 +284,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   def finalize_config!(instance)
     super instance
     self.command_executor = ::Kitchen::Terraform::CommandExecutor.new client: config_client, logger: logger
-    self.create_strategy = ::Kitchen::Terraform::Driver::Create.new config: config, logger: logger
+    self.create_strategy = ::Kitchen::Terraform::Driver::Create.new(
+      config: config,
+      logger: logger,
+      version_requirement: version_requirement,
+      workspace_name: workspace_name,
+    )
 
     self
   end
@@ -478,14 +480,11 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   end
 
   def verify_version
-    ::Kitchen::Terraform::VersionVerifier.new(
-      command: ::Kitchen::Terraform::Command::Version.new(client: config_client, logger: logger),
+    ::Kitchen::Terraform::VerifyVersion.new(
+      config: config,
       logger: logger,
-    ).verify(
-      options: { cwd: config_root_module_directory },
-      requirement: version_requirement,
-      strict: config_verify_version,
-    )
+      version_requirement: version_requirement,
+    ).call
   end
 
   def workspace_name

@@ -14,50 +14,61 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
 require "kitchen/terraform/command/version"
+require "kitchen/terraform/unsupported_client_version_error"
+require "kitchen/terraform/verify_version_rescue_strategy_factory"
 require "kitchen/terraform/version_verifier"
 
 module Kitchen
   module Terraform
-      # VerifyVersion is the class of objects which verify the version of the Terraform client against a version 
-      # requirement.
-      class VerifyVersion
-        # #call invokes the verification.
-        #
-        # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
-        # @return [self]
-        def call(version_requirement:)
-          version_verifier.verify(
-            options: { cwd: root_module_directory },
-            requirement: version_requirement,
-            strict: verify_version,
-          )
-          
-          self
+    # VerifyVersion is the class of objects which verify the version of the Terraform client against a version
+    # requirement.
+    class VerifyVersion
+      # #call invokes the verification.
+      #
+      # @raise [Kitchen::ActionFailed] if the verification fails.
+      # @return [self]
+      def call
+        logger.banner "Verifying the Terraform client version is in the supported interval of #{version_requirement}..."
+        version_command.run options: options do |version:|
+          version_verifier.verify version: version
         end
+        logger.banner "Finished verifying the Terraform client version."
+      rescue ::Kitchen::Terraform::UnsupportedClientVersionError
+        rescue_strategy.call
 
-        # #initialize prepares a new instance.
-        #
-        # @param config [Hash] the configuration of the driver.
-        # @param logger [Kitchen::Logger] a logger for logging messages.
-        # @option config [String] :client the pathname of the Terraform client.
-        # @option config [String] :root_module_directory the pathname of the directory which contains the root 
-        #   Terraform module.
-        # @option config [Boolean] :verify_version a toggle of strict or permissive verification of support for the 
-        #   version of the Terraform client.
-        # @return [Kitchen::Terraform::VerifyVersion]
-        def initialize(config:, logger:)
-          self.root_module_directory = config.fetch :root_module_directory
-          self.verify_version = config.fetch :verify_version
-          self.version_verifier = ::Kitchen::Terraform::VersionVerifier.new(
-            command: ::Kitchen::Terraform::Command::Version.new(client: config.fetch(:client), logger: logger),
-            logger: logger,
-          )
-        end
-
-        private
-
-        attr_accessor :root_module_directory, :verify_version, :version_verifier
+        self
       end
+
+      # #initialize prepares a new instance.
+      #
+      # @param config [Hash] the configuration of the driver.
+      # @param logger [Kitchen::Logger] a logger for logging messages.
+      # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
+      # @option config [String] :client the pathname of the Terraform client.
+      # @option config [String] :root_module_directory the pathname of the directory which contains the root
+      #   Terraform module.
+      # @option config [Boolean] :verify_version a toggle of strict or permissive verification of support for the
+      #   version of the Terraform client.
+      # @return [Kitchen::Terraform::VerifyVersion]
+      def initialize(config:, logger:, version_requirement:)
+        self.logger = logger
+        self.version_requirement = version_requirement
+        self.options = { cwd: config.fetch(:root_module_directory) }
+        self.version_command = ::Kitchen::Terraform::Command::Version.new client: config.fetch(:client), logger: logger
+        self.rescue_strategy = ::Kitchen::Terraform::VerifyVersionRescueStrategyFactory.new(
+          verify_version: config.fetch(:verify_version),
+        ).build logger: logger
+        self.version_verifier = ::Kitchen::Terraform::VersionVerifier.new(
+          logger: logger,
+          version_requirement: version_requirement,
+        )
+      end
+
+      private
+
+      attr_accessor :logger, :options, :rescue_strategy, :version_command, :version_requirement, :version_verifier
     end
   end
+end

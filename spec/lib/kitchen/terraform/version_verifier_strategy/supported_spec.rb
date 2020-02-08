@@ -14,20 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
+require "kitchen/terraform/version_verifier_strategy/supported"
 
-module Kitchen
-  module Terraform
-    module VersionVerifierStrategy
-      # Supported is the class of objects which provide a strategy for supported Terraform client versions.
-      class Supported
-        # #call takes no action.
-        #
-        # @return [self]
-        def call
-          self
-        end
-      end
+::RSpec.describe ::Kitchen::Terraform::VersionVerifierStrategy::Supported do
+  describe "#call" do
+    subject do
+      described_class.new
+    end
+
+    specify "should not raise an error" do
+      expect do
+        subject.call
+      end.not_to raise_error
     end
   end
 end
