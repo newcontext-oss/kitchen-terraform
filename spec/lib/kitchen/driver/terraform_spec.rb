@@ -21,6 +21,7 @@ require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/driver/create"
+require "kitchen/terraform/driver/destroy"
 require "kitchen/terraform/verify_version"
 require "pathname"
 require "rubygems"
@@ -464,169 +465,28 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#destroy" do
-    let :plugin_directory do
-      nil
+    let :destroy do
+      instance_double ::Kitchen::Terraform::Driver::Destroy
     end
 
     before do
-      subject.finalize_config! kitchen_instance
-    end
-
-    shared_examples "it destroys the Terraform state" do
-      let :action do
-        subject.destroy({})
-      end
-
-      let :verify_version_instance do
-        instance_double ::Kitchen::Terraform::VerifyVersion
-      end
-
-      before do
-        allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
+      allow(::Kitchen::Terraform::Driver::Destroy).to(
+        receive(:new).with(
           config: config,
           logger: kitchen_logger,
           version_requirement: version_requirement,
-        ).and_return verify_version_instance
-        allow(verify_version_instance).to receive :call
-      end
-
-      context "when `terraform destroy` results in failure" do
-        before do
-          allow(shell_out).to receive(:run).with(
-            command: /destroy/,
-            options: { cwd: kitchen_root, timeout: command_timeout },
-          ).and_raise ::Kitchen::TransientFailure, "mocked `terraform destroy` failure"
-        end
-
-        specify "should result in an action failed error with the failed command output" do
-          expect do
-            action
-          end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform destroy` failure"
-        end
-      end
-
-      context "when `terraform destroy` results in success" do
-        before do
-          allow(shell_out).to receive(:run).with(
-            command: "destroy " \
-            "-auto-approve " \
-            "-lock=true " \
-            "-lock-timeout=0s " \
-            "-input=false " \
-            "-no-color " \
-            "-parallelism=10 " \
-            "-refresh=true " \
-            "-var=\"string=\\\"A String\\\"\" " \
-            "-var=\"map={ key = \\\"A Value\\\" }\" " \
-            "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-            "-var-file=\"/Arbitrary Directory/Variable File.tfvars\"",
-            options: { cwd: kitchen_root, timeout: command_timeout },
-          ).and_return "mocked `terraform` success"
-        end
-
-        context "when `terraform select default` results in failure" do
-          before do
-            shell_out_run_failure(
-              command: "workspace select default",
-              message: "mocked `terraform workspace select default` failure",
-            )
-          end
-
-          specify "should result in an action failed error with the failed command output" do
-            expect do
-              action
-            end.to raise_error ::Kitchen::ActionFailed, "mocked `terraform workspace select default` failure"
-          end
-        end
-
-        context "when `terraform workspace select default` results in success" do
-          before do
-            shell_out_run_success command: "workspace select default"
-          end
-
-          context "when `terraform workspace delete <kitchen-instance>` results in failure" do
-            before do
-              shell_out_run_failure(
-                command: "workspace delete kitchen-terraform-test-suite-test-platform",
-                message: "mocked `terraform workspace delete <kitchen-instance>` failure",
-              )
-            end
-
-            specify "should result in an action failed error with the failed command output" do
-              expect do
-                action
-              end.to raise_error(
-                ::Kitchen::ActionFailed,
-                "mocked `terraform workspace delete <kitchen-instance>` failure"
-              )
-            end
-          end
-
-          context "when `terraform workspace delete <kitchen-instance>` results in success" do
-            before do
-              shell_out_run_success command: "workspace delete kitchen-terraform-test-suite-test-platform"
-            end
-
-            specify "should result in success" do
-              expect do
-                action
-              end.not_to raise_error
-            end
-          end
-        end
-      end
+          workspace_name: workspace_name,
+        ).and_return(destroy)
+      )
+      subject.finalize_config! kitchen_instance
     end
 
-    it_behaves_like "the action fails if the Terraform root module can not be initialized" do
-      let :action do
-        subject.destroy({})
-      end
+    specify "should invoke the destroy strategy" do
+      expect(destroy).to receive :call
     end
 
-    context "when `terraform init` results in success" do
-      before do
-        shell_out_run_success(
-          command: "init " \
-          "-input=false " \
-          "-lock=true " \
-          "-lock-timeout=0s " \
-          "-no-color " \
-          "-force-copy " \
-          "-backend=true " \
-          "-backend-config=\"string=\\\"A String\\\"\" " \
-          "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
-          "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-          "-get=true " \
-          "-get-plugins=true " \
-          "-verify-plugins=true",
-        )
-      end
-
-      it_behaves_like "the action fails if the Terraform workspace can not be selected or created" do
-        let :action do
-          subject.destroy({})
-        end
-      end
-
-      context "when the Terraform workspace is created" do
-        before do
-          shell_out_run_failure(
-            command: "workspace select kitchen-terraform-test-suite-test-platform",
-            message: "mocked `terraform workspace select <kitchen-instance>` failure",
-          )
-          shell_out_run_success command: "workspace new kitchen-terraform-test-suite-test-platform"
-        end
-
-        it_behaves_like "it destroys the Terraform state"
-      end
-
-      context "when `terraform workspace select <kitchen-instance>` results in success" do
-        before do
-          shell_out_run_success command: "workspace select kitchen-terraform-test-suite-test-platform"
-        end
-
-        it_behaves_like "it destroys the Terraform state"
-      end
+    after do
+      subject.destroy kitchen_state
     end
   end
 

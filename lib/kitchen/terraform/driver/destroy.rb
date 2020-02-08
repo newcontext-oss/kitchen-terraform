@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
+require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command/init"
+require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/verify_version"
@@ -23,8 +24,8 @@ require "kitchen/terraform/verify_version"
 module Kitchen
   module Terraform
     module Driver
-      # Create is the class of objects which implement the create action of the driver.
-      class Create
+      # Destroy is the class of objects which implement the destroy action of the driver.
+      class Destroy
         # #call executes the action.
         #
         # @raise [Kitchen::ActionFailed] if the action fails.
@@ -39,6 +40,9 @@ module Kitchen
             logger.info "Creating nonexistent Terraform workspace #{workspace_name}..."
             command_workspace_new.run workspace_name: workspace_name
           end
+          command_destroy.run
+          command_workspace_select.run workspace_name: "default"
+          command_workspace_delete.run workspace_name: workspace_name
 
           self
         end
@@ -49,13 +53,18 @@ module Kitchen
         # @param logger [Kitchen::Logger] a logger for logging messages.
         # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
-        # @return [Kitchen::Terraform::Driver::Create]
+        # @return [Kitchen::Terraform::Driver::Destroy]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
           self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory) }
           self.workspace_name = workspace_name
+          self.command_destroy = ::Kitchen::Terraform::Command::Destroy.new config: config, logger: logger
           self.command_init = ::Kitchen::Terraform::Command::Init.new(
-            config: config.to_hash.merge(upgrade_during_init: true),
+            config: config.to_hash.merge(upgrade_during_init: false),
+            logger: logger,
+          )
+          self.command_workspace_delete = ::Kitchen::Terraform::Command::WorkspaceDelete.new(
+            config: config,
             logger: logger,
           )
           self.command_workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: config, logger: logger
@@ -73,7 +82,9 @@ module Kitchen
         private
 
         attr_accessor(
+          :command_destroy,
           :command_init,
+          :command_workspace_delete,
           :command_workspace_new,
           :command_workspace_select,
           :logger,

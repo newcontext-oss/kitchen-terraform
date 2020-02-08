@@ -15,10 +15,10 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/command/init"
+require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command_executor"
 
-::RSpec.describe ::Kitchen::Terraform::Command::Init do
+::RSpec.describe ::Kitchen::Terraform::Command::Destroy do
   describe "#run" do
     subject do
       described_class.new config: config, logger: logger
@@ -34,19 +34,19 @@ require "kitchen/terraform/command_executor"
 
     let :config do
       {
-        backend_configurations: {
+        client: client,
+        color: false,
+        command_timeout: command_timeout,
+        lock_timeout: 123,
+        lock: true,
+        parallelism: 456,
+        root_module_directory: root_module_directory,
+        variable_files: ["/one.tfvars", "/two.tfvars"],
+        variables: {
           string: "\\\"A String\\\"",
           map: "{ key = \\\"A Value\\\" }",
           list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
         },
-        client: client,
-        color: false,
-        command_timeout: command_timeout,
-        lock: true,
-        lock_timeout: 123,
-        plugin_directory: "/plugins",
-        root_module_directory: root_module_directory,
-        upgrade_during_init: upgrade_during_init,
       }
     end
 
@@ -66,10 +66,6 @@ require "kitchen/terraform/command_executor"
       "/root-module"
     end
 
-    let :upgrade_during_init do
-      true
-    end
-
     before do
       allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(client: client, logger: logger).and_return(
         command_executor
@@ -78,7 +74,7 @@ require "kitchen/terraform/command_executor"
 
     context "when running the command results in failure" do
       before do
-        allow(command_executor).to receive(:run).with(command: /init/, options: options).and_raise(
+        allow(command_executor).to receive(:run).with(command: /destroy/, options: options).and_raise(
           ::Kitchen::ShellOut::ShellCommandFailed, "shell command failed"
         )
       end
@@ -93,21 +89,19 @@ require "kitchen/terraform/command_executor"
     context "when running the command results in success" do
       before do
         allow(command_executor).to receive(:run).with(
-          command: "init " \
-          "-input=false " \
+          command: "destroy " \
+          "-auto-approve " \
           "-lock=true " \
           "-lock-timeout=123s " \
+          "-input=false " \
           "-no-color " \
-          "-upgrade " \
-          "-force-copy " \
-          "-backend=true " \
-          "-backend-config=\"string=\\\"A String\\\"\" " \
-          "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
-          "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-          "-get=true " \
-          "-get-plugins=true " \
-          "-plugin-dir=\"/plugins\" " \
-          "-verify-plugins=true",
+          "-parallelism=456 " \
+          "-refresh=true " \
+          "-var=\"string=\\\"A String\\\"\" " \
+          "-var=\"map={ key = \\\"A Value\\\" }\" " \
+          "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+          "-var-file=\"/one.tfvars\" " \
+          "-var-file=\"/two.tfvars\"",
           options: options,
         )
       end

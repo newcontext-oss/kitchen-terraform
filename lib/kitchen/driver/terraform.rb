@@ -33,6 +33,7 @@ require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/driver/create"
+require "kitchen/terraform/driver/destroy"
 require "kitchen/terraform/version_verifier"
 require "rubygems"
 require "shellwords"
@@ -265,14 +266,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
   # @return [void]
   def destroy(_state)
-    verify_version
-    destroy_run_init
-    run_workspace_select_instance
-    destroy_run_destroy
-    destroy_run_workspace_select_default
-    destroy_run_workspace_delete_instance
-  rescue => error
-    raise ::Kitchen::ActionFailed, error.message
+    destroy_strategy.call
   end
 
   # #finalize_config! invokes the super implementation and then defines the command executor.
@@ -285,6 +279,12 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     super instance
     self.command_executor = ::Kitchen::Terraform::CommandExecutor.new client: config_client, logger: logger
     self.create_strategy = ::Kitchen::Terraform::Driver::Create.new(
+      config: config,
+      logger: logger,
+      version_requirement: version_requirement,
+      workspace_name: workspace_name,
+    )
+    self.destroy_strategy = ::Kitchen::Terraform::Driver::Destroy.new(
       config: config,
       logger: logger,
       version_requirement: version_requirement,
@@ -306,7 +306,7 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
 
   private
 
-  attr_accessor :command_executor, :create_strategy, :version_requirement
+  attr_accessor :command_executor, :create_strategy, :destroy_strategy, :version_requirement
 
   def apply_run(&block)
     run_workspace_select_instance
@@ -359,68 +359,9 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
     )
   end
 
-  # @api private
-  def backend_configurations_flags
-    config_backend_configurations.map do |key, value|
-      "-backend-config=\"#{key}=#{value}\""
-    end.join " "
-  end
-
   # api private
   def color_flag
     config_color and "" or "-no-color"
-  end
-
-  # @api private
-  def destroy_run_destroy
-    command_executor.run(
-      command: "destroy " \
-      "-auto-approve " \
-      "#{lock_flag} " \
-      "#{lock_timeout_flag} " \
-      "-input=false " \
-      "#{color_flag} " \
-      "#{parallelism_flag} " \
-      "-refresh=true " \
-      "#{variables_flags} " \
-      "#{variable_files_flags}",
-      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
-    )
-  end
-
-  # @api private
-  def destroy_run_init
-    command_executor.run(
-      command: "init " \
-      "-input=false " \
-      "#{lock_flag} " \
-      "#{lock_timeout_flag} " \
-      "#{color_flag} " \
-      "-force-copy " \
-      "-backend=true " \
-      "#{backend_configurations_flags} " \
-      "-get=true " \
-      "-get-plugins=true " \
-      "#{plugin_directory_flag}" \
-      "-verify-plugins=true",
-      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
-    )
-  end
-
-  # @api private
-  def destroy_run_workspace_delete_instance
-    command_executor.run(
-      command: "workspace delete #{workspace_name}",
-      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
-    )
-  end
-
-  # @api private
-  def destroy_run_workspace_select_default
-    command_executor.run(
-      command: "workspace select default",
-      options: { cwd: config_root_module_directory, timeout: config_command_timeout },
-    )
   end
 
   def initialize(config = {})
@@ -441,15 +382,6 @@ class ::Kitchen::Driver::Terraform < ::Kitchen::Driver::Base
   # @api private
   def parallelism_flag
     "-parallelism=#{config_parallelism}"
-  end
-
-  # @api private
-  def plugin_directory_flag
-    if config_plugin_directory
-      "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit config_plugin_directory}\" "
-    else
-      ""
-    end
   end
 
   # @api private

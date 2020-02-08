@@ -20,39 +20,39 @@ require "shellwords"
 module Kitchen
   module Terraform
     module Command
-      # Init is the class of objects which run the `terraform init` command.
-      class Init
+      # Destroy is the class of objects which run the `terraform destroy` command.
+      class Destroy
         # #initialize prepares an instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
         # @param logger [Kitchen::Logger] a logger to log messages.
-        # @option config [Hash{String=>String}] :backend_configurations Terraform backend configuration arguments to
-        #   complete a partial backend configuration.
         # @option config [String] :client the pathname of the Terraform client.
         # @option config [Boolean] :color a toggle of colored output from the Terraform client.
         # @option config [Integer] :command_timeout the the number of seconds to wait for the command to finish running.
         # @option config [Boolean] :lock a toggle of locking for the Terraform state file.
         # @option config [Integer] :lock_timeout the number of seconds that the Terraform client will wait for a lock
         #   on the state to be obtained during operations.
-        # @option config [String] :plugin_directory the pathname of the directory which contains
         #   customized Terraform provider plugins} to install in place of the official Terraform provider plugins.
+        # @option config [Integer] :parallelism the number of concurrent operations to use while Terraform walks the
+        #   resource graph.
         # @option config [String] :root_module_directory the pathname of the directory which contains the root
         #   Terraform module.
-        # @option config [Boolean] :upgrade_during_init a toggle for upgrading modules and plugins.
-        # @return [Kitchen::Terraform::Command::Init]
+        # @option config [Array<String>] :variable_files a list of pathnames of Terraform variable files to evaluate.
+        # @option config [Hash{String=>String}] :variables a mapping of Terraform variables to evaluate.
+        # @return [Kitchen::Terraform::Command::Destroy]
         def initialize(config:, logger:)
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
             client: config.fetch(:client),
             logger: logger,
           )
-          self.backend_configurations = config.fetch :backend_configurations
           self.color = config.fetch :color
           self.command_timeout = config.fetch :command_timeout
           self.lock = config.fetch :lock
           self.lock_timeout = config.fetch :lock_timeout
-          self.plugin_directory = config.fetch :plugin_directory
+          self.parallelism = config.fetch :parallelism
           self.root_module_directory = config.fetch :root_module_directory
-          self.upgrade_during_init = config.fetch :upgrade_during_init
+          self.variable_files = config.fetch :variable_files
+          self.variables = config.fetch :variables
         end
 
         # #run executes the command.
@@ -61,19 +61,16 @@ module Kitchen
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
         def run
           command_executor.run(
-            command: "init " \
-            "-input=false " \
+            command: "destroy " \
+            "-auto-approve " \
             "-lock=#{lock} " \
             "#{lock_timeout_flag} " \
+            "-input=false " \
             "#{color_flag} " \
-            "#{upgrade_flag} " \
-            "-force-copy " \
-            "-backend=true " \
-            "#{backend_configurations_flags} " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "#{plugin_directory_flag} " \
-            "-verify-plugins=true",
+            "-parallelism=#{parallelism} " \
+            "-refresh=true " \
+            "#{variables_flags} " \
+            "#{variable_files_flags}",
             options: { cwd: root_module_directory, timeout: command_timeout },
           )
 
@@ -83,22 +80,16 @@ module Kitchen
         private
 
         attr_accessor(
-          :backend_configurations,
           :color,
           :command_executor,
           :command_timeout,
           :lock,
           :lock_timeout,
-          :plugin_directory,
+          :parallelism,
           :root_module_directory,
-          :upgrade_during_init,
+          :variable_files,
+          :variables,
         )
-
-        def backend_configurations_flags
-          backend_configurations.map do |key, value|
-            "-backend-config=\"#{key}=#{value}\""
-          end.join " "
-        end
 
         def color_flag
           if color
@@ -112,20 +103,16 @@ module Kitchen
           "-lock-timeout=#{lock_timeout}s"
         end
 
-        def plugin_directory_flag
-          if plugin_directory
-            "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit plugin_directory}\""
-          else
-            ""
-          end
+        def variable_files_flags
+          variable_files.map do |path|
+            "-var-file=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit path}\""
+          end.join " "
         end
 
-        def upgrade_flag
-          if upgrade_during_init
-            "-upgrade"
-          else
-            ""
-          end
+        def variables_flags
+          variables.map do |key, value|
+            "-var=\"#{key}=#{value}\""
+          end.join " "
         end
       end
     end

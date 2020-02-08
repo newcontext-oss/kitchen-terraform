@@ -15,10 +15,10 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/command/init"
+require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command_executor"
 
-::RSpec.describe ::Kitchen::Terraform::Command::Init do
+::RSpec.describe ::Kitchen::Terraform::Command::WorkspaceDelete do
   describe "#run" do
     subject do
       described_class.new config: config, logger: logger
@@ -34,19 +34,9 @@ require "kitchen/terraform/command_executor"
 
     let :config do
       {
-        backend_configurations: {
-          string: "\\\"A String\\\"",
-          map: "{ key = \\\"A Value\\\" }",
-          list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
-        },
         client: client,
-        color: false,
         command_timeout: command_timeout,
-        lock: true,
-        lock_timeout: 123,
-        plugin_directory: "/plugins",
         root_module_directory: root_module_directory,
-        upgrade_during_init: upgrade_during_init,
       }
     end
 
@@ -66,8 +56,8 @@ require "kitchen/terraform/command_executor"
       "/root-module"
     end
 
-    let :upgrade_during_init do
-      true
+    let :workspace_name do
+      "test"
     end
 
     before do
@@ -78,14 +68,14 @@ require "kitchen/terraform/command_executor"
 
     context "when running the command results in failure" do
       before do
-        allow(command_executor).to receive(:run).with(command: /init/, options: options).and_raise(
+        allow(command_executor).to receive(:run).with(command: /workspace delete/, options: options).and_raise(
           ::Kitchen::ShellOut::ShellCommandFailed, "shell command failed"
         )
       end
 
       specify "should raise a transient failure error" do
         expect do
-          subject.run
+          subject.run workspace_name: workspace_name
         end.to raise_error ::Kitchen::TransientFailure
       end
     end
@@ -93,28 +83,14 @@ require "kitchen/terraform/command_executor"
     context "when running the command results in success" do
       before do
         allow(command_executor).to receive(:run).with(
-          command: "init " \
-          "-input=false " \
-          "-lock=true " \
-          "-lock-timeout=123s " \
-          "-no-color " \
-          "-upgrade " \
-          "-force-copy " \
-          "-backend=true " \
-          "-backend-config=\"string=\\\"A String\\\"\" " \
-          "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
-          "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-          "-get=true " \
-          "-get-plugins=true " \
-          "-plugin-dir=\"/plugins\" " \
-          "-verify-plugins=true",
+          command: "workspace delete test",
           options: options,
         )
       end
 
       specify "should not raise an error" do
         expect do
-          subject.run
+          subject.run workspace_name: workspace_name
         end.not_to raise_error
       end
     end

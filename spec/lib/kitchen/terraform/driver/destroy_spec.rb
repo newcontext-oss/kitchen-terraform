@@ -15,14 +15,16 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command/init"
+require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
-require "kitchen/terraform/driver/create"
+require "kitchen/terraform/driver/destroy"
 require "kitchen/terraform/verify_version"
 require "rubygems"
 
-::RSpec.describe ::Kitchen::Terraform::Driver::Create do
+::RSpec.describe ::Kitchen::Terraform::Driver::Destroy do
   subject do
     described_class.new(
       config: base_config,
@@ -36,8 +38,16 @@ require "rubygems"
     { root_module_directory: root_module_directory }
   end
 
+  let :command_destroy do
+    instance_double ::Kitchen::Terraform::Command::Destroy
+  end
+
   let :command_init do
     instance_double ::Kitchen::Terraform::Command::Init
+  end
+
+  let :command_workspace_delete do
+    instance_double ::Kitchen::Terraform::Command::WorkspaceDelete
   end
 
   let :command_workspace_new do
@@ -53,7 +63,7 @@ require "rubygems"
   end
 
   let :modified_config do
-    { root_module_directory: root_module_directory, upgrade_during_init: true }
+    { root_module_directory: root_module_directory, upgrade_during_init: false }
   end
 
   let :root_module_directory do
@@ -73,10 +83,18 @@ require "rubygems"
   end
 
   before do
+    allow(::Kitchen::Terraform::Command::Destroy).to receive(:new).with(
+      config: base_config,
+      logger: logger,
+    ).and_return command_destroy
     allow(::Kitchen::Terraform::Command::Init).to receive(:new).with(
       config: modified_config,
       logger: logger,
     ).and_return command_init
+    allow(::Kitchen::Terraform::Command::WorkspaceDelete).to receive(:new).with(
+      config: base_config,
+      logger: logger,
+    ).and_return command_workspace_delete
     allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:new).with(
       config: base_config,
       logger: logger,
@@ -97,11 +115,17 @@ require "rubygems"
         allow(command_workspace_select).to receive(:run).with workspace_name: workspace_name
       end
 
-      specify "should verify the version, initialize the working directory, and select the workspace" do
+      specify(
+        "should verify the version, initialize the working directory, select the workspace, destroy the state, and " \
+        "delete the workspace"
+      ) do
         expect(verify_version).to receive(:call).ordered
         expect(command_init).to receive(:run).ordered
         expect(command_workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
         expect(command_workspace_new).not_to receive :run
+        expect(command_destroy).to receive(:run).ordered
+        expect(command_workspace_select).to receive(:run).with(workspace_name: "default").ordered
+        expect(command_workspace_delete).to receive(:run).with(workspace_name: workspace_name).ordered
       end
 
       after do
@@ -116,11 +140,17 @@ require "rubygems"
         )
       end
 
-      specify "should verify the version, initialize the working directory, and create the workspace" do
+      specify(
+        "should verify the version, initialize the working directory, create the workspace, destroy the state, and " \
+        "delete the workspace"
+      ) do
         expect(verify_version).to receive(:call).ordered
         expect(command_init).to receive(:run).ordered
         expect(command_workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
         expect(command_workspace_new).to receive(:run).with(workspace_name: workspace_name).ordered
+        expect(command_destroy).to receive(:run).ordered
+        expect(command_workspace_select).to receive(:run).with(workspace_name: "default").ordered
+        expect(command_workspace_delete).to receive(:run).with(workspace_name: workspace_name).ordered
       end
 
       after do
