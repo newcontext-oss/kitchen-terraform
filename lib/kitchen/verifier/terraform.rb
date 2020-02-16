@@ -42,10 +42,6 @@ module Kitchen
     # against the hosts of each system. The outputs of the Terraform state are retrieved and exposed as attributes to
     # the InSpec controls.
     #
-    # ===== Retrieving the Terraform Output
-    #
-    # {include:Kitchen::Terraform::Command::Output}
-    #
     # === Configuration Attributes
     #
     # The configuration attributes of the verifier control the behaviour of the InSpec runner. Within the

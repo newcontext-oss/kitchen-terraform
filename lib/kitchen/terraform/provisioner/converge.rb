@@ -45,6 +45,10 @@ module Kitchen
       # ===== Applying the Terraform State Changes
       #
       # {include:Kitchen::Terraform::Command::Apply}
+      #
+      # ===== Retrieving the Terraform Output
+      #
+      # {include:Kitchen::Terraform::Command::Output}
       class Converge
         # #call executes the action.
         #
