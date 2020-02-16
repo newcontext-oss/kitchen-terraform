@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/action_failed"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/client"
 require "kitchen/terraform/config_attribute/color"
@@ -177,9 +178,7 @@ module Kitchen
       def create(_state)
         create_strategy.call
       rescue => error
-        logger.error error.message
-
-        raise ::Kitchen::ActionFailed, error.message
+        action_failed.call message: error.message
       end
 
       # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
@@ -191,9 +190,7 @@ module Kitchen
       def destroy(_state)
         destroy_strategy.call
       rescue => error
-        logger.error error.message
-
-        raise ::Kitchen::ActionFailed, error.message
+        action_failed.call message: error.message
       end
 
       # #finalize_config! invokes the super implementation and then defines the command executor.
@@ -228,12 +225,13 @@ module Kitchen
       # @return [Kitchen::Driver::Terraform]
       def initialize(config = {})
         super config
+        self.action_failed = ::Kitchen::Terraform::ActionFailed.new logger: logger
         self.version_requirement = ::Gem::Requirement.new ">= 0.11.4", "< 0.13.0"
       end
 
       private
 
-      attr_accessor :command_executor, :create_strategy, :destroy_strategy
+      attr_accessor :action_failed, :command_executor, :create_strategy, :destroy_strategy
       attr_writer :version_requirement, :workspace_name
     end
   end

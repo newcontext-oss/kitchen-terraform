@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/action_failed"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/provisioner/converge"
 
@@ -81,9 +82,7 @@ module Kitchen
       def call(state)
         converge_strategy.call state: state
       rescue => error
-        logger.error error.message
-
-        raise ::Kitchen::ActionFailed, error.message
+        action_failed.call message: error.message
       end
 
       # #finalize_config! invokes the super implementation and then defines the command executor.
@@ -94,6 +93,7 @@ module Kitchen
       # @see Kitchen::Configurable#finalize_config!
       def finalize_config!(instance)
         super instance
+        self.action_failed = ::Kitchen::Terraform::ActionFailed.new logger: logger
         self.converge_strategy = ::Kitchen::Terraform::Provisioner::Converge.new(
           config: instance.driver.send(:config),
           logger: logger,
@@ -106,7 +106,7 @@ module Kitchen
 
       private
 
-      attr_accessor :converge_strategy
+      attr_accessor :action_failed, :converge_strategy
     end
   end
 end

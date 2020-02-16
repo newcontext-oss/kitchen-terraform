@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/action_failed"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/systems"
@@ -43,7 +44,7 @@ module Kitchen
     #
     # ===== Retrieving the Terraform Output
     #
-    #   terraform output -json
+    # {include:Kitchen::Terraform::Command::Output}
     #
     # === Configuration Attributes
     #
@@ -107,9 +108,7 @@ module Kitchen
         load_outputs state: state
         verify_systems
       rescue => error
-        logger.error error.message
-
-        raise ::Kitchen::ActionFailed, error.message
+        action_failed.call message: error.message
       end
 
       # doctor checks the system and configuration for common errors.
@@ -121,15 +120,20 @@ module Kitchen
         false
       end
 
-      private
-
-      attr_accessor :outputs, :variables
-
-      def initialize(configuration = {})
-        init_config configuration
+      # #initialize prepares an instance of the class.
+      #
+      # @param config [Hash] the verifier configuration.
+      # @return [Kitchen::Verifier::Terraform]
+      def initialize(config = {})
+        init_config config
+        self.action_failed = ::Kitchen::Terraform::ActionFailed.new logger: logger
         self.outputs = {}
         self.variables = {}
       end
+
+      private
+
+      attr_accessor :action_failed, :outputs, :variables
 
       def load_variables(state:)
         logger.banner "Starting retrieval of Terraform variables from the Kitchen instance state."
