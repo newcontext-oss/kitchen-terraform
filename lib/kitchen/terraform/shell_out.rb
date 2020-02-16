@@ -20,8 +20,7 @@ require "mixlib/shellout"
 module Kitchen
   module Terraform
     # Terraform commands are run by shelling out and using the
-    # {https://www.terraform.io/docs/commands/index.html command-line interface}, which is assumed to be present in the
-    # {https://en.wikipedia.org/wiki/PATH_(variable) PATH} of the user. The shell out environment includes the
+    # {https://www.terraform.io/docs/commands/index.html command-line interface}. The shell out environment includes the
     # TF_IN_AUTOMATION environment variable as specified by the
     # {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
     class ShellOut
@@ -42,14 +41,10 @@ module Kitchen
 
       # #run executes a client command.
       #
-      # @param command [String] the command to run.
-      # @param options [Hash] options which adjust the execution of the command.
-      # @option options [Integer] :timeout the maximum duration in seconds to run the command.
-      # @option options [String] :cwd the directory in which to run the command.
       # @yieldparam standard_output [String] the standard output of the command.
       # @raise [Kitchen::TransientFailure] if running the command results in failure.
       # @return [self]
-      def run()
+      def run
         execute
         handle_shell_out_error if shell_out.error?
 
