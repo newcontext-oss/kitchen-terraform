@@ -107,6 +107,8 @@ module Kitchen
         load_outputs state: state
         verify_systems
       rescue => error
+        logger.error error.message
+
         raise ::Kitchen::ActionFailed, error.message
       end
 
