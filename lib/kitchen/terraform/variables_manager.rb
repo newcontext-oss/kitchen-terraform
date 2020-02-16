@@ -26,12 +26,12 @@ module Kitchen
       # @param state [::Hash] the Kitchen instance state from which the Terraform variables will be read.
       # @return [self]
       def load(variables:, state:)
-        variables.replace state.fetch @state_key
+        variables.replace state.fetch state_key
 
         self
       rescue ::KeyError => error
-        @logger.error(
-          "The '#{@state_key}' key was not found in the Kitchen instance state. This error could indicate that the " \
+        logger.error(
+          "The '#{state_key}' key was not found in the Kitchen instance state. This error could indicate that the " \
           "Kitchen-Terraform provisioner plugin was not used to converge the Kitchen instance."
         )
 
@@ -44,17 +44,21 @@ module Kitchen
       # @param state [::Hash] the Kitchen instance state to which the Terraform variables will be written.
       # @return [self]
       def save(variables:, state:)
-        state.store @state_key, variables
+        state.store state_key, variables
 
         self
       end
 
+      # @param logger [Kitchen::Logger] a logger to log messages.
+      # @return [Kitchen::Terraform::VariablesManager]
+      def initialize(logger:)
+        self.state_key = :kitchen_terraform_variables
+        self.logger = logger
+      end
+
       private
 
-      def initialize(logger:)
-        @state_key = :kitchen_terraform_variables
-        @logger = logger
-      end
+      attr_accessor :logger, :state_key
     end
   end
 end
