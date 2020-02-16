@@ -85,7 +85,7 @@ module Kitchen
         action_failed.call message: error.message
       end
 
-      # #finalize_config! invokes the super implementation and then defines the command executor.
+      # #finalize_config! invokes the super implementation and then initializes the strategy.
       #
       # @param instance [Kitchen::Instance] an associated instance.
       # @raise [Kitchen::ClientError] if the instance is nil.
@@ -97,8 +97,8 @@ module Kitchen
         self.converge_strategy = ::Kitchen::Terraform::Provisioner::Converge.new(
           config: instance.driver.send(:config),
           logger: logger,
-          version_requirement: instance.driver.version_requirement,
-          workspace_name: instance.driver.workspace_name,
+          version_requirement: version_requirement,
+          workspace_name: workspace_name,
         )
 
         self

@@ -168,8 +168,6 @@ module Kitchen
 
       include ::Kitchen::Terraform::Configurable
 
-      attr_reader :version_requirement, :workspace_name
-
       # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
       #
       # @param _state [::Hash] the mutable instance and driver state.
@@ -193,7 +191,7 @@ module Kitchen
         action_failed.call message: error.message
       end
 
-      # #finalize_config! invokes the super implementation and then defines the command executor.
+      # #finalize_config! invokes the super implementation and then initializes the strategies.
       #
       # @param instance [Kitchen::Instance] an associated instance.
       # @raise [Kitchen::ClientError] if the instance is nil.
@@ -201,8 +199,6 @@ module Kitchen
       # @see Kitchen::Configurable#finalize_config!
       def finalize_config!(instance)
         super instance
-        self.workspace_name = "kitchen-terraform-#{::Shellwords.escape instance.name}"
-        self.command_executor = ::Kitchen::Terraform::CommandExecutor.new client: config_client, logger: logger
         self.create_strategy = ::Kitchen::Terraform::Driver::Create.new(
           config: config,
           logger: logger,
@@ -226,13 +222,11 @@ module Kitchen
       def initialize(config = {})
         super config
         self.action_failed = ::Kitchen::Terraform::ActionFailed.new logger: logger
-        self.version_requirement = ::Gem::Requirement.new ">= 0.11.4", "< 0.13.0"
       end
 
       private
 
-      attr_accessor :action_failed, :command_executor, :create_strategy, :destroy_strategy
-      attr_writer :version_requirement, :workspace_name
+      attr_accessor :action_failed, :create_strategy, :destroy_strategy
     end
   end
 end

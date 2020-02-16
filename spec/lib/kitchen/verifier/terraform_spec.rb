@@ -16,11 +16,9 @@
 
 require "inspec"
 require "kitchen"
-require "kitchen/driver/terraform"
 require "kitchen/terraform/inspec_options_factory"
 require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/outputs_manager"
-require "kitchen/transport/ssh"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/fail_fast_examples"
@@ -83,31 +81,27 @@ require "support/kitchen/terraform/configurable_examples"
     true
   end
 
-  let :driver do
-    instance_double ::Kitchen::Driver::Terraform
-  end
-
   let :kitchen_instance do
-    instance_double ::Kitchen::Instance
+    ::Kitchen::Instance.new(
+      driver: ::Kitchen::Driver::Base.new,
+      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+      logger: logger,
+      platform: ::Kitchen::Platform.new(name: "test-platform"),
+      provisioner: ::Kitchen::Provisioner::Base.new,
+      state_file: ::Kitchen::StateFile.new("/kitchen", "test-suite-test-platform"),
+      suite: ::Kitchen::Suite.new(name: "test-suite"),
+      transport: ::Kitchen::Transport::Base.new,
+      verifier: ::Kitchen::Verifier::Base.new,
+    )
   end
 
   let :logger do
     ::Kitchen::Logger.new
   end
 
-  let :transport do
-    ::Kitchen::Transport::Ssh.new
-  end
-
-  before do
-    allow(kitchen_instance).to receive(:logger).and_return logger
-    allow(kitchen_instance).to receive(:transport).and_return transport
-  end
-
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::FailFast"
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Systems"
-
   it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call" do
@@ -115,14 +109,7 @@ require "support/kitchen/terraform/configurable_examples"
       {}
     end
 
-    let :kitchen_suite do
-      instance_double ::Kitchen::Suite
-    end
-
     before do
-      allow(kitchen_instance).to receive(:driver).and_return driver
-      allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
-      allow(kitchen_suite).to receive(:name).and_return "test-suite"
       subject.finalize_config! kitchen_instance
     end
 
