@@ -22,9 +22,7 @@ module Kitchen
     class VersionVerifier
       # #verify verifies a version against the requirement.
       #
-      # @param options [Hash] options which adjust the execution of the command.
-      # @option options [Integer] :timeout the maximum duration in seconds to run the command.
-      # @option options [String] :cwd the directory in which to run the command.
+      # @param version [Gem::Version] the Terraform client version.
       # @raise [Kitchen::TransientFailure] if running the command fails.
       # @raise [Kitchen::UserError] if the version is unsupported.
       # @return [self]
