@@ -55,15 +55,7 @@ module Kitchen
         # @return [self]
         def call
           verify_version.call
-          command_init.run
-          begin
-            command_workspace_select.run workspace_name: workspace_name
-          rescue ::Kitchen::TransientFailure
-            command_workspace_new.run workspace_name: workspace_name
-          end
-          command_destroy.run
-          command_workspace_select.run workspace_name: "default"
-          command_workspace_delete.run workspace_name: workspace_name
+          execute_workflow
 
           self
         end
@@ -113,6 +105,20 @@ module Kitchen
           :verify_version,
           :workspace_name,
         )
+
+        def execute_workflow
+          command_init.run
+          select_or_create_test_workspace
+          command_destroy.run
+          command_workspace_select.run workspace_name: "default"
+          command_workspace_delete.run workspace_name: workspace_name
+        end
+
+        def select_or_create_test_workspace
+          command_workspace_select.run workspace_name: workspace_name
+        rescue ::Kitchen::TransientFailure
+          command_workspace_new.run workspace_name: workspace_name
+        end
       end
     end
   end
