@@ -57,14 +57,8 @@ module Kitchen
         # @return [self]
         def call(state:)
           verify_version.call
-          command_workspace_select.run workspace_name: workspace_name
-          command_get.run
-          command_validate.run
-          command_apply.run
-          command_output.run do |outputs:|
-            outputs_manager.save outputs: outputs, state: state
-          end
-          variables_manager.save variables: variables, state: state
+          execute_workflow
+          save_variables_and_outputs state: state
 
           self
         end
@@ -80,22 +74,13 @@ module Kitchen
           self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory) }
           self.workspace_name = workspace_name
-          self.command_apply = ::Kitchen::Terraform::Command::Apply.new(
-            config: config,
-            logger: logger,
-          )
-          self.command_get = ::Kitchen::Terraform::Command::Get.new(
-            config: config,
-            logger: logger,
-          )
+          self.command_apply = ::Kitchen::Terraform::Command::Apply.new config: config, logger: logger
+          self.command_get = ::Kitchen::Terraform::Command::Get.new config: config, logger: logger
           self.command_output = ::Kitchen::Terraform::Command::Output.new(
             config: config,
             logger: ::Kitchen::Terraform::DebugLogger.new(logger),
           )
-          self.command_validate = ::Kitchen::Terraform::Command::Validate.new(
-            config: config,
-            logger: logger,
-          )
+          self.command_validate = ::Kitchen::Terraform::Command::Validate.new config: config, logger: logger
           self.command_workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new(
             config: config,
             logger: logger,
@@ -126,6 +111,20 @@ module Kitchen
           :verify_version,
           :workspace_name,
         )
+
+        def execute_workflow
+          command_workspace_select.run workspace_name: workspace_name
+          command_get.run
+          command_validate.run
+          command_apply.run
+        end
+
+        def save_variables_and_outputs(state:)
+          command_output.run do |outputs:|
+            outputs_manager.save outputs: outputs, state: state
+          end
+          variables_manager.save variables: variables, state: state
+        end
       end
     end
   end
