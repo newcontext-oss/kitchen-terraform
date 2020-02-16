@@ -21,7 +21,8 @@ require "kitchen/terraform/command_executor"
 module Kitchen
   module Terraform
     module Command
-      # Output is the class of objects which run the `terraform output` command.
+      # The outputs are retrieved by running a command like the following example:
+      #   terraform output -json
       class Output
         # #initialize prepares an instance of the class.
         #
