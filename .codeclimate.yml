@@ -28,6 +28,7 @@ exclude_patterns:
   - "examples/"
   - "ruby-2.4/"
   - "ruby-2.5/"
-  - "ruby-2.6/"
   - "rubygems/"
+  - "source/"
   - "tmp/"
+  - "vendor/"
