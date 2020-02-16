@@ -15,55 +15,52 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/command/destroy"
-require "kitchen/terraform/command/init"
-require "kitchen/terraform/command/workspace_delete"
-require "kitchen/terraform/command/workspace_new"
+require "kitchen/terraform/command/apply"
+require "kitchen/terraform/command/get"
+require "kitchen/terraform/command/output"
+require "kitchen/terraform/command/validate"
 require "kitchen/terraform/command/workspace_select"
+require "kitchen/terraform/debug_logger"
+require "kitchen/terraform/outputs_manager"
+require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/verify_version"
 
 module Kitchen
   module Terraform
-    module Driver
-      # A Test Kitchen instance is destroyed through the following steps.
+    module Provisioner
+      # A Test Kitchen instance is converged through the following steps.
       #
-      # ===== Initializing the Terraform Working Directory
-      #
-      # {include:Kitchen::Terraform::Command::Init}
-      #
-      # ===== Selecting or Creating the Test Terraform Workspace
+      # ===== Selecting the Test Terraform Workspace
       #
       # {include:Kitchen::Terraform::Command::WorkspaceSelect}
       #
-      # {include:Kitchen::Terraform::Command::WorkspaceNew}
+      # ===== Updating the Terraform Dependency Modules
       #
-      # ===== Destroying the Terraform State
+      # {include:Kitchen::Terraform::Command::Get}
       #
-      # {include:Kitchen::Terraform::Command::Destroy}
+      # ===== Validating the Terraform Root Module
       #
-      # ===== Selecting the Default Terraform Workspace
+      # {include:Kitchen::Terraform::Command::Validate}
       #
-      # {include:Kitchen::Terraform::Command::WorkspaceSelect}
+      # ===== Applying the Terraform State Changes
       #
-      # ===== Deleting the Test Terraform Workspace
-      #
-      # {include:Kitchen::Terraform::Command::WorkspaceDelete}
-      class Destroy
+      # {include:Kitchen::Terraform::Command::Apply}
+      class Converge
         # #call executes the action.
         #
+        # @param state [Hash] the Kitchen instance state.
         # @raise [Kitchen::TransientFailure] if a command fails.
         # @return [self]
-        def call
+        def call(state:)
           verify_version.call
-          command_init.run
-          begin
-            command_workspace_select.run workspace_name: workspace_name
-          rescue ::Kitchen::TransientFailure
-            command_workspace_new.run workspace_name: workspace_name
+          command_workspace_select.run workspace_name: workspace_name
+          command_get.run
+          command_validate.run
+          command_apply.run
+          command_output.run do |outputs:|
+            outputs_manager.save outputs: outputs, state: state
           end
-          command_destroy.run
-          command_workspace_select.run workspace_name: "default"
-          command_workspace_delete.run workspace_name: workspace_name
+          variables_manager.save variables: variables, state: state
 
           self
         end
@@ -74,25 +71,34 @@ module Kitchen
         # @param logger [Kitchen::Logger] a logger for logging messages.
         # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
-        # @return [Kitchen::Terraform::Driver::Destroy]
+        # @return [Kitchen::Terraform::Driver::Converge]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
           self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory) }
           self.workspace_name = workspace_name
-          self.command_destroy = ::Kitchen::Terraform::Command::Destroy.new config: config, logger: logger
-          self.command_init = ::Kitchen::Terraform::Command::Init.new(
-            config: config.to_hash.merge(upgrade_during_init: false),
-            logger: logger,
-          )
-          self.command_workspace_delete = ::Kitchen::Terraform::Command::WorkspaceDelete.new(
+          self.command_apply = ::Kitchen::Terraform::Command::Apply.new(
             config: config,
             logger: logger,
           )
-          self.command_workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: config, logger: logger
+          self.command_get = ::Kitchen::Terraform::Command::Get.new(
+            config: config,
+            logger: logger,
+          )
+          self.command_output = ::Kitchen::Terraform::Command::Output.new(
+            config: config,
+            logger: ::Kitchen::Terraform::DebugLogger.new(logger),
+          )
+          self.command_validate = ::Kitchen::Terraform::Command::Validate.new(
+            config: config,
+            logger: logger,
+          )
           self.command_workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new(
             config: config,
             logger: logger,
           )
+          self.outputs_manager = ::Kitchen::Terraform::OutputsManager.new logger: logger
+          self.variables = config.fetch :variables
+          self.variables_manager = ::Kitchen::Terraform::VariablesManager.new logger: logger
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
             config: config,
             logger: logger,
@@ -103,13 +109,16 @@ module Kitchen
         private
 
         attr_accessor(
-          :command_destroy,
-          :command_init,
-          :command_workspace_delete,
-          :command_workspace_new,
+          :command_apply,
+          :command_get,
+          :command_output,
+          :command_validate,
           :command_workspace_select,
           :logger,
           :options,
+          :outputs_manager,
+          :variables,
+          :variables_manager,
           :verify_version,
           :workspace_name,
         )

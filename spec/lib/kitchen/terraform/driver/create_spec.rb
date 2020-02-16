@@ -92,16 +92,12 @@ require "rubygems"
   end
 
   describe "#call" do
-    context "when the desired workspace does exist" do
-      before do
-        allow(command_workspace_select).to receive(:run).with workspace_name: workspace_name
-      end
-
-      specify "should verify the version, initialize the working directory, and select the workspace" do
+    context "when the desired workspace does not exist" do
+      specify "should verify the version, initialize the working directory, and create the workspace" do
         expect(verify_version).to receive(:call).ordered
         expect(command_init).to receive(:run).ordered
-        expect(command_workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
-        expect(command_workspace_new).not_to receive :run
+        expect(command_workspace_new).to receive(:run).with(workspace_name: workspace_name).ordered
+        expect(command_workspace_select).not_to receive :run
       end
 
       after do
@@ -109,18 +105,18 @@ require "rubygems"
       end
     end
 
-    context "when the desired workspace does not exist" do
+    context "when the desired workspace does exist" do
       before do
-        allow(command_workspace_select).to receive(:run).with(workspace_name: workspace_name).and_raise(
-          ::Kitchen::TransientFailure, "no such workspace"
+        allow(command_workspace_new).to receive(:run).with(workspace_name: workspace_name).and_raise(
+          ::Kitchen::TransientFailure, "workspace already exists"
         )
       end
 
-      specify "should verify the version, initialize the working directory, and create the workspace" do
+      specify "should verify the version, initialize the working directory, and select the workspace" do
         expect(verify_version).to receive(:call).ordered
         expect(command_init).to receive(:run).ordered
-        expect(command_workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
         expect(command_workspace_new).to receive(:run).with(workspace_name: workspace_name).ordered
+        expect(command_workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
       end
 
       after do

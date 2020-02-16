@@ -23,21 +23,29 @@ require "kitchen/terraform/verify_version"
 module Kitchen
   module Terraform
     module Driver
-      # Create is the class of objects which implement the create action of the driver.
+      # A Test Kitchen instance is created through the following steps.
+      #
+      # ===== Initializing the Terraform Working Directory
+      #
+      # {include:Kitchen::Terraform::Command::Init}
+      #
+      # ===== Creating or Selecting the Test Terraform Workspace
+      #
+      # {include:Kitchen::Terraform::Command::WorkspaceNew}
+      #
+      # {include:Kitchen::Terraform::Command::WorkspaceSelect}
       class Create
         # #call executes the action.
         #
-        # @raise [Kitchen::ActionFailed] if the action fails.
+        # @raise [Kitchen::TransientFailure] if a command fails.
         # @return [self]
         def call
           verify_version.call
           command_init.run
           begin
-            command_workspace_select.run workspace_name: workspace_name
-            # TODO improve detection of missing workspace
-          rescue ::Kitchen::TransientFailure
-            logger.info "Creating nonexistent Terraform workspace #{workspace_name}..."
             command_workspace_new.run workspace_name: workspace_name
+          rescue ::Kitchen::TransientFailure
+            command_workspace_select.run workspace_name: workspace_name
           end
 
           self

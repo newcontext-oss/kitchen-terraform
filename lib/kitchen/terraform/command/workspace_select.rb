@@ -19,7 +19,8 @@ require "kitchen/terraform/command_executor"
 module Kitchen
   module Terraform
     module Command
-      # WorkspaceSelect is the class of objects which run the `terraform workspace select` command.
+      # The workspace is selected by running a command like the following example:
+      #   terraform workspace select <name>
       class WorkspaceSelect
         # @param config [Hash] the configuration of the driver.
         # @param logger [Kitchen::Logger] a logger to log messages.
@@ -33,8 +34,7 @@ module Kitchen
             client: config.fetch(:client),
             logger: logger,
           )
-          self.command_timeout = config.fetch :command_timeout
-          self.root_module_directory = config.fetch :root_module_directory
+          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
         end
 
         # #run executes the command.
@@ -45,7 +45,7 @@ module Kitchen
         def run(workspace_name:)
           command_executor.run(
             command: "workspace select #{workspace_name}",
-            options: { cwd: root_module_directory, timeout: command_timeout },
+            options: options,
           )
 
           self
@@ -53,7 +53,7 @@ module Kitchen
 
         private
 
-        attr_accessor :command_executor, :command_timeout, :root_module_directory
+        attr_accessor :command_executor, :options
       end
     end
   end

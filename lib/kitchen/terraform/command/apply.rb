@@ -20,19 +20,19 @@ require "shellwords"
 module Kitchen
   module Terraform
     module Command
-      # The state is destroyed by running a command like the following example:
-      #   terraform destroy \
-      #     -auto-approve \
+      # The state changes are applied by running a command like the following example:
+      #   terraform apply\
       #     -lock=<lock> \
       #     -lock-timeout=<lock_timeout>s \
       #     -input=false \
+      #     -auto-approve=true \
       #     [-no-color] \
       #     -parallelism=<parallelism> \
       #     -refresh=true \
       #     [-var=<variables.first>...] \
       #     [-var-file=<variable_files.first>...] \
-      #     <root_module_directory>
-      class Destroy
+      #     <directory>
+      class Apply
         # #initialize prepares an instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
@@ -49,7 +49,7 @@ module Kitchen
         #   Terraform module.
         # @option config [Array<String>] :variable_files a list of pathnames of Terraform variable files to evaluate.
         # @option config [Hash{String=>String}] :variables a mapping of Terraform variables to evaluate.
-        # @return [Kitchen::Terraform::Command::Destroy]
+        # @return [Kitchen::Terraform::Command::Apply]
         def initialize(config:, logger:)
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
             client: config.fetch(:client),
@@ -70,7 +70,7 @@ module Kitchen
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
         def run
           command_executor.run(
-            command: "destroy " \
+            command: "apply " \
             "-auto-approve " \
             "-lock=#{lock} " \
             "#{lock_timeout_flag} " \

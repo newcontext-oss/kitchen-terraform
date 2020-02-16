@@ -16,8 +16,8 @@
 
 module Kitchen
   module Terraform
-    # Driver is the namespace for driver strategies.
-    module Driver
+    # Provisioner is the namespace for provisioner strategies.
+    module Provisioner
     end
   end
 end

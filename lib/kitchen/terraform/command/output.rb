@@ -23,24 +23,31 @@ module Kitchen
     module Command
       # Output is the class of objects which run the `terraform output` command.
       class Output
-        # @param client [String] the pathname of the Terraform client.
+        # #initialize prepares an instance of the class.
+        #
+        # @param config [Hash] the configuration of the driver.
         # @param logger [Kitchen::Logger] a logger to log messages.
+        # @option config [String] :client the pathname of the Terraform client.
+        # @option config [Integer] :command_timeout the the number of seconds to wait for the command to finish running.
+        # @option config [String] :root_module_directory the pathname of the directory which contains the root
+        #   Terraform module.
         # @return [Kitchen::Terraform::Command::Output]
-        def initialize(client:, logger:)
+        def initialize(config:, logger:)
+          self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
+            client: config.fetch(:client),
+            logger: logger,
+          )
           self.logger = logger
-          self.shell_out = ::Kitchen::Terraform::CommandExecutor.new client: client, logger: logger
+          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
         end
 
         # #run executes the command.
         #
-        # @param options [Hash] options which adjust the execution of the command.
-        # @option options [String] :cwd the directory in which to run the command.
-        # @option options [Integer] :timeout the maximum duration in seconds to run the command.
         # @yieldparam output [Hash] the standard output of the command.
         # @return [self]
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
-        def run(options:, &block)
-          run_shell_out options: options, &block
+        def run(&block)
+          run_command_executor(&block)
         rescue ::JSON::ParserError => error
           rescue_invalid_json error: error
         rescue ::Kitchen::TransientFailure => error
@@ -49,7 +56,11 @@ module Kitchen
 
         private
 
-        attr_accessor :logger, :shell_out
+        attr_accessor(
+          :command_executor,
+          :logger,
+          :options
+        )
 
         def rescue_invalid_json(error:)
           logger.error "Parsing Terraform output as JSON experienced an error:\n\t#{error.message}"
@@ -66,9 +77,9 @@ module Kitchen
           end
         end
 
-        def run_shell_out(options:)
-          shell_out.run(command: "output -json", options: options) do |standard_output:|
-            yield outputs: ::Kitchen::Util.stringified_hash(::JSON.parse(standard_output))
+        def run_command_executor
+          command_executor.run(command: "output -json", options: options) do |standard_output:|
+            yield outputs: ::JSON.parse(standard_output)
           end
         end
       end

@@ -111,10 +111,6 @@ require "rubygems"
 
   describe "#call" do
     context "when the desired workspace does exist" do
-      before do
-        allow(command_workspace_select).to receive(:run).with workspace_name: workspace_name
-      end
-
       specify(
         "should verify the version, initialize the working directory, select the workspace, destroy the state, and " \
         "delete the workspace"

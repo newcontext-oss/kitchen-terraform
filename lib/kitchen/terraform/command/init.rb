@@ -20,7 +20,21 @@ require "shellwords"
 module Kitchen
   module Terraform
     module Command
-      # Init is the class of objects which run the `terraform init` command.
+      # The working directory is initialized by running a command like the following example:
+      #   terraform init \
+      #     -input=false \
+      #     -lock=<lock> \
+      #     -lock-timeout=<lock_timeout>s \
+      #     [-no-color] \
+      #     [-upgrade] \
+      #     -force-copy \
+      #     -backend=true \
+      #     [-backend-config=<backend_configurations.first> ...] \
+      #     -get=true \
+      #     -get-plugins=true \
+      #     [-plugin-dir=<plugin_directory>] \
+      #     -verify-plugins=true \
+      #     <root_module_directory>
       class Init
         # #initialize prepares an instance of the class.
         #
@@ -35,7 +49,7 @@ module Kitchen
         # @option config [Integer] :lock_timeout the number of seconds that the Terraform client will wait for a lock
         #   on the state to be obtained during operations.
         # @option config [String] :plugin_directory the pathname of the directory which contains
-        #   customized Terraform provider plugins} to install in place of the official Terraform provider plugins.
+        #   customized Terraform provider plugins to install in place of the official Terraform provider plugins.
         # @option config [String] :root_module_directory the pathname of the directory which contains the root
         #   Terraform module.
         # @option config [Boolean] :upgrade_during_init a toggle for upgrading modules and plugins.
@@ -47,11 +61,10 @@ module Kitchen
           )
           self.backend_configurations = config.fetch :backend_configurations
           self.color = config.fetch :color
-          self.command_timeout = config.fetch :command_timeout
           self.lock = config.fetch :lock
           self.lock_timeout = config.fetch :lock_timeout
+          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
           self.plugin_directory = config.fetch :plugin_directory
-          self.root_module_directory = config.fetch :root_module_directory
           self.upgrade_during_init = config.fetch :upgrade_during_init
         end
 
@@ -74,7 +87,7 @@ module Kitchen
             "-get-plugins=true " \
             "#{plugin_directory_flag} " \
             "-verify-plugins=true",
-            options: { cwd: root_module_directory, timeout: command_timeout },
+            options: options,
           )
 
           self
@@ -86,11 +99,10 @@ module Kitchen
           :backend_configurations,
           :color,
           :command_executor,
-          :command_timeout,
           :lock,
           :lock_timeout,
+          :options,
           :plugin_directory,
-          :root_module_directory,
           :upgrade_during_init,
         )
 

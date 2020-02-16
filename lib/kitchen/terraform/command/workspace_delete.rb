@@ -19,7 +19,8 @@ require "kitchen/terraform/command_executor"
 module Kitchen
   module Terraform
     module Command
-      # WorkspaceDelete is the class of objects which run the `terraform workspace delete` command.
+      # The workspace is deleted by running a command like the following example:
+      #   terraform workspace delete <name>
       class WorkspaceDelete
         # @param config [Hash] the configuration of the driver.
         # @param logger [Kitchen::Logger] a logger to log messages.

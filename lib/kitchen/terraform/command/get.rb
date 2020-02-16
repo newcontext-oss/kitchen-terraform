@@ -15,20 +15,23 @@
 # limitations under the License.
 
 require "kitchen/terraform/command_executor"
+require "shellwords"
 
 module Kitchen
   module Terraform
     module Command
-      # The workspace is created by running a command like the following example:
-      #   terraform workspace new <name>
-      class WorkspaceNew
+      # The dependency modules are updated by running a command like the following example:
+      #   terraform get -update <directory>
+      class Get
+        # #initialize prepares an instance of the class.
+        #
         # @param config [Hash] the configuration of the driver.
         # @param logger [Kitchen::Logger] a logger to log messages.
         # @option config [String] :client the pathname of the Terraform client.
         # @option config [Integer] :command_timeout the the number of seconds to wait for the command to finish running.
         # @option config [String] :root_module_directory the pathname of the directory which contains the root
         #   Terraform module.
-        # @return [Kitchen::Terraform::Command::WorkspaceNew]
+        # @return [Kitchen::Terraform::Command::Get]
         def initialize(config:, logger:)
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
             client: config.fetch(:client),
@@ -39,21 +42,22 @@ module Kitchen
 
         # #run executes the command.
         #
-        # @param workspace_name [String] the name of the Terraform workspace to create.
         # @return [self]
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
-        def run(workspace_name:)
+        def run
           command_executor.run(
-            command: "workspace new #{workspace_name}",
+            command: "get -update",
             options: options,
           )
-
           self
         end
 
         private
 
-        attr_accessor :command_executor, :options
+        attr_accessor(
+          :command_executor,
+          :options
+        )
       end
     end
   end
