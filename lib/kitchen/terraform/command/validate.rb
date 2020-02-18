@@ -45,6 +45,7 @@ module Kitchen
             logger: logger,
           )
           self.color = config.fetch :color
+          self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
           self.variable_files = config.fetch :variable_files
           self.variables = config.fetch :variables
@@ -55,13 +56,16 @@ module Kitchen
         # @return [self]
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
         def run
+          logger.warn "Validating the Terraform configuration files..."
           command_executor.run(
             command: "validate " \
             "#{color_flag} " \
             "#{variables_flags} " \
             "#{variable_files_flags}",
             options: options,
-          )
+          ) do |standard_output:|
+            logger.warn "Finished validating the Terraform configuration files."
+          end
 
           self
         end
@@ -71,6 +75,7 @@ module Kitchen
         attr_accessor(
           :color,
           :command_executor,
+          :logger,
           :options,
           :variable_files,
           :variables,

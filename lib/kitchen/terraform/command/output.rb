@@ -47,21 +47,26 @@ module Kitchen
         # @yieldparam output [Hash] the standard output of the command.
         # @return [self]
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
-        def run(&block)
-          run_command_executor(&block)
+        def run
+          logger.warn "Reading the output variables from the Terraform state..."
+          run_command_executor do |outputs:|
+            logger.warn "Finished reading the output variables from the Terraform state."
+            
+            yield outputs: outputs
+          end
+
+          self
         rescue ::JSON::ParserError => error
           rescue_invalid_json error: error
         rescue ::Kitchen::TransientFailure => error
-          rescue_no_outputs_defined error: error, &block
+          rescue_no_outputs_defined error: error do |outputs:|
+            yield outputs: outputs
+          end
         end
 
         private
 
-        attr_accessor(
-          :command_executor,
-          :logger,
-          :options
-        )
+        attr_accessor :command_executor, :logger, :options
 
         def rescue_invalid_json(error:)
           logger.error "Parsing Terraform output as JSON experienced an error:\n\t#{error.message}"

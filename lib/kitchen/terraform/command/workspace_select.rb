@@ -22,6 +22,8 @@ module Kitchen
       # The workspace is selected by running a command like the following example:
       #   terraform workspace select <name>
       class WorkspaceSelect
+        # #initialize prepares an instance of the class.
+        #
         # @param config [Hash] the configuration of the driver.
         # @param logger [Kitchen::Logger] a logger to log messages.
         # @option config [String] :client the pathname of the Terraform client.
@@ -34,6 +36,7 @@ module Kitchen
             client: config.fetch(:client),
             logger: logger,
           )
+          self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
         end
 
@@ -43,17 +46,17 @@ module Kitchen
         # @return [self]
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
         def run(workspace_name:)
-          command_executor.run(
-            command: "workspace select #{workspace_name}",
-            options: options,
-          )
+          logger.warn "Selecting the #{workspace_name} Terraform workspace..."
+          command_executor.run command: "workspace select #{workspace_name}", options: options do |standard_output:|
+            logger.warn "Finished selecting the #{workspace_name} Terraform workspace."
+          end
 
           self
         end
 
         private
 
-        attr_accessor :command_executor, :options
+        attr_accessor :command_executor, :logger, :options
       end
     end
   end

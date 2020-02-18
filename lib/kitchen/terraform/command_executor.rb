@@ -21,6 +21,8 @@ module Kitchen
   module Terraform
     # CommandExecutor is the class of objects which execute Terraform CLI commands.
     class CommandExecutor
+      # #initialize prepares an instance of the class.
+      #
       # @param client [String] the pathname of the Terraform client.
       # @param logger [Kitchen::Logger] a logger for logging messages.
       # @return [Kitchen::Terraform::CommandExecutor]
@@ -38,13 +40,13 @@ module Kitchen
       # @yieldparam standard_output [String] the standard output of the command.
       # @raise [Kitchen::TransientFailure] if running the command results in failure.
       # @return [self]
-      def run(command:, options:, &block)
-        block ||= ::Proc.new do |standard_output:|
-        end
-
-        ::Kitchen::Terraform::ShellOut.new(client: client, command: command, logger: logger, options: options)
-          .run do |standard_output:|
-          block.call standard_output: standard_output
+      def run(command:, options:)
+        ::Kitchen::Terraform::ShellOut.new(
+          command: "#{client} #{command}",
+          logger: logger,
+          options: options,
+        ).run do |standard_output:|
+          yield standard_output: standard_output
         end
 
         self

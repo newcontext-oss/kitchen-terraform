@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "etc"
 require "kitchen"
 require "mixlib/shellout"
 
@@ -24,29 +25,30 @@ module Kitchen
     # TF_IN_AUTOMATION environment variable as specified by the
     # {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
     class ShellOut
-      # @param client [String] the pathname of the Terraform client.
+      # #initialize prepares an instance of the class.
+      #
       # @param command [String] the command to run.
       # @param logger [Kitchen::Logger] a logger for logging messages.
       # @return [Kitchen::Terraform::CommandExecutor]
-      def initialize(client:, command:, logger:, options:)
+      def initialize(command:, logger:, options:)
+        self.command = command
+        self.logger = logger
         self.shell_out = ::Mixlib::ShellOut.new(
-          "#{client} #{command}",
+          command,
           options.merge(
-            environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" }, live_stream: logger,
+            environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" },
+            live_stream: logger,
           )
         )
-        self.command = shell_out.command
-        self.logger = logger
       end
 
-      # #run executes a client command.
+      # #run executes a command.
       #
       # @yieldparam standard_output [String] the standard output of the command.
       # @raise [Kitchen::TransientFailure] if running the command results in failure.
       # @return [self]
       def run
-        execute
-        handle_shell_out_error if shell_out.error?
+        execute_workflow
 
         yield standard_output: shell_out.stdout
 
@@ -57,39 +59,54 @@ module Kitchen
 
       attr_accessor :command, :logger, :shell_out
 
-      def execute
-        logger.warn "Running command `#{command}` in directory #{shell_out.cwd} with a timeout of #{shell_out.timeout} seconds."
+      def error_access_message
+        "Running the command `#{command}` failed due to unauthorized access to the Terraform client. Authorize the " \
+        "#{::Etc.getlogin} user to execute the client to avoid this error."
+      end
+
+      def error_no_entry_message
+        "Running the command `#{command}` failed due to a nonexistent Terraform client. Set `driver.client` to the " \
+        "pathname of a client to avoid this error."
+      end
+
+      def error_non_zero_message
+        "Running the command `#{command}` failed due to a non-zero exit code of #{shell_out.exitstatus}."
+      end
+
+      def error_timeout_message
+        "Running the command `#{command}` failed due to an excessive execution time. Increase " \
+        "`driver.command_timeout` to avoid this error."
+      end
+
+      def execute_workflow
+        logger.debug run_start_message
+        run_command
+        logger.debug run_finish_message
+        verify_exit_code
+      end
+
+      def run_command
         shell_out.run_command
       rescue ::Errno::EACCES
-        rescue_no_access
+        raise ::Kitchen::TransientFailure, error_access_message
       rescue ::Errno::ENOENT
-        rescue_no_entry
+        raise ::Kitchen::TransientFailure, error_no_entry_message
       rescue ::Mixlib::ShellOut::CommandTimeout
-        rescue_timeout
+        raise ::Kitchen::TransientFailure, error_timeout_message
       end
 
-      def handle_shell_out_error
-        logger.warn "Running command `#{command}` returned a non-zero exit code #{shell_out.exitstatus}."
-
-        raise ::Kitchen::TransientFailure, "Failed running command `#{command}`:\n\t#{shell_out.stderr}"
+      def run_finish_message
+        "Finished running command `#{command}` in #{shell_out.execution_time} seconds."
       end
 
-      def rescue_no_access
-        logger.error "Running command `#{command}` experienced an error due to unauthorized access to a file or directory."
-
-        raise ::Kitchen::TransientFailure, "Failed running command `#{command}`."
+      def run_start_message
+        "Running command `#{command}` in directory #{shell_out.cwd} with a timeout of #{shell_out.timeout} seconds..."
       end
 
-      def rescue_no_entry
-        logger.error "Running command `#{command}` experienced an error due to a nonexistent file or directory."
-
-        raise ::Kitchen::TransientFailure, "Failed running command `#{command}`."
-      end
-
-      def rescue_timeout
-        logger.error "Running command `#{command}` experienced an error due to the execution time exceeding the timeout."
-
-        raise ::Kitchen::TransientFailure, "Failed running command `#{command}`."
+      def verify_exit_code
+        shell_out.error!
+      rescue ::Mixlib::ShellOut::ShellCommandFailed
+        raise ::Kitchen::TransientFailure, error_non_zero_message
       end
     end
   end

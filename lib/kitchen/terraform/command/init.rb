@@ -63,6 +63,7 @@ module Kitchen
           self.color = config.fetch :color
           self.lock = config.fetch :lock
           self.lock_timeout = config.fetch :lock_timeout
+          self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
           self.plugin_directory = config.fetch :plugin_directory
           self.upgrade_during_init = config.fetch :upgrade_during_init
@@ -73,6 +74,7 @@ module Kitchen
         # @return [self]
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
         def run
+          logger.warn "Initializing the Terraform working directory..."
           command_executor.run(
             command: "init " \
             "-input=false " \
@@ -88,7 +90,9 @@ module Kitchen
             "#{plugin_directory_flag} " \
             "-verify-plugins=true",
             options: options,
-          )
+          ) do |standard_output:|
+            logger.warn "Finished initializing the Terraform working directory."
+          end
 
           self
         end
@@ -101,6 +105,7 @@ module Kitchen
           :command_executor,
           :lock,
           :lock_timeout,
+          :logger,
           :options,
           :plugin_directory,
           :upgrade_during_init,

@@ -37,6 +37,7 @@ module Kitchen
             client: config.fetch(:client),
             logger: logger,
           )
+          self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
         end
 
@@ -45,19 +46,17 @@ module Kitchen
         # @return [self]
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
         def run
-          command_executor.run(
-            command: "get -update",
-            options: options,
-          )
+          logger.warn "Downloading the modules needed for the Terraform configuration..."
+          command_executor.run command: "get -update", options: options do |standard_output:|
+            logger.warn "Finished downloading the modules needed for the Terraform configuration."
+          end
+
           self
         end
 
         private
 
-        attr_accessor(
-          :command_executor,
-          :options
-        )
+        attr_accessor :command_executor, :logger, :options
       end
     end
   end

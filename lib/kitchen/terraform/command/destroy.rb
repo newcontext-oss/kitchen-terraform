@@ -58,6 +58,7 @@ module Kitchen
           self.color = config.fetch :color
           self.lock = config.fetch :lock
           self.lock_timeout = config.fetch :lock_timeout
+          self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
           self.parallelism = config.fetch :parallelism
           self.variable_files = config.fetch :variable_files
@@ -69,6 +70,7 @@ module Kitchen
         # @return [self]
         # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
         def run
+          logger.warn "Destroying the Terraform-managed infrastructure..."
           command_executor.run(
             command: "destroy " \
             "-auto-approve " \
@@ -81,7 +83,9 @@ module Kitchen
             "#{variables_flags} " \
             "#{variable_files_flags}",
             options: options,
-          )
+          ) do |standard_output:|
+            logger.warn "Finished destroying the Terraform-managed infrastructure."
+          end
 
           self
         end
@@ -93,6 +97,7 @@ module Kitchen
           :command_executor,
           :lock,
           :lock_timeout,
+          :logger,
           :options,
           :parallelism,
           :variable_files,

@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
 require "kitchen/terraform/command_executor"
 require "rubygems"
 
@@ -32,14 +31,17 @@ module Kitchen
         # @return [self]
         # @raise [Kitchen::TransientFailure] if running the command results in failure.
         def run(options:)
-          command_executor.run(
-            command: "version",
-            options: options,
-          ) do |standard_output:|
+          logger.warn "Reading the Terraform client version..."
+          command_executor.run command: "version", options: options do |standard_output:|
+            logger.warn "Finished reading the Terraform client version."
             yield version: ::Gem::Version.new(standard_output.slice(/Terraform v(\d+\.\d+\.\d+)/, 1))
           end
+
+          self
         end
 
+        # #initialize prepares an instance of the class.
+        #
         # @param client [String] the pathname of the Terraform client.
         # @param logger [Kitchen::Logger] a logger to log messages.
         # @return [Kitchen::Terraform::Command::Version]
