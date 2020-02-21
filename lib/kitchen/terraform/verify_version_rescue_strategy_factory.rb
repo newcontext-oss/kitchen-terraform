@@ -29,9 +29,9 @@ module Kitchen
       #   Kitchen::Terraform::VerifyVersionRescueStrategy::Permissive]
       def build(logger:)
         if verify_version
-          return ::Kitchen::Terraform::VerifyVersionRescueStrategy::Strict.new logger: logger
+          ::Kitchen::Terraform::VerifyVersionRescueStrategy::Strict.new
         else
-          return ::Kitchen::Terraform::VerifyVersionRescueStrategy::Permissive.new logger: logger
+          ::Kitchen::Terraform::VerifyVersionRescueStrategy::Permissive.new logger: logger
         end
       end
 

@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/command/version"
+require "kitchen/terraform/unsupported_client_version_error"
 require "kitchen/terraform/verify_version"
 require "rubygems"
 
@@ -69,10 +70,10 @@ require "rubygems"
       end
 
       context "when driver.verify_version is true" do
-        specify "should raise an error because the action failed" do
+        specify "should raise an error" do
           expect do
             subject.call
-          end.to raise_error ::Kitchen::ActionFailed
+          end.to raise_error ::Kitchen::Terraform::UnsupportedClientVersionError
         end
       end
 

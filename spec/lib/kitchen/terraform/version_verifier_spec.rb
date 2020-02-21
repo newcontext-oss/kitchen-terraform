@@ -20,11 +20,7 @@ require "rubygems"
 
 ::RSpec.describe ::Kitchen::Terraform::VersionVerifier do
   subject do
-    described_class.new logger: logger, version_requirement: version_requirement
-  end
-
-  let :logger do
-    ::Kitchen::Logger.new
+    described_class.new version_requirement: version_requirement
   end
 
   let :version_requirement do

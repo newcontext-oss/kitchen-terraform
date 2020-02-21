@@ -27,24 +27,24 @@ module Kitchen
       # @raise [Kitchen::UserError] if the version is unsupported.
       # @return [self]
       def verify(version:)
-        ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(version_requirement: version_requirement).build(
-          version: version,
-        ).call
+        version_verifier_strategy_factory.build(version: version).call
 
         self
       end
 
-      # @param logger [Kitchen::Logger] a logger to log messages.
+      # #initialize prepares an instance of the class.
+      #
       # @param version_requirement [Gem::Requirement] the requirement for version support.
       # @return [Kitchen::Terraform::VersionVerifier]
-      def initialize(logger:, version_requirement:)
-        self.logger = logger
-        self.version_requirement = version_requirement
+      def initialize(version_requirement:)
+        self.version_verifier_strategy_factory = ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(
+          version_requirement: version_requirement
+        )
       end
 
       private
 
-      attr_accessor :logger, :version_requirement
+      attr_accessor :version_verifier_strategy_factory
     end
   end
 end

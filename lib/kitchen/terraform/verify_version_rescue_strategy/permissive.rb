@@ -26,10 +26,7 @@ module Kitchen
         #
         # @return [self]
         def call
-          logger.warn(
-            "Verifying the Terraform client version failed. Set `driver.verify_version: true` to upgrade this " \
-            "warning to an error."
-          )
+          logger.warn message
 
           self
         end
@@ -40,11 +37,13 @@ module Kitchen
         # @return [Kitchen::Terraform::VerifyVersionRescueStrategy::Permissive]
         def initialize(logger:)
           self.logger = logger
+          self.message = "Verifying the Terraform client version failed. Set `driver.verify_version: true` to " \
+                         "upgrade this warning to an error."
         end
 
         private
 
-        attr_accessor :logger
+        attr_accessor :logger, :message
       end
     end
   end
