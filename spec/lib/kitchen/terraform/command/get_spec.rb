@@ -79,7 +79,9 @@ require "kitchen/terraform/command_executor"
 
     context "when running the command results in success" do
       before do
-        allow(command_executor).to receive(:run).with command: "get -update", options: options
+        allow(command_executor).to receive(:run).with(command: "get -update", options: options).and_yield(
+          standard_output: "stdout",
+        )
       end
 
       specify "should not raise an error" do

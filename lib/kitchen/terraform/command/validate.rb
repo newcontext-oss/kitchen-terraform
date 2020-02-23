@@ -15,6 +15,9 @@
 # limitations under the License.
 
 require "kitchen/terraform/command_executor"
+require "kitchen/terraform/command_flag/color"
+require "kitchen/terraform/command_flag/var_file"
+require "kitchen/terraform/command_flag/var"
 require "shellwords"
 
 module Kitchen
@@ -44,11 +47,11 @@ module Kitchen
             client: config.fetch(:client),
             logger: logger,
           )
-          self.color = config.fetch :color
+          self.color = ::Kitchen::Terraform::CommandFlag::Color.new enabled: config.fetch(:color)
           self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
-          self.variable_files = config.fetch :variable_files
-          self.variables = config.fetch :variables
+          self.var_file = ::Kitchen::Terraform::CommandFlag::VarFile.new pathnames: config.fetch(:variable_files)
+          self.var = ::Kitchen::Terraform::CommandFlag::Var.new arguments: config.fetch(:variables)
         end
 
         # #run executes the command.
@@ -59,9 +62,9 @@ module Kitchen
           logger.warn "Validating the Terraform configuration files..."
           command_executor.run(
             command: "validate " \
-            "#{color_flag} " \
-            "#{variables_flags} " \
-            "#{variable_files_flags}",
+            "#{color} " \
+            "#{var} " \
+            "#{var_file}",
             options: options,
           ) do |standard_output:|
             logger.warn "Finished validating the Terraform configuration files."
@@ -77,29 +80,9 @@ module Kitchen
           :command_executor,
           :logger,
           :options,
-          :variable_files,
-          :variables,
+          :var_file,
+          :var,
         )
-
-        def color_flag
-          if color
-            ""
-          else
-            "-no-color"
-          end
-        end
-
-        def variable_files_flags
-          variable_files.map do |path|
-            "-var-file=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit path}\""
-          end.join " "
-        end
-
-        def variables_flags
-          variables.map do |key, value|
-            "-var=\"#{key}=#{value}\""
-          end.join " "
-        end
       end
     end
   end

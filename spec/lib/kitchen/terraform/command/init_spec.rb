@@ -109,7 +109,7 @@ require "kitchen/terraform/command_executor"
           "-plugin-dir=\"/plugins\" " \
           "-verify-plugins=true",
           options: options,
-        )
+        ).and_yield standard_output: "stdout"
       end
 
       specify "should not raise an error" do

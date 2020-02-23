@@ -15,7 +15,11 @@
 # limitations under the License.
 
 require "kitchen/terraform/command_executor"
-require "shellwords"
+require "kitchen/terraform/command_flag/backend_config"
+require "kitchen/terraform/command_flag/color"
+require "kitchen/terraform/command_flag/lock_timeout"
+require "kitchen/terraform/command_flag/plugin_dir"
+require "kitchen/terraform/command_flag/upgrade"
 
 module Kitchen
   module Terraform
@@ -29,7 +33,7 @@ module Kitchen
       #     [-upgrade] \
       #     -force-copy \
       #     -backend=true \
-      #     [-backend-config=<backend_configurations.first> ...] \
+      #     [-backend-config=<backend_configurations[0]> ...] \
       #     -get=true \
       #     -get-plugins=true \
       #     [-plugin-dir=<plugin_directory>] \
@@ -59,14 +63,18 @@ module Kitchen
             client: config.fetch(:client),
             logger: logger,
           )
-          self.backend_configurations = config.fetch :backend_configurations
-          self.color = config.fetch :color
+          self.backend_config = ::Kitchen::Terraform::CommandFlag::BackendConfig.new arguments: config.fetch(
+            :backend_configurations
+          )
+          self.color = ::Kitchen::Terraform::CommandFlag::Color.new enabled: config.fetch(:color)
           self.lock = config.fetch :lock
-          self.lock_timeout = config.fetch :lock_timeout
+          self.lock_timeout = ::Kitchen::Terraform::CommandFlag::LockTimeout.new duration: config.fetch(:lock_timeout)
           self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
-          self.plugin_directory = config.fetch :plugin_directory
-          self.upgrade_during_init = config.fetch :upgrade_during_init
+          self.plugin_dir = ::Kitchen::Terraform::CommandFlag::PluginDir.new pathname: config.fetch(
+            :plugin_directory
+          )
+          self.upgrade = ::Kitchen::Terraform::CommandFlag::Upgrade.new enabled: config.fetch(:upgrade_during_init)
         end
 
         # #run executes the command.
@@ -79,15 +87,15 @@ module Kitchen
             command: "init " \
             "-input=false " \
             "-lock=#{lock} " \
-            "#{lock_timeout_flag} " \
-            "#{color_flag} " \
-            "#{upgrade_flag} " \
+            "#{lock_timeout} " \
+            "#{color} " \
+            "#{upgrade} " \
             "-force-copy " \
             "-backend=true " \
-            "#{backend_configurations_flags} " \
+            "#{backend_config} " \
             "-get=true " \
             "-get-plugins=true " \
-            "#{plugin_directory_flag} " \
+            "#{plugin_dir} " \
             "-verify-plugins=true",
             options: options,
           ) do |standard_output:|
@@ -100,50 +108,16 @@ module Kitchen
         private
 
         attr_accessor(
-          :backend_configurations,
+          :backend_config,
           :color,
           :command_executor,
           :lock,
           :lock_timeout,
           :logger,
           :options,
-          :plugin_directory,
-          :upgrade_during_init,
+          :plugin_dir,
+          :upgrade,
         )
-
-        def backend_configurations_flags
-          backend_configurations.map do |key, value|
-            "-backend-config=\"#{key}=#{value}\""
-          end.join " "
-        end
-
-        def color_flag
-          if color
-            ""
-          else
-            "-no-color"
-          end
-        end
-
-        def lock_timeout_flag
-          "-lock-timeout=#{lock_timeout}s"
-        end
-
-        def plugin_directory_flag
-          if plugin_directory
-            "-plugin-dir=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit plugin_directory}\""
-          else
-            ""
-          end
-        end
-
-        def upgrade_flag
-          if upgrade_during_init
-            "-upgrade"
-          else
-            ""
-          end
-        end
       end
     end
   end

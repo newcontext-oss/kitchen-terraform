@@ -85,7 +85,7 @@ require "kitchen/terraform/command_executor"
         allow(command_executor).to receive(:run).with(
           command: "workspace new test",
           options: options,
-        )
+        ).and_yield standard_output: "stdout"
       end
 
       specify "should not raise an error" do

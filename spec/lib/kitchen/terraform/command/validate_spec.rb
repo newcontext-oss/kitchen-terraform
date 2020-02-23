@@ -95,7 +95,7 @@ require "kitchen/terraform/command_executor"
           "-var-file=\"/one.tfvars\" " \
           "-var-file=\"/two.tfvars\"",
           options: options,
-        )
+        ).and_yield standard_output: "stdout"
       end
 
       specify "should not raise an error" do

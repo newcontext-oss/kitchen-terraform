@@ -15,6 +15,10 @@
 # limitations under the License.
 
 require "kitchen/terraform/command_executor"
+require "kitchen/terraform/command_flag/color"
+require "kitchen/terraform/command_flag/lock_timeout"
+require "kitchen/terraform/command_flag/var_file"
+require "kitchen/terraform/command_flag/var"
 require "shellwords"
 
 module Kitchen
@@ -55,14 +59,14 @@ module Kitchen
             client: config.fetch(:client),
             logger: logger,
           )
-          self.color = config.fetch :color
+          self.color = ::Kitchen::Terraform::CommandFlag::Color.new enabled: config.fetch(:color)
           self.lock = config.fetch :lock
-          self.lock_timeout = config.fetch :lock_timeout
+          self.lock_timeout = ::Kitchen::Terraform::CommandFlag::LockTimeout.new duration: config.fetch(:lock_timeout)
           self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
           self.parallelism = config.fetch :parallelism
-          self.variable_files = config.fetch :variable_files
-          self.variables = config.fetch :variables
+          self.var_file = ::Kitchen::Terraform::CommandFlag::VarFile.new pathnames: config.fetch(:variable_files)
+          self.var = ::Kitchen::Terraform::CommandFlag::Var.new arguments: config.fetch(:variables)
         end
 
         # #run executes the command.
@@ -75,13 +79,13 @@ module Kitchen
             command: "destroy " \
             "-auto-approve " \
             "-lock=#{lock} " \
-            "#{lock_timeout_flag} " \
+            "#{lock_timeout} " \
             "-input=false " \
-            "#{color_flag} " \
+            "#{color} " \
             "-parallelism=#{parallelism} " \
             "-refresh=true " \
-            "#{variables_flags} " \
-            "#{variable_files_flags}",
+            "#{var} " \
+            "#{var_file}",
             options: options,
           ) do |standard_output:|
             logger.warn "Finished destroying the Terraform-managed infrastructure."
@@ -100,33 +104,9 @@ module Kitchen
           :logger,
           :options,
           :parallelism,
-          :variable_files,
-          :variables,
+          :var_file,
+          :var,
         )
-
-        def color_flag
-          if color
-            ""
-          else
-            "-no-color"
-          end
-        end
-
-        def lock_timeout_flag
-          "-lock-timeout=#{lock_timeout}s"
-        end
-
-        def variable_files_flags
-          variable_files.map do |path|
-            "-var-file=\"#{::Shellwords.shelljoin ::Shellwords.shellsplit path}\""
-          end.join " "
-        end
-
-        def variables_flags
-          variables.map do |key, value|
-            "-var=\"#{key}=#{value}\""
-          end.join " "
-        end
       end
     end
   end
