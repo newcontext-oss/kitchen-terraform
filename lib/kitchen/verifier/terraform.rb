@@ -150,9 +150,9 @@ module Kitchen
       end
 
       def load_outputs(state:)
-        logger.banner "Starting retrieval of Terraform outputs from the Kitchen instance state."
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).load outputs: outputs, state: state
-        logger.banner "Finished retrieval of Terraform outputs from the Kitchen instance state."
+        logger.warn "Reading the Terraform output variables from the Kitchen state..."
+        ::Kitchen::Terraform::OutputsManager.new.load outputs: outputs, state: state
+        logger.warn "Finished reading the Terraform output varibales from the Kitchen state."
       end
 
       def profile_locations

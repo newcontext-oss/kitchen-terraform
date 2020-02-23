@@ -119,7 +119,7 @@ require "support/kitchen/terraform/configurable_examples"
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+        ::Kitchen::Terraform::OutputsManager.new.save(
           outputs: { hosts: { amount: "host" }, output_name: { amount: "output value" } },
           state: kitchen_instance_state,
         )
@@ -138,7 +138,7 @@ require "support/kitchen/terraform/configurable_examples"
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+        ::Kitchen::Terraform::OutputsManager.new.save(
           outputs: { hosts: { value: "host" } },
           state: kitchen_instance_state,
         )
@@ -157,7 +157,7 @@ require "support/kitchen/terraform/configurable_examples"
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+        ::Kitchen::Terraform::OutputsManager.new.save(
           outputs: { hosts: { value: "host" }, output_name: { amount: "output value" } },
           state: kitchen_instance_state,
         )
@@ -176,7 +176,7 @@ require "support/kitchen/terraform/configurable_examples"
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+        ::Kitchen::Terraform::OutputsManager.new.save(
           outputs: { output_name: { value: "output value" } },
           state: kitchen_instance_state,
         )
@@ -262,7 +262,7 @@ require "support/kitchen/terraform/configurable_examples"
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+        ::Kitchen::Terraform::OutputsManager.new.save(
           outputs: { hosts: { value: "host" }, output_name: { value: "output value" } },
           state: kitchen_instance_state,
         )

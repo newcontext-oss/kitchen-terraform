@@ -89,7 +89,7 @@ module Kitchen
           self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: config.to_hash.merge(
             workspace_name: workspace_name,
           )
-          self.outputs_manager = ::Kitchen::Terraform::OutputsManager.new logger: logger
+          self.outputs_manager = ::Kitchen::Terraform::OutputsManager.new
           self.outputs_parser = ::Kitchen::Terraform::OutputsParser.new
           self.outputs_reader = ::Kitchen::Terraform::OutputsReader.new command_executor: command_executor
           self.variables = config.fetch :variables
