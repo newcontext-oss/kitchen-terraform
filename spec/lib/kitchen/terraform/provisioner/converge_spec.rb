@@ -15,10 +15,12 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/apply"
 require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/command/validate"
+require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/outputs_manager"
@@ -37,32 +39,38 @@ require "rubygems"
     )
   end
 
-  let :command_apply do
-    instance_double ::Kitchen::Terraform::Command::Apply
+  let :client do
+    "/client"
   end
 
-  let :command_get do
-    instance_double ::Kitchen::Terraform::Command::Get
+  let :command_executor do
+    instance_double ::Kitchen::Terraform::CommandExecutor
   end
 
-  let :command_output do
-    instance_double ::Kitchen::Terraform::Command::Output
-  end
-
-  let :command_validate do
-    instance_double ::Kitchen::Terraform::Command::Validate
-  end
-
-  let :command_workspace_select do
-    instance_double ::Kitchen::Terraform::Command::WorkspaceSelect
+  let :command_timeout do
+    123
   end
 
   let :config do
-    { root_module_directory: root_module_directory, variables: { variable_name: "variable_value" } }
+    {
+      client: client,
+      color: true,
+      command_timeout: command_timeout,
+      lock: true,
+      lock_timeout: 123,
+      parallelism: 456,
+      root_module_directory: root_module_directory,
+      variable_files: [],
+      variables: { variable_name: "variable_value" },
+    }
   end
 
   let :logger do
     ::Kitchen::Logger.new
+  end
+
+  let :options do
+    { cwd: root_module_directory, timeout: command_timeout }
   end
 
   let :root_module_directory do
@@ -82,22 +90,12 @@ require "rubygems"
   end
 
   before do
-    allow(::Kitchen::Terraform::Command::Apply).to(
-      receive(:new).with(config: config, logger: logger).and_return(command_apply)
-    )
-    allow(::Kitchen::Terraform::Command::Get).to(
-      receive(:new).with(config: config, logger: logger).and_return(command_get)
-    )
-    allow(::Kitchen::Terraform::Command::Output).to(
-      receive(:new).with(config: config, logger: kind_of(::Kitchen::Terraform::DebugLogger)).and_return(command_output)
-    )
-    allow(::Kitchen::Terraform::Command::Validate).to(
-      receive(:new).with(config: config, logger: logger).and_return(command_validate)
-    )
-    allow(::Kitchen::Terraform::Command::WorkspaceSelect).to(
-      receive(:new).with(config: config, logger: logger).and_return(command_workspace_select)
-    )
+    allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(
+      client: client,
+      logger: logger,
+    ).and_return command_executor
     allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
+      command_executor: command_executor,
       config: config,
       logger: logger,
       version_requirement: version_requirement,
@@ -110,12 +108,30 @@ require "rubygems"
         "should verify the version, select the workspace, update the modules, validate the configuration, update " \
         "the Terraform state, and retrieve the outputs"
       ) do
-        expect(verify_version).to receive(:call).ordered
-        expect(command_workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
-        expect(command_get).to receive(:run).ordered
-        expect(command_validate).to receive(:run).ordered
-        expect(command_apply).to receive(:run).ordered
-        expect(command_output).to receive(:run).ordered
+        expect(verify_version).to receive(:call).with(
+          command: kind_of(::Kitchen::Terraform::Command::Version),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::WorkspaceSelect),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Get),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Validate),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Apply),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Output),
+          options: options,
+        ).ordered
       end
 
       after do
@@ -137,12 +153,30 @@ require "rubygems"
       end
 
       before do
-        allow(verify_version).to receive :call
-        allow(command_workspace_select).to receive(:run).with workspace_name: workspace_name
-        allow(command_get).to receive :run
-        allow(command_validate).to receive :run
-        allow(command_apply).to receive :run
-        allow(command_output).to receive(:run).and_yield outputs: { output_name: { value: "output_value" } }
+        allow(verify_version).to receive(:call).with(
+          command: kind_of(::Kitchen::Terraform::Command::Version),
+          options: options,
+        )
+        allow(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::WorkspaceSelect),
+          options: options,
+        )
+        allow(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Get),
+          options: options,
+        )
+        allow(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Validate),
+          options: options,
+        )
+        allow(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Apply),
+          options: options,
+        )
+        allow(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Output),
+          options: options,
+        ).and_yield standard_output: "{ \"output_name\": { \"value\": \"output_value\" } }"
         subject.call state: state
         ::Kitchen::Terraform::VariablesManager.new(logger: logger).load variables: variables, state: state
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).load outputs: outputs, state: state
@@ -153,7 +187,7 @@ require "rubygems"
       end
 
       specify "should store outputs in the Kitchen instance state" do
-        expect(outputs).to eq output_name: { value: "output_value" }
+        expect(outputs).to eq "output_name" => { "value" => "output_value" }
       end
     end
   end

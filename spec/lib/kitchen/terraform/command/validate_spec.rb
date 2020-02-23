@@ -14,95 +14,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
 require "kitchen/terraform/command/validate"
-require "kitchen/terraform/command_executor"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::Validate do
-  describe "#run" do
-    subject do
-      described_class.new config: config, logger: logger
-    end
+  subject do
+    described_class.new config: config
+  end
 
-    let :client do
-      "/client"
-    end
+  let :config do
+    {
+      color: false,
+      variable_files: ["/one.tfvars", "/two.tfvars"],
+      variables: {
+        string: "\\\"A String\\\"",
+        map: "{ key = \\\"A Value\\\" }",
+        list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
+      },
+    }
+  end
 
-    let :command_timeout do
-      456
-    end
-
-    let :config do
-      {
-        client: client,
-        color: false,
-        command_timeout: command_timeout,
-        root_module_directory: root_module_directory,
-        variable_files: ["/one.tfvars", "/two.tfvars"],
-        variables: {
-          string: "\\\"A String\\\"",
-          map: "{ key = \\\"A Value\\\" }",
-          list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
-        },
-      }
-    end
-
-    let :command_executor do
-      instance_double ::Kitchen::Terraform::CommandExecutor
-    end
-
-    let :logger do
-      ::Kitchen::Logger.new
-    end
-
-    let :options do
-      { cwd: root_module_directory, timeout: command_timeout }
-    end
-
-    let :root_module_directory do
-      "/root-module"
-    end
-
-    before do
-      allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(client: client, logger: logger).and_return(
-        command_executor
+  describe "#to_s" do
+    specify "should return the command with flags" do
+      # -var and -var-file are included for compatibility with Terraform 0.11
+      expect(subject.to_s).to eq(
+        "validate " \
+        "-no-color " \
+        "-var=\"string=\\\"A String\\\"\" " \
+        "-var=\"map={ key = \\\"A Value\\\" }\" " \
+        "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+        "-var-file=\"/one.tfvars\" " \
+        "-var-file=\"/two.tfvars\""
       )
-    end
-
-    context "when running the command results in failure" do
-      before do
-        allow(command_executor).to receive(:run).with(command: /validate/, options: options).and_raise(
-          ::Kitchen::ShellOut::ShellCommandFailed, "shell command failed"
-        )
-      end
-
-      specify "should raise a transient failure error" do
-        expect do
-          subject.run
-        end.to raise_error ::Kitchen::TransientFailure
-      end
-    end
-
-    context "when running the command results in success" do
-      before do
-        allow(command_executor).to receive(:run).with(
-          # -var and -var-file are included for compatibility with Terraform 0.11
-          command: "validate " \
-          "-no-color " \
-          "-var=\"string=\\\"A String\\\"\" " \
-          "-var=\"map={ key = \\\"A Value\\\" }\" " \
-          "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-          "-var-file=\"/one.tfvars\" " \
-          "-var-file=\"/two.tfvars\"",
-          options: options,
-        ).and_yield standard_output: "stdout"
-      end
-
-      specify "should not raise an error" do
-        expect do
-          subject.run
-        end.not_to raise_error
-      end
     end
   end
 end

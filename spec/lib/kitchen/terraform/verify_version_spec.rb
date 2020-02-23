@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/unsupported_client_version_error"
 require "kitchen/terraform/verify_version"
@@ -22,57 +23,58 @@ require "rubygems"
 
 ::RSpec.describe ::Kitchen::Terraform::VerifyVersion do
   subject do
-    described_class.new config: config, logger: logger, version_requirement: version_requirement
+    described_class.new(
+      command_executor: command_executor,
+      config: config,
+      logger: logger,
+      version_requirement: version_requirement,
+    )
   end
 
-  let :client do
-    "/client"
+  let :command_executor do
+    instance_double ::Kitchen::Terraform::CommandExecutor
   end
 
   let :config do
-    { client: client, root_module_directory: root_module_directory, verify_version: verify_version }
+    { verify_version: verify_version }
   end
 
   let :logger do
     ::Kitchen::Logger.new
   end
 
-  let :root_module_directory do
-    "/root-module"
-  end
-
   let :verify_version do
     true
-  end
-
-  let :version_command do
-    instance_double ::Kitchen::Terraform::Command::Version
   end
 
   let :version_requirement do
     ::Gem::Requirement.new "~> 1.2.3"
   end
 
-  before do
-    allow(::Kitchen::Terraform::Command::Version).to receive(:new).with(client: client, logger: logger).and_return(
-      version_command
-    )
-  end
-
   describe "#call" do
+    let :options do
+      {}
+    end
+
+    let :version do
+      instance_double ::Kitchen::Terraform::Command::Version
+    end
+
     before do
-      allow(version_command).to receive(:run).with(options: { cwd: root_module_directory }).and_yield version: version
+      allow(command_executor).to receive(:run).with(command: version, options: options).and_yield(
+        standard_output: standard_output,
+      )
     end
 
     context "when the version is not supported" do
-      let :version do
-        ::Gem::Version.new "0.1.2"
+      let :standard_output do
+        "Terraform v0.1.2"
       end
 
       context "when driver.verify_version is true" do
         specify "should raise an error" do
           expect do
-            subject.call
+            subject.call command: version, options: options
           end.to raise_error ::Kitchen::Terraform::UnsupportedClientVersionError
         end
       end
@@ -84,20 +86,20 @@ require "rubygems"
 
         specify "should not raise an error" do
           expect do
-            subject.call
+            subject.call command: version, options: options
           end.not_to raise_error
         end
       end
     end
 
     context "when the version is supported" do
-      let :version do
-        ::Gem::Version.new "1.2.4"
+      let :standard_output do
+        "Terraform v1.2.4"
       end
 
       specify "should not raise an error" do
         expect do
-          subject.call
+          subject.call command: version, options: options
         end.not_to raise_error
       end
     end

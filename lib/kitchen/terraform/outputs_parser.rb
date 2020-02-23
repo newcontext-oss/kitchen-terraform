@@ -14,16 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "json"
+require "kitchen"
+
 module Kitchen
   module Terraform
-    module Command
-      # The outputs are retrieved by running a command like the following example:
-      #   terraform output -json
-      class Output
-        # @return [String] the command with flags.
-        def to_s
-          "output -json"
-        end
+    # OutputsParser parses Terraform output variables as JSON.
+    class OutputsParser
+      # #parse parses the outputs.
+      #
+      # @param json_outputs [String] the output variables as a string of JSON.
+      # @raise [Kitchen::TransientFailure] if parsing the output variables fails.
+      # @yieldparam parsed_outputs [Hash] the output variables as a hash.
+      # @return [self]
+      def parse(json_outputs:)
+        yield parsed_outputs: ::JSON.parse(json_outputs)
+
+        self
+      rescue ::JSON::ParserError
+        raise ::Kitchen::TransientFailure, "Parsing the Terraform output variables as JSON failed."
       end
     end
   end

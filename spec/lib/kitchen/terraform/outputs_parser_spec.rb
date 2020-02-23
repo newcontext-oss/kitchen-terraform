@@ -14,16 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command/version"
+require "kitchen"
+require "kitchen/terraform/outputs_parser"
 
-::RSpec.describe ::Kitchen::Terraform::Command::Version do
+::RSpec.describe ::Kitchen::Terraform::OutputsParser do
   subject do
     described_class.new
   end
 
-  describe "#to_s" do
-    specify "should return the command" do
-      expect(subject.to_s).to eq "version"
+  describe "#parse" do
+    context "when the outputs are not valid JSON" do
+      specify "should raise a transient failure error" do
+        expect do
+          subject.parse json_outputs: "invalid"
+        end.to raise_error ::Kitchen::TransientFailure
+      end
+    end
+
+    context "when the outputs are valid JSON" do
+      specify "should yield the parsed outputs" do
+        expect do |block|
+          subject.parse json_outputs: "{\"key\": \"value\"}", &block
+        end.to yield_with_args parsed_outputs: { "key" => "value" }
+      end
     end
   end
 end

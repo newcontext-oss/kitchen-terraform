@@ -14,8 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command_executor"
-
 module Kitchen
   module Terraform
     module Command
@@ -23,38 +21,20 @@ module Kitchen
       #   terraform workspace delete <name>
       class WorkspaceDelete
         # @param config [Hash] the configuration of the driver.
-        # @param logger [Kitchen::Logger] a logger to log messages.
-        # @option config [String] :client the pathname of the Terraform client.
-        # @option config [Integer] :command_timeout the the number of seconds to wait for the command to finish running.
-        # @option config [String] :root_module_directory the pathname of the directory which contains the root
-        #   Terraform module.
+        # @option config [String] :workspace_name the name of the Terraform workspace.
         # @return [Kitchen::Terraform::Command::WorkspaceDelete]
-        def initialize(config:, logger:)
-          self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: config.fetch(:client),
-            logger: logger,
-          )
-          self.logger = logger
-          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
+        def initialize(config:)
+          self.workspace_name = config.fetch :workspace_name
         end
 
-        # #run executes the command.
-        #
-        # @param workspace_name [String] the name of the Terraform workspace to delete.
-        # @return [self]
-        # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
-        def run(workspace_name:)
-          logger.warn "Deleting the #{workspace_name} Terraform workspace..."
-          command_executor.run command: "workspace delete #{workspace_name}", options: options do |standard_output:|
-            logger.warn "Finished deleting the #{workspace_name} Terraform workspace."
-          end
-
-          self
+        # @return [String] the command.
+        def to_s
+          "workspace delete #{workspace_name}"
         end
 
         private
 
-        attr_accessor :command_executor, :logger, :options
+        attr_accessor :workspace_name
       end
     end
   end

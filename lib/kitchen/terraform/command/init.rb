@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command_flag/backend_config"
 require "kitchen/terraform/command_flag/color"
 require "kitchen/terraform/command_flag/lock_timeout"
@@ -43,10 +42,8 @@ module Kitchen
         # #initialize prepares an instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
-        # @param logger [Kitchen::Logger] a logger to log messages.
         # @option config [Hash{String=>String}] :backend_configurations Terraform backend configuration arguments to
         #   complete a partial backend configuration.
-        # @option config [String] :client the pathname of the Terraform client.
         # @option config [Boolean] :color a toggle of colored output from the Terraform client.
         # @option config [Integer] :command_timeout the the number of seconds to wait for the command to finish running.
         # @option config [Boolean] :lock a toggle of locking for the Terraform state file.
@@ -58,51 +55,34 @@ module Kitchen
         #   Terraform module.
         # @option config [Boolean] :upgrade_during_init a toggle for upgrading modules and plugins.
         # @return [Kitchen::Terraform::Command::Init]
-        def initialize(config:, logger:)
-          self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: config.fetch(:client),
-            logger: logger,
-          )
+        def initialize(config:)
           self.backend_config = ::Kitchen::Terraform::CommandFlag::BackendConfig.new arguments: config.fetch(
             :backend_configurations
           )
           self.color = ::Kitchen::Terraform::CommandFlag::Color.new enabled: config.fetch(:color)
           self.lock = config.fetch :lock
           self.lock_timeout = ::Kitchen::Terraform::CommandFlag::LockTimeout.new duration: config.fetch(:lock_timeout)
-          self.logger = logger
-          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
           self.plugin_dir = ::Kitchen::Terraform::CommandFlag::PluginDir.new pathname: config.fetch(
             :plugin_directory
           )
           self.upgrade = ::Kitchen::Terraform::CommandFlag::Upgrade.new enabled: config.fetch(:upgrade_during_init)
         end
 
-        # #run executes the command.
-        #
-        # @return [self]
-        # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
-        def run
-          logger.warn "Initializing the Terraform working directory..."
-          command_executor.run(
-            command: "init " \
-            "-input=false " \
-            "-lock=#{lock} " \
-            "#{lock_timeout} " \
-            "#{color} " \
-            "#{upgrade} " \
-            "-force-copy " \
-            "-backend=true " \
-            "#{backend_config} " \
-            "-get=true " \
-            "-get-plugins=true " \
-            "#{plugin_dir} " \
-            "-verify-plugins=true",
-            options: options,
-          ) do |standard_output:|
-            logger.warn "Finished initializing the Terraform working directory."
-          end
-
-          self
+        # @return [String] the command with flags.
+        def to_s
+          "init " \
+          "-input=false " \
+          "-lock=#{lock} " \
+          "#{lock_timeout} " \
+          "#{color} " \
+          "#{upgrade} " \
+          "-force-copy " \
+          "-backend=true " \
+          "#{backend_config} " \
+          "-get=true " \
+          "-get-plugins=true " \
+          "#{plugin_dir} " \
+          "-verify-plugins=true"
         end
 
         private
@@ -110,10 +90,8 @@ module Kitchen
         attr_accessor(
           :backend_config,
           :color,
-          :command_executor,
           :lock,
           :lock_timeout,
-          :logger,
           :options,
           :plugin_dir,
           :upgrade,

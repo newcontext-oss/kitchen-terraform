@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command_executor"
 require "shellwords"
 
 module Kitchen
@@ -23,40 +22,10 @@ module Kitchen
       # The dependency modules are updated by running a command like the following example:
       #   terraform get -update <directory>
       class Get
-        # #initialize prepares an instance of the class.
-        #
-        # @param config [Hash] the configuration of the driver.
-        # @param logger [Kitchen::Logger] a logger to log messages.
-        # @option config [String] :client the pathname of the Terraform client.
-        # @option config [Integer] :command_timeout the the number of seconds to wait for the command to finish running.
-        # @option config [String] :root_module_directory the pathname of the directory which contains the root
-        #   Terraform module.
-        # @return [Kitchen::Terraform::Command::Get]
-        def initialize(config:, logger:)
-          self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: config.fetch(:client),
-            logger: logger,
-          )
-          self.logger = logger
-          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
+        # @return [String] the command with flags.
+        def to_s
+          "get -update"
         end
-
-        # #run executes the command.
-        #
-        # @return [self]
-        # @raise [Kitchen::TransientFailure] if the result of executing the command is a failure.
-        def run
-          logger.warn "Downloading the modules needed for the Terraform configuration..."
-          command_executor.run command: "get -update", options: options do |standard_output:|
-            logger.warn "Finished downloading the modules needed for the Terraform configuration."
-          end
-
-          self
-        end
-
-        private
-
-        attr_accessor :command_executor, :logger, :options
       end
     end
   end

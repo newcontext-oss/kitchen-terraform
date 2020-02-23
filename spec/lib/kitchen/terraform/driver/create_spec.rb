@@ -15,7 +15,9 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/init"
+require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/driver/create"
@@ -25,35 +27,44 @@ require "rubygems"
 ::RSpec.describe ::Kitchen::Terraform::Driver::Create do
   subject do
     described_class.new(
-      config: base_config,
+      config: config,
       logger: logger,
       workspace_name: workspace_name,
       version_requirement: version_requirement,
     )
   end
 
-  let :base_config do
-    { root_module_directory: root_module_directory }
+  let :config do
+    {
+      backend_configurations: {},
+      client: client,
+      color: true,
+      command_timeout: command_timeout,
+      lock: true,
+      lock_timeout: 123,
+      plugin_directory: "",
+      root_module_directory: root_module_directory,
+    }
   end
 
-  let :command_init do
-    instance_double ::Kitchen::Terraform::Command::Init
+  let :client do
+    "/client"
   end
 
-  let :command_workspace_new do
-    instance_double ::Kitchen::Terraform::Command::WorkspaceNew
+  let :command_executor do
+    instance_double ::Kitchen::Terraform::CommandExecutor
   end
 
-  let :command_workspace_select do
-    instance_double ::Kitchen::Terraform::Command::WorkspaceSelect
+  let :command_timeout do
+    123
   end
 
   let :logger do
     ::Kitchen::Logger.new
   end
 
-  let :modified_config do
-    { root_module_directory: root_module_directory, upgrade_during_init: true }
+  let :options do
+    { cwd: root_module_directory, timeout: command_timeout }
   end
 
   let :root_module_directory do
@@ -73,19 +84,12 @@ require "rubygems"
   end
 
   before do
-    allow(::Kitchen::Terraform::Command::Init).to receive(:new).with(
-      config: modified_config,
-      logger: logger,
-    ).and_return command_init
-    allow(::Kitchen::Terraform::Command::WorkspaceNew).to receive(:new).with(
-      config: base_config,
-      logger: logger,
-    ).and_return command_workspace_new
-    allow(::Kitchen::Terraform::Command::WorkspaceSelect).to(
-      receive(:new).with(config: base_config, logger: logger).and_return(command_workspace_select)
+    allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(client: client, logger: logger).and_return(
+      command_executor
     )
     allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
-      config: base_config,
+      command_executor: command_executor,
+      config: config,
       logger: logger,
       version_requirement: version_requirement,
     ).and_return verify_version
@@ -94,10 +98,22 @@ require "rubygems"
   describe "#call" do
     context "when the desired workspace does not exist" do
       specify "should verify the version, initialize the working directory, and create the workspace" do
-        expect(verify_version).to receive(:call).ordered
-        expect(command_init).to receive(:run).ordered
-        expect(command_workspace_new).to receive(:run).with(workspace_name: workspace_name).ordered
-        expect(command_workspace_select).not_to receive :run
+        expect(verify_version).to receive(:call).with(
+          command: kind_of(::Kitchen::Terraform::Command::Version),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Init),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::WorkspaceNew),
+          options: options,
+        ).ordered
+        expect(command_executor).not_to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::WorkspaceSelect),
+          options: options,
+        )
       end
 
       after do
@@ -107,16 +123,29 @@ require "rubygems"
 
     context "when the desired workspace does exist" do
       before do
-        allow(command_workspace_new).to receive(:run).with(workspace_name: workspace_name).and_raise(
-          ::Kitchen::TransientFailure, "workspace already exists"
-        )
+        allow(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::WorkspaceNew),
+          options: options,
+        ).and_raise ::Kitchen::TransientFailure, "workspace already exists"
       end
 
       specify "should verify the version, initialize the working directory, and select the workspace" do
-        expect(verify_version).to receive(:call).ordered
-        expect(command_init).to receive(:run).ordered
-        expect(command_workspace_new).to receive(:run).with(workspace_name: workspace_name).ordered
-        expect(command_workspace_select).to receive(:run).with(workspace_name: workspace_name).ordered
+        expect(verify_version).to receive(:call).with(
+          command: kind_of(::Kitchen::Terraform::Command::Version),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::Init),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::WorkspaceNew),
+          options: options,
+        ).ordered
+        expect(command_executor).to receive(:run).with(
+          command: kind_of(::Kitchen::Terraform::Command::WorkspaceSelect),
+          options: options,
+        ).ordered
       end
 
       after do
