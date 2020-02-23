@@ -14,12 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
 require "kitchen/terraform/variables_manager"
 
 ::RSpec.describe ::Kitchen::Terraform::VariablesManager do
   subject do
-    described_class.new logger: ::Kitchen::Logger.new
+    described_class.new
   end
 
   describe "#load" do

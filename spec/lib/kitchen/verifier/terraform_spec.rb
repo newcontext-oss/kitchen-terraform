@@ -115,7 +115,7 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform output mapped to the :hosts key is in an unexpected format" do
       before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+        ::Kitchen::Terraform::VariablesManager.new.save(
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
@@ -134,7 +134,7 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
       before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+        ::Kitchen::Terraform::VariablesManager.new.save(
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
@@ -153,7 +153,7 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when a Terraform output mapped to a :attrs_outputs key is in an unexpected format" do
       before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+        ::Kitchen::Terraform::VariablesManager.new.save(
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
@@ -172,7 +172,7 @@ require "support/kitchen/terraform/configurable_examples"
 
     context "when the Terraform outputs omits the value of the :hosts_output key" do
       before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+        ::Kitchen::Terraform::VariablesManager.new.save(
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )
@@ -258,7 +258,7 @@ require "support/kitchen/terraform/configurable_examples"
       end
 
       before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
+        ::Kitchen::Terraform::VariablesManager.new.save(
           variables: { variable: "input value" },
           state: kitchen_instance_state,
         )

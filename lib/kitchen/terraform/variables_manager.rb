@@ -20,6 +20,13 @@ module Kitchen
   module Terraform
     # VariablesManager manages Terraform variables in the Kitchen instance state.
     class VariablesManager
+      # #initialize prepares an instance of the class.
+      #
+      # @return [Kitchen::Terraform::VariablesManager]
+      def initialize
+        self.state_key = :kitchen_terraform_variables
+      end
+
       # #load reads the Terraform variables from the Kitchen instance state and writes them to a container.
       #
       # @param variables [::Hash] the container to which the Terraform variables will be written.
@@ -30,12 +37,12 @@ module Kitchen
 
         self
       rescue ::KeyError => error
-        logger.error(
-          "The '#{state_key}' key was not found in the Kitchen instance state. This error could indicate that the " \
-          "Kitchen-Terraform provisioner plugin was not used to converge the Kitchen instance."
+        raise(
+          ::Kitchen::ClientError,
+          "Reading the Terraform input variables from the Kitchen state failed due to the absence of the " \
+          "'#{state_key}' key. This error could indicate that the Kitchen-Terraform provisioner plugin was not used " \
+          "to converge the Kitchen instance."
         )
-
-        raise ::Kitchen::ClientError, "Failed retrieval of Terraform variables from the Kitchen instance state."
       end
 
       # #save reads the Terraform variables from a container and writes them to the Kitchen instance state.
@@ -49,16 +56,9 @@ module Kitchen
         self
       end
 
-      # @param logger [Kitchen::Logger] a logger to log messages.
-      # @return [Kitchen::Terraform::VariablesManager]
-      def initialize(logger:)
-        self.state_key = :kitchen_terraform_variables
-        self.logger = logger
-      end
-
       private
 
-      attr_accessor :logger, :state_key
+      attr_accessor :state_key
     end
   end
 end

@@ -93,7 +93,7 @@ module Kitchen
           self.outputs_parser = ::Kitchen::Terraform::OutputsParser.new
           self.outputs_reader = ::Kitchen::Terraform::OutputsReader.new command_executor: command_executor
           self.variables = config.fetch :variables
-          self.variables_manager = ::Kitchen::Terraform::VariablesManager.new logger: logger
+          self.variables_manager = ::Kitchen::Terraform::VariablesManager.new
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
             command_executor: command_executor,
             config: config,
@@ -173,7 +173,9 @@ module Kitchen
           read_and_parse_outputs do |parsed_outputs:|
             save_outputs parsed_outputs: parsed_outputs, state: state
           end
+          logger.warn "Writing the input variables to the Kitchen state..."
           variables_manager.save variables: variables, state: state
+          logger.warn "Finished writing the input variables to the Kitchen state."
         end
 
         def select_workspace

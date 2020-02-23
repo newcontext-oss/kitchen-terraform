@@ -178,7 +178,7 @@ require "rubygems"
           options: options,
         ).and_yield standard_output: "{ \"output_name\": { \"value\": \"output_value\" } }"
         subject.call state: state
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).load variables: variables, state: state
+        ::Kitchen::Terraform::VariablesManager.new.load variables: variables, state: state
         ::Kitchen::Terraform::OutputsManager.new(logger: logger).load outputs: outputs, state: state
       end
 

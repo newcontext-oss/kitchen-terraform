@@ -132,9 +132,9 @@ module Kitchen
       attr_accessor :action_failed, :outputs, :variables
 
       def load_variables(state:)
-        logger.banner "Starting retrieval of Terraform variables from the Kitchen instance state."
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).load variables: variables, state: state
-        logger.banner "Finished retrieval of Terraform variables from the Kitchen instance state."
+        logger.warn "Reading the Terraform input variables from the Kitchen state..."
+        ::Kitchen::Terraform::VariablesManager.new.load variables: variables, state: state
+        logger.warn "Finished reading the Terraform input variables from the Kitchen state."
       end
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
