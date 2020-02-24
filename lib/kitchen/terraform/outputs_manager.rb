@@ -33,7 +33,7 @@ module Kitchen
       # @param state [::Hash] the Kitchen instance state from which the Terraform outputs will be read.
       # @return [self]
       def load(outputs:, state:)
-        outputs.replace state.fetch @state_key
+        outputs.replace state.fetch state_key
 
         self
       rescue ::KeyError
@@ -51,7 +51,7 @@ module Kitchen
       # @param state [::Hash] the Kitchen instance state to which the Terraform outputs will be written.
       # @return [self]
       def save(outputs:, state:)
-        state.store @state_key, outputs.dup
+        state.store state_key, outputs.dup
 
         self
       end
