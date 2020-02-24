@@ -33,7 +33,7 @@ module Kitchen
           # A callback to define the configuration attribute which is invoked when this module is included in a plugin
           # class.
           #
-          # @param plugin_class [::Kitchen::Configurable] A plugin class.
+          # @param plugin_class [Kitchen::Configurable] A plugin class.
           # @return [void]
           def included(plugin_class)
             ::Kitchen::Terraform::FilePathConfigAttributeDefiner.new(
@@ -42,7 +42,7 @@ module Kitchen
             ).define plugin_class: plugin_class
           end
 
-          # @return [::Symbol] the symbol corresponding to the attribute.
+          # @return [Symbol] the symbol corresponding to the attribute.
           def to_sym
             :root_module_directory
           end
@@ -50,7 +50,7 @@ module Kitchen
 
         extend ::Kitchen::Terraform::ConfigAttributeCacher
 
-        # @return [::String] the working directory of the Test Kitchen process.
+        # @return [String] the working directory of the Test Kitchen process.
         def config_root_module_directory_default_value
           "."
         end

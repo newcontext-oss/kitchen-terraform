@@ -20,7 +20,7 @@ module Kitchen
       # The workspace is selected by running a command like the following example:
       #   terraform workspace select <name>
       class WorkspaceSelect
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
         # @option config [String] :workspace_name the name of the Terraform workspace.

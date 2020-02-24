@@ -23,8 +23,9 @@ module Kitchen
       class FailFast
         # #initialize prepares a new instance of the class.
         #
-        # @param logger [::Kitchen::Logger] a logger to log messages.
-        # @param systems [::Array<::Kitchen::Terraform::System>] a list of systems to be verified.
+        # @param logger [Kitchen::Logger] a logger to log messages.
+        # @param systems [Array<::Kitchen::Terraform::System>] a list of systems to be verified.
+        # @return [Kitchen::Terraform::SystemsVerifier::FailFast]
         def initialize(logger:, systems:)
           self.logger = logger
           self.systems = systems
@@ -32,9 +33,9 @@ module Kitchen
 
         # #verify verifies each system.
         #
-        # @param outputs [::Hash] a mapping of Terraform outputs.
-        # @param variables [::Hash] a mapping of Terraform variables.
-        # @raise [::Kitchen::TransientFailure] if verification of a system fails.
+        # @param outputs [Hash] a mapping of Terraform outputs.
+        # @param variables [Hash] a mapping of Terraform variables.
+        # @raise [Kitchen::TransientFailure] if verification of a system fails.
         # @return [self]
         def verify(outputs:, variables:)
           systems.each do |system|

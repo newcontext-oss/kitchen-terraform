@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
-
-# The namespace for configuration attribute predicates.
-module ::Kitchen::Terraform::ConfigPredicates
+module Kitchen
+  module Terraform
+    # The namespace for configuration attribute predicates.
+    module ConfigPredicates
+    end
+  end
 end

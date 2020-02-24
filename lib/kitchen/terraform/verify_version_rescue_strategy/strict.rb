@@ -30,7 +30,7 @@ module Kitchen
           raise ::Kitchen::Terraform::UnsupportedClientVersionError, message
         end
 
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @return [Kitchen::Terraform::VerifyVersionRescueStrategy::Permissive]
         def initialize

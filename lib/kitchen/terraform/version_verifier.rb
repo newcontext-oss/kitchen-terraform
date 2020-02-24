@@ -32,13 +32,13 @@ module Kitchen
         self
       end
 
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @param version_requirement [Gem::Requirement] the requirement for version support.
       # @return [Kitchen::Terraform::VersionVerifier]
       def initialize(version_requirement:)
         self.version_verifier_strategy_factory = ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(
-          version_requirement: version_requirement
+          version_requirement: version_requirement,
         )
       end
 

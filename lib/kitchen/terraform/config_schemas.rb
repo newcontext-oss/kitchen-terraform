@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
-
-# The namespace for configuration attribute schemas.
-module ::Kitchen::Terraform::ConfigSchemas
+module Kitchen
+  module Terraform
+    # The namespace for configuration attribute schemas.
+    module ConfigSchemas
+    end
+  end
 end

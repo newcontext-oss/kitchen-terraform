@@ -170,8 +170,8 @@ module Kitchen
 
       # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
       #
-      # @param _state [::Hash] the mutable instance and driver state.
-      # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+      # @param _state [Hash] the mutable instance and driver state.
+      # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def create(_state)
         create_strategy.call
@@ -182,8 +182,8 @@ module Kitchen
       # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
       # deleting the state, selecting the default workspace, and deleting the test workspace.
       #
-      # @param _state [::Hash] the mutable instance and driver state.
-      # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+      # @param _state [Hash] the mutable instance and driver state.
+      # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def destroy(_state)
         destroy_strategy.call
@@ -215,7 +215,7 @@ module Kitchen
         self
       end
 
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @param config [Hash] the driver configuration.
       # @return [Kitchen::Driver::Terraform]

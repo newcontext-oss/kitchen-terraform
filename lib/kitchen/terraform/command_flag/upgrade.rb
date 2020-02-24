@@ -19,9 +19,10 @@ module Kitchen
     module CommandFlag
       # Upgrade is the class of objects which control the upgrade of existing modules and plugins.
       class Upgrade
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param enabled [Boolean] a toggle to enable or disable the upgrade.
+        # @return [Kitchen::Terraform::CommandFlag::Upgrade]
         def initialize(enabled:)
           self.enabled = enabled
         end

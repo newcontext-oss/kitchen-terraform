@@ -20,9 +20,10 @@ module Kitchen
       # LockTimeout is the class of objects which control the duration in which to retry the acquisition of the state
       # lock.
       class LockTimeout
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param duration [Integer] the duration in seconds.
+        # @return [Kitchen::Terraform::CommandFlag::LockTimeout]
         def initialize(duration:)
           self.duration = duration
         end

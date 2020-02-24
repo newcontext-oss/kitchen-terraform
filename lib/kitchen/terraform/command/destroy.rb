@@ -36,7 +36,7 @@ module Kitchen
       #     [-var-file=<variable_files.first>...] \
       #     <root_module_directory>
       class Destroy
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
         # @option config [Boolean] :color a toggle of colored output from the Terraform client.

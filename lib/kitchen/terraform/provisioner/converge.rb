@@ -67,7 +67,7 @@ module Kitchen
           self
         end
 
-        # #initialize prepares a new instance.
+        # #initialize prepares a new instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
         # @param logger [Kitchen::Logger] a logger for logging messages.

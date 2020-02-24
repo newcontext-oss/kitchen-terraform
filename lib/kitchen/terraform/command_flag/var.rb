@@ -19,9 +19,10 @@ module Kitchen
     module CommandFlag
       # Var is the class of objects which control the configuration variables.
       class Var
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param arguments [Hash{String=>String}] the arguments.
+        # @return [Kitchen::Terraform::CommandFlag::Var]
         def initialize(arguments:)
           self.arguments = arguments
         end

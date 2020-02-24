@@ -14,31 +14,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
+module Kitchen
+  module Terraform
+    # Behaviour to cache configuration attribute lookups.
+    module ConfigAttributeCacher
+      # A callback to define an attribute lookup cache which is invoked when this module is extended by a
+      # configuration attribute.
+      #
+      # @param configuration_attribute [::Kitchen::Terraform::ConfigAttribute] a configuration attribute.
+      # @return [void]
+      def self.extended(configuration_attribute)
+        configuration_attribute.define_cache
+      end
 
-# Behaviour to cache configuration attribute lookups.
-module ::Kitchen::Terraform::ConfigAttributeCacher
-  # A callback to define an attribute lookup cache which is invoked when this module is extended by a
-  # configuration attribute.
-  #
-  # @param configuration_attribute [::Kitchen::Terraform::ConfigAttribute] a configuration attribute.
-  # @return [void]
-  def self.extended(configuration_attribute)
-    configuration_attribute.define_cache
-  end
-
-  # Defines an instance method named "config_<attribute_name>" which caches the value of the configuration attribute
-  # lookup using an equivalently named instance variable.
-  #
-  # @param attribute_name [::Symbol] the name of the attribute
-  def define_cache(attribute_name: to_sym)
-    define_method "config_#{attribute_name}" do
-      instance_variable_defined? "@config_#{attribute_name}" and
-        instance_variable_get "@config_#{attribute_name}" or
-        instance_variable_set(
-          "@config_#{attribute_name}",
-          config.fetch(attribute_name)
-        )
+      # Defines an instance method named "config_<attribute_name>" which caches the value of the configuration attribute
+      # lookup using an equivalently named instance variable.
+      #
+      # @param attribute_name [Symbol] the name of the attribute
+      def define_cache(attribute_name: to_sym)
+        define_method "config_#{attribute_name}" do
+          instance_variable_defined? "@config_#{attribute_name}" and
+            instance_variable_get "@config_#{attribute_name}" or
+            instance_variable_set(
+              "@config_#{attribute_name}",
+              config.fetch(attribute_name)
+            )
+        end
+      end
     end
   end
 end

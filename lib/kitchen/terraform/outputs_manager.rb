@@ -20,7 +20,7 @@ module Kitchen
   module Terraform
     # OutputsManager manages Terraform outputs in the Kitchen instance state.
     class OutputsManager
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @return [Kitchen::Terraform::OutputsManager]
       def initialize
@@ -29,8 +29,8 @@ module Kitchen
 
       # #load reads the Terraform outputs from the Kitchen instance state and writes them to a container.
       #
-      # @param outputs [::Hash] the container to which the Terraform outputs will be written.
-      # @param state [::Hash] the Kitchen instance state from which the Terraform outputs will be read.
+      # @param outputs [Hash] the container to which the Terraform outputs will be written.
+      # @param state [Hash] the Kitchen instance state from which the Terraform outputs will be read.
       # @return [self]
       def load(outputs:, state:)
         outputs.replace state.fetch state_key
@@ -47,8 +47,8 @@ module Kitchen
 
       # #save reads the Terraform outputs from container and writes them to the Kitchen instance state.
       #
-      # @param outputs [::Hash] the container from which the Terraform outputs will be read.
-      # @param state [::Hash] the Kitchen instance state to which the Terraform outputs will be written.
+      # @param outputs [Hash] the container from which the Terraform outputs will be read.
+      # @param state [Hash] the Kitchen instance state to which the Terraform outputs will be written.
       # @return [self]
       def save(outputs:, state:)
         state.store state_key, outputs.dup

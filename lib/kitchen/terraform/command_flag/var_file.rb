@@ -21,9 +21,10 @@ module Kitchen
     module CommandFlag
       # VarFile is the class of objects which control the locations of configuration variables files.
       class VarFile
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param pathnames [Array[String]] the pathnames.
+        # @return [Kitchen::Terraform::CommandFlag::VarFile]
         def initialize(pathnames:)
           self.pathnames = pathnames
         end

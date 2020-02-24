@@ -31,9 +31,10 @@ module Kitchen
         raise ::Kitchen::ActionFailed, message
       end
 
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @param logger [Kitchen::Logger] a logger to log messages.
+      # @return [Kitchen::Terraform::ActionFailed]
       def initialize(logger:)
         self.logger = logger
       end

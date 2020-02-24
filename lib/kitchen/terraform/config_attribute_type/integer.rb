@@ -25,9 +25,9 @@ require "kitchen/terraform/config_attribute_type"
 module ::Kitchen::Terraform::ConfigAttributeType::Integer
   # This method applies the configuration attribute behaviour to a module.
   #
-  # @param attribute [::Symbol] the symbol corresponding to the configuration attribute.
-  # @param config_attribute [::Module] a module.
-  # @param default_value [::Proc] a proc which returns the default value.
+  # @param attribute [Symbol] the symbol corresponding to the configuration attribute.
+  # @param config_attribute [Module] a module.
+  # @param default_value [Proc] a proc which returns the default value.
   # @return [self]
   def self.apply(attribute:, config_attribute:, default_value:)
     ::Kitchen::Terraform::ConfigAttribute

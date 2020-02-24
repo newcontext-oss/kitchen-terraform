@@ -25,7 +25,7 @@ module Kitchen
     # TF_IN_AUTOMATION environment variable as specified by the
     # {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
     class ShellOut
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @param command [String] the command to run.
       # @param logger [Kitchen::Logger] a logger for logging messages.

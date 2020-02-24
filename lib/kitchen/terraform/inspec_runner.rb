@@ -25,8 +25,8 @@ module Kitchen
         #
         # The logdev of the logger is extended to conform to interface expected by InSpec.
         #
-        # @param logger [::Kitchen::Logger] the logger to use.
-        # @return [::Kitchen::Logger] the logger.
+        # @param logger [Kitchen::Logger] the logger to use.
+        # @return [Kitchen::Logger] the logger.
         def logger=(logger)
           logger.logdev.define_singleton_method :filename do
             false
@@ -38,7 +38,7 @@ module Kitchen
 
       # #exec executes InSpec.
       #
-      # @raise [::Kitchen::ClientError] if the execution of InSpec fails.
+      # @raise [Kitchen::ClientError] if the execution of InSpec fails.
       # @return [self]
       def exec
         if 0 != exit_code
@@ -50,19 +50,24 @@ module Kitchen
         raise ::Kitchen::ClientError, error.message
       end
 
+      # #initialize prepares a new instance of the class.
+      #
+      # @param options [Hash] options to configure the runner.
+      # @param profile_locations [Array<String>] a list of pathnames of profiles.
+      # @return [Kitchen::Terraform::InSpecRunner]
+      def initialize(options:, profile_locations:)
+        self.runner = ::Inspec::Runner.new options.merge logger: ::Inspec::Log.logger
+        profile_locations.each do |profile_location|
+          runner.add_target profile_location
+        end
+      end
+
       private
 
       attr_accessor :runner
 
       def exit_code
         @exit_code ||= runner.run
-      end
-
-      def initialize(options:, profile_locations:)
-        self.runner = ::Inspec::Runner.new options.merge logger: ::Inspec::Log.logger
-        profile_locations.each do |profile_location|
-          runner.add_target profile_location
-        end
       end
     end
   end

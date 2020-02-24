@@ -24,10 +24,12 @@ module Kitchen
     class InSpecFactory
       # #build creates a new instance of an InSpec object.
       #
-      # @param logger [::Kitchen::Logger] a logger to log messages.
-      # @param options [::Hash] a mapping of InSpec options.
-      # @param profile_locations [::Array<::String>] the locations of the InSpec profiles which contain the controls to
+      # @param logger [Kitchen::Logger] a logger to log messages.
+      # @param options [Hash] a mapping of InSpec options.
+      # @param profile_locations [Array<::String>] the locations of the InSpec profiles which contain the controls to
       #   be executed.
+      # @return [Kitchen::Terraform::InSpec::WithoutHosts, Kitchen::Terraform::InSpec::FailFastWithHosts,
+      #   Kitchen::Terraform::InSpec::FailFastWithoutHosts]
       def build(logger:, options:, profile_locations:)
         if hosts.empty?
           ::Kitchen::Terraform::InSpec::WithoutHosts.new(
@@ -54,14 +56,19 @@ module Kitchen
         end
       end
 
-      private
-
-      attr_accessor :fail_fast, :hosts
-
+      # #initialize prepares a new instance of the class
+      #
+      # @param fail_fast [Boolean] a toggle for fail fast or fail slow behaviour.
+      # @param hosts [Array<String>] a list of hosts to verify with InSpec.
+      # @return [Kitchen::Terraform::InSpecFactory]
       def initialize(fail_fast:, hosts:)
         self.fail_fast = fail_fast
         self.hosts = hosts
       end
+
+      private
+
+      attr_accessor :fail_fast, :hosts
     end
   end
 end

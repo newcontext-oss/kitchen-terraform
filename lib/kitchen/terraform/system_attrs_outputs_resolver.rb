@@ -23,8 +23,8 @@ module Kitchen
     class SystemAttrsOutputsResolver
       # #initialize prepares a new instance of the class.
       #
-      # @param attrs [::Hash] a container for attributes.
-      # @param logger [::Kitchen::Logger] a logger to log messages.
+      # @param attrs [Hash] a container for attributes.
+      # @param logger [Kitchen::Logger] a logger to log messages.
       def initialize(attrs:, logger:)
         self.attrs = attrs
         self.logger = logger
@@ -32,9 +32,9 @@ module Kitchen
 
       # #resolve fetches Terraform outputs and associates them with InSpec attributes.
       #
-      # @param attrs_outputs [::Hash<::String, ::String>] a mapping of InSpec attribute names to Terraform output names.
-      # @param outputs [::Hash<::String, ::Hash>] Terraform outputs.
-      # @raise [::Kitchen::TransientFailure] if the resolution fails.
+      # @param attrs_outputs [Hash{String=>String}] a mapping of InSpec attribute names to Terraform output names.
+      # @param outputs [Hash{String=>Hash}] Terraform outputs.
+      # @raise [Kitchen::TransientFailure] if the resolution fails.
       # @return [self]
       def resolve(attrs_outputs:, outputs:)
         resolve_defaults outputs: outputs

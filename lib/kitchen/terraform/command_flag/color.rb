@@ -19,9 +19,10 @@ module Kitchen
     module CommandFlag
       # Color is the class of objects which control coloured output.
       class Color
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param enabled [Boolean] a toggle to enable or disable color.
+        # @return [Kitchen::Terraform::CommandFlag::Color]
         def initialize(enabled:)
           self.enabled = enabled
         end

@@ -20,7 +20,7 @@ module Kitchen
   module Terraform
     # VariablesManager manages Terraform variables in the Kitchen instance state.
     class VariablesManager
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @return [Kitchen::Terraform::VariablesManager]
       def initialize
@@ -29,8 +29,8 @@ module Kitchen
 
       # #load reads the Terraform variables from the Kitchen instance state and writes them to a container.
       #
-      # @param variables [::Hash] the container to which the Terraform variables will be written.
-      # @param state [::Hash] the Kitchen instance state from which the Terraform variables will be read.
+      # @param variables [Hash] the container to which the Terraform variables will be written.
+      # @param state [Hash] the Kitchen instance state from which the Terraform variables will be read.
       # @return [self]
       def load(variables:, state:)
         variables.replace state.fetch state_key
@@ -47,8 +47,8 @@ module Kitchen
 
       # #save reads the Terraform variables from a container and writes them to the Kitchen instance state.
       #
-      # @param variables [::Hash] the container from which the Terraform variables will be read.
-      # @param state [::Hash] the Kitchen instance state to which the Terraform variables will be written.
+      # @param variables [Hash] the container from which the Terraform variables will be read.
+      # @param state [Hash] the Kitchen instance state to which the Terraform variables will be written.
       # @return [self]
       def save(variables:, state:)
         state.store state_key, variables

@@ -35,6 +35,8 @@ module Kitchen
         end
       end
 
+      # #initialize prepares a new instance of the class.
+      #
       # @param verify_version [Boolean] a toggle for a strict strategy or a permissive strategy.
       # @return [Kitchen::Terraform::VerifyVersionRescueStrategyFactory]
       def initialize(verify_version:)

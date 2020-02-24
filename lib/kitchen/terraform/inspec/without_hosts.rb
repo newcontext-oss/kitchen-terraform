@@ -23,7 +23,7 @@ module Kitchen
       class WithoutHosts
         # #exec executes the InSpec controls of an InSpec profile.
         #
-        # @raise [::Kitchen::TransientFailure] if the execution of InSpec fails.
+        # @raise [Kitchen::TransientFailure] if the execution of InSpec fails.
         # @return [self]
         def exec
           ::Kitchen::Terraform::InSpecRunner.new(options: options, profile_locations: profile_locations).exec
@@ -37,10 +37,11 @@ module Kitchen
 
         # #initialize prepares a new instance of the class.
         #
-        # @param logger [::Kitchen::Logger] a logger to log messages.
-        # @param options [::Hash] a mapping of InSpec options.
-        # @param profile_locations [::Array<::String>] the locations of the InSpec profiles which contain the controls
+        # @param logger [Kitchen::Logger] a logger to log messages.
+        # @param options [Hash] a mapping of InSpec options.
+        # @param profile_locations [Array<::String>] the locations of the InSpec profiles which contain the controls
         #   to be executed.
+        # @return [Kitchen::Terraform::InSpec::WithoutHosts]
         def initialize(logger:, options:, profile_locations:)
           self.logger = logger
           self.options = options

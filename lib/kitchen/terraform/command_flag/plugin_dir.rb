@@ -21,9 +21,10 @@ module Kitchen
     module CommandFlag
       # PluginDir is the class of objects which control the location of the directory which contains plugin binaries.
       class PluginDir
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param pathname [String] the pathname of the directory.
+        # @return [Kitchen::Terraform::CommandFlag::PluginDir]
         def initialize(pathname:)
           self.pathname = pathname.to_s
         end

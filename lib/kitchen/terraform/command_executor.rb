@@ -21,7 +21,7 @@ module Kitchen
   module Terraform
     # CommandExecutor is the class of objects which execute Terraform CLI commands.
     class CommandExecutor
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @param client [String] the pathname of the Terraform client.
       # @param logger [Kitchen::Logger] a logger for logging messages.

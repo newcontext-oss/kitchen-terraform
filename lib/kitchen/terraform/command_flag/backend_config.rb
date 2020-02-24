@@ -19,9 +19,10 @@ module Kitchen
     module CommandFlag
       # BackendConfig is the class of objects which control the arguments to the backend configuration.
       class BackendConfig
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param arguments [Hash{String=>String}] the arguments.
+        # @return [Kitchen::Terraform::CommandFlag::BackendConfig]
         def initialize(arguments:)
           self.arguments = arguments
         end

@@ -29,8 +29,8 @@ module Kitchen
   #
   # @see https://www.rubydoc.info/gems/test-kitchen/Kitchen/Verifier
   module Verifier
-    # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the behaviour and
-    # state of resources in the Terraform state.
+    # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the
+    # behaviour and state of resources in the Terraform state.
     #
     # === Commands
     #
@@ -68,6 +68,12 @@ module Kitchen
     #
     # This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
     # :reek:MissingSafeMethod { exclude: [ finalize_config!, load_needed_dependencies! ] }
+    #
+    # @example Describe the verify command
+    #   kitchen help verify
+    # @example Verify a Test Kitchen instance
+    #   kitchen verify default-ubuntu
+    # @version 2
     class Terraform < ::Kitchen::Verifier::Base
       # UNSUPPORTED_BASE_ATTRIBUTES is the list of attributes inherited from
       # Kitchen::Verifier::Base which are not supported by Kitchen::Verifier::Terraform.
@@ -96,8 +102,8 @@ module Kitchen
       #
       # @example
       #   `kitchen verify suite-name`
-      # @param state [::Hash] the mutable instance and verifier state.
-      # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+      # @param state [Hash] the mutable instance and verifier state.
+      # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def call(state)
         load_variables state: state
@@ -109,14 +115,14 @@ module Kitchen
 
       # doctor checks the system and configuration for common errors.
       #
-      # @param _state [::Hash] the mutable Kitchen instance state.
+      # @param _state [Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
       # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/verifier/base.rb#L85-L91
       def doctor(_state)
         false
       end
 
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @param config [Hash] the verifier configuration.
       # @return [Kitchen::Verifier::Terraform]
@@ -139,7 +145,7 @@ module Kitchen
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
       #
-      # @raise [::Kitchen::ClientError] if loading the InSpec libraries fails.
+      # @raise [Kitchen::ClientError] if loading the InSpec libraries fails.
       # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/configurable.rb#L252-L274
       def load_needed_dependencies!
         require "kitchen/terraform/inspec_runner"

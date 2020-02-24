@@ -34,7 +34,7 @@ module Kitchen
         self
       end
 
-      # #initialize prepares an instance of the class.
+      # #initialize prepares a new instance of the class.
       #
       # @param command_executor [Kitchen::Terraform::CommandExecutor] an executor to run the output command.
       # @return [Kitchen::Terraform::OutputsReader]

@@ -39,7 +39,7 @@ module Kitchen
       #     -verify-plugins=true \
       #     <root_module_directory>
       class Init
-        # #initialize prepares an instance of the class.
+        # #initialize prepares a new instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
         # @option config [Hash{String=>String}] :backend_configurations Terraform backend configuration arguments to

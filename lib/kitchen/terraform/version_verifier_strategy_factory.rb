@@ -34,6 +34,8 @@ module Kitchen
         end
       end
 
+      # #initialize prepares a new instance of the class.
+      #
       # @param version_requirement [Gem::Requirement] the requirement for version support.
       # @return [Kitchen::Terraform::VersionVerifierStrategyFactory]
       def initialize(version_requirement:)

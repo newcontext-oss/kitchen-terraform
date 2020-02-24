@@ -27,7 +27,7 @@ module Kitchen
       # #initialize prepares a new instance of the class.
       #
       # @param configuration_attributes [::Hash] a mapping of configuration attributes.
-      # @param logger [::Kitchen::Logger] a logger to log messages.
+      # @param logger [Kitchen::Logger] a logger to log messages.
       def initialize(configuration_attributes:, logger:)
         self.attrs = {}
         self.attrs_outputs = configuration_attributes.fetch :attrs_outputs do
@@ -41,7 +41,7 @@ module Kitchen
         self.logger = logger
       end
 
-      # @return [::String] a string representation of the system.
+      # @return [String] a string representation of the system.
       def to_s
         configuration_attributes.fetch(:name).dup
       end
@@ -49,8 +49,8 @@ module Kitchen
       # #verify verifies the system by executing InSpec.
       #
       # @param fail_fast [Boolean] a toggle to control the fast or slow failure of InSpec.
-      # @param outputs [::Hash] the Terraform outputs to be utilized as InSpec profile attributes.
-      # @param variables [::Hash] the Terraform variables to be utilized as InSpec profile attributes.
+      # @param outputs [Hash] the Terraform outputs to be utilized as InSpec profile attributes.
+      # @param variables [Hash] the Terraform variables to be utilized as InSpec profile attributes.
       # @return [self]
       def verify(fail_fast:, outputs:, variables:)
         logger.warn "Starting verification of the '#{self}' system."
