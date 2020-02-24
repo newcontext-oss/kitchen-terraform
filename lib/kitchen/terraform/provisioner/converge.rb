@@ -75,6 +75,7 @@ module Kitchen
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @return [Kitchen::Terraform::Driver::Converge]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
+          hash_config = config.to_hash.merge workspace_name: workspace_name
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
             client: config.fetch(:client),
             logger: logger,
@@ -86,9 +87,7 @@ module Kitchen
           self.get = ::Kitchen::Terraform::Command::Get.new
           self.output = ::Kitchen::Terraform::Command::Output.new
           self.validate = ::Kitchen::Terraform::Command::Validate.new config: config
-          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: config.to_hash.merge(
-            workspace_name: workspace_name,
-          )
+          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: hash_config
           self.outputs_manager = ::Kitchen::Terraform::OutputsManager.new
           self.outputs_parser = ::Kitchen::Terraform::OutputsParser.new
           self.outputs_reader = ::Kitchen::Terraform::OutputsReader.new command_executor: command_executor
