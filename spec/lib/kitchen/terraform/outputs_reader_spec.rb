@@ -17,6 +17,7 @@
 require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/outputs_reader"
+require "mixlib/shellout"
 
 ::RSpec.describe ::Kitchen::Terraform::OutputsReader do
   subject do
@@ -52,11 +53,14 @@ require "kitchen/terraform/outputs_reader"
     end
 
     context "when the output command fails due to no outputs defined" do
-      before do
-        allow(command_executor).to receive(:run).with(command: command, options: options).and_raise(
-          ::Kitchen::TransientFailure,
+      let :error do
+        ::Kitchen::TransientFailure.new "command failed", ::Mixlib::ShellOut::ShellCommandFailed.new(
           "no outputs defined"
         )
+      end
+
+      before do
+        allow(command_executor).to receive(:run).with(command: command, options: options).and_raise error
       end
 
       specify "should yield an empty JSON object" do

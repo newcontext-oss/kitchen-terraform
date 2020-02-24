@@ -52,7 +52,7 @@ module Kitchen
           yield json_outputs: standard_output
         end
       rescue ::Kitchen::TransientFailure => error
-        if no_outputs_defined.match ::Regexp.escape error.to_s
+        if no_outputs_defined.match ::Regexp.escape error.original.to_s
           yield json_outputs: "{}"
         else
           raise error
