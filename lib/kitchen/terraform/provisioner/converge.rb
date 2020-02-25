@@ -163,18 +163,18 @@ module Kitchen
         end
 
         def save_outputs(parsed_outputs:, state:)
-          logger.warn "Writing the output variables to the Kitchen state..."
+          logger.warn "Writing the output variables to the Kitchen instance state..."
           outputs_manager.save outputs: parsed_outputs, state: state
-          logger.warn "Finished writing the output varibales to the Kitchen state."
+          logger.warn "Finished writing the output varibales to the Kitchen instance state."
         end
 
         def save_variables_and_outputs(state:)
           read_and_parse_outputs do |parsed_outputs:|
             save_outputs parsed_outputs: parsed_outputs, state: state
           end
-          logger.warn "Writing the input variables to the Kitchen state..."
+          logger.warn "Writing the input variables to the Kitchen instance state..."
           variables_manager.save variables: variables, state: state
-          logger.warn "Finished writing the input variables to the Kitchen state."
+          logger.warn "Finished writing the input variables to the Kitchen instance state."
         end
 
         def select_workspace

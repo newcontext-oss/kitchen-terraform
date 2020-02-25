@@ -39,7 +39,7 @@ module Kitchen
       rescue ::KeyError => error
         raise(
           ::Kitchen::ClientError,
-          "Reading the Terraform input variables from the Kitchen state failed due to the absence of the " \
+          "Reading the Terraform input variables from the Kitchen instance state failed due to the absence of the " \
           "'#{state_key}' key. This error could indicate that the Kitchen-Terraform provisioner plugin was not used " \
           "to converge the Kitchen instance."
         )

@@ -138,9 +138,9 @@ module Kitchen
       attr_accessor :action_failed, :outputs, :variables
 
       def load_variables(state:)
-        logger.warn "Reading the Terraform input variables from the Kitchen state..."
+        logger.warn "Reading the Terraform input variables from the Kitchen instance state..."
         ::Kitchen::Terraform::VariablesManager.new.load variables: variables, state: state
-        logger.warn "Finished reading the Terraform input variables from the Kitchen state."
+        logger.warn "Finished reading the Terraform input variables from the Kitchen instance state."
       end
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
@@ -156,9 +156,9 @@ module Kitchen
       end
 
       def load_outputs(state:)
-        logger.warn "Reading the Terraform output variables from the Kitchen state..."
+        logger.warn "Reading the Terraform output variables from the Kitchen instance state..."
         ::Kitchen::Terraform::OutputsManager.new.load outputs: outputs, state: state
-        logger.warn "Finished reading the Terraform output varibales from the Kitchen state."
+        logger.warn "Finished reading the Terraform output varibales from the Kitchen instance state."
       end
 
       def profile_locations
