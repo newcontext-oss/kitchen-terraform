@@ -25,6 +25,7 @@ module Kitchen
       #
       # @param attrs [Hash] a container for attributes.
       # @param logger [Kitchen::Logger] a logger to log messages.
+      # @return [Kitchen::Terraform::SystemAttrsOutputsResolver]
       def initialize(attrs:, logger:)
         self.attrs = attrs
         self.logger = logger
