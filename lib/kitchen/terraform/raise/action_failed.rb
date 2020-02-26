@@ -18,7 +18,8 @@ require "kitchen"
 
 module Kitchen
   module Terraform
-    # ActionFailed is the class of objects which handle errors resulting in failed actoins.
+    module Raise
+    # ActionFailed is the class of objects which handle errors resulting in failed actions.
     class ActionFailed
       # #call logs an error message and raises an error with the message.
       #
@@ -44,4 +45,5 @@ module Kitchen
       attr_accessor :logger
     end
   end
+end
 end

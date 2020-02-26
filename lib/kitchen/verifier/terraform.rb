@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/action_failed"
+require "kitchen/terraform/raise/action_failed"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/systems"
@@ -128,7 +128,7 @@ module Kitchen
       # @return [Kitchen::Verifier::Terraform]
       def initialize(config = {})
         init_config config
-        self.action_failed = ::Kitchen::Terraform::ActionFailed.new logger: logger
+        self.action_failed = ::Kitchen::Terraform::Raise::ActionFailed.new logger: logger
         self.outputs = {}
         self.variables = {}
       end

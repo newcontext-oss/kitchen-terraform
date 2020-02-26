@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/action_failed"
+require "kitchen/terraform/raise/action_failed"
 require "kitchen/terraform/config_attribute/backend_configurations"
 require "kitchen/terraform/config_attribute/client"
 require "kitchen/terraform/config_attribute/color"
@@ -221,7 +221,7 @@ module Kitchen
       # @return [Kitchen::Driver::Terraform]
       def initialize(config = {})
         super config
-        self.action_failed = ::Kitchen::Terraform::ActionFailed.new logger: logger
+        self.action_failed = ::Kitchen::Terraform::Raise::ActionFailed.new logger: logger
       end
 
       private

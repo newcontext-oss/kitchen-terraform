@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/action_failed"
+require "kitchen/terraform/raise/action_failed"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/provisioner/converge"
 
@@ -93,7 +93,7 @@ module Kitchen
       # @see Kitchen::Configurable#finalize_config!
       def finalize_config!(instance)
         super instance
-        self.action_failed = ::Kitchen::Terraform::ActionFailed.new logger: logger
+        self.action_failed = ::Kitchen::Terraform::Raise::ActionFailed.new logger: logger
         self.converge_strategy = ::Kitchen::Terraform::Provisioner::Converge.new(
           config: instance.driver.send(:config),
           logger: logger,
