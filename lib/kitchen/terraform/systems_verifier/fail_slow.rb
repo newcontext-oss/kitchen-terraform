@@ -24,11 +24,9 @@ module Kitchen
       class FailSlow
         # #initialize prepares a new instance of the class.
         #
-        # @param logger [Kitchen::Logger] a logger to log messages.
         # @param systems [Array<::Kitchen::Terraform::System>] a list of systems to be verified.
         # @return [Kitchen::Terraform::SystemsVerifier::FailSlow]
-        def initialize(logger:, systems:)
-          self.logger = logger
+        def initialize(systems:)
           self.messages = []
           self.systems = systems
         end
@@ -51,13 +49,12 @@ module Kitchen
 
         private
 
-        attr_accessor :logger, :messages, :systems
+        attr_accessor :messages, :systems
 
         def verify_and_continue(outputs:, system:, variables:)
           system.verify fail_fast: false, outputs: outputs, variables: variables
-        rescue => error
-          logger.error "Verification of the '#{system}' system experienced an error:\n\t#{error.message}"
-          messages.push "Failed verification of the '#{system}' system."
+        rescue ::Kitchen::TransientFailure => error
+          messages.push error.message
         end
       end
     end

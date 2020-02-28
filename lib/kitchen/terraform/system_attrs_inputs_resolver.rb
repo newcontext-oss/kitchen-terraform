@@ -24,6 +24,7 @@ module Kitchen
       # #initialize prepares a new instance of the class.
       #
       # @param attrs [Hash] a container for attributes.
+      # @return [Kitchen::Terraform::SystemAttrsInputsResolver]
       def initialize(attrs:)
         self.attrs = attrs
       end

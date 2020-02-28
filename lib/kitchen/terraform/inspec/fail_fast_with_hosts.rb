@@ -28,7 +28,10 @@ module Kitchen
         # @return [self]
         def exec
           hosts.each do |host|
-            exec_or_fail host: host
+            ::Kitchen::Terraform::InSpecRunner.new(
+              options: options.merge(host: host),
+              profile_locations: profile_locations,
+            ).exec
           end
 
           self
@@ -37,32 +40,19 @@ module Kitchen
         # #initialize prepares a new instance of the class.
         #
         # @param hosts [Array<::String>] the names or addresses of hosts on which Inspec controls will be executed.
-        # @param logger [Kitchen::Logger] a logger to log messages.
         # @param options [Hash] options for execution.
         # @param profile_locations [Array<::String>] the locations of the InSpec profiles which contain the controls
         #   to be executed.
         # @return [Kitchen::Terraform::InSpec::FailFastWithHosts]
-        def initialize(hosts:, logger:, options:, profile_locations:)
+        def initialize(hosts:, options:, profile_locations:)
           self.hosts = hosts
-          self.logger = logger
           self.options = options
           self.profile_locations = profile_locations
         end
 
         private
 
-        attr_accessor :hosts, :logger, :options, :profile_locations
-
-        def exec_or_fail(host:)
-          ::Kitchen::Terraform::InSpecRunner.new(
-            options: options.merge(host: host),
-            profile_locations: profile_locations,
-          ).exec
-        rescue => error
-          logger.error "Execution of InSpec against the '#{host}' host experienced an error:\n\t#{error.message}"
-
-          raise ::Kitchen::TransientFailure, "Failed execution of InSpec against the '#{host}' host."
-        end
+        attr_accessor :hosts, :options, :profile_locations
       end
     end
   end

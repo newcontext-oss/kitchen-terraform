@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/raise/action_failed"
+require "kitchen/terraform/raise/client_error"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/systems"
@@ -129,13 +130,14 @@ module Kitchen
       def initialize(config = {})
         init_config config
         self.action_failed = ::Kitchen::Terraform::Raise::ActionFailed.new logger: logger
+        self.client_error = ::Kitchen::Terraform::Raise::ClientError.new logger: logger
         self.outputs = {}
         self.variables = {}
       end
 
       private
 
-      attr_accessor :action_failed, :outputs, :variables
+      attr_accessor :action_failed, :client_error, :outputs, :variables
 
       def load_variables(state:)
         logger.warn "Reading the Terraform input variables from the Kitchen instance state..."
@@ -152,7 +154,7 @@ module Kitchen
         require "kitchen/terraform/system"
         ::Kitchen::Terraform::InSpecRunner.logger = logger
       rescue ::LoadError => load_error
-        raise ::Kitchen::ClientError, load_error.message
+        client_error.call message: load_error.message
       end
 
       def load_outputs(state:)
@@ -176,7 +178,6 @@ module Kitchen
 
       def systems_verifier
         @systems_verifier ||= ::Kitchen::Terraform::SystemsVerifierFactory.new(fail_fast: config_fail_fast).build(
-          logger: logger,
           systems: systems,
         )
       end
