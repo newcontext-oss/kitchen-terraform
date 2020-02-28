@@ -14,35 +14,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
 require "kitchen/terraform/config_attribute_definer"
 
-# Defines a file path configuration attribute on a plugin class.
-class ::Kitchen::Terraform::FilePathConfigAttributeDefiner
-  # Defines the file path configuration attribute on a plugin class.
-  #
-  # @param plugin_class [::Kitchen::ConfigAttributeVerifier] A plugin class which has configuration
-  #   attribute verification behaviour.
-  # @return [void]
-  def define(plugin_class:)
-    @definer.define plugin_class: plugin_class
-    plugin_class.expand_path_for @attribute.to_sym
-  end
+module Kitchen
+  module Terraform
+    # FilePathConfigAttributeDefiner is the class of objects which define a file path configuration attribute on a
+    # plugin class.
+    class FilePathConfigAttributeDefiner
+      # #define defines the file path configuration attribute on a plugin class.
+      #
+      # @param plugin_class [Kitchen::ConfigAttributeVerifier] a plugin class which has configuration
+      #   attribute verification behaviour.
+      # @return [self]
+      def define(plugin_class:)
+        definer.define plugin_class: plugin_class
+        plugin_class.expand_path_for attribute.to_sym
 
-  private
+        self
+      end
 
-  # Initializes a definer.
-  #
-  # @api private
-  # @param attribute [::Kitchen::Terraform::ConfigAttribute] an attribute to be defined on a plugin class.
-  # @param schema [::Dry::Validation::Schema] a schema to use for validation of values of the attribute.
-  def initialize(attribute:, schema:)
-    @attribute = attribute
-    @definer =
-      ::Kitchen::Terraform::ConfigAttributeDefiner
-        .new(
-          attribute: attribute,
-          schema: schema,
-        )
+      # #initialize prepares a new instance of the class.
+      #
+      # @param attribute [Kitchen::Terraform::ConfigAttribute] an attribute to be defined on a plugin class.
+      # @param schema [Dry::Validation::Schema] a schema to use for validation of values of the attribute.
+      # @return [Kitchen::Terraform::FilePathConfigAttributeDefiner]
+      def initialize(attribute:, schema:)
+        self.attribute = attribute
+        self.definer = ::Kitchen::Terraform::ConfigAttributeDefiner.new attribute: attribute, schema: schema
+      end
+
+      private
+
+      attr_accessor :attribute, :definer
+    end
   end
 end

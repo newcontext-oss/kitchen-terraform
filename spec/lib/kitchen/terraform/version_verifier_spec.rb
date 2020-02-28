@@ -14,85 +14,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
-require "kitchen/terraform/command/version"
+require "kitchen/terraform/unsupported_client_version_error"
 require "kitchen/terraform/version_verifier"
 require "rubygems"
 
 ::RSpec.describe ::Kitchen::Terraform::VersionVerifier do
+  subject do
+    described_class.new version_requirement: version_requirement
+  end
+
+  let :version_requirement do
+    ::Gem::Requirement.new "~> 1.2.3"
+  end
+
   describe "#verify" do
-    subject do
-      described_class.new command: command, logger: ::Kitchen::Logger.new
-    end
-
-    let :command do
-      instance_double ::Kitchen::Terraform::Command::Version
-    end
-
-    let :options do
-      { cwd: "/root-module-directory" }
-    end
-
-    let :requirement do
-      ::Gem::Requirement.new "~> 1.2.3"
-    end
-
-    context "when running the command fails" do
-      before do
-        allow(command).to(
-          receive(:run).with(options: options)
-            .and_raise(::Kitchen::TransientFailure, "Failed to run the version command.")
-        )
+    context "when the version does not meet the requirement" do
+      let :version do
+        ::Gem::Version.new "0.1.2"
       end
 
       specify "should raise an error" do
         expect do
-          subject.verify options: options, requirement: requirement, strict: true
-        end.to raise_error ::Kitchen::TransientFailure, "Failed verification of the Terraform client version."
-      end
-    end
-
-    context "when the version does not meet the requirement" do
-      before do
-        allow(command).to receive(:run).with(options: options).and_yield version: ::Gem::Version.new("0.1.2")
-      end
-
-      context "when strict mode is enabled" do
-        specify "should raise an error" do
-          expect do
-            subject.verify options: options, requirement: requirement, strict: true
-          end.to raise_error ::Kitchen::UserError, "Failed verification of the Terraform client version."
-        end
-      end
-
-      context "when strict mode is disabled" do
-        specify "should not raise an error" do
-          expect do
-            subject.verify options: options, requirement: requirement, strict: false
-          end.not_to raise_error
-        end
+          subject.verify version: version
+        end.to raise_error(
+          ::Kitchen::Terraform::UnsupportedClientVersionError,
+          "The Terraform client version is unsupported."
+        )
       end
     end
 
     context "when the version does meet the requirement" do
-      before do
-        allow(command).to receive(:run).with(options: options).and_yield version: ::Gem::Version.new("1.2.4")
+      let :version do
+        ::Gem::Version.new "1.2.4"
       end
 
-      context "when strict mode is enabeld" do
-        specify "should not raise an error" do
-          expect do
-            subject.verify options: options, requirement: requirement, strict: true
-          end.not_to raise_error
-        end
-      end
-
-      context "when strict mode is disabled" do
-        specify "should not raise an error" do
-          expect do
-            subject.verify options: options, requirement: requirement, strict: false
-          end.not_to raise_error
-        end
+      specify "should not raise an error" do
+        expect do
+          subject.verify version: version
+        end.not_to raise_error
       end
     end
   end

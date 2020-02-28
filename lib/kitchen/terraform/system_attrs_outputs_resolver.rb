@@ -23,18 +23,17 @@ module Kitchen
     class SystemAttrsOutputsResolver
       # #initialize prepares a new instance of the class.
       #
-      # @param attrs [::Hash] a container for attributes.
-      # @param logger [::Kitchen::Logger] a logger to log messages.
-      def initialize(attrs:, logger:)
+      # @param attrs [Hash] a container for attributes.
+      # @return [Kitchen::Terraform::SystemAttrsOutputsResolver]
+      def initialize(attrs:)
         self.attrs = attrs
-        self.logger = logger
       end
 
       # #resolve fetches Terraform outputs and associates them with InSpec attributes.
       #
-      # @param attrs_outputs [::Hash<::String, ::String>] a mapping of InSpec attribute names to Terraform output names.
-      # @param outputs [::Hash<::String, ::Hash>] Terraform outputs.
-      # @raise [::Kitchen::TransientFailure] if the resolution fails.
+      # @param attrs_outputs [Hash{String=>String}] a mapping of InSpec attribute names to Terraform output names.
+      # @param outputs [Hash{String=>Hash}] Terraform outputs.
+      # @raise [Kitchen::ClientError] if the resolution fails.
       # @return [self]
       def resolve(attrs_outputs:, outputs:)
         resolve_defaults outputs: outputs
@@ -45,20 +44,19 @@ module Kitchen
 
       private
 
-      attr_accessor :attrs, :logger
+      attr_accessor :attrs
 
       def resolve_configuration(attrs_outputs:)
         attrs_outputs.each_pair do |attr_name, output_name|
           begin
             attrs.store attr_name.to_s, attrs.fetch("output_#{output_name}")
           rescue ::KeyError
-            logger.error(
-              "The '#{output_name}' key was not found in the Terraform outputs of the Kitchen instance state. This " \
-              "error indicates that the available Terraform outputs need to be updated with `kitchen converge` or " \
-              "that the wrong key was provided."
+            raise(
+              ::Kitchen::ClientError,
+              "Resolving the system attributes from outputs failed due to the absence of the '#{output_name}' key " \
+              "from the Terraform outputs in the Kitchen instance state. This error indicates that the available " \
+              "Terraform outputs need to be updated with `kitchen converge` or that the wrong key was provided."
             )
-
-            raise ::Kitchen::TransientFailure, "Failed resolution of attributes."
           end
         end
       end
@@ -68,12 +66,12 @@ module Kitchen
           begin
             attrs.store output_name.to_s, attrs.store("output_#{output_name}", output_body.fetch(:value))
           rescue ::KeyError
-            logger.error(
-              "The 'value' key was not found in the '#{output_name}' Terraform output of the Kitchen instance state. " \
-              "This error indicates that the output format of `terraform output -json` is unexpected."
+            raise(
+              ::Kitchen::ClientError,
+              "Resolving the system attributes from outputs failed due to the absence of the 'value' key from the " \
+              "'#{output_name}' Terraform output in the Kitchen instance state. This error indicates that the output " \
+              "format of `terraform output -json` is unexpected."
             )
-
-            raise ::Kitchen::TransientFailure, "Failed resolution of attributes."
           end
         end
       end

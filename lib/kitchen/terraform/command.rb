@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
-
-# The namespace for Terraform commands.
-module ::Kitchen::Terraform::Command
+module Kitchen
+  module Terraform
+    # The namespace for Terraform commands.
+    module Command
+    end
+  end
 end

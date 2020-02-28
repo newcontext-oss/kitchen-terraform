@@ -25,7 +25,7 @@ require "kitchen/terraform/config_predicates"
 module ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
   # A callback to configure an extending schema with this predicate.
   #
-  # @param schema [::Dry::Validation::Schema] the schema to be configured.
+  # @param schema [Dry::Validation::Schema] the schema to be configured.
   # @return [self]
   def self.extended(schema)
     schema.predicates self
@@ -45,8 +45,8 @@ module ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
   # If all keys are symbols then the result is +true+; else the result is +false+.
   #
   # @api private
-  # @param keys [::Enumerable] keys that must be only symbols
-  # @return [::TrueClass, ::FalseClass] the result
+  # @param keys [Enumerable] keys that must be only symbols
+  # @return [TrueClass, ::FalseClass] the result
   def self.all_symbols?(keys:)
     keys
       .all? do |key|
@@ -57,8 +57,8 @@ module ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
   # If all values are strings then the result is +true+; else the result is +false+.
   #
   # @api private
-  # @param values [::Enumerable] values that must be only strings
-  # @return [::TrueClass, ::FalseClass] the result
+  # @param values [Enumerable] values that must be only strings
+  # @return [TrueClass, ::FalseClass] the result
   def self.all_strings?(values:)
     values
       .all? do |value|

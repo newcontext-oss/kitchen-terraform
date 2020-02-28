@@ -23,25 +23,28 @@ module Kitchen
     class SystemsVerifierFactory
       # #build creates a SystemVerifier.
       #
-      # @param logger [::Kitchen::Logger] a logger.
-      # @param systems [::Array<::Kitchen::Terraform::System>] the Systems to be verified.
-      # @return [::Kitchen::Terraform::SystemsVerifier::FailFast, ::Kitchen::Terraform::SystemsVerifier::FailSlow] a
+      # @param systems [Array<::Kitchen::Terraform::System>] the Systems to be verified.
+      # @return [Kitchen::Terraform::SystemsVerifier::FailFast, ::Kitchen::Terraform::SystemsVerifier::FailSlow] a
       #   SystemsVerifier.
-      def build(logger:, systems:)
+      def build(systems:)
         if fail_fast
-          ::Kitchen::Terraform::SystemsVerifier::FailFast.new logger: logger, systems: systems
+          ::Kitchen::Terraform::SystemsVerifier::FailFast.new systems: systems
         else
-          ::Kitchen::Terraform::SystemsVerifier::FailSlow.new logger: logger, systems: systems
+          ::Kitchen::Terraform::SystemsVerifier::FailSlow.new systems: systems
         end
+      end
+
+      # #initialize prepares a new instance of the class.
+      #
+      # @param fail_fast [Boolean] a toggle to fail fast or fail slow.
+      # @return [Kitchen::Terraform::SystemsVerifierFactory]
+      def initialize(fail_fast:)
+        self.fail_fast = fail_fast
       end
 
       private
 
       attr_accessor :fail_fast
-
-      def initialize(fail_fast:)
-        self.fail_fast = fail_fast
-      end
     end
   end
 end

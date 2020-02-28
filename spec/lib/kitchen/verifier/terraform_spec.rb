@@ -14,13 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "inspec"
 require "kitchen"
-require "kitchen/driver/terraform"
-require "kitchen/terraform/inspec_options_factory"
-require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/outputs_manager"
-require "kitchen/transport/ssh"
+require "kitchen/terraform/system"
+require "kitchen/terraform/systems_verifier_factory"
+require "kitchen/terraform/systems_verifier/fail_fast"
+require "kitchen/terraform/variables_manager"
 require "kitchen/verifier/terraform"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/fail_fast_examples"
@@ -35,79 +34,75 @@ require "support/kitchen/terraform/configurable_examples"
   let :config do
     {
       color: false,
-      fail_fast: config_fail_fast,
-      systems: [
-        {
-          attrs_outputs: { attribute_name: "output_name" },
-          attrs: ["attrs.yml"],
-          backend: "backend",
-          backend_cache: false,
-          bastion_host: "bastion_host",
-          bastion_port: 5678,
-          bastion_user: "bastion_user",
-          controls: ["control"],
-          enable_password: "enable_password",
-          hosts_output: "hosts",
-          key_files: ["first_key_file", "second_key_file"],
-          name: "a-system-with-hosts",
-          password: "password",
-          path: "path",
-          port: 1234,
-          proxy_command: "proxy_command",
-          reporter: ["reporter"],
-          self_signed: false,
-          shell: false,
-          shell_command: "/bin/shell",
-          shell_options: "--option=value",
-          sudo: false,
-          sudo_command: "/bin/sudo",
-          sudo_options: "--option=value",
-          sudo_password: "sudo_password",
-          show_progress: false,
-          ssl: false,
-          user: "user",
-          vendor_cache: "vendor_cache",
-        },
-        {
-          name: "a-system-without-hosts",
-          attrs_outputs: { attribute_name: "output_name" },
-          backend: "backend",
-          profile_locations: ["remote://profile"],
-        },
-      ],
+      fail_fast: true,
+      systems: config_systems,
       test_base_path: "/test/base/path",
     }
   end
 
-  let :config_fail_fast do
-    true
-  end
-
-  let :driver do
-    instance_double ::Kitchen::Driver::Terraform
+  let :config_systems do
+    [
+      {
+        attrs_outputs: { attribute_name: "output_name" },
+        attrs: ["attrs.yml"],
+        backend: "backend",
+        backend_cache: false,
+        bastion_host: "bastion_host",
+        bastion_port: 5678,
+        bastion_user: "bastion_user",
+        controls: ["control"],
+        enable_password: "enable_password",
+        hosts_output: "hosts",
+        key_files: ["first_key_file", "second_key_file"],
+        name: "a-system-with-hosts",
+        password: "password",
+        path: "path",
+        port: 1234,
+        proxy_command: "proxy_command",
+        reporter: ["reporter"],
+        self_signed: false,
+        shell: false,
+        shell_command: "/bin/shell",
+        shell_options: "--option=value",
+        sudo: false,
+        sudo_command: "/bin/sudo",
+        sudo_options: "--option=value",
+        sudo_password: "sudo_password",
+        show_progress: false,
+        ssl: false,
+        user: "user",
+        vendor_cache: "vendor_cache",
+      },
+      {
+        name: "a-system-without-hosts",
+        attrs_outputs: { attribute_name: "output_name" },
+        backend: "backend",
+        profile_locations: ["remote://profile"],
+      },
+    ]
   end
 
   let :kitchen_instance do
-    instance_double ::Kitchen::Instance
+    ::Kitchen::Instance.new(
+      driver: ::Kitchen::Driver::Base.new,
+      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+      logger: logger,
+      platform: ::Kitchen::Platform.new(name: "test-platform"),
+      provisioner: ::Kitchen::Provisioner::Base.new,
+      state_file: ::Kitchen::StateFile.new("/kitchen", "test-suite-test-platform"),
+      suite: ::Kitchen::Suite.new(name: "test-suite"),
+      transport: ::Kitchen::Transport::Base.new,
+      verifier: ::Kitchen::Verifier::Base.new,
+    )
   end
 
   let :logger do
     ::Kitchen::Logger.new
   end
 
-  let :transport do
-    ::Kitchen::Transport::Ssh.new
-  end
-
-  before do
-    allow(kitchen_instance).to receive(:logger).and_return logger
-    allow(kitchen_instance).to receive(:transport).and_return transport
-  end
-
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Color"
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::FailFast"
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Systems"
-
   it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call" do
@@ -115,248 +110,59 @@ require "support/kitchen/terraform/configurable_examples"
       {}
     end
 
-    let :kitchen_suite do
-      instance_double ::Kitchen::Suite
+    let :systems_verifier do
+      instance_double ::Kitchen::Terraform::SystemsVerifier::FailFast
+    end
+
+    let :systems_verifier_factory do
+      instance_double ::Kitchen::Terraform::SystemsVerifierFactory
     end
 
     before do
-      allow(kitchen_instance).to receive(:driver).and_return driver
-      allow(kitchen_instance).to receive(:suite).and_return kitchen_suite
-      allow(kitchen_suite).to receive(:name).and_return "test-suite"
+      ::Kitchen::Terraform::VariablesManager.new.save(
+        variables: { variable: "input value" },
+        state: kitchen_instance_state,
+      )
+      ::Kitchen::Terraform::OutputsManager.new.save(
+        outputs: { hosts: { value: "host" }, output_name: { value: "output value" } },
+        state: kitchen_instance_state,
+      )
+      allow(::Kitchen::Terraform::SystemsVerifierFactory).to receive(:new).with(fail_fast: true).and_return(
+        systems_verifier_factory
+      )
+      allow(systems_verifier_factory).to receive(:build).with(
+        systems: including(kind_of(::Kitchen::Terraform::System)),
+      ).and_return systems_verifier
       subject.finalize_config! kitchen_instance
     end
 
-    context "when the Terraform output mapped to the :hosts key is in an unexpected format" do
+    context "when the systems verifier does raise an error" do
       before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input value" },
-          state: kitchen_instance_state,
-        )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { hosts: { amount: "host" }, output_name: { amount: "output value" } },
-          state: kitchen_instance_state,
-        )
-      end
-
-      specify "should raise an action failed error" do
-        expect do
-          subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
-      end
-    end
-
-    context "when the Terraform outputs omit a key from the values of the :attrs_outputs key" do
-      before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input value" },
-          state: kitchen_instance_state,
-        )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { hosts: { value: "host" } },
-          state: kitchen_instance_state,
-        )
-      end
-
-      specify "should raise an action failed error" do
-        expect do
-          subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
-      end
-    end
-
-    context "when a Terraform output mapped to a :attrs_outputs key is in an unexpected format" do
-      before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input value" },
-          state: kitchen_instance_state,
-        )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { hosts: { value: "host" }, output_name: { amount: "output value" } },
-          state: kitchen_instance_state,
-        )
-      end
-
-      specify "should raise an action failed error" do
-        expect do
-          subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
-      end
-    end
-
-    context "when the Terraform outputs omits the value of the :hosts_output key" do
-      before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input value" },
-          state: kitchen_instance_state,
-        )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
-          outputs: { output_name: { value: "output value" } },
-          state: kitchen_instance_state,
-        )
-      end
-
-      specify "should raise an action failed error" do
-        expect do
-          subject.call kitchen_instance_state
-        end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
-      end
-    end
-
-    context "when the Terraform outputs are correctly formatted and match the configuration" do
-      let :runner do
-        instance_double(::Inspec::Runner).tap do |runner|
-          allow(runner).to receive(:add_target).with "/test/base/path/test-suite"
-          allow(runner).to receive(:add_target).with "remote://profile"
-        end
-      end
-
-      let :runner_options_with_hosts do
-        {
-          "color" => false,
-          "distinct_exit" => false,
-          "reporter" => ["reporter"],
-          backend_cache: false,
-          backend: "backend",
-          bastion_host: "bastion_host",
-          bastion_port: 5678,
-          bastion_user: "bastion_user",
-          controls: ["control"],
-          enable_password: "enable_password",
-          host: "host",
-          input_file: ["attrs.yml"],
-          ::Kitchen::Terraform::InSpecOptionsFactory.inputs_key => {
-            "attribute_name" => "output value",
-            "hosts" => "host",
-            "input_variable" => "input value",
-            "output_hosts" => "host",
-            "output_name" => "output value",
-            "output_output_name" => "output value",
-          },
-          key_files: ["first_key_file", "second_key_file"],
-          logger: logger,
-          password: "password",
-          path: "path",
-          port: 1234,
-          proxy_command: "proxy_command",
-          self_signed: false,
-          shell_command: "/bin/shell",
-          shell_options: "--option=value",
-          shell: false,
-          show_progress: false,
-          ssl: false,
-          sudo_command: "/bin/sudo",
-          sudo_options: "--option=value",
-          sudo_password: "sudo_password",
-          sudo: false,
-          user: "user",
-          vendor_cache: "vendor_cache",
-        }
-      end
-
-      let :runner_options_without_hosts do
-        {
-          "color" => false,
-          "distinct_exit" => false,
-          backend: "backend",
-          ::Kitchen::Terraform::InSpecOptionsFactory.inputs_key => {
-            "attribute_name" => "output value",
-            "hosts" => "host",
-            "input_variable" => "input value",
-            "output_hosts" => "host",
-            "output_name" => "output value",
-            "output_output_name" => "output value",
-          },
-          logger: logger,
-        }
-      end
-
-      before do
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).save(
-          variables: { variable: "input value" },
-          state: kitchen_instance_state,
-        )
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).save(
+        allow(systems_verifier).to receive(:verify).with(
           outputs: { hosts: { value: "host" }, output_name: { value: "output value" } },
-          state: kitchen_instance_state,
+          variables: { variable: "input value" },
+        ).and_raise ::Kitchen::TransientFailure
+      end
+
+      specify "should raise an action failed error" do
+        expect do
+          subject.call kitchen_instance_state
+        end.to raise_error ::Kitchen::ActionFailed
+      end
+    end
+
+    context "when the systems verifier does not raise an error" do
+      before do
+        allow(systems_verifier).to receive(:verify).with(
+          outputs: { hosts: { value: "host" }, output_name: { value: "output value" } },
+          variables: { variable: "input value" },
         )
-        allow(::Inspec::Runner).to receive(:new).with(runner_options_with_hosts).and_return(runner)
-        allow(::Inspec::Runner).to receive(:new).with(runner_options_without_hosts).and_return(runner)
       end
 
-      context "when fail fast behaviour is enabled" do
-        context "when the InSpec runner returns an exit code other than 0" do
-          before do
-            allow(runner).to receive(:run).with(no_args).and_return(1)
-          end
-
-          it "does raise an error" do
-            expect do
-              subject.call kitchen_instance_state
-            end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
-          end
-        end
-
-        context "when the InSpec runner raises an error" do
-          before do
-            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, "mocked InSpec error"
-          end
-
-          specify "should raise an action failed error" do
-            expect do
-              subject.call kitchen_instance_state
-            end.to raise_error ::Kitchen::ActionFailed, "Failed verification of the 'a-system-with-hosts' system."
-          end
-        end
-      end
-
-      context "when fail fast behaviour is disabled" do
-        let :config_fail_fast do
-          false
-        end
-
-        context "when the InSpec runner returns an exit code other than 0 multiple times" do
-          before do
-            allow(runner).to receive(:run).with(no_args).and_return 1
-          end
-
-          specify "should raise an ActionFailed with all error messages" do
-            expect do
-              subject.call kitchen_instance_state
-            end.to raise_error(
-              ::Kitchen::ActionFailed,
-              "Failed verification of the 'a-system-with-hosts' system.\n\n" \
-              "Failed verification of the 'a-system-without-hosts' system."
-            )
-          end
-        end
-
-        context "when the InSpec runner raises an error multiple times" do
-          before do
-            allow(runner).to receive(:run).with(no_args).and_raise ::Train::UserError, "mocked InSpec error"
-          end
-
-          specify "should raise an ActionFailed with all error messages" do
-            expect do
-              subject.call kitchen_instance_state
-            end.to raise_error(
-              ::Kitchen::ActionFailed,
-              "Failed verification of the 'a-system-with-hosts' system.\n\n" \
-              "Failed verification of the 'a-system-without-hosts' system."
-            )
-          end
-        end
-      end
-
-      context "when the InSpec runner returns an exit code of 0" do
-        before do
-          allow(runner).to receive(:run).with(no_args).and_return 0
-        end
-
-        it "does not raise an error" do
-          expect do
-            subject.call kitchen_instance_state
-          end.to_not raise_error
-        end
+      specify "should not raise an error" do
+        expect do
+          subject.call kitchen_instance_state
+        end.to_not raise_error
       end
     end
   end

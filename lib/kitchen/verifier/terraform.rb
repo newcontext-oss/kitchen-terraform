@@ -15,6 +15,8 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/raise/action_failed"
+require "kitchen/terraform/raise/client_error"
 require "kitchen/terraform/config_attribute/color"
 require "kitchen/terraform/config_attribute/fail_fast"
 require "kitchen/terraform/config_attribute/systems"
@@ -28,8 +30,8 @@ module Kitchen
   #
   # @see https://www.rubydoc.info/gems/test-kitchen/Kitchen/Verifier
   module Verifier
-    # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the behaviour and
-    # state of resources in the Terraform state.
+    # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the
+    # behaviour and state of resources in the Terraform state.
     #
     # === Commands
     #
@@ -40,10 +42,6 @@ module Kitchen
     # A Kitchen instance is verified by iterating through the systems and executing the associated InSpec controls
     # against the hosts of each system. The outputs of the Terraform state are retrieved and exposed as attributes to
     # the InSpec controls.
-    #
-    # ===== Retrieving the Terraform Output
-    #
-    #   terraform output -json
     #
     # === Configuration Attributes
     #
@@ -71,6 +69,12 @@ module Kitchen
     #
     # This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
     # :reek:MissingSafeMethod { exclude: [ finalize_config!, load_needed_dependencies! ] }
+    #
+    # @example Describe the verify command
+    #   kitchen help verify
+    # @example Verify a Test Kitchen instance
+    #   kitchen verify default-ubuntu
+    # @version 2
     class Terraform < ::Kitchen::Verifier::Base
       # UNSUPPORTED_BASE_ATTRIBUTES is the list of attributes inherited from
       # Kitchen::Verifier::Base which are not supported by Kitchen::Verifier::Terraform.
@@ -99,58 +103,64 @@ module Kitchen
       #
       # @example
       #   `kitchen verify suite-name`
-      # @param state [::Hash] the mutable instance and verifier state.
-      # @raise [::Kitchen::ActionFailed] if the result of the action is a failure.
+      # @param state [Hash] the mutable instance and verifier state.
+      # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
       def call(state)
         load_variables state: state
         load_outputs state: state
         verify_systems
       rescue => error
-        raise ::Kitchen::ActionFailed, error.message
+        action_failed.call message: error.message
       end
 
       # doctor checks the system and configuration for common errors.
       #
-      # @param _state [::Hash] the mutable Kitchen instance state.
+      # @param _state [Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
       # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/verifier/base.rb#L85-L91
       def doctor(_state)
         false
       end
 
-      private
-
-      attr_accessor :outputs, :variables
-
-      def initialize(configuration = {})
-        init_config configuration
+      # #initialize prepares a new instance of the class.
+      #
+      # @param config [Hash] the verifier configuration.
+      # @return [Kitchen::Verifier::Terraform]
+      def initialize(config = {})
+        init_config config
+        self.action_failed = ::Kitchen::Terraform::Raise::ActionFailed.new logger: logger
+        self.client_error = ::Kitchen::Terraform::Raise::ClientError.new logger: logger
         self.outputs = {}
         self.variables = {}
       end
 
+      private
+
+      attr_accessor :action_failed, :client_error, :outputs, :variables
+
       def load_variables(state:)
-        logger.banner "Starting retrieval of Terraform variables from the Kitchen instance state."
-        ::Kitchen::Terraform::VariablesManager.new(logger: logger).load variables: variables, state: state
-        logger.banner "Finished retrieval of Terraform variables from the Kitchen instance state."
+        logger.warn "Reading the Terraform input variables from the Kitchen instance state..."
+        ::Kitchen::Terraform::VariablesManager.new.load variables: variables, state: state
+        logger.warn "Finished reading the Terraform input variables from the Kitchen instance state."
       end
 
       # load_needed_dependencies! loads the InSpec libraries required to verify a Terraform state.
       #
-      # @raise [::Kitchen::ClientError] if loading the InSpec libraries fails.
+      # @raise [Kitchen::ClientError] if loading the InSpec libraries fails.
       # @see https://github.com/test-kitchen/test-kitchen/blob/v1.21.2/lib/kitchen/configurable.rb#L252-L274
       def load_needed_dependencies!
         require "kitchen/terraform/inspec_runner"
         require "kitchen/terraform/system"
         ::Kitchen::Terraform::InSpecRunner.logger = logger
       rescue ::LoadError => load_error
-        raise ::Kitchen::ClientError, load_error.message
+        client_error.call message: load_error.message
       end
 
       def load_outputs(state:)
-        logger.banner "Starting retrieval of Terraform outputs from the Kitchen instance state."
-        ::Kitchen::Terraform::OutputsManager.new(logger: logger).load outputs: outputs, state: state
-        logger.banner "Finished retrieval of Terraform outputs from the Kitchen instance state."
+        logger.warn "Reading the Terraform output variables from the Kitchen instance state..."
+        ::Kitchen::Terraform::OutputsManager.new.load outputs: outputs, state: state
+        logger.warn "Finished reading the Terraform output varibales from the Kitchen instance state."
       end
 
       def profile_locations
@@ -168,7 +178,6 @@ module Kitchen
 
       def systems_verifier
         @systems_verifier ||= ::Kitchen::Terraform::SystemsVerifierFactory.new(fail_fast: config_fail_fast).build(
-          logger: logger,
           systems: systems,
         )
       end

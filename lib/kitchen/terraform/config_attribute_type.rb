@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform"
-
-# The namespace for configuration attribute types.
-module ::Kitchen::Terraform::ConfigAttributeType
+module Kitchen
+  module Terraform
+    # The namespace for configuration attribute types.
+    module ConfigAttributeType
+    end
+  end
 end

@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
 require "kitchen/terraform/inspec_runner"
 
 module Kitchen
@@ -24,7 +25,7 @@ module Kitchen
       class FailSlowWithHosts
         # exec executes the InSpec controls of an InSpec profile.
         #
-        # @raise [::Kitchen::TransientFailure] if the execution of InSpec fails.
+        # @raise [Kitchen::TransientFailure] if the execution of InSpec fails.
         # @return [self]
         def exec
           hosts.each do |host|
@@ -36,16 +37,15 @@ module Kitchen
           self
         end
 
-        # #initialize prepares a new instance.
+        # #initialize prepares a new instance of the class.
         #
-        # @param hosts [::Array<::String>] the names or addresses of hosts on which Inspec controls will be executed.
-        # @param logger [::Kitchen::Logger] a logger to log messages.
-        # @param options [::Hash] options for execution.
-        # @param profile_locations [::Array<::String>] the locations of the InSpec profiles which contain the controls
+        # @param hosts [Array<::String>] the names or addresses of hosts on which Inspec controls will be executed.
+        # @param options [Hash] options for execution.
+        # @param profile_locations [Array<::String>] the locations of the InSpec profiles which contain the controls
         #   to be executed.
-        def initialize(hosts:, logger:, options:, profile_locations:)
+        # @return [Kitchen::Terraform::InSpec::FailSlowWithHosts]
+        def initialize(hosts:, options:, profile_locations:)
           self.hosts = hosts
-          self.logger = logger
           self.messages = []
           self.options = options
           self.profile_locations = profile_locations
@@ -53,7 +53,7 @@ module Kitchen
 
         private
 
-        attr_accessor :hosts, :logger, :messages, :options, :profile_locations
+        attr_accessor :hosts, :messages, :options, :profile_locations
 
         def exec_and_continue(host:)
           ::Kitchen::Terraform::InSpecRunner.new(
@@ -61,8 +61,7 @@ module Kitchen
             profile_locations: profile_locations,
           ).exec
         rescue => error
-          logger.error "Execution of InSpec against the '#{host}' host experienced an error:\n\t#{error.message}"
-          messages.push "Failed execution of InSpec against the '#{host}' host."
+          messages.push error.message
         end
       end
     end

@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "inspec"
+require "kitchen"
 
 module Kitchen
   module Terraform
@@ -25,8 +26,8 @@ module Kitchen
         #
         # The logdev of the logger is extended to conform to interface expected by InSpec.
         #
-        # @param logger [::Kitchen::Logger] the logger to use.
-        # @return [::Kitchen::Logger] the logger.
+        # @param logger [Kitchen::Logger] the logger to use.
+        # @return [Kitchen::Logger] the logger.
         def logger=(logger)
           logger.logdev.define_singleton_method :filename do
             false
@@ -38,31 +39,49 @@ module Kitchen
 
       # #exec executes InSpec.
       #
-      # @raise [::Kitchen::ClientError] if the execution of InSpec fails.
+      # @raise [Kitchen::TransientFailure] if the execution of InSpec fails.
       # @return [self]
       def exec
-        if 0 != exit_code
-          raise "InSpec Runner exited with #{exit_code}."
+        run do |exit_code:|
+          if 0 != exit_code
+            raise ::Kitchen::TransientFailure, "#{action} failed due to a non-zero exit code of #{exit_code}."
+          end
         end
 
         self
-      rescue => error
-        raise ::Kitchen::ClientError, error.message
       end
 
-      private
-
-      attr_accessor :runner
-
-      def exit_code
-        @exit_code ||= runner.run
-      end
-
+      # #initialize prepares a new instance of the class.
+      #
+      # @param options [Hash] options to configure the runner.
+      # @param profile_locations [Array<String>] a list of pathnames of profiles.
+      # @return [Kitchen::Terraform::InSpecRunner]
       def initialize(options:, profile_locations:)
+        self.host = options.fetch :host do
+          ""
+        end
         self.runner = ::Inspec::Runner.new options.merge logger: ::Inspec::Log.logger
         profile_locations.each do |profile_location|
           runner.add_target profile_location
         end
+      end
+
+      private
+
+      attr_accessor :host, :runner
+
+      def action
+        if host.empty?
+          "Running InSpec"
+        else
+          "Running InSpec against the '#{host}' host"
+        end
+      end
+
+      def run
+        yield exit_code: runner.run
+      rescue => error
+        raise ::Kitchen::TransientFailure, "#{action} failed:\n\t#{error.message}"
       end
     end
   end

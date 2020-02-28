@@ -14,19 +14,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
-require "kitchen/terraform/version_verifier_strategy/unsupported_permissive"
+require "kitchen/terraform/command_flag/color"
 
-::RSpec.describe ::Kitchen::Terraform::VersionVerifierStrategy::UnsupportedPermissive do
-  describe "#call" do
-    subject do
-      described_class.new logger: ::Kitchen::Logger.new
+::RSpec.describe ::Kitchen::Terraform::CommandFlag::Color do
+  subject do
+    described_class.new enabled: enabled
+  end
+
+  describe "#to_s" do
+    context "when color is enabled" do
+      let :enabled do
+        true
+      end
+
+      specify "should return an empty string" do
+        expect(subject.to_s).to eq ""
+      end
     end
 
-    specify "should not raise an error" do
-      expect do
-        subject.call
-      end.not_to raise_error
+    context "when color is disabled" do
+      let :enabled do
+        false
+      end
+
+      specify "should return -no-color" do
+        expect(subject.to_s).to eq "-no-color"
+      end
     end
   end
 end

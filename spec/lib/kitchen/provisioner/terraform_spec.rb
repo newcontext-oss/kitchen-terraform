@@ -17,8 +17,8 @@
 require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/provisioner/terraform"
-require "kitchen/terraform/variables_manager"
-require "kitchen/terraform/outputs_manager"
+require "kitchen/terraform/provisioner/converge"
+require "rubygems"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Provisioner::Terraform do
@@ -30,87 +30,79 @@ require "support/kitchen/terraform/configurable_examples"
     {}
   end
 
+  let :converge do
+    instance_double ::Kitchen::Terraform::Provisioner::Converge
+  end
+
+  let :driver do
+    ::Kitchen::Driver::Terraform.new driver_config
+  end
+
+  let :driver_config do
+    {}
+  end
+
+  let :kitchen_instance do
+    ::Kitchen::Instance.new(
+      driver: driver,
+      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+      logger: kitchen_logger,
+      platform: ::Kitchen::Platform.new(name: "test-platform"),
+      provisioner: subject,
+      state_file: ::Kitchen::StateFile.new("/kitchen", "test-suite-test-platform"),
+      suite: ::Kitchen::Suite.new(name: "test-suite"),
+      transport: ::Kitchen::Transport::Base.new,
+      verifier: ::Kitchen::Verifier::Base.new,
+    )
+  end
+
+  let :kitchen_logger do
+    ::Kitchen::Logger.new
+  end
+
+  before do
+    allow(::Kitchen::Terraform::Provisioner::Converge).to(
+      receive(:new).with(
+        config: driver_config,
+        logger: kitchen_logger,
+        version_requirement: kind_of(::Gem::Requirement),
+        workspace_name: kind_of(::String),
+      ).and_return(converge)
+    )
+  end
+
   it_behaves_like "Kitchen::Terraform::Configurable"
 
   describe "#call" do
-    let :driver do
-      ::Kitchen::Driver::Terraform.new({})
-    end
-
-    let :kitchen_instance do
-      ::Kitchen::Instance.new(
-        driver: driver,
-        lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
-        logger: kitchen_logger,
-        platform: ::Kitchen::Platform.new(name: "test-platform"),
-        provisioner: ::Kitchen::Provisioner::Base.new,
-        state_file: ::Kitchen::StateFile.new("/kitchen", "test-suite-test-platform"),
-        suite: ::Kitchen::Suite.new(name: "test-suite"),
-        transport: ::Kitchen::Transport::Base.new,
-        verifier: ::Kitchen::Verifier::Base.new,
-      )
-    end
-
-    let :kitchen_logger do
-      ::Kitchen::Logger.new
-    end
-
-    let :kitchen_instance_state do
+    let :state do
       {}
     end
 
     before do
-      allow(kitchen_instance).to receive(:driver).and_return driver
-      allow(driver).to(receive(:retrieve_variables) do |&block|
-        block.call variables: { "variable" => "input_value" }
-
-        driver
-      end)
       subject.finalize_config! kitchen_instance
     end
 
-    describe "error handling" do
-      context "when the driver create action is a failure" do
-        before do
-          allow(driver).to receive(:apply).and_raise ::Kitchen::ActionFailed, "mocked Driver#create failure"
-        end
-
-        specify "should raise a Kitchen::ActionFailed" do
-          expect do
-            subject.call kitchen_instance_state
-          end.to raise_error ::Kitchen::ActionFailed, "mocked Driver#create failure"
-        end
+    context "when the action is a failure" do
+      before do
+        allow(converge).to receive(:call).and_raise ::Kitchen::StandardError, "failure"
       end
 
-      context "when the driver create action is a success" do
-        let :variables do
-          {}
-        end
+      specify "should raise an action failed error" do
+        expect do
+          subject.call state
+        end.to raise_error ::Kitchen::ActionFailed
+      end
+    end
 
-        let :outputs do
-          {}
-        end
+    context "when the action is a success" do
+      before do
+        allow(converge).to receive :call
+      end
 
-        before do
-          allow(driver).to(receive(:apply) do |&block|
-            block.call outputs: { "output_name" => { "value" => "output_value" } }
-
-            driver
-          end)
-          subject.call kitchen_instance_state
-          ::Kitchen::Terraform::VariablesManager.new(logger: kitchen_logger)
-            .load(variables: variables, state: kitchen_instance_state)
-          ::Kitchen::Terraform::OutputsManager.new(logger: kitchen_logger)
-            .load(outputs: outputs, state: kitchen_instance_state)
-        end
-
-        specify "should store variables in the Kitchen instance state" do
-          expect(variables).to eq "variable" => "input_value"
-        end
-
-        specify "should store outputs in the Kitchen instance state" do
-          expect(outputs).to eq "output_name" => { "value" => "output_value" }
-        end
+      specify "should not raise an error" do
+        expect do
+          subject.call state
+        end.not_to raise_error
       end
     end
   end

@@ -25,7 +25,7 @@ module Kitchen
       class << self
         # #inputs_key provides a key for InSpec profile inputs which depends on the version of InSpec.
         #
-        # @return [::Symbol] if the version is less than 4.3.2, :attributes; else, :inputs.
+        # @return [Symbol] if the version is less than 4.3.2, :attributes; else, :inputs.
         def inputs_key
           if ::Gem::Requirement.new("< 4.3.2").satisfied_by? ::Gem::Version.new ::Inspec::VERSION
             :attributes
@@ -38,9 +38,9 @@ module Kitchen
       # #build creates a mapping of InSpec options. Most key-value pairs are derived from the configuration attributes
       # of a system; some key-value pairs are hard-coded.
       #
-      # @param attributes [::Hash] the attributes to be added to the InSpec options.
-      # @param system_configuration_attributes [::Hash] the configuration attributes of a system.
-      # @return [::Hash] a mapping of InSpec options.
+      # @param attributes [Hash] the attributes to be added to the InSpec options.
+      # @param system_configuration_attributes [Hash] the configuration attributes of a system.
+      # @return [Hash] a mapping of InSpec options.
       def build(attributes:, system_configuration_attributes:)
         system_configuration_attributes.lazy.select do |attribute_name, _|
           system_inspec_map.key?(attribute_name)
@@ -51,15 +51,17 @@ module Kitchen
         options.merge self.class.inputs_key => attributes
       end
 
-      private
-
-      attr_accessor :options, :system_inspec_map
-
-      # @api private
+      # #initialize prepares a new instance of the class.
+      #
+      # @return [Kitchen::Terraform::InSpecOptionsFactory]
       def initialize
         self.options = { "distinct_exit" => false }
         self.system_inspec_map = ::Kitchen::Terraform::SYSTEM_INSPEC_MAP.dup
       end
+
+      private
+
+      attr_accessor :options, :system_inspec_map
     end
   end
 end

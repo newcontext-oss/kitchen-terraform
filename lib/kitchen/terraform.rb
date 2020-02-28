@@ -15,9 +15,8 @@
 # limitations under the License.
 
 # Dummy namespace for Test Kitchen to allow loading of Kitchen::Terraform::Version from gem specification.
-module ::Kitchen
-end
-
-# The namespace for kitchen-terraform.
-module ::Kitchen::Terraform
+module Kitchen
+  # The namespace for Kitchen-Terraform.
+  module Terraform
+  end
 end

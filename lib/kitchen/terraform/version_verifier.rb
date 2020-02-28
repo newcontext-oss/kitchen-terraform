@@ -22,49 +22,29 @@ module Kitchen
     class VersionVerifier
       # #verify verifies a version against the requirement.
       #
-      # @param options [Hash] options which adjust the execution of the command.
-      # @option options [Integer] :timeout the maximum duration in seconds to run the command.
-      # @option options [String] :cwd the directory in which to run the command.
-      # @param requirement [Gem::Requirement] the requirement for version support.
-      # @param strict [Boolean] the toggle of strict or permissive verification.
+      # @param version [Gem::Version] the Terraform client version.
+      # @raise [Kitchen::TransientFailure] if running the command fails.
+      # @raise [Kitchen::UserError] if the version is unsupported.
       # @return [self]
-      def verify(options:, requirement:, strict:)
-        run_and_invoke_strategy options: options, requirement: requirement, strict: strict
-        logger.banner "Finished verification of the Terraform client version."
+      def verify(version:)
+        version_verifier_strategy_factory.build(version: version).call
 
         self
-      rescue ::Kitchen::TransientFailure => error
-        handle error: error
       end
 
-      # @param command [Kitchen::Terraform::Command::Version] a version command.
-      # @param logger [Kitchen::Logger] a logger to log messages.
+      # #initialize prepares a new instance of the class.
+      #
+      # @param version_requirement [Gem::Requirement] the requirement for version support.
       # @return [Kitchen::Terraform::VersionVerifier]
-      def initialize(command:, logger:)
-        self.command = command
-        self.logger = logger
+      def initialize(version_requirement:)
+        self.version_verifier_strategy_factory = ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(
+          version_requirement: version_requirement,
+        )
       end
 
       private
 
-      attr_accessor :command, :logger
-
-      def handle(error:)
-        logger.error error.message
-
-        raise ::Kitchen::TransientFailure, "Failed verification of the Terraform client version."
-      end
-
-      def run_and_invoke_strategy(options:, requirement:, strict:)
-        logger.banner "Starting verification of the Terraform client version."
-        logger.warn "Supported Terraform client versions are in the interval of #{requirement}."
-        command.run options: options do |version:|
-          ::Kitchen::Terraform::VersionVerifierStrategyFactory.new(requirement: requirement, strict: strict).build(
-            logger: logger,
-            version: version,
-          ).call
-        end
-      end
+      attr_accessor :version_verifier_strategy_factory
     end
   end
 end

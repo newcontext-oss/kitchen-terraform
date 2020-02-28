@@ -20,41 +20,45 @@ module Kitchen
   module Terraform
     # VariablesManager manages Terraform variables in the Kitchen instance state.
     class VariablesManager
+      # #initialize prepares a new instance of the class.
+      #
+      # @return [Kitchen::Terraform::VariablesManager]
+      def initialize
+        self.state_key = :kitchen_terraform_variables
+      end
+
       # #load reads the Terraform variables from the Kitchen instance state and writes them to a container.
       #
-      # @param variables [::Hash] the container to which the Terraform variables will be written.
-      # @param state [::Hash] the Kitchen instance state from which the Terraform variables will be read.
+      # @param variables [Hash] the container to which the Terraform variables will be written.
+      # @param state [Hash] the Kitchen instance state from which the Terraform variables will be read.
       # @return [self]
       def load(variables:, state:)
-        variables.replace state.fetch @state_key
+        variables.replace state.fetch state_key
 
         self
       rescue ::KeyError => error
-        @logger.error(
-          "The '#{@state_key}' key was not found in the Kitchen instance state. This error could indicate that the " \
-          "Kitchen-Terraform provisioner plugin was not used to converge the Kitchen instance."
+        raise(
+          ::Kitchen::ClientError,
+          "Reading the Terraform input variables from the Kitchen instance state failed due to the absence of the " \
+          "'#{state_key}' key. This error could indicate that the Kitchen-Terraform provisioner plugin was not used " \
+          "to converge the Kitchen instance."
         )
-
-        raise ::Kitchen::ClientError, "Failed retrieval of Terraform variables from the Kitchen instance state."
       end
 
       # #save reads the Terraform variables from a container and writes them to the Kitchen instance state.
       #
-      # @param variables [::Hash] the container from which the Terraform variables will be read.
-      # @param state [::Hash] the Kitchen instance state to which the Terraform variables will be written.
+      # @param variables [Hash] the container from which the Terraform variables will be read.
+      # @param state [Hash] the Kitchen instance state to which the Terraform variables will be written.
       # @return [self]
       def save(variables:, state:)
-        state.store @state_key, variables
+        state.store state_key, variables
 
         self
       end
 
       private
 
-      def initialize(logger:)
-        @state_key = :kitchen_terraform_variables
-        @logger = logger
-      end
+      attr_accessor :state_key
     end
   end
 end

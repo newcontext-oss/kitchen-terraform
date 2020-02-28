@@ -21,26 +21,12 @@ module Kitchen
     module VersionVerifierStrategy
       # Supported is the class of objects which provide a strategy for supported Terraform client versions.
       class Supported
-        # #call informs the user that the version is supported.
+        # #call takes no action.
         #
         # @return [self]
         def call
-          logger.warn "The Terraform client version is supported."
-
           self
         end
-
-        # #initialize prepares a new instance of the class.
-        #
-        # @param logger [Kitchen::Logger] a logger to log messages.
-        # @return [Kitchen::Terraform::VersionVerifierStrategy::Supported]
-        def initialize(logger:)
-          self.logger = logger
-        end
-
-        private
-
-        attr_accessor :logger
       end
     end
   end

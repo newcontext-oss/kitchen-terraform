@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen"
 require "kitchen/terraform/inspec_runner"
 
 module Kitchen
@@ -23,33 +24,28 @@ module Kitchen
       class WithoutHosts
         # #exec executes the InSpec controls of an InSpec profile.
         #
-        # @raise [::Kitchen::TransientFailure] if the execution of InSpec fails.
+        # @raise [Kitchen::TransientFailure] if the execution of InSpec fails.
         # @return [self]
         def exec
           ::Kitchen::Terraform::InSpecRunner.new(options: options, profile_locations: profile_locations).exec
 
           self
-        rescue => error
-          logger.error "Execution of InSpec experienced an error:\n\t#{error.message}"
-
-          raise ::Kitchen::TransientFailure, "Failed execution of InSpec."
         end
 
         # #initialize prepares a new instance of the class.
         #
-        # @param logger [::Kitchen::Logger] a logger to log messages.
-        # @param options [::Hash] a mapping of InSpec options.
-        # @param profile_locations [::Array<::String>] the locations of the InSpec profiles which contain the controls
+        # @param options [Hash] a mapping of InSpec options.
+        # @param profile_locations [Array<::String>] the locations of the InSpec profiles which contain the controls
         #   to be executed.
-        def initialize(logger:, options:, profile_locations:)
-          self.logger = logger
+        # @return [Kitchen::Terraform::InSpec::WithoutHosts]
+        def initialize(options:, profile_locations:)
           self.options = options
           self.profile_locations = profile_locations
         end
 
         private
 
-        attr_accessor :logger, :options, :profile_locations
+        attr_accessor :options, :profile_locations
       end
     end
   end

@@ -42,7 +42,7 @@ module Kitchen
           # .included is a callback to define the configuration attribute which is invoked when this module is included
           # in a plugin class.
           #
-          # @param plugin_class [::Kitchen::Configurable] A plugin class.
+          # @param plugin_class [Kitchen::Configurable] A plugin class.
           # @return [self]
           def included(plugin_class)
             ::Kitchen::Terraform::ConfigAttributeDefiner.new(
@@ -56,7 +56,7 @@ module Kitchen
             self
           end
 
-          # @return [::Symbol] the symbol corresponding to this attribute.
+          # @return [Symbol] the symbol corresponding to this attribute.
           def to_sym
             :client
           end
@@ -64,7 +64,7 @@ module Kitchen
 
         extend ::Kitchen::Terraform::ConfigAttributeCacher
 
-        # @return [::String] </code>"terraform"</code>
+        # @return [String] </code>"terraform"</code>
         def config_client_default_value
           "terraform"
         end
