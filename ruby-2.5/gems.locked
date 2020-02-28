@@ -14,7 +14,7 @@ GIT
 PATH
   remote: ..
   specs:
-    kitchen-terraform (5.1.1)
+    kitchen-terraform (5.2.0)
       dry-validation (~> 0.13)
       inspec (>= 3, < 5)
       json (~> 2.2)
@@ -396,8 +396,8 @@ GEM
     jwt (2.2.1)
     kramdown (1.17.0)
     kwalify (0.7.2)
-    launchy (2.4.3)
-      addressable (~> 2.3)
+    launchy (2.5.0)
+      addressable (~> 2.7)
     libv8 (7.3.492.27.1)
     libyajl2 (1.2.0)
     license-acceptance (1.0.13)
