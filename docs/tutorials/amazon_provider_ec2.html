@@ -124,7 +124,7 @@
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">ruby</span> <span class="s1">'2.6.5'</span>
 
 <span class="n">source</span> <span class="s1">'https://rubygems.org/'</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s1">'kitchen-terraform'</span><span class="p">,</span> <span class="s1">'~&gt; 5.1'</span>
+  <span class="n">gem</span> <span class="s1">'kitchen-terraform'</span><span class="p">,</span> <span class="s1">'~&gt; 5.2'</span>
 <span class="k">end</span>
 </code></pre></div>          Close and save the file then run bundler to install these gems:
           <br><br>
@@ -172,23 +172,6 @@
 
 <span class="na">platforms</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
-</code></pre></div>          Next, let's add the transport section. This is what will allow Kitchen-Terraform to ssh into your terraform'd instances and run your inspec tests. You will need to include the path to the private key half of your AWS keypair - wherever you keep it on your workstation.
-          <br><br>
-<div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
-<span class="na">driver</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">variable_files</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">testing.tfvars</span>
-
-<span class="na">provisioner</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-
-<span class="na">platforms</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
-
-<span class="na">transport</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
-  <span class="na">ssh_key</span><span class="pi">:</span> <span class="s">~/path/to/your/private/aws/key.pem</span>
 </code></pre></div>          And now let's add another section, the verifier section. The verifier is what will verify whether your Test Kitchen instances match what is laid out in your inspec files.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
@@ -203,10 +186,6 @@
 <span class="na">platforms</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
 
-<span class="na">transport</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
-  <span class="na">ssh_key</span><span class="pi">:</span> <span class="s">~/path/to/your/private/aws/key.pem</span>
-
 <span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
   <span class="na">systems</span><span class="pi">:</span>
@@ -214,8 +193,10 @@
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
       <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
-      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
       <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">key_files</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">~/path/to/your/private/aws/key.pem</span>
+      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
       <span class="na">reporter</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">documentation</span>
 </code></pre></div>          And let's stop and talk about what we did here - as this is where you will see some of the uniqueness of Kitchen-Terraform.
@@ -237,11 +218,13 @@
           Additionally, we have specified the ssh backend. We would like Kitchen-Terraform to ssh into an instance and run the Inspec tests there:
           <br><br>
 <div class="highlight"><pre class="syntax-highlight yaml"><code>      <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
-      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
       <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">key_files</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">~/path/to/your/private/aws/key.pem</span>
+      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
       <span class="na">reporter</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">documentation</span>
-</code></pre></div>          Kitchen-Terraform also needs to know a username and hostnames to ssh run those specs. We have set the hosts_output key to public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit. The user key specifies the username that kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu. Finally the reporter key specifies the InSpec reporters for reporting test output. In this example, we are specifying documentation which shows the tests passed with a small summary at the end.
+</code></pre></div>          Kitchen-Terraform also needs to know a username, private keys, and hostnames to ssh run those specs. We have set the hosts_output key to public_dns - which is an output value we will need to add to <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> in a bit. The user key specifies the username that kitchen terraform will use to ssh into the hostnames with. In this tutorial we are using Ubuntu instances and the default username is ubuntu. Finally the reporter key specifies the InSpec reporters for reporting test output. In this example, we are specifying documentation which shows the tests passed with a small summary at the end.
           <br><br>
           And, last, let's add a test suite to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file:
           <br><br>
@@ -257,10 +240,6 @@
 <span class="na">platforms</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">ubuntu</span>
 
-<span class="na">transport</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">ssh</span>
-  <span class="na">ssh_key</span><span class="pi">:</span> <span class="s">~/path/to/your/private/aws/key.pem</span>
-
 <span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
   <span class="na">systems</span><span class="pi">:</span>
@@ -268,8 +247,10 @@
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
       <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
-      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
       <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">key_files</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">~/path/to/your/private/aws/key.pem</span>
+      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
       <span class="na">reporter</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">documentation</span>
 
@@ -403,7 +384,8 @@ public_dns <span class="o">=</span> your_aws_instance_public_ip
 <div class="highlight"><pre class="syntax-highlight shell"><code>bundle <span class="nb">exec </span>kitchen verify
 </code></pre></div>          And if it runs successfully, you should see output that includes:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>Test Summary: 0 successful, 0 failures, 0 skipped
+<div class="highlight"><pre class="syntax-highlight shell"><code>Finished <span class="k">in </span>0.002 seconds <span class="o">(</span>files took 2.54 seconds to load<span class="o">)</span>
+0 examples, 0 failures
 </code></pre></div>          Let's add some tests!
           <br><br>
           Open up the file
@@ -421,12 +403,12 @@ end
 <div class="highlight"><pre class="syntax-highlight shell"><code>bundle <span class="nb">exec </span>kitchen verify
 </code></pre></div>          And hey, it passed! You should see output that includes:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>  ✔  operating_system: Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span>
-     ✔  Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span> stdout should match /Ubuntu/
+<div class="highlight"><pre class="syntax-highlight shell"><code>Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span>
+  stdout
+    is expected to match /Ubuntu/
 
-
-Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
-Test Summary: 1 successful, 0 failures, 0 skipped
+Finished <span class="k">in </span>0.23381 seconds <span class="o">(</span>files took 2.62 seconds to load<span class="o">)</span>
+1 example, 0 failures
 </code></pre></div>          It's nice that it passed...but we still need to make sure that it fails to be certain it tests what we think it tests. Let's try changing our Terraform config to spin up an Amazon Linux System, rather than an Ubuntu system, and make sure that this test fails.
           <br><br>
           Go ahead and destroy your current test kitchen instances with:
@@ -484,8 +466,11 @@ ami <span class="o">=</span> <span class="s2">"ami-6869aa05"</span>
     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
-      <span class="na">hostnames</span><span class="pi">:</span> <span class="s">public_dns</span>
-      <span class="na">username</span><span class="pi">:</span> <span class="s">ec2-user</span>
+      <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
+      <span class="na">key_files</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">~/.ssh/ncs-laptop.pem</span>
+      <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
+      <span class="na">user</span><span class="pi">:</span> <span class="s">ec2-user</span>
       <span class="na">reporter</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">documentation</span>
 </code></pre></div>          Now try running the tests again:
@@ -493,16 +478,28 @@ ami <span class="o">=</span> <span class="s2">"ami-6869aa05"</span>
 <div class="highlight"><pre class="syntax-highlight shell"><code>bundle <span class="nb">exec </span>kitchen verify
 </code></pre></div>          And now we see a test failure:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code>  ×  operating_system: Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span>
-     ×  Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span> stdout should match /Ubuntu/
-     expected <span class="s2">""</span> to match /Ubuntu/
-     Diff:
-     @@ <span class="nt">-1</span>,2 +1,2 @@
-     -/Ubuntu/
-     +<span class="s2">""</span>
+<div class="highlight"><pre class="syntax-highlight shell"><code>Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span>
+  stdout
+    is expected to match /Ubuntu/ <span class="o">(</span>FAILED - 1<span class="o">)</span>
 
-Profile Summary: 0 successful controls, 1 control failure, 0 controls skipped
-Test Summary: 0 successful, 1 failure, 0 skipped
+Failures:
+
+  1<span class="o">)</span> Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span> stdout is expected to match /Ubuntu/
+     Failure/Error: DEFAULT_FAILURE_NOTIFIER <span class="o">=</span> lambda <span class="o">{</span> |failure, _opts| raise failure <span class="o">}</span>
+
+       expected <span class="s2">""</span> to match /Ubuntu/
+       Diff:
+       @@ <span class="nt">-1</span>,2 +1,2 @@
+       -/Ubuntu/
+       +<span class="s2">""</span>
+     <span class="c"># ./test/integration/default/controls/operating_system_spec.rb:3:in `block (3 levels) in load_with_context'</span>
+
+Finished <span class="k">in </span>0.26506 seconds <span class="o">(</span>files took 5.52 seconds to load<span class="o">)</span>
+1 example, 1 failure
+
+Failed examples:
+
+rspec  <span class="c"># Command: `lsb_release -a` stdout is expected to match /Ubuntu/</span>
 </code></pre></div>          Alright, that means our test is failing when it is supposed to be failing, and passing when it is supposed to pass.
           <br><br>
           Open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file and change the username back to ubuntu
@@ -514,8 +511,10 @@ Test Summary: 0 successful, 1 failure, 0 skipped
       <span class="na">controls</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">operating_system</span>
       <span class="na">backend</span><span class="pi">:</span> <span class="s">ssh</span>
+      <span class="na">key_files</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="s">~/.ssh/ncs-laptop.pem</span>
       <span class="na">hosts_output</span><span class="pi">:</span> <span class="s">public_dns</span>
-      <span class="na">user</span><span class="pi">:</span> <span class="s">ubuntu</span>
+      <span class="na">user</span><span class="pi">:</span> <span class="s">ec2-user</span>
       <span class="na">reporter</span><span class="pi">:</span>
         <span class="pi">-</span> <span class="s">documentation</span>
 </code></pre></div>          And open up your <p class="font-weight-bold" style="color: #32c850; display: inline;">testing.tfvars</p> file and switch back to an Ubuntu AMI
