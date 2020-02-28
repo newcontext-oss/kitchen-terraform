@@ -24,7 +24,7 @@ require "rubygems"
   end
 
   let :version do
-    ::Gem::Version.new "5.1.1"
+    ::Gem::Version.new "5.2.0"
   end
 
   describe ".assign_plugin_version" do

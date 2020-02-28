@@ -8,6 +8,18 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [5.2.0] - 2020-02-27
+
+The "trapped in Atlanta" edition!
+
+### Changed
+
+- Log messages have been adjusted to provide better context and
+  actionable information where approriate.
+
+- The dependency on mixlib-shellout has been updated to support
+  installation using ChefDK versions 3.9 and newer.
+
 ## [5.1.1] - 2019-08-28
 
 ### Fixed
@@ -703,7 +715,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.1...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.2.0...HEAD
+[5.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.1...v5.2.0
 [5.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.0...v5.1.1
 [5.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.0.0...v5.1.0
 [5.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v4.9.0...v5.0.0
