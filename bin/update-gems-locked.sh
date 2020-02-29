@@ -19,7 +19,7 @@ do
     bundle install
   fi
   bundle clean
-  bundle binstubs --force bundler guard middleman-cli rake reek rspec-core rufo test-kitchen yard
+  bundle binstubs --force bundler guard middleman-cli pry rake reek rspec-core rufo test-kitchen travis yard
   set +x
   if [ "$RUBY" != "ruby-2.6" ]
   then
