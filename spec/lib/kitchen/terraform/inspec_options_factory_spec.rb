@@ -49,7 +49,7 @@ require "kitchen/terraform/inspec_options_factory"
     end
 
     let :outputs do
-      { bastion_host: {value: "dynamic-host"}}
+      { bastion_host: { value: "dynamic-host" } }
     end
 
     let :system_configuration_attributes do

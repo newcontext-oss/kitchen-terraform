@@ -31,4 +31,3 @@ require "kitchen/terraform/command_flag/var_file"
     end
   end
 end
-

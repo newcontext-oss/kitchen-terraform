@@ -31,7 +31,7 @@ require "kitchen/terraform/system"
       bastion_host_output: "",
       hosts_output: "hosts_output",
       name: "test",
-      profile_locations: profile_locations
+      profile_locations: profile_locations,
     }
   end
 
@@ -71,7 +71,7 @@ require "kitchen/terraform/system"
             "output_test_output" => "value",
             "test_output" => "value",
           },
-          bastion_host: "static-host"
+          bastion_host: "static-host",
         },
         profile_locations: profile_locations,
       ).and_return fail_fast_with_hosts
