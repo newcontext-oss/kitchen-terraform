@@ -134,6 +134,14 @@ require "kitchen/terraform/config_schemas/system"
       it_behaves_like "an optional string"
     end
 
+    describe ":bastion_host_output" do
+      let :attribute do
+        :bastion_host_output
+      end
+
+      it_behaves_like "an optional string"
+    end
+
     describe ":bastion_port" do
       let :attribute do
         :bastion_port

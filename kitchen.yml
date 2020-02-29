@@ -52,7 +52,7 @@ suites:
       systems:
         - name: bastion, hosts, key files, profile locations
           backend: ssh
-          bastion_host: localhost
+          bastion_host_output: bastion_host
           bastion_port: 2223
           bastion_user: root
           hosts:

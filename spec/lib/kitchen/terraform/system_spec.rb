@@ -26,7 +26,13 @@ require "kitchen/terraform/system"
   end
 
   let :configuration_attributes do
-    { hosts_output: "hosts_output", name: "test", profile_locations: profile_locations }
+    {
+      bastion_host: "static-host",
+      bastion_host_output: "",
+      hosts_output: "hosts_output",
+      name: "test",
+      profile_locations: profile_locations
+    }
   end
 
   let :profile_locations do
@@ -65,6 +71,7 @@ require "kitchen/terraform/system"
             "output_test_output" => "value",
             "test_output" => "value",
           },
+          bastion_host: "static-host"
         },
         profile_locations: profile_locations,
       ).and_return fail_fast_with_hosts

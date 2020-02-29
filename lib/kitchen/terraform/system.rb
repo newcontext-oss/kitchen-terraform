@@ -46,7 +46,6 @@ module Kitchen
         self.hosts = configuration_attributes.fetch :hosts do
           []
         end.dup
-        self.inspec_options_factory = ::Kitchen::Terraform::InSpecOptionsFactory.new
         self.logger = logger
       end
 
@@ -72,17 +71,20 @@ module Kitchen
 
       private
 
-      attr_accessor :attrs, :attrs_outputs, :configuration_attributes, :hosts, :inspec_options_factory, :logger
+      attr_accessor :attrs, :attrs_outputs, :configuration_attributes, :hosts, :logger
 
-      def execute_inspec_runner(fail_fast:)
+      def execute_inspec_runner(fail_fast:, options:)
         ::Kitchen::Terraform::InSpecFactory.new(fail_fast: fail_fast, hosts: hosts).build(
-          options: inspec_options,
+          options: options,
           profile_locations: configuration_attributes.fetch(:profile_locations),
         ).exec
       end
 
-      def inspec_options
-        inspec_options_factory.build attributes: attrs, system_configuration_attributes: configuration_attributes
+      def inspec_options(outputs:)
+        ::Kitchen::Terraform::InSpecOptionsFactory.new(outputs: outputs).build(
+          attributes: attrs,
+          system_configuration_attributes: configuration_attributes,
+        )
       end
 
       def resolve(outputs:, variables:)
@@ -102,7 +104,7 @@ module Kitchen
       def resolve_and_execute(fail_fast:, outputs:, variables:)
         logger.warn "Verifying the '#{self}' system..."
         resolve outputs: outputs, variables: variables
-        execute_inspec_runner fail_fast: fail_fast
+        execute_inspec_runner fail_fast: fail_fast, options: inspec_options(outputs: outputs)
         logger.warn "Finished verifying the '#{self}' system."
       end
     end

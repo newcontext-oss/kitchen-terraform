@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "inspec"
+require "kitchen/terraform/system_bastion_host_resolver"
 require "kitchen/terraform/system_inspec_map"
 require "rubygems"
 
@@ -40,28 +41,46 @@ module Kitchen
       #
       # @param attributes [Hash] the attributes to be added to the InSpec options.
       # @param system_configuration_attributes [Hash] the configuration attributes of a system.
+      # @raise [Kitchen::ClientError] if the system bastion host fails to be resolved.
       # @return [Hash] a mapping of InSpec options.
       def build(attributes:, system_configuration_attributes:)
-        system_configuration_attributes.lazy.select do |attribute_name, _|
-          system_inspec_map.key?(attribute_name)
-        end.each do |attribute_name, attribute_value|
-          options.store system_inspec_map.fetch(attribute_name), attribute_value
-        end
+        map_system_to_inspec system_configuration_attributes: system_configuration_attributes
+        options.store self.class.inputs_key, attributes
+        resolve_bastion_host system_configuration_attributes: system_configuration_attributes
 
-        options.merge self.class.inputs_key => attributes
+        options
       end
 
       # #initialize prepares a new instance of the class.
       #
+      # @param outputs [Hash] the Terraform output variables.
       # @return [Kitchen::Terraform::InSpecOptionsFactory]
-      def initialize
+      def initialize(outputs:)
         self.options = { "distinct_exit" => false }
+        self.system_bastion_host_resolver = ::Kitchen::Terraform::SystemBastionHostResolver.new outputs: outputs
         self.system_inspec_map = ::Kitchen::Terraform::SYSTEM_INSPEC_MAP.dup
       end
 
       private
 
-      attr_accessor :options, :system_inspec_map
+      attr_accessor :options, :system_bastion_host_resolver, :system_inspec_map
+
+      def map_system_to_inspec(system_configuration_attributes:)
+        system_configuration_attributes.lazy.select do |attribute_name, _|
+          system_inspec_map.key?(attribute_name)
+        end.each do |attribute_name, attribute_value|
+          options.store system_inspec_map.fetch(attribute_name), attribute_value
+        end
+      end
+
+      def resolve_bastion_host(system_configuration_attributes:)
+        system_bastion_host_resolver.resolve(
+          bastion_host: system_configuration_attributes.fetch(:bastion_host, ""),
+          bastion_host_output: system_configuration_attributes.fetch(:bastion_host_output, ""),
+        ) do |bastion_host:|
+          options.store :bastion_host, bastion_host
+        end
+      end
     end
   end
 end
