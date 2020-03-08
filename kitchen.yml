@@ -50,9 +50,9 @@ suites:
       root_module_directory: test/terraform/backend-ssh
     verifier:
       systems:
-        - name: bastion, hosts, key files, profile locations
+        - name: bastion, hosts, key files, one remote profile location
           backend: ssh
-          bastion_host: localhost
+          bastion_host_output: bastion_host
           bastion_port: 2223
           bastion_user: root
           hosts:
@@ -63,11 +63,14 @@ suites:
           profile_locations:
             - https://github.com/brentm5/chef-compliance-profile-test.git
           user: root
-        - name: hosts output, password, proxy command, shell
+        - name: hosts output, password, proxy command, shell, two local profile locations
           backend: ssh
           hosts_output: hosts
           password: root
           port: 2222
+          profile_locations:
+            - test/integration/backend-ssh/behaviour
+            - test/integration/backend-ssh/state
           proxy_command: nc %h %p
           shell: true
           shell_command: /bin/sh

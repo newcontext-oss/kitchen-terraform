@@ -40,8 +40,16 @@ require "kitchen/terraform/inspec_options_factory"
   end
 
   describe "#build" do
+    subject do
+      described_class.new outputs: outputs
+    end
+
     let :attributes do
       { key: "value" }
+    end
+
+    let :outputs do
+      { bastion_host: { value: "dynamic-host" } }
     end
 
     let :system_configuration_attributes do
@@ -49,7 +57,8 @@ require "kitchen/terraform/inspec_options_factory"
         attrs: "./inputs",
         backend_cache: "./backend-cache",
         backend: "ssh",
-        bastion_host: "bastion-host",
+        bastion_host: "",
+        bastion_host_output: "bastion_host",
         bastion_port: 1234,
         bastion_user: "bastion-user",
         color: true,
@@ -84,7 +93,7 @@ require "kitchen/terraform/inspec_options_factory"
         input_file: "./inputs",
         backend_cache: "./backend-cache",
         backend: "ssh",
-        bastion_host: "bastion-host",
+        bastion_host: "dynamic-host",
         bastion_port: 1234,
         bastion_user: "bastion-user",
         "color" => true,

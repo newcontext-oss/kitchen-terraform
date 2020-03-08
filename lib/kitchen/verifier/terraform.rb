@@ -183,9 +183,9 @@ module Kitchen
       end
 
       def verify_systems
-        logger.banner "Starting verification of the systems."
+        logger.warn "Verifying the systems..."
         systems_verifier.verify outputs: outputs, variables: variables
-        logger.banner "Finished verification of the systems."
+        logger.warn "Finished verifying the systems."
       end
     end
   end

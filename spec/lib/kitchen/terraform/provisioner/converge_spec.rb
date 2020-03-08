@@ -65,6 +65,10 @@ require "rubygems"
     }
   end
 
+  let :debug_command_executor do
+    instance_double ::Kitchen::Terraform::CommandExecutor
+  end
+
   let :logger do
     ::Kitchen::Logger.new
   end
@@ -94,6 +98,10 @@ require "rubygems"
       client: client,
       logger: logger,
     ).and_return command_executor
+    allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(
+      client: client,
+      logger: kind_of(::Kitchen::Terraform::DebugLogger),
+    ).and_return debug_command_executor
     allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
       command_executor: command_executor,
       config: config,
@@ -128,7 +136,7 @@ require "rubygems"
           command: kind_of(::Kitchen::Terraform::Command::Apply),
           options: options,
         ).ordered
-        expect(command_executor).to receive(:run).with(
+        expect(debug_command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Output),
           options: options,
         ).ordered
@@ -173,7 +181,7 @@ require "rubygems"
           command: kind_of(::Kitchen::Terraform::Command::Apply),
           options: options,
         )
-        allow(command_executor).to receive(:run).with(
+        allow(debug_command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Output),
           options: options,
         ).and_yield standard_output: "{ \"output_name\": { \"value\": \"output_value\" } }"

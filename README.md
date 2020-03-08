@@ -75,7 +75,7 @@ the semantic versioning of the Ruby gem.
 
 ```ruby
 source "https://rubygems.org/" do
-  gem "kitchen-terraform", "~> 5.2"
+  gem "kitchen-terraform", "~> 5.3"
 end
 ```
 
@@ -102,7 +102,7 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 5.2.0
+gem install kitchen-terraform --version 5.3.0
 ```
 
 This approach is not recommended as it requires more effort to install
@@ -142,6 +142,15 @@ Terraform state.
 
 More information can be found in the
 [Ruby gem documentation][ruby-gem-documentation].
+
+### Caveats
+
+Versions of Terraform in the 0.11 series may cause `kitchen test` to
+fail if the initial destroy targets an empty Terraform state. A
+workaround for this problem is to use
+`kitchen verify && kitchen destroy` instead of `kitchen test`. More
+details about the problem are available in
+[issue #271](issue-271).
 
 ### Example
 
@@ -209,7 +218,8 @@ suites:
   - name: example
 ```
 
-Although Kitchen-Terraform supports multiple versions of Terraform, below snippets are compatible with v0.12:
+Although Kitchen-Terraform supports multiple versions of Terraform,
+below snippets are compatible with v0.12:
 > ./main.tf
 
 ```hcl
@@ -380,11 +390,12 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg
 [gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg
 [gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg
-[hakiri-shield]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/master.svg
-[hakiri]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/
 [gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg
 [gitter]: https://gitter.im/kitchen-terraform/Lobby
+[hakiri-shield]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/master.svg
+[hakiri]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/
 [inspec]: https://www.inspec.io/
+[issue-271]: https://github.com/newcontext-oss/kitchen-terraform/issues/271
 [kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/

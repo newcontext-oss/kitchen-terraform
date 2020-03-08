@@ -21,7 +21,6 @@ module Kitchen
       attrs: :input_file,
       backend_cache: :backend_cache,
       backend: :backend,
-      bastion_host: :bastion_host,
       bastion_port: :bastion_port,
       bastion_user: :bastion_user,
       color: "color",

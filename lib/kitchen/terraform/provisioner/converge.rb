@@ -75,9 +75,10 @@ module Kitchen
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @return [Kitchen::Terraform::Driver::Converge]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
+          client = config.fetch :client
           hash_config = config.to_hash.merge workspace_name: workspace_name
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: config.fetch(:client),
+            client: client,
             logger: logger,
           )
           self.logger = logger
@@ -86,11 +87,9 @@ module Kitchen
           self.apply = ::Kitchen::Terraform::Command::Apply.new config: config
           self.get = ::Kitchen::Terraform::Command::Get.new
           self.output = ::Kitchen::Terraform::Command::Output.new
+          initialize_outputs_handlers client: client, logger: logger
           self.validate = ::Kitchen::Terraform::Command::Validate.new config: config
           self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: hash_config
-          self.outputs_manager = ::Kitchen::Terraform::OutputsManager.new
-          self.outputs_parser = ::Kitchen::Terraform::OutputsParser.new
-          self.outputs_reader = ::Kitchen::Terraform::OutputsReader.new command_executor: command_executor
           self.variables = config.fetch :variables
           self.variables_manager = ::Kitchen::Terraform::VariablesManager.new
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
@@ -142,6 +141,17 @@ module Kitchen
           download_modules
           validate_files
           build_infrastructure
+        end
+
+        def initialize_outputs_handlers(client:, logger:)
+          self.outputs_manager = ::Kitchen::Terraform::OutputsManager.new
+          self.outputs_parser = ::Kitchen::Terraform::OutputsParser.new
+          self.outputs_reader = ::Kitchen::Terraform::OutputsReader.new(
+            command_executor: ::Kitchen::Terraform::CommandExecutor.new(
+              client: client,
+              logger: ::Kitchen::Terraform::DebugLogger.new(logger),
+            ),
+          )
         end
 
         def parse_outputs(json_outputs:)

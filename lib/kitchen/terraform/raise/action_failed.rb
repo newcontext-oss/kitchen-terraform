@@ -19,31 +19,31 @@ require "kitchen"
 module Kitchen
   module Terraform
     module Raise
-    # ActionFailed is the class of objects which handle errors resulting in failed actions.
-    class ActionFailed
-      # #call logs an error message and raises an error with the message.
-      #
-      # @param message [String] the error message.
-      # @raise [Kitchen::ActionFailed]
-      # @return [void]
-      def call(message:)
-        logger.error message
+      # ActionFailed is the class of objects which handle errors resulting in failed actions.
+      class ActionFailed
+        # #call logs an error message and raises an error with the message.
+        #
+        # @param message [String] the error message.
+        # @raise [Kitchen::ActionFailed]
+        # @return [void]
+        def call(message:)
+          logger.error message
 
-        raise ::Kitchen::ActionFailed, message
+          raise ::Kitchen::ActionFailed, message
+        end
+
+        # #initialize prepares a new instance of the class.
+        #
+        # @param logger [Kitchen::Logger] a logger to log messages.
+        # @return [Kitchen::Terraform::ActionFailed]
+        def initialize(logger:)
+          self.logger = logger
+        end
+
+        private
+
+        attr_accessor :logger
       end
-
-      # #initialize prepares a new instance of the class.
-      #
-      # @param logger [Kitchen::Logger] a logger to log messages.
-      # @return [Kitchen::Terraform::ActionFailed]
-      def initialize(logger:)
-        self.logger = logger
-      end
-
-      private
-
-      attr_accessor :logger
     end
   end
-end
 end

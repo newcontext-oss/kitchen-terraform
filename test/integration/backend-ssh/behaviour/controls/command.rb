@@ -14,20 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command_flag/var_file"
-
-::RSpec.describe ::Kitchen::Terraform::CommandFlag::VarFile do
-  subject do
-    described_class.new pathnames: pathnames
-  end
-
-  describe "#to_s" do
-    let :pathnames do
-      ["/one.tfvars", "/two.tfvars"]
-    end
-
-    specify "should return -var-file for each argument" do
-      expect(subject.to_s).to eq "-var-file=\"/one.tfvars\" -var-file=\"/two.tfvars\""
+control "command" do
+  describe command "echo hello" do
+    its "stdout" do
+      should eq "hello\n"
     end
   end
 end

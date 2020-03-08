@@ -130,6 +130,8 @@ module Kitchen
       #
       # The +bastion_host+ key must be used in combination with a backend which supports remote connections.
       #
+      # The +bastion_host_output+ key will take priority over the +bastion_host+ key.
+      #
       # <em>Example kitchen.yml</em>
       #   verifier:
       #     name: terraform
@@ -137,13 +139,30 @@ module Kitchen
       #       - name: a system
       #         backend: ssh
       #         bastion_host: bastion-host.domain
+      #
+      # ====== bastion_host_output
+      #
+      # The value of the +bastion_host_output+ key is a scalar which is used to obtain the address of a bastion host in
+      # the system from a Terraform output.
+      #
+      # The scalar must match the name of an output with a value which is a string.
+      #
+      # The +bastion_host_output+ key must be used in combination with a backend which enables remote connections.
+      #
+      # <em>Example kitchen.yml</em>
+      #   verifier:
+      #     name: terraform
+      #     systems:
+      #       - name: a system
+      #         backend: ssh
+      #         bastion_host_output: an_output
       #
       # ====== bastion_port
       #
       # The value of the +bastion_port+ key is an integer which is used as the port number to connect to on the bastion
       # host.
       #
-      # The +bastion_port+ key must be used in combination with the +bastion_host+ key.
+      # The +bastion_port+ key must be used in combination with the +bastion_host_output+ key or the +bastion_host+ key.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -151,7 +170,7 @@ module Kitchen
       #     systems:
       #       - name: a system
       #         backend: ssh
-      #         bastion_host: bastion-host.domain
+      #         bastion_host_output: an_output
       #         bastion_port: 1234
       #
       # ====== bastion_user
@@ -159,7 +178,7 @@ module Kitchen
       # The value of the +bastion_user+ key is a scalar which is used as the username for authentication with the
       # bastion host.
       #
-      # The +bastion_user+ key must be used in combination with the +bastion_host+ key.
+      # The +bastion_user+ key must be used in combination with the +bastion_host_output+ key or the +bastion_host+ key.
       #
       # <em>Example kitchen.yml</em>
       #   verifier:
@@ -167,7 +186,7 @@ module Kitchen
       #     systems:
       #       - name: a system
       #         backend: ssh
-      #         bastion_host: bastion-host.domain
+      #         bastion_host_output: an_output
       #         bastion_user: bastion-user
       #
       # ====== controls
@@ -554,6 +573,7 @@ module Kitchen
         optional(:attrs_outputs).filled :hash?
         optional(:backend_cache).value :bool?
         optional(:bastion_host).filled :str?
+        optional(:bastion_host_output).filled :str?
         optional(:bastion_port).value :int?
         optional(:bastion_user).filled :str?
         optional(:controls).each(:filled?, :str?)
