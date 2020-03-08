@@ -81,7 +81,7 @@ module Kitchen
       def run
         yield exit_code: runner.run
       rescue => error
-        raise ::Kitchen::TransientFailure, "#{action} failed:\n\t#{error.message}"
+        raise ::Kitchen::TransientFailure, "#{action} failed:\n\t\t#{error.message}"
       end
     end
   end
