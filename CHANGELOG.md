@@ -8,6 +8,20 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [5.3.0] - 2020-03-08
+
+### Added
+
+- Verifier systems have a `bastion_host_output` attribute which allows 
+  a bastion host to be obtained from a Terraform output rather than 
+  statically defined with the `bastion_host` attribute.
+
+### Fixed
+
+- All plugin log messages use consistent levels.
+- The output of the `terraform output` command has been reverted to log 
+  at the debug level rather than the warn level.
+
 ## [5.2.0] - 2020-02-27
 
 The "trapped in Atlanta" edition!
@@ -715,7 +729,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.2.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.3.0...HEAD
+[5.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.2.0...v5.3.0
 [5.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.1...v5.2.0
 [5.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.0...v5.1.1
 [5.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.0.0...v5.1.0
