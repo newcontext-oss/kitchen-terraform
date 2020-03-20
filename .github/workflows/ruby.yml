@@ -1,0 +1,60 @@
+name: Ruby
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+  schedule:
+  - cron: "0 0 * * *"
+
+jobs:
+  unit-tests:
+    name: Unit tests with Ruby ${{ matrix.ruby-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        ruby-version:
+        - "2.4"
+        - "2.5"
+        - "2.6"
+        os:
+        - macos-latest
+        - ubuntu-latest
+        - windows-latest
+        include:
+        - ruby-version: "2.6"
+          os: ubuntu-latest
+          cc_test_reporter_id: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: Set up Ruby ${{ matrix.ruby-version }}
+      uses: actions/setup-ruby@v1.1.1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+    - name: Cache Ruby dependencies
+      uses: actions/cache@v1.1.2
+      with:
+        path: ./ruby-${{ matrix.ruby-version }}/vendor/bundle
+        key: unit-tests-${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('ruby-*/gems.locked') }}
+    - name: Install Ruby dependencies
+      run: |
+        gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
+        bundle config --local gemfile ./ruby-${{ matrix.ruby-version }}/gems.rb
+        bundle config --local deployment true
+        bundle config --local jobs "$(nproc --ignore=1)"
+        bundle install --clean --frozen
+    - name: Execute unit tests
+      if: matrix.cc_test_reporter_id == null
+      run: |
+        ./ruby-${{ matrix.ruby-version }}/bin/rake test:rspec
+    - name: Execute unit tests and publish code coverage
+      if: matrix.cc_test_reporter_id != null
+      uses: paambaati/codeclimate-action@v2.5.5
+      env:
+        CC_TEST_REPORTER_ID: ${{ matrix.cc_test_reporter_id }}
+      with:
+        coverageCommand: |
+          ./ruby-${{ matrix.ruby-version }}/bin/rake test:rspec
