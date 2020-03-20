@@ -21,7 +21,7 @@ jobs:
         - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
         - bundle config --local without development
       install:
-        - bundle install --clean --frozen
+        - bundle install --frozen
         - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.12.0/terraform_0.12.0_darwin_amd64.zip
         - shasum -a 256 terraform_0.12.0_darwin_amd64.zip | grep 9dbee9dea660ea64352f8ddf2539e60d1c414210e9c4a29c8585926fef366be1
         - unzip terraform_0.12.0_darwin_amd64.zip -d "$HOME"/bin
