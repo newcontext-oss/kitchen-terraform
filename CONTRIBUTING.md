@@ -66,7 +66,7 @@ The following command will execute the unit tests.
 > Executing unit tests with RSpec
 
 ```sh
-bundle exec rake test:spec
+./bin/rake test:rspec
 ```
 
 [.rspec](.rspec) contains command line options which will be
@@ -90,7 +90,7 @@ run appropriate unit tests.
 > Watching for file changes with Guard
 
 ```sh
-bundle exec guard
+./bin/guard
 ```
 
 #### Integration Testing
@@ -105,7 +105,7 @@ The following command will execute the integration tests.
 > Executing integration tests with Rake
 
 ```sh
-bundle exec rake test:kitchen:all
+./bin/rake test:kitchen:all
 ```
 
 [Rakefile](Rakefile) contains the task definitions.
@@ -168,7 +168,7 @@ the content can be reviewed at <http://localhost:4567/>.
 > Running Middleman server to review content changes
 
 ```sh
-env NO_CONTRACTS=true bundle exec middleman server --build-dir docs
+env NO_CONTRACTS=true ./bin/middleman server --build-dir docs
 ```
 
 [config.rb](config.rb) contains Middleman configuration.
@@ -185,7 +185,7 @@ project.
 > Building HTML site based on Middleman project
 
 ```sh
-bundle exec middleman build --build-dir docs
+./bin/middleman build --build-dir docs
 ```
 
 <!-- Markdown links and image definitions -->
@@ -196,7 +196,7 @@ bundle exec middleman build --build-dir docs
 [github-issue-tracker]: https://github.com/newcontext-oss/kitchen-terraform/issues
 [gitter-chat]: https://gitter.im/kitchen-terraform/Lobby
 [guard]: http://guardgem.org/
-[inspec]: https://github.com/chef/inspec/tree/v1.44.8
+[inspec]: https://github.com/chef/inspec
 [middleman]: https://middlemanapp.com/
 [rake]: https://ruby.github.io/rake/
 [rspec]: http://rspec.info/

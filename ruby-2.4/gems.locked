@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/travis-ci/gh
-  revision: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
-  ref: 38fb339510ff9ae67cb08c6df7698f4c393f5a44
+  revision: e0ca0d28d6533d5b9ee8ba18dff0a62346ff49d2
+  ref: e0ca0d28d6533d5b9ee8ba18dff0a62346ff49d2
   specs:
-    gh (0.15.1)
+    gh (0.15.2)
       addressable (~> 2.4)
       backports
       faraday (~> 0.8)
@@ -36,13 +36,13 @@ GEM
     autoprefixer-rails (9.7.4)
       execjs
     aws-eventstream (1.0.3)
-    aws-sdk (2.11.462)
-      aws-sdk-resources (= 2.11.462)
-    aws-sdk-core (2.11.462)
+    aws-sdk (2.11.471)
+      aws-sdk-resources (= 2.11.471)
+    aws-sdk-core (2.11.471)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.11.462)
-      aws-sdk-core (= 2.11.462)
+    aws-sdk-resources (2.11.471)
+      aws-sdk-core (= 2.11.471)
     aws-sigv4 (1.1.1)
       aws-eventstream (~> 1.0, >= 1.0.2)
     axiom-types (0.1.1)
@@ -83,7 +83,7 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.5)
-    dry-configurable (0.11.3)
+    dry-configurable (0.11.4)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.7)
       dry-equalizer (~> 0.2)
@@ -123,7 +123,7 @@ GEM
     ethon (0.12.0)
       ffi (>= 1.3.0)
     eventmachine (1.2.7)
-    excon (0.72.0)
+    excon (0.73.0)
     execjs (2.7.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
@@ -227,7 +227,7 @@ GEM
     launchy (2.5.0)
       addressable (~> 2.7)
     libv8 (7.3.492.27.1)
-    license-acceptance (1.0.13)
+    license-acceptance (1.0.18)
       pastel (~> 0.7)
       tomlrb (~> 1.2)
       tty-box (~> 0.3)
@@ -292,7 +292,7 @@ GEM
     mini_racer (0.2.9)
       libv8 (>= 6.9.411)
     minitest (5.14.0)
-    mixlib-install (3.11.28)
+    mixlib-install (3.12.1)
       mixlib-shellout
       mixlib-versioning
       thor
@@ -367,14 +367,14 @@ GEM
       declarative-option (< 0.2.0)
       uber (< 0.2.0)
     retriable (3.1.2)
-    rouge (3.16.0)
+    rouge (3.17.0)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
       rspec-expectations (~> 3.9.0)
       rspec-mocks (~> 3.9.0)
     rspec-core (3.9.1)
       rspec-support (~> 3.9.1)
-    rspec-expectations (3.9.0)
+    rspec-expectations (3.9.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
     rspec-its (1.3.0)
@@ -386,7 +386,7 @@ GEM
     rspec-support (3.9.2)
     rubyntlm (0.6.2)
     rubyzip (1.3.0)
-    rufo (0.11.0)
+    rufo (0.12.0)
     sassc (2.2.1)
       ffi (~> 1.9)
     semverse (3.0.0)
@@ -431,7 +431,7 @@ GEM
     timeliness (0.3.10)
     tins (1.24.1)
       sync
-    tomlrb (1.2.9)
+    tomlrb (1.3.0)
     train (1.7.6)
       aws-sdk (~> 2)
       azure_graph_rbac (~> 0.16)
@@ -463,7 +463,7 @@ GEM
       tty-cursor (~> 0.7)
     tty-color (0.5.1)
     tty-cursor (0.7.1)
-    tty-prompt (0.20.0)
+    tty-prompt (0.21.0)
       necromancer (~> 0.5.0)
       pastel (~> 0.7.0)
       tty-reader (~> 0.7.0)
@@ -489,7 +489,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.2)
-    unicode-display_width (1.6.1)
+    unicode-display_width (1.7.0)
     unicode_utils (1.4.0)
     virtus (1.0.5)
       axiom-types (~> 0.1)

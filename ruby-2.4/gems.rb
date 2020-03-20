@@ -20,7 +20,7 @@ source "https://rubygems.org/" do
   gemspec path: "../"
 
   group :development do
-    gem "gh", git: "https://github.com/travis-ci/gh", ref: "38fb339510ff9ae67cb08c6df7698f4c393f5a44"
+    gem "gh", git: "https://github.com/travis-ci/gh", ref: "e0ca0d28d6533d5b9ee8ba18dff0a62346ff49d2"
   end
 
   group :runtime do
