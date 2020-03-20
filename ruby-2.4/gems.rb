@@ -19,15 +19,7 @@ ruby "~> 2.4"
 source "https://rubygems.org/" do
   gemspec path: "../"
 
-  group :development do
-    gem "gh", git: "https://github.com/travis-ci/gh", ref: "e0ca0d28d6533d5b9ee8ba18dff0a62346ff49d2"
-  end
-
   group :runtime do
     gem "inspec", "~> 3.0"
-  end
-
-  group :test do
-    gem "rake", "~> 12.3"
   end
 end

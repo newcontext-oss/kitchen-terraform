@@ -19,7 +19,6 @@ jobs:
         - bundle config --local gemfile ruby-2.4/gems.rb
         - bundle config --local deployment true
         - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-        - bundle config --local without development
       install:
         - bundle install --frozen
         - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.12.0/terraform_0.12.0_darwin_amd64.zip

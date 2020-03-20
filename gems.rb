@@ -19,11 +19,24 @@ ruby "~> 2.6"
 source "https://rubygems.org/" do
   gemspec path: "."
 
-  group :development do
+  group :development_auxiliary do
+    gem "bundler", "~> 2.0"
     gem "gh", git: "https://github.com/travis-ci/gh", ref: "e0ca0d28d6533d5b9ee8ba18dff0a62346ff49d2"
-  end
-
-  group :test do
-    gem "rake", "~> 12.3"
+    gem "guard-bundler", "~> 2.1"
+    gem "guard-rspec", "~> 4.7"
+    gem "guard-yard", "~> 2.2"
+    gem "guard", "~> 2.14"
+    gem "middleman-autoprefixer", "~> 2.7"
+    gem "middleman-favicon-maker", "~> 4.1"
+    gem "middleman-livereload", "~> 3.4"
+    gem "middleman-syntax", "~> 3.0"
+    gem "middleman", "~> 4.2"
+    gem "mini_racer", "~> 0.2.0"
+    gem "pry-coolline", "~> 0.2"
+    gem "pry", "~> 0.10"
+    gem "reek", "~> 5.5"
+    gem "rufo", "~> 0.7"
+    gem "travis", "~> 1.8"
+    gem "yard", "~> 0.9"
   end
 end

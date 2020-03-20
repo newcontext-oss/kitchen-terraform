@@ -24,7 +24,6 @@ for:
       - bundle config --local gemfile ./gems.rb
       - bundle config --local deployment true
       - bundle config --local jobs $(nproc --ignore=1)
-      - bundle config --local without development
       - bundle install --frozen
       - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.4/terraform_0.11.4_linux_amd64.zip
       - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
@@ -50,7 +49,6 @@ for:
       - gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
       - bundle config --local gemfile ruby-2.5/gems.rb
       - bundle config --local jobs $(nproc --ignore=1)
-      - bundle config --local without development
       - bundle install
       - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_windows_amd64.zip
       - sha256sum terraform_0.11.14_windows_amd64.zip | grep bfec66e2ad079a1fab6101c19617a82ef79357dc1b92ddca80901bb8d5312dc0
