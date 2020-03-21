@@ -20,7 +20,6 @@ source "https://rubygems.org/" do
   gemspec path: "."
 
   group :development_auxiliary do
-    gem "bundler", "~> 2.0"
     gem "gh", git: "https://github.com/travis-ci/gh", ref: "e0ca0d28d6533d5b9ee8ba18dff0a62346ff49d2"
     gem "guard-bundler", "~> 2.1"
     gem "guard-rspec", "~> 4.7"

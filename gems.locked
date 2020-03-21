@@ -33,17 +33,17 @@ GEM
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.0)
-    autoprefixer-rails (9.7.4)
+    autoprefixer-rails (9.7.5)
       execjs
     aws-eventstream (1.0.3)
-    aws-partitions (1.285.0)
+    aws-partitions (1.287.0)
     aws-sdk-apigateway (1.37.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-apigatewayv2 (1.17.0)
+    aws-sdk-apigatewayv2 (1.18.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-athena (1.23.0)
+    aws-sdk-athena (1.24.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-autoscaling (1.22.0)
@@ -82,7 +82,7 @@ GEM
     aws-sdk-configservice (1.43.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-core (3.91.1)
+    aws-sdk-core (3.92.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
@@ -102,7 +102,7 @@ GEM
     aws-sdk-ecs (1.59.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-eks (1.33.0)
+    aws-sdk-eks (1.35.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-elasticache (1.31.0)
@@ -147,7 +147,7 @@ GEM
     aws-sdk-redshift (1.39.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-route53 (1.31.0)
+    aws-sdk-route53 (1.32.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-route53domains (1.19.0)
@@ -231,7 +231,7 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.5)
-    dry-configurable (0.11.4)
+    dry-configurable (0.11.5)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.7)
       dry-equalizer (~> 0.2)
@@ -507,7 +507,7 @@ GEM
     padrino-support (0.13.3.4)
       activesupport (>= 3.1)
     parallel (1.19.1)
-    parser (2.7.0.4)
+    parser (2.7.0.5)
       ast (~> 2.4.0)
     parslet (1.8.2)
     pastel (0.7.3)
@@ -527,7 +527,7 @@ GEM
     rack-livereload (0.3.17)
       rack
     rainbow (3.0.0)
-    rake (12.3.3)
+    rake (13.0.1)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
@@ -667,9 +667,8 @@ GEM
       aws-sdk-sns (~> 1.9)
       aws-sdk-sqs (~> 1.10)
       aws-sdk-ssm (~> 1.0)
-    train-core (3.2.23)
+    train-core (3.2.26)
       addressable (~> 2.5)
-      inifile (~> 3.0)
       json (>= 1.8, < 3.0)
       mixlib-shellout (>= 2.0, < 4.0)
       net-scp (>= 1.2, < 3.0)
@@ -678,7 +677,7 @@ GEM
     train-winrm (0.2.6)
       winrm (~> 2.0)
       winrm-fs (~> 1.0)
-    travis (1.8.11)
+    travis (1.8.12)
       backports
       faraday (~> 0.9)
       faraday_middleware (~> 0.9, >= 0.9.1)
@@ -753,7 +752,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 2.0)!
+  bundler (~> 2.1)!
   gh!
   guard (~> 2.14)!
   guard-bundler (~> 2.1)!
@@ -768,7 +767,7 @@ DEPENDENCIES
   mini_racer (~> 0.2.0)!
   pry (~> 0.10)!
   pry-coolline (~> 0.2)!
-  rake (~> 12.3)!
+  rake (~> 13.0)!
   reek (~> 5.5)!
   rspec (~> 3.4)!
   rufo (~> 0.7)!

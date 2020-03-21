@@ -7,13 +7,9 @@ verifier:
   name: terraform
   fail_fast: false
 platforms:
-  - name: linux
-  - name: osx
-    driver:
-      client: ./terragrunt_darwin_amd64
-  - name: windows
-    driver:
-      client: ./terraform.exe
+  - name: ubuntu-latest
+  - name: macos-latest
+  - name: windows-latest
 suites:
   - name: attributes
     driver:
@@ -44,8 +40,8 @@ suites:
             - precedence
   - name: backend-ssh
     excludes:
-      - osx
-      - windows
+      - macos-latest
+      - windows-latest
     driver:
       root_module_directory: test/terraform/backend-ssh
     verifier:
@@ -76,14 +72,6 @@ suites:
           shell_command: /bin/sh
           shell_options: -x
           user: root
-  - name: plug-ins
-    driver:
-      plugin_directory: test/terraform/Plug Ins/Plug In Directory
-      root_module_directory: test/terraform/Plug Ins
-    verifier:
-      systems:
-        - name: default
-          backend: local
   - name: variables
     driver:
       root_module_directory: test/terraform/variables
@@ -104,21 +92,3 @@ suites:
           backend: local
           controls:
             - variables
-  - name: workspace-one
-    driver:
-      root_module_directory: test/terraform/workspace
-      variables:
-        workspace: one
-    verifier:
-      systems:
-        - name: one
-          backend: local
-  - name: workspace-two
-    driver:
-      root_module_directory: test/terraform/workspace
-      variables:
-        workspace: two
-    verifier:
-      systems:
-        - name: two
-          backend: local

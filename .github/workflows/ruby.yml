@@ -12,18 +12,15 @@ on:
 
 jobs:
   unit-tests:
-    name: Unit tests with Ruby ${{ matrix.ruby-version }} on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Unit tests with Ruby ${{ matrix.ruby-version }} on ubuntu-latest
+    runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         ruby-version:
         - "2.4"
         - "2.5"
         - "2.6"
-        os:
-        - macos-latest
-        - ubuntu-latest
-        - windows-latest
         include:
         - ruby-version: "2.6"
           os: ubuntu-latest
@@ -38,14 +35,15 @@ jobs:
       uses: actions/cache@v1.1.2
       with:
         path: ./ruby-${{ matrix.ruby-version }}/vendor/bundle
-        key: unit-tests-${{ runner.os }}-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('ruby-*/gems.locked') }}
+        key: unit-tests-ubuntu-latest-ruby-${{ matrix.ruby-version }}-gems-${{ hashFiles('ruby-*/gems.locked') }}
     - name: Install Ruby dependencies
       run: |
-        gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
+        gem install bundler --conservative --minimal-deps --no-document --version="~> 2.1"
         bundle config --local gemfile ./ruby-${{ matrix.ruby-version }}/gems.rb
         bundle config --local deployment true
+        bundle config --local frozen true
         bundle config --local jobs "$(nproc --ignore=1)"
-        bundle install --frozen
+        bundle install
     - name: Execute unit tests
       if: matrix.cc_test_reporter_id == null
       run: |
@@ -58,3 +56,62 @@ jobs:
       with:
         coverageCommand: |
           ./ruby-${{ matrix.ruby-version }}/bin/rake test:rspec
+  integration-tests:
+    name: Integration tests with Terraform ${{ matrix.terraform-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - macos-latest
+        - ubuntu-latest
+        - windows-latest
+        include:
+        - os: macos-latest
+          platform: darwin
+          terraform-version: "0.12.24"
+        - os: ubuntu-latest
+          platform: linux
+          terraform-version: "0.11.4"
+        - os: windows-latest
+          platform: windows
+          terraform-version: "0.12.0"
+    steps:
+    - uses: actions/checkout@v2.0.0
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1.1.1
+      with:
+        ruby-version: "2.6"
+    - name: Cache Ruby dependencies
+      id: cache-ruby
+      uses: actions/cache@v1.1.2
+      with:
+        path: ./ruby-2.6/vendor/bundle
+        key: integration-tests-${{ runner.os }}-ruby-2.6-gems-${{ hashFiles('ruby-*/gems.locked') }}
+    - name: Install Ruby dependencies
+      run: |
+        gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
+        bundle config --local gemfile ./ruby-2.6/gems.rb
+        bundle config --local deployment true
+        bundle config --local frozen true
+        bundle config --local jobs "$(nproc --ignore=1)"
+        bundle install
+    - name: Cache Terraform
+      id: cache-terraform
+      uses: actions/cache@v1.1.2
+      with:
+        path: ./terraform
+        key: integration-tests-${{ runner.os }}-terraform-${{ matrix.terraform-version }}
+    - name: Install Terraform
+      if: steps.cache-terraform.outputs.cache-hit != 'true'
+      env:
+        TERRAFORM_BASE_URL: "https://releases.hashicorp.com/terraform/${{ matrix.terraform-version }}"
+      run: |
+        terraform_url="${TERRAFORM_BASE_URL}/terraform_${{ matrix.terraform-version }}_${{ matrix.platform }}_amd64.zip"
+        mkdir ./terraform
+        curl --show-error --location --output ./terraform.zip ${terraform_url}
+        unzip -d ./terraform ./terraform.zip
+    - name: Execute integration tests
+      run: |
+        chmod go-rw ./test/terraform/backend-ssh/id_ed25519
+        PATH="./terraform:$PATH" ./ruby-2.6/bin/rake test:kitchen:${{ matrix.os }}:all

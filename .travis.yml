@@ -7,38 +7,6 @@ notifications:
     - https://webhooks.gitter.im/e/3a11f6fb1385c5cdb12b
 jobs:
   include:
-    - stage: Tests
-      name: Integration Tests with Terraform 0.12.0 and Terragrunt 0.18.6 and InSpec 3 on MacOS
-      os: osx
-      osx_image: xcode10.2
-      language: ruby
-      rvm: 2.4.5
-      before_install:
-        - gem install bundler --conservative --minimal-deps --no-document --version="~>
-          2.0"
-        - bundle config --local gemfile ruby-2.4/gems.rb
-        - bundle config --local deployment true
-        - bundle config --local jobs $(expr $(sysctl -n hw.ncpu) - 1)
-      install:
-        - bundle install --frozen
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform/0.12.0/terraform_0.12.0_darwin_amd64.zip
-        - shasum -a 256 terraform_0.12.0_darwin_amd64.zip | grep 9dbee9dea660ea64352f8ddf2539e60d1c414210e9c4a29c8585926fef366be1
-        - unzip terraform_0.12.0_darwin_amd64.zip -d "$HOME"/bin
-        - curl --location --remote-name --silent https://github.com/gruntwork-io/terragrunt/releases/download/v0.18.6/terragrunt_darwin_amd64
-        - shasum -a 256 terragrunt_darwin_amd64 | grep 234327294a07c312e7bc279ea749a653218c37d2d0b51c5cf2076fcf82dc298a
-        - chmod +x terragrunt_darwin_amd64
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_darwin_amd64.zip
-        - shasum -a 256 terraform-provider-local_1.2.2_darwin_amd64.zip | grep 2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
-        - unzip terraform-provider-local_1.2.2_darwin_amd64.zip -d test/terraform/Plug\
-          Ins/Plug\ In\ Directory
-      script:
-        - ./ruby-2.4/bin/rake test:kitchen:attributes-osx
-        - ./ruby-2.4/bin/rake test:kitchen:plug-ins-osx
-        - ./ruby-2.4/bin/rake test:kitchen:variables-osx
-        - ./ruby-2.4/bin/rake test:kitchen:workspaces-osx
-      cache:
-        directories:
-          - ruby-2.4/vendor/bundle
     - stage: Deploy to RubyGems
       dist: xenial
       language: ruby

@@ -15,13 +15,13 @@ GEM
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     aws-eventstream (1.0.3)
-    aws-sdk (2.11.471)
-      aws-sdk-resources (= 2.11.471)
-    aws-sdk-core (2.11.471)
+    aws-sdk (2.11.475)
+      aws-sdk-resources (= 2.11.475)
+    aws-sdk-core (2.11.475)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.11.471)
-      aws-sdk-core (= 2.11.471)
+    aws-sdk-resources (2.11.475)
+      aws-sdk-core (= 2.11.475)
     aws-sigv4 (1.1.1)
       aws-eventstream (~> 1.0, >= 1.0.2)
     azure_graph_rbac (0.17.1)
@@ -43,7 +43,7 @@ GEM
       multi_json
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    dry-configurable (0.11.4)
+    dry-configurable (0.11.5)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.7)
       dry-equalizer (~> 0.2)
@@ -187,7 +187,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     public_suffix (4.0.3)
-    rake (12.3.3)
+    rake (13.0.1)
     representable (3.0.4)
       declarative (< 0.1.0)
       declarative-option (< 0.2.0)
@@ -317,9 +317,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bundler (~> 2.1)!
   inspec (~> 3.0)!
   kitchen-terraform!
-  rake (~> 12.3)!
+  rake (~> 13.0)!
   rspec (~> 3.4)!
   simplecov (~> 0.16.1)!
 

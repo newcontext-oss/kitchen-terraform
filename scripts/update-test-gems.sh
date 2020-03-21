@@ -15,7 +15,7 @@ do
   else
     bundle install
   fi
-  bundle binstubs --force rake test-kitchen
+  bundle binstubs --force bundler rake test-kitchen
   set +x
   popd
 done
