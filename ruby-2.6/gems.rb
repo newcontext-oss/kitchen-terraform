@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ruby "~> 2.7"
+ruby "~> 2.6"
 
 source "https://rubygems.org/" do
-  gemspec path: "."
+  gemspec path: "../"
 
   group :development do
     gem "gh", git: "https://github.com/travis-ci/gh", ref: "38fb339510ff9ae67cb08c6df7698f4c393f5a44"

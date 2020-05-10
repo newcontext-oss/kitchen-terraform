@@ -7,6 +7,9 @@ The format is based on
 adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
+### Added
+
+- Support for Ruby 2.7.
 
 ## [5.3.0] - 2020-03-08
 
