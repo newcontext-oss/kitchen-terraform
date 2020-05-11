@@ -19,6 +19,7 @@ for:
     cache:
       - ./vendor/bundle
     install:
+      - rvm install 2.7.1
       - rvm use 2.7.1
       - gem install bundler --conservative --minimal-deps --no-document --version="~> 2.0"
       - bundle config --local gemfile ./gems.rb
