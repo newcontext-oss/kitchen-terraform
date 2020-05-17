@@ -117,6 +117,7 @@ jobs:
         directories:
           - ./vendor/bundle
     - stage: Deploy to RubyGems
+      if: type != pull_request AND branch = master AND tag IS present
       dist: xenial
       language: ruby
       rvm: 2.5.3
