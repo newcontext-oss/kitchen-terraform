@@ -11,7 +11,7 @@ require "rubygems"
   specification.authors = ["Aaron Lane", "Nick Willever", "Kevin Dickerson", "Nell Shamrell-Harrington",
                            "Michael Glenney", "Walter Dolce", "Clay Thomas", "Erik R. Rygg", "Kyle Sexton",
                            "Ewa Czechowska", "Matt Long", "John Engelman", "Steven A. Burns", "David Begin",
-                           "curleighbraces", "Austin Heiman", "Gary Foster"]
+                           "curleighbraces", "Austin Heiman", "Gary Foster", "Ed Bartholomew"]
   specification.description = "kitchen-terraform is a set of Test Kitchen plugins for testing Terraform configuration"
   specification.files = ::Dir.glob "{lib/**/*.rb,LICENSE,README.md}"
   specification.name = "kitchen-terraform"
@@ -47,7 +47,7 @@ require "rubygems"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
 
   specification.cert_chain = ["certs/gem-public_cert.pem"]
-  specification.required_ruby_version = [">= 2.4", "< 2.7"]
+  specification.required_ruby_version = [">= 2.4", "< 2.8"]
   specification.requirements = ["Terraform >= v0.11.4, < v0.13.0"]
   specification.signing_key = "certs/gem-private_key.pem" if $PROGRAM_NAME =~ /gem\z/
 end
