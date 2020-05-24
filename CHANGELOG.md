@@ -8,6 +8,9 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Changed
+Gem deployment to RubyGems now takes place with GitHub Actions. Unit and Integration tests remain in Travis CI.
+
 ## [5.4.0] - 2020-05-22
 
 ### Added
