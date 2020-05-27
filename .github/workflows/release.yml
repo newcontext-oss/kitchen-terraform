@@ -31,4 +31,4 @@ jobs:
       run: |
         gem push kitchen-terraform-*.gem
       env:
-        GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_AUTH_TOKEN }}
+        GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
