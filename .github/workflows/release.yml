@@ -25,7 +25,7 @@ jobs:
         gem cert --add certs/gem-public_cert.pem
         gem build kitchen-terraform.gemspec --silent
       env:
-        GEM_PRIVATE_KEY: ${{ secrets.RUBYGEMS_PRIVATE_KEY }}
+        GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}
 
     - name: Publish
       run: |
