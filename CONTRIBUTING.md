@@ -140,8 +140,11 @@ continuous deployment functionality for the Ruby gem.
 Unit tests and integration tests will be executed for each commit to the
 master branch and each commit to a branch with an open pull request.
 
-If a commit to the master branch has a [tag][git-tag] then the job will
-attempt to build the Ruby gem and deploy it to [RubyGems][ruby-gems].
+[GitHub Actions][github-actions] are used to deploy the Ruby gem. If a [tag][git-tag]
+starting with v is pushed to the master branch, then the job will attempt to build
+the Ruby gem and deploy it to [RubyGems][ruby-gems].
+
+[release.yml](.github/workflows/release.yml) contains job configuration.
 
 #### Releasing
 
@@ -206,3 +209,4 @@ bundle exec middleman build --build-dir docs
 [terraform]: https://www.terraform.io/
 [kitchen]: https://github.com/test-kitchen/test-kitchen/
 [travis-ci]: https://travis-ci.com/newcontext-oss/kitchen-terraform
+[github-actions]: https://help.github.com/en/actions

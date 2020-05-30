@@ -8,11 +8,16 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
-## [5.4.0] - 2020-05-22
+
+## [5.4.0] - 2020-05-30
 
 ### Added
 
 - Support for Ruby 2.7.
+
+### Changed
+
+- Gem deployment to RubyGems now takes place with GitHub Actions. Unit and Integration tests remain in Travis CI and Appveyor.
 
 ## [5.3.0] - 2020-03-08
 
