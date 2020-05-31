@@ -19,7 +19,7 @@ jobs:
 
     - name: Build
       run: |
-        printf -- "${GEM_PRIVATE_KEY}\n" > $HOME/certs/gem-private_key.pem
+        printf -- "${GEM_PRIVATE_KEY}\n" > certs/gem-private_key.pem
         gem cert --add certs/gem-public_cert.pem
         gem build kitchen-terraform.gemspec --silent
       env:
