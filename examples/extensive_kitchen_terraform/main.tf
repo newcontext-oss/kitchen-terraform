@@ -1,7 +1,9 @@
 terraform {
-}
-
-provider "aws" {
+  required_version = ">= 0.12.26"
+  required_providers {
+    aws    = ">= 2.66"
+    random = ">= 2.2"
+  }
 }
 
 # These aws_instances will be targeted with the operating_system control and the
@@ -14,6 +16,7 @@ resource "aws_instance" "remote_group" {
   subnet_id     = aws_subnet.extensive_tutorial.id
 
   tags = {
+    Name      = "kitchen-terraform-test-target-${count.index}"
     Terraform = "true"
   }
 
@@ -39,9 +42,14 @@ resource "aws_instance" "reachable_other_host" {
 }
 
 resource "aws_key_pair" "extensive_tutorial" {
-  key_name = "kitchen-terraform-key"
+  key_name = "kitchen-terraform-${random_string.key_name.result}"
 
   public_key = var.key_pair_public_key
+}
+
+resource "random_string" "key_name" {
+  length  = 9
+  special = false
 }
 
 resource "aws_security_group" "extensive_tutorial" {
