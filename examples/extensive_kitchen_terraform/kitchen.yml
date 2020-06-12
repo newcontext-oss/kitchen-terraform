@@ -94,7 +94,7 @@ platforms:
           backend: ssh
 
           controls:
-            - operating_system
+            #- operating_system
             - reachable_other_host
 
           # The value of the Terraform output named remote_group_public_dns will
