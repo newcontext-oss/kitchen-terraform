@@ -15,7 +15,7 @@
 
 [![Gitter chat][gitter-shield]][gitter]
 
-Kitchen-Terraform provides a set of [Test Kitchen][test-kitchen] plugins
+Kitchen-Terraform provides a set of [Kitchen][kitchen] plugins
 which enable a system to use Test Kitchen to converge a
 [Terraform][terraform] configuration and verify the resulting Terraform
 state with [InSpec][inspec] controls.
@@ -128,7 +128,7 @@ Ed25519-type SSH keys.
 
 Kitchen-Terraform provides three Test Kitchen plugins which must be
 configured in a
-[Test Kitchen configuration file][test-kitchen-configuration-file] in
+[Kitchen configuration file][kitchen-configuration-file] in
 order to successfully test Terraform configuration.
 
 The [Terraform driver][terraform-driver] manages the state of the
@@ -152,167 +152,17 @@ workaround for this problem is to use
 details about the problem are available in
 [issue #271](issue-271).
 
-### Example
+### Tutorials and Examples
 
-This example demonstrates how to test a simple Terraform configuration
-which utilizes the [Docker provider][docker-provider].
-
-The test system is assumed to be running Ubuntu 17.04.
-
-Terraform, Ruby, and Bundler are assumed to have been installed on the
-test system as described in the [Installation](#installation) section.
-
-The [Docker Community Edition][docker-community-edition] is assumed to
-have been installed on the test system.
-
-The working directory on the test system is assumed to contain a
-hierarchy of files comprising the following blocks.
-
-> Directory hierarchy
-
-```
-.
-├── .kitchen.yml
-├── Gemfile
-├── main.tf
-├── outputs.tf
-└── test
-    └── integration
-        └── example
-            ├── controls
-            │   ├── operating_system.rb
-            └── inspec.yml
-```
-
-> Gemfile
-
-```ruby
-source "https://rubygems.org/"
-
-gem 'kitchen-terraform', '~> 5.1'
-```
-
-> ./kitchen.yml (Test Kitchen configuration)
-
-```yaml
-driver:
-  name: terraform
-
-provisioner:
-  name: terraform
-
-verifier:
-  name: terraform
-  systems:
-    - name: container
-      backend: ssh
-      hosts_output: container_hostname
-      password: root
-      port: 2222
-      user: root
-
-platforms:
-  - name: ubuntu
-
-suites:
-  - name: example
-```
-
-Although Kitchen-Terraform supports multiple versions of Terraform,
-below snippets are compatible with v0.12:
-> ./main.tf
-
-```hcl
-provider "docker" {
-  host = "unix:///var/run/docker.sock"
-}
-
-data "docker_registry_image" "ubuntu" {
-  name = "rastasheep/ubuntu-sshd:latest"
-}
-
-resource "docker_image" "ubuntu" {
-  name          = data.docker_registry_image.ubuntu.name
-  pull_triggers = ["${data.docker_registry_image.ubuntu.sha256_digest}"]
-}
-
-resource "docker_container" "ubuntu" {
-  image    = docker_image.ubuntu.name
-  must_run = true
-  name     = "ubuntu_container"
-
-  ports {
-    external = 2222
-    internal = 22
-  }
-}
-```
-
-> ./outputs.tf
-
-```hcl
-output "container_hostname" {
-  description = "The hostname of the container."
-  value       = "127.0.0.1"
-}
-```
-
-> ./test/integration/example/inspec.yml
-
-```yaml
-name: example
-```
-
-> ./test/integration/example/controls/operating_system.rb
-
-```ruby
-# frozen_string_literal: true
-
-control "operating_system" do
-  describe "the operating system" do
-    subject do
-      command("cat /etc/os-release").stdout
-    end
-
-    it "is Ubuntu" do
-      is_expected.to match /Ubuntu/
-    end
-  end
-end
-```
-
-Running the following command would initialize the working directory for
-Terraform, create a Docker container by applying the configuration file,
-and verify that the container is running Ubuntu.
-
-> Verifying with Kitchen-Terraform
-
-```sh
-$ bundle install
-$ bundle exec kitchen test
------> Starting Kitchen...
-...
-$$$$$$ Running command `terraform init...`
-...
-$$$$$$ Running command `terraform apply...`
-...
-       docker_container.ubuntu: Creation complete after 1s...
-
-       Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
-...
-       Finished converging <example-ubuntu>...
-...
------> Verifying <example-ubuntu>...
-       Verifying host 'localhost' of system 'container'
-...
-  ✔  operating_system: the operating system is Ubuntu
-...
-Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
-...
-```
-
-More information can be found on the
+Several tutorials are available on the
 [Kitchen-Terraform Tutorials][kitchen-terraform-tutorials] page.
+
+The integration tests for Kitchen-Terraform can also be viewed as
+examples of how it works. The
+[integration test Kitchen configuration file][int-kitchen-config]
+and the [integration test directory][test-directory] provide several
+functional examples which exercise various features of
+Kitchen-Terraform.
 
 ## Contributing
 
@@ -331,7 +181,8 @@ Information about changes to Kitchen-Terraform can be found in the
 
 ## Maintainers
 
-Kitchen-Terraform is maintained by New Context.
+Kitchen-Terraform is maintained by [community contributors][contributors]
+and New Context.
 
 <img
   alt="New Context logo"
@@ -384,6 +235,7 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [code-coverage-shield]: https://img.shields.io/codeclimate/coverage/newcontext-oss/kitchen-terraform.svg
 [code-coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
 [contributing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md
+[contributors]: https://github.com/newcontext-oss/kitchen-terraform/graphs/contributors
 [docker]: https://www.docker.com/
 [docker-community-edition]: https://store.docker.com/editions/community/docker-ce-server-ubuntu
 [docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
@@ -395,7 +247,10 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [hakiri-shield]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/master.svg
 [hakiri]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/
 [inspec]: https://www.inspec.io/
+[int-kitchen-config]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/kitchen.yml
 [issue-271]: https://github.com/newcontext-oss/kitchen-terraform/issues/271
+[kitchen]: http://kitchen.ci/index.html
+[kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
@@ -422,8 +277,7 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [terraform-provisioner]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Provisioner/Terraform
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
-[test-kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
-[test-kitchen]: http://kitchen.ci/index.html
+[test-directory]: https://github.com/newcontext-oss/kitchen-terraform/tree/master/test
 [tfenv]: https://github.com/kamatama41/tfenv
 [travis-build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
 [travis-build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
