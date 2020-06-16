@@ -8,6 +8,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Security
+- Updated all gem versions to remediate ActiveSupport vulnerability, a dependency of the train gem.
 
 ## [5.4.0] - 2020-05-31
 
@@ -740,7 +742,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.3.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.4.0...HEAD
+[5.4.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.3.0...v5.4.0
 [5.3.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.2.0...v5.3.0
 [5.2.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.1...v5.2.0
 [5.1.1]: https://github.com/newcontext/kitchen-terraform/compare/v5.1.0...v5.1.1
