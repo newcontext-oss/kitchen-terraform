@@ -1,6 +1,6 @@
 # ![Kitchen-Terraform Logo][kitchen-terraform-logo] Kitchen-Terraform
 
-> Kitchen-Terraform enables verification of Terraform state.
+> Kitchen-Terraform enables verification of infrastructure systems provisioned with Terraform.
 
 [![Gem version][gem-version-shield]][kitchen-terraform-gem]
 [![Gem downloads version][gem-downloads-version-shield]][kitchen-terraform-gem]
@@ -16,9 +16,9 @@
 [![Gitter chat][gitter-shield]][gitter]
 
 Kitchen-Terraform provides a set of [Kitchen][kitchen] plugins
-which enable a system to use Test Kitchen to converge a
-[Terraform][terraform] configuration and verify the resulting Terraform
-state with [InSpec][inspec] controls.
+which enable the use of Kitchen to converge a [Terraform][terraform]
+configuration and verify the resulting infrastructure systems with
+[InSpec][inspec] controls.
 
 As Kitchen-Terraform integrates several distinctive technologies in a
 nontrivial manner, reviewing the documentation of each of the
