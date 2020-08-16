@@ -30,7 +30,7 @@ require "rubygems"
   specification.add_development_dependency "middleman-livereload", "~> 3.4"
   specification.add_development_dependency "middleman-syntax", "~> 3.0"
   specification.add_development_dependency "middleman", "~> 4.2"
-  specification.add_development_dependency "mini_racer", "~> 0.2.0"
+  specification.add_development_dependency "mini_racer", "~> 0.2"
   specification.add_development_dependency "pry-coolline", "~> 0.2"
   specification.add_development_dependency "pry", "~> 0.10"
   specification.add_development_dependency "reek", "~> 5.5"
@@ -48,6 +48,6 @@ require "rubygems"
 
   specification.cert_chain = ["certs/gem-public_cert.pem"]
   specification.required_ruby_version = [">= 2.4", "< 2.8"]
-  specification.requirements = ["Terraform >= v0.11.4, < v0.13.0"]
+  specification.requirements = ["Terraform >= v0.11.4, < v0.14.0"]
   specification.signing_key = "certs/gem-private_key.pem" if $PROGRAM_NAME =~ /gem\z/
 end
