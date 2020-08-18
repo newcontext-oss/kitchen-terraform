@@ -7,6 +7,7 @@ The format is based on
 adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
+
 ### Added
 
 - Support for Terraform v0.13.
