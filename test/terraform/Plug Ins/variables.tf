@@ -14,5 +14,5 @@
 
 variable "terragrunt" {
   description = "Terragrunt configuration."
-  type        = "map"
+  type        = map(string)
 }

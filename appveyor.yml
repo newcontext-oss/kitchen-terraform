@@ -37,7 +37,7 @@ for:
       - chmod go-rw test/terraform/backend-ssh/id_ed25519
       - PATH="$(pwd)/bin:$PATH" ./ruby-2.6/bin/rake test:kitchen:attributes-linux
       - PATH="$(pwd)/bin:$PATH" ./ruby-2.6/bin/rake test:kitchen:backend-ssh-linux
-      - PATH="$(pwd)/bin:$PATH" ./ruby-2.6/bin/rake test:kitchen:plug-ins-linux
+      - PATH="$(pwd)/bin:$PATH" ./ruby-2.6/bin/rake test:kitchen:plug-ins-11-linux
       - PATH="$(pwd)/bin:$PATH" ./ruby-2.6/bin/rake test:kitchen:variables-linux
       - PATH="$(pwd)/bin:$PATH" ./ruby-2.6/bin/rake test:kitchen:workspaces-linux
   - matrix:
@@ -60,6 +60,6 @@ for:
       - unzip terraform-provider-local_1.2.2_windows_amd64.zip -d "test\terraform\Plug Ins\Plug In Directory"
     test_script:
       - ruby ./ruby-2.5/bin/rake test:kitchen:attributes-windows
-      - ruby ./ruby-2.5/bin/rake test:kitchen:plug-ins-windows
+      - ruby ./ruby-2.5/bin/rake test:kitchen:plug-ins-11-windows
       - ruby ./ruby-2.5/bin/rake test:kitchen:variables-windows
       - ruby ./ruby-2.5/bin/rake test:kitchen:workspaces-windows
