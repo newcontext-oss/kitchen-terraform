@@ -14,7 +14,7 @@ GIT
 PATH
   remote: ..
   specs:
-    kitchen-terraform (5.4.0)
+    kitchen-terraform (5.5.0)
       dry-validation (~> 0.13)
       inspec (>= 3, < 5)
       json (~> 2.2)
@@ -33,7 +33,7 @@ GEM
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.1)
-    autoprefixer-rails (9.8.6.2)
+    autoprefixer-rails (9.8.6.3)
       execjs
     aws-eventstream (1.1.0)
     aws-partitions (1.358.0)
@@ -194,7 +194,7 @@ GEM
       ms_rest_azure (~> 0.12.0)
     azure_mgmt_key_vault (0.17.6)
       ms_rest_azure (~> 0.12.0)
-    azure_mgmt_resources (0.17.9)
+    azure_mgmt_resources (0.18.0)
       ms_rest_azure (~> 0.12.0)
     azure_mgmt_security (0.18.2)
       ms_rest_azure (~> 0.12.0)
@@ -473,7 +473,7 @@ GEM
       mixlib-shellout
       mixlib-versioning
       thor
-    mixlib-log (3.0.8)
+    mixlib-log (3.0.9)
     mixlib-shellout (3.1.4)
       chef-utils
     mixlib-versioning (1.2.12)
