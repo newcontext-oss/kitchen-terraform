@@ -42,7 +42,7 @@ module Kitchen
       # @see Kitchen::Configurable#finalize_config!
       def finalize_config!(instance)
         super instance
-        self.version_requirement = ::Gem::Requirement.new ">= 0.11.4", "< 0.13.0"
+        self.version_requirement = ::Gem::Requirement.new ">= 0.11.4", "< 0.14.0"
         self.workspace_name = "kitchen-terraform-#{::Shellwords.escape instance.name}"
       end
 

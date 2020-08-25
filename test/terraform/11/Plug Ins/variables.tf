@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-resource "local_file" "static_file" {
-  content  = "abc"
-  filename = "${path.cwd}/static_file.txt"
+variable "terragrunt" {
+  description = "Terragrunt configuration."
+  type        = "map"
 }
