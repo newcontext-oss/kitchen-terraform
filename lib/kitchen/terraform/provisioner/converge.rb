@@ -175,7 +175,7 @@ module Kitchen
         def save_outputs(parsed_outputs:, state:)
           logger.warn "Writing the output variables to the Kitchen instance state..."
           outputs_manager.save outputs: parsed_outputs, state: state
-          logger.warn "Finished writing the output varibales to the Kitchen instance state."
+          logger.warn "Finished writing the output variables to the Kitchen instance state."
         end
 
         def save_variables_and_outputs(state:)

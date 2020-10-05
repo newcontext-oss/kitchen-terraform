@@ -160,7 +160,7 @@ module Kitchen
       def load_outputs(state:)
         logger.warn "Reading the Terraform output variables from the Kitchen instance state..."
         ::Kitchen::Terraform::OutputsManager.new.load outputs: outputs, state: state
-        logger.warn "Finished reading the Terraform output varibales from the Kitchen instance state."
+        logger.warn "Finished reading the Terraform output variables from the Kitchen instance state."
       end
 
       def profile_locations
