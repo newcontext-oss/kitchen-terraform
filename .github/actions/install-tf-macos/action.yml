@@ -1,0 +1,7 @@
+name: install_tf_macos
+description: installs Terraform/TerraGrunt for MacOS
+runs:
+  using: "composite"
+  steps:
+    - run: $GITHUB_ACTION_PATH/install_tf_macos.sh
+      shell: bash

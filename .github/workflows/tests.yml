@@ -68,3 +68,61 @@ jobs:
         bundle install
         ./$GEMFILE_DIR/bin/rake
 
+
+  test_macos_ruby_2_7_tf12:
+    name: MacOS Ruby 2.7 TF12
+    runs-on: macos-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.12.0
+      TERRAFORM_SHASUM: 9dbee9dea660ea64352f8ddf2539e60d1c414210e9c4a29c8585926fef366be1
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        version: $RUBY_VERSION
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF
+      uses: ./.github/actions/install-tf-macos
+    - name: Build
+      run: |
+        bundle install
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:variables-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-osx
+
+
+  test_macos_ruby_2_7_tf13:
+    name: MacOS Ruby 2.7 TF13
+    runs-on: macos-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.13.0
+      TERRAFORM_SHASUM: 080af0420732cd08941aa4c0d2b4693056b24366724faa11b107bf052f7de203
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        version: $RUBY_VERSION
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF and friends
+      uses: ./.github/actions/install-tf-macos
+    - name: Build
+      run: |
+        bundle install
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:variables-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-osx
+
