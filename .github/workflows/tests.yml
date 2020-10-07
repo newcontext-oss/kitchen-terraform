@@ -146,6 +146,6 @@ jobs:
     - name: Build
       run: |
         bundle install
-        ./$GEMFILE_DIR/bin/rake
+        ./$Env:GEMFILE_DIR/bin/rake
 
 
