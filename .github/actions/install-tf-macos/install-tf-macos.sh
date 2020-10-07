@@ -31,7 +31,7 @@ case $TERRAFORM_VERSION in
                PLUGIN_DIR="$PLUGIN_DIR/registry.terraform.io/hashicorp"
 	       PLUGIN_DIR="$PLUGIN_DIR/local";;
 esac
-mkdir -p $PLUGIN_DIR
+mkdir -p "$PLUGIN_DIR"
 curl --remote-name --silent $URL3
 shasum -a 256 $FILE3 | grep $SHASUM3
-unzip $FILE3 -d $PLUGIN_DIR
+unzip $FILE3 -d "$PLUGIN_DIR"
