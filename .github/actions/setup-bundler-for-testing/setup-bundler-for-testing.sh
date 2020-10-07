@@ -7,3 +7,4 @@ bundle config --local deployment true
 bundle config --local jobs $(nproc --ignore=1)
 bundle config --local set clean true
 bundle config --local set frozen true
+bundle config --local set specific_platform true
