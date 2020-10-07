@@ -3,10 +3,9 @@
 # install Terraform
 FILE1=terraform_${TERRAFORM_VERSION}_darwin_amd64.zip
 URL1=https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}
-URL1="$URL1/$FILE"
+URL1="$URL1/$FILE1"
 
 curl --remote-name --silent $URL1
-ls
 shasum -a 256 $FILE1 | grep ${TERRAFORM_SHASUM}
 unzip $FILE1 -d "$HOME/bin"
 
