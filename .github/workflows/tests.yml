@@ -145,6 +145,9 @@ jobs:
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Build
       run: |
+        echo 'Ruby Version:'
+        ruby --version
+        echo 'RUBY_PLATFORM:'
         ruby -e 'puts RUBY_PLATFORM'
         bundle install
         . ./$Env:GEMFILE_DIR/bin/rake

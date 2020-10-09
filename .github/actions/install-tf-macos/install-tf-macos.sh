@@ -32,7 +32,7 @@ SHASUM3=2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
 #                PLUGIN_DIR="$PLUGIN_DIR/local";;
 # esac
 
-PLUGIN_DIR='test/terraform/11/PlugIns/Plug In Directory'
+PLUGIN_DIR='test/terraform/11/PlugIns/PlugInDirectory'
 
 mkdir -p "$PLUGIN_DIR"
 curl --remote-name --silent $URL3
