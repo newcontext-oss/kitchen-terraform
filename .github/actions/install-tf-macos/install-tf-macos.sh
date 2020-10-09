@@ -38,7 +38,4 @@ mkdir -p "$PLUGIN_DIR"
 curl --remote-name --silent $URL3
 shasum -a 256 $FILE3 | grep $SHASUM3
 unzip $FILE3 -d "$PLUGIN_DIR"
-echo "----- Looking at Plugin Directory -----"
-ls "$PLUGIN_DIR"
 
-# check the PLUGIN_DIR is correct, TF list plugins

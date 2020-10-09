@@ -91,8 +91,6 @@ jobs:
       uses: ./.github/actions/install-tf-macos
     - name: Build
       run: |
-        echo 'top level dir-----------------------------'
-        ls
         bundle install
         ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
         ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
@@ -122,6 +120,13 @@ jobs:
       uses: ./.github/actions/install-tf-macos
     - name: Build
       run: |
+        echo 'plugin directory -----------------------------------'
+        ls test/terraform/11/PlugIns/PlugInDirectory
+        SAVE_DIR=$(pwd)
+        cd test/terraform/11/PlugIns
+        PLUGIN_DIR=/Users/runner/work/kitchen-terraform/kitchen-terraform/test/terraform/11/PlugIns/PlugInDirectory
+        bin/terraform init  -input=false -lock=true -lock-timeout=0s -no-color -force-copy -backend=true -get=true -get-plugins=true -plugin-dir="$PLUGIN_DIR" -verify-plugins=true
+        cd "$SAVE_DIR"
         bundle install
         ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
         ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
