@@ -78,8 +78,8 @@ suites:
           user: root
   - name: plug-ins-11
     driver:
-      plugin_directory: test/terraform/11/Plug Ins/Plug In Directory
-      root_module_directory: test/terraform/11/Plug Ins
+      plugin_directory: test/terraform/11/PlugIns/PlugInDirectory
+      root_module_directory: test/terraform/11/PlugIns
     verifier:
       systems:
         - name: default
@@ -88,8 +88,8 @@ suites:
             - test/integration/plug-ins
   - name: plug-ins
     driver:
-      plugin_directory: test/terraform/Plug Ins/Plug In Directory
-      root_module_directory: test/terraform/Plug Ins
+      plugin_directory: test/terraform/11/PlugIns/PlugInDirectory
+      root_module_directory: test/terraform/11/PlugIns
     verifier:
       systems:
         - name: default

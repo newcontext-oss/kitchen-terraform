@@ -25,12 +25,15 @@ URL3=https://releases.hashicorp.com/terraform-provider-local/1.2.2
 URL3="$URL3/$FILE3"
 SHASUM3=2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
 
-case $TERRAFORM_VERSION in
-     "0.12.0") PLUGIN_DIR='test/terraform/11/Plug Ins';;
-     "0.13.0") PLUGIN_DIR='test/terraform/Plug Ins'
-               PLUGIN_DIR="$PLUGIN_DIR/registry.terraform.io/hashicorp"
-	       PLUGIN_DIR="$PLUGIN_DIR/local";;
-esac
+# case $TERRAFORM_VERSION in
+#      "0.12.0") PLUGIN_DIR='test/terraform/11/PlugIns/Plug In Directory';;
+#      "0.13.0") PLUGIN_DIR='test/terraform/PlugIns/Plug In Directory'
+#                PLUGIN_DIR="$PLUGIN_DIR/registry.terraform.io/hashicorp"
+#                PLUGIN_DIR="$PLUGIN_DIR/local";;
+# esac
+
+PLUGIN_DIR='test/terraform/11/PlugIns/Plug In Directory'
+
 mkdir -p "$PLUGIN_DIR"
 curl --remote-name --silent $URL3
 shasum -a 256 $FILE3 | grep $SHASUM3
