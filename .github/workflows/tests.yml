@@ -91,6 +91,8 @@ jobs:
       uses: ./.github/actions/install-tf-macos
     - name: Build
       run: |
+        echo 'top level dir-----------------------------'
+        ls
         bundle install
         ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
         ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
