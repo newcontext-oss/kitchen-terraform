@@ -44,7 +44,7 @@ require "rubygems"
   specification.add_runtime_dependency "json", "~> 2.2"
   if specification.platform == 'x64_mingw32'
     default_platform = specification.platform
-    specification.platform = 'universal_mingw32'
+    specification.platform = 'universal-mingw32'
     specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
     specification.platform = default_platform
   else

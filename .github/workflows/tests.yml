@@ -120,11 +120,11 @@ jobs:
       uses: ./.github/actions/install-tf-macos
     - name: Build
       run: |
-        echo 'plugin directory -----------------------------------'
-        ls test/terraform/11/PlugIns/PlugInDirectory
+        PLUGIN_DIR=/Users/runner/work/kitchen-terraform/kitchen-terraform/test/terraform/11/PlugIns/PlugInDirectory
+        echo '---------- plugin directory contents -----------------------------------'
+        ls "$PLUGIN_DIR"
         SAVE_DIR=$(pwd)
         cd test/terraform/11/PlugIns
-        PLUGIN_DIR=/Users/runner/work/kitchen-terraform/kitchen-terraform/test/terraform/11/PlugIns/PlugInDirectory
         $HOME/bin/terraform init  -input=false -lock=true -lock-timeout=0s -no-color -force-copy -backend=true -get=true -get-plugins=true -plugin-dir="$PLUGIN_DIR" -verify-plugins=true
         cd "$SAVE_DIR"
         bundle install
