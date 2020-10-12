@@ -33,7 +33,10 @@ SHASUM3=2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
 # esac
 
 PLUGIN_DIR='test/terraform/11/PlugIns/PlugInDirectory'
-
+MAJOR_VERSION=$(echo $TERRAFORM_VERSION|sed 's/0\.\([0-9][0-9]*\)\.[0-9][0-9]*$/\1/')
+if [ "$MAJOR_VERSION" -ge 13 ]; then
+  PLUGIN_DIR="${PLUGIN_DIR}/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64"
+fi
 mkdir -p "$PLUGIN_DIR"
 curl --remote-name --silent $URL3
 shasum -a 256 $FILE3 | grep $SHASUM3

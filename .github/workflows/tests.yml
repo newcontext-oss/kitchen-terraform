@@ -139,7 +139,7 @@ jobs:
     runs-on: windows-latest
     env:
       GEMFILE_DIR: .
-      RUBY_VERSION: 2.6.x
+      RUBY_VERSION: 2.7.2
 
     steps:
     - name: Checkout repo
