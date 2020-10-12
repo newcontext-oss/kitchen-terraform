@@ -42,9 +42,9 @@ require "rubygems"
   specification.add_runtime_dependency "dry-validation", "~> 0.13"
   specification.add_runtime_dependency "inspec", ">= 3", "< 5"
   specification.add_runtime_dependency "json", "~> 2.2"
-  if specification.platform == 'x64_mingw'
+  if specification.platform == 'x64_mingw32'
     default_platform = specification.platform
-    specification.platform = 'universal_mingw'
+    specification.platform = 'universal_mingw32'
     specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
     specification.platform = default_platform
   else

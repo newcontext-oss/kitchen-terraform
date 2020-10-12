@@ -125,7 +125,7 @@ jobs:
         SAVE_DIR=$(pwd)
         cd test/terraform/11/PlugIns
         PLUGIN_DIR=/Users/runner/work/kitchen-terraform/kitchen-terraform/test/terraform/11/PlugIns/PlugInDirectory
-        bin/terraform init  -input=false -lock=true -lock-timeout=0s -no-color -force-copy -backend=true -get=true -get-plugins=true -plugin-dir="$PLUGIN_DIR" -verify-plugins=true
+        $HOME/bin/terraform init  -input=false -lock=true -lock-timeout=0s -no-color -force-copy -backend=true -get=true -get-plugins=true -plugin-dir="$PLUGIN_DIR" -verify-plugins=true
         cd "$SAVE_DIR"
         bundle install
         ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
