@@ -120,13 +120,6 @@ jobs:
       uses: ./.github/actions/install-tf-macos
     - name: Build
       run: |
-        PLUGIN_DIR=/Users/runner/work/kitchen-terraform/kitchen-terraform/test/terraform/11/PlugIns/PlugInDirectory
-        echo '---------- plugin directory contents -----------------------------------'
-        ls "$PLUGIN_DIR"
-        SAVE_DIR=$(pwd)
-        cd test/terraform/11/PlugIns
-        $HOME/bin/terraform init  -input=false -lock=true -lock-timeout=0s -no-color -force-copy -backend=true -get=true -get-plugins=true -plugin-dir="$PLUGIN_DIR" -verify-plugins=true
-        cd "$SAVE_DIR"
         bundle install
         ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
         ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
@@ -134,29 +127,28 @@ jobs:
         ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-osx
 
 
-  test_windows_ruby_2_7:
-    name: Windows Ruby 2.7
-    runs-on: windows-latest
-    env:
-      GEMFILE_DIR: .
-      RUBY_VERSION: 2.7.2
-
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: actions/setup-ruby@v1
-      with:
-        version: $RUBY_VERSION
-    - name: Setup bundler
-      uses: ./.github/actions/setup-bundler-for-testing
-    - name: Build
-      run: |
-        echo 'Ruby Version:'
-        ruby --version
-        echo 'RUBY_PLATFORM:'
-        ruby -e 'puts RUBY_PLATFORM'
-        bundle install
-        . ./$Env:GEMFILE_DIR/bin/rake
-
+#  test_windows_ruby_2_7:
+#    name: Windows Ruby 2.7
+#    runs-on: windows-latest
+#    env:
+#      GEMFILE_DIR: .
+#      RUBY_VERSION: 2.7.2
+#
+#    steps:
+#    - name: Checkout repo
+#      uses: actions/checkout@v2
+#    - name: Set up Ruby
+#      uses: actions/setup-ruby@v1
+#      with:
+#        version: $RUBY_VERSION
+#    - name: Setup bundler
+#      uses: ./.github/actions/setup-bundler-for-testing
+#    - name: Build
+#      run: |
+#        echo 'Ruby Version:'
+#        ruby --version
+#        echo 'RUBY_PLATFORM:'
+#        ruby -e 'puts RUBY_PLATFORM'
+#        bundle install
+#        . ./$Env:GEMFILE_DIR/bin/rake
 
