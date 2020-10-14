@@ -151,6 +151,7 @@ jobs:
         ruby -e 'puts RUBY_PLATFORM'
         echo 'deleting gems.locked'
         remove-item gems.locked
+        bundle config --local deployment false
         bundle install
         . ./$Env:GEMFILE_DIR/bin/rake
 
