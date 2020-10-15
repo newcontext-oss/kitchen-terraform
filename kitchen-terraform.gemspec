@@ -42,6 +42,7 @@ require "rubygems"
   specification.add_runtime_dependency "inspec", ">= 3", "< 5"
   specification.add_runtime_dependency "json", "~> 2.2"
   if specification.platform == 'x64_mingw32'
+    puts 'Taking the gemspec branch!'
     default_platform = specification.platform
     specification.platform = 'universal-mingw32'
     specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"

@@ -145,7 +145,6 @@ jobs:
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Build
       run: |
-        get-command ruby.exe -all -commandtype application
         echo 'Ruby Version:'
         ruby --version
         echo 'RUBY_PLATFORM:'
@@ -154,6 +153,7 @@ jobs:
         remove-item gems.locked
         bundle config --local deployment false
         bundle install
-        cat gems.locked
+        ls
+        cat gemfile.lock
         . ./$Env:GEMFILE_DIR/bin/rake
 
