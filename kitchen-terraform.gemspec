@@ -33,7 +33,6 @@ require "rubygems"
   specification.add_development_dependency "mini_racer", "~> 0.3.0"
   specification.add_development_dependency "pry-coolline", "~> 0.2"
   specification.add_development_dependency "pry", "~> 0.10"
-  specification.add_development_dependency "reek", "~> 5.5"
   specification.add_development_dependency "rspec", "~> 3.4"
   specification.add_development_dependency "rufo", "~> 0.7"
   specification.add_development_dependency "simplecov", "~> 0.16.1"
@@ -47,8 +46,10 @@ require "rubygems"
     specification.platform = 'universal-mingw32'
     specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
     specification.platform = default_platform
+    specification.add_development_dependency "reek", "~> 6.0"
   else
     specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
+    specification.add_development_dependency "reek", "~> 5.5"
   end
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
