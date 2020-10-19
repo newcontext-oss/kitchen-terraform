@@ -153,8 +153,5 @@ jobs:
         remove-item gems.locked
         bundle config --local deployment false
         bundle install
-        ls vendor/bundle/ruby/
-        ls vendor/bundle/ruby/2.7.1/gems
-        
         . ./$Env:GEMFILE_DIR/bin/rake
 

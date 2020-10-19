@@ -41,17 +41,19 @@ require "rubygems"
   specification.add_runtime_dependency "dry-validation", "~> 0.13"
   specification.add_runtime_dependency "inspec", ">= 3", "< 5"
   specification.add_runtime_dependency "json", "~> 2.2"
+  specification.add_development_dependency "reek", "~> 6.0.2"
   puts 'specification.platform:'
   puts specification.platform
+  puts 'Gem::Platform::CURRENT:'
+  puts Gem::Platform::CURRENT
+  # This never matches!
   if specification.platform == 'x64_mingw32'
     default_platform = specification.platform
     specification.platform = 'universal-mingw32'
     specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
     specification.platform = default_platform
-    specification.add_development_dependency "reek", "~> 6.0"
   else
     specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
-    specification.add_development_dependency "reek", "~> 6.0"  # was 5.5
   end
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
