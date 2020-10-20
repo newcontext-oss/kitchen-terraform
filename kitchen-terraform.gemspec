@@ -55,6 +55,7 @@ end
   if version_gt_25
     specification.add_development_dependency "reek", "~> 6.0.2"
   else
+    puts 'version <= 2.5'
     specification.add_development_dependency "reek", "~> 5.5"
   end
   

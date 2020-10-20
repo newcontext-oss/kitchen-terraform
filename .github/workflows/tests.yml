@@ -21,6 +21,9 @@ jobs:
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Build
       run: |
+        type ruby
+        ruby --version
+        ruby -e 'puts RUBY_VERSION'
         bundle install
         ./$GEMFILE_DIR/bin/rake
 
@@ -149,9 +152,12 @@ jobs:
         ruby --version
         echo 'RUBY_PLATFORM:'
         ruby -e 'puts RUBY_PLATFORM'
+        # This is temporary - for troubleshooting
         echo 'deleting gems.locked'
         remove-item gems.locked
         bundle config --local deployment false
+        
         bundle install
+        gem list
         . ./$Env:GEMFILE_DIR/bin/rake
 
