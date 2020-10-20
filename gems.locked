@@ -758,7 +758,7 @@ DEPENDENCIES
   pry (~> 0.10)!
   pry-coolline (~> 0.2)!
   rake (~> 12.3)!
-  reek (~> 6.0)!
+  reek (~> 6.0.2)!
   rspec (~> 3.4)!
   rufo (~> 0.7)!
   simplecov (~> 0.16.1)!
