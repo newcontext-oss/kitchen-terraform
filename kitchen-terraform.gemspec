@@ -7,6 +7,17 @@ end
 require "kitchen/terraform/version.rb"
 require "rubygems"
 
+version_parts_strings = RUBY_VERSION.split('.')
+version_parts = []
+version_parts_strings.each { |vp| version_parts.push(vp.to_i) }
+
+if version_parts[0] > 2 ||
+   (version_parts[0] == 2 && version_parts[1] > 5)
+  version_gt_25 = true
+else
+  version_gt_25 = false
+end
+
 ::Gem::Specification.new do |specification|
   specification.authors = ["Aaron Lane", "Nick Willever", "Kevin Dickerson", "Nell Shamrell-Harrington",
                            "Michael Glenney", "Walter Dolce", "Clay Thomas", "Erik R. Rygg", "Kyle Sexton",
@@ -41,23 +52,15 @@ require "rubygems"
   specification.add_runtime_dependency "dry-validation", "~> 0.13"
   specification.add_runtime_dependency "inspec", ">= 3", "< 5"
   specification.add_runtime_dependency "json", "~> 2.2"
-  specification.add_development_dependency "reek", "~> 6.0.2"
-  puts 'specification.platform:'
-  puts specification.platform
-  puts 'Gem::Platform::CURRENT:'
-  puts Gem::Platform::CURRENT
-  # This never matches!
-  if specification.platform == 'x64_mingw32'
-    default_platform = specification.platform
-    specification.platform = 'universal-mingw32'
-    specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
-    specification.platform = default_platform
+  if version_gt_25
+    specification.add_development_dependency "reek", "~> 6.0.2"
   else
-    specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
+    specification.add_development_dependency "reek", "~> 5.6.0"
   end
+  
+  specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
-
   specification.cert_chain = ["certs/gem-public_cert.pem"]
   specification.required_ruby_version = [">= 2.4", "< 2.8"]
   specification.requirements = ["Terraform >= v0.11.4, < v0.14.0"]
