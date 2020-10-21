@@ -452,8 +452,6 @@ GEM
       middleman-core (>= 3.2)
       rouge (~> 3.2)
     mini_mime (1.0.2)
-    mini_racer (0.3.1)
-      libv8 (~> 8.4.255)
     minitest (5.14.1)
     mixlib-config (3.0.9)
       tomlrb
@@ -754,7 +752,6 @@ DEPENDENCIES
   middleman-favicon-maker (~> 4.1)!
   middleman-livereload (~> 3.4)!
   middleman-syntax (~> 3.0)!
-  mini_racer (~> 0.3.0)!
   pry (~> 0.10)!
   pry-coolline (~> 0.2)!
   rake (~> 12.3)!

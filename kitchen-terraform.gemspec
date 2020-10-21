@@ -41,7 +41,7 @@ end
   specification.add_development_dependency "middleman-livereload", "~> 3.4"
   specification.add_development_dependency "middleman-syntax", "~> 3.0"
   specification.add_development_dependency "middleman", "~> 4.2"
-  specification.add_development_dependency "mini_racer", "~> 0.3.0"
+  # specification.add_development_dependency "mini_racer", "~> 0.3.0"
   specification.add_development_dependency "pry-coolline", "~> 0.2"
   specification.add_development_dependency "pry", "~> 0.10"
   specification.add_development_dependency "rspec", "~> 3.4"
