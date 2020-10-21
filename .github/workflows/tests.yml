@@ -16,7 +16,7 @@ jobs:
     - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: $RUBY_VERSION
+        ruby-version: ${{ $RUBY_VERSION }}
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Build
@@ -41,7 +41,7 @@ jobs:
     - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: $RUBY_VERSION
+        ruby-version: ${{ $RUBY_VERSION }}
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Build
@@ -63,7 +63,7 @@ jobs:
     - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: $RUBY_VERSION
+        ruby-version: ${{ $RUBY_VERSION }}
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Build
@@ -87,7 +87,7 @@ jobs:
     - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: $RUBY_VERSION
+        ruby-version: ${{ $RUBY_VERSION }}
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Install TF
@@ -116,7 +116,7 @@ jobs:
     - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: $RUBY_VERSION
+        ruby-version: ${{ $RUBY_VERSION }}
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Install TF and friends
@@ -143,7 +143,7 @@ jobs:
     - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: $RUBY_VERSION
+        ruby-version: ${{ $RUBY_VERSION }}
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Build
