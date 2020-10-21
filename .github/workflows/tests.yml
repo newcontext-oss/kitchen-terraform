@@ -148,6 +148,7 @@ jobs:
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Build
       run: |
+        # Remember - this is PowerShell code!
         echo 'Ruby Version:'
         ruby --version
         echo 'RUBY_PLATFORM:'
@@ -160,5 +161,10 @@ jobs:
         bundle install
         gem list --local
         ls ./vendor/bundle/ruby/2.7.0/gems/
-        ./${{ Env:GEMFILE_DIR }}/bin/rake
+        echo "all environment variables"
+        gci Env:
+        echo "rake path"
+        $rake_path = "./$Env:GEMFILE_DIR/bin/rake"
+        echo $rake_path
+        $rake_path
         echo 'done!'
