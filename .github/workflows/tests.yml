@@ -164,6 +164,6 @@ jobs:
         ls ./bin/
         echo "rake path"
         $rake_path = "$Env:GEMFILE_DIR/bin/rake.exe"
-        echo "-- $rake_path --""
+        echo "-- $rake_path --"
         & $rake_path
         echo 'done!'
