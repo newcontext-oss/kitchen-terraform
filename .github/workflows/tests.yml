@@ -160,5 +160,5 @@ jobs:
         bundle install
         gem list --local
         ls ./vendor/bundle/ruby/2.7.0/gems/
-        ./${{Env:GEMFILE_DIR}}/bin/rake
+        ./${{ Env:GEMFILE_DIR }}/bin/rake
         echo 'done!'
