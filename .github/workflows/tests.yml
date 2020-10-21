@@ -158,6 +158,6 @@ jobs:
         bundle config --local deployment false
         
         bundle install
-        gem list
-        . ./$Env:GEMFILE_DIR/bin/rake
-
+        gem list --local
+        ./$Env:GEMFILE_DIR/bin/rake
+        echo 'done!'
