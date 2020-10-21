@@ -157,14 +157,13 @@ jobs:
         echo 'deleting gems.locked'
         remove-item gems.locked
         bundle config --local deployment false
-        
+
         bundle install
         gem list --local
         ls ./vendor/bundle/ruby/2.7.0/gems/
-        echo "all environment variables"
-        gci Env:
+        ls ./bin/
         echo "rake path"
-        $rake_path = "./$Env:GEMFILE_DIR/bin/rake"
-        echo $rake_path
-        $rake_path
+        $rake_path = "$Env:GEMFILE_DIR/bin/rake.exe"
+        echo "-- $rake_path --""
+        & $rake_path
         echo 'done!'
