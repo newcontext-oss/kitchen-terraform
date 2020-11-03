@@ -149,21 +149,9 @@ jobs:
     - name: Build
       run: |
         # Remember - this is PowerShell code!
-        echo 'Ruby Version:'
-        ruby --version
-        echo 'RUBY_PLATFORM:'
-        ruby -e 'puts RUBY_PLATFORM'
-        # This is temporary - for troubleshooting
-        echo 'deleting gems.locked'
-        remove-item gems.locked
-        bundle config --local deployment false
-
         bundle install
         gem list --local
         ls ./vendor/bundle/ruby/2.7.0/gems/
-        ls ./bin/
-        echo "rake path"
-        $rake_path = "$Env:GEMFILE_DIR/bin/rake.exe"
-        echo "-- $rake_path --"
-        & $rake_path
+        $rake_path = "$Env:GEMFILE_DIR/bin/rake"
+        . $rake_path
         echo 'done!'
