@@ -47,7 +47,7 @@ end
   specification.add_development_dependency "travis", "~> 1.8"
   specification.add_development_dependency "tty-which", "~> 0.4.0"
   specification.add_development_dependency "yard", "~> 0.9"
-  # specification.add_runtime_dependency "dry-validation", "~> 0.13"
+  specification.add_development_dependency "dry-validation", "~> 0.13"
 
   if version_gt_25
     specification.add_development_dependency "reek", "~> 6.0.2"

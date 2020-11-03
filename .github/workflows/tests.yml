@@ -150,8 +150,6 @@ jobs:
       run: |
         # Remember - this is PowerShell code!
         bundle install
-        gem list --local
-        ls ./vendor/bundle/ruby/2.7.0/gems/
         $rake_path = "$Env:GEMFILE_DIR/bin/rake"
-        . $rake_path
+        & $rake_path
         echo 'done!'
