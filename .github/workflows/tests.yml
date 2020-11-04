@@ -151,10 +151,7 @@ jobs:
         # Remember - this is PowerShell code!
         bundle install
         $rake_path = "$Env:GEMFILE_DIR/bin/rake"
-        echo "rake path: $rake_path"
-        echo "./bin/rake contains: --------------------------"
-        cat $rake_path
-        echo "-----------------------------------------------"
-        & $rake_path --version
-        & $rake_path --trace=stdout --job-stats --verbose history
+        ruby --version
+        ruby $rake_path --version
+        ruby $rake_path --trace=stdout --job-stats --verbose history
         echo 'done!'
