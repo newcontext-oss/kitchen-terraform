@@ -153,5 +153,5 @@ jobs:
         $rake_path = "$Env:GEMFILE_DIR/bin/rake"
         ruby --version
         ruby $rake_path --version
-        ruby $rake_path --trace=stdout --job-stats --verbose history
+        ruby $rake_path --trace=stdout --job-stats --verbose
         echo 'done!'
