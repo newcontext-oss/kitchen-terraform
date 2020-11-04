@@ -25,7 +25,7 @@ jobs:
         ruby --version
         ruby -e 'puts RUBY_VERSION'
         bundle install
-        ./$GEMFILE_DIR/bin/rake
+        ./$GEMFILE_DIR/bin/rake --job-stats
 
 
   test_ubun_ruby_2_6:
@@ -151,5 +151,7 @@ jobs:
         # Remember - this is PowerShell code!
         bundle install
         $rake_path = "$Env:GEMFILE_DIR/bin/rake"
-        & $rake_path
+        echo "rake path: $rake_path"
+        $rake_path --version
+        $rake_path --verbose --job-stats
         echo 'done!'
