@@ -152,6 +152,6 @@ jobs:
         bundle install
         $rake_path = "$Env:GEMFILE_DIR/bin/rake"
         echo "rake path: $rake_path"
-        $rake_path --version
-        $rake_path --verbose --job-stats
+        & $rake_path --version
+        & $rake_path --verbose --job-stats
         echo 'done!'
