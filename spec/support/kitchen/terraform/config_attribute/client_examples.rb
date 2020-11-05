@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "support/kitchen/terraform/config_schemas/string_examples"
+require 'os'
 
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Client" do
   let :attribute do
@@ -39,7 +40,10 @@ require "support/kitchen/terraform/config_schemas/string_examples"
     end
 
     specify "should expand the pathname" do
-      expect(subject[attribute]).to eq "/kitchen-root/abc"
+      path = subject[attribute]
+      # On Windows this path will have a drive letter, so remove that
+      path = path.gsub(/^[A-Za-z]:/, '') if OS.windows?
+      expect(path).to eq "/kitchen-root/abc"
     end
   end
 
