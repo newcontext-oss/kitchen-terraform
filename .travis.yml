@@ -116,8 +116,7 @@ jobs:
         - chmod +x terragrunt_darwin_amd64
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_darwin_amd64.zip
         - shasum -a 256 terraform-provider-local_1.2.2_darwin_amd64.zip | grep 2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
-        - unzip terraform-provider-local_1.2.2_darwin_amd64.zip -d test/terraform/11/Plug\
-          Ins/Plug\ In\ Directory
+        - unzip terraform-provider-local_1.2.2_darwin_amd64.zip -d test/terraform/11/PlugIns/PlugInDirectory
       script:
         - ./bin/rake test:kitchen:attributes-osx
         - ./bin/rake test:kitchen:plug-ins-11-osx
@@ -150,8 +149,8 @@ jobs:
         - chmod +x terragrunt_darwin_amd64
         - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_darwin_amd64.zip
         - shasum -a 256 terraform-provider-local_1.2.2_darwin_amd64.zip | grep 2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
-        - mkdir -p test/terraform/Plug\ Ins/Plug\ In\ Directory/registry.terraform.io/hashicorp/local
-        - mv terraform-provider-local_1.2.2_darwin_amd64.zip test/terraform/Plug\ Ins/Plug\ In\ Directory/registry.terraform.io/hashicorp/local/terraform-provider-local_1.2.2_darwin_amd64.zip
+        - mkdir -p test/terraform/11/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64
+        - unzip terraform-provider-local_1.2.2_darwin_amd64.zip -d test/terraform/11/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64
       script:
         - ./bin/rake test:kitchen:attributes-osx
         - ./bin/rake test:kitchen:plug-ins-osx

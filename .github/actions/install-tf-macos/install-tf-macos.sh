@@ -25,13 +25,6 @@ URL3=https://releases.hashicorp.com/terraform-provider-local/1.2.2
 URL3="$URL3/$FILE3"
 SHASUM3=2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
 
-# case $TERRAFORM_VERSION in
-#      "0.12.0") PLUGIN_DIR='test/terraform/11/PlugIns/Plug In Directory';;
-#      "0.13.0") PLUGIN_DIR='test/terraform/PlugIns/Plug In Directory'
-#                PLUGIN_DIR="$PLUGIN_DIR/registry.terraform.io/hashicorp"
-#                PLUGIN_DIR="$PLUGIN_DIR/local";;
-# esac
-
 PLUGIN_DIR='test/terraform/11/PlugIns/PlugInDirectory'
 MAJOR_VERSION=$(echo $TERRAFORM_VERSION|sed 's/0\.\([0-9][0-9]*\)\.[0-9][0-9]*$/\1/')
 if [ "$MAJOR_VERSION" -ge 13 ]; then
