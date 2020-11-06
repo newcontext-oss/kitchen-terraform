@@ -59,7 +59,7 @@ for:
       - sha256sum terraform_0.11.14_windows_amd64.zip | grep bfec66e2ad079a1fab6101c19617a82ef79357dc1b92ddca80901bb8d5312dc0
       - unzip terraform_0.11.14_windows_amd64.zip
       - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.4.0/terraform-provider-local_1.4.0_windows_amd64.zip
-      - sha256sum terraform-provider-local_1.2.2_windows_amd64.zip | grep 109262576075cd1ccf77079497beab27de5051bb9ed3a07760a8400c4ef54925
+      - sha256sum terraform-provider-local_1.4.0_windows_amd64.zip | grep 2ea6d8c503a1119b80a273eacd187516347c00a54990c47d130235e2ad53d163
       - md test\terraform\11\PlugIns\PlugInDirectory\registry.terraform.io\hashicorp\local\1.4.0\windows_amd64
       - unzip terraform-provider-local_1.4.0_windows_amd64.zip -d "test\terraform\11\PlugIns\PlugInDirectory\registry.terraform.io\hashicorp\local\1.4.0\windows_amd64"
     test_script:
