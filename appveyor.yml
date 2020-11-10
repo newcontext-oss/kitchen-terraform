@@ -31,7 +31,8 @@ for:
       - sha256sum terraform_0.11.4_linux_amd64.zip | grep 817be651ca41b999c09250a9fcade541a941afab41c0c663bd25529a4d5cfd31
       - unzip terraform_0.11.4_linux_amd64.zip -d "$(pwd)/bin"
       - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.4.0/terraform-provider-local_1.4.0_linux_amd64.zip
-      - sha256sum terraform-provider-local_1.4.0_linux_amd64.zip | grep 149e7fd6e51fe9f24a11d30b6034deefdece04f0272ced832a6803d1e2bfa37d
+      - sha256sum terraform-provider-local_1.4.0_linux_amd64.zip
+      - sha256sum terraform-provider-local_1.4.0_linux_amd64.zip | grep ca9fe963f261236b3f3308f8b4979cdd95dd68281b00c1c18a6d17db07519ac8
       - unzip terraform-provider-local_1.4.0_linux_amd64.zip -d test/terraform/11/PlugIns/PlugInDirectory
     test_script:
       - chmod go-rw test/terraform/backend-ssh/id_ed25519
