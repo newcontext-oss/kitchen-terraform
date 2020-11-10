@@ -63,7 +63,8 @@ for:
       - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.4.0/terraform-provider-local_1.4.0_windows_amd64.zip
       - sha256sum terraform-provider-local_1.4.0_windows_amd64.zip | grep 2ea6d8c503a1119b80a273eacd187516347c00a54990c47d130235e2ad53d163
       - md test\terraform\11\PlugIns\PlugInDirectory\registry.terraform.io\hashicorp\local\1.4.0\windows_amd64
-      - unzip terraform-provider-local_1.4.0_windows_amd64.zip -d "test\terraform\11\PlugIns\PlugInDirectory\registry.terraform.io\hashicorp\local\1.4.0\windows_amd64"
+      - unzip terraform-provider-local_1.4.0_windows_amd64.zip -d "test/terraform/11/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/windows_amd64"
+      - dir /s test\terraform\11\PlugIns\PlugInDirectory\registry.terraform.io\hashicorp\local\1.4.0\windows_amd64
     test_script:
       - ruby ./ruby-2.5/bin/rake test:kitchen:attributes-windows
       - ruby ./ruby-2.5/bin/rake test:kitchen:plug-ins-11-windows
