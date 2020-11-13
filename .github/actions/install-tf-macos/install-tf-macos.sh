@@ -20,10 +20,10 @@ shasum -a 256 $FILE2 | grep $SHASUM2
 chmod +x $FILE2
 
 # install TerraForm Provider
-FILE3=terraform-provider-local_1.2.2_darwin_amd64.zip
-URL3=https://releases.hashicorp.com/terraform-provider-local/1.2.2
+FILE3=terraform-provider-local_1.4.0_darwin_amd64.zip
+URL3=https://releases.hashicorp.com/terraform-provider-local/1.4.0
 URL3="$URL3/$FILE3"
-SHASUM3=2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
+SHASUM3=7ef13da7e8ae7129fae8a9c72845d52d4586db496359228ed435aeab2f44aea8
 
 PLUGIN_DIR='test/terraform/11/PlugIns/PlugInDirectory'
 MAJOR_VERSION=$(echo $TERRAFORM_VERSION|sed 's/0\.\([0-9][0-9]*\)\.[0-9][0-9]*$/\1/')

@@ -113,9 +113,9 @@ jobs:
         - curl --location --remote-name --silent https://github.com/gruntwork-io/terragrunt/releases/download/v0.18.6/terragrunt_darwin_amd64
         - shasum -a 256 terragrunt_darwin_amd64 | grep 234327294a07c312e7bc279ea749a653218c37d2d0b51c5cf2076fcf82dc298a
         - chmod +x terragrunt_darwin_amd64
-        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.2.2/terraform-provider-local_1.2.2_darwin_amd64.zip
-        - shasum -a 256 terraform-provider-local_1.2.2_darwin_amd64.zip | grep 2464abf56aabecca26177f3562a4bd771cd79a79a94c78474f39691f9d4abea7
-        - unzip terraform-provider-local_1.2.2_darwin_amd64.zip -d test/terraform/11/PlugIns/PlugInDirectory
+        - curl --remote-name --silent https://releases.hashicorp.com/terraform-provider-local/1.4.0/terraform-provider-local_1.4.0_darwin_amd64.zip
+        - shasum -a 256 terraform-provider-local_1.4.0_darwin_amd64.zip | grep 7ef13da7e8ae7129fae8a9c72845d52d4586db496359228ed435aeab2f44aea8
+        - unzip terraform-provider-local_1.4.0_darwin_amd64.zip -d test/terraform/11/PlugIns/PlugInDirectory
       script:
         - ./bin/rake test:kitchen:attributes-osx
         - ./bin/rake test:kitchen:plug-ins-11-osx
