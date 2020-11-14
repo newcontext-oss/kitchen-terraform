@@ -6,7 +6,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="msapplication-config" content="browserconfig.xml" />
-    <title>About Kitchen-Terraform</title>
+    <title>Documentation</title>
     <link rel="apple-touch-icon" sizes="180x180" href="/kitchen-terraform/apple-touch-icon-180x180-precomposed.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/kitchen-terraform/apple-touch-icon-152x152-precomposed.png">
     <link rel="apple-touch-icon" sizes="144x144" href="/kitchen-terraform/apple-touch-icon-144x144-precomposed.png">
@@ -45,7 +45,7 @@
             <a href="/kitchen-terraform/tutorials/" class="nav-link">Tutorials</a>
           </li>
           <li class="nav-item">
-            <a href="/kitchen-terraform/about.html" class="nav-link">About</a>
+            <a href="/kitchen-terraform/documentation/" class="nav-link">Documentation</a>
           </li>
           <li class="nav-item">
             <a href="/kitchen-terraform/community/" class="nav-link">Community</a>
@@ -59,30 +59,22 @@
       </div>
     </nav>
     <div class="content text-left">
-      <div class="container" style="padding-top: 0px;">
-  <div class="row">
-    <div class="col-12">
-      <div class="jumbotron">
-        <h1 class="display-3">
-          About Kitchen-Terraform
-        </h1>
-        <p class="lead">
-          <a href="https://github.com/newcontext-oss/kitchen-terraform" style="color: #32c850;">Kitchen Terraform</a> brings the benefits of test-driven development to <a href="http://terraform.io" style="color: #32c850;">Terraform</a> projects.
-        </p>
-        <p class="lead">
-          As use of Terraform continues to gain popularity in production environments, it is critical that this logic is thoroughly tested. Development cycle can now be driven by a suite of tests to verify new features and protect against regressions.
-        </p>
-        <hr>
-        <p class="lead">
-          Using Kitchen Terraform enables a test matrix that can vary in platforms, input variables and even fixture modules.
-        </p>
-        <p class="lead">
-          Kitchen Terraform provides a consistent approach for testing Terraform projects locally and in continuous integration pipelines.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+      <h1 id="kitchen-terraform-documentation">Kitchen-Terraform Documentation</h1>
+
+<p>Kitchen-Terraform provides three Kitchen plugins which must be
+configured in a
+<a href="https://docs.chef.io/config_yml_kitchen.html">Kitchen configuration file</a> in
+order to test Terraform modules using the Kitchen executable.</p>
+
+<p>The <a href="/kitchen-terraform/documentation/driver.html">Terraform driver</a> manages the state of the
+Terraform root module.</p>
+
+<p>The <a href="./provisioner.html">Terraform provisioner</a> uses the Terraform
+driver to apply changes to the Terraform state.</p>
+
+<p>The <a href="./verifier.html">Terraform verifier</a> uses InSpec to verify the
+Terraform state.</p>
+
 
     </div>
     <footer class="footer">
