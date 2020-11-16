@@ -69,10 +69,10 @@ for:
       - ruby ./ruby-2.5/bin/rake test:kitchen:attributes-windows
       - ruby ./ruby-2.5/bin/rake test:kitchen:plug-ins-11-windows
       - echo -------------------------------------------------------------------
-      - type .kitchen/logs/plug-ins-11-windows.log
+      - type .kitchen\logs\plug-ins-11-windows.log
       - echo -------------------------------------------------------------------
       - ruby ./ruby-2.5/bin/rake test:kitchen:variables-windows
       - ruby ./ruby-2.5/bin/rake test:kitchen:workspaces-windows
       - echo -------------------------------------------------------------------
-      - type .kitchen/logs/plug-ins-11-windows.log
+      - type .kitchen\logs\plug-ins-11-windows.log
       - echo -------------------------------------------------------------------
