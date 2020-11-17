@@ -51,7 +51,7 @@ jobs:
 
 
   test_ubun_ruby_2_7:
-    name: Ubuntu Ruby 2.7
+    name: Ubuntu Ruby 2.7 + Extras
     runs-on: ubuntu-latest
     env:
       GEMFILE_DIR: .
@@ -70,6 +70,11 @@ jobs:
       run: |
         bundle install
         ./$GEMFILE_DIR/bin/rake
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:variables-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-linux
 
 
   test_macos_ruby_2_7_tf12:
@@ -154,4 +159,8 @@ jobs:
         ruby --version
         ruby $rake_path --version
         ruby $rake_path --trace=stdout --job-stats --verbose
+        ruby $rake_path test:kitchen:attributes-windows
+        ruby $rake_path test:kitchen:plug-ins-11-windows
+        ruby $rake_path test:kitchen:variables-windows
+        ruby $rake_path test:kitchen:workspaces-windows
         echo 'done!'
