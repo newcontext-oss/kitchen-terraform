@@ -141,7 +141,8 @@ jobs:
     env:
       GEMFILE_DIR: .
       RUBY_VERSION: 2.7.x
-
+      TERRAFORM_VERSION: 0.11.14
+      TERRAFORM_SHASUM: bfec66e2ad079a1fab6101c19617a82ef79357dc1b92ddca80901bb8d5312dc0
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
@@ -151,6 +152,8 @@ jobs:
         ruby-version: ${{ env.RUBY_VERSION }}
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF and friends
+      uses: ./.github/actions/install-tf-win
     - name: Build
       run: |
         # Remember - this is PowerShell code!
