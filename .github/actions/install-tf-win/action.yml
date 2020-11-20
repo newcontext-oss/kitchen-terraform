@@ -3,5 +3,5 @@ description: installs Terraform/TerraGrunt for Windows
 runs:
   using: "composite"
   steps:
-    - run: $GITHUB_ACTION_PATH/install-tf-win.ps1
+    - run: $GITHUB_ACTION_PATH\install-tf-win.ps1
       shell: powershell
