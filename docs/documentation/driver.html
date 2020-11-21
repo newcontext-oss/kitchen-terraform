@@ -90,9 +90,9 @@ $ kitchen create default-ubuntu
 </code></pre></div>
 <h4 id="initializing-the-terraform-working-directory">Initializing the Terraform Working Directory</h4>
 
-<p>The driver initializes the working directory by running a command like the 
-following example, where the variable options are controlled by configuration 
-attributes:</p>
+<p>The driver initializes the working directory by running a command like 
+the following example, where the options are controlled by 
+configuration attributes:</p>
 
 <div class="highlight"><pre class="syntax-highlight plaintext"><code>terraform init \
   -backend=true \
@@ -135,9 +135,9 @@ $ kitchen destroy default-ubuntu
 </code></pre></div>
 <h4 id="initializing-the-terraform-working-directory-1">Initializing the Terraform Working Directory</h4>
 
-<p>The driver initializes the working directory by running a command like the 
-following example, where the variable options are controlled by configuration 
-attributes:</p>
+<p>The driver initializes the working directory by running a command like 
+the following example, where the options are controlled by 
+configuration attributes:</p>
 
 <div class="highlight"><pre class="syntax-highlight plaintext"><code>terraform init \
   -backend=true \
@@ -164,7 +164,7 @@ following example:</p>
 <h4 id="destroying-the-terraform-state">Destroying the Terraform State</h4>
 
 <p>The driver destroys the state by running a command like the following
-example, where the variable options are controlled by configuration
+example, where the options are controlled by configuration
 attributes:</p>
 
 <div class="highlight"><pre class="syntax-highlight plaintext"><code>terraform destroy \
@@ -193,17 +193,20 @@ example:</p>
 
 <div class="highlight"><pre class="syntax-highlight plaintext"><code>terraform workspace delete &lt;name&gt;
 </code></pre></div>
-<h2 id="configuration-attributes">Configuration Attributes</h2>
+<h2 id="configuration">Configuration</h2>
 
-<p>The configuration attributes of the driver control the behaviour of the Terraform 
-commands that are run. Within the
+<p>Within the
 <a href="http://kitchen.ci/docs/getting-started/kitchen-yml">Kitchen configuration file</a>, 
-these attributes must be declared in the <code>driver</code> mapping along with the plugin name.</p>
+the <code>driver</code> mapping must be declared along with the plugin name:</p>
 
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="na">driver</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">example_attribute</span><span class="pi">:</span> <span class="s">some value</span>
 </code></pre></div>
+<h3 id="attributes">Attributes</h3>
+
+<p>The configuration attributes of the driver control the behaviour of the 
+Terraform commands that are run.</p>
+
 <h3 id="backendconfigurations">backend_configurations</h3>
 
 <p>This attribute comprises

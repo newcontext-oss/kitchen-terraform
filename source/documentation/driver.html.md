@@ -31,9 +31,9 @@ $ kitchen create default-ubuntu
 
 #### Initializing the Terraform Working Directory
 
-The driver initializes the working directory by running a command like the 
-following example, where the variable options are controlled by configuration 
-attributes:
+The driver initializes the working directory by running a command like 
+the following example, where the options are controlled by 
+configuration attributes:
 
 ~~~
 terraform init \
@@ -80,9 +80,9 @@ $ kitchen destroy default-ubuntu
       
 #### Initializing the Terraform Working Directory
 
-The driver initializes the working directory by running a command like the 
-following example, where the variable options are controlled by configuration 
-attributes:
+The driver initializes the working directory by running a command like 
+the following example, where the options are controlled by 
+configuration attributes:
 
 ~~~
 terraform init \
@@ -113,7 +113,7 @@ terraform workspace select <name> || terraform workspace new <name>
 #### Destroying the Terraform State
 
 The driver destroys the state by running a command like the following
-example, where the variable options are controlled by configuration
+example, where the options are controlled by configuration
 attributes:
 
 ~~~
@@ -148,19 +148,22 @@ example:
 terraform workspace delete <name>
 ~~~
 
-## Configuration Attributes
+## Configuration
 
-The configuration attributes of the driver control the behaviour of the Terraform 
-commands that are run. Within the
+Within the
 [Kitchen configuration file](http://kitchen.ci/docs/getting-started/kitchen-yml), 
-these attributes must be declared in the `driver` mapping along with the plugin name.
+the `driver` mapping must be declared along with the plugin name:
 
 ~~~
 driver:
   name: terraform
-  example_attribute: some value
 ~~~
 {: .language-yaml}
+
+### Attributes
+
+The configuration attributes of the driver control the behaviour of the 
+Terraform commands that are run.
 
 ### backend_configurations
 
