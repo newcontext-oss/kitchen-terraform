@@ -19,7 +19,7 @@ curl --location --remote-name --silent $URL2
 shasum -a 256 $FILE2 | grep $SHASUM2
 chmod +x $FILE2
 
-# install TerraForm Provider
+# install TerraForm Local Provider
 FILE3=terraform-provider-local_1.4.0_darwin_amd64.zip
 URL3=https://releases.hashicorp.com/terraform-provider-local/1.4.0
 URL3="$URL3/$FILE3"
@@ -35,3 +35,7 @@ curl --remote-name --silent $URL3
 shasum -a 256 $FILE3 | grep $SHASUM3
 unzip $FILE3 -d "$PLUGIN_DIR"
 
+
+# install TerraForm Docker Provider
+      source = "kreuzwerker/docker"
+      version = "2.8.0"
