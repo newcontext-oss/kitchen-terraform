@@ -35,7 +35,3 @@ curl --remote-name --silent $URL3
 shasum -a 256 $FILE3 | grep $SHASUM3
 unzip $FILE3 -d "$PLUGIN_DIR"
 
-
-# install TerraForm Docker Provider
-      source = "kreuzwerker/docker"
-      version = "2.8.0"
