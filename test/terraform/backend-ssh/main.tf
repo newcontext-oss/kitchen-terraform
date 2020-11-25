@@ -24,7 +24,7 @@ terraform {
 }
 provider "docker" {
   #version = "1.1.1"
-  version = "2.8.0"
+  version = "2.7.2"
 }
 
 data "docker_registry_image" "ubuntu_sshd" {
