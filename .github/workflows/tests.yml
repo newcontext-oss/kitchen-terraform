@@ -48,6 +48,7 @@ jobs:
       run: |
         bundle install
         ./$GEMFILE_DIR/bin/rake
+        chmod 400 test/terraform/backend-ssh/id_ed25519
         ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-linux
 
 
@@ -75,6 +76,7 @@ jobs:
         ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-linux
         ./$GEMFILE_DIR/bin/rake test:kitchen:variables-linux
         ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-linux
+        chmod 400 test/terraform/backend-ssh/id_ed25519
         ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-linux
 
 
