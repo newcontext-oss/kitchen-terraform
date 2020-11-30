@@ -3,5 +3,5 @@ description: installs Terraform/TerraGrunt for Windows
 runs:
   using: "composite"
   steps:
-    - run: ./install-tf-win.ps1
+    - run: .\install-tf-win.ps1
       shell: pwsh

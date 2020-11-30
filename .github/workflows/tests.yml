@@ -48,6 +48,7 @@ jobs:
       run: |
         bundle install
         ./$GEMFILE_DIR/bin/rake
+        ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-linux
 
 
   test_ubun_ruby_2_7:
@@ -71,10 +72,10 @@ jobs:
         bundle install
         ./$GEMFILE_DIR/bin/rake
         ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-linux
-        ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-linux
         ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-linux
         ./$GEMFILE_DIR/bin/rake test:kitchen:variables-linux
         ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-linux
 
 
   test_macos_ruby_2_7_tf12:
