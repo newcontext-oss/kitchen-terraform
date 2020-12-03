@@ -36,7 +36,7 @@ Installation instructions can be found in the
 [Terraform: Install Terraform][terraform-install] article.
 
 Kitchen-Terraform supports versions of Terraform in the interval of
-`>= 0.11.4, < 0.14.0`.
+`>= 0.11.4, < 0.15.0`.
 
 [tfenv] can be used to manage versions of Terraform on the system.
 
@@ -75,7 +75,7 @@ the semantic versioning of the Ruby gem.
 
 ```ruby
 source "https://rubygems.org/" do
-  gem "kitchen-terraform", "~> 5.5"
+  gem "kitchen-terraform", "~> 5.6"
 end
 ```
 
@@ -102,7 +102,7 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 5.5.0
+gem install kitchen-terraform --version 5.6.0
 ```
 
 This approach is not recommended as it requires more effort to install

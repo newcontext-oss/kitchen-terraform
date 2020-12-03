@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Support for Terraform v0.14
+
 ## [5.5.0] - 2020-08-25
 
 ### Added
