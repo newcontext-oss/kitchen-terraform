@@ -159,7 +159,7 @@ jobs:
       with:
         ruby-version: ${{ env.RUBY_VERSION }}
     - name: Setup bundler
-      uses: ./.github/actions/setup-bundler-for-testing
+      uses: ./.github/actions/setup-bundler-for-testing-win
     - name: Install TF and friends
       uses: ./.github/actions/install-tf-win
     - name: Build
