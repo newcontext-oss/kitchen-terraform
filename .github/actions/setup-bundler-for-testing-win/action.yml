@@ -3,5 +3,5 @@ description: installs bundler and configures it
 runs:
   using: "composite"
   steps:
-    - run: '& $Env:GITHUB_ACTION_PATH/setup-bundler-for-testing-win/setup-bundler-for-testing.ps1'
+    - run: '& $Env:GITHUB_ACTION_PATH/setup-bundler-for-testing.ps1'
       shell: pwsh
