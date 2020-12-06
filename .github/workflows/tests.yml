@@ -201,7 +201,6 @@ jobs:
     - name: Bundle Install
       run: |
         bundle install
-        ./$GEMFILE_DIR/bin/rake
     - name: Setup Code Climate
       run: |
         curl --location --silent https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -209,7 +208,7 @@ jobs:
         ./cc-test-reporter before-build
     - name: Run Rake
       run: |
-        ./ruby-2.5/bin/rake
+        ./$GEMFILE_DIR/bin/rake
     - name: Code Climate Conclusion
       run: |
         TEST_RESULT=1
