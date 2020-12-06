@@ -212,7 +212,5 @@ jobs:
     - name: Code Climate Conclusion
       run: |
         TEST_RESULT=1
-        if [ ${{ job.status }} == "success"]; then
-          TEST_RESULT=0
-        fi
+        [ ${{ job.status }} == "success" ] && TEST_RESULT=0
         ./cc-test-reporter after-build --exit-code $TEST_RESULT
