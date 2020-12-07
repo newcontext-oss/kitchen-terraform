@@ -45,9 +45,9 @@ end
   specification.add_development_dependency "rufo", "~> 0.7"
   specification.add_development_dependency "simplecov", "~> 0.16.1"
   specification.add_development_dependency "travis", "~> 1.8"
-  specification.add_development_dependency "tty-which", "~> 0.4.0"
   specification.add_development_dependency "yard", "~> 0.9"
   specification.add_development_dependency "dry-validation", "~> 0.13"
+  specification.add_development_dependency "guard-bundler", "~> 2.1"
 
   if version_gt_25
     specification.add_development_dependency "reek", "~> 6.0.2"
@@ -60,6 +60,7 @@ end
   specification.add_runtime_dependency "inspec", ">= 3", "< 5"
   specification.add_runtime_dependency "json", "~> 2.2"
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
+  specification.add_runtime_dependency "tty-which", "~> 0.4.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
   specification.required_ruby_version = [">= 2.4", "< 2.8"]
   specification.requirements = ["Terraform >= v0.11.4, < v0.14.0"]
