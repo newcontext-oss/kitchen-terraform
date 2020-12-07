@@ -32,7 +32,8 @@ end
   specification.homepage = "https://newcontext-oss.github.io/kitchen-terraform/"
   specification.license = "Apache-2.0"
   specification.add_development_dependency "bundler", "~> 2.0"
-  specification.add_development_dependency "delegate", "~> 0.1.0"
+  specification.add_development_dependency "dry-validation", "~> 0.13"
+  specification.add_development_dependency "guard-bundler", "~> 2.1"
   specification.add_development_dependency "guard-rspec", "~> 4.7"
   specification.add_development_dependency "guard-yard", "~> 2.2"
   specification.add_development_dependency "guard", "~> 2.14"
@@ -46,8 +47,6 @@ end
   specification.add_development_dependency "simplecov", "~> 0.16.1"
   specification.add_development_dependency "travis", "~> 1.8"
   specification.add_development_dependency "yard", "~> 0.9"
-  specification.add_development_dependency "dry-validation", "~> 0.13"
-  specification.add_development_dependency "guard-bundler", "~> 2.1"
 
   if version_gt_25
     specification.add_development_dependency "reek", "~> 6.0.2"
@@ -56,7 +55,8 @@ end
     specification.add_development_dependency "reek", "~> 5.5"
   end
 
-  # specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
+  specification.add_runtime_dependency "delegate", "~> 0.1.0"
+  specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
   specification.add_runtime_dependency "inspec", ">= 3", "< 5"
   specification.add_runtime_dependency "json", "~> 2.2"
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
