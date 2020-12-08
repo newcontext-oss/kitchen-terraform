@@ -142,6 +142,33 @@ jobs:
         ./$GEMFILE_DIR/bin/rake test:kitchen:variables-osx
         ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-osx
 
+  test_macos_ruby_2_7_tf14:
+    name: MacOS Ruby 2.7 TF14
+    runs-on: macos-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.14.0
+      TERRAFORM_SHASUM: e728f9c5f64b9a7507f7038ad243743b4bcad0057fe7cc83021eb825cc2b6b9c
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF and friends
+      uses: ./.github/actions/install-tf-macos
+    - name: Build
+      run: |
+        bundle install
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:variables-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-osx
 
   test_windows_ruby_2_7:
     name: Windows Ruby 2.7
