@@ -132,19 +132,12 @@ analysis locally.
 
 #### Continuously Integrating and Continuously Deploying
 
-[Travis CI][travis-ci] is used to provide continuous integration and
+[GitHub Actions][github-actions] are used to provide continuous integration and
 continuous deployment functionality for the Ruby gem.
 
-[.travis.yml](.travis.yml) contains job configuration.
+[tests.yml](.github/workflows/tests.yml) define unit and integration tests that will be executed for each commit to the master branch and each commit to a branch with an open pull request.
 
-Unit tests and integration tests will be executed for each commit to the
-master branch and each commit to a branch with an open pull request.
-
-[GitHub Actions][github-actions] are used to deploy the Ruby gem. If a [tag][git-tag]
-starting with v is pushed to the master branch, then the job will attempt to build
-the Ruby gem and deploy it to [RubyGems][ruby-gems].
-
-[release.yml](.github/workflows/release.yml) contains job configuration.
+[release.yml](.github/workflows/release.yml) contains the job configuration to deploy the Ruby gem. If a [tag][git-tag] starting with v is pushed to the master branch, then the job will attempt to build the Ruby gem and deploy it to [RubyGems][ruby-gems].
 
 #### Releasing
 
@@ -208,5 +201,4 @@ bundle exec middleman build --build-dir docs
 [terraform-docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
 [terraform]: https://www.terraform.io/
 [kitchen]: https://github.com/test-kitchen/test-kitchen/
-[travis-ci]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [github-actions]: https://help.github.com/en/actions
