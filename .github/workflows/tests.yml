@@ -1,0 +1,216 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test_ubun_ruby_2_5:
+    name: Ubuntu Ruby 2.5
+    runs-on: ubuntu-latest
+    env:
+      GEMFILE_DIR: ruby-2.5
+      RUBY_VERSION: 2.5.x
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Build
+      run: |
+        type ruby
+        ruby --version
+        ruby -e 'puts RUBY_VERSION'
+        bundle install
+        ./$GEMFILE_DIR/bin/rake --job-stats
+
+
+  test_ubun_ruby_2_6:
+    name: Ubuntu Ruby 2.6
+    runs-on: ubuntu-latest
+    env:
+      GEMFILE_DIR: ruby-2.6
+      RUBY_VERSION: 2.6.x
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Build
+      run: |
+        bundle install
+        ./$GEMFILE_DIR/bin/rake
+        chmod 400 test/terraform/backend-ssh/id_ed25519
+        ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-linux
+
+
+  test_ubun_ruby_2_7:
+    name: Ubuntu Ruby 2.7 + Extras
+    runs-on: ubuntu-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.13.0
+      TERRAFORM_SHASUM: 9ed437560faf084c18716e289ea712c784a514bdd7f2796549c735d439dbe378
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF
+      uses: ./.github/actions/install-tf-linux
+    - name: Build
+      run: |
+        bundle install
+        ./$GEMFILE_DIR/bin/rake
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:variables-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-linux
+        # this test does not run under ruby 2.7
+        # chmod 400 test/terraform/backend-ssh/id_ed25519
+        # ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-linux
+
+
+  test_macos_ruby_2_7_tf12:
+    name: MacOS Ruby 2.7 TF12
+    runs-on: macos-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.12.0
+      TERRAFORM_SHASUM: 9dbee9dea660ea64352f8ddf2539e60d1c414210e9c4a29c8585926fef366be1
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF
+      uses: ./.github/actions/install-tf-macos
+    - name: Build
+      run: |
+        bundle install
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:variables-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-osx
+
+
+  test_macos_ruby_2_7_tf13:
+    name: MacOS Ruby 2.7 TF13
+    runs-on: macos-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.13.0
+      TERRAFORM_SHASUM: 080af0420732cd08941aa4c0d2b4693056b24366724faa11b107bf052f7de203
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF and friends
+      uses: ./.github/actions/install-tf-macos
+    - name: Build
+      run: |
+        bundle install
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-11-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:variables-osx
+        ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-osx
+
+
+  test_windows_ruby_2_7:
+    name: Windows Ruby 2.7
+    runs-on: windows-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.11.14
+      TERRAFORM_SHASUM: bfec66e2ad079a1fab6101c19617a82ef79357dc1b92ddca80901bb8d5312dc0
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing-win
+    - name: Install TF and friends
+      uses: ./.github/actions/install-tf-win
+    - name: Build
+      run: |
+        # Remember - this is PowerShell code!
+        bundle install
+        $rake_path = "$Env:GEMFILE_DIR/bin/rake"
+        ruby --version
+        ruby $rake_path --version
+        ruby $rake_path --trace=stdout --job-stats --verbose
+        ruby $rake_path test:kitchen:attributes-windows
+        ruby $rake_path test:kitchen:plug-ins-11-windows
+        ruby $rake_path test:kitchen:variables-windows
+        ruby $rake_path test:kitchen:workspaces-windows
+        echo 'done!'
+
+
+  test_code_climate:
+    name: Code Climate Tests on Ubuntu Ruby 2.7
+    runs-on: ubuntu-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.13.0
+      TERRAFORM_SHASUM: 9ed437560faf084c18716e289ea712c784a514bdd7f2796549c735d439dbe378
+      CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF
+      uses: ./.github/actions/install-tf-linux
+    - name: Bundle Install
+      run: |
+        bundle install
+    - name: Setup Code Climate
+      run: |
+        curl --location --silent https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+        ./cc-test-reporter before-build
+    - name: Run Rake
+      run: |
+        ./$GEMFILE_DIR/bin/rake
+    - name: Code Climate Conclusion
+      run: |
+        TEST_RESULT=1
+        [ ${{ job.status }} == "success" ] && TEST_RESULT=0
+        ./cc-test-reporter after-build --exit-code $TEST_RESULT

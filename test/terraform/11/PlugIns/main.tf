@@ -13,11 +13,11 @@
 # limitations under the License.
 
 terraform {
-  required_version = ">= 0.11.4, < 0.13.0"
+  required_version = ">= 0.11.4, < 0.14.0"
 }
 
 provider "local" {
-  version = "~> 1.2"
+  version = "~> 1.4"
 }
 
 resource "local_file" "static_file" {

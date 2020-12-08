@@ -13,11 +13,18 @@
 # limitations under the License.
 
 terraform {
-  required_version = ">= 0.11.4, < 0.14.0"
+  required_providers {
+    docker = {
+      source = "terraform-providers/docker"
+    }
+  }
+  # because the docker provider needs the above for TF version 0.13+, we must restrict this one,
+  # because the syntax cannot be compatible
+  required_version = ">= 0.13, < 0.14.0"
 }
-
 provider "docker" {
-  version = "1.1.1"
+  #version = "1.1.1"
+  version = "2.7.2"
 }
 
 data "docker_registry_image" "ubuntu_sshd" {
