@@ -1,6 +1,6 @@
 name: Test
 
-on: [push, pull_request]
+on: pull_request
 
 jobs:
   test_ubun_ruby_2_5:
