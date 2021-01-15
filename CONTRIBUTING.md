@@ -37,13 +37,13 @@ understanding the design and behaviour of Kitchen-Terraform.
 ## Reporting Bugs
 
 Bugs must be reported on the
-[GitHub issue tracker](github-issue-tracker). Any information that will
+[GitHub issue tracker][github-issue-tracker]. Any information that will
 assist in the maintainers reproducing the bug should be included.
 
 ## Suggesting Changes
 
 Changes should be suggested on the
-[GitHub issue tracker](github-issue-tracker). Submitting a pull request
+[GitHub issue tracker][github-issue-tracker]. Submitting a pull request
 with an implementation of the changes is also encouraged but not
 required.
 
@@ -51,7 +51,7 @@ required.
 
 The development workflow for both the Kitchen-Terraform Ruby gem and the
 documentation web site follow the same
-[standard GitHub workflow](fork-a-repo).
+[standard GitHub workflow][fork-a-repo].
 
 ### Ruby Gem
 
