@@ -58,7 +58,7 @@ end
   specification.add_runtime_dependency "dry-validation", "~> 0.13"
   specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
   specification.add_runtime_dependency "inspec", ">= 3", "< 4.24.23"
-  specification.add_runtime_dependency "json", "~> 2.2"
+  specification.add_runtime_dependency "json", "~> 2.3"
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
