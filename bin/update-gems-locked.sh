@@ -12,6 +12,7 @@ do
   fi
   ruby --version
   set -x
+  gem install bundler
   if [ -e gems.locked ]
   then
     bundle update --all
