@@ -45,11 +45,11 @@ require "support/kitchen/terraform/configurable_examples"
   let :kitchen_instance do
     ::Kitchen::Instance.new(
       driver: driver,
-      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config),
+      lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config, state_file),
       logger: kitchen_logger,
       platform: ::Kitchen::Platform.new(name: "test-platform"),
       provisioner: subject,
-      state_file: ::Kitchen::StateFile.new("/kitchen", "test-suite-test-platform"),
+      state_file: state_file,
       suite: ::Kitchen::Suite.new(name: "test-suite"),
       transport: ::Kitchen::Transport::Base.new,
       verifier: ::Kitchen::Verifier::Base.new,
@@ -58,6 +58,10 @@ require "support/kitchen/terraform/configurable_examples"
 
   let :kitchen_logger do
     ::Kitchen::Logger.new
+  end
+
+  let :state_file do
+    ::Kitchen::StateFile.new "/kitchen", "test-suite-test-platform"
   end
 
   before do
