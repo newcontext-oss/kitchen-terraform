@@ -61,6 +61,12 @@ module Kitchen
           ""
         end
         self.runner = ::Inspec::Runner.new options.merge logger: ::Inspec::Log.logger
+        # load plugins if configured
+        if options.fetch :load_plugins
+          v2_loader = ::Inspec::Plugin::V2::Loader.new
+          v2_loader.load_all
+          v2_loader.exit_on_load_error
+        end
         profile_locations.each do |profile_location|
           runner.add_target profile_location
         end
