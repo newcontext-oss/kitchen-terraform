@@ -62,7 +62,7 @@ module Kitchen
         end
         self.runner = ::Inspec::Runner.new options.merge logger: ::Inspec::Log.logger
         # load plugins if configured
-        if options.fetch :load_plugins
+        if options.fetch(:load_plugins,true)
           v2_loader = ::Inspec::Plugin::V2::Loader.new
           v2_loader.load_all
           v2_loader.exit_on_load_error
