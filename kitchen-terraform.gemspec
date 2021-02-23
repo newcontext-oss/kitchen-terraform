@@ -57,7 +57,7 @@ end
   specification.add_runtime_dependency "delegate", "~> 0.1.0"
   specification.add_runtime_dependency "dry-validation", "~> 0.13"
   specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
-  specification.add_runtime_dependency "inspec", ">= 3", "< 4.24.23"
+  specification.add_runtime_dependency "inspec", ">= 3", "< 5", "!= 4.24.26", "!= 4.24.28", "!= 4.24.32"
   specification.add_runtime_dependency "json", "~> 2.3"
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
