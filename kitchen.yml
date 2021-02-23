@@ -42,6 +42,11 @@ suites:
             output_third_output: first_output
           controls:
             - precedence
+          reporter:
+            - cli
+            - json:test/reports/inspec/attributes.json
+            - junit:test/reports/inspec/attributes.junit.xml
+            - junit2:test/reports/inspec/attributes.junit2.xml
   - name: backend-ssh
     excludes:
       - osx
