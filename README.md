@@ -102,7 +102,7 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 5.6.0
+gem install kitchen-terraform --version 5.7.0
 ```
 
 This approach is not recommended as it requires more effort to install
@@ -281,4 +281,3 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [tfenv]: https://github.com/kamatama41/tfenv
 [travis-build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
 [travis-build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
-
