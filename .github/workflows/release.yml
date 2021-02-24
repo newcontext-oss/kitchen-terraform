@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby 2.6
-    - uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.6 # uses the latest release matching that version (e.g., 2.6.6)
         bundler-cache: false # when true, runs 'bundle install' and caches installed gems automatically
