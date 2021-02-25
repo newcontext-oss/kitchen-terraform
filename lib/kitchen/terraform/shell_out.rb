@@ -36,7 +36,7 @@ module Kitchen
         self.shell_out = ::Mixlib::ShellOut.new(
           command,
           options.merge(
-            environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" },
+            environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true" },
             live_stream: logger,
           )
         )
