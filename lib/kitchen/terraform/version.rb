@@ -71,7 +71,7 @@ module Kitchen
 
         # @api private
         def value
-          self.value = ::Gem::Version.new "5.7.0" if not @value
+          self.value = ::Gem::Version.new "5.7.1" if not @value
           @value
         end
 
