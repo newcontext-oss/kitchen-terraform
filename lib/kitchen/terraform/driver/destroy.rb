@@ -76,10 +76,7 @@ module Kitchen
             logger: logger,
           )
           self.logger = logger
-          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
-          self.destroy_options = options.merge(
-            environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "true" }
-          )
+          define_options config: config
           self.workspace_name = workspace_name
           self.destroy = ::Kitchen::Terraform::Command::Destroy.new config: config
           self.init = ::Kitchen::Terraform::Command::Init.new config: hash_config
@@ -121,6 +118,13 @@ module Kitchen
           command_executor.run command: workspace_new_test, options: options do |standard_output:|
           end
           logger.warn "Finished creating the #{workspace_name} Terraform workspace."
+        end
+
+        def define_options(config:)
+          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
+          self.destroy_options = options.merge(
+            environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "true" }
+          )
         end
 
         def destroy_infrastructure
