@@ -46,6 +46,10 @@ require "kitchen/terraform/inspec_runner"
       { key: "value", logger: logger }
     end
 
+    let :loader do
+      instance_double ::Inspec::Plugin::V2::Loader
+    end
+
     let :options do
       { key: "value" }
     end
@@ -59,6 +63,9 @@ require "kitchen/terraform/inspec_runner"
     end
 
     before do
+      allow(::Inspec::Plugin::V2::Loader).to receive(:new).and_return loader
+      allow(loader).to receive :load_all
+      allow(loader).to receive :exit_on_load_error
       allow(::Inspec::Runner).to receive(:new).with(full_options).and_return runner
       allow(runner).to receive(:add_target).with profile_location
       described_class.logger = logger
