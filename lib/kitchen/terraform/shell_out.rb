@@ -29,16 +29,17 @@ module Kitchen
       #
       # @param command [String] the command to run.
       # @param logger [Kitchen::Logger] a logger for logging messages.
+      # @param options [Hash] options which adjust the execution of the command.
       # @return [Kitchen::Terraform::CommandExecutor]
       def initialize(command:, logger:, options:)
         self.command = command
         self.logger = logger
         self.shell_out = ::Mixlib::ShellOut.new(
           command,
-          options.merge(
+          {
             environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true" },
             live_stream: logger,
-          )
+          }.merge(options)
         )
       end
 

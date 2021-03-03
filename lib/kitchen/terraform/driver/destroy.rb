@@ -77,6 +77,9 @@ module Kitchen
           )
           self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
+          self.destroy_options = options.merge(
+            environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "true" }
+          )
           self.workspace_name = workspace_name
           self.destroy = ::Kitchen::Terraform::Command::Destroy.new config: config
           self.init = ::Kitchen::Terraform::Command::Init.new config: hash_config
@@ -100,6 +103,7 @@ module Kitchen
         attr_accessor(
           :command_executor,
           :destroy,
+          :destroy_options,
           :init,
           :logger,
           :options,
@@ -121,7 +125,7 @@ module Kitchen
 
         def destroy_infrastructure
           logger.warn "Destroying the Terraform-managed infrastructure..."
-          command_executor.run command: destroy, options: options do |standard_output:|
+          command_executor.run command: destroy, options: destroy_options do |standard_output:|
           end
           logger.warn "Finished destroying the Terraform-managed infrastructure."
         end

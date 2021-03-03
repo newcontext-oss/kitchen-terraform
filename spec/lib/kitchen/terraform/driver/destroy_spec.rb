@@ -96,6 +96,14 @@ require "rubygems"
   end
 
   describe "#call" do
+    let :destroy_options do
+      {
+        cwd: root_module_directory,
+        environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "true" },
+        timeout: command_timeout
+      }
+    end
+
     let :options do
       { cwd: root_module_directory, timeout: command_timeout }
     end
@@ -123,7 +131,7 @@ require "rubygems"
         )
         expect(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Destroy),
-          options: options,
+          options: destroy_options,
         ).ordered
         expect(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::WorkspaceSelect),
@@ -176,7 +184,7 @@ require "rubygems"
         ).ordered
         expect(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Destroy),
-          options: options,
+          options: destroy_options,
         ).ordered
         expect(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::WorkspaceSelect),
