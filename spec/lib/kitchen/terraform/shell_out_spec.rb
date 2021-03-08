@@ -39,7 +39,7 @@ require "mixlib/shellout"
     allow(::Mixlib::ShellOut).to receive(:new).with(
       command,
       {
-        environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "1" },
+        environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true" },
         live_stream: logger,
         option_key: "option_value",
       }
