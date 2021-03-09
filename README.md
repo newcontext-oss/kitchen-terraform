@@ -102,7 +102,7 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 5.7.1
+gem install kitchen-terraform --version 5.7.2
 ```
 
 This approach is not recommended as it requires more effort to install
