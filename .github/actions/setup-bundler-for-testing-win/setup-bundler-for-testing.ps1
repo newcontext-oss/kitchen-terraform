@@ -1,5 +1,8 @@
-$errorActionPreference="Stop"
-gem install bundler --conservative --minimal-deps --no-document --version="~>2.0"
+gem install bundler --conservative --minimal-deps --no-document --version=`"~>2.0`"
+if (! $?) {
+    Write-Error "Failed installing bundler"
+    exit 1
+}
 $GEMFILEDIR = $Env:GEMFILE_DIR
 bundle config --local gemfile "${GEMFILEDIR}/gems.rb"
 bundle config --local jobs $(nproc --ignore=1)
