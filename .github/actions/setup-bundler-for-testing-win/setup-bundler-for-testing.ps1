@@ -1,4 +1,4 @@
-gem install bundler --conservative --minimal-deps --no-document --version="~>2.0"
+gem install bundler --conservative --minimal-deps --no-document --version=`"~>2.0`"
 if (! $?) {
     Write-Error "Failed installing bundler"
     exit 1
