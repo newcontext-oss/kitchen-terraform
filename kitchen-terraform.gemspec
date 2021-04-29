@@ -7,7 +7,7 @@ end
 require "kitchen/terraform/version.rb"
 require "rubygems"
 
-version_parts_strings = RUBY_VERSION.split('.')
+version_parts_strings = RUBY_VERSION.split(".")
 version_parts = []
 version_parts_strings.each { |vp| version_parts.push(vp.to_i) }
 
@@ -50,7 +50,7 @@ end
   if version_gt_25
     specification.add_development_dependency "reek", "~> 6.0.2"
   else
-    puts 'version <= 2.5'
+    puts "version <= 2.5"
     specification.add_development_dependency "reek", "~> 5.5"
   end
 

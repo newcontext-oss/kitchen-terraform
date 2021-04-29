@@ -100,7 +100,7 @@ require "rubygems"
       {
         cwd: root_module_directory,
         environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "true" },
-        timeout: command_timeout
+        timeout: command_timeout,
       }
     end
 

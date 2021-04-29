@@ -119,39 +119,31 @@ title: Extensive Kitchen-Terraform
         >
           This tutorial provides a detailed review of the features of Kitchen-Terraform by developing a Terraform module
           which configures resources on the
-          <%=
-            link_to(
-              "Amazon Web Services (AWS)",
-              "https://aws.amazon.com/"
-            )
-          %>
+          <%= link_to(
+                "Amazon Web Services (AWS)",
+                "https://aws.amazon.com/"
+              ) %>
           platform.
           <br><br>
           Kitchen-Terraform is assumed to be installed on the development system according to the instructions in the
-          <%=
-            link_to(
-              "Kitchen-Terraform ReadMe",
-              "https://github.com/newcontext-oss/kitchen-terraform/blob/master/README.md#installation"
-            )
-          %>.
+          <%= link_to(
+                "Kitchen-Terraform ReadMe",
+                "https://github.com/newcontext-oss/kitchen-terraform/blob/master/README.md#installation"
+              ) %>.
           <br><br>
           The files and scripts shown in this tutorial are sourced from
           a functional
-          <%=
-            link_to(
-              "example project",
-              "https://github.com/newcontext-oss/kitchen-terraform/tree/master/examples/extensive_kitchen_terraform"
-            )
-          %>
+          <%= link_to(
+                "example project",
+                "https://github.com/newcontext-oss/kitchen-terraform/tree/master/examples/extensive_kitchen_terraform"
+              ) %>
           in the Kitchen-Terraform repository.
           <br><br>
           Any issues with this tutorial should be reported in the Kitchen-Terraform
-          <%=
-            link_to(
-              "issue tracker",
-              "https://github.com/newcontext-oss/kitchen-terraform/issues"
-            )
-          %>.
+          <%= link_to(
+                "issue tracker",
+                "https://github.com/newcontext-oss/kitchen-terraform/issues"
+              ) %>.
         </div>
         <div
           aria-labelledby="list-two-list"
@@ -160,62 +152,48 @@ title: Extensive Kitchen-Terraform
           role="tabpanel"
         >
           This tutorial creates AWS resources using the
-          <%=
-            link_to(
-              "Terraform AWS Provider",
-              "https://www.terraform.io/docs/providers/aws/index.html"
-            )
-          %>
+          <%= link_to(
+                "Terraform AWS Provider",
+                "https://www.terraform.io/docs/providers/aws/index.html"
+              ) %>
           so
-          <%=
-            link_to(
-              "registration of an AWS account",
-              "https://portal.aws.amazon.com/gp/aws/developer/registration/index.html"
-            )
-          %>
+          <%= link_to(
+                "registration of an AWS account",
+                "https://portal.aws.amazon.com/gp/aws/developer/registration/index.html"
+              ) %>
           is required.
           <br><br>
           The
-          <%=
-            link_to(
-              "AWS Command Line Interface (CLI)",
-              "https://aws.amazon.com/documentation/cli/"
-            )
-          %>
+          <%= link_to(
+                "AWS Command Line Interface (CLI)",
+                "https://aws.amazon.com/documentation/cli/"
+              ) %>
           must be installed and configured with the credentials of the AWS account by following the
-          <%=
-            link_to(
-              "AWS CLI Quick Configuration",
-              "https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration"
-            )
-          %>
+          <%= link_to(
+                "AWS CLI Quick Configuration",
+                "https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-quick-configuration"
+              ) %>
           instructions.
           <br><br>
           The JSON filtering tool
-          <%=
-            link_to(
-              "jq",
-              "https://stedolan.github.io/jq/"
-            )
-          %>
+          <%= link_to(
+                "jq",
+                "https://stedolan.github.io/jq/"
+              ) %>
           must be installed to enable the parsing of output from the AWS CLI in Bash scripts.
           <br><br>
-          <%=
-            link_to(
-              "IAM users",
-              "https://console.aws.amazon.com/iam/home#users"
-            )
-          %>
+          <%= link_to(
+                "IAM users",
+                "https://console.aws.amazon.com/iam/home#users"
+              ) %>
           with API keys must be created in the us-east-1 region and the us-west-2 region. Those IAM users must be
           authorized to manage a variety of AWS resources, which can be accomplished by adding an inline custom
           policy like the following example to the IAM users.
           <br></br>
-          <%
-            read_example_file(
-              language: "json",
-              path: "extensive_kitchen_terraform/iam_user_policy.json"
-            ) do
-          %>
+          <% read_example_file(
+               language: "json",
+               path: "extensive_kitchen_terraform/iam_user_policy.json",
+             ) do %>
 <%= lines %>
           <% end %>
         </div>
@@ -226,19 +204,15 @@ title: Extensive Kitchen-Terraform
           role="tabpanel"
         >
           Prepare the
-          <%=
-            link_to(
-              "InSpec profile",
-              "https://www.inspec.io/docs/reference/profiles/"
-            )
-          %>
+          <%= link_to(
+                "InSpec profile",
+                "https://www.inspec.io/docs/reference/profiles/"
+              ) %>
           by mimicking the following Bash script.
-          <%
-            read_example_file(
-              language: "bash",
-              path: "extensive_kitchen_terraform/prepare_inspec_profile.bash"
-            ) do
-          %>
+          <% read_example_file(
+               language: "bash",
+               path: "extensive_kitchen_terraform/prepare_inspec_profile.bash",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -249,12 +223,10 @@ title: Extensive Kitchen-Terraform
           >
             test/integration/extensive_suite/inspec.yml
           </p>, to match the following example.
-          <%
-            read_example_file(
-              language: "yml",
-              path: "extensive_kitchen_terraform/test/integration/extensive_suite/inspec.yml"
-            ) do
-          %>
+          <% read_example_file(
+               language: "yml",
+               path: "extensive_kitchen_terraform/test/integration/extensive_suite/inspec.yml",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -266,13 +238,10 @@ title: Extensive Kitchen-Terraform
             test/integration/extensive_suite/controls/inspec_attributes.rb
           </p>
           , to match the following example.
-          <%
-            read_example_file(
-              language: "ruby",
-              path:
-                "extensive_kitchen_terraform/test/integration/extensive_suite/controls/inspec_attributes.rb"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/integration/extensive_suite/controls/inspec_attributes.rb",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -284,12 +253,10 @@ title: Extensive Kitchen-Terraform
             test/integration/extensive_suite/controls/operating_system.rb
           </p>
           , to match the following example.
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/test/integration/extensive_suite/controls/operating_system.rb"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/integration/extensive_suite/controls/operating_system.rb",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -301,12 +268,10 @@ title: Extensive Kitchen-Terraform
             test/integration/extensive_suite/centos_attributes.yml
           </p>
           , to match the following example.
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/test/integration/extensive_suite/centos_attributes.yml"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/integration/extensive_suite/centos_attributes.yml",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>          
@@ -318,12 +283,10 @@ title: Extensive Kitchen-Terraform
             test/integration/extensive_suite/ubuntu_attributes.yml
           </p>
           , to match the following example.
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/test/integration/extensive_suite/ubuntu_attributes.yml"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/integration/extensive_suite/ubuntu_attributes.yml",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -335,12 +298,10 @@ title: Extensive Kitchen-Terraform
             test/integration/extensive_suite/controls/reachable_other_host.rb
           </p>
           , to match the following example.
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/test/integration/extensive_suite/controls/reachable_other_host.rb"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/integration/extensive_suite/controls/reachable_other_host.rb",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -352,12 +313,10 @@ title: Extensive Kitchen-Terraform
             test/integration/extensive_suite/controls/state_file.rb
           </p>
           , to match the following example.
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/test/integration/extensive_suite/controls/state_file.rb"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/integration/extensive_suite/controls/state_file.rb",
+             ) do %>
 <%= lines %>
           <% end %>
         </div>
@@ -370,12 +329,10 @@ title: Extensive Kitchen-Terraform
           Mimic the following Bash script to generate an authentication key for SSH to be used by InSpec when
           authenticating with the AWS EC2 instances under test.
           <br><br>
-          <%
-            read_example_file(
-              language: "bash",
-              path: "extensive_kitchen_terraform/generate_ssh_key.bash"
-            ) do
-          %>
+          <% read_example_file(
+               language: "bash",
+               path: "extensive_kitchen_terraform/generate_ssh_key.bash",
+             ) do %>
 <%= lines %>
           <% end %>
         </div>
@@ -391,24 +348,20 @@ title: Extensive Kitchen-Terraform
           to test the user experience of the module and identify areas of the design that can be improved or simplified.
           <br><br>
           Prepare the configuration by mimicking the following Bash script.
-          <%
-            read_example_file(
-              language: "bash",
-              path: "extensive_kitchen_terraform/prepare_test_fixture_terraform_configuration.bash"
-            ) do
-          %>
+          <% read_example_file(
+               language: "bash",
+               path: "extensive_kitchen_terraform/prepare_test_fixture_terraform_configuration.bash",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
           Populate the variables file,
           <p class="font-weight-bold" style="color: #32c850; display: inline;">test/fixtures/wrapper/variables.tf</p>, to match the following example.
           <br><br>
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/test/fixtures/wrapper/variables.tf"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/fixtures/wrapper/variables.tf",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -421,12 +374,10 @@ title: Extensive Kitchen-Terraform
           </p>
           , to match the following example.
           <br><br>
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/test/fixtures/wrapper/main.tf"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/fixtures/wrapper/main.tf",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -439,12 +390,10 @@ title: Extensive Kitchen-Terraform
           </p>
           , to match the following example.
           <br><br>
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/test/fixtures/wrapper/outputs.tf"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/test/fixtures/wrapper/outputs.tf",
+             ) do %>
 <%= lines %>
           <% end %>
         </div>
@@ -458,24 +407,20 @@ title: Extensive Kitchen-Terraform
           profile and the fixture configuration.
           <br><br>
           Prepare the module by mimicking the following Bash script.
-          <%
-            read_example_file(
-              language: "bash",
-              path: "extensive_kitchen_terraform/prepare_terraform_module.bash"
-            ) do
-          %>
+          <% read_example_file(
+               language: "bash",
+               path: "extensive_kitchen_terraform/prepare_terraform_module.bash",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
           Populate the variables file,
           <p class="font-weight-bold" style="color: #32c850; display: inline;">variables.tf</p>, to match the following example.
           <br><br>
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/variables.tf"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/variables.tf",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -488,12 +433,10 @@ title: Extensive Kitchen-Terraform
           </p>
           , to match the following example.
           <br><br>
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/main.tf"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/main.tf",
+             ) do %>
 <%= lines %>
           <% end %>
           <br><br>
@@ -506,12 +449,10 @@ title: Extensive Kitchen-Terraform
           </p>
           , to match the following example.
           <br><br>
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/outputs.tf"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/outputs.tf",
+             ) do %>
 <%= lines %>
           <% end %>
         </div>
@@ -530,12 +471,10 @@ title: Extensive Kitchen-Terraform
           </p>
           , to match the following example.
           <br><br>
-          <%
-            read_example_file(
-              language: "yml",
-              path: "extensive_kitchen_terraform/kitchen.yml"
-            ) do
-          %>
+          <% read_example_file(
+               language: "yml",
+               path: "extensive_kitchen_terraform/kitchen.yml",
+             ) do %>
 <%= lines %>
           <% end %>
         </div>
@@ -554,32 +493,26 @@ title: Extensive Kitchen-Terraform
           </p>,
           to match the following example.
           <br><br>
-          <%
-            read_example_file(
-              language: "ruby",
-              path: "extensive_kitchen_terraform/Gemfile"
-            ) do
-          %>
+          <% read_example_file(
+               language: "ruby",
+               path: "extensive_kitchen_terraform/Gemfile",
+             ) do %>
 <%= lines %>
           <% end %>
           Install the declared Ruby gem dependencies by mimicking the following Bash script.
           <br><br>
-          <%
-            read_example_file(
-              language: "bash",
-              path: "extensive_kitchen_terraform/install_ruby_gem_dependencies.bash"
-            ) do
-          %>
+          <% read_example_file(
+               language: "bash",
+               path: "extensive_kitchen_terraform/install_ruby_gem_dependencies.bash",
+             ) do %>
 <%= lines %>
           <% end %>
           Test the Terraform module using multiple platforms by mimicking the following Bash script.
           <br><br>
-          <%
-            read_example_file(
-              language: "bash",
-              path: "extensive_kitchen_terraform/execute_kitchen_terraform.bash"
-            ) do
-          %>
+          <% read_example_file(
+               language: "bash",
+               path: "extensive_kitchen_terraform/execute_kitchen_terraform.bash",
+             ) do %>
 <%= lines %>
           <% end %>
         </div>

@@ -65,7 +65,7 @@ module Kitchen
           loader.load_all
           loader.exit_on_load_error
         end
-        
+
         self.runner = ::Inspec::Runner.new options.merge logger: ::Inspec::Log.logger
 
         profile_locations.each do |profile_location|
