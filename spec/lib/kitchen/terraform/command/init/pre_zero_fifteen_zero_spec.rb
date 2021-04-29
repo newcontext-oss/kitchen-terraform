@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command/init"
+require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
 
-::RSpec.describe ::Kitchen::Terraform::Command::Init do
+::RSpec.describe ::Kitchen::Terraform::Command::Init::PreZeroFifteenZero do
   subject do
     described_class.new config: config
   end

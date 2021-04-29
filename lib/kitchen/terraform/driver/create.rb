@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/command/init"
+require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
@@ -29,7 +29,7 @@ module Kitchen
       #
       # ===== Initializing the Terraform Working Directory
       #
-      # {include:Kitchen::Terraform::Command::Init}
+      # {include:Kitchen::Terraform::Command::Init::PreZeroFifteenZero}
       #
       # ===== Creating or Selecting the Test Terraform Workspace
       #
@@ -63,7 +63,7 @@ module Kitchen
             client: config.fetch(:client),
             logger: logger,
           )
-          self.init = ::Kitchen::Terraform::Command::Init.new config: hash_config
+          self.init = ::Kitchen::Terraform::Command::Init::PreZeroFifteenZero.new config: hash_config
           self.logger = logger
           self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
           self.workspace_name = workspace_name

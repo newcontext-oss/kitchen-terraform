@@ -17,7 +17,7 @@
 require "kitchen"
 require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/destroy"
-require "kitchen/terraform/command/init"
+require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
@@ -31,7 +31,7 @@ module Kitchen
       #
       # ===== Initializing the Terraform Working Directory
       #
-      # {include:Kitchen::Terraform::Command::Init}
+      # {include:Kitchen::Terraform::Command::Init::PreZeroFifteenZero}
       #
       # ===== Selecting or Creating the Test Terraform Workspace
       #
@@ -79,7 +79,7 @@ module Kitchen
           define_options config: config
           self.workspace_name = workspace_name
           self.destroy = ::Kitchen::Terraform::Command::Destroy.new config: config
-          self.init = ::Kitchen::Terraform::Command::Init.new config: hash_config
+          self.init = ::Kitchen::Terraform::Command::Init::PreZeroFifteenZero.new config: hash_config
           self.workspace_delete_test = ::Kitchen::Terraform::Command::WorkspaceDelete.new config: hash_config
           self.workspace_new_test = ::Kitchen::Terraform::Command::WorkspaceNew.new config: hash_config
           self.workspace_select_test = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: hash_config
