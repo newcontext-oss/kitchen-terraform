@@ -36,7 +36,7 @@ Installation instructions can be found in the
 [Terraform: Install Terraform][terraform-install] article.
 
 Kitchen-Terraform supports versions of Terraform in the interval of
-`>= 0.11.4, < 0.15.0`.
+`>= 0.11.4, < 1.1.0`.
 
 [tfenv] can be used to manage versions of Terraform on the system.
 

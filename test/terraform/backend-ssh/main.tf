@@ -20,7 +20,7 @@ terraform {
   }
   # because the docker provider needs the above for TF version 0.13+, we must restrict this one,
   # because the syntax cannot be compatible
-  required_version = ">= 0.13, < 0.15.0"
+  required_version = ">= 0.13, < 1.1.0"
 }
 provider "docker" {
   #version = "1.1.1"
