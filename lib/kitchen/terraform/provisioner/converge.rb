@@ -28,6 +28,7 @@ require "kitchen/terraform/outputs_reader"
 require "kitchen/terraform/variables_manager"
 require "kitchen/terraform/verify_version"
 require "kitchen/terraform/version"
+require "rubygems"
 
 module Kitchen
   module Terraform
@@ -60,7 +61,12 @@ module Kitchen
         # @raise [Kitchen::TransientFailure] if a command fails.
         # @return [self]
         def call(state:)
-          verify_version.call command: version, options: options
+          logger.warn "Reading the Terraform client version..."
+          command_executor.run command: version, options: options do |standard_output:|
+            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
+          end
+          logger.warn "Finished reading the Terraform client version."
+          verify_version.call version: client_version
           execute_workflow
           save_variables_and_outputs state: state
 
@@ -77,6 +83,7 @@ module Kitchen
         def initialize(config:, logger:, version_requirement:, workspace_name:)
           client = config.fetch :client
           hash_config = config.to_hash.merge workspace_name: workspace_name
+          self.client_version = ::Gem::Version.new "0.0.0"
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
             client: client,
             logger: logger,
@@ -93,7 +100,6 @@ module Kitchen
           self.variables = config.fetch :variables
           self.variables_manager = ::Kitchen::Terraform::VariablesManager.new
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
-            command_executor: command_executor,
             config: config,
             logger: logger,
             version_requirement: version_requirement,
@@ -104,6 +110,7 @@ module Kitchen
         private
 
         attr_accessor(
+          :client_version,
           :command_executor,
           :apply,
           :get,

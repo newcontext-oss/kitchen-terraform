@@ -21,6 +21,7 @@ require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/command_executor"
 require "kitchen/terraform/verify_version"
+require "rubygems"
 
 module Kitchen
   module Terraform
@@ -42,7 +43,12 @@ module Kitchen
         # @raise [Kitchen::TransientFailure] if a command fails.
         # @return [self]
         def call
-          verify_version.call command: version, options: options
+          logger.warn "Reading the Terraform client version..."
+          command_executor.run command: version, options: options do |standard_output:|
+            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
+          end
+          logger.warn "Finished reading the Terraform client version."
+          verify_version.call version: client_version
           initialize_directory
           create_or_select_workspace
 
@@ -59,6 +65,7 @@ module Kitchen
         # @return [Kitchen::Terraform::Driver::Create]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
           hash_config = config.to_hash.merge upgrade_during_init: true, workspace_name: workspace_name
+          self.client_version = ::Gem::Version.new "0.0.0"
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
             client: config.fetch(:client),
             logger: logger,
@@ -70,7 +77,6 @@ module Kitchen
           self.workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: hash_config
           self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: hash_config
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
-            command_executor: command_executor,
             config: config,
             logger: logger,
             version_requirement: version_requirement,
@@ -81,6 +87,7 @@ module Kitchen
         private
 
         attr_accessor(
+          :client_version,
           :command_executor,
           :init,
           :logger,

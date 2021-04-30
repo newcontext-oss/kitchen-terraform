@@ -62,6 +62,7 @@ require "rubygems"
       root_module_directory: root_module_directory,
       variable_files: [],
       variables: { variable_name: "variable_value" },
+      verify_version: true,
     }
   end
 
@@ -81,12 +82,8 @@ require "rubygems"
     "/root-module"
   end
 
-  let :verify_version do
-    instance_double ::Kitchen::Terraform::VerifyVersion
-  end
-
   let :version_requirement do
-    instance_double ::Gem::Requirement
+    ::Gem::Requirement.new ">= 0.1.0"
   end
 
   let :workspace_name do
@@ -102,12 +99,10 @@ require "rubygems"
       client: client,
       logger: kind_of(::Kitchen::Terraform::DebugLogger),
     ).and_return debug_command_executor
-    allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
-      command_executor: command_executor,
-      config: config,
-      logger: logger,
-      version_requirement: version_requirement,
-    ).and_return verify_version
+    allow(command_executor).to receive(:run).with(
+      command: kind_of(::Kitchen::Terraform::Command::Version),
+      options: options,
+    ).and_yield standard_output: "Terraform v0.11.4"
   end
 
   describe "#call" do
@@ -116,7 +111,7 @@ require "rubygems"
         "should verify the version, select the workspace, update the modules, validate the configuration, update " \
         "the Terraform state, and retrieve the outputs"
       ) do
-        expect(verify_version).to receive(:call).with(
+        expect(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Version),
           options: options,
         ).ordered
@@ -161,10 +156,10 @@ require "rubygems"
       end
 
       before do
-        allow(verify_version).to receive(:call).with(
+        allow(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Version),
           options: options,
-        )
+        ).and_yield standard_output: "Terraform v0.11.4"
         allow(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::WorkspaceSelect),
           options: options,

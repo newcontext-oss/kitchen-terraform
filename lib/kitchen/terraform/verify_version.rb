@@ -27,13 +27,12 @@ module Kitchen
     class VerifyVersion
       # #call invokes the verification.
       #
-      # @param command [Kitchen::Terraform::Command::Version] the version command.
-      # @param options [Hash] options for running the command.
+      # @param version [Gem::Version] the Terraform client version.
       # @raise [Kitchen::ActionFailed] if the verification fails.
       # @return [self]
-      def call(command:, options:)
+      def call(version:)
         logger.warn start_message
-        run_version_and_verify command: command, options: options
+        version_verifier.verify version: version
         logger.warn finish_message
       rescue ::Kitchen::Terraform::UnsupportedClientVersionError
         rescue_strategy.call
@@ -49,8 +48,7 @@ module Kitchen
       # @option config [Boolean] :verify_version a toggle of strict or permissive verification of support for the
       #   version of the Terraform client.
       # @return [Kitchen::Terraform::VerifyVersion]
-      def initialize(command_executor:, config:, logger:, version_requirement:)
-        self.command_executor = command_executor
+      def initialize(config:, logger:, version_requirement:)
         self.finish_message = "Finished verifying the Terraform client version."
         self.logger = logger
         self.rescue_strategy = ::Kitchen::Terraform::VerifyVersionRescueStrategyFactory.new(
@@ -64,22 +62,12 @@ module Kitchen
       private
 
       attr_accessor(
-        :command_executor,
         :finish_message,
         :logger,
-        :options,
         :rescue_strategy,
         :start_message,
         :version_verifier
       )
-
-      def run_version_and_verify(command:, options:)
-        logger.warn "Reading the Terraform client version..."
-        command_executor.run command: command, options: options do |standard_output:|
-          logger.warn "Finished reading the Terraform client version."
-          version_verifier.verify version: ::Gem::Version.new(standard_output.slice(/Terraform v(\d+\.\d+\.\d+)/, 1))
-        end
-      end
     end
   end
 end
