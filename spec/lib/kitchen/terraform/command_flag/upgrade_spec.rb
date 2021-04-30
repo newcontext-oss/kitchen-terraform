@@ -27,8 +27,8 @@ require "kitchen/terraform/command_flag/upgrade"
         true
       end
 
-      specify "should return -upgrade" do
-        expect(subject.to_s).to eq "-upgrade"
+      specify "should return -upgrade=true" do
+        expect(subject.to_s).to eq "-upgrade=true"
       end
     end
 

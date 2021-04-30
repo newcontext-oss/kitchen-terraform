@@ -41,19 +41,19 @@ require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
     specify "should return command with flags" do
       expect(subject.to_s).to eq(
         "init " \
-        "-input=false " \
-        "-lock=true " \
-        "-lock-timeout=123s " \
-        "-no-color " \
-        "-upgrade " \
-        "-force-copy " \
         "-backend=true " \
         "-backend-config=\"string=\\\"A String\\\"\" " \
         "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
         "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+        "-force-copy=true " \
         "-get=true " \
         "-get-plugins=true " \
+        "-input=false " \
+        "-lock=true " \
+        "-lock-timeout=123s " \
+        "-no-color " \
         "-plugin-dir=\"/plugins\" " \
+        "-upgrade=true " \
         "-verify-plugins=true",
       )
     end

@@ -72,17 +72,17 @@ module Kitchen
           # @return [String] the command with flags.
           def to_s
             "init " \
+            "-backend=true " \
+            "#{backend_config} " \
+            "-force-copy=true " \
+            "-get=true " \
+            "-get-plugins=true " \
             "-input=false " \
             "-lock=#{lock} " \
             "#{lock_timeout} " \
             "#{color} " \
-            "#{upgrade} " \
-            "-force-copy " \
-            "-backend=true " \
-            "#{backend_config} " \
-            "-get=true " \
-            "-get-plugins=true " \
             "#{plugin_dir} " \
+            "#{upgrade} " \
             "-verify-plugins=true"
           end
 
