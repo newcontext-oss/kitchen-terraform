@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
+require "kitchen/terraform/command/init_factory"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
@@ -29,6 +29,12 @@ module Kitchen
       # A Test Kitchen instance is created through the following steps.
       #
       # ===== Initializing the Terraform Working Directory
+      #
+      # ====== Terraform >= 0.15.0
+      #
+      # {include:Kitchen::Terraform::Command::Init::PostZeroFifteenZero}
+      #
+      # ====== Terraform < 0.15.0
       #
       # {include:Kitchen::Terraform::Command::Init::PreZeroFifteenZero}
       #
@@ -64,20 +70,19 @@ module Kitchen
         # @option config [String] :client the pathname of the Terraform client.
         # @return [Kitchen::Terraform::Driver::Create]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
-          hash_config = config.to_hash.merge upgrade_during_init: true, workspace_name: workspace_name
+          self.config = config.to_hash.merge upgrade_during_init: true, workspace_name: workspace_name
           self.client_version = ::Gem::Version.new "0.0.0"
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: config.fetch(:client),
+            client: self.config.fetch(:client),
             logger: logger,
           )
-          self.init = ::Kitchen::Terraform::Command::Init::PreZeroFifteenZero.new config: hash_config
           self.logger = logger
-          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
+          self.options = { cwd: self.config.fetch(:root_module_directory), timeout: self.config.fetch(:command_timeout) }
           self.workspace_name = workspace_name
-          self.workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: hash_config
-          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: hash_config
+          self.workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: self.config
+          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: self.config
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
-            config: config,
+            config: self.config,
             logger: logger,
             version_requirement: version_requirement,
           )
@@ -89,7 +94,7 @@ module Kitchen
         attr_accessor(
           :client_version,
           :command_executor,
-          :init,
+          :config,
           :logger,
           :options,
           :verify_version,
@@ -110,7 +115,10 @@ module Kitchen
 
         def initialize_directory
           logger.warn "Initializing the Terraform working directory..."
-          command_executor.run command: init, options: options do |standard_output:|
+          command_executor.run(
+            command: ::Kitchen::Terraform::Command::InitFactory.new(version: client_version).build(config: config),
+            options: options,
+          ) do |standard_output:|
           end
           logger.warn "Finished initializing the Terraform working directory."
         end

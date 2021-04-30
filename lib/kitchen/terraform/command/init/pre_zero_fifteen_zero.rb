@@ -26,17 +26,17 @@ module Kitchen
       module Init
         # The working directory is initialized by running a command like the following example:
         #   terraform init \
+        #     -backend=true \
+        #     [-backend-config=<backend_configurations[0]> ...] \
+        #     -force-copy \
+        #     -get=true \
+        #     -get-plugins=true \
         #     -input=false \
         #     -lock=<lock> \
         #     -lock-timeout=<lock_timeout>s \
         #     [-no-color] \
-        #     [-upgrade] \
-        #     -force-copy \
-        #     -backend=true \
-        #     [-backend-config=<backend_configurations[0]> ...] \
-        #     -get=true \
-        #     -get-plugins=true \
         #     [-plugin-dir=<plugin_directory>] \
+        #     [-upgrade=true] \
         #     -verify-plugins=true \
         #     <root_module_directory>
         class PreZeroFifteenZero

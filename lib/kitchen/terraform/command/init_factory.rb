@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "kitchen/terraform/command/init/post_zero_fifteen_zero"
 require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
 require "rubygems"
 

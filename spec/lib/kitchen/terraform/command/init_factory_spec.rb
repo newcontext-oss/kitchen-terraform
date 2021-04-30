@@ -15,8 +15,6 @@
 # limitations under the License.
 
 require "kitchen/terraform/command/init_factory"
-require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
-require "kitchen/terraform/command/init/post_zero_fifteen_zero"
 require "rubygems"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::InitFactory do

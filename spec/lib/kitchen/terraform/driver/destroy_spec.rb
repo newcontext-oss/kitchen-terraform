@@ -17,7 +17,6 @@
 require "kitchen"
 require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/destroy"
-require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
 require "kitchen/terraform/command/workspace_delete"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
