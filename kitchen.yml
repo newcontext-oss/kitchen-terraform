@@ -47,6 +47,44 @@ suites:
             output_third_output: first_output
           controls:
             - precedence
+  - name: attributes-post-0-15-0
+    driver:
+      root_module_directory: test/terraform/post-0-15-0/attributes
+      variables:
+        passthrough: value
+    verifier:
+      systems:
+        - name: default
+          backend: local
+          controls:
+            - default
+          profile_locations:
+            - test/integration/attributes
+          reporter:
+            - cli
+            - json:test/reports/inspec/default-attributes.json
+            - junit:test/reports/inspec/default-attributes.junit.xml
+            - junit2:test/reports/inspec/default-attributes.junit2.xml
+        - name: attrs_outputs
+          backend: local
+          attrs_outputs:
+            first_output: second_output
+          controls:
+            - attrs_outputs
+          profile_locations:
+            - test/integration/attributes
+        - name: precedence
+          backend: local
+          attrs:
+            - test/integration/attributes/Attribute File.yml
+          attrs_outputs:
+            first_output: second_output
+            second_output: third_output
+            output_third_output: first_output
+          controls:
+            - precedence
+          profile_locations:
+            - test/integration/attributes
   - name: backend-ssh
     excludes:
       - osx
