@@ -19,7 +19,6 @@ require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/apply"
 require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/output"
-require "kitchen/terraform/command/validate"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/debug_logger"
@@ -124,7 +123,7 @@ require "rubygems"
           options: options,
         ).ordered
         expect(command_executor).to receive(:run).with(
-          command: kind_of(::Kitchen::Terraform::Command::Validate),
+          command: kind_of(::Kitchen::Terraform::Command::Validate::PreZeroFifteenZero),
           options: options,
         ).ordered
         expect(command_executor).to receive(:run).with(
@@ -169,7 +168,7 @@ require "rubygems"
           options: options,
         )
         allow(command_executor).to receive(:run).with(
-          command: kind_of(::Kitchen::Terraform::Command::Validate),
+          command: kind_of(::Kitchen::Terraform::Command::Validate::PreZeroFifteenZero),
           options: options,
         )
         allow(command_executor).to receive(:run).with(

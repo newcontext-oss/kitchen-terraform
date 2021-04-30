@@ -19,7 +19,7 @@ require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/apply"
 require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/output"
-require "kitchen/terraform/command/validate"
+require "kitchen/terraform/command/validate_factory"
 require "kitchen/terraform/command/workspace_select"
 require "kitchen/terraform/debug_logger"
 require "kitchen/terraform/outputs_manager"
@@ -45,7 +45,13 @@ module Kitchen
       #
       # ===== Validating the Terraform Root Module
       #
-      # {include:Kitchen::Terraform::Command::Validate}
+      # ====== Terraform >= 0.15.0
+      #
+      # {include:Kitchen::Terraform::Command::Validate::PostZeroFifteenZero}
+      #
+      # ====== Terraform < 0.15.0
+      #
+      # {include:Kitchen::Terraform::Command::Validate::PreZeroFifteenZero}
       #
       # ===== Applying the Terraform State Changes
       #
@@ -81,26 +87,28 @@ module Kitchen
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @return [Kitchen::Terraform::Driver::Converge]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
-          client = config.fetch :client
-          hash_config = config.to_hash.merge workspace_name: workspace_name
+          self.config = config.to_hash.merge workspace_name: workspace_name
+          client = self.config.fetch :client
           self.client_version = ::Gem::Version.new "0.0.0"
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
             client: client,
             logger: logger,
           )
           self.logger = logger
-          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
+          self.options = {
+            cwd: self.config.fetch(:root_module_directory),
+            timeout: self.config.fetch(:command_timeout),
+          }
           self.workspace_name = workspace_name
-          self.apply = ::Kitchen::Terraform::Command::Apply.new config: config
+          self.apply = ::Kitchen::Terraform::Command::Apply.new config: self.config
           self.get = ::Kitchen::Terraform::Command::Get.new
           self.output = ::Kitchen::Terraform::Command::Output.new
           initialize_outputs_handlers client: client, logger: logger
-          self.validate = ::Kitchen::Terraform::Command::Validate.new config: config
-          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: hash_config
-          self.variables = config.fetch :variables
+          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: self.config
+          self.variables = self.config.fetch :variables
           self.variables_manager = ::Kitchen::Terraform::VariablesManager.new
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
-            config: config,
+            config: self.config,
             logger: logger,
             version_requirement: version_requirement,
           )
@@ -110,23 +118,23 @@ module Kitchen
         private
 
         attr_accessor(
+          :apply,
           :client_version,
           :command_executor,
-          :apply,
+          :config,
           :get,
-          :output,
-          :validate,
-          :workspace_select,
           :logger,
           :options,
+          :output,
           :outputs_manager,
           :outputs_parser,
           :outputs_reader,
-          :variables,
           :variables_manager,
+          :variables,
           :verify_version,
           :version,
           :workspace_name,
+          :workspace_select,
         )
 
         def build_infrastructure
@@ -203,7 +211,10 @@ module Kitchen
 
         def validate_files
           logger.warn "Validating the Terraform configuration files..."
-          command_executor.run command: validate, options: options do |standard_output:|
+          command_executor.run(
+            command: ::Kitchen::Terraform::Command::ValidateFactory.new(version: client_version).build(config: config),
+            options: options,
+          ) do |standard_output:|
           end
           logger.warn "Finished validating the Terraform configuration files."
         end

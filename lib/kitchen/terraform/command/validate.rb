@@ -14,49 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command_flag/color"
-require "kitchen/terraform/command_flag/var_file"
-require "kitchen/terraform/command_flag/var"
-require "shellwords"
-
 module Kitchen
   module Terraform
     module Command
-      # The root module is validated by running a command like the following example:
-      #   terraform validate \
-      #     [-no-color] \
-      #     [-var=<variables.first>...] \
-      #     [-var-file=<variable_files.first>...] \
-      #     <directory>
-      class Validate
-        # #initialize prepares a new instance of the class.
-        #
-        # @param config [Hash] the configuration of the driver.
-        # @option config [Boolean] :color a toggle of colored output from the Terraform client.
-        # @option config [Array<String>] :variable_files a list of pathnames of Terraform variable files to evaluate.
-        # @option config [Hash{String=>String}] :variables a mapping of Terraform variables to evaluate.
-        # @return [Kitchen::Terraform::Command::Validate]
-        def initialize(config:)
-          self.color = ::Kitchen::Terraform::CommandFlag::Color.new enabled: config.fetch(:color)
-          self.var_file = ::Kitchen::Terraform::CommandFlag::VarFile.new pathnames: config.fetch(:variable_files)
-          self.var = ::Kitchen::Terraform::CommandFlag::Var.new arguments: config.fetch(:variables)
-        end
-
-        # @return [String] the command with flags.
-        def to_s
-          "validate " \
-          "#{color} " \
-          "#{var} " \
-          "#{var_file}"
-        end
-
-        private
-
-        attr_accessor(
-          :color,
-          :var_file,
-          :var,
-        )
+      # Validate is the namespace for Terraform Validate commands.
+      module Validate
       end
     end
   end
