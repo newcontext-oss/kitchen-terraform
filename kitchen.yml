@@ -171,6 +171,16 @@ suites:
       systems:
         - name: default
           backend: local
+  - name: plug-ins-post-0-15-0
+    driver:
+      plugin_directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory
+      root_module_directory: test/terraform/post-0-15-0/PlugIns
+    verifier:
+      systems:
+        - name: default
+          backend: local
+          profile_locations:
+            - test/integration/plug-ins
   - name: variables
     driver:
       root_module_directory: test/terraform/variables

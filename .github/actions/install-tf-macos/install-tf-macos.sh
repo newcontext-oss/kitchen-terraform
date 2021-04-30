@@ -27,7 +27,9 @@ SHASUM3=7ef13da7e8ae7129fae8a9c72845d52d4586db496359228ed435aeab2f44aea8
 
 PLUGIN_DIR='test/terraform/11/PlugIns/PlugInDirectory'
 MAJOR_VERSION=$(echo $TERRAFORM_VERSION|sed 's/0\.\([0-9][0-9]*\)\.[0-9][0-9]*$/\1/')
-if [ "$MAJOR_VERSION" -ge 13 ]; then
+if [ "$MAJOR_VERSION" -ge 15 ]; then
+  PLUGIN_DIR="test/terraform/post-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/linux_amd64"
+elif [ "$MAJOR_VERSION" -ge 13 ]; then
   PLUGIN_DIR="${PLUGIN_DIR}/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64"
 fi
 mkdir -p "$PLUGIN_DIR"

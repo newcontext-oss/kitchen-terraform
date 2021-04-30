@@ -38,7 +38,10 @@ $PLUGIN_DIR_END='PlugInDirectory'
 # MAJOR_VERSION=$(echo $TERRAFORM_VERSION|sed 's/0\.\([0-9][0-9]*\)\.[0-9][0-9]*$/\1/')
 $MAJOR_VERSION=$(Select-String -Input $ENV:TERRAFORM_VERSION "0\.([0-9]+)\.[0-9]+" | 
                  ForEach-Object { $_.Matches[0].Groups[1].Value })
-if ("$MAJOR_VERSION" -ge 13) {
+if ("$MAJOR_VERSION" -ge 15) {
+   $PLUGIN_DIR_PARENT="test/terraform/post-0-15-0/PlugIns/${PLUGIN_DIR_END}/registry.terraform.io/hashicorp/local/1.4.0/"
+   $PLUGIN_DIR_END="windows_amd64"
+} elseif ("$MAJOR_VERSION" -ge 13) {
   $PLUGIN_DIR_PARENT="${PLUGIN_DIR_PARENT}/${PLUGIN_DIR_END}/registry.terraform.io/hashicorp/local/1.4.0/"
   $PLUGIN_DIR_END="windows_amd64"
 }
