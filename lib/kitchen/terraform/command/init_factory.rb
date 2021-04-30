@@ -29,6 +29,8 @@ module Kitchen
         #   Kitchen::Terraform::Command::Init::PostZeroFifteenZero]
         def build(config:)
           return ::Kitchen::Terraform::Command::Init::PreZeroFifteenZero.new config: config if requirement.satisfied_by? version
+
+          ::Kitchen::Terraform::Command::Init::PostZeroFifteenZero.new config: config
         end
 
         # #initialize prepares a new instance of the class

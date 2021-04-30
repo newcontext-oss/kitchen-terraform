@@ -16,6 +16,7 @@
 
 require "kitchen/terraform/command/init_factory"
 require "kitchen/terraform/command/init/pre_zero_fifteen_zero"
+require "kitchen/terraform/command/init/post_zero_fifteen_zero"
 require "rubygems"
 
 ::RSpec.describe ::Kitchen::Terraform::Command::InitFactory do
@@ -48,6 +49,24 @@ require "rubygems"
     end
 
     context "when the version is greater than or equal to 0.15.0" do
+      let :config do
+        {
+          backend_configurations: {},
+          color: false,
+          plugin_directory: "/plugins",
+          upgrade_during_init: true,
+        }
+      end
+
+      let :version do
+        ::Gem::Version.new "0.15.1"
+      end
+
+      specify "should return a post 0.15.0 init command" do
+        expect(subject.build(config: config)).to be_kind_of(
+          ::Kitchen::Terraform::Command::Init::PostZeroFifteenZero
+        )
+      end
     end
   end
 end
