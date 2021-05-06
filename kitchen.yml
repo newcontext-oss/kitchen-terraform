@@ -201,7 +201,30 @@ suites:
           backend: local
           controls:
             - variables
-  - name: workspace-one
+  - name: variables-post-0-15-0
+    driver:
+      root_module_directory: test/terraform/post-0-15-0/variables
+      variable_files:
+        - test/terraform/post-0-15-0/variables/variable_files/Variable File.tfvars
+      variables:
+        string: 'A String'
+        map: '{ key = \"A Value\" }'
+        list_of_strings: '[ \"Element One\", \"Element Two\" ]'
+        list_of_maps: '[ { key = \"A List Of Maps Value\" } ]'
+    verifier:
+      systems:
+        - name: variable_files
+          backend: local
+          controls:
+            - variable_files
+          profile_locations:
+            - test/integration/variables
+        - name: variables
+          backend: local
+          controls:
+            - variables
+          profile_locations:
+            - test/integration/variables
     driver:
       root_module_directory: test/terraform/workspace
       variables:
