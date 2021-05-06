@@ -225,20 +225,47 @@ suites:
             - variables
           profile_locations:
             - test/integration/variables
+  - name: workspace-one-pre-0-15-0
     driver:
-      root_module_directory: test/terraform/workspace
+      root_module_directory: test/terraform/pre-0-15-0/workspace
       variables:
         workspace: one
     verifier:
       systems:
         - name: one
           backend: local
-  - name: workspace-two
+          profile_locations:
+            - test/integration/workspace-one
+  - name: workspace-two-pre-0-15-0
     driver:
-      root_module_directory: test/terraform/workspace
+      root_module_directory: test/terraform/pre-0-15-0/workspace
       variables:
         workspace: two
     verifier:
       systems:
         - name: two
           backend: local
+          profile_locations:
+            - test/integration/workspace-two
+  - name: workspace-one-post-0-15-0
+    driver:
+      root_module_directory: test/terraform/post-0-15-0/workspace
+      variables:
+        workspace: one
+    verifier:
+      systems:
+        - name: one
+          backend: local
+          profile_locations:
+            - test/integration/workspace-one
+  - name: workspace-two-post-0-15-0
+    driver:
+      root_module_directory: test/terraform/post-0-15-0/workspace
+      variables:
+        workspace: two
+    verifier:
+      systems:
+        - name: two
+          backend: local
+          profile_locations:
+            - test/integration/workspace-two
