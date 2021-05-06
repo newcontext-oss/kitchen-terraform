@@ -179,6 +179,37 @@ jobs:
         ./$GEMFILE_DIR/bin/rake test:kitchen:variables-osx
         ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-pre-0-15-0-osx
 
+  test_ubun_ruby_2_7_tf15:
+    name: Ubuntu Ruby 2.7 TF15
+    runs-on: ubuntu-latest
+    env:
+      GEMFILE_DIR: .
+      RUBY_VERSION: 2.7.x
+      TERRAFORM_VERSION: 0.15.2
+      TERRAFORM_SHASUM: 6d4780cbbe49f2d49eb49e8d7a90f5b8d5beec7e64d80d3f8eb0c6e19156a26b
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ env.RUBY_VERSION }}
+    - name: Setup bundler
+      uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF and friends
+      uses: ./.github/actions/install-tf-linux
+    - name: Build
+      run: |
+        bundle install
+        chmod 400 test/terraform/post-0-15-0/backend-ssh/id_ed25519
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-post-0-15-0-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:attributes-post-0-15-0-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:backend-ssh-post-0-15-0-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:plug-ins-post-0-15-0-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:variables-post-0-15-0-linux
+        ./$GEMFILE_DIR/bin/rake test:kitchen:workspaces-post-0-15-0-linux
+
   test_windows_ruby_2_7:
     name: Windows Ruby 2.7
     runs-on: windows-latest
