@@ -3,6 +3,7 @@
 .ruby-version
 .sass-cache/
 .solargraph.yml
+.terraform.lock.hcl
 .vscode/
 .yardoc/
 *.gem
@@ -23,7 +24,7 @@ gems.locked
 rubygems/credentials
 terraform_*/
 terraform.tfstate.d/
+test/reports/
 test/terraform/Plug Ins/Plug In Directory/
 tmp/
 vendor/
-test/reports/
