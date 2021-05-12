@@ -58,7 +58,6 @@ jobs:
     env:
       GEMFILE_DIR: .
       RUBY_VERSION: 2.7.x
-      TERRAFORM_VERSION: 0.13.0
       TERRAFORM_SHASUM: 9ed437560faf084c18716e289ea712c784a514bdd7f2796549c735d439dbe378
 
     steps:
@@ -71,7 +70,10 @@ jobs:
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Install TF
-      uses: ./.github/actions/install-tf-linux
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.13.0
+        terraform_wrapper: false
     - name: Build
       run: |
         bundle install
