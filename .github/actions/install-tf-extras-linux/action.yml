@@ -1,0 +1,7 @@
+name: install_tf_linux
+description: installs Terraform Providers/TerraGrunt for Linux
+runs:
+  using: "composite"
+  steps:
+    - run: $GITHUB_ACTION_PATH/install-tf-extras-linux.sh
+      shell: bash
