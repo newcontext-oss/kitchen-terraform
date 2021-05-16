@@ -44,6 +44,11 @@ jobs:
         ruby-version: ${{ env.RUBY_VERSION }}
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
+    - name: Install TF
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.14.11
+        terraform_wrapper: false
     - name: Build
       run: |
         bundle install
@@ -59,7 +64,6 @@ jobs:
       GEMFILE_DIR: .
       RUBY_VERSION: 2.7.x
       TERRAFORM_VERSION: 0.13.0
-      TERRAFORM_SHASUM: 9ed437560faf084c18716e289ea712c784a514bdd7f2796549c735d439dbe378
 
     steps:
     - name: Checkout repo
@@ -71,7 +75,12 @@ jobs:
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Install TF
-      uses: ./.github/actions/install-tf-linux
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.13.0
+        terraform_wrapper: false
+    - name: Install TF Extras
+      uses: ./.github/actions/install-tf-extras-linux
     - name: Build
       run: |
         bundle install
@@ -211,7 +220,6 @@ jobs:
       GEMFILE_DIR: .
       RUBY_VERSION: 2.7.x
       TERRAFORM_VERSION: 0.13.0
-      TERRAFORM_SHASUM: 9ed437560faf084c18716e289ea712c784a514bdd7f2796549c735d439dbe378
       CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
 
     steps:
@@ -224,7 +232,12 @@ jobs:
     - name: Setup bundler
       uses: ./.github/actions/setup-bundler-for-testing
     - name: Install TF
-      uses: ./.github/actions/install-tf-linux
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.13.0
+        terraform_wrapper: false
+    - name: Install TF Extras
+      uses: ./.github/actions/install-tf-extras-linux
     - name: Bundle Install
       run: |
         bundle install
