@@ -87,8 +87,8 @@ module Kitchen
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @return [Kitchen::Terraform::Driver::Converge]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
-          self.config = config.to_hash.merge workspace_name: workspace_name
-          client = self.config.fetch :client
+          self.complete_config = config.to_hash.merge workspace_name: workspace_name
+          client = complete_config.fetch :client
           self.client_version = ::Gem::Version.new "0.0.0"
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
             client: client,
@@ -96,19 +96,19 @@ module Kitchen
           )
           self.logger = logger
           self.options = {
-            cwd: self.config.fetch(:root_module_directory),
-            timeout: self.config.fetch(:command_timeout),
+            cwd: complete_config.fetch(:root_module_directory),
+            timeout: complete_config.fetch(:command_timeout),
           }
           self.workspace_name = workspace_name
-          self.apply = ::Kitchen::Terraform::Command::Apply.new config: self.config
+          self.apply = ::Kitchen::Terraform::Command::Apply.new config: complete_config
           self.get = ::Kitchen::Terraform::Command::Get.new
           self.output = ::Kitchen::Terraform::Command::Output.new
           initialize_outputs_handlers client: client, logger: logger
-          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: self.config
-          self.variables = self.config.fetch :variables
+          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: complete_config
+          self.variables = complete_config.fetch :variables
           self.variables_manager = ::Kitchen::Terraform::VariablesManager.new
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
-            config: self.config,
+            config: complete_config,
             logger: logger,
             version_requirement: version_requirement,
           )
@@ -121,7 +121,7 @@ module Kitchen
           :apply,
           :client_version,
           :command_executor,
-          :config,
+          :complete_config,
           :get,
           :logger,
           :options,
@@ -212,7 +212,8 @@ module Kitchen
         def validate_files
           logger.warn "Validating the Terraform configuration files..."
           command_executor.run(
-            command: ::Kitchen::Terraform::Command::ValidateFactory.new(version: client_version).build(config: config),
+            command: ::Kitchen::Terraform::Command::ValidateFactory.new(version: client_version)
+              .build(config: complete_config),
             options: options,
           ) do |standard_output:|
           end

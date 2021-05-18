@@ -82,24 +82,24 @@ module Kitchen
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @return [Kitchen::Terraform::Driver::Destroy]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
-          self.config = config.to_hash.merge upgrade_during_init: false, workspace_name: workspace_name
+          self.complete_config = config.to_hash.merge upgrade_during_init: false, workspace_name: workspace_name
           self.client_version = ::Gem::Version.new "0.0.0"
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: self.config.fetch(:client),
+            client: complete_config.fetch(:client),
             logger: logger,
           )
           self.logger = logger
           define_options
           self.workspace_name = workspace_name
-          self.destroy = ::Kitchen::Terraform::Command::Destroy.new config: self.config
-          self.workspace_delete_test = ::Kitchen::Terraform::Command::WorkspaceDelete.new config: self.config
-          self.workspace_new_test = ::Kitchen::Terraform::Command::WorkspaceNew.new config: self.config
-          self.workspace_select_test = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: self.config
+          self.destroy = ::Kitchen::Terraform::Command::Destroy.new config: complete_config
+          self.workspace_delete_test = ::Kitchen::Terraform::Command::WorkspaceDelete.new config: complete_config
+          self.workspace_new_test = ::Kitchen::Terraform::Command::WorkspaceNew.new config: complete_config
+          self.workspace_select_test = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: complete_config
           self.workspace_select_default = ::Kitchen::Terraform::Command::WorkspaceSelect.new(
-            config: self.config.merge(workspace_name: "default"),
+            config: complete_config.merge(workspace_name: "default"),
           )
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
-            config: self.config,
+            config: complete_config,
             logger: logger,
             version_requirement: version_requirement,
           )
@@ -111,7 +111,7 @@ module Kitchen
         attr_accessor(
           :client_version,
           :command_executor,
-          :config,
+          :complete_config,
           :destroy_options,
           :destroy,
           :init,
@@ -134,7 +134,10 @@ module Kitchen
         end
 
         def define_options
-          self.options = { cwd: config.fetch(:root_module_directory), timeout: config.fetch(:command_timeout) }
+          self.options = {
+            cwd: complete_config.fetch(:root_module_directory),
+            timeout: complete_config.fetch(:command_timeout),
+          }
           self.destroy_options = options.merge(
             environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "true" },
           )
@@ -165,7 +168,8 @@ module Kitchen
         def initialize_directory
           logger.warn "Initializing the Terraform working directory..."
           command_executor.run(
-            command: ::Kitchen::Terraform::Command::InitFactory.new(version: client_version).build(config: config),
+            command: ::Kitchen::Terraform::Command::InitFactory.new(version: client_version)
+              .build(config: complete_config),
             options: options,
           ) do |standard_output:|
           end

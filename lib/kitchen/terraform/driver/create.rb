@@ -70,19 +70,22 @@ module Kitchen
         # @option config [String] :client the pathname of the Terraform client.
         # @return [Kitchen::Terraform::Driver::Create]
         def initialize(config:, logger:, version_requirement:, workspace_name:)
-          self.config = config.to_hash.merge upgrade_during_init: true, workspace_name: workspace_name
+          self.complete_config = config.to_hash.merge upgrade_during_init: true, workspace_name: workspace_name
           self.client_version = ::Gem::Version.new "0.0.0"
           self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: self.config.fetch(:client),
+            client: complete_config.fetch(:client),
             logger: logger,
           )
           self.logger = logger
-          self.options = { cwd: self.config.fetch(:root_module_directory), timeout: self.config.fetch(:command_timeout) }
+          self.options = {
+            cwd: complete_config.fetch(:root_module_directory),
+            timeout: complete_config.fetch(:command_timeout),
+          }
           self.workspace_name = workspace_name
-          self.workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: self.config
-          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: self.config
+          self.workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: complete_config
+          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: complete_config
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
-            config: self.config,
+            config: complete_config,
             logger: logger,
             version_requirement: version_requirement,
           )
@@ -94,7 +97,7 @@ module Kitchen
         attr_accessor(
           :client_version,
           :command_executor,
-          :config,
+          :complete_config,
           :logger,
           :options,
           :verify_version,
@@ -116,7 +119,8 @@ module Kitchen
         def initialize_directory
           logger.warn "Initializing the Terraform working directory..."
           command_executor.run(
-            command: ::Kitchen::Terraform::Command::InitFactory.new(version: client_version).build(config: config),
+            command: ::Kitchen::Terraform::Command::InitFactory.new(version: client_version)
+              .build(config: complete_config),
             options: options,
           ) do |standard_output:|
           end
