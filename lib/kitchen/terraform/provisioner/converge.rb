@@ -67,11 +67,7 @@ module Kitchen
         # @raise [Kitchen::TransientFailure] if a command fails.
         # @return [self]
         def call(state:)
-          logger.warn "Reading the Terraform client version..."
-          command_executor.run command: version, options: options do |standard_output:|
-            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
-          end
-          logger.warn "Finished reading the Terraform client version."
+          read_client_version
           verify_version.call version: client_version
           execute_workflow
           save_variables_and_outputs state: state
@@ -189,6 +185,14 @@ module Kitchen
 
             parse_outputs json_outputs: json_outputs, &block
           end
+        end
+
+        def read_client_version
+          logger.warn "Reading the Terraform client version..."
+          command_executor.run command: version, options: options do |standard_output:|
+            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
+          end
+          logger.warn "Finished reading the Terraform client version."
         end
 
         def save_outputs(parsed_outputs:, state:)
