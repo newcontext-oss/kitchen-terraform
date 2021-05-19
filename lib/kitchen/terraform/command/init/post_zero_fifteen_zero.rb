@@ -42,12 +42,9 @@ module Kitchen
           # @option config [Hash{String=>String}] :backend_configurations Terraform backend configuration arguments to
           #   complete a partial backend configuration.
           # @option config [Boolean] :color a toggle of colored output from the Terraform client.
-          # @option config [Integer] :command_timeout the the number of seconds to wait for the command to finish running.
           #   on the state to be obtained during operations.
           # @option config [String] :plugin_directory the pathname of the directory which contains
           #   customized Terraform provider plugins to install in place of the official Terraform provider plugins.
-          # @option config [String] :root_module_directory the pathname of the directory which contains the root
-          #   Terraform module.
           # @option config [Boolean] :upgrade_during_init a toggle for upgrading modules and plugins.
           # @return [Kitchen::Terraform::Command::Init::PostZeroFifteenZero]
           def initialize(config:)
