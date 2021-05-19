@@ -6,8 +6,7 @@
 [![Gem downloads version][gem-downloads-version-shield]][kitchen-terraform-gem]
 [![Gem downloads total][gem-downloads-total-shield]][kitchen-terraform-gem]
 
-[![Travis CI Build status][travis-build-status-shield]][travis-build-status]
-[![AppVeyor Build status][appveyor-build-status-shield]][appveyor-build-status]
+[![Test workflow][test-workflow-shield]][test-workflow]
 [![Code coverage][code-coverage-shield]][code-coverage]
 [![Maintainability][maintainability-shield]][maintainability]
 [![Technical debt][technical-debt-shield]][technical-debt]
@@ -278,6 +277,8 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
 [test-directory]: https://github.com/newcontext-oss/kitchen-terraform/tree/master/test
+[test-workflow]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/tests.yml
+[test-workflow-shield]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/tests.yml/badge.svg
 [tfenv]: https://github.com/kamatama41/tfenv
 [travis-build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
 [travis-build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
