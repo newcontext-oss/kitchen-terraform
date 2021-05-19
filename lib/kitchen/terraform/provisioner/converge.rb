@@ -100,11 +100,8 @@ module Kitchen
             timeout: complete_config.fetch(:command_timeout),
           }
           self.workspace_name = workspace_name
-          self.apply = ::Kitchen::Terraform::Command::Apply.new config: complete_config
-          self.get = ::Kitchen::Terraform::Command::Get.new
-          self.output = ::Kitchen::Terraform::Command::Output.new
+          initialize_commands
           initialize_outputs_handlers client: client, logger: logger
-          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: complete_config
           self.variables = complete_config.fetch :variables
           self.variables_manager = ::Kitchen::Terraform::VariablesManager.new
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
@@ -112,7 +109,6 @@ module Kitchen
             logger: logger,
             version_requirement: version_requirement,
           )
-          self.version = ::Kitchen::Terraform::Command::Version.new
         end
 
         private
@@ -156,6 +152,14 @@ module Kitchen
           download_modules
           validate_files
           build_infrastructure
+        end
+
+        def initialize_commands
+          self.apply = ::Kitchen::Terraform::Command::Apply.new config: complete_config
+          self.get = ::Kitchen::Terraform::Command::Get.new
+          self.output = ::Kitchen::Terraform::Command::Output.new
+          self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: complete_config
+          self.version = ::Kitchen::Terraform::Command::Version.new
         end
 
         def initialize_outputs_handlers(client:, logger:)
