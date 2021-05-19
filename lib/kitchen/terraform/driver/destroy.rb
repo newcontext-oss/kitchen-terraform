@@ -63,11 +63,7 @@ module Kitchen
         # @raise [Kitchen::TransientFailure] if a command fails.
         # @return [self]
         def call
-          logger.warn "Reading the Terraform client version..."
-          command_executor.run command: version, options: options do |standard_output:|
-            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
-          end
-          logger.warn "Finished reading the Terraform client version."
+          read_client_version
           verify_version.call version: client_version
           execute_workflow
 
@@ -174,6 +170,14 @@ module Kitchen
           ) do |standard_output:|
           end
           logger.warn "Finished initializing the Terraform working directory."
+        end
+
+        def read_client_version
+          logger.warn "Reading the Terraform client version..."
+          command_executor.run command: version, options: options do |standard_output:|
+            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
+          end
+          logger.warn "Finished reading the Terraform client version."
         end
 
         def select_default_workspace
