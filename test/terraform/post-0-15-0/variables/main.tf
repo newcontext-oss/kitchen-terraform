@@ -25,25 +25,25 @@ terraform {
 
 resource "local_file" "string" {
   content  = var.string
-  filename = "${path.cwd}/string.txt"
+  filename = "${path.module}/string.txt"
 }
 
 resource "local_file" "map" {
   content  = var.map["key"]
-  filename = "${path.cwd}/map.txt"
+  filename = "${path.module}/map.txt"
 }
 
 resource "local_file" "list_of_strings" {
   content  = join("; ", var.list_of_strings)
-  filename = "${path.cwd}/list_of_strings.txt"
+  filename = "${path.module}/list_of_strings.txt"
 }
 
 resource "local_file" "list_of_maps" {
   content  = lookup(var.list_of_maps[0], "key")
-  filename = "${path.cwd}/list_of_maps.txt"
+  filename = "${path.module}/list_of_maps.txt"
 }
 
 resource "local_file" "variable_file" {
   content  = var.local_file_content_from_variable_file
-  filename = "${path.cwd}/variable_file.txt"
+  filename = "${path.module}/variable_file.txt"
 }
