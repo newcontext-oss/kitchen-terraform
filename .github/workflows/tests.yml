@@ -244,7 +244,7 @@ jobs:
         ruby $rake_path test:kitchen:attributes-windows
         ruby $rake_path test:kitchen:plug-ins-11-windows
         ruby $rake_path test:kitchen:variables-windows
-        ruby $rake_path test:kitchen:workspaces-windows
+        ruby $rake_path test:kitchen:workspaces-pre-0-15-0-windows
         echo 'done!'
 
 
