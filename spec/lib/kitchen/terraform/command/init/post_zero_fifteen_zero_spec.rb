@@ -14,36 +14,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command/validate"
+require "kitchen/terraform/command/init/post_zero_fifteen_zero"
 
-::RSpec.describe ::Kitchen::Terraform::Command::Validate do
+::RSpec.describe ::Kitchen::Terraform::Command::Init::PostZeroFifteenZero do
   subject do
     described_class.new config: config
   end
 
   let :config do
     {
-      color: false,
-      variable_files: ["/one.tfvars", "/two.tfvars"],
-      variables: {
+      backend_configurations: {
         string: "\\\"A String\\\"",
         map: "{ key = \\\"A Value\\\" }",
         list: "[ \\\"Element One\\\", \\\"Element Two\\\" ]",
       },
+      color: false,
+      lock: true,
+      lock_timeout: 123,
+      plugin_directory: "/plugins",
+      root_module_directory: "/root-module",
+      upgrade_during_init: true,
     }
   end
 
   describe "#to_s" do
-    specify "should return the command with flags" do
-      # -var and -var-file are included for compatibility with Terraform 0.11
+    specify "should return command with flags" do
       expect(subject.to_s).to eq(
-        "validate " \
+        "init " \
+        "-backend=true " \
+        "-backend-config=\"string=\\\"A String\\\"\" " \
+        "-backend-config=\"map={ key = \\\"A Value\\\" }\" " \
+        "-backend-config=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
+        "-force-copy=true " \
+        "-get=true " \
+        "-input=false " \
         "-no-color " \
-        "-var=\"string=\\\"A String\\\"\" " \
-        "-var=\"map={ key = \\\"A Value\\\" }\" " \
-        "-var=\"list=[ \\\"Element One\\\", \\\"Element Two\\\" ]\" " \
-        "-var-file=\"/one.tfvars\" " \
-        "-var-file=\"/two.tfvars\""
+        "-plugin-dir=\"/plugins\" " \
+        "-upgrade=true"
       )
     end
   end

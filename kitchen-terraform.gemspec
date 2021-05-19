@@ -7,7 +7,7 @@ end
 require "kitchen/terraform/version.rb"
 require "rubygems"
 
-version_parts_strings = RUBY_VERSION.split('.')
+version_parts_strings = RUBY_VERSION.split(".")
 version_parts = []
 version_parts_strings.each { |vp| version_parts.push(vp.to_i) }
 
@@ -50,7 +50,7 @@ end
   if version_gt_25
     specification.add_development_dependency "reek", "~> 6.0.2"
   else
-    puts 'version <= 2.5'
+    puts "version <= 2.5"
     specification.add_development_dependency "reek", "~> 5.5"
   end
 
@@ -63,6 +63,6 @@ end
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
   specification.required_ruby_version = [">= 2.4", "< 2.8"]
-  specification.requirements = ["Terraform >= v0.11.4, < v0.15.0"]
+  specification.requirements = ["Terraform >= v0.11.4, < v1.1.0"]
   specification.signing_key = "certs/gem-private_key.pem" if $PROGRAM_NAME =~ /gem\z/
 end

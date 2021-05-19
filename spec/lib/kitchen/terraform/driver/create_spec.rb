@@ -16,7 +16,6 @@
 
 require "kitchen"
 require "kitchen/terraform/command_executor"
-require "kitchen/terraform/command/init"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
@@ -44,6 +43,7 @@ require "rubygems"
       lock_timeout: 123,
       plugin_directory: "",
       root_module_directory: root_module_directory,
+      verify_version: true,
     }
   end
 
@@ -71,39 +71,33 @@ require "rubygems"
     "/root-module"
   end
 
-  let :verify_version do
-    instance_double ::Kitchen::Terraform::VerifyVersion
-  end
-
   let :workspace_name do
     "test"
   end
 
   let :version_requirement do
-    instance_double ::Gem::Requirement
+    ::Gem::Requirement.new ">= 0.1.0"
   end
 
   before do
     allow(::Kitchen::Terraform::CommandExecutor).to receive(:new).with(client: client, logger: logger).and_return(
       command_executor
     )
-    allow(::Kitchen::Terraform::VerifyVersion).to receive(:new).with(
-      command_executor: command_executor,
-      config: config,
-      logger: logger,
-      version_requirement: version_requirement,
-    ).and_return verify_version
+    allow(command_executor).to receive(:run).with(
+      command: kind_of(::Kitchen::Terraform::Command::Version),
+      options: options,
+    ).and_yield standard_output: "Terraform v0.11.4"
   end
 
   describe "#call" do
     context "when the desired workspace does not exist" do
       specify "should verify the version, initialize the working directory, and create the workspace" do
-        expect(verify_version).to receive(:call).with(
+        expect(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Version),
           options: options,
         ).ordered
         expect(command_executor).to receive(:run).with(
-          command: kind_of(::Kitchen::Terraform::Command::Init),
+          command: kind_of(::Kitchen::Terraform::Command::Init::PreZeroFifteenZero),
           options: options,
         ).ordered
         expect(command_executor).to receive(:run).with(
@@ -130,12 +124,12 @@ require "rubygems"
       end
 
       specify "should verify the version, initialize the working directory, and select the workspace" do
-        expect(verify_version).to receive(:call).with(
+        expect(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Version),
           options: options,
         ).ordered
         expect(command_executor).to receive(:run).with(
-          command: kind_of(::Kitchen::Terraform::Command::Init),
+          command: kind_of(::Kitchen::Terraform::Command::Init::PreZeroFifteenZero),
           options: options,
         ).ordered
         expect(command_executor).to receive(:run).with(

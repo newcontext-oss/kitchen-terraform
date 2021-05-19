@@ -30,7 +30,7 @@ module Kitchen
         # @return [String] the upgrade flag.
         def to_s
           if enabled
-            "-upgrade"
+            "-upgrade=true"
           else
             ""
           end
