@@ -8,6 +8,12 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [5.8.0] - 2021-05-18
+
+### Added
+
+- Support for Terraform 0.15.
+
 ## [5.7.2] - 2021-03-08
 
 ### Fixed
@@ -779,7 +785,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.2...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.8.0...HEAD
+[5.8.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.2...v5.8.0
 [5.7.2]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.1...v5.7.2
 [5.7.1]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.0...v5.7.1
 [5.7.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.6.0...v5.7.0
