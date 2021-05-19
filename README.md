@@ -256,10 +256,10 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
 [maintainability-shield]: https://img.shields.io/codeclimate/maintainability-percentage/newcontext-oss/kitchen-terraform.svg
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
-[new-context-github]: https://github.com/newcontext
-[new-context-linkedin]: https://www.linkedin.com/company/-new-context-
-[new-context-twitter]: https://twitter.com/newcontext
-[new-context]: https://newcontext.com/
+[copado-github]: https://github.com/CopadoSolutions
+[copado-linkedin]: https://www.linkedin.com/company/copado-solutions-s.l
+[copado-twitter]: https://twitter.com/CopadoSolutions
+[copado]: https://copado.com/
 [rbenv]: https://github.com/rbenv/rbenv
 [rbnacl-installation]: https://github.com/crypto-rb/rbnacl/tree/v4.0.2#installation
 [ruby-branches]: https://www.ruby-lang.org/en/downloads/branches/
