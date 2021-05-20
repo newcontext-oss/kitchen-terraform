@@ -181,43 +181,43 @@ Information about changes to Kitchen-Terraform can be found in the
 ## Maintainers
 
 Kitchen-Terraform is maintained by [community contributors][contributors]
-and New Context.
+and Copado NCS LLC.
 
 <img
-  alt="New Context logo"
+  alt="Copado logo"
   height="25"
-  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/new_context_logo.png"
-  width="25"> [NewContext.com][new-context]
+  src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/copado_logo.png"
+  width="25"> [copado.com][copado]
 
 <img
   alt="Twitter logo"
   height="25"
   src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/twitter_logo.png"
-  width="25"> [@NewContext][new-context-twitter]
+  width="25"> [@CopadoSolutions][copado-twitter]
 
 <img
   alt="LinkedIn logo"
   height="23"
   src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/linkedin_logo.png"
-  width="25"> [New Context][new-context-linkedin]
+  width="25"> [Copado][copado-linkedin]
 
 <img
   alt="GitHub logo"
   height="25"
   src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/github_logo.png"
-  width="25"> [@NewContext][new-context-github]
+  width="25"> [@CopadoSolutions][copado-github]
 
 <img
   alt="Email logo"
   height="16"
   src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/email_logo.png"
-  width="25"> kitchen-terraform@newcontext.com
+  width="25"> kitchen-terraform@copado.com
 
 <img
   alt="Email logo"
   height="16"
   src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/email_logo.png"
-  width="25"> info@newcontext.com
+  width="25"> ss-info@copado.com
 
 ## License
 
@@ -256,10 +256,10 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
 [maintainability-shield]: https://img.shields.io/codeclimate/maintainability-percentage/newcontext-oss/kitchen-terraform.svg
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
-[new-context-github]: https://github.com/newcontext
-[new-context-linkedin]: https://www.linkedin.com/company/-new-context-
-[new-context-twitter]: https://twitter.com/newcontext
-[new-context]: https://newcontext.com/
+[copado-github]: https://github.com/CopadoSolutions
+[copado-linkedin]: https://www.linkedin.com/company/copado-solutions-s.l
+[copado-twitter]: https://twitter.com/CopadoSolutions
+[copado]: https://copado.com/
 [rbenv]: https://github.com/rbenv/rbenv
 [rbnacl-installation]: https://github.com/crypto-rb/rbnacl/tree/v4.0.2#installation
 [ruby-branches]: https://www.ruby-lang.org/en/downloads/branches/
