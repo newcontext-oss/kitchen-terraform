@@ -7,8 +7,8 @@ verifier:
   name: terraform
   fail_fast: false
 platforms:
-  - name: linux
-  - name: osx
+  - name: ubuntu
+  - name: macos
     driver:
       client: ./terragrunt_darwin_amd64
   - name: windows
@@ -87,7 +87,7 @@ suites:
             - test/integration/attributes
   - name: backend-ssh
     excludes:
-      - osx
+      - macos
       - windows
     driver:
       root_module_directory: test/terraform/backend-ssh
@@ -121,7 +121,7 @@ suites:
           user: root
   - name: backend-ssh-post-0-15-0
     excludes:
-      - osx
+      - macos
       - windows
     driver:
       root_module_directory: test/terraform/post-0-15-0/backend-ssh
