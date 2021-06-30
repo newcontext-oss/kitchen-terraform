@@ -15,9 +15,9 @@ platforms:
     driver:
       client: ./terraform.exe
 suites:
-  - name: attributes
+  - name: attributes-pre-0-15-0
     driver:
-      root_module_directory: test/terraform/attributes
+      root_module_directory: test/terraform/pre-0-15-0/attributes
       variables:
         passthrough: value
     verifier:
@@ -26,6 +26,8 @@ suites:
           backend: local
           controls:
             - default
+          profile_locations:
+            - test/integration/attributes
           reporter:
             - cli
             - json:test/reports/inspec/default-attributes.json
@@ -37,6 +39,8 @@ suites:
             first_output: second_output
           controls:
             - attrs_outputs
+          profile_locations:
+            - test/integration/attributes
         - name: precedence
           backend: local
           attrs:
@@ -47,6 +51,8 @@ suites:
             output_third_output: first_output
           controls:
             - precedence
+          profile_locations:
+            - test/integration/attributes
   - name: attributes-post-0-15-0
     driver:
       root_module_directory: test/terraform/post-0-15-0/attributes
@@ -85,12 +91,12 @@ suites:
             - precedence
           profile_locations:
             - test/integration/attributes
-  - name: backend-ssh
+  - name: backend-ssh-pre-0-15-0
     excludes:
       - macos
       - windows
     driver:
-      root_module_directory: test/terraform/backend-ssh
+      root_module_directory: test/terraform/pre-0-15-0/backend-ssh
     verifier:
       systems:
         - name: bastion, hosts, key files, one remote profile location
@@ -153,24 +159,16 @@ suites:
           shell_command: /bin/sh
           shell_options: -x
           user: root
-  - name: plug-ins-11
+  - name: plug-ins-pre-0-15-0
     driver:
-      plugin_directory: test/terraform/11/PlugIns/PlugInDirectory
-      root_module_directory: test/terraform/11/PlugIns
+      plugin_directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory
+      root_module_directory: test/terraform/pre-0-15-0/PlugIns
     verifier:
       systems:
         - name: default
           backend: local
           profile_locations:
             - test/integration/plug-ins
-  - name: plug-ins
-    driver:
-      plugin_directory: test/terraform/11/PlugIns/PlugInDirectory
-      root_module_directory: test/terraform/11/PlugIns
-    verifier:
-      systems:
-        - name: default
-          backend: local
   - name: plug-ins-post-0-15-0
     driver:
       plugin_directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory
@@ -181,11 +179,11 @@ suites:
           backend: local
           profile_locations:
             - test/integration/plug-ins
-  - name: variables
+  - name: variables-pre-0-15-0
     driver:
-      root_module_directory: test/terraform/variables
+      root_module_directory: test/terraform/pre-0-15-0/variables
       variable_files:
-        - test/terraform/variables/variable_files/Variable File.tfvars
+        - test/terraform/pre-0-15-0/variables/variable_files/Variable File.tfvars
       variables:
         string: 'A String'
         map: '{ key = \"A Value\" }'
@@ -197,10 +195,14 @@ suites:
           backend: local
           controls:
             - variable_files
+          profile_locations:
+            - test/integration/variables
         - name: variables
           backend: local
           controls:
             - variables
+          profile_locations:
+            - test/integration/variables
   - name: variables-post-0-15-0
     driver:
       root_module_directory: test/terraform/post-0-15-0/variables
