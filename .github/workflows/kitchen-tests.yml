@@ -62,7 +62,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}-latest
     env:
       PLUGIN_DIRECTORY: ${{ matrix.plugin-directory }}
-      VERSION_MATCHER: ${{ fromJSON('["post-0-15-0", "pre-0-15-0"]')[matrix.terraform-version == '0.15.5' || matrix.terraform-version == '1.0.1'] }}
+      VERSION_MATCHER: ${{ fromJSON('["pre-0-15-0", "post-0-15-0"]')[matrix.terraform-version == '0.15.5' || matrix.terraform-version == '1.0.1'] }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
