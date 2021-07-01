@@ -14,11 +14,11 @@
 
 terraform {
   required_providers {
-    local = {
-      source = "hashicorp/local"
-      version = "~> 1.4"
+    docker = {
+      source = "terraform-providers/docker"
     }
   }
-
-  required_version = ">= 0.15.0, < 1.1.0"
+  # because the docker provider needs the above for TF version 0.13+, we must restrict this one,
+  # because the syntax cannot be compatible
+  required_version = ">= 0.13, < 0.15.0"
 }

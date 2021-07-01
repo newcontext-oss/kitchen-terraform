@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-terraform {
-  required_version = ">= 0.11.4, < 1.1.0"
-}
-
 provider "local" {
   version = "~> 1.4"
 }
