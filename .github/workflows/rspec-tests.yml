@@ -20,6 +20,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
+          # 2.2.21 fails to install the gems
+          bundler: '2.2.20'
           bundler-cache: true
       - name: Run RSpec Tests
         if: ${{ matrix.ruby-version != '2.7' }}
