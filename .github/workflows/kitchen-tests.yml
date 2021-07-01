@@ -61,8 +61,6 @@ jobs:
             plugin-directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/windows_amd64
     runs-on: ${{ matrix.operating-system }}-latest
     env:
-      BUNDLE_GEMFILE: ruby-2.7/gems.rb
-      BUNDLE_CLEAN: "true"
       PLUGIN_DIRECTORY: ${{ matrix.plugin-directory }}
       VERSION_MATCHER: ${{ fromJSON('["post-0-15-0", "pre-0-15-0"]')[matrix.terraform-version == '0.15.5' || matrix.terraform-version == '1.0.1'] }}
     steps:
