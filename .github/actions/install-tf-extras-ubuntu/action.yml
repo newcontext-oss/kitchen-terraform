@@ -1,0 +1,7 @@
+name: install_tf_extras_ubuntu
+description: installs Terraform Providers for Ubuntu
+runs:
+  using: "composite"
+  steps:
+    - run: $GITHUB_ACTION_PATH/install-tf-extras-ubuntu.sh
+      shell: bash

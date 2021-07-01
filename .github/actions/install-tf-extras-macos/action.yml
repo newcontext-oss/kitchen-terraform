@@ -1,0 +1,7 @@
+name: install_tf_extras_macos
+description: installs TerraGrunt and Terraform Providers for MacOS
+runs:
+  using: "composite"
+  steps:
+    - run: $GITHUB_ACTION_PATH/install-tf-extras-macos.sh
+      shell: bash

@@ -1,0 +1,7 @@
+name: install_tf_extras_windows
+description: installs Terraform Providers for Windows
+runs:
+  using: "composite"
+  steps:
+    - run: '& $env:GITHUB_ACTION_PATH/install-tf-extras-windows.ps1'
+      shell: pwsh
