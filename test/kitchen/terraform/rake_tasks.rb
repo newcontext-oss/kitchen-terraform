@@ -35,7 +35,7 @@ module Test
           config.instances.get_all(/workspace-\w+-#{version_matcher}/).group_by do |instance|
             instance.platform.name
           end.each_pair do |platform_name, instances|
-            desc "Run #{platform_name} test instances"
+            desc "Run workspaces-#{version_matcher}-#{platform_name} test instances"
             task "workspaces-#{version_matcher}-#{platform_name}" do
               instances.each_entry(&:converge).each_entry(&:verify).each_entry(&:destroy)
             end
