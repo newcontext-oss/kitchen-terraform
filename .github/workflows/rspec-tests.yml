@@ -12,7 +12,6 @@ jobs:
           - '2.7'
     runs-on: ubuntu-latest
     env:
-      BUNDLE_GEMFILE: ruby-${{ matrix.ruby-version }}/gems.rb
       CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
     steps:
       - name: Checkout Repository
