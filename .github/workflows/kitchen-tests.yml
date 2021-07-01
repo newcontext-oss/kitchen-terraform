@@ -70,6 +70,8 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.7'
+          # bundler 2.2 fails to install the gems
+          bundler: '2.1.4'
           bundler-cache: true
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
