@@ -1,0 +1,35 @@
+name: RSpec Tests
+
+on: pull_request
+
+jobs:
+  rspec-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version:
+          - '2.4'
+          - '2.5'
+          - '2.6'
+          - '2.7'
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ruby-${{ matrix.ruby-version }}/gems.rb
+      BUNDLE_CLEAN: "true"
+      CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      - name: Run RSpec Tests
+        if: ${{ matrix.ruby-version != '2.7' }}
+        run: ./ruby-${{ matrix.ruby-version }}/bin/rake test:rspec
+      - name: Run RSpec Tests with Code Coverage
+        if: ${{ matrix.ruby-version == '2.7' }}
+        uses: paambaati/codeclimate-action@v2
+        with:
+          coverageCommand: ./ruby-${{ matrix.ruby-version }}/bin/rake test:rspec

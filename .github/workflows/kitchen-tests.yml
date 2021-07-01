@@ -1,0 +1,100 @@
+name: Kitchen Tests
+
+on: pull_request
+
+jobs:
+  kitchen-tests-ubuntu:
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system:
+          - macos
+          - ubuntu
+          - windows
+        terraform-version:
+          - '0.11.15'
+          - '0.12.31'
+          - '0.13.7'
+          - '0.14.11'
+          - '0.15.5'
+          - '1.0.1'
+        include:
+          - terraform-version: '0.11.15'
+            plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory
+          - terraform-version: '0.12.31'
+            plugin-directory-parent: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory
+          - terraform-version: '0.13.7'
+            operating-system: macos
+            plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64
+          - terraform-version: '0.13.7'
+            operating-system: ubuntu
+            plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/linux_amd64
+          - terraform-version: '0.13.7'
+            operating-system: windows
+            plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/windows_amd64
+          - terraform-version: '0.14.11'
+            operating-system: macos
+            plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64
+          - terraform-version: '0.14.11'
+            operating-system: ubuntu
+            plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/linux_amd64
+          - terraform-version: '0.14.11'
+            operating-system: windows
+            plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/windows_amd64
+          - terraform-version: '0.15.5'
+            operating-system: macos
+            plugin-directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64
+          - terraform-version: '0.15.5'
+            operating-system: ubuntu
+            plugin-directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/linux_amd64
+          - terraform-version: '0.15.5'
+            operating-system: windows
+            plugin-directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/windows_amd64
+          - terraform-version: '1.0.1'
+            operating-system: macos
+            plugin-directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64
+          - terraform-version: '1.0.1'
+            operating-system: ubuntu
+            plugin-directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/linux_amd64
+          - terraform-version: '1.0.1'
+            operating-system: windows
+            plugin-directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/windows_amd64
+    runs-on: ${{ matrix.operating-system }}-latest
+    env:
+      BUNDLE_GEMFILE: ruby-2.7/gems.rb
+      BUNDLE_CLEAN: "true"
+      PLUGIN_DIRECTORY: ${{ matrix.plugin-directory }}
+      VERSION_MATCHER: ${{ fromJSON('["post-0-15-0", "pre-0-15-0"]')[matrix.terraform-version == '0.15.5' || matrix.terraform-version == '1.0.1'] }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ matrix.terraform-version }}
+          terraform_wrapper: false
+      - name: Install Terraform Extras for MacOS
+        if: ${{ matrix.operating-system == 'macos' }}
+        uses: ./.github/actions/install-tf-extras-macos
+      - name: Install Terraform Extras for Ubuntu
+        if: ${{ matrix.operating-system == 'ubuntu' }}
+        uses: ./.github/actions/install-tf-extras-ubuntu
+      - name: Install Terraform Extras for Windows
+        if: ${{ matrix.operating-system == 'windows' }}
+        uses: ./.github/actions/install-tf-extras-windows
+      - name: Run Kitchen Tests
+        run: |
+          ruby ./ruby-2.7/bin/rake test:kitchen:attributes-$VERSION_MATCHER-${{ matrix.operating-system }}
+          ruby ./ruby-2.7/bin/rake test:kitchen:plug-ins-$VERSION_MATCHER-${{ matrix.operating-system }}
+          ruby ./ruby-2.7/bin/rake test:kitchen:variables-$VERSION_MATCHER-${{ matrix.operating-system }}
+          ruby ./ruby-2.7/bin/rake test:kitchen:workspaces-$VERSION_MATCHER-${{ matrix.operating-system }}
+      - name: Run Kitchen Test backend-ssh
+        if: ${{ matrix.operating-system == 'ubuntu' }}
+        run: |
+          chmod 400 ./test/terraform/$VERSION_MATCHER/backend-ssh/id_ed25519
+          ruby ./ruby-2.7/bin/rake test:kitchen:backend-ssh-$VERSION_MATCHER-ubuntu
