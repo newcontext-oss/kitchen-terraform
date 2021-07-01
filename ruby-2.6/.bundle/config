@@ -1,4 +1,0 @@
----
-BUNDLE_IGNORE_MESSAGES: "true"
-BUNDLE_PATH: "vendor/bundle"
-BUNDLE_RETRY: "3"
