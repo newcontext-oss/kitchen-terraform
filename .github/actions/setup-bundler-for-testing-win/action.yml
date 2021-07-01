@@ -1,7 +1,0 @@
-name: setup_bundler_for_testing
-description: installs bundler and configures it
-runs:
-  using: "composite"
-  steps:
-    - run: '& $Env:GITHUB_ACTION_PATH/setup-bundler-for-testing.ps1'
-      shell: pwsh
