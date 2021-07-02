@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-provider "local" {
-  version = "~> 1.4"
-}
-
 resource "local_file" "static_file" {
   content  = "abc"
   filename = "${path.cwd}/static_file.txt"

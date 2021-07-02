@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-provider "local" {
-  version = "~> 1.4"
-}
-
 resource "local_file" "string" {
   content  = var.string
   filename = "${path.cwd}/string.txt"
