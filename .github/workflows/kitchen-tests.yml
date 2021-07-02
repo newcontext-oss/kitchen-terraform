@@ -90,7 +90,7 @@ jobs:
           bundle exec rake test:kitchen:variables-$VERSION_MATCHER-${{ matrix.operating-system }}
           bundle exec rake test:kitchen:workspaces-$VERSION_MATCHER-${{ matrix.operating-system }}
       - name: Run Kitchen Test backend-ssh
-        if: ${{ matrix.operating-system == 'ubuntu' && matrix.terraform-version != '0.12.31' }}
+        if: ${{ matrix.operating-system == 'ubuntu' }}
         run: |
           chmod 400 ./test/terraform/$VERSION_MATCHER/backend-ssh/id_ed25519
           bundle exec rake test:kitchen:backend-ssh-$VERSION_MATCHER-ubuntu
