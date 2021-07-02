@@ -12,7 +12,6 @@ jobs:
           - ubuntu
           - windows
         terraform-version:
-          - '0.12.31'
           - '0.13.7'
           - '0.14.11'
           - '0.15.5'
