@@ -7,13 +7,11 @@ verifier:
   name: terraform
   fail_fast: false
 platforms:
-  - name: ubuntu
   - name: macos
     driver:
       client: terragrunt
+  - name: ubuntu
   - name: windows
-    driver:
-      client: ./terraform.exe
 suites:
   - name: attributes
     driver:
