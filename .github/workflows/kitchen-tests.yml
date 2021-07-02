@@ -17,8 +17,6 @@ jobs:
           - '0.15.5'
           - '1.0.1'
     runs-on: ${{ matrix.operating-system }}-latest
-    env:
-      VERSION_MATCHER: ${{ fromJSON('["pre-0-15-0", "post-0-15-0"]')[matrix.terraform-version == '0.15.5' || matrix.terraform-version == '1.0.1'] }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -43,16 +41,16 @@ jobs:
           brew install terragrunt
       - name: Mirror Terraform Providers
         run: |
-          cd ./test/terraform/$VERSION_MATCHER/PlugIns
+          cd ./test/terraform/PlugIns
           terraform providers mirror ./PlugInDirectory
       - name: Run Kitchen Tests
         run: |
-          bundle exec rake test:kitchen:attributes-$VERSION_MATCHER-${{ matrix.operating-system }}
-          bundle exec rake test:kitchen:plug-ins-$VERSION_MATCHER-${{ matrix.operating-system }}
-          bundle exec rake test:kitchen:variables-$VERSION_MATCHER-${{ matrix.operating-system }}
-          bundle exec rake test:kitchen:workspaces-$VERSION_MATCHER-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:attributes-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:plug-ins-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:variables-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:workspaces-${{ matrix.operating-system }}
       - name: Run Kitchen Test backend-ssh
         if: ${{ matrix.operating-system == 'ubuntu' }}
         run: |
           chmod 400 ./test/terraform/$VERSION_MATCHER/backend-ssh/id_ed25519
-          bundle exec rake test:kitchen:backend-ssh-$VERSION_MATCHER-ubuntu
+          bundle exec rake test:kitchen:backend-ssh-ubuntu
