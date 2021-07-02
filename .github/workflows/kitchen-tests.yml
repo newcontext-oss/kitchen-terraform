@@ -3,7 +3,7 @@ name: Kitchen Tests
 on: pull_request
 
 jobs:
-  kitchen-tests-ubuntu:
+  kitchen-tests:
     strategy:
       fail-fast: false
       matrix:
