@@ -43,7 +43,7 @@ jobs:
           brew install terragrunt
       - name: Mirror Terraform Providers
         run: |
-          cd ./tests/terraform/$VERSION_MATCHER/PlugIns
+          cd ./test/terraform/$VERSION_MATCHER/PlugIns
           terraform providers mirror ./PlugInDirectory
       - name: Run Kitchen Tests
         run: |
