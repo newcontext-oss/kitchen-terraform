@@ -13,9 +13,7 @@ jobs:
       matrix:
         include:
           - operating-system: macos
-            # terraform-version on macos is only included for reference; it is not used.
             terraform-version: '1.0.1'
-            # The Terragrunt Homebrew formulae 0.31.0 depends on the Terraform formulae 1.0.1
             terragrunt-version: '0.31.0'
           - operating-system: ubuntu
             terraform-version: '0.15.5'
@@ -35,19 +33,16 @@ jobs:
           # bundler 2.2 fails to install the gems
           bundler: '2.1.4'
           bundler-cache: true
-      - name: Setup Homebrew
-        if: ${{ matrix.operating-system == 'macos' }}
-        uses: homebrew/actions/setup-homebrew@master
-      - name: Install Terragrunt
-        if: ${{ matrix.operating-system == 'macos' }}
-        run: |
-          brew install terragrunt@${{ matrix.terragrunt-version }}
       - name: Setup Terraform
-        if: ${{ matrix.operating-system != 'macos' }}
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ matrix.terraform-version }}
           terraform_wrapper: false
+      - name: Setup Terragrunt
+        if: ${{ matrix.operating-system == 'macos' }}
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: ${{ matrix.terragrunt-version }}
       - name: Mirror Terraform Providers
         run: |
           cd ./test/terraform/PlugIns
