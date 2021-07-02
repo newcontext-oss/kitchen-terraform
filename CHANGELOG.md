@@ -11,6 +11,7 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Dropped support for Ruby 2.4, 2.5.
+- Dropped Terraform 0.11 and 0.12 from the test matrix.
 
 ## [5.8.0] - 2021-05-18
 
