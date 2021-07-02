@@ -10,7 +10,7 @@ platforms:
   - name: ubuntu
   - name: macos
     driver:
-      client: ./terragrunt_darwin_amd64
+      client: terragrunt
   - name: windows
     driver:
       client: ./terraform.exe
