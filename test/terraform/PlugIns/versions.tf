@@ -13,11 +13,11 @@
 # limitations under the License.
 
 terraform {
-  required_version = ">= 0.15.0, < 1.1.0"
-  
+  required_version = ">= 0.13.0, < 1.1.0"
+
   required_providers {
     local = {
-      source = "hashicorp/local"
+      source  = "hashicorp/local"
       version = "~> 1.4"
     }
   }
