@@ -13,13 +13,12 @@
 # limitations under the License.
 
 terraform {
+  required_version = ">= 0.13, < 0.15.0"
+
   required_providers {
     docker = {
       source = "kreuzwerker/docker"
       version = "~> 2.13"
     }
   }
-  # because the docker provider needs the above for TF version 0.13+, we must restrict this one,
-  # because the syntax cannot be compatible
-  required_version = ">= 0.13, < 0.15.0"
 }
