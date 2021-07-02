@@ -19,7 +19,7 @@ jobs:
           - '1.0.1'
         include:
           - terraform-version: '0.12.31'
-            plugin-directory-parent: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory
+            plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory
           - terraform-version: '0.13.7'
             operating-system: macos
             plugin-directory: test/terraform/pre-0-15-0/PlugIns/PlugInDirectory/registry.terraform.io/hashicorp/local/1.4.0/darwin_amd64
