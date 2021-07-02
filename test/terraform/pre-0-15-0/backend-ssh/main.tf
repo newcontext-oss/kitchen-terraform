@@ -12,10 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-provider "docker" {
-  version = "2.7.2"
-}
-
 data "docker_registry_image" "ubuntu_sshd" {
   name = "rastasheep/ubuntu-sshd:latest"
 }

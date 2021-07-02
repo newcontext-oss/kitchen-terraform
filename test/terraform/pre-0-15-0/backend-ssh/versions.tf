@@ -15,7 +15,8 @@
 terraform {
   required_providers {
     docker = {
-      source = "terraform-providers/docker"
+      source = "kreuzwerker/docker"
+      version = "~> 2.13"
     }
   }
   # because the docker provider needs the above for TF version 0.13+, we must restrict this one,
