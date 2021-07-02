@@ -2,6 +2,10 @@ name: Kitchen Tests
 
 on: pull_request
 
+defaults:
+  run:
+    shell: bash
+    
 jobs:
   kitchen-tests:
     strategy:
