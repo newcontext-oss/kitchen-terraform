@@ -32,6 +32,7 @@ jobs:
           bundler: '2.1.4'
           bundler-cache: true
       - name: Setup Terraform
+        if: ${{ matrix.operating-system != 'macos' }}
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ matrix.terraform-version }}
@@ -39,9 +40,10 @@ jobs:
       - name: Setup Homebrew
         if: ${{ matrix.operating-system == 'macos' }}
         uses: homebrew/actions/setup-homebrew@master
-      - name: Install Terragrunt
+      - name: Install Terraform and Terragrunt
         if: ${{ matrix.operating-system == 'macos' }}
         run: |
+          brew install terraform@${{ matrix.terraform-version }}
           brew install terragrunt
       - name: Mirror Terraform Providers
         run: |
