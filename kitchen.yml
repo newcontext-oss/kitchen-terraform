@@ -107,7 +107,7 @@ suites:
           hosts:
             - 172.21.0.2
           key_files:
-            - test/terraform/backend-ssh/id_ed25519
+            - test/terraform/pre-0-15-0/backend-ssh/id_ed25519
           port: 22
           profile_locations:
             - https://github.com/brentm5/chef-compliance-profile-test.git
