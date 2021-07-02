@@ -16,11 +16,6 @@ variable "string" {
   type = string
 }
 
-variable "terragrunt" {
-  description = "Terragrunt configuration."
-  type        = map(any)
-}
-
 variable "map" {
   type = map(any)
 }

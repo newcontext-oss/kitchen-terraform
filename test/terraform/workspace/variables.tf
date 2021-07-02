@@ -12,11 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "terragrunt" {
-  description = "Terragrunt configuration."
-  type        = map(string)
-}
-
 variable "workspace" {
   description = "The name of the workspace."
 }
