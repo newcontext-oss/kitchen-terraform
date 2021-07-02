@@ -7,17 +7,6 @@ end
 require "kitchen/terraform/version.rb"
 require "rubygems"
 
-version_parts_strings = RUBY_VERSION.split(".")
-version_parts = []
-version_parts_strings.each { |vp| version_parts.push(vp.to_i) }
-
-if version_parts[0] > 2 ||
-   (version_parts[0] == 2 && version_parts[1] > 5)
-  version_gt_25 = true
-else
-  version_gt_25 = false
-end
-
 ::Gem::Specification.new do |specification|
   specification.authors = ["Aaron Lane", "Nick Willever", "Kevin Dickerson", "Nell Shamrell-Harrington",
                            "Michael Glenney", "Walter Dolce", "Clay Thomas", "Erik R. Rygg", "Kyle Sexton",
@@ -31,7 +20,6 @@ end
   specification.email = "kitchen-terraform@newcontext.com"
   specification.homepage = "https://newcontext-oss.github.io/kitchen-terraform/"
   specification.license = "Apache-2.0"
-  specification.add_development_dependency "bundler", "~> 2.0"
   specification.add_development_dependency "guard-bundler", "~> 2.1"
   specification.add_development_dependency "guard-rspec", "~> 4.7"
   specification.add_development_dependency "guard-yard", "~> 2.2"
@@ -41,19 +29,13 @@ end
   specification.add_development_dependency "middleman-livereload", "~> 3.4"
   specification.add_development_dependency "middleman-syntax", "~> 3.0"
   specification.add_development_dependency "middleman", "~> 4.2"
+  specification.add_development_dependency "rake", "~> 13.0"
   specification.add_development_dependency "rspec", "~> 3.4"
   specification.add_development_dependency "rufo", "~> 0.7"
   specification.add_development_dependency "simplecov", "~> 0.16.1"
   specification.add_development_dependency "travis", "~> 1.8"
   specification.add_development_dependency "yard", "~> 0.9"
-
-  if version_gt_25
-    specification.add_development_dependency "reek", "~> 6.0.2"
-  else
-    puts "version <= 2.5"
-    specification.add_development_dependency "reek", "~> 5.5"
-  end
-
+  specification.add_development_dependency "reek", "~> 6.0.2"
   specification.add_runtime_dependency "delegate", "~> 0.1.0"
   specification.add_runtime_dependency "dry-validation", "~> 0.13"
   specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
@@ -62,7 +44,7 @@ end
   specification.add_runtime_dependency "test-kitchen", "~> 2.1"
   specification.add_runtime_dependency "tty-which", "~> 0.4.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
-  specification.required_ruby_version = [">= 2.4", "< 2.8"]
+  specification.required_ruby_version = [">= 2.6", "< 3.0"]
   specification.requirements = ["Terraform >= v0.11.4, < v1.1.0"]
   specification.signing_key = "certs/gem-private_key.pem" if $PROGRAM_NAME =~ /gem\z/
 end

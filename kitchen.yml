@@ -7,49 +7,15 @@ verifier:
   name: terraform
   fail_fast: false
 platforms:
-  - name: linux
-  - name: osx
+  - name: macos
     driver:
-      client: ./terragrunt_darwin_amd64
+      client: terragrunt
+  - name: ubuntu
   - name: windows
-    driver:
-      client: ./terraform.exe
 suites:
   - name: attributes
     driver:
       root_module_directory: test/terraform/attributes
-      variables:
-        passthrough: value
-    verifier:
-      systems:
-        - name: default
-          backend: local
-          controls:
-            - default
-          reporter:
-            - cli
-            - json:test/reports/inspec/default-attributes.json
-            - junit:test/reports/inspec/default-attributes.junit.xml
-            - junit2:test/reports/inspec/default-attributes.junit2.xml
-        - name: attrs_outputs
-          backend: local
-          attrs_outputs:
-            first_output: second_output
-          controls:
-            - attrs_outputs
-        - name: precedence
-          backend: local
-          attrs:
-            - test/integration/attributes/Attribute File.yml
-          attrs_outputs:
-            first_output: second_output
-            second_output: third_output
-            output_third_output: first_output
-          controls:
-            - precedence
-  - name: attributes-post-0-15-0
-    driver:
-      root_module_directory: test/terraform/post-0-15-0/attributes
       variables:
         passthrough: value
     verifier:
@@ -87,7 +53,7 @@ suites:
             - test/integration/attributes
   - name: backend-ssh
     excludes:
-      - osx
+      - macos
       - windows
     driver:
       root_module_directory: test/terraform/backend-ssh
@@ -119,62 +85,10 @@ suites:
           shell_command: /bin/sh
           shell_options: -x
           user: root
-  - name: backend-ssh-post-0-15-0
-    excludes:
-      - osx
-      - windows
-    driver:
-      root_module_directory: test/terraform/post-0-15-0/backend-ssh
-    verifier:
-      systems:
-        - name: bastion, hosts, key files, one remote profile location
-          backend: ssh
-          bastion_host_output: bastion_host
-          bastion_port: 2223
-          bastion_user: root
-          hosts:
-            - 172.21.0.2
-          key_files:
-            - test/terraform/post-0-15-0/backend-ssh/id_ed25519
-          port: 22
-          profile_locations:
-            - https://github.com/brentm5/chef-compliance-profile-test.git
-          user: root
-        - name: hosts output, password, proxy command, shell, two local profile locations
-          backend: ssh
-          hosts_output: hosts
-          password: root
-          port: 2222
-          profile_locations:
-            - test/integration/backend-ssh/behaviour
-            - test/integration/backend-ssh/state
-          proxy_command: nc %h %p
-          shell: true
-          shell_command: /bin/sh
-          shell_options: -x
-          user: root
-  - name: plug-ins-11
-    driver:
-      plugin_directory: test/terraform/11/PlugIns/PlugInDirectory
-      root_module_directory: test/terraform/11/PlugIns
-    verifier:
-      systems:
-        - name: default
-          backend: local
-          profile_locations:
-            - test/integration/plug-ins
   - name: plug-ins
     driver:
-      plugin_directory: test/terraform/11/PlugIns/PlugInDirectory
-      root_module_directory: test/terraform/11/PlugIns
-    verifier:
-      systems:
-        - name: default
-          backend: local
-  - name: plug-ins-post-0-15-0
-    driver:
-      plugin_directory: test/terraform/post-0-15-0/PlugIns/PlugInDirectory
-      root_module_directory: test/terraform/post-0-15-0/PlugIns
+      plugin_directory: test/terraform/PlugIns/PlugInDirectory
+      root_module_directory: test/terraform/PlugIns
     verifier:
       systems:
         - name: default
@@ -197,26 +111,6 @@ suites:
           backend: local
           controls:
             - variable_files
-        - name: variables
-          backend: local
-          controls:
-            - variables
-  - name: variables-post-0-15-0
-    driver:
-      root_module_directory: test/terraform/post-0-15-0/variables
-      variable_files:
-        - test/terraform/post-0-15-0/variables/variable_files/Variable File.tfvars
-      variables:
-        string: 'A String'
-        map: '{ key = \"A Value\" }'
-        list_of_strings: '[ \"Element One\", \"Element Two\" ]'
-        list_of_maps: '[ { key = \"A List Of Maps Value\" } ]'
-    verifier:
-      systems:
-        - name: variable_files
-          backend: local
-          controls:
-            - variable_files
           profile_locations:
             - test/integration/variables
         - name: variables
@@ -225,9 +119,9 @@ suites:
             - variables
           profile_locations:
             - test/integration/variables
-  - name: workspace-one-pre-0-15-0
+  - name: workspace-one
     driver:
-      root_module_directory: test/terraform/pre-0-15-0/workspace
+      root_module_directory: test/terraform/workspace
       variables:
         workspace: one
     verifier:
@@ -236,31 +130,9 @@ suites:
           backend: local
           profile_locations:
             - test/integration/workspace-one
-  - name: workspace-two-pre-0-15-0
+  - name: workspace-two
     driver:
-      root_module_directory: test/terraform/pre-0-15-0/workspace
-      variables:
-        workspace: two
-    verifier:
-      systems:
-        - name: two
-          backend: local
-          profile_locations:
-            - test/integration/workspace-two
-  - name: workspace-one-post-0-15-0
-    driver:
-      root_module_directory: test/terraform/post-0-15-0/workspace
-      variables:
-        workspace: one
-    verifier:
-      systems:
-        - name: one
-          backend: local
-          profile_locations:
-            - test/integration/workspace-one
-  - name: workspace-two-post-0-15-0
-    driver:
-      root_module_directory: test/terraform/post-0-15-0/workspace
+      root_module_directory: test/terraform/workspace
       variables:
         workspace: two
     verifier:

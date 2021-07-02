@@ -1,0 +1,60 @@
+name: Kitchen Tests
+
+on: pull_request
+
+defaults:
+  run:
+    shell: bash
+    
+jobs:
+  kitchen-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - operating-system: macos
+            terraform-version: '1.0.1'
+            terragrunt-version: '0.31.0'
+          - operating-system: ubuntu
+            terraform-version: '0.15.5'
+          - operating-system: ubuntu
+            terraform-version: '0.14.11'
+          - operating-system: windows
+            terraform-version: '0.13.7'
+        
+    runs-on: ${{ matrix.operating-system }}-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          # bundler 2.2 fails to install the gems
+          bundler: '2.1.4'
+          bundler-cache: true
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ matrix.terraform-version }}
+          terraform_wrapper: false
+      - name: Setup Terragrunt
+        if: ${{ matrix.operating-system == 'macos' }}
+        uses: autero1/action-terragrunt@v1.1.0
+        with:
+          terragrunt_version: ${{ matrix.terragrunt-version }}
+      - name: Mirror Terraform Providers
+        run: |
+          cd ./test/terraform/PlugIns
+          terraform providers mirror ./PlugInDirectory
+      - name: Run Kitchen Tests
+        run: |
+          bundle exec rake test:kitchen:attributes-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:plug-ins-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:variables-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:workspaces-${{ matrix.operating-system }}
+      - name: Run Kitchen Test backend-ssh
+        if: ${{ matrix.operating-system == 'ubuntu' }}
+        run: |
+          chmod 400 ./test/terraform/$VERSION_MATCHER/backend-ssh/id_ed25519
+          bundle exec rake test:kitchen:backend-ssh-ubuntu

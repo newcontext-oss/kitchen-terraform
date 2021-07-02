@@ -13,26 +13,21 @@
 # limitations under the License.
 
 variable "string" {
-  type = "string"
-}
-
-variable "terragrunt" {
-  description = "Terragrunt configuration."
-  type        = "map"
+  type = string
 }
 
 variable "map" {
-  type = "map"
+  type = map(any)
 }
 
 variable "list_of_strings" {
-  type = "list"
+  type = list(any)
 }
 
 variable "list_of_maps" {
-  type = "list"
+  type = list(any)
 }
 
 variable "local_file_content_from_variable_file" {
-  type = "string"
+  type = string
 }

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-output "root_module_directory" {
-  description = "The pathname of the root module directory."
-  value       = abspath(path.module)
+variable "workspace" {
+  description = "The name of the workspace."
 }

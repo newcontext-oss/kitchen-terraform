@@ -12,35 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-terraform {
-  required_version = ">= 0.11.4, < 1.1.0"
-}
-
-provider "local" {
-  version = "~> 1.4"
-}
-
 resource "local_file" "string" {
-  content  = "${var.string}"
-  filename = "${path.cwd}/string.txt"
+  content  = var.string
+  filename = "${path.module}/string.txt"
 }
 
 resource "local_file" "map" {
-  content  = "${var.map["key"]}"
-  filename = "${path.cwd}/map.txt"
+  content  = var.map["key"]
+  filename = "${path.module}/map.txt"
 }
 
 resource "local_file" "list_of_strings" {
-  content  = "${join("; ", var.list_of_strings)}"
-  filename = "${path.cwd}/list_of_strings.txt"
+  content  = join("; ", var.list_of_strings)
+  filename = "${path.module}/list_of_strings.txt"
 }
 
 resource "local_file" "list_of_maps" {
-  content  = "${lookup(var.list_of_maps[0], "key")}"
-  filename = "${path.cwd}/list_of_maps.txt"
+  content  = lookup(var.list_of_maps[0], "key")
+  filename = "${path.module}/list_of_maps.txt"
 }
 
 resource "local_file" "variable_file" {
-  content  = "${var.local_file_content_from_variable_file}"
-  filename = "${path.cwd}/variable_file.txt"
+  content  = var.local_file_content_from_variable_file
+  filename = "${path.module}/variable_file.txt"
 }

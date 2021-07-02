@@ -26,17 +26,16 @@ module Test
         def define
           super
           namespace "kitchen" do
-            define_workspaces version_matcher: "pre-0-15-0"
-            define_workspaces version_matcher: "post-0-15-0"
+            define_workspaces
           end
         end
 
-        def define_workspaces(version_matcher:)
-          config.instances.get_all(/workspace-\w+-#{version_matcher}/).group_by do |instance|
+        def define_workspaces
+          config.instances.get_all(/workspace-\w+/).group_by do |instance|
             instance.platform.name
           end.each_pair do |platform_name, instances|
-            desc "Run #{platform_name} test instances"
-            task "workspaces-#{version_matcher}-#{platform_name}" do
+            desc "Run workspaces-#{platform_name} test instances"
+            task "workspaces-#{platform_name}" do
               instances.each_entry(&:converge).each_entry(&:verify).each_entry(&:destroy)
             end
           end

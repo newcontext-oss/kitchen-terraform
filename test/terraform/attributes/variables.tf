@@ -14,10 +14,5 @@
 
 variable "passthrough" {
   description = "A value to use as an Inspec profile attribute."
-  type        = "string"
-}
-
-variable "terragrunt" {
-  description = "Terragrunt configuration."
-  type        = "map"
+  type        = string
 }

@@ -12,7 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-output "root_module_directory" {
-  description = "The pathname of the root module directory."
-  value       = abspath(path.module)
+terraform {
+  required_version = ">= 0.13.0, < 1.1.0"
+
+  required_providers {
+    docker = {
+      source  = "kreuzwerker/docker"
+      version = "~> 2.13"
+    }
+  }
 }

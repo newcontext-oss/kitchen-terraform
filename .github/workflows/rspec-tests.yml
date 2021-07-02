@@ -1,0 +1,33 @@
+name: RSpec Tests
+
+on: pull_request
+
+jobs:
+  rspec-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version:
+          - '2.6'
+          - '2.7'
+    runs-on: ubuntu-latest
+    env:
+      CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          # bundler 2.2 fails to install the gems
+          bundler: '2.1.4'
+          bundler-cache: true
+      - name: Run RSpec Tests
+        if: ${{ matrix.ruby-version != '2.7' }}
+        run: bundle exec rake test:rspec
+      - name: Run RSpec Tests with Code Coverage
+        if: ${{ matrix.ruby-version == '2.7' }}
+        uses: paambaati/codeclimate-action@v2.7.5
+        with:
+          coverageCommand: bundle exec rake test:rspec
