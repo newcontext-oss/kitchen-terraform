@@ -143,7 +143,10 @@ commit to a branch with an open pull request.
 integration tests that will be executed for each commit to the master 
 branch and each commit to a branch with an open pull request.
 
-[release.yml](.github/workflows/release.yml) contains the job configuration to deploy the Ruby gem. If a [tag][git-tag] starting with v is pushed to the master branch, then the job will attempt to build the Ruby gem and deploy it to [RubyGems][ruby-gems].
+[release.yml](.github/workflows/release.yml) contains the job 
+configuration to deploy the Ruby gem. If a [tag][git-tag] starting with 
+v is pushed to the master branch, then the job will attempt to build 
+the Ruby gem and deploy it to [RubyGems][ruby-gems].
 
 #### Releasing
 
