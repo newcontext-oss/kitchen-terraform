@@ -19,7 +19,7 @@ require "dry/validation"
 module Kitchen
   module Terraform
     module ConfigAttributeContract
-      # HashOfSymbolsAndStrings is the class of objects that provide a configuration attribute contract for a hash 
+      # HashOfSymbolsAndStrings is the class of objects that provide a configuration attribute contract for a hash
       # including only symbol keys and string values.
       class HashOfSymbolsAndStrings < ::Dry::Validation::Contract
         schema do
@@ -27,9 +27,11 @@ module Kitchen
         end
 
         rule :value do
-          value.each_pair do |k, v|
-            if ::Symbol != k.class || ::String != v.class
-              key.failure "the key value pair '#{k} => #{v}' must both be scalars" 
+          value.each_pair do |symbol, string|
+            if ::Symbol != symbol.class
+              key.failure "the key of the key-value pair '#{symbol} => #{string}' must be a scalar"
+            elsif ::String != string.class
+              key.failure "the value of the key-value pair '#{symbol} => #{string}' must be a scalar"
             end
           end
         end

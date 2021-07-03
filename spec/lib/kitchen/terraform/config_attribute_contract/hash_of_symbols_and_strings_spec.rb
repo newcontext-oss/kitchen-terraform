@@ -27,19 +27,19 @@ require "kitchen/terraform/config_attribute_contract/hash_of_symbols_and_strings
     end
 
     specify "should fail for a value that is a hash without symbol keys" do
-      expect(subject.call(value: {"k" => "v"}).errors.to_h).to include(
-        value: ["the key value pair 'k => v' must both be scalars"]
+      expect(subject.call(value: { "k" => "v" }).errors.to_h).to include(
+        value: ["the key of the key-value pair 'k => v' must be a scalar"],
       )
     end
 
     specify "should fail for a value that is a hash without string values" do
-      expect(subject.call(value: {k: :v}).errors.to_h).to include(
-        value: ["the key value pair 'k => v' must both be scalars"]
+      expect(subject.call(value: { k: :v }).errors.to_h).to include(
+        value: ["the value of the key-value pair 'k => v' must be a scalar"],
       )
     end
 
     specify "should pass for a value that is a hash with symbol keys and string values" do
-      expect(subject.call(value: {k: "v"}).errors.to_h).to be_empty
+      expect(subject.call(value: { k: "v" }).errors.to_h).to be_empty
     end
   end
 end

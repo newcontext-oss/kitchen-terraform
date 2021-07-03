@@ -63,7 +63,7 @@
         described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
       end.to raise_error(
         ::Kitchen::UserError,
-        /#{attribute}.*the key value pair 'key => value' must both be scalars/
+        /#{attribute}.*the key of the key-value pair 'key => value' must be a scalar/
       )
     end
   end
@@ -78,7 +78,7 @@
         described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
       end.to raise_error(
         ::Kitchen::UserError,
-        /#{attribute}.*the key value pair 'key => value' must both be scalars/
+        /#{attribute}.*the value of the key-value pair 'key => value' must be a scalar/
       )
     end
   end
