@@ -45,13 +45,13 @@ require "kitchen/terraform/shell_out"
         logger: logger,
         options: options,
       ).and_return shell_out
-      allow(shell_out).to receive(:run).and_yield standard_output: standard_output
+      allow(shell_out).to receive(:run).and_yield standard_output
     end
 
     specify "should yield the standard output" do
       expect do |block|
         subject.run command: "test", options: options, &block
-      end.to yield_with_args standard_output: standard_output
+      end.to yield_with_args standard_output
     end
   end
 end

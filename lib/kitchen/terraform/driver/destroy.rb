@@ -124,7 +124,7 @@ module Kitchen
 
         def create_test_workspace
           logger.warn "Creating the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_new_test, options: options do |standard_output:|
+          command_executor.run command: workspace_new_test, options: options do |standard_output|
           end
           logger.warn "Finished creating the #{workspace_name} Terraform workspace."
         end
@@ -141,14 +141,14 @@ module Kitchen
 
         def destroy_infrastructure
           logger.warn "Destroying the Terraform-managed infrastructure..."
-          command_executor.run command: destroy, options: destroy_options do |standard_output:|
+          command_executor.run command: destroy, options: destroy_options do |standard_output|
           end
           logger.warn "Finished destroying the Terraform-managed infrastructure."
         end
 
         def delete_test_workspace
           logger.warn "Deleting the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_delete_test, options: options do |standard_output:|
+          command_executor.run command: workspace_delete_test, options: options do |standard_output|
           end
           logger.warn "Finished deleting the #{workspace_name} Terraform workspace."
         end
@@ -167,14 +167,14 @@ module Kitchen
             command: ::Kitchen::Terraform::Command::InitFactory.new(version: client_version)
               .build(config: complete_config),
             options: options,
-          ) do |standard_output:|
+          ) do |standard_output|
           end
           logger.warn "Finished initializing the Terraform working directory."
         end
 
         def read_client_version
           logger.warn "Reading the Terraform client version..."
-          command_executor.run command: version, options: options do |standard_output:|
+          command_executor.run command: version, options: options do |standard_output|
             self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
           end
           logger.warn "Finished reading the Terraform client version."
@@ -182,14 +182,14 @@ module Kitchen
 
         def select_default_workspace
           logger.warn "Selecting the default Terraform workspace..."
-          command_executor.run command: workspace_select_default, options: options do |standard_output:|
+          command_executor.run command: workspace_select_default, options: options do |standard_output|
           end
           logger.warn "Finished selecting the default Terraform workspace."
         end
 
         def select_or_create_test_workspace
           logger.warn "Selecting the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_select_test, options: options do |standard_output:|
+          command_executor.run command: workspace_select_test, options: options do |standard_output|
           end
           logger.warn "Finished selecting the #{workspace_name} Terraform workspace."
         rescue ::Kitchen::TransientFailure

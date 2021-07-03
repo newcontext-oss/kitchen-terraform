@@ -48,7 +48,7 @@ module Kitchen
       attr_accessor :command_executor, :no_outputs_defined
 
       def run(command:, options:)
-        command_executor.run command: command, options: options do |standard_output:|
+        command_executor.run command: command, options: options do |standard_output|
           yield json_outputs: standard_output
         end
       rescue ::Kitchen::TransientFailure => error

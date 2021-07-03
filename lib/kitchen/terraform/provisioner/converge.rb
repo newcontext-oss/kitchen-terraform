@@ -131,14 +131,14 @@ module Kitchen
 
         def build_infrastructure
           logger.warn "Building the infrastructure based on the Terraform configuration..."
-          command_executor.run command: apply, options: options do |standard_output:|
+          command_executor.run command: apply, options: options do |standard_output|
           end
           logger.warn "Finished building the infrastructure based on the Terraform configuration."
         end
 
         def download_modules
           logger.warn "Downloading the modules needed for the Terraform configuration..."
-          command_executor.run command: get, options: options do |standard_output:|
+          command_executor.run command: get, options: options do |standard_output|
           end
           logger.warn "Finished downloading the modules needed for the Terraform configuration."
         end
@@ -189,7 +189,7 @@ module Kitchen
 
         def read_client_version
           logger.warn "Reading the Terraform client version..."
-          command_executor.run command: version, options: options do |standard_output:|
+          command_executor.run command: version, options: options do |standard_output|
             self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
           end
           logger.warn "Finished reading the Terraform client version."
@@ -212,7 +212,7 @@ module Kitchen
 
         def select_workspace
           logger.warn "Selecting the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_select, options: options do |standard_output:|
+          command_executor.run command: workspace_select, options: options do |standard_output|
           end
           logger.warn "Finished selecting the #{workspace_name} Terraform workspace."
         end
@@ -223,7 +223,7 @@ module Kitchen
             command: ::Kitchen::Terraform::Command::ValidateFactory.new(version: client_version)
               .build(config: complete_config),
             options: options,
-          ) do |standard_output:|
+          ) do |standard_output|
           end
           logger.warn "Finished validating the Terraform configuration files."
         end

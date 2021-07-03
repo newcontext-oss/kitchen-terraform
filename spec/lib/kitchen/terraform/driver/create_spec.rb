@@ -86,7 +86,7 @@ require "rubygems"
     allow(command_executor).to receive(:run).with(
       command: kind_of(::Kitchen::Terraform::Command::Version),
       options: options,
-    ).and_yield standard_output: "Terraform v0.11.4"
+    ).and_yield "Terraform v0.11.4"
   end
 
   describe "#call" do

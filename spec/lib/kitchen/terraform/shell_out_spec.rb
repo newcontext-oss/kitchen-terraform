@@ -115,7 +115,7 @@ require "mixlib/shellout"
       specify "should yield the standard output" do
         expect do |block|
           subject.run(&block)
-        end.to yield_with_args standard_output: standard_output
+        end.to yield_with_args standard_output
       end
     end
   end
