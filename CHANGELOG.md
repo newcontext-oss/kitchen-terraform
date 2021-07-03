@@ -57,7 +57,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Security
 
-- Updated all gem versions to remediate ActiveSupport vulnerability, a dependency of the train gem.
+- Updated all gem versions to remediate ActiveSupport vulnerability, a 
+  dependency of the train gem.
 
 ## [5.4.0] - 2020-05-31
 
@@ -67,7 +68,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Gem deployment to RubyGems now takes place with GitHub Actions. Unit and Integration tests remain in Travis CI and Appveyor.
+- Gem deployment to RubyGems now takes place with GitHub Actions. Unit 
+  and Integration tests remain in Travis CI and Appveyor.
 
 ## [5.3.0] - 2020-03-08
 
