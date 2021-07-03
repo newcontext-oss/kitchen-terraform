@@ -35,6 +35,8 @@ require "rubygems"
   specification.add_development_dependency "travis", "~> 1.8"
   specification.add_development_dependency "yard", "~> 0.9"
   specification.add_development_dependency "reek", "~> 6.0.2"
+  # webrick is implicitly required by yard
+  specification.add_development_dependency "webrick", "~> 1.7"
   specification.add_runtime_dependency "delegate", "~> 0.1.0"
   specification.add_runtime_dependency "dry-validation", "~> 0.13"
   specification.add_runtime_dependency "mixlib-shellout", "~> 3.0"
