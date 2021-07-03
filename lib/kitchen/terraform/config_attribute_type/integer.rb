@@ -22,8 +22,8 @@ require "kitchen/terraform/config_attribute_type"
 module Kitchen
   module Terraform
     module ConfigAttributeType
-      # This module applies the behaviour of a configuration attribute of type integer to a module which must be included by a
-      # plugin class.
+      # This module applies the behaviour of a configuration attribute of type integer to a module which must be 
+      # included by a plugin class.
       #
       # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
       module Integer
