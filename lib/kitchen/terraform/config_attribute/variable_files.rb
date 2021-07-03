@@ -16,7 +16,7 @@
 
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_cacher"
-require "kitchen/terraform/config_schemas/array_of_strings"
+require "kitchen/terraform/config_attribute_contract/array_of_strings"
 require "kitchen/terraform/file_path_config_attribute_definer"
 
 module Kitchen
@@ -42,7 +42,7 @@ module Kitchen
           def included(plugin_class)
             ::Kitchen::Terraform::FilePathConfigAttributeDefiner.new(
               attribute: self,
-              schema: ::Kitchen::Terraform::ConfigSchemas::ArrayOfStrings,
+              schema: ::Kitchen::Terraform::ConfigAttributeContract::ArrayOfStrings.new,
             ).define plugin_class: plugin_class
           end
 

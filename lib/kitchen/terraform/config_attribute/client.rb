@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen/terraform/config_attribute_cacher"
-require "kitchen/terraform/config_schemas/string"
+require "kitchen/terraform/config_attribute_contract/string"
 require "kitchen/terraform/config_attribute_definer"
 require "tty/which"
 
@@ -47,7 +47,7 @@ module Kitchen
           def included(plugin_class)
             ::Kitchen::Terraform::ConfigAttributeDefiner.new(
               attribute: self,
-              schema: ::Kitchen::Terraform::ConfigSchemas::String,
+              schema: ::Kitchen::Terraform::ConfigAttributeContract::String.new,
             ).define plugin_class: plugin_class
             plugin_class.expand_path_for to_sym do |plugin|
               !::TTY::Which.exist? plugin[to_sym]

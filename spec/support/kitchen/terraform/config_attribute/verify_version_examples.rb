@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/boolean_examples"
+require "support/kitchen/terraform/config_attribute_contract/boolean_examples"
 
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::VerifyVersion" do
-  it_behaves_like "Kitchen::Terraform::ConfigSchemas::Boolean", attribute: :verify_version
+  it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::Boolean", attribute: :verify_version
 end

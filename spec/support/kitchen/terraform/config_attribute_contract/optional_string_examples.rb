@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_schemas/boolean"
+require "kitchen/terraform/config_attribute_contract/optional_string"
 
-::RSpec.shared_examples Kitchen::Terraform::ConfigSchemas::Boolean.to_s do |attribute:|
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttributeContract::OptionalString" do |attribute:, default_value:|
   context "when the config omits #{attribute.inspect}" do
     subject do
       described_class.new
@@ -26,26 +26,38 @@ require "kitchen/terraform/config_schemas/boolean"
       described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
     end
 
-    specify "should associate #{attribute.inspect} with true" do
-      expect(subject[attribute]).to be true
+    specify "should associate #{attribute.inspect} with #{default_value}" do
+      expect(subject[attribute]).to be default_value
     end
   end
 
-  context "when the config associates #{attribute.inspect} with a nonboolean" do
+  context "when the config associates #{attribute.inspect} with a nonstring" do
     subject do
-      described_class.new attribute => "abc"
+      described_class.new attribute => 123
     end
 
     specify "should raise a Kitchen::UserError" do
       expect do
         described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      end.to raise_error ::Kitchen::UserError, /#{attribute}.*must be boolean/
+      end.to raise_error ::Kitchen::UserError, /#{attribute}.*must be a string/
     end
   end
 
-  context "when the config associates #{attribute.inspect} with a boolean" do
+  context "when the config associates #{attribute.inspect} with an empty string" do
     subject do
-      described_class.new attribute => false
+      described_class.new attribute => ""
+    end
+
+    specify "should raise a Kitchen::UserError" do
+      expect do
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+      end.to raise_error ::Kitchen::UserError, /#{attribute}.*must be filled/
+    end
+  end
+
+  context "when the config associates #{attribute.inspect} with a nonempty string" do
+    subject do
+      described_class.new attribute => "abc"
     end
 
     specify "should not raise a Kitchen::UserError" do

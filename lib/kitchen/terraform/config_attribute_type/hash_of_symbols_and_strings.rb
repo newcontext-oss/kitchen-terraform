@@ -16,7 +16,7 @@
 
 require "dry/validation"
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_predicates/hash_of_symbols_and_strings"
+require "kitchen/terraform/config_attribute_contract/hash_of_symbols_and_strings"
 
 module Kitchen
   module Terraform
@@ -33,17 +33,10 @@ module Kitchen
         # @param default_value [Proc] a proc which returns the default value.
         # @return [self]
         def self.apply(attribute:, config_attribute:, default_value:)
-          ::Kitchen::Terraform::ConfigAttribute
-            .new(
+          ::Kitchen::Terraform::ConfigAttribute.new(
               attribute: attribute,
               default_value: default_value,
-              schema: ::Dry::Validation
-                .Schema do
-                configure do
-                  extend ::Kitchen::Terraform::ConfigPredicates::HashOfSymbolsAndStrings
-                end
-                required(:value).value :hash_of_symbols_and_strings?
-              end,
+              schema: ::Kitchen::Terraform::ConfigAttributeContract::HashOfSymbolsAndStrings.new,
             ).apply config_attribute: config_attribute
 
           self

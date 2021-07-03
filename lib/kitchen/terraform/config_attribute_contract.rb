@@ -16,8 +16,8 @@
 
 module Kitchen
   module Terraform
-    # The namespace for configuration attribute schemas.
-    module ConfigSchemas
+    # ConfigAttributeContract is the namespace for configuration attribute contracts.
+    module ConfigAttributeContract
     end
   end
 end

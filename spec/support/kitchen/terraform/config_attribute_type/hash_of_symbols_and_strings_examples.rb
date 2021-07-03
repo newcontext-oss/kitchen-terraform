@@ -37,10 +37,7 @@
     specify "should raise a Kitchen::UserError" do
       expect do
         described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      end.to raise_error(
-        ::Kitchen::UserError,
-        /#{attribute}.*must be a hash which includes only symbol keys and string values/
-      )
+      end.to raise_error ::Kitchen::UserError, /#{attribute}.*must be a hash/
     end
   end
 
@@ -66,7 +63,7 @@
         described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
       end.to raise_error(
         ::Kitchen::UserError,
-        /#{attribute}.*must be a hash which includes only symbol keys and string values/
+        /#{attribute}.*the key value pair 'key => value' must both be scalars/
       )
     end
   end
@@ -81,7 +78,7 @@
         described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
       end.to raise_error(
         ::Kitchen::UserError,
-        /#{attribute}.*must be a hash which includes only symbol keys and string values/
+        /#{attribute}.*the key value pair 'key => value' must both be scalars/
       )
     end
   end

@@ -14,19 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/validation"
+require "kitchen/terraform/config_attribute_contract/integer"
 
-module Kitchen
-  module Terraform
-    module ConfigSchemas
-      # Defines a validation schema for a string.
-      String = ::Dry::Validation.Schema do
-        required(:value).filled :str?
-      end.dup
+::RSpec.describe ::Kitchen::Terraform::ConfigAttributeContract::Integer do
+  describe "#call" do
+    specify "should fail for a value that is not an integer" do
+      expect(subject.call(value: "abc").errors.to_h).to include value: ["must be an integer"]
+    end
 
-      String.define_singleton_method :to_s do
-        "Kitchen::Terraform::ConfigSchemas::String"
-      end
+    specify "should pass for a value that is an integer" do
+      expect(subject.call(value: 123).errors.to_h).to be_empty
     end
   end
 end

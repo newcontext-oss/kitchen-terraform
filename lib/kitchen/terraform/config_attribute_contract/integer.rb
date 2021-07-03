@@ -14,8 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_contract/array_of_strings_examples"
+require "dry/validation"
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::VariableFiles" do
-  it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::ArrayOfStrings", attribute: :variable_files, default_value: []
+module Kitchen
+  module Terraform
+    module ConfigAttributeContract
+      # Integer is the class of objects that provide a configuration attribute contract for an integer.
+      class Integer < ::Dry::Validation::Contract
+        schema do
+          required(:value).value :int?
+        end
+      end
+    end
+  end
 end

@@ -14,10 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "dry/validation"
+
 module Kitchen
   module Terraform
-    # The namespace for configuration attribute predicates.
-    module ConfigPredicates
+    module ConfigAttributeContract
+      # ArrayOfStrings is the class of objects that provide a configuration attribute contract for an array of strings.
+      class ArrayOfStrings < ::Dry::Validation::Contract
+        schema do
+          required(:value).array :filled?, :str?
+        end
+      end
     end
   end
 end

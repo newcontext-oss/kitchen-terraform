@@ -18,20 +18,12 @@ require "dry/validation"
 
 module Kitchen
   module Terraform
-    module ConfigSchemas
-      # A validation schema for a configuration attribute which is an optional string.
-      #
-      # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas
-      OptionalString = ::Dry::Validation.Schema do
-        required(:value)
-          .maybe(
-            :str?,
-            :filled?
-          )
-      end.dup
-
-      OptionalString.define_singleton_method :to_s do
-        "Kitchen::Terraform::ConfigSchemas::OptionalString"
+    module ConfigAttributeContract
+      # String is the class of objects that provide a configuration attribute contract for a string.
+      class String < ::Dry::Validation::Contract
+        schema do
+          required(:value).filled :str?
+        end
       end
     end
   end

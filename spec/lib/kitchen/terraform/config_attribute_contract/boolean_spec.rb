@@ -14,8 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_contract/array_of_strings_examples"
+require "kitchen/terraform/config_attribute_contract/boolean"
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::VariableFiles" do
-  it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::ArrayOfStrings", attribute: :variable_files, default_value: []
+::RSpec.describe ::Kitchen::Terraform::ConfigAttributeContract::Boolean do
+  describe "#call" do
+    specify "should fail for a value that is not boolean" do
+      expect(subject.call(value: "abc").errors.to_h).to include value: ["must be boolean"]
+    end
+
+    specify "should pass for a value that is boolean" do
+      expect(subject.call(value: true).errors.to_h).to be_empty
+    end
+  end
 end

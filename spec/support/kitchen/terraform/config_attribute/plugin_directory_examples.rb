@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/optional_string_examples"
+require "support/kitchen/terraform/config_attribute_contract/optional_string_examples"
 
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::PluginDirectory" do
-  it_behaves_like "Kitchen::Terraform::ConfigSchemas::OptionalString", attribute: :plugin_directory, default_value: nil
+  it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::OptionalString", attribute: :plugin_directory, default_value: nil
 end

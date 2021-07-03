@@ -16,7 +16,7 @@
 
 require "kitchen/terraform/config_attribute"
 require "kitchen/terraform/config_attribute_cacher"
-require "kitchen/terraform/config_schemas/optional_string"
+require "kitchen/terraform/config_attribute_contract/optional_string"
 require "kitchen/terraform/file_path_config_attribute_definer"
 
 module Kitchen
@@ -41,7 +41,7 @@ module Kitchen
           def included(plugin_class)
             ::Kitchen::Terraform::FilePathConfigAttributeDefiner.new(
               attribute: self,
-              schema: ::Kitchen::Terraform::ConfigSchemas::OptionalString,
+              schema: ::Kitchen::Terraform::ConfigAttributeContract::OptionalString.new,
             ).define plugin_class: plugin_class
           end
 
