@@ -25,10 +25,10 @@ jobs:
           bundler: '2.1.4'
           bundler-cache: true
       - name: Run RSpec Tests
-        if: ${{ matrix.ruby-version != '2.7' }}
+        if: ${{ matrix.ruby-version != '3.0' }}
         run: bundle exec rake test:rspec
       - name: Run RSpec Tests with Code Coverage
-        if: ${{ matrix.ruby-version == '2.7' }}
+        if: ${{ matrix.ruby-version == '3.0' }}
         uses: paambaati/codeclimate-action@v2.7.5
         with:
           coverageCommand: bundle exec rake test:rspec
