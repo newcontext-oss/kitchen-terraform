@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ruby "~> 2.6"
+source "https://rubygems.org/"
 
-source "https://rubygems.org/" do
-  gemspec path: "."
-end
+ruby ">= 2.6"
+
+gemspec
