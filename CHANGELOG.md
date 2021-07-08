@@ -8,6 +8,8 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+## [6.0.0] - 2021-07-07
+
 ### Added
 
 - Support for Ruby 3.0.
@@ -797,7 +799,8 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v5.8.0...HEAD
+[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v6.0.0...HEAD
+[6.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.8.0...v6.0.0
 [5.8.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.2...v5.8.0
 [5.7.2]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.1...v5.7.2
 [5.7.1]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.0...v5.7.1
