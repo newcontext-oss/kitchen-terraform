@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Support for Ruby 3.0.
+
 ### Changed
 
 - Dropped support for Ruby 2.4, 2.5.
