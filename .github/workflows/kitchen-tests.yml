@@ -1,6 +1,13 @@
 name: Kitchen Tests
 
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - 'kitchen-terraform.gemspec'
+      - 'kitchen.yml'
+      - 'lib/**'
+      - 'Rakefile'
+      - 'test/**'
 
 defaults:
   run:

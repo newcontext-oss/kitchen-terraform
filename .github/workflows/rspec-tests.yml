@@ -1,6 +1,14 @@
 name: RSpec Tests
 
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - '.rspec'
+      - 'gems.rb'
+      - 'kitchen-terraform.gemspec'
+      - 'lib/**'
+      - 'Rakefile'
+      - 'spec/**'
 
 jobs:
   rspec-tests:
