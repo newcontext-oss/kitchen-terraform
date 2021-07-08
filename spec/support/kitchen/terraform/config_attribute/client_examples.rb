@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/string_examples"
+require "support/kitchen/terraform/config_attribute_contract/string_examples"
 require "os"
 
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Client" do
@@ -22,7 +22,7 @@ require "os"
     :client
   end
 
-  it_behaves_like "Kitchen::Terraform::ConfigSchemas::String", attribute: :client, default_value: "terraform"
+  it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::String", attribute: :client, default_value: "terraform"
 
   context "when the config associates :client with a pathname which is not on the PATH" do
     subject do

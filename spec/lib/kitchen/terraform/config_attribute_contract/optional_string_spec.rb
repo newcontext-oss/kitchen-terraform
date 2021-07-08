@@ -14,10 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Kitchen
-  module Terraform
-    # The namespace for configuration attribute predicates.
-    module ConfigPredicates
+require "kitchen/terraform/config_attribute_contract/optional_string"
+
+::RSpec.describe ::Kitchen::Terraform::ConfigAttributeContract::OptionalString do
+  describe "#call" do
+    specify "should fail for a value that is not a string" do
+      expect(subject.call(value: 123).errors.to_h).to include value: ["must be a string"]
+    end
+
+    specify "should pass for a value that is a string" do
+      expect(subject.call(value: "abc").errors.to_h).to be_empty
+    end
+
+    specify "should pass for a value that is nil" do
+      expect(subject.call(value: nil).errors.to_h).to be_empty
     end
   end
 end

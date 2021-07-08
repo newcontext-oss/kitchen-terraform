@@ -76,9 +76,7 @@ require "mixlib/shellout"
       end
 
       before do
-        allow(command_executor).to receive(:run).with(command: command, options: options).and_yield(
-          standard_output: standard_output,
-        )
+        allow(command_executor).to receive(:run).with(command: command, options: options).and_yield standard_output
       end
 
       specify "should yield the standard output" do

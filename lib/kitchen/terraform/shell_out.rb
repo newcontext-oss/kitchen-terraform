@@ -51,7 +51,7 @@ module Kitchen
       def run
         execute_workflow
 
-        yield standard_output: shell_out.stdout
+        yield shell_out.stdout
 
         self
       end

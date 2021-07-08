@@ -135,9 +135,18 @@ analysis locally.
 [GitHub Actions][github-actions] are used to provide continuous integration and
 continuous deployment functionality for the Ruby gem.
 
-[tests.yml](.github/workflows/tests.yml) define unit and integration tests that will be executed for each commit to the master branch and each commit to a branch with an open pull request.
+[rspec-tests.yml](.github/workflows/rspec-tests.yml) defines unit tests 
+that will be executed for each commit to the master branch and each  
+commit to a branch with an open pull request.
 
-[release.yml](.github/workflows/release.yml) contains the job configuration to deploy the Ruby gem. If a [tag][git-tag] starting with v is pushed to the master branch, then the job will attempt to build the Ruby gem and deploy it to [RubyGems][ruby-gems].
+[kitchen-tests.yml](.github/workflows/kitchen-tests.yml) defines 
+integration tests that will be executed for each commit to the master 
+branch and each commit to a branch with an open pull request.
+
+[release.yml](.github/workflows/release.yml) contains the job 
+configuration to deploy the Ruby gem. If a [tag][git-tag] starting with 
+v is pushed to the master branch, then the job will attempt to build 
+the Ruby gem and deploy it to [RubyGems][ruby-gems].
 
 #### Releasing
 

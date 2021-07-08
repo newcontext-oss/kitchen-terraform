@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_schemas/optional_string"
+require "kitchen/terraform/config_attribute_contract/string"
 
-::RSpec.shared_examples Kitchen::Terraform::ConfigSchemas::OptionalString.to_s do |attribute:, default_value:|
+::RSpec.shared_examples "Kitchen::Terraform::ConfigAttributeContract::String" do |attribute:, default_value:|
   context "when the config omits #{attribute.inspect}" do
     subject do
       described_class.new
@@ -27,7 +27,7 @@ require "kitchen/terraform/config_schemas/optional_string"
     end
 
     specify "should associate #{attribute.inspect} with #{default_value}" do
-      expect(subject[attribute]).to be default_value
+      expect(subject[attribute]).to eq default_value
     end
   end
 

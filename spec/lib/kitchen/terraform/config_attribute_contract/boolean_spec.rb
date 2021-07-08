@@ -14,19 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "dry/validation"
+require "kitchen/terraform/config_attribute_contract/boolean"
 
-module Kitchen
-  module Terraform
-    module ConfigSchemas
-      # Defines a validation schema for a string.
-      String = ::Dry::Validation.Schema do
-        required(:value).filled :str?
-      end.dup
+::RSpec.describe ::Kitchen::Terraform::ConfigAttributeContract::Boolean do
+  describe "#call" do
+    specify "should fail for a value that is not boolean" do
+      expect(subject.call(value: "abc").errors.to_h).to include value: ["must be boolean"]
+    end
 
-      String.define_singleton_method :to_s do
-        "Kitchen::Terraform::ConfigSchemas::String"
-      end
+    specify "should pass for a value that is boolean" do
+      expect(subject.call(value: true).errors.to_h).to be_empty
     end
   end
 end

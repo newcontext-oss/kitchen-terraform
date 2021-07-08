@@ -14,8 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_contract/array_of_strings_examples"
+require "dry/validation"
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::VariableFiles" do
-  it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::ArrayOfStrings", attribute: :variable_files, default_value: []
+module Kitchen
+  module Terraform
+    module ConfigAttributeContract
+      # ArrayOfStrings is the class of objects that provide a configuration attribute contract for an array of strings.
+      class ArrayOfStrings < ::Dry::Validation::Contract
+        schema do
+          required(:value).array :filled?, :str?
+        end
+      end
+    end
+  end
 end

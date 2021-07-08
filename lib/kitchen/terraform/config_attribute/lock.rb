@@ -16,7 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/config_attribute"
-require "kitchen/terraform/config_schemas/boolean"
+require "kitchen/terraform/config_attribute_contract/boolean"
 
 module Kitchen
   module Terraform
@@ -33,7 +33,7 @@ module Kitchen
           default_value: lambda do
             true
           end,
-          schema: ::Kitchen::Terraform::ConfigSchemas::Boolean,
+          schema: ::Kitchen::Terraform::ConfigAttributeContract::Boolean.new,
         ).apply config_attribute: self
       end
     end

@@ -14,26 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_schemas/system"
+require "kitchen/terraform/config_attribute_contract/systems"
 
-::RSpec.describe Kitchen::Terraform::ConfigSchemas::System do
-  subject do
-    described_class
-  end
-
+::RSpec.describe ::Kitchen::Terraform::ConfigAttributeContract::Systems do
   shared_examples "a string" do
     specify "the input must associate the attribute with a string" do
-      expect(subject.call({ attribute => 123 }).errors).to include attribute => ["must be a string"]
+      expect(subject.call(value: [{ attribute => 123 }]).errors.to_h.fetch(:value).fetch(0)).to include(
+        attribute => ["must be a string"],
+      )
     end
 
     specify "the input must associate the attribute with a nonempty string" do
-      expect(subject.call(attribute => "").errors).to include attribute => ["must be filled"]
+      expect(subject.call(value: [{ attribute => "" }]).errors.to_h.fetch(:value).fetch(0)).to include(
+        attribute => ["must be filled"],
+      )
     end
   end
 
   shared_examples "a required string" do
     specify "the input must include the attribute" do
-      expect(subject.call({}).errors).to include attribute => ["is missing"]
+      expect(subject.call(value: [{}]).errors.to_h.fetch(:value).fetch(0)).to include attribute => ["is missing"]
     end
 
     it_behaves_like "a string"
@@ -41,51 +41,73 @@ require "kitchen/terraform/config_schemas/system"
 
   shared_examples "an optional array of strings" do
     specify "the input may include the attribute" do
-      expect(subject.call({}).errors).not_to include attribute => ["is missing"]
+      expect(subject.call(value: [{}]).errors.to_h.fetch(:value).fetch(0)).not_to include attribute => ["is missing"]
     end
 
     specify "the input must associate the attribute with an array" do
-      expect(subject.call(attribute => 123).errors).to include attribute => ["must be an array"]
+      expect(subject.call(value: [{ attribute => 123 }]).errors.to_h.fetch(:value).fetch(0)).to include(
+        attribute => ["must be an array"],
+      )
     end
 
     specify "the input must associate the attribute with an array which includes strings" do
-      expect(subject.call(attribute => [123]).errors).to include attribute => { 0 => ["must be a string"] }
+      expect(subject.call(value: [{ attribute => [123] }]).errors.to_h.fetch(:value).fetch(0)).to include(
+        attribute => { 0 => ["must be a string"] },
+      )
     end
 
     specify "the input must associate the attribute with an array which includes nonempty strings" do
-      expect(subject.call(attribute => [""]).errors).to include attribute => { 0 => ["must be filled"] }
+      expect(subject.call(value: [{ attribute => [""] }]).errors.to_h.fetch(:value).fetch(0)).to include(
+        attribute => { 0 => ["must be filled"] },
+      )
     end
   end
 
   shared_examples "an optional boolean" do
     specify "the input may include the attribute" do
-      expect(subject.call({}).errors).not_to include attribute => ["is missing"]
+      expect(subject.call(value: [{}]).errors.to_h.fetch(:value).fetch(0)).not_to include attribute => ["is missing"]
     end
 
     specify "the input must associate the attribute with a boolean" do
-      expect(subject.call(attribute => 123).errors).to include attribute => ["must be boolean"]
+      expect(subject.call(value: [{ attribute => 123 }]).errors.to_h.fetch(:value).fetch(0)).to include(
+        attribute => ["must be boolean"],
+      )
     end
   end
 
   shared_examples "an optional integer" do
     specify "the input may include the attribute" do
-      expect(subject.call({}).errors).not_to include attribute => ["is missing"]
+      expect(subject.call(value: [{}]).errors.to_h.fetch(:value).fetch(0)).not_to include attribute => ["is missing"]
     end
 
     specify "the input must associate the attribute with an integer" do
-      expect(subject.call({ attribute => "abc" }).errors).to include attribute => ["must be an integer"]
+      expect(subject.call(value: [{ attribute => "abc" }]).errors.to_h.fetch(:value).fetch(0)).to include(
+        attribute => ["must be an integer"],
+      )
     end
   end
 
   shared_examples "an optional string" do
     specify "the input may include the attribute" do
-      expect(subject.call({}).errors).not_to include attribute => ["is missing"]
+      expect(subject.call(value: [{}]).errors.to_h.fetch(:value).fetch(0)).not_to include attribute => ["is missing"]
     end
 
     it_behaves_like "a string"
   end
 
-  describe ".call" do
+  describe "#call" do
+    specify "should fail for a value that is not an array" do
+      expect(subject.call(value: 123).errors.to_h).to include value: ["must be an array"]
+    end
+
+    specify "should pass for a value that is an empty array" do
+      expect(subject.call(value: []).errors.to_h).to be_empty
+    end
+
+    specify "should fail for a value that is an array with elements that are not hashes" do
+      expect(subject.call(value: [123]).errors.to_h).to include value: { 0 => ["must be a hash"] }
+    end
+
     describe ":name" do
       let :attribute do
         :name
@@ -102,12 +124,18 @@ require "kitchen/terraform/config_schemas/system"
       it_behaves_like "a required string"
     end
 
-    specify "the input may include :attrs_outputs" do
-      expect(subject.call({}).errors).not_to include attrs_outputs: ["is missing"]
-    end
+    describe ":attrs_outputs" do
+      specify "the input may include :attrs_outputs" do
+        expect(subject.call(value: [{}]).errors.to_h.fetch(:value).fetch(0)).not_to include(
+          attrs_outputs: ["is missing"],
+        )
+      end
 
-    specify "the input must associate :attrs_outputs with a hash" do
-      expect(subject.call(attrs_outputs: 123).errors).to include attrs_outputs: ["must be a hash"]
+      specify "the input must associate :attrs_outputs with a hash" do
+        expect(subject.call(value: [{ attrs_outputs: 123 }]).errors.to_h.fetch(:value).fetch(0)).to include(
+          attrs_outputs: ["must be a hash"],
+        )
+      end
     end
 
     describe ":attrs" do

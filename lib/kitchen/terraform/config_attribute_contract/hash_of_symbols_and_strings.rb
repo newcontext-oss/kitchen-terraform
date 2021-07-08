@@ -15,22 +15,26 @@
 # limitations under the License.
 
 require "dry/validation"
-require "kitchen/terraform/config_schemas/system"
 
 module Kitchen
   module Terraform
-    module ConfigSchemas
-      # The value of the +systems+ key must be a sequence of systems.
-      #
-      # {include:Kitchen::Terraform::ConfigSchemas::System}
-      Systems = ::Dry::Validation.Schema do
-        required(:value).each do
-          schema ::Kitchen::Terraform::ConfigSchemas::System
+    module ConfigAttributeContract
+      # HashOfSymbolsAndStrings is the class of objects that provide a configuration attribute contract for a hash
+      # including only symbol keys and string values.
+      class HashOfSymbolsAndStrings < ::Dry::Validation::Contract
+        schema do
+          required(:value).hash
         end
-      end.dup
 
-      Systems.define_singleton_method :to_s do
-        "Kitchen::Terraform::ConfigSchemas::Systems"
+        rule :value do
+          value.each_pair do |symbol, string|
+            if ::Symbol != symbol.class
+              key.failure "the key of the key-value pair '#{symbol} => #{string}' must be a scalar"
+            elsif ::String != string.class
+              key.failure "the value of the key-value pair '#{symbol} => #{string}' must be a scalar"
+            end
+          end
+        end
       end
     end
   end

@@ -1,6 +1,14 @@
 name: RSpec Tests
 
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - '.rspec'
+      - 'gems.rb'
+      - 'kitchen-terraform.gemspec'
+      - 'lib/**'
+      - 'Rakefile'
+      - 'spec/**'
 
 jobs:
   rspec-tests:
@@ -10,6 +18,7 @@ jobs:
         ruby-version:
           - '2.6'
           - '2.7'
+          - '3.0'
     runs-on: ubuntu-latest
     env:
       CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
@@ -24,10 +33,10 @@ jobs:
           bundler: '2.1.4'
           bundler-cache: true
       - name: Run RSpec Tests
-        if: ${{ matrix.ruby-version != '2.7' }}
+        if: ${{ matrix.ruby-version != '3.0' }}
         run: bundle exec rake test:rspec
       - name: Run RSpec Tests with Code Coverage
-        if: ${{ matrix.ruby-version == '2.7' }}
+        if: ${{ matrix.ruby-version == '3.0' }}
         uses: paambaati/codeclimate-action@v2.7.5
         with:
           coverageCommand: bundle exec rake test:rspec

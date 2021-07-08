@@ -1,6 +1,13 @@
 name: Kitchen Tests
 
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - 'kitchen-terraform.gemspec'
+      - 'kitchen.yml'
+      - 'lib/**'
+      - 'Rakefile'
+      - 'test/**'
 
 defaults:
   run:
@@ -29,7 +36,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
+          ruby-version: '3.0'
           # bundler 2.2 fails to install the gems
           bundler: '2.1.4'
           bundler-cache: true

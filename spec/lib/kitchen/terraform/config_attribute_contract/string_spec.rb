@@ -14,8 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_attribute_contract/array_of_strings_examples"
+require "kitchen/terraform/config_attribute_contract/string"
 
-::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::VariableFiles" do
-  it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::ArrayOfStrings", attribute: :variable_files, default_value: []
+::RSpec.describe ::Kitchen::Terraform::ConfigAttributeContract::String do
+  describe "#call" do
+    specify "should fail for a value that is not a string" do
+      expect(subject.call(value: 123).errors.to_h).to include value: ["must be a string"]
+    end
+
+    specify "should pass for a value that is a string" do
+      expect(subject.call(value: "abc").errors.to_h).to be_empty
+    end
+  end
 end

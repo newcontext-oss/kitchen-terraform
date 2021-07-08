@@ -14,24 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/config_schemas/systems"
+require "kitchen/terraform/config_attribute_contract/integer"
 
-::RSpec.describe ::Kitchen::Terraform::ConfigSchemas::Systems do
-  subject do
-    described_class
-  end
-
-  describe ".call" do
-    specify "the value must be an array" do
-      expect(subject.call(value: 123).errors).to contain_exactly [:value, ["must be an array"]]
+::RSpec.describe ::Kitchen::Terraform::ConfigAttributeContract::Integer do
+  describe "#call" do
+    specify "should fail for a value that is not an integer" do
+      expect(subject.call(value: "abc").errors.to_h).to include value: ["must be an integer"]
     end
 
-    specify "the value may be an array which includes no elements" do
-      expect(subject.call(value: []).errors).to be_empty
-    end
-
-    specify "the value may be an array which includes hashes" do
-      expect(subject.call(value: [123]).errors).to contain_exactly [:value, { 0 => ["must be a hash"] }]
+    specify "should pass for a value that is an integer" do
+      expect(subject.call(value: 123).errors.to_h).to be_empty
     end
   end
 end

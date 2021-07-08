@@ -40,14 +40,12 @@ module Kitchen
       # @yieldparam standard_output [String] the standard output of the command.
       # @raise [Kitchen::TransientFailure] if running the command results in failure.
       # @return [self]
-      def run(command:, options:)
+      def run(command:, options:, &block)
         ::Kitchen::Terraform::ShellOut.new(
           command: "#{client} #{command}",
           logger: logger,
           options: options,
-        ).run do |standard_output:|
-          yield standard_output: standard_output
-        end
+        ).run(&block)
 
         self
       end

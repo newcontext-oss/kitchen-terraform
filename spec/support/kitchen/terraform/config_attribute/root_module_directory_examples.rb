@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "support/kitchen/terraform/config_schemas/string_examples"
+require "support/kitchen/terraform/config_attribute_contract/string_examples"
 
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::RootModuleDirectory" do
-  it_behaves_like "Kitchen::Terraform::ConfigSchemas::String", attribute: :root_module_directory, default_value: "."
+  it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::String", attribute: :root_module_directory, default_value: "."
 end

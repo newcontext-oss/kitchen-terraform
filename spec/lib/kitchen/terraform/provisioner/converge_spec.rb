@@ -101,7 +101,7 @@ require "rubygems"
     allow(command_executor).to receive(:run).with(
       command: kind_of(::Kitchen::Terraform::Command::Version),
       options: options,
-    ).and_yield standard_output: "Terraform v0.11.4"
+    ).and_yield "Terraform v0.11.4"
   end
 
   describe "#call" do
@@ -158,7 +158,7 @@ require "rubygems"
         allow(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Version),
           options: options,
-        ).and_yield standard_output: "Terraform v0.11.4"
+        ).and_yield "Terraform v0.11.4"
         allow(command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::WorkspaceSelect),
           options: options,
@@ -178,7 +178,7 @@ require "rubygems"
         allow(debug_command_executor).to receive(:run).with(
           command: kind_of(::Kitchen::Terraform::Command::Output),
           options: options,
-        ).and_yield standard_output: "{ \"output_name\": { \"value\": \"output_value\" } }"
+        ).and_yield "{ \"output_name\": { \"value\": \"output_value\" } }"
         subject.call state: state
         ::Kitchen::Terraform::VariablesManager.new.load variables: variables, state: state
         ::Kitchen::Terraform::OutputsManager.new.load outputs: outputs, state: state
