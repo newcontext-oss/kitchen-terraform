@@ -6,7 +6,8 @@
 [![Gem downloads version][gem-downloads-version-shield]][kitchen-terraform-gem]
 [![Gem downloads total][gem-downloads-total-shield]][kitchen-terraform-gem]
 
-[![Test workflow][test-workflow-shield]][test-workflow]
+[![Kitchen tests workflow][kitchen-tests-workflow-shield]][kitchen-tests-workflow]
+[![RSpec tests workflow][rspec-tests-workflow-shield]][rspec-tests-workflow]
 [![Code coverage][code-coverage-shield]][code-coverage]
 [![Maintainability][maintainability-shield]][maintainability]
 [![Technical debt][technical-debt-shield]][technical-debt]
@@ -253,6 +254,8 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
+[kitchen-tests-workflow]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/kitchen-tests.yml
+[kitchen-tests-workflow-shield]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/kitchen-tests.yml/badge.svg
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
 [maintainability-shield]: https://img.shields.io/codeclimate/maintainability-percentage/newcontext-oss/kitchen-terraform.svg
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
@@ -262,6 +265,8 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [copado]: https://copado.com/
 [rbenv]: https://github.com/rbenv/rbenv
 [rbnacl-installation]: https://github.com/crypto-rb/rbnacl/tree/v4.0.2#installation
+[rspec-tests-workflow]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/rspec-tests.yml
+[rspec-tests-workflow-shield]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/rspec-tests.yml/badge.svg
 [ruby-branches]: https://www.ruby-lang.org/en/downloads/branches/
 [ruby-gem-documentation]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/
 [ruby-gems-what-is]: http://guides.rubygems.org/ruby-gems-what-is/index.html
@@ -277,8 +282,6 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
 [test-directory]: https://github.com/newcontext-oss/kitchen-terraform/tree/master/test
-[test-workflow]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/tests.yml
-[test-workflow-shield]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/tests.yml/badge.svg
 [tfenv]: https://github.com/kamatama41/tfenv
 [travis-build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
 [travis-build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
