@@ -42,7 +42,7 @@ require "rubygems"
   specification.add_runtime_dependency "inspec", ">= 3", "< 5", "!= 4.24.26", "!= 4.24.28", "!= 4.24.32"
   specification.add_runtime_dependency "json", "~> 2.3"
   specification.add_runtime_dependency "test-kitchen", ">= 2.1", "< 4.0"
-  specification.add_runtime_dependency "tty-which", "~> 0.4.0"
+  specification.add_runtime_dependency "tty-which", "~> 0.5.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
   specification.required_ruby_version = [">= 2.6", "< 4.0"]
   specification.requirements = ["Terraform >= v0.11.4, < v2.0.0"]
