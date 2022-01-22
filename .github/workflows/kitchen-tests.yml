@@ -20,8 +20,8 @@ jobs:
       matrix:
         include:
           - operating-system: macos
-            terraform-version: '1.0.1'
-            terragrunt-version: '0.31.0'
+            terraform-version: '1.1.4'
+            terragrunt-version: '0.36.0'
           - operating-system: ubuntu
             terraform-version: '0.15.5'
           - operating-system: ubuntu
@@ -47,7 +47,7 @@ jobs:
           terraform_wrapper: false
       - name: Setup Terragrunt
         if: ${{ matrix.operating-system == 'macos' }}
-        uses: autero1/action-terragrunt@v1.1.0
+        uses: autero1/action-terragrunt@v1.1.1
         with:
           terragrunt_version: ${{ matrix.terragrunt-version }}
       - name: Mirror Terraform Providers

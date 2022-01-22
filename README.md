@@ -36,7 +36,7 @@ Installation instructions can be found in the
 [Terraform: Install Terraform][terraform-install] article.
 
 Kitchen-Terraform supports versions of Terraform in the interval of
-`>= 0.11.4, < 1.1.0`.
+`>= 0.11.4, < 2.0.0`.
 
 [tfenv] can be used to manage versions of Terraform on the system.
 
@@ -102,7 +102,7 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ```sh
-gem install kitchen-terraform --version 6.0.0
+gem install kitchen-terraform --version 6.1.0
 ```
 
 This approach is not recommended as it requires more effort to install
@@ -283,5 +283,3 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [terraform]: https://www.terraform.io/
 [test-directory]: https://github.com/newcontext-oss/kitchen-terraform/tree/master/test
 [tfenv]: https://github.com/kamatama41/tfenv
-[travis-build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
-[travis-build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform

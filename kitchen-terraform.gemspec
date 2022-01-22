@@ -32,7 +32,6 @@ require "rubygems"
   specification.add_development_dependency "rspec", "~> 3.10"
   specification.add_development_dependency "rufo", "~> 0.7"
   specification.add_development_dependency "simplecov", "~> 0.16.1"
-  specification.add_development_dependency "travis", "~> 1.8"
   specification.add_development_dependency "yard", "~> 0.9"
   specification.add_development_dependency "reek", "~> 6.0.2"
   # webrick is implicitly required by yard
@@ -43,9 +42,9 @@ require "rubygems"
   specification.add_runtime_dependency "inspec", ">= 3", "< 5", "!= 4.24.26", "!= 4.24.28", "!= 4.24.32"
   specification.add_runtime_dependency "json", "~> 2.3"
   specification.add_runtime_dependency "test-kitchen", ">= 2.1", "< 4.0"
-  specification.add_runtime_dependency "tty-which", "~> 0.4.0"
+  specification.add_runtime_dependency "tty-which", "~> 0.5.0"
   specification.cert_chain = ["certs/gem-public_cert.pem"]
   specification.required_ruby_version = [">= 2.6", "< 4.0"]
-  specification.requirements = ["Terraform >= v0.11.4, < v1.1.0"]
+  specification.requirements = ["Terraform >= v0.11.4, < v2.0.0"]
   specification.signing_key = "certs/gem-private_key.pem" if $PROGRAM_NAME =~ /gem\z/
 end
