@@ -65,7 +65,7 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   let :version_requirement do
-    ::Gem::Requirement.new ">= 0.11.4", "< 1.1.0"
+    ::Gem::Requirement.new ">= 0.11.4", "< 2.0.0"
   end
 
   let :workspace_name do
