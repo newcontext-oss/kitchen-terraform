@@ -10,7 +10,7 @@
 			// Use -bullseye variants on local on arm64/Apple Silicon.
 			"VARIANT": "3-bullseye",
 			// Options
-			"NODE_VERSION": "none"
+			"NODE_VERSION": "17"
 		}
 	},
 
