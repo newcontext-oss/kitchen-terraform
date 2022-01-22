@@ -13,5 +13,5 @@ then
 else
   bundle install
 fi
-bundle binstubs --force bundler guard middleman-cli pry rake reek rspec-core rufo test-kitchen travis yard
+bundle binstubs --force bundler guard middleman-cli pry rake reek rspec-core rufo test-kitchen yard
 set +x

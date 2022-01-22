@@ -283,5 +283,3 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [terraform]: https://www.terraform.io/
 [test-directory]: https://github.com/newcontext-oss/kitchen-terraform/tree/master/test
 [tfenv]: https://github.com/kamatama41/tfenv
-[travis-build-status-shield]: https://img.shields.io/travis/com/newcontext-oss/kitchen-terraform.svg
-[travis-build-status]: https://travis-ci.com/newcontext-oss/kitchen-terraform
