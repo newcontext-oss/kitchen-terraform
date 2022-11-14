@@ -1,3 +1,4 @@
+
 # ![Kitchen-Terraform Logo][kitchen-terraform-logo] Kitchen-Terraform
 
 > Kitchen-Terraform enables verification of infrastructure systems provisioned with Terraform.
@@ -73,19 +74,23 @@ the semantic versioning of the Ruby gem.
 
 > Defining Kitchen-Terraform as a dependency for Bundler in a Gemfile
 
+---
 ```ruby
 source "https://rubygems.org/" do
-  gem "kitchen-terraform", "~> 5.7"
+  gem "kitchen-terraform", "~> 6.1"
 end
 ```
+---
 
 Second, run the following command.
 
 > Installing Kitchen-Terraform with Bundler
 
+---
 ```sh
 bundle install
 ```
+---
 
 The preceding command will create a `Gemfile.lock` comprising a list
 of the resolved Ruby gem dependencies.
@@ -101,9 +106,11 @@ example.
 
 > Installing Kitchen-Terraform with RubyGems
 
+---
 ```sh
 gem install kitchen-terraform --version 6.1.0
 ```
+---
 
 This approach is not recommended as it requires more effort to install
 the gem in a manner that is reproducible and free of dependency
