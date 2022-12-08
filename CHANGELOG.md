@@ -2,11 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on
-[Keep a Changelog](http://keepachangelog.com/en/1.0.0) and this project
-adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0)
+and this project adheres to
+[Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased][unreleased]
+
+## [6.1.0] - 2022-01-22
+
+### Added
+
+- Support for Terraform >= 1.1.0, < 2.0.0.
 
 ## [6.0.0] - 2021-07-07
 
@@ -30,9 +36,9 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- `TF_WARN_OUTPUT_ERRORS` is only set during when running
-  `terraform destroy` during `kitchen destroy`. It appears that this
-  change was erroneously declared as functional in 4.3.0. :grimacing:
+- `TF_WARN_OUTPUT_ERRORS` is only set during when running `terraform destroy`
+  during `kitchen destroy`. It appears that this change was erroneously declared
+  as functional in 4.3.0. :grimacing:
 
 ## [5.7.1] - 2021-02-25
 
@@ -64,7 +70,7 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Security
 
-- Updated all gem versions to remediate ActiveSupport vulnerability, a 
+- Updated all gem versions to remediate ActiveSupport vulnerability, a
   dependency of the train gem.
 
 ## [5.4.0] - 2020-05-31
@@ -75,22 +81,22 @@ adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Gem deployment to RubyGems now takes place with GitHub Actions. Unit 
-  and Integration tests remain in Travis CI and Appveyor.
+- Gem deployment to RubyGems now takes place with GitHub Actions. Unit and
+  Integration tests remain in Travis CI and Appveyor.
 
 ## [5.3.0] - 2020-03-08
 
 ### Added
 
-- Verifier systems have a `bastion_host_output` attribute which allows
-  a bastion host to be obtained from a Terraform output rather than
-  statically defined with the `bastion_host` attribute.
+- Verifier systems have a `bastion_host_output` attribute which allows a bastion
+  host to be obtained from a Terraform output rather than statically defined
+  with the `bastion_host` attribute.
 
 ### Fixed
 
 - All plugin log messages use consistent levels.
-- The output of the `terraform output` command has been reverted to log
-  at the debug level rather than the warn level.
+- The output of the `terraform output` command has been reverted to log at the
+  debug level rather than the warn level.
 
 ## [5.2.0] - 2020-02-27
 
@@ -98,39 +104,39 @@ The "trapped in Atlanta" edition!
 
 ### Changed
 
-- Log messages have been adjusted to provide better context and
-  actionable information where approriate.
+- Log messages have been adjusted to provide better context and actionable
+  information where approriate.
 
-- The dependency on mixlib-shellout has been updated to support
-  installation using ChefDK versions 3.9 and newer.
+- The dependency on mixlib-shellout has been updated to support installation
+  using ChefDK versions 3.9 and newer.
 
 ## [5.1.1] - 2019-08-28
 
 ### Fixed
 
-- RbNaCl was removed from the gem dependencies to solve for an
-  unexpected compatibility issue with InSpec's GCP transport [#351].
-  Installation instructions were linked in the README for
-  configurations which may require this gem.
+- RbNaCl was removed from the gem dependencies to solve for an unexpected
+  compatibility issue with InSpec's GCP transport [#351]. Installation
+  instructions were linked in the README for configurations which may require
+  this gem.
 
 ## [5.1.0] - 2019-07-06
 
 ### Changed
 
-- InSpec 3 is supported again. It must be explicitly pinned in the
-  `Gemfile`, like `gem "inspec", "~> 3.0"`.
+- InSpec 3 is supported again. It must be explicitly pinned in the `Gemfile`,
+  like `gem "inspec", "~> 3.0"`.
 
 ### Fixed
 
-- Default values for unsupported configuration attributes inherited
-  from the base Kitchen plugins were removed.
+- Default values for unsupported configuration attributes inherited from the
+  base Kitchen plugins were removed.
 
 ## [5.0.0] - 2019-06-06
 
 ### Changed
 
-- The supported version of InSpec is 4. This version changes the
-  priority of profile attributes configurations:
+- The supported version of InSpec is 4. This version changes the priority of
+  profile attributes configurations:
   1. `systems.x.attrs_outputs`
   1. the default association of attributes to Terraform outputs
   1. `systems.x.attrs`
@@ -145,37 +151,33 @@ The "trapped in Atlanta" edition!
 
 ### Fixed
 
-- Added a reference to the `client` attribute in the driver
-  documentation.
+- Added a reference to the `client` attribute in the driver documentation.
 - Corrected the attribute name in the `verify_version` example.
 
 ## [4.8.0] - 2019-04-14
 
 ### Added
 
-- The verifier exposes input variables configured through the
-  `variables` attribute as InSpec profile attributes prefixed with
-  `input_`; refer to the updated
-  [Terraform Verifier documentation][terraform-verifier] for more
+- The verifier exposes input variables configured through the `variables`
+  attribute as InSpec profile attributes prefixed with `input_`; refer to the
+  updated [Terraform Verifier documentation][terraform-verifier] for more
   details.
 
 ### Changed
 
-- The verifier exposes output variables as InSpec profile attributes
-  prefixed with `output_`, though the unprefixed variety of attributes
-  are still available for backward compatibility; refer to the updated
-  [Terraform Verifier documentation][terraform-verifier] for more
-  details.
+- The verifier exposes output variables as InSpec profile attributes prefixed
+  with `output_`, though the unprefixed variety of attributes are still
+  available for backward compatibility; refer to the updated [Terraform Verifier
+  documentation][terraform-verifier] for more details.
 
 ## [4.7.0] - 2019-04-13
 
 ### Added
 
-- The verifier systems gained a `profile_locations` attribute which
-  enables overriding the default InSpec profile location of
-  `test/integration/<KITCHEN SUITE NAME>`; refer to the updated
-  [Terraform Verifier documentation][terraform-verifier] for more
-  details.
+- The verifier systems gained a `profile_locations` attribute which enables
+  overriding the default InSpec profile location of
+  `test/integration/<KITCHEN SUITE NAME>`; refer to the updated [Terraform
+  Verifier documentation][terraform-verifier] for more details.
 
 ### Changed
 
@@ -185,55 +187,54 @@ The "trapped in Atlanta" edition!
 
 ### Added
 
-- The verifier gained a `fail_fast` attribute which toggles fail fast
-  behaviour when verifying systems; refer to the updated
-  [Terraform Verifier documentation][terraform-verifier] for more details.
+- The verifier gained a `fail_fast` attribute which toggles fail fast behaviour
+  when verifying systems; refer to the updated [Terraform Verifier
+  documentation][terraform-verifier] for more details.
 
 ## [4.5.0] - 2019-04-10
 
 ### Changed
 
-- The output of `terraform output` is logged at the debug level to
-  prevent sensitive output values from being printed by default. This
-  output can be viewed by enabling the debug log level. For example:
+- The output of `terraform output` is logged at the debug level to prevent
+  sensitive output values from being printed by default. This output can be
+  viewed by enabling the debug log level. For example:
   `kitchen converge INSTANCE --log-level=debug`
 
 ## [4.4.0] - 2019-04-06
 
 ### Added
 
-- The driver gained a `client` configuration attribute which contains
-  the pathname to the Terraform client; refer to the
-  [Terraform Driver documentation][terraform-driver] for more details.
+- The driver gained a `client` configuration attribute which contains the
+  pathname to the Terraform client; refer to the [Terraform Driver
+  documentation][terraform-driver] for more details.
 
 ### Fixed
 
-- The verifier lost legacy code which was implicity coupled to the SSH
-  transport and integrated with InSpec in undocumented ways.
+- The verifier lost legacy code which was implicity coupled to the SSH transport
+  and integrated with InSpec in undocumented ways.
 
 ## [4.3.0] - 2019-01-20
 
 ### Changed
 
 - `TF_WARN_OUTPUT_ERRORS` is no longer automatically set when running
-  `terraform apply` during `kitchen converge`. This change should allow
-  output errors to be more quickly exposed to the user.
+  `terraform apply` during `kitchen converge`. This change should allow output
+  errors to be more quickly exposed to the user.
 
 ## [4.2.1] - 2019-01-19
 
 ### Changed
 
-- `terraform validate` is now called without `-check-variables=true`.
-  This flag already defaults to `true` and will be obsolete for
-  Terraform v0.12.
+- `terraform validate` is now called without `-check-variables=true`. This flag
+  already defaults to `true` and will be obsolete for Terraform v0.12.
 
 ## [4.2.0] - 2018-12-29
 
 ### Added
 
-- The driver gained a `:verify_version` configuration attribute which
-  toggles verification of support for the available Terraform version.
-  This feature allows unsupported versions of Terraform to be used.
+- The driver gained a `:verify_version` configuration attribute which toggles
+  verification of support for the available Terraform version. This feature
+  allows unsupported versions of Terraform to be used.
 
 - The gem supports Ruby v2.6.
 
@@ -247,32 +248,30 @@ The "trapped in Atlanta" edition!
 
 ### Changed
 
-- The bundled version of InSpec is now ~> 3.0. Despite the major
-  version change, it is intended to be backward compatible.
+- The bundled version of InSpec is now ~> 3.0. Despite the major version change,
+  it is intended to be backward compatible.
 
 ## [4.0.6] - 2018-12-02
 
 ### Fixed
 
-- `terraform output` is moved from `kitchen converge` to
-  `kitchen verify` to ensure Terraform state outputs are up to date for
-  use as InSpec attributes regardless of the result of
-  `kitchen converge`.
+- `terraform output` is moved from `kitchen converge` to `kitchen verify` to
+  ensure Terraform state outputs are up to date for use as InSpec attributes
+  regardless of the result of `kitchen converge`.
 
 ## [4.0.5] - 2018-12-01
 
 ### Fixed
 
-- The escaping of Terraform command-line arguments... Again! Arguments
-  for `-backend-config` and `-var` are surrounded by double quotes but
-  are not escaped. This compromise is intended to ensure proper
-  handling of arguments containing HashiCorp Language (HCL) on Linux,
-  MacOS, and Windows. The corresponding values for the Kitchen
-  configuration attributes `driver.backend_configurations` and
-  `driver.variables` must be properly escaped depending on the execution
-  environment. The [Kitchen configuration file](kitchen.yml) used for
-  integration testing of Kitchen-Terraform contains examples of escaped
-  HCL values.
+- The escaping of Terraform command-line arguments... Again! Arguments for
+  `-backend-config` and `-var` are surrounded by double quotes but are not
+  escaped. This compromise is intended to ensure proper handling of arguments
+  containing HashiCorp Language (HCL) on Linux, MacOS, and Windows. The
+  corresponding values for the Kitchen configuration attributes
+  `driver.backend_configurations` and `driver.variables` must be properly
+  escaped depending on the execution environment. The
+  [Kitchen configuration file](kitchen.yml) used for integration testing of
+  Kitchen-Terraform contains examples of escaped HCL values.
 
 ## [4.0.4] - 2018-11-21
 
@@ -284,39 +283,36 @@ The "trapped in Atlanta" edition!
 
 ### Changed
 
-- The version of InSpec was relaxed to include all versions between 2.2
-  and 3
+- The version of InSpec was relaxed to include all versions between 2.2 and 3
 
 ## [4.0.2] - 2018-09-26
 
 ### Changed
 
-- The version of InSpec was relaxed to include 2.2.70 to enable
-  compatability with ChefDK 3.2.30
+- The version of InSpec was relaxed to include 2.2.70 to enable compatability
+  with ChefDK 3.2.30
 
 ## [4.0.1] - 2018-09-15
 
 ### Fixed
 
-- The version of InSpec was pinned to 2.2.78 as 2.2.101 introduced a
-  breaking change to the InSpec profile attributes system
+- The version of InSpec was pinned to 2.2.78 as 2.2.101 introduced a breaking
+  change to the InSpec profile attributes system
 
 ## [4.0.0] - 2018-08-13
 
-"An open-source software release is never late. Nor is it early. It
-arrives precisely when the maintainers get around to finishing it." -
-Gandalf the Free-As-In-Beer
+"An open-source software release is never late. Nor is it early. It arrives
+precisely when the maintainers get around to finishing it." - Gandalf the
+Free-As-In-Beer
 
 ### Added
 
-- The verifier configuration gained a `:systems` attribute which
-  replaced the `:groups` attribute; refer to the updated
-  [Terraform Verifier documentation][terraform-verifier] for more
-  details
+- The verifier configuration gained a `:systems` attribute which replaced the
+  `:groups` attribute; refer to the updated [Terraform Verifier
+  documentation][terraform-verifier] for more details
 
-- The Terraform shell out environment now enables
-  `TF_WARN_OUTPUT_ERRORS` to work around
-  [Terraform issue #17655][terraform-issue-17655]
+- The Terraform shell out environment now enables `TF_WARN_OUTPUT_ERRORS` to
+  work around [Terraform issue #17655][terraform-issue-17655]
 
 ### Changed
 
@@ -332,18 +328,18 @@ Gandalf the Free-As-In-Beer
 
 - Support for Ruby 2.2 was broken
 
-- Support for concurrency with the following commands was broken:
-  `create`, `converge`, `setup`, and `destroy`
+- Support for concurrency with the following commands was broken: `create`,
+  `converge`, `setup`, and `destroy`
 
-- The deprecated `terraform destroy -force` flag was replaced with the
-  supported `terraform destroy -auto-approve` flag
+- The deprecated `terraform destroy -force` flag was replaced with the supported
+  `terraform destroy -auto-approve` flag
 
-- The working directory of the Terraform shell out environment was
-  changed to the value of the `:root_module_directory` attribute of the
-  driver configuration
+- The working directory of the Terraform shell out environment was changed to
+  the value of the `:root_module_directory` attribute of the driver
+  configuration
 
-- Support for the `:groups` attribute of the verifier configuration was
-  broken; `:systems` replaces `:groups`
+- Support for the `:groups` attribute of the verifier configuration was broken;
+  `:systems` replaces `:groups`
 
 - InSpec was reconfigured to use the Kitchen logger for all logging
 
@@ -353,17 +349,17 @@ Gandalf the Free-As-In-Beer
 
 ### Changed
 
-- Deprecating support for Ruby 2.2; this version reaches end of life on
-  March 31, 2018
+- Deprecating support for Ruby 2.2; this version reaches end of life on March
+  31, 2018
 
-- Deprecating support for concurrency with the following commands:
-  `create`, `converge`, `setup`, and `destroy`; these commands invoke
-  Terraform in a manner which is not safe for concurrency
+- Deprecating support for concurrency with the following commands: `create`,
+  `converge`, `setup`, and `destroy`; these commands invoke Terraform in a
+  manner which is not safe for concurrency
 
 ### Fixed
 
-- Escaping the following configuration attributes for safe usage in the
-  shell out commands:
+- Escaping the following configuration attributes for safe usage in the shell
+  out commands:
 
   - backend_configurations
   - plugin_directory
@@ -377,8 +373,8 @@ Gandalf the Free-As-In-Beer
 
 ### Added
 
-- The `lock` configuration attribute of the driver toggles locking of
-  the Terraform state file
+- The `lock` configuration attribute of the driver toggles locking of the
+  Terraform state file
 
 ## [3.2.0] - 2018-03-21
 
@@ -402,19 +398,18 @@ Gandalf the Free-As-In-Beer
 
 - Internal success and failure to be modeled without monads
 
-- All driver and provisioner actions to attempt to select or create a
-  Terraform workspace
+- All driver and provisioner actions to attempt to select or create a Terraform
+  workspace
 
 - Format and wording of the verifier `groups` attribute documentation
 
 ### Fixed
 
 - Documented supported Terraform version for ClientVersionVerifier
-- Failure during `kitchen converge` when no Terraform outputs are
-  defined
+- Failure during `kitchen converge` when no Terraform outputs are defined
 
-- Failure on Windows due to use of single quoted arguments for
-  `-backend-config` and `-var`
+- Failure on Windows due to use of single quoted arguments for `-backend-config`
+  and `-var`
 
 ## [3.0.0] - 2017-11-28
 
@@ -424,16 +419,16 @@ Gandalf the Free-As-In-Beer
 
 ### Changed
 
-- Update `kitchen create` and `kitchen converge` to initialize and
-  apply, respectively
+- Update `kitchen create` and `kitchen converge` to initialize and apply,
+  respectively
 
 - Driver and provisioner commands use Terraform workspaces
 
-- Execute Terraform commands in an environment including
-  the TF_IN_AUTOMATION variable
+- Execute Terraform commands in an environment including the TF_IN_AUTOMATION
+  variable
 
-- Change the lock_timeout configuration attribute of the driver to an
-  integer representing seconds
+- Change the lock_timeout configuration attribute of the driver to an integer
+  representing seconds
 
 - Remove the state configuration attribute from the driver
 
@@ -457,8 +452,8 @@ Gandalf the Free-As-In-Beer
 
 ### Added
 
-- Verifier `:groups` have an optional `:ssh_key` attribute that
-  overrides the Test Kitchen SSH Transport `:ssh_key`
+- Verifier `:groups` have an optional `:ssh_key` attribute that overrides the
+  Test Kitchen SSH Transport `:ssh_key`
 
 ## [2.0.0] - 2017-09-13
 
@@ -484,8 +479,8 @@ Gandalf the Free-As-In-Beer
 
 - Dropped support for Terraform versions < 0.10.2
 
-- The driver's variables configuration attribute must be a hash of
-  symbols and strings
+- The driver's variables configuration attribute must be a hash of symbols and
+  strings
 
 - Removed configuration attributes from the driver
 
@@ -503,23 +498,21 @@ Gandalf the Free-As-In-Beer
 
 ### Added
 
-- The Bundler Gemfile.lock is committed to enable Code Climate's
-  bundler-audit engine and to simplify testing and releasing this gem
-  with Travis CI
+- The Bundler Gemfile.lock is committed to enable Code Climate's bundler-audit
+  engine and to simplify testing and releasing this gem with Travis CI
 
 - RSpec produces backtraces for failures in Travis CI
 
 ### Changed
 
-- The integration tests use Terraform version 0.9.11 instead of version
-  0.9.10
+- The integration tests use Terraform version 0.9.11 instead of version 0.9.10
 
 - The integration tests display the Terraform versions
 
 ### Fixed
 
-- The Getting Started guide uses kitchen-terraform 1.0 configuration
-  attributes (thanks [@davidbegin])
+- The Getting Started guide uses kitchen-terraform 1.0 configuration attributes
+  (thanks [@davidbegin])
 
 - The Developing guide uses the new GitHub organization
 
@@ -557,19 +550,18 @@ Gandalf the Free-As-In-Beer
 
 - Moved all provisioner configuration attributes to the driver
 
-- Dropped support for specifying the configuration attribute `variables`
-  in the literal `name=value` notation
+- Dropped support for specifying the configuration attribute `variables` in the
+  literal `name=value` notation
 
-- Dropped support for the value of the output variable specified by
-  the configuration attribute `hostnames` being in CSV format
+- Dropped support for the value of the output variable specified by the
+  configuration attribute `hostnames` being in CSV format
 
-- Renamed the configuration attribute `apply_timeout` to
-  `command_timeout`
+- Renamed the configuration attribute `apply_timeout` to `command_timeout`
 
 - Default the configuration attribute `cli` to `"terraform"`
 
-- Default the configuration attribute `color` to be based on the
-  association of the Test Kitchen process with a terminal emulator
+- Default the configuration attribute `color` to be based on the association of
+  the Test Kitchen process with a terminal emulator
 
 - Improved the engine for validating configuration attribute values
 
@@ -587,9 +579,8 @@ Gandalf the Free-As-In-Beer
 
 ### Fixed
 
-- `terraform plan` during `kitchen converge` was not reading the state
-  file so subsequent converges would create duplicate state
-  (thanks [@johnrengelman])
+- `terraform plan` during `kitchen converge` was not reading the state file so
+  subsequent converges would create duplicate state (thanks [@johnrengelman])
 
 ## [0.6.0] - 2017-02-22
 
@@ -598,15 +589,13 @@ Gandalf the Free-As-In-Beer
 - Driver configuration option to specify the pathname of the Terraform
   command-line interface
 
-- "terraform_state" InSpec attribute containing the pathname of the
-  state file
+- "terraform_state" InSpec attribute containing the pathname of the state file
 
 ### Changed
 
 - Restructured code for better distribution of responsibilities
 
-- Intermediate workflow Terraform commands will be logged at the debug
-  level
+- Intermediate workflow Terraform commands will be logged at the debug level
 
 ### Fixed
 
@@ -614,18 +603,17 @@ Gandalf the Free-As-In-Beer
 
 - Output names for Terraform 0.6 are correctly parsed
 
-- Incomplete InSpec control definition in the Getting Started guide (
-  thanks [@burythehammer])
+- Incomplete InSpec control definition in the Getting Started guide ( thanks
+  [@burythehammer])
 
-- Missing descriptions of the plan and state provisioner configuration
-  options
+- Missing descriptions of the plan and state provisioner configuration options
 
 ## [0.5.1] - 2017-02-17
 
 ### Fixed
 
-- Support for Terraform configurations that do not define any outputs
-  (thanks [@johnrengelman])
+- Support for Terraform configurations that do not define any outputs (thanks
+  [@johnrengelman])
 
 ## [0.5.0] - 2017-01-09
 
@@ -652,26 +640,26 @@ Gandalf the Free-As-In-Beer
 
 - [Code Climate coverage][code climate coverage]
 
-- Group attributes default to a mapping of all Terraform output
-  variables to equivalently named InSpec attributes (thanks [@shinka81])
+- Group attributes default to a mapping of all Terraform output variables to
+  equivalently named InSpec attributes (thanks [@shinka81])
 
 - A Docker provider example (thanks [@errygg])
 
 - An OpenStack provider example (thanks [@xmik])
 
-- Groups with no hostnames will have their controls executed locally; in
-  theory, this enables testing of any provider API
+- Groups with no hostnames will have their controls executed locally; in theory,
+  this enables testing of any provider API
 
-- Provisioner configuration for the `terraform apply -parallelism`
-  option (thanks [@s3lehtin])
+- Provisioner configuration for the `terraform apply -parallelism` option
+  (thanks [@s3lehtin])
 
-- Clay Thomas, Ewa Czechowska, Erik R. Rygg, Kyle Sexton, and Walter
-  Dolce join the gem specification authors
+- Clay Thomas, Ewa Czechowska, Erik R. Rygg, Kyle Sexton, and Walter Dolce join
+  the gem specification authors
 
 ### Changed
 
-- Removed the pin on the RubyGems version from the gem specification
-  (thanks [@jbussdieker])
+- Removed the pin on the RubyGems version from the gem specification (thanks
+  [@jbussdieker])
 
 ### Fixed
 
@@ -681,19 +669,17 @@ Gandalf the Free-As-In-Beer
 
 ### Added
 
-- Support for Terraform v0.7 (thanks [@esword], [@maniacal], and
-  [@nictrix])
+- Support for Terraform v0.7 (thanks [@esword], [@maniacal], and [@nictrix])
 
 - Getting started guide under `examples/getting_started` (thanks
   [@nellshamrell])
 
-- Kevin Dickerson, Nell Shamrell-Harrington, and Michael Glenney join
-  the gem specification authors
+- Kevin Dickerson, Nell Shamrell-Harrington, and Michael Glenney join the gem
+  specification authors
 
 ### Changed
 
-- Example project moved under `examples/detailed` (thanks
-  [@nellshamrell])
+- Example project moved under `examples/detailed` (thanks [@nellshamrell])
 
 - Deprecate support for Terraform v0.6
 
@@ -701,8 +687,8 @@ Gandalf the Free-As-In-Beer
 
 - Release date of kitchen-terraform v0.2.0
 
-- Remove references to verifying the gem; it's problematic even with
-  low security (thanks [@kevindickerson])
+- Remove references to verifying the gem; it's problematic even with low
+  security (thanks [@kevindickerson])
 
 ## [0.2.0] - 2016-09-12
 
@@ -714,8 +700,8 @@ Gandalf the Free-As-In-Beer
 
 - Configuration option for timeout of Terraform apply command
 
-- Configuration option for colored output of Terraform plan and apply
-  commands (thanks [@nictrix])
+- Configuration option for colored output of Terraform plan and apply commands
+  (thanks [@nictrix])
 
 - Configuration of variable assignments using a map
 
@@ -747,21 +733,19 @@ Gandalf the Free-As-In-Beer
 
 - Contributing and developing guides (thanks [@nictrix])
 
-- Example instructions suggest IAM user creation for enhanced security (
-  thanks [@nictrix])
+- Example instructions suggest IAM user creation for enhanced security ( thanks
+  [@nictrix])
 
 ### Changed
 
-- Example configuration is compatible with more AWS accounts (thanks
-  [@nictrix])
+- Example configuration is compatible with more AWS accounts (thanks [@nictrix])
 
 ### Fixed
 
 - Remove enforcement of RubyGems trust policy (thanks [@fivetwentysix])
 
 - Only suggest the LowSecurity RubyGems trust policy; in a clean Bundler
-  environment, this is the highest policy that can be successfully
-  applied
+  environment, this is the highest policy that can be successfully applied
 
 - Only enforce code coverage requirements when Guard runs all specs
 
@@ -787,11 +771,10 @@ Gandalf the Free-As-In-Beer
 - Fix the line length of the gem specification signing key configuration
 
 - Correct the reference to `bundle install --trust-profile` with
-  `bundle install --trust-policy` in the README (thanks [@nellshamrell]
-  and [@nictrix])
-
-- Clarify the gem installation instructions in the README (thanks
+  `bundle install --trust-policy` in the README (thanks [@nellshamrell] and
   [@nictrix])
+
+- Clarify the gem installation instructions in the README (thanks [@nictrix])
 
 ## 0.1.0 - 2016-07-22
 
@@ -799,7 +782,9 @@ Gandalf the Free-As-In-Beer
 
 - Initial release
 
-[unreleased]: https://github.com/newcontext/kitchen-terraform/compare/v6.0.0...HEAD
+[unreleased]:
+  https://github.com/newcontext/kitchen-terraform/compare/v6.1.0...HEAD
+[6.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v6.0.0...v6.1.0
 [6.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.8.0...v6.0.0
 [5.8.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.2...v5.8.0
 [5.7.2]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.1...v5.7.2
@@ -873,9 +858,12 @@ Gandalf the Free-As-In-Beer
 [@shinka81]: https://github.com/shinka81
 [@walterdolce]: https://github.com/walterdolce
 [@xmik]: https://github.com/xmik
-[code climate coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform
+[code climate coverage]:
+  https://codeclimate.com/github/newcontext-oss/kitchen-terraform
 [travis ci build plan]: https://travis-ci.com/newcontext-oss/kitchen-terraform
 [terraform-issue-17655]: https://github.com/hashicorp/terraform/issues/17655
-[terraform-driver]: https://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Driver/Terraform
-[terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
+[terraform-driver]:
+  https://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Driver/Terraform
+[terraform-verifier]:
+  http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [#351]: https://github.com/newcontext-oss/kitchen-terraform/issues/351
