@@ -43,7 +43,8 @@ title: Using the Terraform Docker Provider
         <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
           Requirements are a Docker host listening on the Unix socket located at: unix:///var/run/docker.sock.
           <br><br>
-          The Docker container that will be tested must be running an SSH daemon in the foreground to enable the Kitchen-Terraform verifier to remotely execute tests.
+          The Docker container that will be tested must be running an SSH daemon in the foreground to enable the
+          Kitchen-Terraform verifier to remotely execute tests.
           <br><hr>
           To setup the project, run the following commands in the terminal:
           <br><br>
@@ -51,20 +52,31 @@ title: Using the Terraform Docker Provider
 mkdir -p docker_provider_example/test/integration/example/controls
 cd docker_provider_example
           <% end %>
-          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> in the root of the project, so that you can install your dependencies.
+          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> in the root of the project by running:
+          <br><br>
+          <% code("bash") do %>touch Gemfile<% end %>
+          In this file we will place the dependencies that are required for the project by copying the code below into
+          the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p>.
           <br><br>
           <% code("ruby") do %>
 source 'https://rubygems.org/' do
   gem 'kitchen-terraform', '~> 6.1'
 end
           <% end %>
-          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+          Next we to install kitchen-terraform and the other rubygems required, we also need to install bundler if it is
+          not installed yet, by running the commands below in a terminal in the root of the project:
           <br><br>
           <% code("bash") do %>
 gem install bundler
 bundle install
           <% end %>
-          Create a <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file in the root of the project, this brings together the Terraform module code and Inspec controls.
+          Create a <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file in the root of the project.
+          <br><br>
+          <% code("bash") do %>
+touch .kitchen.yml
+          <% end %>
+          This file brings together the Terraform module code and Inspec controls. Copy the configuration below into the
+          <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file.
           <br><br>
           <div class="row">
             <div class="col">
@@ -97,7 +109,6 @@ platforms:
 suites:
   - name: example
 
-
               <% end %>
             </div>
             <div class="col">
@@ -117,15 +128,24 @@ suites:
               The platforms provide arbitrary grouping for the test suite matrix.
               <br><br>
               The suite name corresponds to the directory containing the Inspec profile: <% code("bash") do %>test/integration/example/<% end %>
+              <br><br>
             </div>
           </div>
         </div>
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
-          Below is the example Terraform code that uses the Docker provider. The resources created by this code is what we'll be testing later on.
+          Below is the example Terraform code that uses the Docker provider. The resources created by this code is what
+          we'll be testing later on.
           <br><br>
-          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">versions.tf</p> in the root of the project and add the block of code into it.
+          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">versions.tf</p> in the root of the project.
           <br><br>
-          The configuration is restricted to Terraform versions equal to or greater than 0.14.0 and less than 2.0.0. The Docker provider is used to interact with Docker containers and images, it uses the Docker API to manage the lifecycle of Docker containers.
+          <% code("bash") do %>
+touch versions.tf
+          <% end %>
+          Add the following block of code into the file.
+          <br><br>
+          The configuration is restricted to Terraform versions equal to or greater than 0.14.0 and less than 2.0.0. The
+          Docker provider is used to interact with Docker containers and images, it uses the Docker API to manage the
+          lifecycle of Docker containers.
           <br><br>
           <% code("ruby") do %>
 # Set the required provider and versions
@@ -142,7 +162,12 @@ terraform {
     }
   }
           <% end %>
-          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> in the root of the project and add each block of code into it.
+          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> in the root of the project.
+          <br><br>
+          <% code("bash") do %>
+touch main.tf
+          <% end %>
+          Add each of the following blocks of code into the file.
           <br><br>
           The Docker provider is configured to communicate with a Docker host listening on a Unix socket.
           <br><br>
@@ -163,11 +188,12 @@ data "docker_registry_image" "ubuntu_sshd" {
           <% code("ruby") do %>
 resource "docker_image" "ubuntu_sshd" {
   keep_locally = true
-  name = "${data.docker_registry_image.ubuntu_sshd.name}"
+  name = data.docker_registry_image.ubuntu_sshd.name
   pull_triggers = [data.docker_registry_image.ubuntu_sshd.sha256_digest]
 }
           <% end %>
-          A Docker container based on the Docker image is configured to be running on the Docker host. The container forwards localhost:2222 to its internal SSH daemon.
+          A Docker container based on the Docker image is configured to be running on the Docker host. The container
+          forwards localhost:2222 to its internal SSH daemon.
           <br><br>
           <% code("ruby") do %>
 resource "docker_container" "ubuntu" {
@@ -180,12 +206,19 @@ resource "docker_container" "ubuntu" {
     internal = 22
   }
 }
+
           <% end %>
         </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
-          To assist with testing, Terraform outputs will provide the path of the backend state file and the container host name. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
+          To assist with testing, Terraform outputs will provide the path of the backend state file and the container
+          host name. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
-          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
+          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p>
+          <br><br>
+          <% code("bash") do %>
+touch output.tf
+          <% end %>
+          Add each block of code into the file.
           <br><br>
           <% code("ruby") do %>
 output "terraform state" {
@@ -198,12 +231,19 @@ output "container_host" {
   value = "localhost"
 }
           <% end %>
-          Refer back to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file and in the verifier section you will see a reference to the above container host output.
+          Refer back to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file and in the verifier section
+          you will see a reference to the above container host output.
+          <br><br>
         </div>
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
           We've created the Terraform code, now it's time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
           <br><br>
-          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p> and add the block below into it.
+          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p>
+          <br><br>
+          <% code("bash") do %>
+touch test/integration/examples/inspec.yml
+          <% end %>
+          Add the block below into the file.
           <br><br>
           <% code("yml") do %>
 ---
@@ -231,32 +271,37 @@ end
           <% end %>
           Let's create the state_files control, which will validate the Terraform state file is created and has the proper content.
           <br><br>
-          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/state_file.rb</p>
+          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/state_file.rb</p>
           <% code("ruby") do %>
 # frozen_string_literal: true
 
-terraform_state = input("terraform_state", {})
+terraform_state = input('terraform_state', {})
 
-control "state_files" do
-  describe "the terraform state file" do
+control 'state_files' do
+  describe 'the terraform state file' do
     subject do
       file terraform_state
-   end
+    end
 
-  it do
-    is_expected.to exist
+    it do
+      is_expected.to exist
+    end
   end
 end
           <% end %>
+          <br><br>
         </div>
         <div class="tab-pane fade" id="list-five" role="tabpanel" aria-labelledby="list-five-list">
-          Execute Kitchen-Terraform by running the below command
+          <strong>Before commencing this section of the tutorial please ensure docker is running on your machine, failure to do
+          will mean that you will not be able to successfully run the commands.</strong>
+          <br><br>
+          Execute Kitchen-Terraform by running the command below in the terminal:
           <br><br>
           <% code("ruby") do %>
-# Create resources from the Terraform code in main.tf
 bundle exec kitchen converge
           <% end %>
-          Below is an example output of Kitchen-Terraform running when you use the <strong>converge</strong> command.
+          This creates resources from the Terraform code in the main.tf file. Below is an example output of
+          Kitchen-Terraform running when you use the <strong>converge</strong> command.
           <br><br>
           <% code("bash") do %>
 -----> Starting Test Kitchen (v3.4.0)
@@ -340,9 +385,10 @@ $$$$$$ Finished writing the input variables to the Kitchen instance state.
 Now run the Kitchen-Terraform tests using:
           <br><br>
         <% code("ruby") do %>
-# Run the Inspec controls from the .kitchen.yml verifier section
 bundle exec kitchen verify
         <% end %>
+          This executes the Inspec controls from the .kitchen.yml verifier section and will run the tests in the
+          <strong>operating_system.rb</strong> and <strong>state_file.rb</strong> files.
           The output below is an example of Kitchen-Terraform running when you use the <strong>verify</strong> command.
         <br><br>
         <% code("bash") do %>
@@ -362,9 +408,9 @@ $$$$$$ Verifying the 'docker container' system...
        Target:  ssh://root@localhost:2222
 
        ✔  operating_system: Command: `lsb_release -a`
-       ✔  Command: `lsb_release -a` stderr is expected to match /lsb_release: command not found/
-       ✔  Command: `uname -ar` stdout is expected to match /Linux/
-       ✔  Command: `env -i bash -c '. /etc/os-release; echo $NAME'` stdout is expected to match /Ubuntu/
+           ✔  Command: `lsb_release -a` stderr is expected to match /lsb_release: command not found/
+           ✔  Command: `uname -ar` stdout is expected to match /Linux/
+           ✔  Command: `env -i bash -c '. /etc/os-release; echo $NAME'` stdout is expected to match /Ubuntu/
 
 
        Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
@@ -377,7 +423,7 @@ $$$$$$ Verifying the 'terraform state' system...
        Target:  local://
 
        ✔  state_files: the terraform state file
-       ✔  the terraform state file is expected to exist
+           ✔  the terraform state file is expected to exist
 
 
        Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
@@ -387,6 +433,18 @@ $$$$$$ Finished verifying the systems.
        Finished verifying <example-ubuntu> (0m6.20s).
 -----> Test Kitchen is finished. (0m7.62s)
         <% end %>
+          Once you are finished running the tests with:
+          <br><br>
+          <% code("ruby") do %>
+bundle exec kitchen verify
+          <% end %>
+          Run the following in the terminal:
+          <br><br>
+          <% code("bash") do %>
+bundle exec kitchen destroy
+          <% end %>
+          This will destroy the docker container and delete all information for that instance.
+          <br><br>
       </div>
     </div>
   </div>
