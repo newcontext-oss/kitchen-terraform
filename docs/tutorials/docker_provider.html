@@ -100,22 +100,32 @@
         <div class="tab-pane fade show active" id="list-one" role="tabpanel" aria-labelledby="list-one-list">
           Requirements are a Docker host listening on the Unix socket located at: unix:///var/run/docker.sock.
           <br><br>
-          The Docker container that will be tested must be running an SSH daemon in the foreground to enable the Kitchen-Terraform verifier to remotely execute tests.
+          The Docker container that will be tested must be running an SSH daemon in the foreground to enable the
+          Kitchen-Terraform verifier to remotely execute tests.
           <br><hr>
           To setup the project, run the following commands in the terminal:
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">mkdir</span> <span class="nt">-p</span> docker_provider_example/test/integration/example/controls
 <span class="nb">cd </span>docker_provider_example
-</code></pre></div>          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> in the root of the project, so that you can install your dependencies.
+</code></pre></div>          Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> in the root of the project by running:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">source</span> <span class="s2">"https://rubygems.org/"</span> <span class="k">do</span>
-  <span class="n">gem</span> <span class="s2">"kitchen-terraform"</span>
+          <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">touch </span>Gemfile</code></pre></div>
+          In this file we will place the dependencies that are required for the project by copying the code below into
+          the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p>.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">source</span> <span class="s1">'https://rubygems.org/'</span> <span class="k">do</span>
+  <span class="n">gem</span> <span class="s1">'kitchen-terraform'</span><span class="p">,</span> <span class="s1">'~&gt; 6.1'</span>
 <span class="k">end</span>
-</code></pre></div>          Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
+</code></pre></div>          Next we to install kitchen-terraform and the other rubygems required, we also need to install bundler if it is
+          not installed yet, by running the commands below in a terminal in the root of the project:
           <br><br>
 <div class="highlight"><pre class="syntax-highlight shell"><code>gem <span class="nb">install </span>bundler
 bundle <span class="nb">install</span>
-</code></pre></div>          Create a <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file in the root of the project, this brings together the Terraform module code and Inspec controls.
+</code></pre></div>          Create a <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file in the root of the project.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">touch</span> .kitchen.yml
+</code></pre></div>          This file brings together the Terraform module code and Inspec controls. Copy the configuration below into the
+          <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file.
           <br><br>
           <div class="row">
             <div class="col">
@@ -147,7 +157,6 @@ bundle <span class="nb">install</span>
 <span class="na">suites</span><span class="pi">:</span>
   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">example</span>
 
-
 </code></pre></div>            </div>
             <div class="col">
               <br><br>
@@ -166,30 +175,40 @@ bundle <span class="nb">install</span>
               The platforms provide arbitrary grouping for the test suite matrix.
               <br><br>
               The suite name corresponds to the directory containing the Inspec profile: <div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">test</span>/integration/example/</code></pre></div>
+              <br><br>
             </div>
           </div>
         </div>
         <div class="tab-pane fade" id="list-two" role="tabpanel" aria-labelledby="list-two-list">
-          Below is the example Terraform code that uses the Docker provider. The resources created by this code is what we'll be testing later on.
+          Below is the example Terraform code that uses the Docker provider. The resources created by this code is what
+          we'll be testing later on.
           <br><br>
-          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">versions.tf</p> in the root of the project and add the block of code into it.
+          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">versions.tf</p> in the root of the project.
           <br><br>
-          The configuration is restricted to Terraform versions equal to or greater than 0.14.0 and less than 1.1.0. The Docker provider is used to interact with Docker containers and images, it uses the Docker API to manage the lifecycle of Docker containers.
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">touch </span>versions.tf
+</code></pre></div>          Add the following block of code into the file.
+          <br><br>
+          The configuration is restricted to Terraform versions equal to or greater than 0.14.0 and less than 2.0.0. The
+          Docker provider is used to interact with Docker containers and images, it uses the Docker API to manage the
+          lifecycle of Docker containers.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Set the required provider and versions</span>
 <span class="n">terraform</span> <span class="p">{</span>
-  <span class="n">required_version</span> <span class="o">=</span> <span class="s2">"&gt;= 0.14.0, &lt; 1.1.0"</span>
+  <span class="n">required_version</span> <span class="o">=</span> <span class="s2">"&gt;= 0.14.0, &lt; 2.0.0"</span>
 
   <span class="n">required_providers</span> <span class="p">{</span>
   <span class="c1"># We recommend pinning to the specific version of the Docker Provider you're using</span>
   <span class="c1"># since new versions are released frequently</span>
     <span class="n">docker</span> <span class="o">=</span> <span class="p">{</span>
       <span class="n">source</span> <span class="o">=</span> <span class="s2">"kreuzwerker/docker"</span>
-      <span class="n">version</span> <span class="o">=</span> <span class="s2">"2.13.0"</span>
+      <span class="n">version</span> <span class="o">=</span> <span class="s2">"2.23.1"</span>
       <span class="p">}</span>
     <span class="p">}</span>
   <span class="p">}</span>
-</code></pre></div>          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> in the root of the project and add each block of code into it.
+</code></pre></div>          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">main.tf</p> in the root of the project.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">touch </span>main.tf
+</code></pre></div>          Add each of the following blocks of code into the file.
           <br><br>
           The Docker provider is configured to communicate with a Docker host listening on a Unix socket.
           <br><br>
@@ -205,10 +224,11 @@ bundle <span class="nb">install</span>
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">resource</span> <span class="s2">"docker_image"</span> <span class="s2">"ubuntu_sshd"</span> <span class="p">{</span>
   <span class="n">keep_locally</span> <span class="o">=</span> <span class="kp">true</span>
-  <span class="nb">name</span> <span class="o">=</span> <span class="s2">"${data.docker_registry_image.ubuntu_sshd.name}"</span>
+  <span class="nb">name</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="nf">docker_registry_image</span><span class="p">.</span><span class="nf">ubuntu_sshd</span><span class="p">.</span><span class="nf">name</span>
   <span class="n">pull_triggers</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">.</span><span class="nf">docker_registry_image</span><span class="p">.</span><span class="nf">ubuntu_sshd</span><span class="p">.</span><span class="nf">sha256_digest</span><span class="p">]</span>
 <span class="p">}</span>
-</code></pre></div>          A Docker container based on the Docker image is configured to be running on the Docker host. The container forwards localhost:2222 to its internal SSH daemon.
+</code></pre></div>          A Docker container based on the Docker image is configured to be running on the Docker host. The container
+          forwards localhost:2222 to its internal SSH daemon.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">resource</span> <span class="s2">"docker_container"</span> <span class="s2">"ubuntu"</span> <span class="p">{</span>
   <span class="n">image</span> <span class="o">=</span> <span class="n">docker_image</span><span class="p">.</span><span class="nf">ubuntu_sshd</span><span class="p">.</span><span class="nf">latest</span>
@@ -220,11 +240,16 @@ bundle <span class="nb">install</span>
     <span class="n">internal</span> <span class="o">=</span> <span class="mi">22</span>
   <span class="p">}</span>
 <span class="p">}</span>
+
 </code></pre></div>        </div>
         <div class="tab-pane fade" id="list-three" role="tabpanel" aria-labelledby="list-three-list">
-          To assist with testing, Terraform outputs will provide the path of the backend state file and the container host name. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
+          To assist with testing, Terraform outputs will provide the path of the backend state file and the container
+          host name. The Kitchen-Terraform verifier can use these artifacts to validate the Terraform code.
           <br><br>
-          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p> and add each block of code into it.
+          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">output.tf</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">touch </span>output.tf
+</code></pre></div>          Add each block of code into the file.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">output</span> <span class="s2">"terraform state"</span> <span class="p">{</span>
   <span class="n">description</span> <span class="o">=</span> <span class="s2">"The path to the backend state file"</span>
@@ -235,12 +260,17 @@ bundle <span class="nb">install</span>
   <span class="n">description</span> <span class="o">=</span> <span class="s2">"The container's host name"</span>
   <span class="n">value</span> <span class="o">=</span> <span class="s2">"localhost"</span>
 <span class="p">}</span>
-</code></pre></div>          Refer back to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file and in the verifier section you will see a reference to the above container host output.
+</code></pre></div>          Refer back to the <p class="font-weight-bold" style="color: #32c850; display: inline;">.kitchen.yml</p> file and in the verifier section
+          you will see a reference to the above container host output.
+          <br><br>
         </div>
         <div class="tab-pane fade" id="list-four" role="tabpanel" aria-labelledby="list-four-list">
           We've created the Terraform code, now it's time to create the Inspec control tests. Please see the <a href="https://www.inspec.io/docs/reference/profiles/" style="color: #32c850;">Inspec documentation</a> to learn more about profiles and controls.
           <br><br>
-          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p> and add the block below into it.
+          Create a default profile file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/inspec.yml</p>
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nb">touch test</span>/integration/examples/inspec.yml
+</code></pre></div>          Add the block below into the file.
           <br><br>
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
 <span class="na">name</span><span class="pi">:</span> <span class="s">default</span>
@@ -264,48 +294,53 @@ bundle <span class="nb">install</span>
 <span class="k">end</span>
 </code></pre></div>          Let's create the state_files control, which will validate the Terraform state file is created and has the proper content.
           <br><br>
-          Create this file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/state_file.rb</p>
+          Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">test/integration/example/controls/state_file.rb</p>
 <div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># frozen_string_literal: true</span>
 
-<span class="n">terraform_state</span> <span class="o">=</span> <span class="n">input</span><span class="p">(</span><span class="s2">"terraform_state"</span><span class="p">,</span> <span class="p">{})</span>
+<span class="n">terraform_state</span> <span class="o">=</span> <span class="n">input</span><span class="p">(</span><span class="s1">'terraform_state'</span><span class="p">,</span> <span class="p">{})</span>
 
-<span class="n">control</span> <span class="s2">"state_files"</span> <span class="k">do</span>
-  <span class="n">describe</span> <span class="s2">"the terraform state file"</span> <span class="k">do</span>
+<span class="n">control</span> <span class="s1">'state_files'</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s1">'the terraform state file'</span> <span class="k">do</span>
     <span class="n">subject</span> <span class="k">do</span>
       <span class="n">file</span> <span class="n">terraform_state</span>
-   <span class="k">end</span>
+    <span class="k">end</span>
 
-  <span class="n">it</span> <span class="k">do</span>
-    <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">exist</span>
+    <span class="n">it</span> <span class="k">do</span>
+      <span class="n">is_expected</span><span class="p">.</span><span class="nf">to</span> <span class="n">exist</span>
+    <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre></div>        </div>
+</code></pre></div>          <br><br>
+        </div>
         <div class="tab-pane fade" id="list-five" role="tabpanel" aria-labelledby="list-five-list">
-          Execute Kitchen-Terraform by running the below command
+          <strong>Before commencing this section of the tutorial please ensure docker is running on your machine, failure to do
+          will mean that you will not be able to successfully run the commands.</strong>
           <br><br>
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Create resources from the Terraform code in main.tf</span>
-<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
-</code></pre></div>          Below is an example output of Kitchen-Terraform running when you use the <strong>converge</strong> command.
+          Execute Kitchen-Terraform by running the command below in the terminal:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nt">-----</span><span class="o">&gt;</span> Starting Test Kitchen <span class="o">(</span>v2.12.0<span class="o">)</span>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">converge</span>
+</code></pre></div>          This creates resources from the Terraform code in the main.tf file. Below is an example output of
+          Kitchen-Terraform running when you use the <strong>converge</strong> command.
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nt">-----</span><span class="o">&gt;</span> Starting Test Kitchen <span class="o">(</span>v3.4.0<span class="o">)</span>
 <span class="nt">-----</span><span class="o">&gt;</span> Creating &lt;example-ubuntu&gt;...
 <span class="nv">$$$$$$</span> Reading the Terraform client version...
        Terraform v0.14.0
-       + provider registry.terraform.io/kreuzwerker/docker v2.13.0
+       + provider registry.terraform.io/kreuzwerker/docker v2.23.1
 
        Your version of Terraform is out of <span class="nb">date</span><span class="o">!</span> The latest version
-       is 1.0.2. You can update by downloading from https://www.terraform.io/downloads.html
+       is 1.3.6. You can update by downloading from https://www.terraform.io/downloads.html
 <span class="nv">$$$$$$</span> Finished reading the Terraform client version.
-<span class="nv">$$$$$$</span> Verifying the Terraform client version is <span class="k">in </span>the supported interval of <span class="o">&gt;=</span> 0.14.0, &lt; 1.1.0...
+<span class="nv">$$$$$$</span> Verifying the Terraform client version is <span class="k">in </span>the supported interval of <span class="o">&gt;=</span> 0.11.4, &lt; 2.0.0...
 <span class="nv">$$$$$$</span> Finished verifying the Terraform client version.
 <span class="nv">$$$$$$</span> Initializing the Terraform working directory...
 
        Initializing the backend...
 
        Initializing provider plugins...
-       - Finding kreuzwerker/docker versions matching <span class="s2">"2.13.0"</span>...
-       - Installing kreuzwerker/docker v2.13.0...
-       - Installed kreuzwerker/docker v2.13.0 <span class="o">(</span>self-signed, key ID 24E54F214569A8A5<span class="o">)</span>
+       - Finding kreuzwerker/docker versions matching <span class="s2">"2.23.1"</span>...
+       - Installing kreuzwerker/docker v2.23.1...
+       - Installed kreuzwerker/docker v2.23.1 <span class="o">(</span>self-signed, key ID BD080C4571C6104C<span class="o">)</span>
 
        Partner and community providers are signed by their developers.
        If you<span class="s1">'d like to know more about provider signing, you can read about it here:
@@ -320,16 +355,16 @@ $$$$$$ Creating the kitchen-terraform-example-ubuntu Terraform workspace...
        so <span class="k">if </span>you run <span class="s2">"terraform plan"</span> Terraform will not see any existing state
        <span class="k">for </span>this configuration.
 <span class="nv">$$$$$$</span> Finished creating the kitchen-terraform-example-ubuntu Terraform workspace.
-       Finished creating &lt;example-ubuntu&gt; <span class="o">(</span>0m4.54s<span class="o">)</span><span class="nb">.</span>
+       Finished creating &lt;example-ubuntu&gt; <span class="o">(</span>0m3.36s<span class="o">)</span><span class="nb">.</span>
 <span class="nt">-----</span><span class="o">&gt;</span> Converging &lt;example-ubuntu&gt;...
 <span class="nv">$$$$$$</span> Reading the Terraform client version...
-       Terraform v0.13.7
-       + provider registry.terraform.io/kreuzwerker/docker v2.13.0
+       Terraform v0.14.0
+       + provider registry.terraform.io/kreuzwerker/docker v2.23.1
 
        Your version of Terraform is out of <span class="nb">date</span><span class="o">!</span> The latest version
-       is 1.0.2. You can update by downloading from https://www.terraform.io/downloads.html
+       is 1.3.6. You can update by downloading from https://www.terraform.io/downloads.html
 <span class="nv">$$$$$$</span> Finished reading the Terraform client version.
-<span class="nv">$$$$$$</span> Verifying the Terraform client version is <span class="k">in </span>the supported interval of <span class="o">&gt;=</span> 0.11.4, &lt; 1.1.0...
+<span class="nv">$$$$$$</span> Verifying the Terraform client version is <span class="k">in </span>the supported interval of <span class="o">&gt;=</span> 0.11.4, &lt; 2.0.0...
 <span class="nv">$$$$$$</span> Finished verifying the Terraform client version.
 <span class="nv">$$$$$$</span> Selecting the kitchen-terraform-example-ubuntu Terraform workspace...
 <span class="nv">$$$$$$</span> Finished selecting the kitchen-terraform-example-ubuntu Terraform workspace.
@@ -340,18 +375,17 @@ $$$$$$ Creating the kitchen-terraform-example-ubuntu Terraform workspace...
 
 <span class="nv">$$$$$$</span> Finished validating the Terraform configuration files.
 <span class="nv">$$$$$$</span> Building the infrastructure based on the Terraform configuration...
-       data.docker_registry_image.ubuntu_sshd: Refreshing state...
        docker_image.ubuntu_sshd: Creating...
        docker_image.ubuntu_sshd: Creation <span class="nb">complete </span>after 0s <span class="o">[</span><span class="nb">id</span><span class="o">=</span>sha256:49533628fb371c9f1952c06cedf912c78a81fbe3914901334673c369376e077erastasheep/ubuntu-sshd:latest]
        docker_container.ubuntu: Creating...
-       docker_container.ubuntu: Creation <span class="nb">complete </span>after 2s <span class="o">[</span><span class="nb">id</span><span class="o">=</span>23dc5980f1a2a642d8b1f3c8a850ee023211db286448617f1e48741aa05d3a52]
+       docker_container.ubuntu: Creation <span class="nb">complete </span>after 1s <span class="o">[</span><span class="nb">id</span><span class="o">=</span>b2766cde74c528e46638f5ab273476431402f7053668499145bc03a12e07291f]
 
        Apply <span class="nb">complete</span><span class="o">!</span> Resources: 2 added, 0 changed, 0 destroyed.
 
        Outputs:
 
-       container_host <span class="o">=</span> localhost
-       terraform_state <span class="o">=</span> ./terraform.tfstate.d/kitchen-terraform-example-ubuntu/terraform.tfstate
+       container_host <span class="o">=</span> <span class="s2">"localhost"</span>
+       terraform_state <span class="o">=</span> <span class="s2">"./terraform.tfstate.d/kitchen-terraform-example-ubuntu/terraform.tfstate"</span>
 <span class="nv">$$$$$$</span> Finished building the infrastructure based on the Terraform configuration.
 <span class="nv">$$$$$$</span> Reading the output variables from the Terraform state...
 <span class="nv">$$$$$$</span> Finished reading the output variables from the Terraform state.
@@ -361,39 +395,40 @@ $$$$$$ Creating the kitchen-terraform-example-ubuntu Terraform workspace...
 <span class="nv">$$$$$$</span> Finished writing the output variables to the Kitchen instance state.
 <span class="nv">$$$$$$</span> Writing the input variables to the Kitchen instance state...
 <span class="nv">$$$$$$</span> Finished writing the input variables to the Kitchen instance state.
-       Finished converging &lt;example-ubuntu&gt; <span class="o">(</span>0m7.99s<span class="o">)</span><span class="nb">.</span>
-<span class="nt">-----</span><span class="o">&gt;</span> Test Kitchen is finished. <span class="o">(</span>0m13.78s<span class="o">)</span>
+       Finished converging &lt;example-ubuntu&gt; <span class="o">(</span>0m3.32s<span class="o">)</span><span class="nb">.</span>
+<span class="nt">-----</span><span class="o">&gt;</span> Test Kitchen is finished. <span class="o">(</span>0m7.86s<span class="o">)</span>
 
 </code></pre></div>
 Now run the Kitchen-Terraform tests using:
           <br><br>
-<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="c1"># Run the Inspec controls from the .kitchen.yml verifier section</span>
-<span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
-</code></pre></div>          The output below is an example of Kitchen-Terraform running when you use the <strong>verify</strong> command.
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
+</code></pre></div>          This executes the Inspec controls from the .kitchen.yml verifier section and will run the tests in the
+          <strong>operating_system.rb</strong> and <strong>state_file.rb</strong> files.
+          The output below is an example of Kitchen-Terraform running when you use the <strong>verify</strong> command.
         <br><br>
-<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nt">-----</span><span class="o">&gt;</span> Starting Test Kitchen <span class="o">(</span>v2.12.0<span class="o">)</span>
+<div class="highlight"><pre class="syntax-highlight shell"><code><span class="nt">-----</span><span class="o">&gt;</span> Starting Test Kitchen <span class="o">(</span>v3.4.0<span class="o">)</span>
 <span class="nt">-----</span><span class="o">&gt;</span> Setting up &lt;example-ubuntu&gt;...
        Finished setting up &lt;example-ubuntu&gt; <span class="o">(</span>0m0.00s<span class="o">)</span><span class="nb">.</span>
 <span class="nt">-----</span><span class="o">&gt;</span> Verifying &lt;example-ubuntu&gt;...
-       <span class="nv">$$$$$$</span> Reading the Terraform input variables from the Kitchen instance state...
-       <span class="nv">$$$$$$</span> Finished reading the Terraform input variables from the Kitchen instance state.
-       <span class="nv">$$$$$$</span> Reading the Terraform output variables from the Kitchen instance state...
-       <span class="nv">$$$$$$</span> Finished reading the Terraform output variables from the Kitchen instance state.
-       <span class="nv">$$$$$$</span> Verifying the systems...
-       <span class="nv">$$$$$$</span> Verifying the <span class="s1">'docker container'</span> system...
+<span class="nv">$$$$$$</span> Reading the Terraform input variables from the Kitchen instance state...
+<span class="nv">$$$$$$</span> Finished reading the Terraform input variables from the Kitchen instance state.
+<span class="nv">$$$$$$</span> Reading the Terraform output variables from the Kitchen instance state...
+<span class="nv">$$$$$$</span> Finished reading the Terraform output variables from the Kitchen instance state.
+<span class="nv">$$$$$$</span> Verifying the systems...
+<span class="nv">$$$$$$</span> Verifying the <span class="s1">'docker container'</span> system...
 
        Profile: default
        Version: <span class="o">(</span>not specified<span class="o">)</span>
        Target:  ssh://root@localhost:2222
 
-    ✔  operating_system: Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span>
-       ✔  Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span> stderr is expected to match /lsb_release: <span class="nb">command </span>not found/
-       ✔  Command: <span class="sb">`</span><span class="nb">uname</span> <span class="nt">-ar</span><span class="sb">`</span> stdout is expected to match /Linux/
-       ✔  Command: <span class="sb">`</span><span class="nb">env</span> <span class="nt">-i</span> bash <span class="nt">-c</span> <span class="s1">'. /etc/os-release; echo $NAME'</span><span class="sb">`</span> stdout is expected to match /Ubuntu/
+       ✔  operating_system: Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span>
+           ✔  Command: <span class="sb">`</span>lsb_release <span class="nt">-a</span><span class="sb">`</span> stderr is expected to match /lsb_release: <span class="nb">command </span>not found/
+           ✔  Command: <span class="sb">`</span><span class="nb">uname</span> <span class="nt">-ar</span><span class="sb">`</span> stdout is expected to match /Linux/
+           ✔  Command: <span class="sb">`</span><span class="nb">env</span> <span class="nt">-i</span> bash <span class="nt">-c</span> <span class="s1">'. /etc/os-release; echo $NAME'</span><span class="sb">`</span> stdout is expected to match /Ubuntu/
 
 
-       Profile Summary: 2 successful controls, 0 control failures, 0 controls skipped
-       Test Summary: 5 successful, 0 failures, 0 skipped
+       Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
+       Test Summary: 3 successful, 0 failures, 0 skipped
 <span class="nv">$$$$$$</span> Finished verifying the <span class="s1">'docker container'</span> system.
 <span class="nv">$$$$$$</span> Verifying the <span class="s1">'terraform state'</span> system...
 
@@ -401,17 +436,25 @@ Now run the Kitchen-Terraform tests using:
        Version: <span class="o">(</span>not specified<span class="o">)</span>
        Target:  <span class="nb">local</span>://
 
-    ✔  state_files: the terraform state file
-       ✔  the terraform state file is expected to exist
+       ✔  state_files: the terraform state file
+           ✔  the terraform state file is expected to exist
 
 
        Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
        Test Summary: 1 successful, 0 failures, 0 skipped
 <span class="nv">$$$$$$</span> Finished verifying the <span class="s1">'terraform state'</span> system.
 <span class="nv">$$$$$$</span> Finished verifying the systems.
-       Finished verifying &lt;example-ubuntu&gt; <span class="o">(</span>0m3.41s<span class="o">)</span><span class="nb">.</span>
-<span class="nt">-----</span><span class="o">&gt;</span> Test Kitchen is finished. <span class="o">(</span>0m4.96s<span class="o">)</span>
-</code></pre></div>      </div>
+       Finished verifying &lt;example-ubuntu&gt; <span class="o">(</span>0m6.20s<span class="o">)</span><span class="nb">.</span>
+<span class="nt">-----</span><span class="o">&gt;</span> Test Kitchen is finished. <span class="o">(</span>0m7.62s<span class="o">)</span>
+</code></pre></div>          Once you are finished running the tests with:
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight ruby"><code><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">kitchen</span> <span class="n">verify</span>
+</code></pre></div>          Run the following in the terminal:
+          <br><br>
+<div class="highlight"><pre class="syntax-highlight shell"><code>bundle <span class="nb">exec </span>kitchen destroy
+</code></pre></div>          This will destroy the docker container and delete all information for that instance.
+          <br><br>
+      </div>
     </div>
   </div>
 </div>
