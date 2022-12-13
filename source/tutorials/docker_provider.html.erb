@@ -54,8 +54,8 @@ cd docker_provider_example
           Create the <p class="font-weight-bold" style="color: #32c850; display: inline;">Gemfile</p> in the root of the project, so that you can install your dependencies.
           <br><br>
           <% code("ruby") do %>
-source "https://rubygems.org/" do
-  gem "kitchen-terraform"
+source 'https://rubygems.org/' do
+  gem 'kitchen-terraform', '~> 6.1'
 end
           <% end %>
           Install Kitchen-Terraform and other rubygems, install bundler if not installed yet.
@@ -125,19 +125,19 @@ suites:
           <br><br>
           Create the file <p class="font-weight-bold" style="color: #32c850; display: inline;">versions.tf</p> in the root of the project and add the block of code into it.
           <br><br>
-          The configuration is restricted to Terraform versions equal to or greater than 0.14.0 and less than 1.1.0. The Docker provider is used to interact with Docker containers and images, it uses the Docker API to manage the lifecycle of Docker containers.
+          The configuration is restricted to Terraform versions equal to or greater than 0.14.0 and less than 2.0.0. The Docker provider is used to interact with Docker containers and images, it uses the Docker API to manage the lifecycle of Docker containers.
           <br><br>
           <% code("ruby") do %>
 # Set the required provider and versions
 terraform {
-  required_version = ">= 0.14.0, < 1.1.0"
+  required_version = ">= 0.14.0, < 2.0.0"
 
   required_providers {
   # We recommend pinning to the specific version of the Docker Provider you're using
   # since new versions are released frequently
     docker = {
       source = "kreuzwerker/docker"
-      version = "2.13.0"
+      version = "2.23.1"
       }
     }
   }
@@ -259,25 +259,25 @@ bundle exec kitchen converge
           Below is an example output of Kitchen-Terraform running when you use the <strong>converge</strong> command.
           <br><br>
           <% code("bash") do %>
------> Starting Test Kitchen (v2.12.0)
+-----> Starting Test Kitchen (v3.4.0)
 -----> Creating <example-ubuntu>...
 $$$$$$ Reading the Terraform client version...
        Terraform v0.14.0
-       + provider registry.terraform.io/kreuzwerker/docker v2.13.0
+       + provider registry.terraform.io/kreuzwerker/docker v2.23.1
 
        Your version of Terraform is out of date! The latest version
-       is 1.0.2. You can update by downloading from https://www.terraform.io/downloads.html
+       is 1.3.6. You can update by downloading from https://www.terraform.io/downloads.html
 $$$$$$ Finished reading the Terraform client version.
-$$$$$$ Verifying the Terraform client version is in the supported interval of >= 0.14.0, < 1.1.0...
+$$$$$$ Verifying the Terraform client version is in the supported interval of >= 0.11.4, < 2.0.0...
 $$$$$$ Finished verifying the Terraform client version.
 $$$$$$ Initializing the Terraform working directory...
 
        Initializing the backend...
 
        Initializing provider plugins...
-       - Finding kreuzwerker/docker versions matching "2.13.0"...
-       - Installing kreuzwerker/docker v2.13.0...
-       - Installed kreuzwerker/docker v2.13.0 (self-signed, key ID 24E54F214569A8A5)
+       - Finding kreuzwerker/docker versions matching "2.23.1"...
+       - Installing kreuzwerker/docker v2.23.1...
+       - Installed kreuzwerker/docker v2.23.1 (self-signed, key ID BD080C4571C6104C)
 
        Partner and community providers are signed by their developers.
        If you'd like to know more about provider signing, you can read about it here:
@@ -292,16 +292,16 @@ $$$$$$ Creating the kitchen-terraform-example-ubuntu Terraform workspace...
        so if you run "terraform plan" Terraform will not see any existing state
        for this configuration.
 $$$$$$ Finished creating the kitchen-terraform-example-ubuntu Terraform workspace.
-       Finished creating <example-ubuntu> (0m4.54s).
+       Finished creating <example-ubuntu> (0m3.36s).
 -----> Converging <example-ubuntu>...
 $$$$$$ Reading the Terraform client version...
-       Terraform v0.13.7
-       + provider registry.terraform.io/kreuzwerker/docker v2.13.0
+       Terraform v0.14.0
+       + provider registry.terraform.io/kreuzwerker/docker v2.23.1
 
        Your version of Terraform is out of date! The latest version
-       is 1.0.2. You can update by downloading from https://www.terraform.io/downloads.html
+       is 1.3.6. You can update by downloading from https://www.terraform.io/downloads.html
 $$$$$$ Finished reading the Terraform client version.
-$$$$$$ Verifying the Terraform client version is in the supported interval of >= 0.11.4, < 1.1.0...
+$$$$$$ Verifying the Terraform client version is in the supported interval of >= 0.11.4, < 2.0.0...
 $$$$$$ Finished verifying the Terraform client version.
 $$$$$$ Selecting the kitchen-terraform-example-ubuntu Terraform workspace...
 $$$$$$ Finished selecting the kitchen-terraform-example-ubuntu Terraform workspace.
@@ -312,18 +312,17 @@ $$$$$$ Validating the Terraform configuration files...
 
 $$$$$$ Finished validating the Terraform configuration files.
 $$$$$$ Building the infrastructure based on the Terraform configuration...
-       data.docker_registry_image.ubuntu_sshd: Refreshing state...
        docker_image.ubuntu_sshd: Creating...
        docker_image.ubuntu_sshd: Creation complete after 0s [id=sha256:49533628fb371c9f1952c06cedf912c78a81fbe3914901334673c369376e077erastasheep/ubuntu-sshd:latest]
        docker_container.ubuntu: Creating...
-       docker_container.ubuntu: Creation complete after 2s [id=23dc5980f1a2a642d8b1f3c8a850ee023211db286448617f1e48741aa05d3a52]
+       docker_container.ubuntu: Creation complete after 1s [id=b2766cde74c528e46638f5ab273476431402f7053668499145bc03a12e07291f]
 
        Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 
        Outputs:
 
-       container_host = localhost
-       terraform_state = ./terraform.tfstate.d/kitchen-terraform-example-ubuntu/terraform.tfstate
+       container_host = "localhost"
+       terraform_state = "./terraform.tfstate.d/kitchen-terraform-example-ubuntu/terraform.tfstate"
 $$$$$$ Finished building the infrastructure based on the Terraform configuration.
 $$$$$$ Reading the output variables from the Terraform state...
 $$$$$$ Finished reading the output variables from the Terraform state.
@@ -333,8 +332,8 @@ $$$$$$ Writing the output variables to the Kitchen instance state...
 $$$$$$ Finished writing the output variables to the Kitchen instance state.
 $$$$$$ Writing the input variables to the Kitchen instance state...
 $$$$$$ Finished writing the input variables to the Kitchen instance state.
-       Finished converging <example-ubuntu> (0m7.99s).
------> Test Kitchen is finished. (0m13.78s)
+       Finished converging <example-ubuntu> (0m3.32s).
+-----> Test Kitchen is finished. (0m7.86s)
 
         <% end %>
 
@@ -347,29 +346,29 @@ bundle exec kitchen verify
           The output below is an example of Kitchen-Terraform running when you use the <strong>verify</strong> command.
         <br><br>
         <% code("bash") do %>
------> Starting Test Kitchen (v2.12.0)
+-----> Starting Test Kitchen (v3.4.0)
 -----> Setting up <example-ubuntu>...
        Finished setting up <example-ubuntu> (0m0.00s).
 -----> Verifying <example-ubuntu>...
-       $$$$$$ Reading the Terraform input variables from the Kitchen instance state...
-       $$$$$$ Finished reading the Terraform input variables from the Kitchen instance state.
-       $$$$$$ Reading the Terraform output variables from the Kitchen instance state...
-       $$$$$$ Finished reading the Terraform output variables from the Kitchen instance state.
-       $$$$$$ Verifying the systems...
-       $$$$$$ Verifying the 'docker container' system...
+$$$$$$ Reading the Terraform input variables from the Kitchen instance state...
+$$$$$$ Finished reading the Terraform input variables from the Kitchen instance state.
+$$$$$$ Reading the Terraform output variables from the Kitchen instance state...
+$$$$$$ Finished reading the Terraform output variables from the Kitchen instance state.
+$$$$$$ Verifying the systems...
+$$$$$$ Verifying the 'docker container' system...
 
        Profile: default
        Version: (not specified)
        Target:  ssh://root@localhost:2222
 
-    ✔  operating_system: Command: `lsb_release -a`
+       ✔  operating_system: Command: `lsb_release -a`
        ✔  Command: `lsb_release -a` stderr is expected to match /lsb_release: command not found/
        ✔  Command: `uname -ar` stdout is expected to match /Linux/
        ✔  Command: `env -i bash -c '. /etc/os-release; echo $NAME'` stdout is expected to match /Ubuntu/
 
 
-       Profile Summary: 2 successful controls, 0 control failures, 0 controls skipped
-       Test Summary: 5 successful, 0 failures, 0 skipped
+       Profile Summary: 1 successful control, 0 control failures, 0 controls skipped
+       Test Summary: 3 successful, 0 failures, 0 skipped
 $$$$$$ Finished verifying the 'docker container' system.
 $$$$$$ Verifying the 'terraform state' system...
 
@@ -377,7 +376,7 @@ $$$$$$ Verifying the 'terraform state' system...
        Version: (not specified)
        Target:  local://
 
-    ✔  state_files: the terraform state file
+       ✔  state_files: the terraform state file
        ✔  the terraform state file is expected to exist
 
 
@@ -385,8 +384,8 @@ $$$$$$ Verifying the 'terraform state' system...
        Test Summary: 1 successful, 0 failures, 0 skipped
 $$$$$$ Finished verifying the 'terraform state' system.
 $$$$$$ Finished verifying the systems.
-       Finished verifying <example-ubuntu> (0m3.41s).
------> Test Kitchen is finished. (0m4.96s)
+       Finished verifying <example-ubuntu> (0m6.20s).
+-----> Test Kitchen is finished. (0m7.62s)
         <% end %>
       </div>
     </div>
