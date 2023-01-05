@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased][unreleased]
 
+### Added
+
+- Support for Inspec < 6.0
+
+### Changed
+
+- Dropped support for Inspec < 4.25.1
+
 ## [6.1.0] - 2022-01-22
 
 ### Added
