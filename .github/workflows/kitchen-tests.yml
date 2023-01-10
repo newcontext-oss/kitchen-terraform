@@ -12,7 +12,7 @@ on:
 defaults:
   run:
     shell: bash
-    
+
 jobs:
   kitchen-tests:
     strategy:
@@ -28,7 +28,7 @@ jobs:
             terraform-version: '0.14.11'
           - operating-system: windows
             terraform-version: '0.13.7'
-        
+
     runs-on: ${{ matrix.operating-system }}-latest
     steps:
       - name: Checkout Repository
