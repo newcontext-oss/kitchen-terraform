@@ -66,7 +66,7 @@ The following command will execute the unit tests.
 > Executing unit tests with RSpec
 
 ```sh
-bundle exec rake test:spec
+bundle exec rake test:rspec
 ```
 
 [.rspec](.rspec) contains command line options which will be
