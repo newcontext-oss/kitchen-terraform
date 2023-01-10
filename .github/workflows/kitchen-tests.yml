@@ -36,8 +36,8 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0'
-          # bundler 2.2 fails to install the gems
+          # kitchen/rake_tasks raises a `NameError: undefined method `=~'` error on Ruby 3.2
+          ruby-version: '3.1'
           bundler: '2.1.4'
           bundler-cache: true
       - name: Setup Terraform
