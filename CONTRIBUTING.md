@@ -201,7 +201,7 @@ bundle exec middleman build --build-dir docs
 [github-issue-tracker]: https://github.com/newcontext-oss/kitchen-terraform/issues
 [gitter-chat]: https://gitter.im/kitchen-terraform/Lobby
 [guard]: http://guardgem.org/
-[inspec]: https://github.com/chef/inspec/tree/v1.44.8
+[inspec]: https://github.com/inspec/inspec
 [middleman]: https://middlemanapp.com/
 [rake]: https://ruby.github.io/rake/
 [rspec]: http://rspec.info/
