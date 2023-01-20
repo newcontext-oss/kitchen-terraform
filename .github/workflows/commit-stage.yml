@@ -1,4 +1,4 @@
-name: RSpec Tests
+name: Commit Stage
 
 on:
   pull_request:
