@@ -36,3 +36,31 @@ jobs:
         uses: paambaati/codeclimate-action@v3.2.0
         with:
           coverageCommand: bundle exec rake test:rspec
+
+  build-release-candidate:
+    name: Build Release Candidate
+    needs:
+      - unit-tests
+    runs-on: ubuntu-latest
+    env:
+      GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler: '2.4'
+          bundler-cache: true
+      - name: Build Ruby Gem
+        run: |
+          printf -- "${GEM_PRIVATE_KEY}\n" > certs/gem-private_key.pem
+          gem cert --add certs/gem-public_cert.pem
+          gem build kitchen-terraform.gemspec --strict --output kitchen-terraform.gem
+      - name: Upload Ruby Gem
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: ruby-gem
+          path: kitchen-terraform.gem
