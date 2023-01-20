@@ -1,4 +1,4 @@
-name: Commit Stage
+name: Delivery Pipeline
 
 on:
   push:
