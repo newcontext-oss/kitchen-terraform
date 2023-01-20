@@ -12,7 +12,7 @@ on:
 defaults:
   run:
     shell: bash
-    
+
 jobs:
   kitchen-tests:
     strategy:
@@ -28,7 +28,7 @@ jobs:
             terraform-version: '0.14.11'
           - operating-system: windows
             terraform-version: '0.13.7'
-        
+
     runs-on: ${{ matrix.operating-system }}-latest
     steps:
       - name: Checkout Repository
@@ -36,9 +36,9 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0'
-          # bundler 2.2 fails to install the gems
-          bundler: '2.1.4'
+          # kitchen/rake_tasks raises a `NameError: undefined method `=~'` error on Ruby 3.2
+          ruby-version: '3.1'
+          bundler: '2.4'
           bundler-cache: true
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2

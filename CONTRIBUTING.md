@@ -66,7 +66,7 @@ The following command will execute the unit tests.
 > Executing unit tests with RSpec
 
 ```sh
-bundle exec rake test:spec
+bundle exec rake test:rspec
 ```
 
 [.rspec](.rspec) contains command line options which will be
@@ -135,17 +135,17 @@ analysis locally.
 [GitHub Actions][github-actions] are used to provide continuous integration and
 continuous deployment functionality for the Ruby gem.
 
-[rspec-tests.yml](.github/workflows/rspec-tests.yml) defines unit tests 
-that will be executed for each commit to the master branch and each  
+[rspec-tests.yml](.github/workflows/rspec-tests.yml) defines unit tests
+that will be executed for each commit to the master branch and each
 commit to a branch with an open pull request.
 
-[kitchen-tests.yml](.github/workflows/kitchen-tests.yml) defines 
-integration tests that will be executed for each commit to the master 
+[kitchen-tests.yml](.github/workflows/kitchen-tests.yml) defines
+integration tests that will be executed for each commit to the master
 branch and each commit to a branch with an open pull request.
 
-[release.yml](.github/workflows/release.yml) contains the job 
-configuration to deploy the Ruby gem. If a [tag][git-tag] starting with 
-v is pushed to the master branch, then the job will attempt to build 
+[release.yml](.github/workflows/release.yml) contains the job
+configuration to deploy the Ruby gem. If a [tag][git-tag] starting with
+v is pushed to the master branch, then the job will attempt to build
 the Ruby gem and deploy it to [RubyGems][ruby-gems].
 
 #### Releasing
