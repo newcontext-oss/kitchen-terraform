@@ -1,6 +1,7 @@
 name: Commit Stage
 
 on:
+  push:
   pull_request:
     paths:
       - '.rspec'
