@@ -5,7 +5,8 @@ on:
   pull_request:
 
 jobs:
-  rspec-tests:
+  unit-tests:
+    name: "Unit Tests"
     strategy:
       fail-fast: false
       matrix:
