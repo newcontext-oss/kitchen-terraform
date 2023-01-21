@@ -5,8 +5,9 @@ on:
   pull_request:
 
 jobs:
-  commit-stage:
-    name: "Commit Stage"
+  commit:
+    name: "Commit"
+    if: ${{ github.ref_type == 'branch' }}
     strategy:
       fail-fast: false
       matrix:
@@ -51,11 +52,11 @@ jobs:
           name: ruby-gem
           path: kitchen-terraform.gem
 
-  acceptance-stage:
-    name: "Acceptance Stage"
-    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+  acceptance:
+    name: "Acceptance"
+    if: ${{ github.ref_type == 'branch' && github.event_name == 'push' && github.ref_name == 'main' }}
     needs:
-      - commit-stage
+      - commit
     strategy:
       fail-fast: false
       matrix:
@@ -71,7 +72,7 @@ jobs:
             terraform-version: '0.13.7'
     runs-on: ${{ matrix.operating-system }}-latest
     env:
-      BUNDLE_GEMFILE: gems-acceptance.rb
+      BUNDLE_GEMFILE:   gems-acceptance.rb
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -112,3 +113,24 @@ jobs:
         run: |
           chmod 400 ./test/terraform/$VERSION_MATCHER/backend-ssh/id_ed25519
           bundle exec rake test:kitchen:backend-ssh-ubuntu
+
+  release:
+    name: "Release"
+    if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: false
+    - name: Download Ruby Gem
+      uses: actions/download-artifact@v3
+      with:
+        name: ruby-gem
+        path: kitchen-terraform.gem
+    - name: Publish
+      env:
+        GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
+      run: gem push kitchen-terraform.gem
