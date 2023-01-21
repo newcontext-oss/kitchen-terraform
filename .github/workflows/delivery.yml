@@ -38,10 +38,12 @@ jobs:
         with:
           coverageCommand: bundle exec rake test:rspec
       - name: Initialize CodeQL
+        if: ${{ matrix.ruby-version == '3.2' }}
         uses: github/codeql-action/init@v2
         with:
           languages: ruby
       - name: Perform CodeQL Analysis
+        if: ${{ matrix.ruby-version == '3.2' }}
         uses: github/codeql-action/analyze@v2
       - name: Build Ruby Gem
         if: ${{ matrix.ruby-version == '3.2' }}
