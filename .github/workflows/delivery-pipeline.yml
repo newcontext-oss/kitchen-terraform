@@ -50,3 +50,65 @@ jobs:
         with:
           name: ruby-gem
           path: kitchen-terraform.gem
+
+  acceptance-stage:
+    name: "Acceptance Stage"
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+    needs:
+      - commit-stage
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - operating-system: macos
+            terraform-version: '1.1.4'
+            terragrunt-version: '0.36.0'
+          - operating-system: ubuntu
+            terraform-version: '0.15.5'
+          - operating-system: ubuntu
+            terraform-version: '0.14.11'
+          - operating-system: windows
+            terraform-version: '0.13.7'
+    runs-on: ${{ matrix.operating-system }}-latest
+    env:
+      BUNDLE_GEMFILE: gems-acceptance.rb
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Download Ruby Gem
+        uses: actions/download-artifact@v3
+        with:
+          name: ruby-gem
+          path: kitchen-terraform.gem
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          # kitchen/rake_tasks raises a `NameError: undefined method `=~'` error on Ruby 3.2
+          ruby-version: '3.1'
+          bundler: '2.4'
+          bundler-cache: true
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ matrix.terraform-version }}
+          terraform_wrapper: false
+      - name: Setup Terragrunt
+        if: ${{ matrix.operating-system == 'macos' }}
+        uses: autero1/action-terragrunt@v1.2.0
+        with:
+          terragrunt_version: ${{ matrix.terragrunt-version }}
+      - name: Mirror Terraform Providers
+        run: |
+          cd ./test/terraform/PlugIns
+          terraform providers mirror ./PlugInDirectory
+      - name: Run Kitchen Tests
+        run: |
+          bundle exec rake test:kitchen:attributes-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:plug-ins-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:variables-${{ matrix.operating-system }}
+          bundle exec rake test:kitchen:workspaces-${{ matrix.operating-system }}
+      - name: Run Kitchen Test backend-ssh
+        if: ${{ matrix.operating-system == 'ubuntu' }}
+        run: |
+          chmod 400 ./test/terraform/$VERSION_MATCHER/backend-ssh/id_ed25519
+          bundle exec rake test:kitchen:backend-ssh-ubuntu
