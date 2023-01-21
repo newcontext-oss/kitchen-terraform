@@ -1,4 +1,4 @@
-name: Delivery Pipeline
+name: Delivery
 
 on:
   push:
