@@ -37,6 +37,12 @@ jobs:
           CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
         with:
           coverageCommand: bundle exec rake test:rspec
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ruby
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
       - name: Build Ruby Gem
         if: ${{ matrix.ruby-version == '3.2' }}
         env:
