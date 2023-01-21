@@ -46,7 +46,7 @@ jobs:
           gem cert --add certs/gem-public_cert.pem
           gem build kitchen-terraform.gemspec --strict --output kitchen-terraform.gem
       - name: Upload Ruby Gem
-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' && matrix.ruby-version == '3.2' }}
         uses: actions/upload-artifact@v3
         with:
           name: ruby-gem
