@@ -1,8 +1,8 @@
 name: Delivery
 
 on:
-  push:
-  pull_request:
+  - push
+  - pull_request
 
 jobs:
   commit:
