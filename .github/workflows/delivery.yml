@@ -1,5 +1,7 @@
 name: Delivery
 
+concurrency: delivery-${{ github.ref }}
+
 on:
   - push
 
