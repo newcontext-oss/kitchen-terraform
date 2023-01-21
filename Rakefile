@@ -14,8 +14,8 @@ namespace :test do
     puts "Terraform is not available; omitting Kitchen tasks", user_error, ""
   rescue ::LoadError => load_error
     puts "The gem named test-kitchen is not available", load_error, ""
-  rescue ::NoMethodError => no_method_error
-    puts "kitchen/rake_tasks is not compatible with this version of Ruby", no_method_error, ""
+  rescue ::NameError => name_error
+    puts "kitchen/rake_tasks is not compatible with this version of Ruby", name_error, ""
   end
 end
 
