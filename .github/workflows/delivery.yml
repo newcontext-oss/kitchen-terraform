@@ -92,7 +92,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: ruby-gem
-          path: kitchen-terraform.gem
       - name: Install Ruby Gems
         run: gem install --conservative --minimal-deps --verbose kitchen-terraform.gem rake
       - name: Setup Terraform
