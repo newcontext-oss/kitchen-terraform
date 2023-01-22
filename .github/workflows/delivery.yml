@@ -55,7 +55,7 @@ jobs:
           gem cert --add certs/gem-public_cert.pem
           gem build kitchen-terraform.gemspec --strict --output kitchen-terraform.gem
       - name: Upload Ruby Gem
-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' && matrix.ruby-version == '3.2' }}
+        if: ${{ github.event_name == 'push' && github.ref_name == 'main' && matrix.ruby-version == '3.1' }}
         uses: actions/upload-artifact@v3
         with:
           name: ruby-gem
@@ -131,7 +131,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.2'
+        ruby-version: '3.1'
         bundler-cache: false
     - name: Download Ruby Gem
       uses: actions/download-artifact@v3
