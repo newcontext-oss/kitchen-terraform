@@ -80,22 +80,21 @@ jobs:
           - operating-system: windows
             terraform-version: '0.13.7'
     runs-on: ${{ matrix.operating-system }}-latest
-    env:
-      BUNDLE_GEMFILE:   gems-acceptance.rb
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler-cache: false
       - name: Download Ruby Gem
         uses: actions/download-artifact@v3
         with:
           name: ruby-gem
           path: kitchen-terraform.gem
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-          bundler: '2.4'
-          bundler-cache: true
+      - name: Install Ruby Gems
+        run: gem install --conservative --minimal-deps --verbose kitchen-terraform.gem rake
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -112,15 +111,15 @@ jobs:
           terraform providers mirror ./PlugInDirectory
       - name: Run Kitchen Tests
         run: |
-          bundle exec rake test:kitchen:attributes-${{ matrix.operating-system }}
-          bundle exec rake test:kitchen:plug-ins-${{ matrix.operating-system }}
-          bundle exec rake test:kitchen:variables-${{ matrix.operating-system }}
-          bundle exec rake test:kitchen:workspaces-${{ matrix.operating-system }}
+          rake test:kitchen:attributes-${{ matrix.operating-system }}
+          rake test:kitchen:plug-ins-${{ matrix.operating-system }}
+          rake test:kitchen:variables-${{ matrix.operating-system }}
+          rake test:kitchen:workspaces-${{ matrix.operating-system }}
       - name: Run Kitchen Test backend-ssh
         if: ${{ matrix.operating-system == 'ubuntu' }}
         run: |
           chmod 400 ./test/terraform/$VERSION_MATCHER/backend-ssh/id_ed25519
-          bundle exec rake test:kitchen:backend-ssh-ubuntu
+          rake test:kitchen:backend-ssh-ubuntu
 
   release:
     name: "Release"
