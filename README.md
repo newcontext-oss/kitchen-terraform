@@ -1,4 +1,3 @@
-
 # ![Kitchen-Terraform Logo][kitchen-terraform-logo] Kitchen-Terraform
 
 > Kitchen-Terraform enables verification of infrastructure systems provisioned with Terraform.
@@ -7,12 +6,11 @@
 [![Gem downloads version][gem-downloads-version-shield]][kitchen-terraform-gem]
 [![Gem downloads total][gem-downloads-total-shield]][kitchen-terraform-gem]
 
-[![Kitchen tests workflow][kitchen-tests-workflow-shield]][kitchen-tests-workflow]
-[![RSpec tests workflow][rspec-tests-workflow-shield]][rspec-tests-workflow]
+[![Delivery][delivery-shield]][delivery-workflow]
+[![Pages Build and Deployment][pages-build-deployment-shield]][pages-build-deployment-workflow]
 [![Code coverage][code-coverage-shield]][code-coverage]
 [![Maintainability][maintainability-shield]][maintainability]
 [![Technical debt][technical-debt-shield]][technical-debt]
-[![Dependencies][hakiri-shield]][hakiri]
 
 [![Gitter chat][gitter-shield]][gitter]
 
@@ -75,11 +73,13 @@ the semantic versioning of the Ruby gem.
 > Defining Kitchen-Terraform as a dependency for Bundler in a Gemfile
 
 ---
+
 ```ruby
 source "https://rubygems.org/" do
   gem "kitchen-terraform", "~> 6.1"
 end
 ```
+
 ---
 
 Second, run the following command.
@@ -87,9 +87,11 @@ Second, run the following command.
 > Installing Kitchen-Terraform with Bundler
 
 ---
+
 ```sh
 bundle install
 ```
+
 ---
 
 The preceding command will create a `Gemfile.lock` comprising a list
@@ -107,9 +109,11 @@ example.
 > Installing Kitchen-Terraform with RubyGems
 
 ---
+
 ```sh
 gem install kitchen-terraform --version 6.1.0
 ```
+
 ---
 
 This approach is not recommended as it requires more effort to install
@@ -233,9 +237,6 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 
 <!-- Markdown links and image definitions -->
 
-[appveyor-build-status-shield]: https://ci.appveyor.com/api/projects/status/8d7t014gij5grk5r/branch/master?svg=true
-[appveyor-build-status]: https://ci.appveyor.com/project/aaron-lane/kitchen-terraform/branch/master
-[bundler-getting-started]: https://bundler.io/#getting-started
 [bundler-in-depth]: https://bundler.io/gemfile.html
 [bundler]: https://bundler.io/index.html#getting-started
 [changelog]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CHANGELOG.md
@@ -243,37 +244,31 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [code-coverage]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
 [contributing-document]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/CONTRIBUTING.md
 [contributors]: https://github.com/newcontext-oss/kitchen-terraform/graphs/contributors
-[docker]: https://www.docker.com/
-[docker-community-edition]: https://store.docker.com/editions/community/docker-ce-server-ubuntu
-[docker-provider]: https://www.terraform.io/docs/providers/docker/index.html
+[copado-github]: https://github.com/CopadoSolutions
+[copado-linkedin]: https://www.linkedin.com/company/copado-solutions-s.l
+[copado-twitter]: https://twitter.com/CopadoSolutions
+[copado]: https://copado.com/
+[delivery-shield]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/delivery.yml/badge.svg
+[delivery-workflow]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/delivery.yml
 [gem-downloads-total-shield]: https://img.shields.io/gem/dt/kitchen-terraform.svg
 [gem-downloads-version-shield]: https://img.shields.io/gem/dtv/kitchen-terraform.svg
 [gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg
 [gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg
 [gitter]: https://gitter.im/kitchen-terraform/Lobby
-[hakiri-shield]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/master.svg
-[hakiri]: https://hakiri.io/github/newcontext-oss/kitchen-terraform/
 [inspec]: https://www.inspec.io/
 [int-kitchen-config]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/kitchen.yml
-[issue-271]: https://github.com/newcontext-oss/kitchen-terraform/issues/271
-[kitchen]: http://kitchen.ci/index.html
 [kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
-[kitchen-tests-workflow]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/kitchen-tests.yml
-[kitchen-tests-workflow-shield]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/kitchen-tests.yml/badge.svg
+[kitchen]: http://kitchen.ci/index.html
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
 [maintainability-shield]: https://img.shields.io/codeclimate/maintainability-percentage/newcontext-oss/kitchen-terraform.svg
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
-[copado-github]: https://github.com/CopadoSolutions
-[copado-linkedin]: https://www.linkedin.com/company/copado-solutions-s.l
-[copado-twitter]: https://twitter.com/CopadoSolutions
-[copado]: https://copado.com/
+[pages-build-deployment-shield]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/pages/pages-build-deployment/badge.svg
+[pages-build-deployment-workflow]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/pages/pages-build-deployment
 [rbenv]: https://github.com/rbenv/rbenv
 [rbnacl-installation]: https://github.com/crypto-rb/rbnacl/tree/v4.0.2#installation
-[rspec-tests-workflow]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/rspec-tests.yml
-[rspec-tests-workflow-shield]: https://github.com/newcontext-oss/kitchen-terraform/actions/workflows/rspec-tests.yml/badge.svg
 [ruby-branches]: https://www.ruby-lang.org/en/downloads/branches/
 [ruby-gem-documentation]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/
 [ruby-gems-what-is]: http://guides.rubygems.org/ruby-gems-what-is/index.html
