@@ -31,6 +31,7 @@ require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/driver/create"
 require "kitchen/terraform/driver/destroy"
+require "kitchen/terraform/driver/doctor"
 require "kitchen/terraform/version_verifier"
 require "rubygems"
 require "shellwords"
@@ -189,6 +190,14 @@ module Kitchen
         destroy_strategy.call
       rescue => error
         action_failed.call message: error.message
+      end
+
+      # doctor checks the system and configuration for common errors.
+      #
+      # @param _state [Hash] the mutable Kitchen instance state.
+      # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
+      def doctor(_state)
+        ::Kitchen::Terraform::Driver::Doctor.new(logger: logger).call config: config
       end
 
       # #finalize_config! invokes the super implementation and then initializes the strategies.
