@@ -14,8 +14,8 @@
 
 [![Gitter chat][gitter-shield]][gitter]
 
-Kitchen-Terraform provides a set of [Kitchen][kitchen] plugins
-which enable the use of Kitchen to converge a [Terraform][terraform]
+Kitchen-Terraform provides a set of [Test Kitchen][test-kitchen] plugins
+which enable the use of Test Kitchen to converge a [Terraform][terraform]
 configuration and verify the resulting infrastructure systems with
 [InSpec][inspec] controls.
 
@@ -139,7 +139,7 @@ Ed25519-type SSH keys.
 
 Kitchen-Terraform provides three Test Kitchen plugins which must be
 configured in a
-[Kitchen configuration file][kitchen-configuration-file] in
+[Test Kitchen configuration file][kitchen-configuration-file] in
 order to successfully test Terraform configuration.
 
 The [Terraform driver][terraform-driver] manages the state of the
@@ -170,7 +170,7 @@ Several tutorials are available on the
 
 The integration tests for Kitchen-Terraform can also be viewed as
 examples of how it works. The
-[integration test Kitchen configuration file][int-kitchen-config]
+[integration test Test Kitchen configuration file][int-kitchen-config]
 and the [integration test directory][test-directory] provide several
 functional examples which exercise various features of
 Kitchen-Terraform.
@@ -261,7 +261,6 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
 [kitchen-terraform-logo]: https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/logo.png
 [kitchen-terraform-tutorials]: https://newcontext-oss.github.io/kitchen-terraform/tutorials/
-[kitchen]: http://kitchen.ci/index.html
 [license]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/LICENSE
 [maintainability-shield]: https://img.shields.io/codeclimate/maintainability-percentage/newcontext-oss/kitchen-terraform.svg
 [maintainability]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
@@ -284,4 +283,5 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
 [test-directory]: https://github.com/newcontext-oss/kitchen-terraform/tree/master/test
+[test-kitchen]: http://kitchen.ci/
 [tfenv]: https://github.com/kamatama41/tfenv
