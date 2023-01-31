@@ -135,6 +135,8 @@ Ed25519-type SSH keys.
 
 ## Usage
 
+A familiarity with [Test Kitchen][test-kitchen] workflows and commands is required to use Kitchen-Terraform.
+
 ### Configuration
 
 Kitchen-Terraform provides three Test Kitchen plugins which must be
