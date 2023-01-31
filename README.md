@@ -156,6 +156,9 @@ Terraform state.
 More information can be found in the
 [Ruby gem documentation][ruby-gem-documentation].
 
+The `kitchen doctor` command can be used to validate the system and the
+configuration file.
+
 ### Caveats
 
 Versions of Terraform in the 0.11 series may cause `kitchen test` to
