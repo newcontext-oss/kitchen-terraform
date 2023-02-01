@@ -101,7 +101,7 @@ jobs:
           terraform_wrapper: false
       - name: Setup Terragrunt
         if: ${{ matrix.operating-system == 'macos' }}
-        uses: autero1/action-terragrunt@v1.2.0
+        uses: autero1/action-terragrunt@v1.3.0
         with:
           terragrunt_version: ${{ matrix.terragrunt-version }}
       - name: Mirror Terraform Providers
