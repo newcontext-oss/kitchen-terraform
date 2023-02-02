@@ -11,6 +11,7 @@ and this project adheres to
 ### Added
 
 - Support for Inspec < 6.0
+- Support for `kitchen doctor` command: initially validates driver.client and verifier.systems
 
 ### Changed
 
