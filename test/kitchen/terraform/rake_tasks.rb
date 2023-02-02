@@ -26,7 +26,19 @@ module Test
         def define
           super
           namespace "kitchen" do
+            define_doctor
             define_workspaces
+          end
+        end
+
+        def define_doctor
+          config.instances.get_all(/doctor-\w+/).group_by do |instance|
+            instance.platform.name
+          end.each_pair do |platform_name, instances|
+            desc "Run doctor-#{platform_name} test"
+            task "doctor-#{platform_name}" do
+              instances.each_entry(&:doctor_action)
+            end
           end
         end
 

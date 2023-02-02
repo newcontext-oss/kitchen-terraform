@@ -85,9 +85,10 @@ suites:
           shell_command: /bin/sh
           shell_options: -x
           user: root
-  - name: doctor
+  - name: doctor-driver
     driver:
       client: /nonexistent/pathname
+  - name: doctor-verifier
     verifier:
       systems: []
   - name: plug-ins
