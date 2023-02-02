@@ -122,7 +122,7 @@ jobs:
       - name: Run Kitchen doctor
         run: |
           status=0
-          output="$(kitchen doctor doctor)"
+          output="$(rake test:kitchen:doctor-${{ matrix.operating-system }})"
           if [[ $output != *"${{ matrix.operating-system }}.driver.client"* ]]
           then
             echo "kitchen doctor did not detect driver.client error"
