@@ -20,7 +20,7 @@ require "tempfile"
 
 ::RSpec.describe ::Kitchen::Terraform::Driver::Doctor do
   subject do
-    described_class.new logger: logger
+    described_class.new instance_name: "test-instance", logger: logger
   end
 
   let :logger do

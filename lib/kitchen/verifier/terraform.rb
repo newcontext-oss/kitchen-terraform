@@ -120,7 +120,7 @@ module Kitchen
       # @param _state [Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
       def doctor(_state)
-        ::Kitchen::Terraform::Verifier::Doctor.new(logger: logger).call config: config
+        ::Kitchen::Terraform::Verifier::Doctor.new(instance_name: instance.name, logger: logger).call config: config
       end
 
       # #initialize prepares a new instance of the class.

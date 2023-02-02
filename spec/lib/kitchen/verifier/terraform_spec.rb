@@ -176,6 +176,10 @@ require "support/kitchen/terraform/configurable_examples"
       {}
     end
 
+    before do
+      subject.finalize_config! kitchen_instance
+    end
+
     specify "should return false" do
       expect(subject.doctor(kitchen_instance_state)).to be_falsey
     end

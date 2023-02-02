@@ -29,7 +29,7 @@ module Kitchen
 
           if systems.empty?
             errors = true
-            logger.error "No systems are configured."
+            logger.error "#{instance_name}.verifier.systems is empty"
           end
 
           errors
@@ -37,16 +37,18 @@ module Kitchen
 
         # #initialize prepares a new instance of the class.
         #
+        # @param instance_name [String] the name of the Kitchen instance.
         # @param logger [Kitchen::Logger] a logger for logging messages.
         # @option config [String] :client the pathname of the Terraform client.
         # @return [Kitchen::Terraform::Verifier::Doctor]
-        def initialize(logger:)
+        def initialize(instance_name:, logger:)
+          self.instance_name = instance_name
           self.logger = logger
         end
 
         private
 
-        attr_accessor :logger
+        attr_accessor :logger, :instance_name
       end
     end
   end
