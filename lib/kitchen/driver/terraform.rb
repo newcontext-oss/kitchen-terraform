@@ -194,10 +194,13 @@ module Kitchen
 
       # doctor checks the system and configuration for common errors.
       #
-      # @param _state [Hash] the mutable Kitchen instance state.
+      # @param state [Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
-      def doctor(_state)
-        ::Kitchen::Terraform::Driver::Doctor.new(logger: logger).call config: config
+      def doctor(state)
+        driver_errors = ::Kitchen::Terraform::Driver::Doctor.new(logger: logger).call config: config
+        verifier_errors = instance.verifier.doctor state
+
+        driver_errors or verifier_errors
       end
 
       # #finalize_config! invokes the super implementation and then initializes the strategies.
