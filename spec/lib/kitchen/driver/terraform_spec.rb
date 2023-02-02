@@ -183,4 +183,18 @@ require "support/kitchen/terraform/configurable_examples"
       end
     end
   end
+
+  describe "#doctor" do
+    let :kitchen_instance_state do
+      {}
+    end
+
+    before do
+      subject.finalize_config! kitchen_instance
+    end
+
+    specify "should return true" do
+      expect(subject.doctor(kitchen_instance_state)).to be_truthy
+    end
+  end
 end

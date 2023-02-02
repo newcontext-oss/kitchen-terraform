@@ -85,6 +85,11 @@ suites:
           shell_command: /bin/sh
           shell_options: -x
           user: root
+  - name: doctor
+    driver:
+      client: /nonexistent/pathname
+    verifier:
+      systems: []
   - name: plug-ins
     driver:
       plugin_directory: test/terraform/PlugIns/PlugInDirectory
