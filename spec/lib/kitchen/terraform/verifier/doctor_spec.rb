@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/terraform/system"
 require "kitchen/terraform/verifier/doctor"
 require "tempfile"
 
@@ -37,6 +38,20 @@ require "tempfile"
 
       specify "should return true" do
         expect(subject.call(config: config)).to be_truthy
+      end
+    end
+
+    context "when the configured systems are not empty" do
+      let :config do
+        {
+          systems: [
+            ::Kitchen::Terraform::System.new(configuration_attributes: {}, logger: logger)
+          ]
+        }
+      end
+
+      specify "should return false" do
+        expect(subject.call(config: config)).to be_falsey
       end
     end
   end

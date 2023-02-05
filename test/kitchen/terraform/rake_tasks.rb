@@ -37,7 +37,9 @@ module Test
           end.each_pair do |platform_name, instances|
             desc "Run doctor-#{platform_name} test"
             task "doctor-#{platform_name}" do
-              instances.each_entry(&:doctor_action)
+              instances.each_entry do |instance|
+                instance.doctor_action or raise "doctor did not detect an issue"
+              end
             end
           end
         end
