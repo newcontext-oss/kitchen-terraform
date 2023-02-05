@@ -1,14 +1,27 @@
 name: Delivery
-
-concurrency: delivery-${{ github.ref }}
-
 on:
   - push
-
+concurrency: delivery-${{ github.ref }}
 jobs:
-  commit:
-    name: "Commit"
+  commit-compile:
+    name: Commit - Compile
     if: ${{ github.ref_type == 'branch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '${{ matrix.ruby-version }}'
+          bundler: '2.4'
+          bundler-cache: true
+      - name: Upload Bundler Lockfile
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundler-lockfile
+          path: gems.locked
+          if-no-files-found: error
     strategy:
       fail-fast: false
       matrix:
@@ -17,14 +30,21 @@ jobs:
           - '2.7'
           - '3.0'
           - '3.1'
+  commit-unit-test:
+    name: Commit - Unit Test
+    if: ${{ github.ref_type == 'branch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+      - name: Download Bundler Lockfile
+        uses: actions/download-artifact@v3
+        with:
+          name: bundler-lockfile
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby-version }}
+          ruby-version: '${{ matrix.ruby-version }}'
           bundler: '2.4'
           bundler-cache: true
       - name: Run RSpec Tests
@@ -37,48 +57,79 @@ jobs:
           CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
         with:
           coverageCommand: bundle exec rake test:rspec
-      - name: Initialize CodeQL
-        if: ${{ matrix.ruby-version == '3.1' }}
-        uses: github/codeql-action/init@v2
+  commit-assemble:
+    name: Commit - Assemble
+    if: ${{ github.ref_type == 'branch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Download Bundler Lockfile
+        uses: actions/download-artifact@v3
         with:
-          config-file: .github/codeql/config.yml
-          languages: ruby
-      - name: Perform CodeQL Analysis
-        if: ${{ matrix.ruby-version == '3.1' }}
-        uses: github/codeql-action/analyze@v2
-      - name: Build Ruby Gem
-        if: ${{ matrix.ruby-version == '3.1' }}
+          name: bundler-lockfile
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler: '2.4'
+          bundler-cache: true
+      - name: Build Ruby Gem Integration
         env:
           GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}
         run: |
           printf -- "${GEM_PRIVATE_KEY}\n" > certs/gem-private_key.pem
           gem cert --add certs/gem-public_cert.pem
           gem build kitchen-terraform.gemspec --strict --output kitchen-terraform.gem
-      - name: Upload Ruby Gem
-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' && matrix.ruby-version == '3.1' }}
+      - name: Upload Ruby Gem Integration
         uses: actions/upload-artifact@v3
         with:
-          name: ruby-gem
+          name: ruby-gem-integration
           path: kitchen-terraform.gem
-
+  commit-code-analysis:
+    name: "Commit - Code Analysis"
+    if: ${{ github.ref_type == 'branch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1'
+          bundler: '2.4'
+          bundler-cache: true
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          config-file: .github/codeql/config.yml
+          languages: ruby
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+  commit-upload-release-candidate:
+    name: Commit - Upload Release Candidate
+    needs:
+      - commit-compile
+      - commit-unit-test
+      - commit-assemble
+      - commit-code-analysis
+    if: ${{ github.ref_type == 'branch' && github.ref_name == 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Ruby Gem Integration
+        uses: actions/download-artifact@v3
+        with:
+          name: ruby-gem-integration
+      - name: Upload Ruby Gem Release Candidate
+        uses: actions/upload-artifact@v3
+        with:
+          name: ruby-gem-release-candidate
+          path: kitchen-terraform.gem
   acceptance:
-    name: "Acceptance"
-    if: ${{ github.ref_type == 'branch' && github.event_name == 'push' && github.ref_name == 'main' }}
+    name: Acceptance
     needs:
       - commit
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - operating-system: macos
-            terraform-version: '1.1.4'
-            terragrunt-version: '0.36.0'
-          - operating-system: ubuntu
-            terraform-version: '0.15.5'
-          - operating-system: ubuntu
-            terraform-version: '0.14.11'
-          - operating-system: windows
-            terraform-version: '0.13.7'
+    if: ${{ github.ref_type == 'branch' && github.event_name == 'push' && github.ref_name == 'main' }}
     runs-on: ${{ matrix.operating-system }}-latest
     steps:
       - name: Checkout Repository
@@ -88,10 +139,10 @@ jobs:
         with:
           ruby-version: '3.1'
           bundler-cache: false
-      - name: Download Ruby Gem
+      - name: Download Ruby Gem Release Candidate
         uses: actions/download-artifact@v3
         with:
-          name: ruby-gem
+          name: ruby-gem-release-candidate
       - name: Install Ruby Gems
         run: gem install --conservative --minimal-deps --verbose kitchen-terraform.gem rake
       - name: Setup Terraform
@@ -117,29 +168,39 @@ jobs:
       - name: Run Kitchen Test backend-ssh
         if: ${{ matrix.operating-system == 'ubuntu' }}
         run: |
-          chmod 400 ./test/terraform/$VERSION_MATCHER/backend-ssh/id_ed25519
+          chmod 400 ./test/terraform/backend-ssh/id_ed25519
           rake test:kitchen:backend-ssh-ubuntu
       - name: Run Kitchen doctor
         run: |
           rake test:kitchen:doctor-${{ matrix.operating-system }}
-
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - operating-system: macos
+            terraform-version: '1.1.4'
+            terragrunt-version: '0.36.0'
+          - operating-system: ubuntu
+            terraform-version: '0.15.5'
+          - operating-system: ubuntu
+            terraform-version: '0.14.11'
+          - operating-system: windows
+            terraform-version: '0.13.7'
   release:
-    name: "Release"
+    name: Release
     if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.1'
         bundler-cache: false
-    - name: Download Ruby Gem
+    - name: Download Ruby Gem Release Candidate
       uses: actions/download-artifact@v3
       with:
-        name: ruby-gem
-        path: kitchen-terraform.gem
-    - name: Publish
+        name: ruby-gem-release-candidate
+    - name: Publish Ruby Gem Release Candidate
       env:
         GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
       run: gem push kitchen-terraform.gem
