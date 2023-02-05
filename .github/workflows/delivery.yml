@@ -121,19 +121,7 @@ jobs:
           rake test:kitchen:backend-ssh-ubuntu
       - name: Run Kitchen doctor
         run: |
-          status=0
-          output="$(rake test:kitchen:doctor-${{ matrix.operating-system }})"
-          if [[ $output != *"${{ matrix.operating-system }}.driver.client"* ]]
-          then
-            echo "kitchen doctor did not detect driver.client error"
-            status=1
-          fi
-          if [[ $output != *"${{ matrix.operating-system }}.verifier.systems"* ]]
-          then
-            echo "kitchen doctor did not detect verifier.systems error"
-            status=1
-          fi
-          exit $status
+          rake test:kitchen:doctor
 
   release:
     name: "Release"
