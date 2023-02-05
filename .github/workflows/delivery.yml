@@ -121,7 +121,7 @@ jobs:
           rake test:kitchen:backend-ssh-ubuntu
       - name: Run Kitchen doctor
         run: |
-          rake test:kitchen:doctor
+          rake test:kitchen:doctor-${{ matrix.operating-system }}
 
   release:
     name: "Release"
