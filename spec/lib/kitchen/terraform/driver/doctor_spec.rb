@@ -47,7 +47,7 @@ require "tempfile"
         }
       end
 
-      specify "should raise a user error" do
+      specify "should return true" do
         expect(subject.call(config: config)).to be_truthy
       end
 
@@ -56,6 +56,19 @@ require "tempfile"
           client.close
           client.unlink
         end
+      end
+    end
+
+    context "when the configured client does exist and is executable" do
+      let :config do
+        {
+          # Use the current executable
+          client: $0
+        }
+      end
+
+      specify "should return false" do
+        expect(subject.call(config: config)).to be_falsey
       end
     end
   end
