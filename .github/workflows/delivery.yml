@@ -128,7 +128,7 @@ jobs:
   acceptance:
     name: Acceptance
     needs:
-      - commit
+      - commit-upload-release-candidate
     if: ${{ github.ref_type == 'branch' && github.event_name == 'push' && github.ref_name == 'main' }}
     runs-on: ${{ matrix.operating-system }}-latest
     steps:
