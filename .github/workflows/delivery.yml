@@ -19,7 +19,7 @@ jobs:
       - name: Upload Bundler Lockfile
         uses: actions/upload-artifact@v3
         with:
-          name: bundler-lockfile
+          name: bundler-lockfile-ruby-${{ matrix.ruby-version }}
           path: gems.locked
           if-no-files-found: error
     strategy:
@@ -32,6 +32,8 @@ jobs:
           - '3.1'
   commit-unit-test:
     name: Commit - Unit Test
+    needs:
+      - commit-compile
     if: ${{ github.ref_type == 'branch' }}
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +42,7 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile
+          name: bundler-lockfile-ruby-${{ matrix.ruby-version }}
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -57,8 +59,18 @@ jobs:
           CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
         with:
           coverageCommand: bundle exec rake test:rspec
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version:
+          - '2.6'
+          - '2.7'
+          - '3.0'
+          - '3.1'
   commit-assemble:
     name: Commit - Assemble
+    needs:
+      - commit-compile
     if: ${{ github.ref_type == 'branch' }}
     runs-on: ubuntu-latest
     steps:
@@ -67,38 +79,32 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile
+          name: bundler-lockfile-ruby-3.1
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
           bundler: '2.4'
           bundler-cache: true
-      - name: Build Ruby Gem Integration
+      - name: Build Ruby Gem
         env:
           GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}
         run: |
           printf -- "${GEM_PRIVATE_KEY}\n" > certs/gem-private_key.pem
           gem cert --add certs/gem-public_cert.pem
           gem build kitchen-terraform.gemspec --strict --output kitchen-terraform.gem
-      - name: Upload Ruby Gem Integration
+      - name: Upload Ruby Gem
         uses: actions/upload-artifact@v3
         with:
-          name: ruby-gem-integration
+          name: ruby-gem
           path: kitchen-terraform.gem
   commit-code-analysis:
-    name: "Commit - Code Analysis"
+    name: Commit - Code Analysis
     if: ${{ github.ref_type == 'branch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.1'
-          bundler: '2.4'
-          bundler-cache: true
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
@@ -106,29 +112,12 @@ jobs:
           languages: ruby
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
-  commit-upload-release-candidate:
-    name: Commit - Upload Release Candidate
-    needs:
-      - commit-compile
-      - commit-unit-test
-      - commit-assemble
-      - commit-code-analysis
-    if: ${{ github.ref_type == 'branch' && github.ref_name == 'main' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Ruby Gem Integration
-        uses: actions/download-artifact@v3
-        with:
-          name: ruby-gem-integration
-      - name: Upload Ruby Gem Release Candidate
-        uses: actions/upload-artifact@v3
-        with:
-          name: ruby-gem-release-candidate
-          path: kitchen-terraform.gem
   acceptance:
     name: Acceptance
     needs:
-      - commit
+      - commit-unit-test
+      - commit-assemble
+      - commit-code-analysis
     if: ${{ github.ref_type == 'branch' && github.event_name == 'push' && github.ref_name == 'main' }}
     runs-on: ${{ matrix.operating-system }}-latest
     steps:
@@ -139,10 +128,10 @@ jobs:
         with:
           ruby-version: '3.1'
           bundler-cache: false
-      - name: Download Ruby Gem Release Candidate
+      - name: Download Ruby Gem
         uses: actions/download-artifact@v3
         with:
-          name: ruby-gem-release-candidate
+          name: ruby-gem
       - name: Install Ruby Gems
         run: gem install --conservative --minimal-deps --verbose kitchen-terraform.gem rake
       - name: Setup Terraform
