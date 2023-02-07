@@ -59,6 +59,14 @@ jobs:
           CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
         with:
           coverageCommand: bundle exec rake test:rspec
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version:
+          - '2.6'
+          - '2.7'
+          - '3.0'
+          - '3.1'
   commit-assemble:
     name: Commit - Assemble
     if: ${{ github.ref_type == 'branch' }}
