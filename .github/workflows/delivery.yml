@@ -32,6 +32,8 @@ jobs:
           - '3.1'
   commit-unit-test:
     name: Commit - Unit Test
+    needs:
+      - commit-compile
     if: ${{ github.ref_type == 'branch' }}
     runs-on: ubuntu-latest
     steps:
