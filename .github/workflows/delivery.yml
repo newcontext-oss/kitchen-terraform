@@ -99,7 +99,7 @@ jobs:
           name: ruby-gem-integration
           path: kitchen-terraform.gem
   commit-code-analysis:
-    name: "Commit - Code Analysis"
+    name: Commit - Code Analysis
     if: ${{ github.ref_type == 'branch' }}
     runs-on: ubuntu-latest
     steps:
