@@ -69,6 +69,8 @@ jobs:
           - '3.1'
   commit-assemble:
     name: Commit - Assemble
+    needs:
+      - commit-compile
     if: ${{ github.ref_type == 'branch' }}
     runs-on: ubuntu-latest
     steps:
