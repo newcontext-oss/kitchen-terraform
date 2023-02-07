@@ -79,7 +79,7 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile
+          name: bundler-lockfile-ruby-3.1
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
