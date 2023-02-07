@@ -19,7 +19,7 @@ jobs:
       - name: Upload Bundler Lockfile
         uses: actions/upload-artifact@v3
         with:
-          name: bundler-lockfile
+          name: bundler-lockfile-ruby-${{ matrix.ruby-version }}
           path: gems.locked
           if-no-files-found: error
     strategy:
@@ -40,7 +40,7 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile
+          name: bundler-lockfile-ruby-${{ matrix.ruby-version }}
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
