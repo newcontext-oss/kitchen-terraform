@@ -54,12 +54,6 @@ require "support/kitchen/terraform/configurable_examples"
 
   it_behaves_like "Kitchen::Terraform::Configurable"
 
-  describe ".serial_actions" do
-    specify "no actions are returned" do
-      expect(described_class.serial_actions).to be_empty
-    end
-  end
-
   describe "#connection" do
     before do
       subject.finalize_config! kitchen_instance

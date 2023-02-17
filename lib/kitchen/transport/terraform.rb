@@ -52,8 +52,6 @@ module Kitchen
     class Terraform < ::Kitchen::Transport::Exec
       kitchen_transport_api_version 2
 
-      no_parallel_for
-
       include ::Kitchen::Terraform::ConfigAttribute::Client
 
       include ::Kitchen::Terraform::Configurable
