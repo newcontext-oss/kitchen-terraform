@@ -25,7 +25,7 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   let :config do
-    { }
+    {}
   end
 
   let :kitchen_instance do

@@ -31,7 +31,7 @@ require "tempfile"
     context "when the configured client does not exist" do
       let :config do
         {
-          client: "/nonexistent/pathname"
+          client: "/nonexistent/pathname",
         }
       end
 
@@ -43,7 +43,7 @@ require "tempfile"
     context "when the configured client is not executable" do
       let :config do
         {
-          client: ::Tempfile.new("client")
+          client: ::Tempfile.new("client"),
         }
       end
 
@@ -63,7 +63,7 @@ require "tempfile"
       let :config do
         {
           # Use the current executable
-          client: $0
+          client: $0,
         }
       end
 

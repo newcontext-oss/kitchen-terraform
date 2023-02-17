@@ -199,7 +199,7 @@ module Kitchen
       def doctor(state)
         driver_errors = ::Kitchen::Terraform::Driver::Doctor.new(
           instance_name: instance.name,
-          logger: logger
+          logger: logger,
         ).call config: config
         verifier_errors = instance.verifier.doctor state
 

@@ -64,7 +64,7 @@ module Kitchen
       def doctor(state)
         ::Kitchen::Terraform::Transport::Doctor.new(
           instance_name: instance.name,
-          logger: logger
+          logger: logger,
         ).call config: config
       end
 

@@ -32,7 +32,7 @@ require "tempfile"
     context "when the configured systems are empty" do
       let :config do
         {
-          systems: []
+          systems: [],
         }
       end
 
@@ -45,8 +45,8 @@ require "tempfile"
       let :config do
         {
           systems: [
-            ::Kitchen::Terraform::System.new(configuration_attributes: {}, logger: logger)
-          ]
+            ::Kitchen::Terraform::System.new(configuration_attributes: {}, logger: logger),
+          ],
         }
       end
 
