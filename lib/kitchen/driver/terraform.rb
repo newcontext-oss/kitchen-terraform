@@ -33,6 +33,7 @@ require "kitchen/terraform/driver/create"
 require "kitchen/terraform/driver/destroy"
 require "kitchen/terraform/driver/doctor"
 require "kitchen/terraform/version_verifier"
+require "kitchen/transport/terraform"
 require "rubygems"
 require "shellwords"
 
@@ -212,7 +213,7 @@ module Kitchen
       # @raise [Kitchen::ClientError] if the instance is nil.
       # @return [self]
       def finalize_config!(instance)
-        super instance
+        super
         self.create_strategy = ::Kitchen::Terraform::Driver::Create.new(
           config: config,
           logger: logger,
@@ -225,6 +226,8 @@ module Kitchen
           version_requirement: version_requirement,
           workspace_name: workspace_name,
         )
+        self.transport = ::Kitchen::Transport::Terraform == instance.transport.class and instance.transport or
+          ::Kitchen::Transport::Terraform.new(config).finalize_config! instance
 
         self
       end
@@ -240,7 +243,7 @@ module Kitchen
 
       private
 
-      attr_accessor :action_failed, :create_strategy, :destroy_strategy
+      attr_accessor :action_failed, :create_strategy, :destroy_strategy, :transport
     end
   end
 end
