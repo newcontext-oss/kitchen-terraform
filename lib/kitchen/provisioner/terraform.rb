@@ -90,7 +90,6 @@ module Kitchen
       # @param instance [Kitchen::Instance] an associated instance.
       # @raise [Kitchen::ClientError] if the instance is nil.
       # @return [self]
-      # @see Kitchen::Configurable#finalize_config!
       def finalize_config!(instance)
         super instance
         self.action_failed = ::Kitchen::Terraform::Raise::ActionFailed.new logger: logger

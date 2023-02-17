@@ -39,7 +39,6 @@ module Kitchen
       # @param instance [Kitchen::Instance] an associated instance.
       # @raise [Kitchen::ClientError] if the instance is nil.
       # @return [self]
-      # @see Kitchen::Configurable#finalize_config!
       def finalize_config!(instance)
         super instance
         self.version_requirement = ::Gem::Requirement.new ">= 0.11.4", "< 2.0.0"

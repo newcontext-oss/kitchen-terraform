@@ -211,7 +211,6 @@ module Kitchen
       # @param instance [Kitchen::Instance] an associated instance.
       # @raise [Kitchen::ClientError] if the instance is nil.
       # @return [self]
-      # @see Kitchen::Configurable#finalize_config!
       def finalize_config!(instance)
         super instance
         self.create_strategy = ::Kitchen::Terraform::Driver::Create.new(
