@@ -37,6 +37,7 @@ module Kitchen
         #
         # @param options [Hash] configuration options.
         # @return [void]
+        # @api private
         def init_options(options)
           super
           self.client = @options.delete :client
