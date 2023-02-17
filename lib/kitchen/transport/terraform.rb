@@ -14,10 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen"
 require "kitchen/terraform/config_attribute/client"
 require "kitchen/terraform/configurable"
+require "kitchen/terraform/transport/connection"
 require "kitchen/terraform/transport/doctor"
+require "kitchen/transport/exec"
 
 module Kitchen
   # This namespace is defined by Kitchen.
@@ -48,7 +49,7 @@ module Kitchen
     # :reek:MissingSafeMethod { exclude: [ finalize_config! ] }
     #
     # @version 2
-    class Terraform < ::Kitchen::Transport::Base
+    class Terraform < ::Kitchen::Transport::Exec
       kitchen_transport_api_version 2
 
       no_parallel_for
@@ -56,6 +57,18 @@ module Kitchen
       include ::Kitchen::Terraform::ConfigAttribute::Client
 
       include ::Kitchen::Terraform::Configurable
+
+      # #connection creates a new Connection, configured by a merging of configuration
+      # and state data.
+      #
+      # @param state [Hash] mutable instance state.
+      # @return [Kitchen::Terraform::Transport::Connection] a connection for this transport.
+      # @raise [Kitchen::TransportFailed] if a connection could not be returned.
+      def connection(state, &block)
+        options = connection_options config.to_hash.merge state
+
+        ::Kitchen::Terraform::Transport::Connection.new options, &block
+      end
 
       # doctor checks the system and configuration for common errors.
       #
@@ -86,6 +99,22 @@ module Kitchen
       # @return [Kitchen::Transport::Terraform]
       def initialize(config = {})
         super config
+      end
+
+      private
+
+      # #connection_options builds the hash of options needed by the Connection object on construction.
+      #
+      # @param data [Hash] merged configuration and mutable state data.
+      # @return [Hash] hash of connection options.
+      # @api private
+      def connection_options(data)
+        opts = super
+
+        opts.store :client, config.fetch(:client)
+        opts.store :logger, logger
+
+        opts
       end
     end
   end

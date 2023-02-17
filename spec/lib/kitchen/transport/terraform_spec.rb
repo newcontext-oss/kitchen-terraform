@@ -60,6 +60,16 @@ require "support/kitchen/terraform/configurable_examples"
     end
   end
 
+  describe "#connection" do
+    before do
+      subject.finalize_config! kitchen_instance
+    end
+
+    specify "should return a connection" do
+      expect(subject.connection(state)).to be_kind_of ::Kitchen::Terraform::Transport::Connection
+    end
+  end
+
   describe "#doctor" do
     let :kitchen_instance_state do
       {}
