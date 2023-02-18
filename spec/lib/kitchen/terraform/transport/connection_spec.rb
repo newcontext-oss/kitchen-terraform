@@ -17,6 +17,7 @@
 require "kitchen"
 require "kitchen/terraform/transport/connection"
 require "kitchen/transport/exec"
+require "mixlib/shellout"
 
 ::RSpec.describe ::Kitchen::Terraform::Transport::Connection do
   subject do
@@ -27,18 +28,29 @@ require "kitchen/transport/exec"
     {}
   end
 
-  describe "#execute" do
+  describe "#run_command" do
     let :client do
       instance_double ::String
+    end
+
+    let :shell_out do
+      instance_double ::Mixlib::ShellOut
     end
 
     before do
       options.store :client, client
     end
 
-    specify "should invoke the Exec superclass implementation with the client prefixing the command" do
-      expect(subject).to receive(:run_command).with "#{client} test-command"
-      subject.execute "test-command"
+    specify "should invoke the ShellOut superclass implementation with the client and environment configured" do
+      allow(shell_out).to receive :run_command
+      allow(shell_out).to receive :execution_time
+      allow(shell_out).to receive :error!
+      allow(shell_out).to receive(:stdout).and_return :superclass
+      allow(::Mixlib::ShellOut).to receive(:new).with(
+        "#{client} test-command",
+        including({environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true" }})
+      ).and_return shell_out
+      expect(subject.run_command("test-command")).to eq :superclass
     end
   end
 end

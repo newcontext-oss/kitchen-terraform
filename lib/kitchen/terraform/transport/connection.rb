@@ -19,14 +19,21 @@ require "kitchen/transport/exec"
 module Kitchen
   module Terraform
     module Transport
-      # Connection is a class of objects which are responsible for carrying out Terraform CLI commands.
+      # Terraform commands are run by shelling out and using the
+      # {https://www.terraform.io/docs/commands/index.html command-line interface}.
+      #
+      # The shell out environment includes the TF_IN_AUTOMATION environment variable as specified by the
+      # {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
       class Connection < ::Kitchen::Transport::Exec::Connection
-        # #execute executes a Terraform CLI command on the local host.
+        # #run_command executes a Terraform CLI command in a subshell on the local running system.
         #
-        # @param command [String] the command to be executed.
-        # @raise [TransportFailed] if the command does not exit successfully.
-        def execute(command)
-          super "#{client} #{command}"
+        # @param cmd [String] the command to be executed locally.
+        # @param options [Hash] additional configuration of the command.
+        # @return [String] the standard output of the command.
+        # @raise [ShellCommandFailed] if the command fails.
+        # @raise [Error] for all other unexpected exceptions.
+        def run_command(command, options = {})
+          super "#{client} #{command}", options.merge(environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true" })
         end
 
         private
