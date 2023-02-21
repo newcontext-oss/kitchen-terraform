@@ -80,32 +80,17 @@ module Kitchen
       # @param state [Hash] the mutable instance and provisioner state.
       # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       def call(state)
-        converge_strategy.call state: state
-      rescue => error
-        action_failed.call message: error.message
-      end
-
-      # #finalize_config! invokes the super implementation and then initializes the strategy.
-      #
-      # @param instance [Kitchen::Instance] an associated instance.
-      # @raise [Kitchen::ClientError] if the instance is nil.
-      # @return [self]
-      def finalize_config!(instance)
-        super instance
-        self.action_failed = ::Kitchen::Terraform::Raise::ActionFailed.new logger: logger
-        self.converge_strategy = ::Kitchen::Terraform::Provisioner::Converge.new(
+        ::Kitchen::Terraform::Provisioner::Converge.new(
           config: instance.driver.send(:config),
+          connection: instance.driver.transport.connection({}),
+          debug_connection: instance.driver.transport.connection(logger: ::Kitchen::Terraform::DebugLogger.new(logger: logger)),
           logger: logger,
           version_requirement: version_requirement,
           workspace_name: workspace_name,
-        )
-
-        self
+        ).call state: state
+      rescue => error
+        ::Kitchen::Terraform::Raise::ActionFailed.new(logger: logger).call message: error.message
       end
-
-      private
-
-      attr_accessor :action_failed, :converge_strategy
     end
   end
 end

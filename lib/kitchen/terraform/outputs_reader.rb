@@ -26,38 +26,32 @@ module Kitchen
       # @raise [Kitchen::TransientFailure] if running the output command fails.
       # @yieldparam json_outputs [String] the output variables as a string of JSON.
       # @return [self]
-      def read(command:, options:)
-        run command: command, options: options do |json_outputs:|
-          yield json_outputs: json_outputs
+      def read(command:)
+        json_outputs = "{}"
+
+        begin
+          json_outputs = connection.execute command
+        rescue ::Kitchen::StandardError => error
+          no_outputs_defined.match ::Regexp.escape error.original.to_s or raise ::Kitchen::TransientFailure, error.message
         end
+
+        yield json_outputs: json_outputs
 
         self
       end
 
       # #initialize prepares a new instance of the class.
       #
-      # @param command_executor [Kitchen::Terraform::CommandExecutor] an executor to run the output command.
+      # @param connection [Kitchen::Terraform::Transport::Connection] a Terraform connection.
       # @return [Kitchen::Terraform::OutputsReader]
-      def initialize(command_executor:)
-        self.command_executor = command_executor
+      def initialize(connection:)
+        self.connection = connection
         self.no_outputs_defined = /no\\ outputs\\ defined/
       end
 
       private
 
-      attr_accessor :command_executor, :no_outputs_defined
-
-      def run(command:, options:)
-        command_executor.run command: command, options: options do |standard_output|
-          yield json_outputs: standard_output
-        end
-      rescue ::Kitchen::TransientFailure => error
-        if no_outputs_defined.match ::Regexp.escape error.original.to_s
-          yield json_outputs: "{}"
-        else
-          raise error
-        end
-      end
+      attr_accessor :connection, :no_outputs_defined
     end
   end
 end

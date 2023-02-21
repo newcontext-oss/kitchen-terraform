@@ -108,8 +108,8 @@ module Kitchen
       def connection_options(data)
         opts = super
 
-        opts.store :client, config.fetch(:client)
-        opts.store :logger, logger
+        opts.store :environment, data.fetch(:environment, {})
+        opts.store :logger, data.fetch(:logger, logger)
 
         opts
       end

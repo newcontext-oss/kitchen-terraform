@@ -170,13 +170,21 @@ module Kitchen
 
       include ::Kitchen::Terraform::Configurable
 
+      attr_reader :transport
+
       # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
       #
-      # @param _state [Hash] the mutable instance and driver state.
+      # @param state [Hash] the mutable instance and driver state.
       # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
-      def create(_state)
-        create_strategy.call
+      def create(state)
+        ::Kitchen::Terraform::Driver::Create.new(
+          config: config,
+          connection: transport.connection(state),
+          logger: logger,
+          version_requirement: version_requirement,
+          workspace_name: workspace_name,
+        ).call
       rescue => error
         action_failed.call message: error.message
       end
@@ -184,11 +192,17 @@ module Kitchen
       # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
       # deleting the state, selecting the default workspace, and deleting the test workspace.
       #
-      # @param _state [Hash] the mutable instance and driver state.
+      # @param state [Hash] the mutable instance and driver state.
       # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
-      def destroy(_state)
-        destroy_strategy.call
+      def destroy(state)
+        ::Kitchen::Terraform::Driver::Destroy.new(
+          config: config,
+          connection: transport.connection(state.merge(environment: { "TF_WARN_OUTPUT_ERRORS" => "true" })),
+          logger: logger,
+          version_requirement: version_requirement,
+          workspace_name: workspace_name,
+        ).call
       rescue => error
         action_failed.call message: error.message
       end
@@ -214,20 +228,13 @@ module Kitchen
       # @return [self]
       def finalize_config!(instance)
         super
-        self.create_strategy = ::Kitchen::Terraform::Driver::Create.new(
-          config: config,
-          logger: logger,
-          version_requirement: version_requirement,
-          workspace_name: workspace_name,
-        )
-        self.destroy_strategy = ::Kitchen::Terraform::Driver::Destroy.new(
-          config: config,
-          logger: logger,
-          version_requirement: version_requirement,
-          workspace_name: workspace_name,
-        )
-        self.transport = ::Kitchen::Transport::Terraform == instance.transport.class and instance.transport or
-          ::Kitchen::Transport::Terraform.new(config).finalize_config! instance
+
+        self.transport = if ::Kitchen::Transport::Terraform == instance.transport.class
+            instance.transport
+          else
+            logger.warn "Usage of the Terraform driver to configure the CLI is deprecated; use the Terraform transport."
+            ::Kitchen::Transport::Terraform.new(config).finalize_config! instance
+          end
 
         self
       end
@@ -243,7 +250,8 @@ module Kitchen
 
       private
 
-      attr_accessor :action_failed, :create_strategy, :destroy_strategy, :transport
+      attr_accessor :action_failed
+      attr_writer :transport
     end
   end
 end

@@ -15,7 +15,6 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/command_executor"
 require "kitchen/terraform/command/apply"
 require "kitchen/terraform/command/get"
 require "kitchen/terraform/command/output"
@@ -78,26 +77,22 @@ module Kitchen
         # #initialize prepares a new instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
+        # @param connection [Kitchen::Terraform::Transport::Connection] a Terraform connection.
+        # @param debug_connection [Kitchen::Terraform::Transport::Connection] a Terraform connection that logs at the
+        #        debug level.
         # @param logger [Kitchen::Logger] a logger for logging messages.
         # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @return [Kitchen::Terraform::Driver::Converge]
-        def initialize(config:, logger:, version_requirement:, workspace_name:)
+        def initialize(config:, connection:, debug_connection:, logger:, version_requirement:, workspace_name:)
           self.complete_config = config.to_hash.merge workspace_name: workspace_name
-          client = complete_config.fetch :client
           self.client_version = ::Gem::Version.new "0.0.0"
-          self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: client,
-            logger: logger,
-          )
+          self.connection = connection
+          self.debug_connection = debug_connection
           self.logger = logger
-          self.options = {
-            cwd: complete_config.fetch(:root_module_directory),
-            timeout: complete_config.fetch(:command_timeout),
-          }
           self.workspace_name = workspace_name
           initialize_commands
-          initialize_outputs_handlers client: client, logger: logger
+          initialize_outputs_handlers
           self.variables = complete_config.fetch :variables
           self.variables_manager = ::Kitchen::Terraform::VariablesManager.new
           self.verify_version = ::Kitchen::Terraform::VerifyVersion.new(
@@ -110,13 +105,12 @@ module Kitchen
         private
 
         attr_accessor(
-          :apply,
           :client_version,
-          :command_executor,
           :complete_config,
+          :connection,
+          :debug_connection,
           :get,
           :logger,
-          :options,
           :output,
           :outputs_manager,
           :outputs_parser,
@@ -131,15 +125,13 @@ module Kitchen
 
         def build_infrastructure
           logger.warn "Building the infrastructure based on the Terraform configuration..."
-          command_executor.run command: apply, options: options do |standard_output|
-          end
+          connection.execute ::Kitchen::Terraform::Command::Apply.new config: complete_config
           logger.warn "Finished building the infrastructure based on the Terraform configuration."
         end
 
         def download_modules
           logger.warn "Downloading the modules needed for the Terraform configuration..."
-          command_executor.run command: get, options: options do |standard_output|
-          end
+          connection.execute get
           logger.warn "Finished downloading the modules needed for the Terraform configuration."
         end
 
@@ -151,22 +143,16 @@ module Kitchen
         end
 
         def initialize_commands
-          self.apply = ::Kitchen::Terraform::Command::Apply.new config: complete_config
           self.get = ::Kitchen::Terraform::Command::Get.new
           self.output = ::Kitchen::Terraform::Command::Output.new
           self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: complete_config
           self.version = ::Kitchen::Terraform::Command::Version.new
         end
 
-        def initialize_outputs_handlers(client:, logger:)
+        def initialize_outputs_handlers
           self.outputs_manager = ::Kitchen::Terraform::OutputsManager.new
           self.outputs_parser = ::Kitchen::Terraform::OutputsParser.new
-          self.outputs_reader = ::Kitchen::Terraform::OutputsReader.new(
-            command_executor: ::Kitchen::Terraform::CommandExecutor.new(
-              client: client,
-              logger: ::Kitchen::Terraform::DebugLogger.new(logger),
-            ),
-          )
+          self.outputs_reader = ::Kitchen::Terraform::OutputsReader.new connection: debug_connection
         end
 
         def parse_outputs(json_outputs:)
@@ -180,7 +166,7 @@ module Kitchen
 
         def read_and_parse_outputs(&block)
           logger.warn "Reading the output variables from the Terraform state..."
-          outputs_reader.read command: output, options: options do |json_outputs:|
+          outputs_reader.read command: output do |json_outputs:|
             logger.warn "Finished reading the output variables from the Terraform state."
 
             parse_outputs json_outputs: json_outputs, &block
@@ -189,9 +175,7 @@ module Kitchen
 
         def read_client_version
           logger.warn "Reading the Terraform client version..."
-          command_executor.run command: version, options: options do |standard_output|
-            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
-          end
+          self.client_version = ::Gem::Version.new connection.execute(version).slice /Terraform v(\d+\.\d+\.\d+)/, 1
           logger.warn "Finished reading the Terraform client version."
         end
 
@@ -212,19 +196,14 @@ module Kitchen
 
         def select_workspace
           logger.warn "Selecting the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_select, options: options do |standard_output|
-          end
+          connection.execute workspace_select
           logger.warn "Finished selecting the #{workspace_name} Terraform workspace."
         end
 
         def validate_files
           logger.warn "Validating the Terraform configuration files..."
-          command_executor.run(
-            command: ::Kitchen::Terraform::Command::ValidateFactory.new(version: client_version)
-              .build(config: complete_config),
-            options: options,
-          ) do |standard_output|
-          end
+          connection.execute ::Kitchen::Terraform::Command::ValidateFactory.new(version: client_version)
+                               .build(config: complete_config)
           logger.warn "Finished validating the Terraform configuration files."
         end
       end

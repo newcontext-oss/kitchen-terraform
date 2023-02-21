@@ -24,12 +24,37 @@ require "mixlib/shellout"
     described_class.new options
   end
 
+  let :client do
+    instance_double ::String
+  end
+
+  let :command_timeout do
+    instance_double ::Integer
+  end
+
+  let :environment_variable_key do
+    instance_double ::String
+  end
+
+  let :environment_variable_value do
+    instance_double ::String
+  end
+
   let :options do
-    {}
+    {
+      client: client,
+      command_timeout: command_timeout,
+      environment: { environment_variable_key => environment_variable_value },
+      root_module_directory: root_module_directory,
+    }
+  end
+
+  let :root_module_directory do
+    instance_double ::String
   end
 
   describe "#run_command" do
-    let :client do
+    let :command do
       instance_double ::String
     end
 
@@ -37,20 +62,25 @@ require "mixlib/shellout"
       instance_double ::Mixlib::ShellOut
     end
 
-    before do
-      options.store :client, client
-    end
-
-    specify "should invoke the ShellOut superclass implementation with the client and environment configured" do
+    specify "should invoke the ShellOut superclass implementation with the client and options configured" do
       allow(shell_out).to receive :run_command
       allow(shell_out).to receive :execution_time
       allow(shell_out).to receive :error!
       allow(shell_out).to receive(:stdout).and_return :superclass
       allow(::Mixlib::ShellOut).to receive(:new).with(
-        "#{client} test-command",
-        including({environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true" }})
+        "#{client} #{command}",
+        including({
+          cwd: root_module_directory,
+          environment: {
+            "LC_ALL" => nil,
+            environment_variable_key => environment_variable_value,
+            "TF_IN_AUTOMATION" => "true",
+          },
+          timeout: command_timeout,
+        })
       ).and_return shell_out
-      expect(subject.run_command("test-command")).to eq :superclass
+
+      expect(subject.run_command(command)).to eq :superclass
     end
   end
 end

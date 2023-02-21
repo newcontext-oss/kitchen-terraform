@@ -15,7 +15,7 @@
 # limitations under the License.
 
 require "kitchen"
-require "kitchen/terraform/command_executor"
+require "kitchen/shell_out"
 require "kitchen/terraform/command/destroy"
 require "kitchen/terraform/command/init_factory"
 require "kitchen/terraform/command/version"
@@ -60,7 +60,7 @@ module Kitchen
       class Destroy
         # #call executes the action.
         #
-        # @raise [Kitchen::TransientFailure] if a command fails.
+        # @raise [Kitchen::StandardError] if a command fails.
         # @return [self]
         def call
           read_client_version
@@ -73,19 +73,16 @@ module Kitchen
         # #initialize prepares a new instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
+        # @param connection [Kitchen::Terraform::Transport::Connection] a Terraform connection.
         # @param logger [Kitchen::Logger] a logger for logging messages.
         # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @return [Kitchen::Terraform::Driver::Destroy]
-        def initialize(config:, logger:, version_requirement:, workspace_name:)
+        def initialize(config:, connection:, logger:, version_requirement:, workspace_name:)
           self.complete_config = config.to_hash.merge upgrade_during_init: false, workspace_name: workspace_name
+          self.connection = connection
           self.client_version = ::Gem::Version.new "0.0.0"
-          self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: complete_config.fetch(:client),
-            logger: logger,
-          )
           self.logger = logger
-          define_options
           self.workspace_name = workspace_name
           self.destroy = ::Kitchen::Terraform::Command::Destroy.new config: complete_config
           self.workspace_delete_test = ::Kitchen::Terraform::Command::WorkspaceDelete.new config: complete_config
@@ -106,13 +103,11 @@ module Kitchen
 
         attr_accessor(
           :client_version,
-          :command_executor,
           :complete_config,
-          :destroy_options,
+          :connection,
           :destroy,
           :init,
           :logger,
-          :options,
           :verify_version,
           :version,
           :workspace_delete_test,
@@ -124,32 +119,19 @@ module Kitchen
 
         def create_test_workspace
           logger.warn "Creating the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_new_test, options: options do |standard_output|
-          end
+          connection.execute workspace_new_test
           logger.warn "Finished creating the #{workspace_name} Terraform workspace."
-        end
-
-        def define_options
-          self.options = {
-            cwd: complete_config.fetch(:root_module_directory),
-            timeout: complete_config.fetch(:command_timeout),
-          }
-          self.destroy_options = options.merge(
-            environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true", "TF_WARN_OUTPUT_ERRORS" => "true" },
-          )
         end
 
         def destroy_infrastructure
           logger.warn "Destroying the Terraform-managed infrastructure..."
-          command_executor.run command: destroy, options: destroy_options do |standard_output|
-          end
+          connection.execute destroy
           logger.warn "Finished destroying the Terraform-managed infrastructure."
         end
 
         def delete_test_workspace
           logger.warn "Deleting the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_delete_test, options: options do |standard_output|
-          end
+          connection.execute workspace_delete_test
           logger.warn "Finished deleting the #{workspace_name} Terraform workspace."
         end
 
@@ -163,36 +145,28 @@ module Kitchen
 
         def initialize_directory
           logger.warn "Initializing the Terraform working directory..."
-          command_executor.run(
-            command: ::Kitchen::Terraform::Command::InitFactory.new(version: client_version)
-              .build(config: complete_config),
-            options: options,
-          ) do |standard_output|
-          end
+          connection.execute ::Kitchen::Terraform::Command::InitFactory.new(version: client_version)
+                               .build(config: complete_config)
           logger.warn "Finished initializing the Terraform working directory."
         end
 
         def read_client_version
           logger.warn "Reading the Terraform client version..."
-          command_executor.run command: version, options: options do |standard_output|
-            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
-          end
+          self.client_version = ::Gem::Version.new connection.execute(version).slice /Terraform v(\d+\.\d+\.\d+)/, 1
           logger.warn "Finished reading the Terraform client version."
         end
 
         def select_default_workspace
           logger.warn "Selecting the default Terraform workspace..."
-          command_executor.run command: workspace_select_default, options: options do |standard_output|
-          end
+          connection.execute workspace_select_default
           logger.warn "Finished selecting the default Terraform workspace."
         end
 
         def select_or_create_test_workspace
           logger.warn "Selecting the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_select_test, options: options do |standard_output|
-          end
+          connection.execute workspace_select_test
           logger.warn "Finished selecting the #{workspace_name} Terraform workspace."
-        rescue ::Kitchen::TransientFailure
+        rescue ::Kitchen::ShellOut::ShellCommandFailed
           create_test_workspace
         end
       end

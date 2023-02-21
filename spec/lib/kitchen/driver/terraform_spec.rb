@@ -18,6 +18,7 @@ require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/driver/create"
 require "kitchen/terraform/driver/destroy"
+require "kitchen/terraform/transport/connection"
 require "rubygems"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/client_examples"
@@ -113,6 +114,7 @@ require "support/kitchen/terraform/configurable_examples"
       allow(::Kitchen::Terraform::Driver::Create).to(
         receive(:new).with(
           config: config,
+          connection: kind_of(::Kitchen::Terraform::Transport::Connection),
           logger: kind_of(::Kitchen::Logger),
           version_requirement: version_requirement,
           workspace_name: workspace_name,
@@ -153,6 +155,7 @@ require "support/kitchen/terraform/configurable_examples"
       allow(::Kitchen::Terraform::Driver::Destroy).to(
         receive(:new).with(
           config: config,
+          connection: kind_of(::Kitchen::Terraform::Transport::Connection),
           logger: kind_of(::Kitchen::Logger),
           version_requirement: version_requirement,
           workspace_name: workspace_name,

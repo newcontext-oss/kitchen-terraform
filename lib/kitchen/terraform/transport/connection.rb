@@ -27,18 +27,22 @@ module Kitchen
       class Connection < ::Kitchen::Transport::Exec::Connection
         # #run_command executes a Terraform CLI command in a subshell on the local running system.
         #
-        # @param cmd [String] the command to be executed locally.
+        # @param command [String] the command to be executed locally.
         # @param options [Hash] additional configuration of the command.
         # @return [String] the standard output of the command.
-        # @raise [ShellCommandFailed] if the command fails.
-        # @raise [Error] for all other unexpected exceptions.
+        # @raise [Kitchen::ShellOut::ShellCommandFailed] if the command fails.
+        # @raise [Kitchen::StandardError] for all other unexpected exceptions.
         def run_command(command, options = {})
-          super "#{client} #{command}", options.merge(environment: { "LC_ALL" => nil, "TF_IN_AUTOMATION" => "true" })
+          super "#{client} #{command}", options.merge(
+            cwd: root_module_directory,
+            environment: environment.merge("LC_ALL" => nil, "TF_IN_AUTOMATION" => "true"),
+            timeout: command_timeout,
+          )
         end
 
         private
 
-        attr_accessor :client
+        attr_accessor :client, :command_timeout, :environment, :root_module_directory
 
         # #init_options initializes incoming options for use by the object.
         #
@@ -47,7 +51,10 @@ module Kitchen
         # @api private
         def init_options(options)
           super
-          self.client = @options.delete :client
+          self.client = self.options.delete :client
+          self.command_timeout = self.options.delete :command_timeout
+          self.environment = self.options.delete :environment
+          self.root_module_directory = self.options.delete :root_module_directory
         end
       end
     end
