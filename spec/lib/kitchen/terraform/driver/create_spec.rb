@@ -61,7 +61,7 @@ require "support/kitchen/logger_context"
       specify "should verify the version, initialize the working directory, and create the workspace" do
         expect(connection).to receive(:execute).with(kind_of(::Kitchen::Terraform::Command::Version)).ordered
         expect(connection).to receive(:execute)
-            .with(kind_of(::Kitchen::Terraform::Command::Init::PreZeroFifteenZero)).ordered
+                                .with(kind_of(::Kitchen::Terraform::Command::Init::PreZeroFifteenZero)).ordered
         expect(connection).to receive(:execute).with(kind_of(::Kitchen::Terraform::Command::WorkspaceNew)).ordered
         expect(connection).not_to receive(:execute).with(kind_of(::Kitchen::Terraform::Command::WorkspaceSelect))
 
@@ -76,7 +76,7 @@ require "support/kitchen/logger_context"
 
         expect(connection).to receive(:execute).with(kind_of(::Kitchen::Terraform::Command::Version)).ordered
         expect(connection).to receive(:execute)
-            .with(kind_of(::Kitchen::Terraform::Command::Init::PreZeroFifteenZero)).ordered
+                                .with(kind_of(::Kitchen::Terraform::Command::Init::PreZeroFifteenZero)).ordered
         expect(connection).to receive(:execute).with(kind_of(::Kitchen::Terraform::Command::WorkspaceNew)).ordered
         expect(connection).to receive(:execute).with(kind_of(::Kitchen::Terraform::Command::WorkspaceSelect)).ordered
 
