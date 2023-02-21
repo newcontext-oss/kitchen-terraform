@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/transport/terraform"
+require "support/kitchen/logger_context"
 require "support/kitchen/terraform/config_attribute/client_examples"
 require "support/kitchen/terraform/configurable_examples"
 
@@ -23,6 +24,8 @@ require "support/kitchen/terraform/configurable_examples"
   subject do
     described_class.new config
   end
+
+  include_context "Kitchen::Logger"
 
   let :config do
     {}
@@ -32,7 +35,7 @@ require "support/kitchen/terraform/configurable_examples"
     ::Kitchen::Instance.new(
       driver: ::Kitchen::Driver::Base.new,
       lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config, state_file),
-      logger: ::Kitchen::Logger.new,
+      logger: logger,
       platform: ::Kitchen::Platform.new(name: "test-platform"),
       provisioner: ::Kitchen::Provisioner::Base.new,
       state_file: state_file,

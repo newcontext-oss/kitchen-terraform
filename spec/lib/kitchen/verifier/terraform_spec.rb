@@ -21,6 +21,7 @@ require "kitchen/terraform/systems_verifier_factory"
 require "kitchen/terraform/systems_verifier/fail_fast"
 require "kitchen/terraform/variables_manager"
 require "kitchen/verifier/terraform"
+require "support/kitchen/logger_context"
 require "support/kitchen/terraform/config_attribute/color_examples"
 require "support/kitchen/terraform/config_attribute/fail_fast_examples"
 require "support/kitchen/terraform/config_attribute/systems_examples"
@@ -30,6 +31,8 @@ require "support/kitchen/terraform/configurable_examples"
   subject do
     described_class.new config
   end
+
+  include_context "Kitchen::Logger"
 
   let :config do
     {
@@ -94,10 +97,6 @@ require "support/kitchen/terraform/configurable_examples"
       transport: ::Kitchen::Transport::Base.new,
       verifier: ::Kitchen::Verifier::Base.new,
     )
-  end
-
-  let :logger do
-    ::Kitchen::Logger.new
   end
 
   let :state_file do

@@ -17,11 +17,10 @@
 require "inspec"
 require "kitchen"
 require "kitchen/terraform/inspec_runner"
+require "support/kitchen/logger_context"
 
 ::RSpec.describe ::Kitchen::Terraform::InSpecRunner do
-  let :logger do
-    ::Kitchen::Logger.new
-  end
+  include_context "Kitchen::Logger"
 
   describe ".logger=" do
     before do

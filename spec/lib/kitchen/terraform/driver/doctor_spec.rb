@@ -16,6 +16,7 @@
 
 require "kitchen"
 require "kitchen/terraform/driver/doctor"
+require "support/kitchen/logger_context"
 require "tempfile"
 
 ::RSpec.describe ::Kitchen::Terraform::Driver::Doctor do
@@ -23,9 +24,7 @@ require "tempfile"
     described_class.new instance_name: "test-instance", logger: logger
   end
 
-  let :logger do
-    ::Kitchen::Logger.new
-  end
+  include_context "Kitchen::Logger"
 
   describe "#call" do
     context "when the configured client does not exist" do

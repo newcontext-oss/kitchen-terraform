@@ -20,6 +20,7 @@ require "kitchen/terraform/driver/create"
 require "kitchen/terraform/driver/destroy"
 require "kitchen/terraform/transport/connection"
 require "rubygems"
+require "support/kitchen/logger_context"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/client_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
@@ -39,6 +40,8 @@ require "support/kitchen/terraform/configurable_examples"
     described_class.new config
   end
 
+  include_context "Kitchen::Logger"
+
   let :config do
     { client: "client" }
   end
@@ -47,7 +50,7 @@ require "support/kitchen/terraform/configurable_examples"
     ::Kitchen::Instance.new(
       driver: subject,
       lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config, state_file),
-      logger: ::Kitchen::Logger.new,
+      logger: logger,
       platform: ::Kitchen::Platform.new(name: "test-platform"),
       provisioner: ::Kitchen::Provisioner::Base.new,
       state_file: state_file,

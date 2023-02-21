@@ -16,15 +16,14 @@
 
 require "kitchen"
 require "kitchen/terraform/verify_version_rescue_strategy/permissive"
+require "support/kitchen/logger_context"
 
 ::RSpec.describe ::Kitchen::Terraform::VerifyVersionRescueStrategy::Permissive do
   subject do
     described_class.new logger: logger
   end
 
-  let :logger do
-    ::Kitchen::Logger.new
-  end
+  include_context "Kitchen::Logger"
 
   describe "#call" do
     specify "should warn the user that the Terraform client version is unsupported" do
