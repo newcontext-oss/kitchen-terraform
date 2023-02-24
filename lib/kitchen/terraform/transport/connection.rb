@@ -42,7 +42,7 @@ module Kitchen
 
         private
 
-        attr_accessor :client, :command_timeout, :environment, :root_module_directory
+        attr_accessor :client, :command_timeout, :environment, :options, :root_module_directory
 
         # #init_options initializes incoming options for use by the object.
         #
