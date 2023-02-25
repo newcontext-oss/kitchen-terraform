@@ -1,0 +1,3 @@
+detectors:
+  TooManyStatements:
+    enabled: false
