@@ -24,7 +24,6 @@ require "kitchen/terraform/configurable"
 require "kitchen/terraform/systems_verifier_factory"
 require "kitchen/terraform/outputs_manager"
 require "kitchen/terraform/variables_manager"
-require "kitchen/terraform/verifier/doctor"
 
 module Kitchen
   # This namespace is defined by Kitchen.
@@ -120,7 +119,16 @@ module Kitchen
       # @param _state [Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
       def doctor(_state)
-        ::Kitchen::Terraform::Verifier::Doctor.new(instance_name: instance.name, logger: logger).call config: config
+        errors = false
+
+        methods.each do |method|
+          next if !method.match? /doctor_config_.*/
+
+          error = send method
+          errors = errors || error
+        end
+
+        errors
       end
 
       # #initialize prepares a new instance of the class.

@@ -579,6 +579,20 @@ module Kitchen
           end,
           schema: ::Kitchen::Terraform::ConfigAttributeContract::Systems.new,
         ).apply config_attribute: self
+
+        # #doctor_config_systems validates the systems configuration.
+        #
+        # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
+        def doctor_config_systems
+          errors = false
+
+          if config_systems.empty?
+            errors = true
+            logger.error "systems is empty"
+          end
+
+          errors
+        end
       end
     end
   end

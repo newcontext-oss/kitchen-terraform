@@ -31,7 +31,6 @@ require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/driver/create"
 require "kitchen/terraform/driver/destroy"
-require "kitchen/terraform/driver/doctor"
 require "kitchen/terraform/version_verifier"
 require "kitchen/transport/terraform"
 require "rubygems"
@@ -213,13 +212,24 @@ module Kitchen
       # @param state [Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
       def doctor(state)
-        driver_errors = ::Kitchen::Terraform::Driver::Doctor.new(
-          instance_name: instance.name,
-          logger: logger,
-        ).call config: config, deprecated_config: deprecated_config
+        errors = false
+
+        deprecated_config.each_pair do |attribute, message|
+          errors = true
+          logger.warn "driver.#{attribute} is deprecated: #{message}"
+        end
+
+        methods.each do |method|
+          next if !method.match? /doctor_config_.*/
+
+          config_error = send method
+          errors = errors || config_error
+        end
+
+        transport_errors = transport.doctor state
         verifier_errors = instance.verifier.doctor state
 
-        driver_errors or verifier_errors
+        errors || transport_errors || verifier_errors
       end
 
       # #finalize_config! invokes the super implementation and then initializes the strategies.

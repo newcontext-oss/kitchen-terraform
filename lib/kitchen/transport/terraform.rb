@@ -17,7 +17,6 @@
 require "kitchen/terraform/config_attribute/client"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/transport/connection"
-require "kitchen/terraform/transport/doctor"
 require "kitchen/transport/exec"
 
 module Kitchen
@@ -70,13 +69,19 @@ module Kitchen
 
       # doctor checks the system and configuration for common errors.
       #
-      # @param state [Hash] the mutable Kitchen instance state.
+      # @param _state [Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
-      def doctor(state)
-        ::Kitchen::Terraform::Transport::Doctor.new(
-          instance_name: instance.name,
-          logger: logger,
-        ).call config: config
+      def doctor(_state)
+        errors = false
+
+        methods.each do |method|
+          next if !method.match? /doctor_config_.*/
+
+          error = send method
+          errors = errors || error
+        end
+
+        errors
       end
 
       # #finalize_config! invokes the super implementation and then initializes the strategies.

@@ -68,6 +68,24 @@ module Kitchen
         def config_client_default_value
           "terraform"
         end
+
+        # #doctor_config_client validates the client configuration.
+        #
+        # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
+        def doctor_config_client
+          errors = false
+
+          if !::File.exist? config_client
+            errors = true
+            logger.error "client '#{config_client}' does not exist"
+          end
+          if !::File.executable? config_client
+            errors = true
+            logger.error "client '#{config_client}' is not executable"
+          end
+
+          errors
+        end
       end
     end
   end

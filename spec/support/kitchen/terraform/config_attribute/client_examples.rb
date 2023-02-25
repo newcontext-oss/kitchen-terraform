@@ -16,54 +16,84 @@
 
 require "support/kitchen/terraform/config_attribute_contract/string_examples"
 require "os"
+require "tempfile"
 
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Client" do
+  subject do
+    described_class.new attribute => value, kitchen_root: "/kitchen-root"
+  end
+
   let :attribute do
     :client
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttributeContract::String", attribute: :client, default_value: "terraform"
 
-  context "when the config associates :client with a pathname which is not on the PATH" do
-    subject do
-      described_class.new attribute => value, kitchen_root: "/kitchen-root"
-    end
-
+  describe "pathname expansion" do
     let :value do
       "abc"
     end
 
-    before do
-      allow(::TTY::Which).to receive(:exist?).with(value).and_return false
-      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      subject.send :expand_paths!
+    context "when the config associates :client with a pathname which is not on the PATH" do
+      specify "should expand the pathname" do
+        allow(::TTY::Which).to receive(:exist?).with(value).and_return false
+
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+        subject.send :expand_paths!
+        path = subject[attribute]
+        # On Windows this path will have a drive letter, so remove that
+        path = path.gsub(/^[A-Za-z]:/, "") if OS.windows?
+
+        expect(path).to eq "/kitchen-root/abc"
+      end
     end
 
-    specify "should expand the pathname" do
-      path = subject[attribute]
-      # On Windows this path will have a drive letter, so remove that
-      path = path.gsub(/^[A-Za-z]:/, "") if OS.windows?
-      expect(path).to eq "/kitchen-root/abc"
+    context "when the config associates :client with a pathname which is on the PATH" do
+      specify "should not expand the pathname" do
+        allow(::TTY::Which).to receive(:exist?).with(value).and_return true
+
+        described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
+        subject.send :expand_paths!
+
+        expect(subject[attribute]).to eq value
+      end
     end
   end
 
-  context "when the config associates :client with a pathname which is on the PATH" do
-    subject do
-      described_class.new attribute => value, kitchen_root: "/kitchen-root"
+  describe "#doctor_config_client" do
+    context "when the configured client does not exist" do
+      let :value do
+        "/nonexistent/pathname"
+      end
+
+      specify "should return true" do
+        expect(subject.doctor_config_client).to be_truthy
+      end
     end
 
-    let :value do
-      "abc"
+    context "when the configured client is not executable" do
+      let :value do
+        ::Tempfile.new "client"
+      end
+
+      specify "should return true" do
+        expect(subject.doctor_config_client).to be_truthy
+      end
+
+      after do
+        value.close
+        value.unlink
+      end
     end
 
-    before do
-      allow(::TTY::Which).to receive(:exist?).with(value).and_return true
-      described_class.validations.fetch(attribute).call attribute, subject[attribute], subject
-      subject.send :expand_paths!
-    end
+    context "when the configured client does exist and is executable" do
+      let :value do
+        $0
+      end
 
-    specify "should not expand the pathname" do
-      expect(subject[attribute]).to eq value
+      specify "should return false" do
+        expect(subject.doctor_config_client).to be_falsey
+      end
     end
   end
 end
