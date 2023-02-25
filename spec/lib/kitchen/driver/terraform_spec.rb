@@ -191,16 +191,15 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#doctor" do
-    let :kitchen_instance_state do
-      {}
-    end
-
     before do
-      subject.finalize_config! kitchen_instance
+      # #deprecate_config! returns early if @@has_been_warned_of_deprecations is set
+      ::Kitchen::Configurable.remove_class_variable :@@has_been_warned_of_deprecations
     end
 
     specify "should return true" do
-      expect(subject.doctor(kitchen_instance_state)).to be_truthy
+      subject.finalize_config! kitchen_instance
+
+      expect(subject.doctor(state)).to be_truthy
     end
   end
 end

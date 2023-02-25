@@ -147,6 +147,7 @@ module Kitchen
       include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
       include ::Kitchen::Terraform::ConfigAttribute::Client
+      deprecate_config_for :client, "driver.client is deprecated; use transport.client instead"
 
       include ::Kitchen::Terraform::ConfigAttribute::Color
 
@@ -215,7 +216,7 @@ module Kitchen
         driver_errors = ::Kitchen::Terraform::Driver::Doctor.new(
           instance_name: instance.name,
           logger: logger,
-        ).call config: config
+        ).call config: config, deprecated_config: deprecated_config
         verifier_errors = instance.verifier.doctor state
 
         driver_errors or verifier_errors
@@ -229,10 +230,11 @@ module Kitchen
       def finalize_config!(instance)
         super
 
-        self.transport = if ::Kitchen::Transport::Terraform == instance.transport.class
-            instance.transport
+        transport = instance.transport
+
+        self.transport = if ::Kitchen::Transport::Terraform == transport.class
+            transport
           else
-            logger.warn "Usage of the Terraform driver to configure the CLI is deprecated; use the Terraform transport."
             ::Kitchen::Transport::Terraform.new(config).finalize_config! instance
           end
 

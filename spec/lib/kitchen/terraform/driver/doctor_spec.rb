@@ -27,47 +27,62 @@ require "tempfile"
   include_context "Kitchen::Logger"
 
   describe "#call" do
-    context "when the configured client does not exist" do
+    context "when the deprecated configured client does not exist" do
       let :config do
         {
           client: "/nonexistent/pathname",
         }
       end
 
-      specify "should return true" do
-        expect(subject.call(config: config)).to be_truthy
-      end
-    end
-
-    context "when the configured client is not executable" do
-      let :config do
+      let :deprecated_config do
         {
-          client: ::Tempfile.new("client"),
+          client: "deprecated",
         }
       end
 
       specify "should return true" do
-        expect(subject.call(config: config)).to be_truthy
+        expect(subject.call(config: config, deprecated_config: deprecated_config)).to be_truthy
+      end
+    end
+
+    context "when the deprecated configured client is not executable" do
+      let :client do
+        ::Tempfile.new "client"
+      end
+
+      let :config do
+        {
+          client: client,
+        }
+      end
+
+      let :deprecated_config do
+        {
+          client: "deprecated",
+        }
+      end
+
+      specify "should return true" do
+        expect(subject.call(config: config, deprecated_config: deprecated_config)).to be_truthy
       end
 
       after do
-        config.fetch(:client).tap do |client|
-          client.close
-          client.unlink
-        end
+        client.close
+        client.unlink
       end
     end
 
-    context "when the configured client does exist and is executable" do
+    context "when there are no errors" do
       let :config do
-        {
-          # Use the current executable
-          client: $0,
-        }
+        {}
+      end
+
+      let :deprecated_config do
+        {}
       end
 
       specify "should return false" do
-        expect(subject.call(config: config)).to be_falsey
+        expect(subject.call(config: config, deprecated_config: deprecated_config)).to be_falsey
       end
     end
   end

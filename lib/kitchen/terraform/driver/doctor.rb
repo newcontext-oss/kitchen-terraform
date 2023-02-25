@@ -22,18 +22,15 @@ module Kitchen
         # #call executes the action.
         #
         # @param config [Hash] the configuration of the driver.
+        # @param deprecated_config [Hash] the deprecated configuration of the driver.
         # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
-        def call(config:)
+        def call(config:, deprecated_config:)
           errors = false
-          client = config.fetch :client
 
-          if !::File.exist? client
+          deprecated_config.each_pair do |attribute, message|
             errors = true
-            logger.error "#{instance_name}.driver.client '#{client}' does not exist"
-          end
-          if !::File.executable? client
-            errors = true
-            logger.error "#{instance_name}.driver.client '#{client}' is not executable"
+            logger.warn "#{instance_name}.driver.#{attribute} is deprecated: #{message}"
+            check_client config: config if :client == attribute
           end
 
           errors
@@ -53,6 +50,17 @@ module Kitchen
         private
 
         attr_accessor :logger, :instance_name
+
+        def check_client(config:)
+          client = config.fetch :client
+
+          if !::File.exist? client
+            logger.error "#{instance_name}.driver.client '#{client}' does not exist"
+          end
+          if !::File.executable? client
+            logger.error "#{instance_name}.driver.client '#{client}' is not executable"
+          end
+        end
       end
     end
   end
