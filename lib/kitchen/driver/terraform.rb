@@ -109,6 +109,8 @@ module Kitchen
     #
     # ==== root_module_directory
     #
+    # driver.root_module_directory is deprecated; use transport.root_module_directory instead.
+    #
     # {include:Kitchen::Terraform::ConfigAttribute::RootModuleDirectory}
     #
     # ==== variable_files
@@ -169,6 +171,10 @@ module Kitchen
       include ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
 
       include ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
+      deprecate_config_for(
+        :root_module_directory,
+        "driver.root_module_directory is deprecated; use transport.root_module_directory instead"
+      )
 
       include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
 
