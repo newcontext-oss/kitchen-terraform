@@ -77,6 +77,8 @@ module Kitchen
     #
     # ==== client
     #
+    # driver.client is deprecated; use transport.client instead.
+    #
     # {include:Kitchen::Terraform::ConfigAttribute::Client}
     #
     # ==== color
@@ -84,6 +86,8 @@ module Kitchen
     # {include:Kitchen::Terraform::ConfigAttribute::Color}
     #
     # ==== command_timeout
+    #
+    # driver.command_timeout is deprecated; use transport.command_timeout instead.
     #
     # {include:Kitchen::Terraform::ConfigAttribute::CommandTimeout}
     #
@@ -151,6 +155,10 @@ module Kitchen
       include ::Kitchen::Terraform::ConfigAttribute::Color
 
       include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
+      deprecate_config_for(
+        :command_timeout,
+        "driver.command_timeout is deprecated; use transport.command_timeout instead"
+      )
 
       include ::Kitchen::Terraform::ConfigAttribute::Lock
 

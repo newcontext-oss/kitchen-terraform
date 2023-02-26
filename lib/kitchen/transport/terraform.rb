@@ -15,6 +15,7 @@
 # limitations under the License.
 
 require "kitchen/terraform/config_attribute/client"
+require "kitchen/terraform/config_attribute/command_timeout"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/transport/connection"
 require "kitchen/transport/exec"
@@ -42,6 +43,10 @@ module Kitchen
     #
     # {include:Kitchen::Terraform::ConfigAttribute::Client}
     #
+    # ==== command_timeout
+    #
+    # {include:Kitchen::Terraform::ConfigAttribute::CommandTimeout}
+    #
     # === Ruby Interface
     #
     # This class implements the interface of Kitchen::Configurable which requires the following Reek suppressions:
@@ -52,6 +57,8 @@ module Kitchen
       kitchen_transport_api_version 2
 
       include ::Kitchen::Terraform::ConfigAttribute::Client
+
+      include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
 
       include ::Kitchen::Terraform::Configurable
 
@@ -113,6 +120,7 @@ module Kitchen
       def connection_options(data)
         opts = super
 
+        opts.store :command_timeout, data.fetch(:command_timeout)
         opts.store :environment, data.fetch(:environment, {})
         opts.store :logger, data.fetch(:logger, logger)
 

@@ -18,6 +18,7 @@ require "kitchen"
 require "kitchen/transport/terraform"
 require "support/kitchen/logger_context"
 require "support/kitchen/terraform/config_attribute/client_examples"
+require "support/kitchen/terraform/config_attribute/command_timeout_examples"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Transport::Terraform do
@@ -54,6 +55,8 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   it_behaves_like "Kitchen::Terraform::ConfigAttribute::Client"
+
+  it_behaves_like "Kitchen::Terraform::ConfigAttribute::CommandTimeout"
 
   it_behaves_like "Kitchen::Terraform::Configurable"
 
