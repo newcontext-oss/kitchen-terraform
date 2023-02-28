@@ -43,7 +43,7 @@ require "support/kitchen/terraform/configurable_examples"
   include_context "Kitchen::Logger"
 
   let :config do
-    { client: "client" }
+    {}
   end
 
   let :kitchen_instance do
@@ -191,11 +191,6 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#doctor" do
-    before do
-      # #deprecate_config! returns early if @@has_been_warned_of_deprecations is set
-      ::Kitchen::Configurable.remove_class_variable :@@has_been_warned_of_deprecations
-    end
-
     specify "should return true" do
       subject.finalize_config! kitchen_instance
 

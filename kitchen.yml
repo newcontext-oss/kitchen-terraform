@@ -3,21 +3,24 @@ driver:
   name: terraform
 provisioner:
   name: terraform
+transport:
+  name: terraform
 verifier:
   name: terraform
   fail_fast: false
 platforms:
   - name: macos
-    driver:
+    transport:
       client: terragrunt
   - name: ubuntu
   - name: windows
 suites:
   - name: attributes
     driver:
-      root_module_directory: test/terraform/attributes
       variables:
         passthrough: value
+    transport:
+      root_module_directory: test/terraform/attributes
     verifier:
       systems:
         - name: default
@@ -55,7 +58,7 @@ suites:
     excludes:
       - macos
       - windows
-    driver:
+    transport:
       root_module_directory: test/terraform/backend-ssh
     verifier:
       systems:
@@ -88,12 +91,16 @@ suites:
   - name: doctor-driver
     driver:
       client: /nonexistent/pathname
+  - name: doctor-transport
+    driver:
+      transport: /nonexistent/pathname
   - name: doctor-verifier
     verifier:
       systems: []
   - name: plug-ins
     driver:
       plugin_directory: test/terraform/PlugIns/PlugInDirectory
+    transport:
       root_module_directory: test/terraform/PlugIns
     verifier:
       systems:
@@ -103,7 +110,6 @@ suites:
             - test/integration/plug-ins
   - name: variables
     driver:
-      root_module_directory: test/terraform/variables
       variable_files:
         - test/terraform/variables/variable_files/Variable File.tfvars
       variables:
@@ -111,6 +117,8 @@ suites:
         map: '{ key = \"A Value\" }'
         list_of_strings: '[ \"Element One\", \"Element Two\" ]'
         list_of_maps: '[ { key = \"A List Of Maps Value\" } ]'
+    transport:
+      root_module_directory: test/terraform/variables
     verifier:
       systems:
         - name: variable_files
@@ -127,9 +135,10 @@ suites:
             - test/integration/variables
   - name: workspace-one
     driver:
-      root_module_directory: test/terraform/workspace
       variables:
         workspace: one
+    transport:
+      root_module_directory: test/terraform/workspace
     verifier:
       systems:
         - name: one
@@ -138,9 +147,10 @@ suites:
             - test/integration/workspace-one
   - name: workspace-two
     driver:
-      root_module_directory: test/terraform/workspace
       variables:
         workspace: two
+    transport:
+      root_module_directory: test/terraform/workspace
     verifier:
       systems:
         - name: two
