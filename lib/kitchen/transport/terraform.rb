@@ -127,10 +127,8 @@ module Kitchen
       def connection_options(data)
         opts = super
 
-        opts.store :command_timeout, data.fetch(:command_timeout)
-        opts.store :environment, data.fetch(:environment, {})
-        opts.store :logger, data.fetch(:logger, logger)
-        opts.store :root_module_directory, data.fetch(:root_module_directory)
+        opts.merge! data
+        opts.merge! logger: logger
 
         opts
       end

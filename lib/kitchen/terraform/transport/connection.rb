@@ -51,10 +51,12 @@ module Kitchen
         # @api private
         def init_options(options)
           super
-          self.client = self.options.delete :client
-          self.command_timeout = self.options.delete :command_timeout
-          self.environment = self.options.delete :environment
-          self.root_module_directory = self.options.delete :root_module_directory
+
+          options = self.options
+          self.client = options.delete :client
+          self.command_timeout = options.delete :command_timeout
+          self.environment = options.delete(:environment) or {}
+          self.root_module_directory = options.delete :root_module_directory
         end
       end
     end

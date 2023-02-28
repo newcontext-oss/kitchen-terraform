@@ -80,10 +80,13 @@ module Kitchen
       # @param state [Hash] the mutable instance and provisioner state.
       # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       def call(state)
+        driver = instance.driver
+        transport = driver.transport
+
         ::Kitchen::Terraform::Provisioner::Converge.new(
-          config: instance.driver.send(:config),
-          connection: instance.driver.transport.connection({}),
-          debug_connection: instance.driver.transport.connection(logger: ::Kitchen::Terraform::DebugLogger.new(logger: logger)),
+          config: driver.send(:config),
+          connection: transport.connection({}),
+          debug_connection: transport.connection(logger: ::Kitchen::Terraform::DebugLogger.new(logger: logger)),
           logger: logger,
           version_requirement: version_requirement,
           workspace_name: workspace_name,
