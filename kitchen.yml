@@ -92,8 +92,8 @@ suites:
     driver:
       client: /nonexistent/pathname
   - name: doctor-transport
-    driver:
-      transport: /nonexistent/pathname
+    transport:
+      client: /nonexistent/pathname
   - name: doctor-verifier
     verifier:
       systems: []
