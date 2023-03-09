@@ -52,7 +52,6 @@ module Kitchen
         def init_options(options)
           super
 
-          options = self.options
           self.client = options.delete :client
           self.command_timeout = options.delete :command_timeout
           self.environment = options.delete(:environment) or {}
