@@ -50,7 +50,7 @@ require "support/kitchen/terraform/configurable_examples"
     ::Kitchen::Instance.new(
       driver: subject,
       lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config, state_file),
-      logger: logger,
+      logger: ::Kitchen::Logger.new,
       platform: ::Kitchen::Platform.new(name: "test-platform"),
       provisioner: ::Kitchen::Provisioner::Base.new,
       state_file: state_file,
@@ -192,6 +192,8 @@ require "support/kitchen/terraform/configurable_examples"
 
   describe "#doctor" do
     specify "should return true" do
+      config.store :client, "test-client"
+
       subject.finalize_config! kitchen_instance
 
       expect(subject.doctor(state)).to be_truthy
