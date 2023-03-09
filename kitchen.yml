@@ -88,6 +88,24 @@ suites:
           shell_command: /bin/sh
           shell_options: -x
           user: root
+  - name: deprecated-driver-attributes
+    includes:
+      - macos
+    driver:
+      client: terragrunt
+      root_module_directory: test/terraform/attributes
+      variables:
+        passthrough: value
+    transport:
+      name: ssh
+    verifier:
+      systems:
+        - name: default
+          backend: local
+          controls:
+            - default
+          profile_locations:
+            - test/integration/attributes
   - name: doctor-driver
     driver:
       client: /nonexistent/pathname
