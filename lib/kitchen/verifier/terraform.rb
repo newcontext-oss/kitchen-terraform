@@ -30,7 +30,7 @@ module Kitchen
   #
   # @see https://www.rubydoc.info/gems/test-kitchen/Kitchen/Verifier
   module Verifier
-    # The verifier utilizes the {https://www.inspec.io/ InSpec infrastructure testing framework} to verify the
+    # The Terraform verifier utilizes {https://community.chef.io/tools/chef-inspec InSpec} to verify the
     # behaviour and state of resources in the Terraform state.
     #
     # === Commands

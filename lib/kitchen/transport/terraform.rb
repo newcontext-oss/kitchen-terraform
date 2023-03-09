@@ -26,8 +26,8 @@ module Kitchen
   #
   # @see http://www.rubydoc.info/gems/test-kitchen/Kitchen/Transport
   module Transport
-    # The transport is responsible for the communication with an instance,
-    # that is Terraform CLI comands.
+    # The Terraform transport is responsible for the integration with the
+    # {https://developer.hashicorp.com/terraform/cli/commands Terraform CLI}.
     #
     # === Configuration Attributes
     #
@@ -36,7 +36,7 @@ module Kitchen
     # {http://kitchen.ci/docs/getting-started/kitchen-yml Test Kitchen configuration file}, these attributes must be
     # declared in the +transport+ mapping along with the plugin name.
     #
-    #   tarnsport:
+    #   transport:
     #     name: terraform
     #     a_configuration_attribute: some value
     #

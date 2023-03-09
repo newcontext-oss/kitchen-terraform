@@ -24,7 +24,7 @@ module Kitchen
   #
   # @see http://www.rubydoc.info/gems/test-kitchen/Kitchen/Provisioner
   module Provisioner
-    # The provisioner applies changes to the Terraform state based on the configuration of the root module.
+    # The Terraform provisioner applies changes to the Terraform state based on the configuration of the root module.
     #
     # === Commands
     #

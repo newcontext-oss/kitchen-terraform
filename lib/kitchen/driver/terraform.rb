@@ -45,9 +45,9 @@ module Kitchen
   # @see http://www.rubydoc.info/gems/test-kitchen/Kitchen/Driver
   module Driver
 
-    # The driver is the bridge between Test Kitchen and Terraform. It manages the
-    # {https://www.terraform.io/docs/state/index.html state} of the Terraform root module by shelling out and running
-    # Terraform commands.
+    # The Terraform driver is the bridge between Test Kitchen and Terraform. It manages the
+    # {https://developer.hashicorp.com/terraform/language/state state} of the Terraform root module under test by
+    # shelling out and running Terraform commands.
     #
     # === Commands
     #
