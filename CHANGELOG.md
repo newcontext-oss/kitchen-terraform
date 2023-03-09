@@ -10,11 +10,18 @@ and this project adheres to
 
 ### Added
 
+- A Terraform transport plugin
 - Support for Inspec < 6.0
-- Support for `kitchen doctor` command: initially validates driver.client and verifier.systems
+- Support for the `kitchen doctor` command, which checks for deprecated
+  or invalid configuration attributes
 
 ### Changed
 
+- Deprecated some driver configuration attributes which are assumed by
+  the transport:
+  - `client`
+  - `command_timeout`
+  - `root_module_directory`
 - Dropped support for Inspec < 4.25.1
 
 ## [6.1.0] - 2022-01-22

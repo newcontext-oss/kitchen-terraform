@@ -15,11 +15,11 @@
 # limitations under the License.
 
 require "kitchen"
+require "kitchen/shell_out"
 require "kitchen/terraform/command/init_factory"
 require "kitchen/terraform/command/version"
 require "kitchen/terraform/command/workspace_new"
 require "kitchen/terraform/command/workspace_select"
-require "kitchen/terraform/command_executor"
 require "kitchen/terraform/verify_version"
 require "rubygems"
 
@@ -46,7 +46,7 @@ module Kitchen
       class Create
         # #call executes the action.
         #
-        # @raise [Kitchen::TransientFailure] if a command fails.
+        # @raise [Kitchen::StandardError] if a command fails.
         # @return [self]
         def call
           read_client_version
@@ -60,23 +60,17 @@ module Kitchen
         # #initialize prepares a new instance of the class.
         #
         # @param config [Hash] the configuration of the driver.
+        # @param connection [Kitchen::Terraform::Transport::Connection] a Terraform connection.
         # @param logger [Kitchen::Logger] a logger for logging messages.
         # @param version_requirement [Gem::VersionRequirement] the required version of the Terraform client.
         # @param workspace_name [String] the name of the Terraform workspace to select or to create.
         # @option config [String] :client the pathname of the Terraform client.
         # @return [Kitchen::Terraform::Driver::Create]
-        def initialize(config:, logger:, version_requirement:, workspace_name:)
+        def initialize(config:, connection:, logger:, version_requirement:, workspace_name:)
           self.complete_config = config.to_hash.merge upgrade_during_init: true, workspace_name: workspace_name
+          self.connection = connection
           self.client_version = ::Gem::Version.new "0.0.0"
-          self.command_executor = ::Kitchen::Terraform::CommandExecutor.new(
-            client: complete_config.fetch(:client),
-            logger: logger,
-          )
           self.logger = logger
-          self.options = {
-            cwd: complete_config.fetch(:root_module_directory),
-            timeout: complete_config.fetch(:command_timeout),
-          }
           self.workspace_name = workspace_name
           self.workspace_new = ::Kitchen::Terraform::Command::WorkspaceNew.new config: complete_config
           self.workspace_select = ::Kitchen::Terraform::Command::WorkspaceSelect.new config: complete_config
@@ -92,10 +86,9 @@ module Kitchen
 
         attr_accessor(
           :client_version,
-          :command_executor,
           :complete_config,
+          :connection,
           :logger,
-          :options,
           :verify_version,
           :version,
           :workspace_name,
@@ -105,36 +98,28 @@ module Kitchen
 
         def create_or_select_workspace
           logger.warn "Creating the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_new, options: options do |standard_output|
-          end
+          connection.execute workspace_new
           logger.warn "Finished creating the #{workspace_name} Terraform workspace."
-        rescue ::Kitchen::TransientFailure
+        rescue ::Kitchen::ShellOut::ShellCommandFailed
           select_workspace
         end
 
         def initialize_directory
           logger.warn "Initializing the Terraform working directory..."
-          command_executor.run(
-            command: ::Kitchen::Terraform::Command::InitFactory.new(version: client_version)
-              .build(config: complete_config),
-            options: options,
-          ) do |standard_output|
-          end
+          connection.execute ::Kitchen::Terraform::Command::InitFactory
+                               .new(version: client_version).build(config: complete_config)
           logger.warn "Finished initializing the Terraform working directory."
         end
 
         def read_client_version
           logger.warn "Reading the Terraform client version..."
-          command_executor.run command: version, options: options do |standard_output|
-            self.client_version = ::Gem::Version.new standard_output.slice /Terraform v(\d+\.\d+\.\d+)/, 1
-          end
+          self.client_version = ::Gem::Version.new connection.execute(version).slice /Terraform v(\d+\.\d+\.\d+)/, 1
           logger.warn "Finished reading the Terraform client version."
         end
 
         def select_workspace
           logger.warn "Selecting the #{workspace_name} Terraform workspace..."
-          command_executor.run command: workspace_select, options: options do |standard_output|
-          end
+          connection.execute workspace_select
           logger.warn "Finished selecting the #{workspace_name} Terraform workspace."
         end
       end

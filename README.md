@@ -139,19 +139,23 @@ A familiarity with [Test Kitchen][test-kitchen] workflows and commands is requir
 
 ### Configuration
 
-Kitchen-Terraform provides three Test Kitchen plugins which must be
+Kitchen-Terraform provides four Test Kitchen plugins which must be
 configured in a
 [Test Kitchen configuration file][kitchen-configuration-file] in
 order to successfully test Terraform configuration.
 
-The [Terraform driver][terraform-driver] manages the state of the
-Terraform root module.
+The [Terraform driver][terraform-driver] is the bridge between Test
+Kitchen and Terraform. It manages the [state][terraform-state] of the
+Terraform root module under test by shelling out and running Terraform commands.
 
-The [Terraform provisioner][terraform-provisioner] uses the Terraform
-driver to apply changes to the Terraform state.
+The [Terraform provisioner][terraform-provisioner] applies changes to
+the Terraform state based on the configuration of the root module.
 
-The [Terraform verifier][terraform-verifier] uses InSpec to verify the
-Terraform state.
+The [Terraform transport][terraform-transport] is responsible for the
+integration with the Terraform CLI.
+
+The [Terraform verifier][terraform-verifier] utilizes InSpec to verify
+the behaviour and state of resources in the Terraform state.
 
 More information can be found in the
 [Ruby gem documentation][ruby-gem-documentation].
@@ -260,7 +264,7 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [gem-version-shield]: https://img.shields.io/gem/v/kitchen-terraform.svg
 [gitter-shield]: https://img.shields.io/gitter/room/kitchen-terraform/Lobby.svg
 [gitter]: https://gitter.im/kitchen-terraform/Lobby
-[inspec]: https://www.inspec.io/
+[inspec]: https://community.chef.io/tools/chef-inspec
 [int-kitchen-config]: https://github.com/newcontext-oss/kitchen-terraform/blob/master/kitchen.yml
 [kitchen-configuration-file]: https://docs.chef.io/config_yml_kitchen.html
 [kitchen-terraform-gem]: https://rubygems.org/gems/kitchen-terraform
@@ -281,10 +285,12 @@ Kitchen-Terraform is distributed under the [Apache License][license].
 [rubygems-installing-gems]: http://guides.rubygems.org/rubygems-basics/#rubygems-installing-gems
 [technical-debt-shield]: https://img.shields.io/codeclimate/tech-debt/newcontext-oss/kitchen-terraform.svg
 [technical-debt]: https://codeclimate.com/github/newcontext-oss/kitchen-terraform/
-[terraform-cli]: https://www.terraform.io/docs/commands/index.html
+[terraform-cli]: https://developer.hashicorp.com/terraform/cli/commands
 [terraform-driver]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Driver/Terraform
 [terraform-install]: https://www.terraform.io/intro/getting-started/install.html
 [terraform-provisioner]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Provisioner/Terraform
+[terraform-state]: https://developer.hashicorp.com/terraform/language/state
+[terraform-transport]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Transport/Terraform
 [terraform-verifier]: http://www.rubydoc.info/github/newcontext-oss/kitchen-terraform/Kitchen/Verifier/Terraform
 [terraform]: https://www.terraform.io/
 [test-directory]: https://github.com/newcontext-oss/kitchen-terraform/tree/master/test

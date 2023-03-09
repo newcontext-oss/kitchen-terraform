@@ -21,7 +21,7 @@ require "kitchen/terraform/config_attribute_contract/hash_of_symbols_and_strings
 module Kitchen
   module Terraform
     module ConfigAttributeType
-      # This modules applies the behaviour of a configuration attribute of type hash of symbols and strings to a module 
+      # This modules applies the behaviour of a configuration attribute of type hash of symbols and strings to a module
       # which must be included by a plugin class.
       #
       # @see http://dry-rb.org/gems/dry-validation/basics/working-with-schemas/ DRY Validation Working With Schemas

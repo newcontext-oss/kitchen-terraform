@@ -14,18 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require "kitchen/terraform/command_executor"
+require "kitchen"
+require "kitchen/errors"
 require "kitchen/terraform/command/output"
 require "kitchen/terraform/outputs_reader"
-require "mixlib/shellout"
+require "kitchen/terraform/transport/connection"
 
 ::RSpec.describe ::Kitchen::Terraform::OutputsReader do
   subject do
-    described_class.new command_executor: command_executor
+    described_class.new connection: connection
   end
 
-  let :command_executor do
-    instance_double ::Kitchen::Terraform::CommandExecutor
+  let :connection do
+    instance_double ::Kitchen::Terraform::Transport::Connection
   end
 
   describe "read" do
@@ -33,39 +34,23 @@ require "mixlib/shellout"
       instance_double ::Kitchen::Terraform::Command::Output
     end
 
-    let :options do
-      {}
-    end
-
     context "when the output command fails due to an unexpected error" do
-      before do
-        allow(command_executor).to receive(:run).with(command: command, options: options).and_raise(
-          ::Kitchen::TransientFailure,
-          "unexpected"
-        )
-      end
-
       specify "should raise a transient failure error" do
+        allow(connection).to receive(:execute).with(command).and_raise ::Kitchen::StandardError.new("unexpected")
+
         expect do
-          subject.read command: command, options: options
+          subject.read command: command
         end.to raise_error ::Kitchen::TransientFailure
       end
     end
 
     context "when the output command fails due to no outputs defined" do
-      let :error do
-        ::Kitchen::TransientFailure.new "command failed", ::Mixlib::ShellOut::ShellCommandFailed.new(
-          "no outputs defined"
-        )
-      end
-
-      before do
-        allow(command_executor).to receive(:run).with(command: command, options: options).and_raise error
-      end
-
       specify "should yield an empty JSON object" do
+        allow(connection).to receive(:execute).with(command).and_raise ::Kitchen::ShellOut::ShellCommandFailed
+                                                                         .new("command failed", ::Kitchen::ShellOut::ShellCommandFailed.new("no outputs defined"))
+
         expect do |block|
-          subject.read command: command, options: options, &block
+          subject.read command: command, &block
         end.to yield_with_args json_outputs: "{}"
       end
     end
@@ -75,13 +60,11 @@ require "mixlib/shellout"
         "{\"key\": \"value\"}"
       end
 
-      before do
-        allow(command_executor).to receive(:run).with(command: command, options: options).and_yield standard_output
-      end
-
       specify "should yield the standard output" do
+        allow(connection).to receive(:execute).with(command).and_return standard_output
+
         expect do |block|
-          subject.read command: command, options: options, &block
+          subject.read command: command, &block
         end.to yield_with_args json_outputs: standard_output
       end
     end

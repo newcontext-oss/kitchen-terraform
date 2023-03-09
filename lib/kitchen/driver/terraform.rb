@@ -31,8 +31,8 @@ require "kitchen/terraform/config_attribute/verify_version"
 require "kitchen/terraform/configurable"
 require "kitchen/terraform/driver/create"
 require "kitchen/terraform/driver/destroy"
-require "kitchen/terraform/driver/doctor"
 require "kitchen/terraform/version_verifier"
+require "kitchen/transport/terraform"
 require "rubygems"
 require "shellwords"
 
@@ -45,9 +45,9 @@ module Kitchen
   # @see http://www.rubydoc.info/gems/test-kitchen/Kitchen/Driver
   module Driver
 
-    # The driver is the bridge between Test Kitchen and Terraform. It manages the
-    # {https://www.terraform.io/docs/state/index.html state} of the Terraform root module by shelling out and running
-    # Terraform commands.
+    # The Terraform driver is the bridge between Test Kitchen and Terraform. It manages the
+    # {https://developer.hashicorp.com/terraform/language/state state} of the Terraform root module under test by
+    # shelling out and running Terraform commands.
     #
     # === Commands
     #
@@ -77,6 +77,8 @@ module Kitchen
     #
     # ==== client
     #
+    # driver.client is deprecated; use transport.client instead.
+    #
     # {include:Kitchen::Terraform::ConfigAttribute::Client}
     #
     # ==== color
@@ -84,6 +86,8 @@ module Kitchen
     # {include:Kitchen::Terraform::ConfigAttribute::Color}
     #
     # ==== command_timeout
+    #
+    # driver.command_timeout is deprecated; use transport.command_timeout instead.
     #
     # {include:Kitchen::Terraform::ConfigAttribute::CommandTimeout}
     #
@@ -104,6 +108,8 @@ module Kitchen
     # {include:Kitchen::Terraform::ConfigAttribute::PluginDirectory}
     #
     # ==== root_module_directory
+    #
+    # driver.root_module_directory is deprecated; use transport.root_module_directory instead.
     #
     # {include:Kitchen::Terraform::ConfigAttribute::RootModuleDirectory}
     #
@@ -146,10 +152,15 @@ module Kitchen
       include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
       include ::Kitchen::Terraform::ConfigAttribute::Client
+      deprecate_config_for :client, "driver.client is deprecated; use transport.client instead"
 
       include ::Kitchen::Terraform::ConfigAttribute::Color
 
       include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
+      deprecate_config_for(
+        :command_timeout,
+        "driver.command_timeout is deprecated; use transport.command_timeout instead"
+      )
 
       include ::Kitchen::Terraform::ConfigAttribute::Lock
 
@@ -160,6 +171,10 @@ module Kitchen
       include ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
 
       include ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
+      deprecate_config_for(
+        :root_module_directory,
+        "driver.root_module_directory is deprecated; use transport.root_module_directory instead"
+      )
 
       include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
 
@@ -169,13 +184,21 @@ module Kitchen
 
       include ::Kitchen::Terraform::Configurable
 
+      attr_reader :transport
+
       # Creates a Test Kitchen instance by initializing the working directory and creating a test workspace.
       #
-      # @param _state [Hash] the mutable instance and driver state.
+      # @param state [Hash] the mutable instance and driver state.
       # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
-      def create(_state)
-        create_strategy.call
+      def create(state)
+        ::Kitchen::Terraform::Driver::Create.new(
+          config: config,
+          connection: transport.connection(state),
+          logger: logger,
+          version_requirement: version_requirement,
+          workspace_name: workspace_name,
+        ).call
       rescue => error
         action_failed.call message: error.message
       end
@@ -183,11 +206,17 @@ module Kitchen
       # Destroys a Test Kitchen instance by initializing the working directory, selecting the test workspace,
       # deleting the state, selecting the default workspace, and deleting the test workspace.
       #
-      # @param _state [Hash] the mutable instance and driver state.
+      # @param state [Hash] the mutable instance and driver state.
       # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       # @return [void]
-      def destroy(_state)
-        destroy_strategy.call
+      def destroy(state)
+        ::Kitchen::Terraform::Driver::Destroy.new(
+          config: config,
+          connection: transport.connection(state.merge(environment: { "TF_WARN_OUTPUT_ERRORS" => "true" })),
+          logger: logger,
+          version_requirement: version_requirement,
+          workspace_name: workspace_name,
+        ).call
       rescue => error
         action_failed.call message: error.message
       end
@@ -197,13 +226,24 @@ module Kitchen
       # @param state [Hash] the mutable Kitchen instance state.
       # @return [Boolean] +true+ if any errors are found; +false+ if no errors are found.
       def doctor(state)
-        driver_errors = ::Kitchen::Terraform::Driver::Doctor.new(
-          instance_name: instance.name,
-          logger: logger
-        ).call config: config
+        errors = false
+
+        deprecated_config.each_pair do |attribute, message|
+          errors = true
+          logger.warn "driver.#{attribute} is deprecated: #{message}"
+        end
+
+        methods.each do |method|
+          next if !method.match? /doctor_config_.*/
+
+          config_error = send method
+          errors = errors || config_error
+        end
+
+        transport_errors = transport.doctor state
         verifier_errors = instance.verifier.doctor state
 
-        driver_errors or verifier_errors
+        errors || transport_errors || verifier_errors
       end
 
       # #finalize_config! invokes the super implementation and then initializes the strategies.
@@ -211,21 +251,16 @@ module Kitchen
       # @param instance [Kitchen::Instance] an associated instance.
       # @raise [Kitchen::ClientError] if the instance is nil.
       # @return [self]
-      # @see Kitchen::Configurable#finalize_config!
       def finalize_config!(instance)
-        super instance
-        self.create_strategy = ::Kitchen::Terraform::Driver::Create.new(
-          config: config,
-          logger: logger,
-          version_requirement: version_requirement,
-          workspace_name: workspace_name,
-        )
-        self.destroy_strategy = ::Kitchen::Terraform::Driver::Destroy.new(
-          config: config,
-          logger: logger,
-          version_requirement: version_requirement,
-          workspace_name: workspace_name,
-        )
+        super
+
+        transport = instance.transport
+
+        self.transport = if ::Kitchen::Transport::Terraform == transport.class
+            transport
+          else
+            ::Kitchen::Transport::Terraform.new(config).finalize_config! instance
+          end
 
         self
       end
@@ -241,7 +276,8 @@ module Kitchen
 
       private
 
-      attr_accessor :action_failed, :create_strategy, :destroy_strategy
+      attr_accessor :action_failed
+      attr_writer :transport
     end
   end
 end

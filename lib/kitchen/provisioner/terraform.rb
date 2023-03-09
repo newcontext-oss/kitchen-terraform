@@ -24,7 +24,7 @@ module Kitchen
   #
   # @see http://www.rubydoc.info/gems/test-kitchen/Kitchen/Provisioner
   module Provisioner
-    # The provisioner applies changes to the Terraform state based on the configuration of the root module.
+    # The Terraform provisioner applies changes to the Terraform state based on the configuration of the root module.
     #
     # === Commands
     #
@@ -80,33 +80,20 @@ module Kitchen
       # @param state [Hash] the mutable instance and provisioner state.
       # @raise [Kitchen::ActionFailed] if the result of the action is a failure.
       def call(state)
-        converge_strategy.call state: state
-      rescue => error
-        action_failed.call message: error.message
-      end
+        driver = instance.driver
+        transport = driver.transport
 
-      # #finalize_config! invokes the super implementation and then initializes the strategy.
-      #
-      # @param instance [Kitchen::Instance] an associated instance.
-      # @raise [Kitchen::ClientError] if the instance is nil.
-      # @return [self]
-      # @see Kitchen::Configurable#finalize_config!
-      def finalize_config!(instance)
-        super instance
-        self.action_failed = ::Kitchen::Terraform::Raise::ActionFailed.new logger: logger
-        self.converge_strategy = ::Kitchen::Terraform::Provisioner::Converge.new(
-          config: instance.driver.send(:config),
+        ::Kitchen::Terraform::Provisioner::Converge.new(
+          config: driver.send(:config),
+          connection: transport.connection({}),
+          debug_connection: transport.connection(logger: ::Kitchen::Terraform::DebugLogger.new(logger: logger)),
           logger: logger,
           version_requirement: version_requirement,
           workspace_name: workspace_name,
-        )
-
-        self
+        ).call state: state
+      rescue => error
+        ::Kitchen::Terraform::Raise::ActionFailed.new(logger: logger).call message: error.message
       end
-
-      private
-
-      attr_accessor :action_failed, :converge_strategy
     end
   end
 end

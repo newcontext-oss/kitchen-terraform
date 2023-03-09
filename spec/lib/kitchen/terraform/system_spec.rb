@@ -19,11 +19,14 @@ require "kitchen/terraform/inspec_factory"
 require "kitchen/terraform/inspec_options_factory"
 require "kitchen/terraform/inspec/fail_fast_with_hosts"
 require "kitchen/terraform/system"
+require "support/kitchen/logger_context"
 
 ::RSpec.describe ::Kitchen::Terraform::System do
   subject do
-    described_class.new configuration_attributes: configuration_attributes, logger: ::Kitchen::Logger.new
+    described_class.new configuration_attributes: configuration_attributes, logger: logger
   end
+
+  include_context "Kitchen::Logger"
 
   let :configuration_attributes do
     {

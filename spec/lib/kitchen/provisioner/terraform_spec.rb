@@ -18,13 +18,17 @@ require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/provisioner/terraform"
 require "kitchen/terraform/provisioner/converge"
+require "kitchen/transport/terraform"
 require "rubygems"
+require "support/kitchen/logger_context"
 require "support/kitchen/terraform/configurable_examples"
 
 ::RSpec.describe ::Kitchen::Provisioner::Terraform do
   subject do
     described_class.new config
   end
+
+  include_context "Kitchen::Logger"
 
   let :config do
     {}
@@ -46,18 +50,14 @@ require "support/kitchen/terraform/configurable_examples"
     ::Kitchen::Instance.new(
       driver: driver,
       lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config, state_file),
-      logger: kitchen_logger,
+      logger: logger,
       platform: ::Kitchen::Platform.new(name: "test-platform"),
       provisioner: subject,
       state_file: state_file,
       suite: ::Kitchen::Suite.new(name: "test-suite"),
-      transport: ::Kitchen::Transport::Base.new,
+      transport: ::Kitchen::Transport::Terraform.new({}),
       verifier: ::Kitchen::Verifier::Base.new,
     )
-  end
-
-  let :kitchen_logger do
-    ::Kitchen::Logger.new
   end
 
   let :state_file do
@@ -68,7 +68,9 @@ require "support/kitchen/terraform/configurable_examples"
     allow(::Kitchen::Terraform::Provisioner::Converge).to(
       receive(:new).with(
         config: driver_config,
-        logger: kitchen_logger,
+        connection: kind_of(::Kitchen::Terraform::Transport::Connection),
+        debug_connection: kind_of(::Kitchen::Terraform::Transport::Connection),
+        logger: logger,
         version_requirement: kind_of(::Gem::Requirement),
         workspace_name: kind_of(::String),
       ).and_return(converge)
@@ -87,11 +89,9 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     context "when the action is a failure" do
-      before do
-        allow(converge).to receive(:call).and_raise ::Kitchen::StandardError, "failure"
-      end
-
       specify "should raise an action failed error" do
+        allow(converge).to receive(:call).and_raise ::Kitchen::StandardError, "failure"
+
         expect do
           subject.call state
         end.to raise_error ::Kitchen::ActionFailed
@@ -99,11 +99,9 @@ require "support/kitchen/terraform/configurable_examples"
     end
 
     context "when the action is a success" do
-      before do
-        allow(converge).to receive :call
-      end
-
       specify "should not raise an error" do
+        allow(converge).to receive :call
+
         expect do
           subject.call state
         end.not_to raise_error

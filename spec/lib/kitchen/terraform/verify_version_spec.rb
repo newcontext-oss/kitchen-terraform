@@ -18,6 +18,7 @@ require "kitchen"
 require "kitchen/terraform/unsupported_client_version_error"
 require "kitchen/terraform/verify_version"
 require "rubygems"
+require "support/kitchen/logger_context"
 
 ::RSpec.describe ::Kitchen::Terraform::VerifyVersion do
   subject do
@@ -28,12 +29,10 @@ require "rubygems"
     )
   end
 
+  include_context "Kitchen::Logger"
+
   let :config do
     { verify_version: verify_version }
-  end
-
-  let :logger do
-    ::Kitchen::Logger.new
   end
 
   let :verify_version do

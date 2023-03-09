@@ -18,7 +18,9 @@ require "kitchen"
 require "kitchen/driver/terraform"
 require "kitchen/terraform/driver/create"
 require "kitchen/terraform/driver/destroy"
+require "kitchen/terraform/transport/connection"
 require "rubygems"
+require "support/kitchen/logger_context"
 require "support/kitchen/terraform/config_attribute/backend_configurations_examples"
 require "support/kitchen/terraform/config_attribute/client_examples"
 require "support/kitchen/terraform/config_attribute/color_examples"
@@ -38,8 +40,10 @@ require "support/kitchen/terraform/configurable_examples"
     described_class.new config
   end
 
+  include_context "Kitchen::Logger"
+
   let :config do
-    { client: "client" }
+    {}
   end
 
   let :kitchen_instance do
@@ -113,6 +117,7 @@ require "support/kitchen/terraform/configurable_examples"
       allow(::Kitchen::Terraform::Driver::Create).to(
         receive(:new).with(
           config: config,
+          connection: kind_of(::Kitchen::Terraform::Transport::Connection),
           logger: kind_of(::Kitchen::Logger),
           version_requirement: version_requirement,
           workspace_name: workspace_name,
@@ -153,6 +158,7 @@ require "support/kitchen/terraform/configurable_examples"
       allow(::Kitchen::Terraform::Driver::Destroy).to(
         receive(:new).with(
           config: config,
+          connection: kind_of(::Kitchen::Terraform::Transport::Connection),
           logger: kind_of(::Kitchen::Logger),
           version_requirement: version_requirement,
           workspace_name: workspace_name,
@@ -185,16 +191,12 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#doctor" do
-    let :kitchen_instance_state do
-      {}
-    end
-
-    before do
-      subject.finalize_config! kitchen_instance
-    end
-
     specify "should return true" do
-      expect(subject.doctor(kitchen_instance_state)).to be_truthy
+      config.store :client, "test-client"
+
+      subject.finalize_config! kitchen_instance
+
+      expect(subject.doctor(state)).to be_truthy
     end
   end
 end
