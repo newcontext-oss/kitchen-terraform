@@ -16,6 +16,7 @@ jobs:
           ruby-version: '${{ matrix.ruby-version }}'
           bundler: '2.4'
           bundler-cache: true
+          cache-version: '1-${{ matrix.operating-system }}-${{ matrix.ruby-version }}'
       - name: Upload Bundler Lockfile
         uses: actions/upload-artifact@v3
         with:
@@ -53,6 +54,7 @@ jobs:
           ruby-version: '${{ matrix.ruby-version }}'
           bundler: '2.4'
           bundler-cache: true
+          cache-version: '1-${{ matrix.operating-system }}-${{ matrix.ruby-version }}'
       - name: Run RSpec Tests
         if: ${{ matrix.ruby-version != '3.1' }}
         run: bundle exec rake test:rspec
@@ -94,6 +96,7 @@ jobs:
           ruby-version: '3.1'
           bundler: '2.4'
           bundler-cache: true
+          cache-version: '1-ubuntu-3.1'
       - name: Build Ruby Gem
         env:
           GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}
