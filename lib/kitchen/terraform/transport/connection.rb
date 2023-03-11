@@ -54,7 +54,7 @@ module Kitchen
 
           self.client = options.delete :client
           self.command_timeout = options.delete :command_timeout
-          self.environment = options.delete(:environment) or {}
+          self.environment = options.delete(:environment) || {}
           self.root_module_directory = options.delete :root_module_directory
         end
       end
