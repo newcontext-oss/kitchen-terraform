@@ -152,15 +152,12 @@ module Kitchen
       include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
       include ::Kitchen::Terraform::ConfigAttribute::Client
-      deprecate_config_for :client, "driver.client is deprecated; use transport.client instead"
+      deprecate_config_for :client, "use transport.client instead"
 
       include ::Kitchen::Terraform::ConfigAttribute::Color
 
       include ::Kitchen::Terraform::ConfigAttribute::CommandTimeout
-      deprecate_config_for(
-        :command_timeout,
-        "driver.command_timeout is deprecated; use transport.command_timeout instead"
-      )
+      deprecate_config_for :command_timeout, "use transport.command_timeout instead"
 
       include ::Kitchen::Terraform::ConfigAttribute::Lock
 
@@ -171,10 +168,7 @@ module Kitchen
       include ::Kitchen::Terraform::ConfigAttribute::PluginDirectory
 
       include ::Kitchen::Terraform::ConfigAttribute::RootModuleDirectory
-      deprecate_config_for(
-        :root_module_directory,
-        "driver.root_module_directory is deprecated; use transport.root_module_directory instead"
-      )
+      deprecate_config_for :root_module_directory, "use transport.root_module_directory instead"
 
       include ::Kitchen::Terraform::ConfigAttribute::VariableFiles
 
@@ -254,6 +248,8 @@ module Kitchen
       def finalize_config!(instance)
         super
 
+        self.deprecated_config ||= {}
+
         transport = instance.transport
 
         self.transport = if ::Kitchen::Transport::Terraform == transport.class
@@ -276,7 +272,7 @@ module Kitchen
 
       private
 
-      attr_accessor :action_failed
+      attr_accessor :action_failed, :deprecated_config
       attr_writer :transport
     end
   end
