@@ -272,8 +272,8 @@ module Kitchen
 
       private
 
-      attr_accessor :action_failed
-      attr_writer :deprecated_config, :transport
+      attr_accessor :action_failed, :deprecated_config
+      attr_writer :transport
     end
   end
 end
