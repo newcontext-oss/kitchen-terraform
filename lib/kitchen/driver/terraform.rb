@@ -248,6 +248,8 @@ module Kitchen
       def finalize_config!(instance)
         super
 
+        self.deprecated_config ||= {}
+
         transport = instance.transport
 
         self.transport = if ::Kitchen::Transport::Terraform == transport.class
@@ -271,7 +273,7 @@ module Kitchen
       private
 
       attr_accessor :action_failed
-      attr_writer :transport
+      attr_writer :deprecated_config, :transport
     end
   end
 end
