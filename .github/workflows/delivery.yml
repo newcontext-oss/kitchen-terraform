@@ -6,7 +6,7 @@ jobs:
   commit-compile:
     name: Commit - Compile
     if: ${{ github.ref_type == 'branch' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-system }}-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -25,16 +25,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version:
-          - '2.7'
-          - '3.0'
-          - '3.1'
+        include:
+          - operating-system: ubuntu
+            ruby-version: '2.7'
+          - operating-system: ubuntu
+            ruby-version: '3.0'
+          - operating-system: ubuntu
+            ruby-version: '3.1'
+          - operating-system: windows
+            ruby-version: '3.1'
   commit-unit-test:
     name: Commit - Unit Test
     needs:
       - commit-compile
     if: ${{ github.ref_type == 'branch' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-system }}-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -61,10 +66,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version:
-          - '2.7'
-          - '3.0'
-          - '3.1'
+        include:
+          - operating-system: ubuntu
+            ruby-version: '2.7'
+          - operating-system: ubuntu
+            ruby-version: '3.0'
+          - operating-system: ubuntu
+            ruby-version: '3.1'
+          - operating-system: windows
+            ruby-version: '3.1'
   commit-assemble:
     name: Commit - Assemble
     needs:
