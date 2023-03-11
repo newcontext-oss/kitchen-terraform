@@ -25,7 +25,15 @@ module Kitchen
       # The shell out environment includes the TF_IN_AUTOMATION environment variable as specified by the
       # {https://www.terraform.io/guides/running-terraform-in-automation.html#controlling-terraform-output-in-automation Running Terraform in Automation guide}.
       class Connection < ::Kitchen::Transport::Exec::Connection
-        # #run_command executes a Terraform CLI command in a subshell on the local running system.
+        # #execute executes a Terraform CLI command on the local host.
+        #
+        # @param command [String] the Terraform command to be executed locally.
+        # @raise [Kitchen::TransportFailed] if the command does not exit successfully.
+        def execute(command)
+          super "#{client} #{command}"
+        end
+
+        # #run_command executes a command in a subshell on the local running system.
         #
         # @param command [String] the command to be executed locally.
         # @param options [Hash] additional configuration of the command.
@@ -33,7 +41,7 @@ module Kitchen
         # @raise [Kitchen::ShellOut::ShellCommandFailed] if the command fails.
         # @raise [Kitchen::StandardError] for all other unexpected exceptions.
         def run_command(command, options = {})
-          super "#{client} #{command}", options.merge(
+          super command, options.merge(
             cwd: root_module_directory,
             environment: environment.merge("LC_ALL" => nil, "TF_IN_AUTOMATION" => "true"),
             timeout: command_timeout,

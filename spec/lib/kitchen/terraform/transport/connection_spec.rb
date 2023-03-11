@@ -53,7 +53,7 @@ require "mixlib/shellout"
     instance_double ::String
   end
 
-  describe "#run_command" do
+  describe "#execute" do
     let :command do
       instance_double ::String
     end
@@ -80,7 +80,7 @@ require "mixlib/shellout"
         })
       ).and_return shell_out
 
-      expect(subject.run_command(command)).to eq :superclass
+      expect(subject.execute(command)).to eq :superclass
     end
   end
 end
