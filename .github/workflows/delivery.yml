@@ -148,10 +148,10 @@ jobs:
           terraform providers mirror ./PlugInDirectory
       - name: Run Kitchen Tests
         run: |
-          rake test:kitchen:attributes-${{ matrix.operating-system }}
-          rake test:kitchen:plug-ins-${{ matrix.operating-system }}
-          rake test:kitchen:variables-${{ matrix.operating-system }}
-          rake test:kitchen:workspaces-${{ matrix.operating-system }}
+          rake --trace test:kitchen:attributes-${{ matrix.operating-system }}
+          rake --trace test:kitchen:plug-ins-${{ matrix.operating-system }}
+          rake --trace test:kitchen:variables-${{ matrix.operating-system }}
+          rake --trace test:kitchen:workspaces-${{ matrix.operating-system }}
       - name: Run Kitchen Test backend-ssh
         if: ${{ matrix.operating-system == 'ubuntu' }}
         run: |
@@ -159,7 +159,7 @@ jobs:
           rake test:kitchen:backend-ssh-ubuntu
       - name: Run Kitchen doctor
         run: |
-          rake test:kitchen:doctor-${{ matrix.operating-system }}
+          rake --trace test:kitchen:doctor-${{ matrix.operating-system }}
     strategy:
       fail-fast: false
       matrix:
