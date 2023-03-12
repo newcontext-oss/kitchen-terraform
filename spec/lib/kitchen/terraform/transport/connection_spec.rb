@@ -75,6 +75,7 @@ require "mixlib/shellout"
 
     specify "should invoke the ShellOut superclass implementation with the client and options configured" do
       allow(subject).to receive(:run_from_file_command).with("#{client} #{command}").and_return "#{client} #{command}"
+      allow(subject).to receive :close
       allow(shell_out).to receive :run_command
       allow(shell_out).to receive :execution_time
       allow(shell_out).to receive :error!
