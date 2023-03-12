@@ -24,7 +24,7 @@ require "support/kitchen/logger_context"
   subject do
     described_class.new(
       config: config,
-      logger: logger,
+      logger: ::Kitchen.logger,
       version_requirement: version_requirement,
     )
   end

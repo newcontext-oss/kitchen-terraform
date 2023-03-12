@@ -17,7 +17,7 @@
 require "kitchen/logger"
 
 ::RSpec.shared_context "Kitchen::Logger" do
-  let :logger do
-    ::Kitchen::Logger.new stdout: ::File.open(::File::NULL, "w")
+  before do
+    ::Kitchen.logger = ::Kitchen::Logger.new stdout: ::File.open(::File::NULL, "w")
   end
 end

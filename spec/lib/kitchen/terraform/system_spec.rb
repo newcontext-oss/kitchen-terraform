@@ -23,7 +23,7 @@ require "support/kitchen/logger_context"
 
 ::RSpec.describe ::Kitchen::Terraform::System do
   subject do
-    described_class.new configuration_attributes: configuration_attributes, logger: logger
+    described_class.new configuration_attributes: configuration_attributes, logger: ::Kitchen.logger
   end
 
   include_context "Kitchen::Logger"

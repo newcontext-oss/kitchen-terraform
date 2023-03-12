@@ -50,7 +50,6 @@ require "support/kitchen/terraform/configurable_examples"
     ::Kitchen::Instance.new(
       driver: driver,
       lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config, state_file),
-      logger: logger,
       platform: ::Kitchen::Platform.new(name: "test-platform"),
       provisioner: subject,
       state_file: state_file,
@@ -70,7 +69,7 @@ require "support/kitchen/terraform/configurable_examples"
         config: driver_config,
         connection: kind_of(::Kitchen::Terraform::Transport::Connection),
         debug_connection: kind_of(::Kitchen::Terraform::Transport::Connection),
-        logger: logger,
+        logger: ::Kitchen.logger,
         version_requirement: kind_of(::Gem::Requirement),
         workspace_name: kind_of(::String),
       ).and_return(converge)
