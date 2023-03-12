@@ -26,7 +26,7 @@ require "support/coverage"
     expect_configuration.max_formatted_output_length = nil
   end
 
-  configuration.fail_fast = true
+  configuration.fail_fast = false
 
   configuration.mock_with :rspec do |mocks|
     mocks.verify_doubled_constant_names = true
