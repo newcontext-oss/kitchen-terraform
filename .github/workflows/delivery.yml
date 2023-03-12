@@ -56,10 +56,10 @@ jobs:
           bundler-cache: true
           cache-version: '1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}'
       - name: Run RSpec Tests
-        if: ${{ matrix.ruby-version != '3.1' }}
+        if: ${{ !matrix.code-coverage }}
         run: bundle exec rake test:rspec
       - name: Run RSpec Tests with Code Coverage
-        if: ${{ matrix.ruby-version == '3.1' }}
+        if: ${{ matrix.code-coverage }}
         uses: paambaati/codeclimate-action@v3.2.0
         env:
           CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
@@ -69,13 +69,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - operating-system: ubuntu
+          - code-coverage: false
+            operating-system: ubuntu
             ruby-version: '2.7'
-          - operating-system: ubuntu
+          - code-coverage: false
+            operating-system: ubuntu
             ruby-version: '3.0'
-          - operating-system: ubuntu
+          - code-coverage: true
+            operating-system: ubuntu
             ruby-version: '3.1'
-          - operating-system: windows
+          - code-coverage: false
+            operating-system: windows
             ruby-version: '3.1'
   commit-assemble:
     name: Commit - Assemble
