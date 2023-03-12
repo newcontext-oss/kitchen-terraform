@@ -16,11 +16,11 @@ jobs:
           ruby-version: '${{ matrix.ruby-version }}'
           bundler: '2.4'
           bundler-cache: true
-          cache-version: '1-${{ matrix.operating-system }}-${{ matrix.ruby-version }}'
+          cache-version: '1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}'
       - name: Upload Bundler Lockfile
         uses: actions/upload-artifact@v3
         with:
-          name: bundler-lockfile-ruby-${{ matrix.ruby-version }}
+          name: bundler-lockfile-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}
           path: gems.locked
           if-no-files-found: error
     strategy:
@@ -47,14 +47,14 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile-ruby-${{ matrix.ruby-version }}
+          name: bundler-lockfile-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '${{ matrix.ruby-version }}'
           bundler: '2.4'
           bundler-cache: true
-          cache-version: '1-${{ matrix.operating-system }}-${{ matrix.ruby-version }}'
+          cache-version: '1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}'
       - name: Run RSpec Tests
         if: ${{ matrix.ruby-version != '3.1' }}
         run: bundle exec rake test:rspec
@@ -89,14 +89,14 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile-ruby-3.1
+          name: bundler-lockfile-os-ubuntu-rv-3.1
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
           bundler: '2.4'
           bundler-cache: true
-          cache-version: '1-ubuntu-3.1'
+          cache-version: '1-os-ubuntu-rv-3.1'
       - name: Build Ruby Gem
         env:
           GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}
