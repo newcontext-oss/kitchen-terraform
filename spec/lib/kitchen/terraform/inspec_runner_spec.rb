@@ -24,15 +24,15 @@ require "support/kitchen/logger_context"
 
   describe ".logger=" do
     before do
-      described_class.logger = logger
+      described_class.logger = ::Kitchen.logger
     end
 
     specify "should extend the logger interface to be compatible with InSpec" do
-      expect(logger.logdev.filename).to be false
+      expect(::Kitchen.logger.logdev.filename).to be false
     end
 
     specify "should set the Inspec logger" do
-      expect(::Inspec::Log.logger).to be logger
+      expect(::Inspec::Log.logger).to be ::Kitchen.logger
     end
   end
 
@@ -42,7 +42,7 @@ require "support/kitchen/logger_context"
     end
 
     let :full_options do
-      { key: "value", logger: logger }
+      { key: "value", logger: ::Kitchen.logger }
     end
 
     let :loader do
@@ -67,7 +67,7 @@ require "support/kitchen/logger_context"
       allow(loader).to receive :exit_on_load_error
       allow(::Inspec::Runner).to receive(:new).with(full_options).and_return runner
       allow(runner).to receive(:add_target).with profile_location
-      described_class.logger = logger
+      described_class.logger = ::Kitchen.logger
     end
 
     context "when the InSpec runner raises an error and a host is not targeted" do
@@ -84,7 +84,7 @@ require "support/kitchen/logger_context"
 
     context "when the InSpec runner raises an error and a host is targeted" do
       let :full_options do
-        { host: "test", key: "value", logger: logger }
+        { host: "test", key: "value", logger: ::Kitchen.logger }
       end
 
       let :options do

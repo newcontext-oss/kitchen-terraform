@@ -31,7 +31,7 @@ require "support/kitchen/logger_context"
     described_class.new(
       config: config,
       connection: connection,
-      logger: logger,
+      logger: ::Kitchen.logger,
       workspace_name: "test-workspace",
       version_requirement: ::Gem::Requirement.new(">= 0.1.0"),
     )

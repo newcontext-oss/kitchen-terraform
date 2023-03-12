@@ -6,7 +6,7 @@ jobs:
   commit-compile:
     name: Commit - Compile
     if: ${{ github.ref_type == 'branch' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-system }}-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -16,43 +16,50 @@ jobs:
           ruby-version: '${{ matrix.ruby-version }}'
           bundler: '2.4'
           bundler-cache: true
+          cache-version: '1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}'
       - name: Upload Bundler Lockfile
         uses: actions/upload-artifact@v3
         with:
-          name: bundler-lockfile-ruby-${{ matrix.ruby-version }}
+          name: bundler-lockfile-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}
           path: gems.locked
           if-no-files-found: error
     strategy:
       fail-fast: false
       matrix:
-        ruby-version:
-          - '2.7'
-          - '3.0'
-          - '3.1'
+        include:
+          - operating-system: ubuntu
+            ruby-version: '2.7'
+          - operating-system: ubuntu
+            ruby-version: '3.0'
+          - operating-system: ubuntu
+            ruby-version: '3.1'
+          - operating-system: windows
+            ruby-version: '3.1'
   commit-unit-test:
     name: Commit - Unit Test
     needs:
       - commit-compile
     if: ${{ github.ref_type == 'branch' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.operating-system }}-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile-ruby-${{ matrix.ruby-version }}
+          name: bundler-lockfile-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '${{ matrix.ruby-version }}'
           bundler: '2.4'
           bundler-cache: true
+          cache-version: '1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}'
       - name: Run RSpec Tests
-        if: ${{ matrix.ruby-version != '3.1' }}
+        if: ${{ !matrix.code-coverage }}
         run: bundle exec rake test:rspec
       - name: Run RSpec Tests with Code Coverage
-        if: ${{ matrix.ruby-version == '3.1' }}
+        if: ${{ matrix.code-coverage }}
         uses: paambaati/codeclimate-action@v3.2.0
         env:
           CC_TEST_REPORTER_ID: 7574433e1beed630cb9a171c688bb9e010d5028f00f7218d6e845fe138c65168
@@ -61,10 +68,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version:
-          - '2.7'
-          - '3.0'
-          - '3.1'
+        include:
+          - code-coverage: false
+            operating-system: ubuntu
+            ruby-version: '2.7'
+          - code-coverage: false
+            operating-system: ubuntu
+            ruby-version: '3.0'
+          - code-coverage: true
+            operating-system: ubuntu
+            ruby-version: '3.1'
+          - code-coverage: false
+            operating-system: windows
+            ruby-version: '3.1'
   commit-assemble:
     name: Commit - Assemble
     needs:
@@ -77,13 +93,14 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile-ruby-3.1
+          name: bundler-lockfile-os-ubuntu-rv-3.1
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
           bundler: '2.4'
           bundler-cache: true
+          cache-version: '1-os-ubuntu-rv-3.1'
       - name: Build Ruby Gem
         env:
           GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}

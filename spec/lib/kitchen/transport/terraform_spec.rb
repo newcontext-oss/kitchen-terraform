@@ -37,7 +37,6 @@ require "support/kitchen/terraform/configurable_examples"
     ::Kitchen::Instance.new(
       driver: ::Kitchen::Driver::Base.new,
       lifecycle_hooks: ::Kitchen::LifecycleHooks.new(config, state_file),
-      logger: logger,
       platform: ::Kitchen::Platform.new(name: "test-platform"),
       provisioner: ::Kitchen::Provisioner::Base.new,
       state_file: state_file,

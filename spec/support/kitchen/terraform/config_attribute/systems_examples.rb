@@ -14,10 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require "support/kitchen/logger_context"
+
 ::RSpec.shared_examples "Kitchen::Terraform::ConfigAttribute::Systems" do
   subject do
     described_class.new config
   end
+
+  include_context "Kitchen::Logger"
 
   let :config do
     {
@@ -50,7 +54,10 @@
 
     context "when the configured systems are not empty" do
       before do
-        config.store :systems, [::Kitchen::Terraform::System.new(configuration_attributes: {}, logger: logger)]
+        config.store(
+          :systems,
+          [::Kitchen::Terraform::System.new(configuration_attributes: {}, logger: ::Kitchen.logger)]
+        )
       end
 
       specify "should return false" do
