@@ -40,11 +40,21 @@ require "mixlib/shellout"
     instance_double ::String
   end
 
+  let :instance_name do
+    instance_double ::String
+  end
+
+  let :kitchen_root do
+    instance_double ::String
+  end
+
   let :options do
     {
       client: client,
       command_timeout: command_timeout,
       environment: { environment_variable_key => environment_variable_value },
+      instance_name: instance_name,
+      kitchen_root: kitchen_root,
       root_module_directory: root_module_directory,
     }
   end
