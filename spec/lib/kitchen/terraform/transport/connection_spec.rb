@@ -45,7 +45,8 @@ require "mixlib/shellout"
   end
 
   let :kitchen_root do
-    instance_double ::String
+    # kitchen_root must support implicit string conversion
+    "test-kitchen-root"
   end
 
   let :options do
