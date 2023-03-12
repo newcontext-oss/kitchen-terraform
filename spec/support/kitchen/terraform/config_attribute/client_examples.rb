@@ -88,7 +88,7 @@ require "tempfile"
 
     context "when the configured client does exist and is executable" do
       let :value do
-        file = ::Tempfile.new "client"
+        file = ::Tempfile.new ["client", ".exe"]
         file.chmod 0777
 
         file
