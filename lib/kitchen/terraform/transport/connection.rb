@@ -28,9 +28,12 @@ module Kitchen
         # #execute executes a Terraform CLI command on the local host.
         #
         # @param command [String] the Terraform command to be executed locally.
+        # @return [String] the standard output of the command.
         # @raise [Kitchen::TransportFailed] if the command does not exit successfully.
         def execute(command)
           super "#{client} #{command}"
+
+          stdout
         end
 
         # #run_command executes a command in a subshell on the local running system.
@@ -41,7 +44,7 @@ module Kitchen
         # @raise [Kitchen::ShellOut::ShellCommandFailed] if the command fails.
         # @raise [Kitchen::StandardError] for all other unexpected exceptions.
         def run_command(command, options = {})
-          super command, options.merge(
+          self.stdout = super command, options.merge(
             cwd: root_module_directory,
             environment: environment.merge("LC_ALL" => nil, "TF_IN_AUTOMATION" => "true"),
             timeout: command_timeout,
@@ -50,7 +53,7 @@ module Kitchen
 
         private
 
-        attr_accessor :client, :command_timeout, :environment, :options, :root_module_directory
+        attr_accessor :client, :command_timeout, :environment, :options, :root_module_directory, :stdout
 
         # #init_options initializes incoming options for use by the object.
         #

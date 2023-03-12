@@ -73,6 +73,10 @@ require "mixlib/shellout"
       instance_double ::Mixlib::ShellOut
     end
 
+    let :stdout do
+      instance_double ::String
+    end
+
     specify "should invoke the ShellOut superclass implementation with the client and options configured" do
       allow(subject).to receive(:run_from_file_command).with("#{client} #{command}").and_return "#{client} #{command}"
       allow(subject).to receive :close
@@ -88,13 +92,12 @@ require "mixlib/shellout"
           timeout: command_timeout,
         })
       ).and_return shell_out
+      allow(shell_out).to receive :run_command
+      allow(shell_out).to receive :execution_time
+      allow(shell_out).to receive :error!
+      allow(shell_out).to receive(:stdout).and_return stdout
 
-      expect(shell_out).to receive :run_command
-      expect(shell_out).to receive :execution_time
-      expect(shell_out).to receive :error!
-      expect(shell_out).to receive :stdout
-
-      subject.execute command
+      expect(subject.execute(command)).to be stdout
     end
   end
 end
