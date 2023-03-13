@@ -28,6 +28,8 @@ require "rubygems"
   specification.add_development_dependency "middleman-livereload", "~> 3.4"
   specification.add_development_dependency "middleman-syntax", "~> 3.0"
   specification.add_development_dependency "middleman", "~> 4.2"
+  # mini_racer is implicity required by middleman
+  specification.add_development_dependency "mini_racer", "~> 0.6.3"
   specification.add_development_dependency "rake", "~> 13.0"
   specification.add_development_dependency "rspec", "~> 3.10"
   specification.add_development_dependency "rufo", "~> 0.15.1"
