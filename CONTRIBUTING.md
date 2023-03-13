@@ -3,14 +3,6 @@
 This document describes how to contribute to Kitchen-Terraform.
 Proposals for changes to this document are welcome.
 
-## Table of Contents
-
-[Code of Conduct](#code-of-conduct)
-
-[Asking Questions](#asking-questions)
-
-[Project Technologies](#project-technologies)
-
 ## Code of Conduct
 
 Contributors to Kitchen-Terraform are expected to adhere to the
