@@ -33,7 +33,7 @@ require "rubygems"
   specification.add_development_dependency "rufo", "~> 0.15.1"
   specification.add_development_dependency "simplecov", "~> 0.22.0"
   specification.add_development_dependency "yard", "~> 0.9"
-  specification.add_development_dependency "reek", "~> 6.0.2"
+  specification.add_development_dependency "reek", "~> 6.1"
   # webrick is implicitly required by yard
   specification.add_development_dependency "webrick", "~> 1.7"
   specification.add_runtime_dependency "delegate", ">= 0.1.0", "< 0.3.0"
