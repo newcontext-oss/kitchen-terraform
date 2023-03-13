@@ -1,6 +1,8 @@
 driver:
   name: terraform
 
+transport:
+  name: terraform
   # The test fixture Terraform configuration is configured to be the Terraform
   # root module
   root_module_directory: test/fixtures/wrapper
