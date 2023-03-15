@@ -16,4 +16,7 @@
 
 require "simplecov"
 
-::SimpleCov.start
+::SimpleCov.start do
+  enable_coverage :branch
+  enable_for_subprocesses
+end
