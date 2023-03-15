@@ -28,8 +28,6 @@ jobs:
       matrix:
         include:
           - operating-system: ubuntu
-            ruby-version: '2.7'
-          - operating-system: ubuntu
             ruby-version: '3.0'
           - operating-system: ubuntu
             ruby-version: '3.1'
@@ -69,9 +67,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - code-coverage: false
-            operating-system: ubuntu
-            ruby-version: '2.7'
           - code-coverage: false
             operating-system: ubuntu
             ruby-version: '3.0'
