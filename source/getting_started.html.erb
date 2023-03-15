@@ -96,11 +96,14 @@ bundle install
 ---
 driver:
   name: terraform
-  root_module_directory: test/fixtures/tf_module
   parallelism: 4
 
 provisioner:
   name: terraform
+
+transport:
+  name: terraform
+  root_module_directory: test/fixtures/tf_module
 
 verifier:
   name: terraform

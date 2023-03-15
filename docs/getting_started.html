@@ -144,11 +144,14 @@ bundle <span class="nb">install</span>
 <div class="highlight"><pre class="syntax-highlight yaml"><code><span class="nn">---</span>
 <span class="na">driver</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
-  <span class="na">root_module_directory</span><span class="pi">:</span> <span class="s">test/fixtures/tf_module</span>
   <span class="na">parallelism</span><span class="pi">:</span> <span class="m">4</span>
 
 <span class="na">provisioner</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+
+<span class="na">transport</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>
+  <span class="na">root_module_directory</span><span class="pi">:</span> <span class="s">test/fixtures/tf_module</span>
 
 <span class="na">verifier</span><span class="pi">:</span>
   <span class="na">name</span><span class="pi">:</span> <span class="s">terraform</span>

@@ -19,3 +19,5 @@ source "https://rubygems.org/"
 ruby ">= 2.7"
 
 gemspec
+
+gem "mini_racer", platforms: ["ruby"]
