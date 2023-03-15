@@ -23,7 +23,8 @@ and this project adheres to
   - `command_timeout`
   - `root_module_directory`
 - Dropped support for Inspec < 4.25.1
-- Dropped support for Ruby 2.6 which reach end of life on 2022-04-12.
+- Dropped support for Ruby 2.6 which reached end of life on 2022-04-12.
+- Dropped support for Ruby 2.7 which reached end of life on 2023-03-31.
 
 ## [6.1.0] - 2022-01-22
 
