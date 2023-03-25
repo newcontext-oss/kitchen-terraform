@@ -74,7 +74,7 @@ module Kitchen
       #
       # @param state [Hash] mutable instance state.
       # @return [Kitchen::Terraform::Transport::Connection] a connection for this transport.
-      # @raise [Kitchen::TransportFailed] if a connection could not be returned.
+      # @raise [Kitchen::Transport::TransportFailed] if a connection could not be returned.
       def connection(state, &block)
         options = connection_options config.to_hash.merge state
 

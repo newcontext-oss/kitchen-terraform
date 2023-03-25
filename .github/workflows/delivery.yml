@@ -31,8 +31,10 @@ jobs:
             ruby-version: '3.0'
           - operating-system: ubuntu
             ruby-version: '3.1'
+          - operating-system: ubuntu
+            ruby-version: '3.2'
           - operating-system: windows
-            ruby-version: '3.1'
+            ruby-version: '3.2'
   commit-unit-test:
     name: Commit - Unit Test
     needs:
@@ -70,12 +72,15 @@ jobs:
           - code-coverage: false
             operating-system: ubuntu
             ruby-version: '3.0'
-          - code-coverage: true
+          - code-coverage: false
             operating-system: ubuntu
             ruby-version: '3.1'
+          - code-coverage: true
+            operating-system: ubuntu
+            ruby-version: '3.2'
           - code-coverage: false
             operating-system: windows
-            ruby-version: '3.1'
+            ruby-version: '3.2'
   commit-assemble:
     name: Commit - Assemble
     needs:
@@ -88,14 +93,14 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile-os-ubuntu-rv-3.1
+          name: bundler-lockfile-os-ubuntu-rv-3.2
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: '3.2'
           bundler: '2.4'
           bundler-cache: true
-          cache-version: '1-os-ubuntu-rv-3.1'
+          cache-version: '1-os-ubuntu-rv-3.2'
       - name: Build Ruby Gem
         env:
           GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}
@@ -136,7 +141,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: '3.2'
           bundler-cache: false
       - name: Download Ruby Gem
         uses: actions/download-artifact@v3
@@ -193,7 +198,7 @@ jobs:
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.1'
+        ruby-version: '3.2'
         bundler-cache: false
     - name: Download Ruby Gem Release Candidate
       uses: actions/download-artifact@v3

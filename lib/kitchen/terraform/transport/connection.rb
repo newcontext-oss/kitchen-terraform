@@ -29,7 +29,7 @@ module Kitchen
         #
         # @param command [String] the Terraform command to be executed locally.
         # @return [String] the standard output of the command.
-        # @raise [Kitchen::TransportFailed] if the command does not exit successfully.
+        # @raise [Kitchen::Transport::TransportFailed] if the command does not exit successfully.
         def execute(command)
           super "#{client} #{command}"
 

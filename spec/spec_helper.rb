@@ -36,3 +36,13 @@ require "support/coverage"
 
   configuration.profile_examples = 10
 end
+
+module RSpec
+  module Mocks
+    # This is a patch to work around an issue that is fixed by rspec-mocks 3.12.2.
+    # SEE: https://github.com/rspec/rspec-mocks/pull/1514
+    class VerifyingMethodDouble
+      ruby2_keywords :proxy_method_invoked if respond_to?(:ruby2_keywords, true)
+    end
+  end
+end
