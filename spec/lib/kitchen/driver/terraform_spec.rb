@@ -101,12 +101,6 @@ require "support/kitchen/terraform/configurable_examples"
 
   it_behaves_like "Kitchen::Terraform::Configurable"
 
-  describe ".serial_actions" do
-    specify "actions are returned" do
-      expect(described_class.serial_actions).to contain_exactly(:create, :converge, :setup, :destroy)
-    end
-  end
-
   describe "#create" do
     let :create do
       instance_double ::Kitchen::Terraform::Driver::Create

@@ -142,13 +142,6 @@ module Kitchen
     class Terraform < ::Kitchen::Driver::Base
       kitchen_driver_api_version 2
 
-      no_parallel_for(
-        :create,
-        :converge,
-        :setup,
-        :destroy
-      )
-
       include ::Kitchen::Terraform::ConfigAttribute::BackendConfigurations
 
       include ::Kitchen::Terraform::ConfigAttribute::Client
