@@ -27,6 +27,8 @@ and this project adheres to
 - Dropped support for Ruby 2.7 which reached end of life on 2023-03-31.
 - Dropped support for InSpec 4.X which reached end of life on some
   indeterminate date.
+- Support for concurrency with the following commands was reintroduced:
+  `create`; `converge`; `setup`; `destroy`. Be safe and test quickly!
 
 ## [6.1.0] - 2022-01-22
 
