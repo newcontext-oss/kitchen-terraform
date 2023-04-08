@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased][unreleased]
 
+## [7.0.0] - 2023-04-08
+
 ### Added
 
 - A Terraform transport plugin
@@ -805,7 +807,8 @@ Free-As-In-Beer
 - Initial release
 
 [unreleased]:
-  https://github.com/newcontext/kitchen-terraform/compare/v6.1.0...HEAD
+  https://github.com/newcontext/kitchen-terraform/compare/v7.0.0...HEAD
+[7.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v6.1.0...v7.0.0
 [6.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v6.0.0...v6.1.0
 [6.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.8.0...v6.0.0
 [5.8.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.2...v5.8.0
