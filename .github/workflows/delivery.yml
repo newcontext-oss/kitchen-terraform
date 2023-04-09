@@ -13,14 +13,17 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '${{ matrix.ruby-version }}'
-          bundler: '2.4'
+          ruby-version: "${{ matrix.ruby-version }}"
+          bundler: "2.4"
           bundler-cache: true
-          cache-version: '1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}'
+          cache-version:
+            "1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}"
       - name: Upload Bundler Lockfile
         uses: actions/upload-artifact@v3
         with:
-          name: bundler-lockfile-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}
+          name:
+            bundler-lockfile-os-${{ matrix.operating-system }}-rv-${{
+            matrix.ruby-version }}
           path: gems.locked
           if-no-files-found: error
     strategy:
@@ -28,13 +31,13 @@ jobs:
       matrix:
         include:
           - operating-system: ubuntu
-            ruby-version: '3.0'
+            ruby-version: "3.0"
           - operating-system: ubuntu
-            ruby-version: '3.1'
+            ruby-version: "3.1"
           - operating-system: ubuntu
-            ruby-version: '3.2'
+            ruby-version: "3.2"
           - operating-system: windows
-            ruby-version: '3.2'
+            ruby-version: "3.2"
   commit-unit-test:
     name: Commit - Unit Test
     needs:
@@ -47,14 +50,17 @@ jobs:
       - name: Download Bundler Lockfile
         uses: actions/download-artifact@v3
         with:
-          name: bundler-lockfile-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}
+          name:
+            bundler-lockfile-os-${{ matrix.operating-system }}-rv-${{
+            matrix.ruby-version }}
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '${{ matrix.ruby-version }}'
-          bundler: '2.4'
+          ruby-version: "${{ matrix.ruby-version }}"
+          bundler: "2.4"
           bundler-cache: true
-          cache-version: '1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}'
+          cache-version:
+            "1-os-${{ matrix.operating-system }}-rv-${{ matrix.ruby-version }}"
       - name: Run RSpec Tests
         if: ${{ !matrix.code-coverage }}
         run: bundle exec rake test:rspec
@@ -71,16 +77,16 @@ jobs:
         include:
           - code-coverage: false
             operating-system: ubuntu
-            ruby-version: '3.0'
+            ruby-version: "3.0"
           - code-coverage: false
             operating-system: ubuntu
-            ruby-version: '3.1'
+            ruby-version: "3.1"
           - code-coverage: true
             operating-system: ubuntu
-            ruby-version: '3.2'
+            ruby-version: "3.2"
           - code-coverage: false
             operating-system: windows
-            ruby-version: '3.2'
+            ruby-version: "3.2"
   commit-assemble:
     name: Commit - Assemble
     needs:
@@ -97,10 +103,10 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
-          bundler: '2.4'
+          ruby-version: "3.2"
+          bundler: "2.4"
           bundler-cache: true
-          cache-version: '1-os-ubuntu-rv-3.2'
+          cache-version: "1-os-ubuntu-rv-3.2"
       - name: Build Ruby Gem
         env:
           GEM_PRIVATE_KEY: ${{ secrets.GEM_PRIVATE_KEY }}
@@ -133,7 +139,9 @@ jobs:
       - commit-unit-test
       - commit-assemble
       - commit-code-analysis
-    if: ${{ github.ref_type == 'branch' && github.event_name == 'push' && github.ref_name == 'main' }}
+    if:
+      ${{ github.ref_type == 'branch' && github.event_name == 'push' &&
+      github.ref_name == 'main' }}
     runs-on: ${{ matrix.operating-system }}-latest
     steps:
       - name: Checkout Repository
@@ -141,14 +149,16 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
+          ruby-version: "3.2"
           bundler-cache: false
       - name: Download Ruby Gem
         uses: actions/download-artifact@v3
         with:
           name: ruby-gem
       - name: Install Ruby Gems
-        run: gem install --conservative --minimal-deps --verbose kitchen-terraform.gem rake
+        run:
+          gem install --conservative --minimal-deps --verbose
+          kitchen-terraform.gem rake
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -182,29 +192,33 @@ jobs:
       matrix:
         include:
           - operating-system: macos
-            terraform-version: '1.1.4'
-            terragrunt-version: '0.36.0'
+            terraform-version: "1.1.4"
+            terragrunt-version: "0.36.0"
           - operating-system: ubuntu
-            terraform-version: '0.15.5'
+            terraform-version: "0.15.5"
           - operating-system: ubuntu
-            terraform-version: '0.14.11'
+            terraform-version: "0.14.11"
           - operating-system: windows
-            terraform-version: '0.13.7'
+            terraform-version: "0.13.7"
   release:
     name: Release
     if: ${{ github.ref_type == 'tag' && startsWith(github.ref_name, 'v') }}
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: '3.2'
-        bundler-cache: false
-    - name: Download Ruby Gem Release Candidate
-      uses: actions/download-artifact@v3
-      with:
-        name: ruby-gem-release-candidate
-    - name: Publish Ruby Gem Release Candidate
-      env:
-        GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
-      run: gem push kitchen-terraform.gem
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: false
+      - name: Download Ruby Gem Release Candidate
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          branch: main
+          commit: ${{ github.sha }}
+          event: push
+          name: ruby-gem-release-candidate
+          workflow_conclusion: success
+      - name: Publish Ruby Gem Release Candidate
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
+        run: gem push kitchen-terraform.gem
