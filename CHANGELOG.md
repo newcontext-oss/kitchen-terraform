@@ -8,12 +8,16 @@ and this project adheres to
 
 ## [Unreleased][unreleased]
 
+## [7.0.0] - 2023-04-09
+
 ### Added
 
-- A Terraform transport plugin
-- Support for Inspec < 6.0
 - Support for the `kitchen doctor` command, which checks for deprecated
-  or invalid configuration attributes
+  or invalid configuration attributes.
+- Support for Inspec < 6.0
+- The `terraform` transport plugin which assumes responsibility from
+  the `terraform` driver plugin for interacting with the Terraform CLI. Use `kitchen doctor` for guidance on migrating
+  the relevant driver configuration to the transport.
 
 ### Changed
 
@@ -28,7 +32,8 @@ and this project adheres to
 - Dropped support for InSpec 4.X which reached end of life on some
   indeterminate date.
 - Support for concurrency with the following commands was reintroduced:
-  `create`; `converge`; `setup`; `destroy`. Be safe and test quickly!
+  `create`; `converge`; `setup`; `destroy`. There is no protection against concurrently running multiple Kitchen
+  instances which use the same `root_module_directory`. Be safe and test quickly!
 
 ## [6.1.0] - 2022-01-22
 
@@ -805,7 +810,8 @@ Free-As-In-Beer
 - Initial release
 
 [unreleased]:
-  https://github.com/newcontext/kitchen-terraform/compare/v6.1.0...HEAD
+  https://github.com/newcontext/kitchen-terraform/compare/v7.0.0...HEAD
+[7.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v6.1.0...v7.0.0
 [6.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v6.0.0...v6.1.0
 [6.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.8.0...v6.0.0
 [5.8.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.7.2...v5.8.0

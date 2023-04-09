@@ -111,7 +111,7 @@ example.
 ---
 
 ```sh
-gem install kitchen-terraform --version 6.1.0
+gem install kitchen-terraform --version 7.0.0
 ```
 
 ---
