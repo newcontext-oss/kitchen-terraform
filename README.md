@@ -76,7 +76,7 @@ the semantic versioning of the Ruby gem.
 
 ```ruby
 source "https://rubygems.org/" do
-  gem "kitchen-terraform", "~> 6.1"
+  gem "kitchen-terraform", "~> 7.0"
 end
 ```
 
