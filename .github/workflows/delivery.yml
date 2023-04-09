@@ -215,7 +215,7 @@ jobs:
         with:
           commit: ${{ github.sha }}
           event: push
-          name: ruby-gem-release-candidate
+          name: ruby-gem
           workflow_conclusion: success
       - name: Publish Ruby Gem Release Candidate
         env:
