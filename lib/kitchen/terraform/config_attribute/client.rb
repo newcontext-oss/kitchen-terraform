@@ -75,13 +75,9 @@ module Kitchen
         def doctor_config_client
           errors = false
 
-          if !::File.exist? config_client
+          if !::TTY::Which.exist? config_client
             errors = true
-            logger.error "client '#{config_client}' does not exist"
-          end
-          if !::File.executable? config_client
-            errors = true
-            logger.error "client '#{config_client}' is not executable"
+            logger.error "client '#{config_client}' is not executable or does not exist"
           end
 
           errors

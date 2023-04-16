@@ -73,6 +73,10 @@ require "support/kitchen/terraform/configurable_examples"
   end
 
   describe "#doctor" do
+    let :config do
+      {client: "/nonexistent/client"}
+    end
+
     specify "should return true" do
       subject.finalize_config! kitchen_instance
 

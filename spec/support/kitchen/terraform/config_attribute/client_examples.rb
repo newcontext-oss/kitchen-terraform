@@ -91,7 +91,7 @@ require "tempfile"
         file = ::Tempfile.new ["client", ".exe"]
         file.chmod 0777
 
-        file
+        ::File.absolute_path file
       end
 
       specify "should return false" do
