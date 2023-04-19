@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased][unreleased]
 
+### Fixed
+
+- The doctor check for the `client` attribute uses the PATH to validate
+  the value.
+
 ## [7.0.0] - 2023-04-09
 
 ### Added
