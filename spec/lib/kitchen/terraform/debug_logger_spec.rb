@@ -16,15 +16,22 @@
 
 require "kitchen"
 require "kitchen/terraform/debug_logger"
+require "support/kitchen/logger_context"
 
 ::RSpec.describe ::Kitchen::Terraform::DebugLogger do
-  subject do
-    described_class.new logger
+  describe ".new" do
+    specify "raises an error if the delegate is not a Kitchen::Logger" do
+      expect do
+        described_class.new ::Object.new
+      end.to raise_error ::TypeError
+    end
   end
 
-  let :logger do
-    instance_double ::Kitchen::Logger
+  subject do
+    described_class.new ::Kitchen.logger
   end
+
+  include_context "Kitchen::Logger"
 
   shared_examples "#debug" do
     after do
@@ -32,7 +39,7 @@ require "kitchen/terraform/debug_logger"
     end
 
     specify "forwards the message to #debug of the wrapped logger" do
-      expect(logger).to receive(:debug).with "message"
+      expect(::Kitchen.logger).to receive(:debug).with "message"
     end
   end
 
