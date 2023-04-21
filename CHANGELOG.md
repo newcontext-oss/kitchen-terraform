@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased][unreleased]
 
+## [7.0.1] - 2023-04-20
+
 ### Fixed
 
 - The doctor check for the `client` attribute uses the PATH to validate
@@ -817,7 +819,8 @@ Free-As-In-Beer
 - Initial release
 
 [unreleased]:
-  https://github.com/newcontext/kitchen-terraform/compare/v7.0.0...HEAD
+  https://github.com/newcontext/kitchen-terraform/compare/v7.0.1...HEAD
+[7.0.1]: https://github.com/newcontext/kitchen-terraform/compare/v7.0.0...v7.0.1
 [7.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v6.1.0...v7.0.0
 [6.1.0]: https://github.com/newcontext/kitchen-terraform/compare/v6.0.0...v6.1.0
 [6.0.0]: https://github.com/newcontext/kitchen-terraform/compare/v5.8.0...v6.0.0
