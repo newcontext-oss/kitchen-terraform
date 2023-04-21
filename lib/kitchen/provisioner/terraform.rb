@@ -86,7 +86,7 @@ module Kitchen
         ::Kitchen::Terraform::Provisioner::Converge.new(
           config: driver.send(:config),
           connection: transport.connection({}),
-          debug_connection: transport.connection(logger: ::Kitchen::Terraform::DebugLogger.new(logger: logger)),
+          debug_connection: transport.connection(logger: ::Kitchen::Terraform::DebugLogger.new(logger)),
           logger: logger,
           version_requirement: version_requirement,
           workspace_name: workspace_name,

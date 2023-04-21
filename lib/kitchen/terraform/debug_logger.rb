@@ -20,6 +20,19 @@ module Kitchen
   module Terraform
     # This class delegates to a logger but ensures the debug level is the default level used for logging messages.
     class DebugLogger < ::SimpleDelegator
+      class << self
+        # .new creates a new instance of the class.
+        #
+        # @return [Kitchen::Terraform::DebugLogger]
+        def new(obj)
+          if !obj.kind_of? ::Kitchen::Logger
+            raise ::TypeError, "delegate must be a Kitchen::Logger; recevied #{obj.class}"
+          end
+
+          super
+        end
+      end
+
       # This method overrides the #<< method of the delegate to call #debug.
       #
       # @param message [#to_s] the message to be logged.
