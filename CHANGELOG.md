@@ -12,6 +12,8 @@ and this project adheres to
 
 - The doctor check for the `client` attribute uses the PATH to validate
   the value.
+- The debug connection logger for `kitchen converge` is properly
+  initialized.
 
 ## [7.0.0] - 2023-04-09
 
