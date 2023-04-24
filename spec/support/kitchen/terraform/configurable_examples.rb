@@ -26,7 +26,7 @@ require "kitchen/driver/terraform"
 
   describe "@plugin_version" do
     it "equals the gem version" do
-      expect(described_class.instance_variable_get(:@plugin_version)).to eq "7.0.1"
+      expect(described_class.instance_variable_get(:@plugin_version)).to eq "7.0.2"
     end
   end
 

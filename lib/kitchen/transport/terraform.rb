@@ -125,10 +125,9 @@ module Kitchen
       # @return [Hash] hash of connection options.
       # @api private
       def connection_options(data)
-        opts = super
+        opts = super.merge! data
 
-        opts.merge! data
-        opts.merge! logger: logger
+        opts.merge! logger: logger if !opts.key? :logger
 
         opts
       end
