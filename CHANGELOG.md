@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased][unreleased]
 
+### Fixed
+
+- Transport connections no longer override provided loggers.
+
 ## [7.0.1] - 2023-04-20
 
 ### Fixed
