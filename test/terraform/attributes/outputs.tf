@@ -12,15 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-output "first_output" {
-  value = "First Output"
+output "insensitive_string" {
+  value = "insensitive-value"
 }
 
-output "second_output" {
-  value     = "Second Output"
+output "sensitive_string" {
+  value     = "sensitive-value"
   sensitive = true
 }
 
-output "third_output" {
-  value = "Third Output"
+output "list_of_objects" {
+  value = [
+    {
+      first_name = "value"
+    },
+    {
+      second_name = "value"
+    }
+  ]
 }

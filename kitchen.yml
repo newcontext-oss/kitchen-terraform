@@ -37,7 +37,7 @@ suites:
         - name: attrs_outputs
           backend: local
           attrs_outputs:
-            first_output: second_output
+            insensitive_string: sensitive_string
           controls:
             - attrs_outputs
           profile_locations:
@@ -47,9 +47,8 @@ suites:
           attrs:
             - test/integration/attributes/Attribute File.yml
           attrs_outputs:
-            first_output: second_output
-            second_output: third_output
-            output_third_output: first_output
+            insensitive_string: sensitive_string
+            output_sensitive_string: insensitive_string
           controls:
             - precedence
           profile_locations:

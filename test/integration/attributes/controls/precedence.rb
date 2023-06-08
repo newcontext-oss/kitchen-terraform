@@ -20,17 +20,17 @@ control "precedence" do
   title "precedence"
   desc "Tests to validate the precedence of overriding system attributes."
 
-  describe "attribute(\"output_first_output\")" do
+  describe "attribute(\"output_insensitive_string\")" do
     subject do
-      attribute("output_first_output")
+      attribute("output_insensitive_string")
     end
 
-    it { should eq "First Output" }
+    it { should eq "insensitive-value" }
   end
 
-  describe "attribute(\"first_output\")" do
+  describe "attribute(\"insensitive_string\")" do
     subject do
-      attribute("first_output")
+      attribute("insensitive_string")
     end
 
     if ::Gem::Requirement.new("~> 3.0").satisfied_by? ::Gem::Version.new ::Inspec::VERSION
@@ -38,42 +38,26 @@ control "precedence" do
         should eq "From Attributes File"
       end
     else
-      it "should eq \"Second Output\" in InSpec 4" do
-        should eq "Second Output"
+      it "should eq \"value\" in InSpec 4" do
+        should eq "sensitive-value"
       end
     end
   end
 
-  describe "attribute(\"output_second_output\")" do
+  describe "attribute(\"output_sensitive_string\")" do
     subject do
-      attribute("output_second_output")
+      attribute("output_sensitive_string")
     end
 
-    it { should eq "Second Output" }
+    it { should eq "insensitive-value" }
   end
 
-  describe "attribute(\"second_output\")" do
+  describe "attribute(\"sensitive_string\")" do
     subject do
-      attribute("second_output")
+      attribute("sensitive_string")
     end
 
-    it { should eq "Third Output" }
-  end
-
-  describe "attribute(\"output_third_output\")" do
-    subject do
-      attribute("output_third_output")
-    end
-
-    it { should eq "First Output" }
-  end
-
-  describe "attribute(\"third_output\")" do
-    subject do
-      attribute("third_output")
-    end
-
-    it { should eq "Third Output" }
+    it { should eq "sensitive-value" }
   end
 
   describe "attribute(\"undefined_output\")" do

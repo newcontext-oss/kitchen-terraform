@@ -4,22 +4,22 @@ attributes:
   - name: input_passthrough
     type: string
     required: true
-  - name: output_first_output
+  - name: output_insensitive_string
     type: string
     required: true
-  - name: output_second_output
+  - name: output_sensitive_string
     type: string
     required: true
-  - name: output_third_output
+  - name: output_list_of_objects
+    type: array
+    required: true
+  - name: insensitive_string
+    type: string
+  - name: sensitive_string
     type: string
     required: true
-  - name: first_output
-    type: string
-  - name: second_output
-    type: string
-    required: true
-  - name: third_output
-    type: string
+  - name: list_of_objects
+    type: array
     required: true
   - name: undefined_output
     type: string
