@@ -34,8 +34,17 @@ require "kitchen/terraform/outputs_parser"
     context "when the outputs are valid JSON" do
       specify "should yield the parsed outputs" do
         expect do |block|
-          subject.parse json_outputs: "{\"key\": \"value\"}", &block
-        end.to yield_with_args parsed_outputs: { "key" => "value" }
+          subject.parse(
+            json_outputs: "{
+              \"list-of-objects\": [
+                {
+                  \"name\": \"value\"
+                }
+              ]
+            }",
+            &block
+          )
+        end.to yield_with_args parsed_outputs: { "list-of-objects" => [{"name" => "value"}] }
       end
     end
   end
