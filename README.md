@@ -14,6 +14,21 @@
 
 [![Gitter chat][gitter-shield]][gitter]
 
+> **Warning**
+> Deprecation Notice :warning:
+>
+> With the
+> [announcement](https://www.hashicorp.com/blog/terraform-1-6-adds-a-test-framework-for-enhanced-code-validation) of
+> a native test framework with Terraform 1.6 on 2023-10-04, we are excited/saddened/relieved to announce the deprecation
+> of Kitchen-Terraform :tada: The project will enter a maintenance-only period for about 1 year, after which time it
+> will be archived.
+>
+> We strongly recommend that users begin to learn about
+> [Terraform tests](https://developer.hashicorp.com/terraform/language/tests) and plan their migration to the new
+> framework accordingly.
+>
+> So long, and thanks for all the tests :sparkling_heart:
+
 Kitchen-Terraform provides a set of [Test Kitchen][test-kitchen] plugins
 which enable the use of Test Kitchen to converge a [Terraform][terraform]
 configuration and verify the resulting infrastructure systems with
@@ -232,13 +247,13 @@ and Copado NCS LLC.
   alt="Email logo"
   height="16"
   src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/email_logo.png"
-  width="25"> kitchen-terraform@copado.com
+  width="25"> <kitchen-terraform@copado.com>
 
 <img
   alt="Email logo"
   height="16"
   src="https://raw.githubusercontent.com/newcontext-oss/kitchen-terraform/master/assets/email_logo.png"
-  width="25"> ss-info@copado.com
+  width="25"> <ss-info@copado.com>
 
 ## License
 
